@@ -50,7 +50,7 @@ class TestSubsystemsMission(unittest.TestCase):
                     'altitude_final': (35000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'boundary_constraint',
-                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((10.0, 30.0), 'min'),
                 },
                 'initial_guesses': {'time': ([0, 30], 'min')},
@@ -68,17 +68,14 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
+        prob.build_model()
 
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
+            [10.0, 100.0],
+            'm',
+        )
 
         prob.add_driver('SLSQP', max_iter=0, verbosity=0)
 
@@ -87,12 +84,6 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
-
-        prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
-            [10.0, 100.0],
-            'm',
-        )
-        prob.set_initial_guesses()
 
         # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
         assert_almost_equal(
@@ -116,7 +107,6 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()

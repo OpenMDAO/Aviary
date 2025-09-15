@@ -21,6 +21,10 @@ phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
     'method': 'external',
 }
 
+# Start cruise at t=0.
+del phase_info['cruise']['user_options']['time_initial_bounds']
+phase_info['cruise']['user_options']['time_initial'] = (0.0, 'min')
+
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()
@@ -29,17 +33,9 @@ if __name__ == '__main__':
     # Allow for user overrides here
     prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
 
-    # Preprocess inputs
     prob.check_and_preprocess_inputs()
 
-    prob.add_pre_mission_systems()
-
-    prob.add_phases()
-
-    prob.add_post_mission_systems()
-
-    # Link phases and variables
-    prob.link_phases()
+    prob.build_model()
 
     # Note, SLSQP has trouble here.
     prob.add_driver('IPOPT')
@@ -49,8 +45,6 @@ if __name__ == '__main__':
     prob.add_objective()
 
     prob.setup()
-
-    prob.set_initial_guesses()
 
     prob.run_aviary_problem(suppress_solver_print=True)
 

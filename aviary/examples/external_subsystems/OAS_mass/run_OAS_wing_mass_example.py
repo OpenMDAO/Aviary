@@ -59,7 +59,7 @@ phase_info = {
             'altitude_final': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 34000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
-            'time_initial_bounds': ((0.0, 0.0), 'min'),
+            'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((64.0, 192.0), 'min'),
         },
         'initial_guesses': {'time': ([0, 128], 'min')},
@@ -124,10 +124,7 @@ prob = av.AviaryProblem()
 
 prob.load_inputs(aircraft_definition_file, phase_info)
 prob.check_and_preprocess_inputs()
-prob.add_pre_mission_systems()
-prob.add_phases()
-prob.add_post_mission_systems()
-prob.link_phases()
+prob.build_model()
 prob.add_driver(optimizer=optimizer)
 prob.add_design_variables()
 prob.add_objective()
@@ -210,7 +207,6 @@ prob.set_val(OAS_sys + 'engine_mass', 7400, units='lbm')
 prob.set_val(OAS_sys + 'engine_location', np.array([25, -10.0, 0.0]), units='m')
 
 # finish setting up Aviary problem and run
-prob.set_initial_guesses()
 prob.run_aviary_problem(make_plots=False)
 
 print('wing mass = ', prob.model.get_val(av.Aircraft.Wing.MASS, units='lbm'))
