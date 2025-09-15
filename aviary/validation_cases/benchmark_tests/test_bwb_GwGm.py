@@ -33,6 +33,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             verbosity=2,
         )
 
+        self.assertTrue(prob.result.success)
+
         rtol = 1e-3
 
         # There are no truth values for these.
