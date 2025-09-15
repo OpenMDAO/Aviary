@@ -46,8 +46,7 @@ aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_fuselage_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
-aircraft:engine:reference_sls_thrust,28690.0,lbf
-aircraft:engine:scale_factor,0.6824747298710352,unitless
+aircraft:engine:reference_sls_thrust,19580.2,lbf
 aircraft:engine:scaled_sls_thrust,19580.2,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.0,unitless
