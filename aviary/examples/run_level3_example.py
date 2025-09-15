@@ -1,16 +1,17 @@
+import warnings
+
+import dymos as dm
+import openmdao.api as om
+
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
-import openmdao.api as om
-from aviary.models.missions.height_energy_default import phase_info
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
-import dymos as dm
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import setup_trajectory_params
-import warnings
-from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class L3SubsystemsGroup(om.Group):
@@ -492,7 +493,7 @@ prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
-prob.verbosity = Verbosity.VERBOSE
+prob.verbosity = Verbosity.BRIEF
 
 prob.run_aviary_problem()
 # prob.model.list_vars(units=True, print_arrays=True)
