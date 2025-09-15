@@ -1189,7 +1189,7 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             self.final_setup()
-            with open(Path(self.get_reports_dir()) / 'input_list.txt', 'w') as outfile:
+            with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
 
             recorder = om.SqliteRecorder('optimization_history.db')
