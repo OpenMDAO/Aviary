@@ -1,3 +1,4 @@
+from copy import deepcopy
 import unittest
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -16,10 +17,11 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
     def setUp(self):
         # run design case
         prob = self.prob = AviaryProblem(verbosity=1)
-        energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
+        copy_energy_phase_info = deepcopy(energy_phase_info)
+        copy_energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', energy_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', copy_energy_phase_info
         )
         # define passengers of every seat class so we can change their values later
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 169)
@@ -269,8 +271,10 @@ class Test2DOFOffDesign(unittest.TestCase):
         # run design case
         prob = self.prob = AviaryProblem(verbosity=1)
 
+        copy_twodof_phase_info = deepcopy(twodof_phase_info)
+
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', twodof_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', copy_twodof_phase_info
         )
 
         # Preprocess inputs
