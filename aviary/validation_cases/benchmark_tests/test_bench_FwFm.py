@@ -202,7 +202,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
             optimizer='IPOPT',
         )
 
-        # self.assertTrue(prob.result.success)
+        self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
@@ -249,4 +249,3 @@ if __name__ == '__main__':
     test = TestBenchFwFmSerial()
     test.setUp()
     test.test_bench_FwFm_SNOPT()
-    # test.test_bench_FwFm_IPOPT()
