@@ -185,7 +185,7 @@ def _dashboard_cmd(options, user_args):
         dashboard(
             report_dir_name,
             # options.problem_recorder,
-            options.driver_recorder,
+            # options.driver_recorder,
             options.port,
             options.run_in_background,
         )
@@ -204,7 +204,7 @@ def _dashboard_cmd(options, user_args):
     dashboard(
         options.script_name,
         # options.problem_recorder,
-        options.driver_recorder,
+        # options.driver_recorder,
         options.port,
         options.run_in_background,
     )
@@ -1123,7 +1123,7 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
 
 
 # The main script that generates all the tabs in the dashboard
-def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
+def dashboard(script_name, port, run_in_background=False):
     """
     Generate the dashboard app display.
 
@@ -1131,14 +1131,10 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     ----------
     script_name : str
         Name of the script file whose results will be displayed by this dashboard.
-    problem_recorder : str
-        Name of the recorder file containing the Problem cases.
-    driver_recorder : str or None
-        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    reports_dir = f'{script_name}_out/reports/'
+    reports_dir = Path(f'{script_name}_out/reports/')
     out_dir = f'{script_name}_out/'
 
     if not Path(reports_dir).is_dir():
@@ -1147,7 +1143,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             f"associated with it. The directory '{reports_dir}' does not exist."
         )
 
-    problem_recorder_path = Path(out_dir) / problem_recorder
+    problem_recorder_path = Path(out_dir) / 'problem_history.db'
 
     if not os.path.isfile(problem_recorder_path):
         issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
