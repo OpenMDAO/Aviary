@@ -1146,7 +1146,6 @@ class AviaryProblem(om.Problem):
 
     def run_aviary_problem(
         self,
-        optimization_history_filename=None,
         restart_filename=None,
         suppress_solver_print=True,
         run_driver=True,
@@ -1160,9 +1159,6 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        optimization_history_filename : str, None
-            The name of the database file where the driver iterations are to be
-            recorded. The default is None.
         restart_filename : str, optional
             The name of the file that contains previously computed solutions which are
             to be used as starting points for this run. If it is None (default), no
@@ -1180,6 +1176,8 @@ class AviaryProblem(om.Problem):
             False.
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1194,6 +1192,9 @@ class AviaryProblem(om.Problem):
             with open(Path(self.get_reports_dir()) / 'input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
 
+            recorder = om.SqliteRecorder('optimization_history.db')
+            self.driver.add_recorder(recorder)
+
         # Creates a flag to determine if the user would or would not like a payload/range diagram
         payload_range_bool = False
         if self.problem_type is not ProblemType.MULTI_MISSION:
@@ -1202,10 +1203,6 @@ class AviaryProblem(om.Problem):
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
-
-        if optimization_history_filename:
-            recorder = om.SqliteRecorder(optimization_history_filename)
-            self.driver.add_recorder(recorder)
 
         # and run mission, and dynamics
         if run_driver:

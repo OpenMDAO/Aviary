@@ -1134,19 +1134,21 @@ def dashboard(script_name, port, run_in_background=False):
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    reports_dir = Path(f'{script_name}_out/reports/')
-    out_dir = f'{script_name}_out/'
+    out_dir = Path(f'{script_name}')
+    if not out_dir.exists():
+        out_dir = Path(f'{script_name}_out')
+    if not out_dir.exists():
+        raise FileNotFoundError(f"Output directory for '{script_name}' could not be found.")
 
-    if not Path(reports_dir).is_dir():
-        raise ValueError(
-            f"The script name, '{script_name}', does not have a reports folder "
-            f"associated with it. The directory '{reports_dir}' does not exist."
-        )
+    reports_dir = out_dir / 'reports'
+
+    if not reports_dir.is_dir():
+        raise FileNotFoundError(f"Reports directory could not be found in '{out_dir}'.")
 
     problem_recorder_path = Path(out_dir) / 'problem_history.db'
 
     if not os.path.isfile(problem_recorder_path):
-        issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
+        issue_warning(f'Problem case recorder file {problem_recorder_path} does not exist.')
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
@@ -1177,7 +1179,7 @@ def dashboard(script_name, port, run_in_background=False):
         can appear in different phases.
         """,
         'text',
-        Path(reports_dir) / 'input_list.txt',
+        reports_dir / 'input_list.txt',
     )
 
     #  Debug Output List
@@ -1196,7 +1198,7 @@ def dashboard(script_name, port, run_in_background=False):
         variable can appear in different phases.
         """,
         'text',
-        Path(reports_dir) / 'output_list.txt',
+        reports_dir / 'output_list.txt',
     )
 
     # Inputs
@@ -1205,7 +1207,7 @@ def dashboard(script_name, port, run_in_background=False):
         model_tabs_list,
         'Detailed report on the model inputs.',
         'html',
-        Path(reports_dir) / 'inputs.html',
+        reports_dir / 'inputs.html',
     )
 
     # N2
@@ -1219,7 +1221,7 @@ def dashboard(script_name, port, run_in_background=False):
         It can be used to systematically identify, define, tabulate, design, and analyze functional
         and physical interfaces.""",
         'html',
-        Path(reports_dir) / 'n2.html',
+        reports_dir / 'n2.html',
     )
 
     # Trajectory Linkage
@@ -1232,7 +1234,7 @@ def dashboard(script_name, port, run_in_background=False):
         It can be used to identify errant linkages between fixed quantities.
         """,
         'html',
-        Path(reports_dir) / 'traj_linkage_report.html',
+        reports_dir / 'traj_linkage_report.html',
     )
 
     # Driver scaling
@@ -1246,19 +1248,19 @@ def dashboard(script_name, port, run_in_background=False):
             design variables (DV).
         """,
         'html',
-        Path(reports_dir) / 'driver_scaling_report.html',
+        reports_dir / 'driver_scaling_report.html',
     )
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
 
     # Optimization History Plot
-    if driver_recorder:
-        if os.path.isfile(driver_recorder):
-            df = convert_driver_case_recorder_file_to_df(f'{driver_recorder}')
-            cr = om.CaseReader(f'{driver_recorder}')
-            opt_history_pane = create_optimization_history_plot(cr, df)
-            optimization_tabs_list.append(('Optimization History', opt_history_pane))
+    opt_history_path = out_dir / 'optimization_history.db'
+    if opt_history_path.exists():
+        df = convert_driver_case_recorder_file_to_df(opt_history_path)
+        cr = om.CaseReader(opt_history_path)
+        opt_history_pane = create_optimization_history_plot(cr, df)
+        optimization_tabs_list.append(('Optimization History', opt_history_pane))
 
     # IPOPT report
     if os.path.isfile(Path(reports_dir) / 'IPOPT.out'):
