@@ -1,10 +1,8 @@
 import argparse
-from collections import defaultdict
 import functools
 import importlib.util
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import traceback
@@ -1123,7 +1121,7 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
 
 
 # The main script that generates all the tabs in the dashboard
-def dashboard(script_name, port, run_in_background=False):
+def dashboard(script_name, port=0, run_in_background=False):
     """
     Generate the dashboard app display.
 
