@@ -31,6 +31,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
         )
 
+        self.assertTrue(prob.result.success)
+
         rtol = 1e-3
 
         # There are no truth values for these.
@@ -75,6 +77,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='SNOPT',
             verbosity=0,
         )
+
+        self.assertTrue(prob.result.success)
 
         rtol = 1e-3
 

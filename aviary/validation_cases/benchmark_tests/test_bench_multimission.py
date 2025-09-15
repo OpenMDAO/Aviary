@@ -40,6 +40,8 @@ class MultiMissionTestcase(unittest.TestCase):
 
         # alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations', units='')
 
+        self.assertTrue(prob.result.success)
+
         assert_near_equal(objective_expected_value, objective, tolerance=1e-3)
         assert_near_equal(mission1_fuel_expected_value, mission1_fuel, tolerance=1e-3)
         assert_near_equal(mission2_fuel_expected_value, mission2_fuel, tolerance=1e-3)

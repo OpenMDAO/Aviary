@@ -93,6 +93,8 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.run_aviary_problem()
 
+        self.assertTrue(prob.result.success)
+
         # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
         assert_almost_equal(
             prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'],

@@ -202,6 +202,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
             optimizer='IPOPT',
         )
 
+        # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
@@ -214,6 +215,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
             optimizer='SNOPT',
         )
 
+        self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
         # This is one of the few places we test Height Energy + simple takeoff.
@@ -238,7 +240,7 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
             max_iter=50,
             optimizer='SNOPT',
         )
-
+        self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
 
@@ -247,3 +249,4 @@ if __name__ == '__main__':
     test = TestBenchFwFmSerial()
     test.setUp()
     test.test_bench_FwFm_SNOPT()
+    # test.test_bench_FwFm_IPOPT()
