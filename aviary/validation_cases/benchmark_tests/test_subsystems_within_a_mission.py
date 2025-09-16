@@ -64,7 +64,7 @@ class TestSubsystemsMission(unittest.TestCase):
     def test_subsystems_in_a_mission(self):
         phase_info = self.phase_info.copy()
 
-        prob = AviaryProblem(verbosity=2)
+        prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
 
