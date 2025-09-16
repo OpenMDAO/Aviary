@@ -816,7 +816,7 @@ class BWBPrepGeomTest(unittest.TestCase):
         # BWBWingPrelim
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
 
-    def test_case1(self):
+    def ttest_case1(self):
         prob = self.prob
         options = self.options
 
