@@ -26,6 +26,7 @@ class InputOutputOptionTest(unittest.TestCase):
         self.assertEqual(prob.model.comp._valid_name_map['length'], 'aa')
         self.assertEqual(prob.model.comp._valid_name_map['mass'], 'zz')
 
+
 class DummyComp(om.ExplicitComponent):
     """Simple component to test unit conversion."""
 
