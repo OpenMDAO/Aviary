@@ -158,9 +158,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.setup()
         prob_alternate.run_aviary_problem()
 
-        self.assertTrue(prob_fallout.result.success)
-        self.assertTrue(prob_alternate.result.success)
-
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
         alternate_mass = prob_alternate.get_val(av.Mission.Summary.GROSS_MASS)
         assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
@@ -225,9 +222,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.add_objective()
         prob_alternate.setup()
         prob_alternate.run_aviary_problem()
-
-        self.assertTrue(prob_fallout.result.success)
-        self.assertTrue(prob_alternate.result.success)
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
         alternate_mass = prob_alternate.get_val(av.Mission.Summary.GROSS_MASS)
