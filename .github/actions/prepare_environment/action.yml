@@ -71,7 +71,6 @@ runs:
         echo "Install dependencies"
         echo "============================================================="
         conda install numpy=${{ inputs.NUMPY }} scipy=${{ inputs.SCIPY }} -q -y
-        conda install matplotlib pandas panel hvplot -q -y
         pip install testflo -q
 
     - name: Install pyOptSparse
