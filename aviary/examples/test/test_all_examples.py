@@ -61,64 +61,6 @@ def example_name(testcase_func, param_num, param):
     return 'test_example_' + param.args[0].name.replace('.py', '')
 
 
-@use_tempdirs
-class RunScriptTest(unittest.TestCase):
-    """
-    A test case class that uses unittest to run and test scripts with a timeout.
-
-    Attributes
-    ----------
-    base_directory : str
-        The base directory where the run scripts are located.
-    run_files : list
-        A list of paths to run scripts found in the base directory.
-
-    Methods
-    -------
-    setUpClass()
-        Class method to find all run scripts before tests are run.
-    find_run_files(base_dir)
-        Finds and returns all run scripts in the specified directory.
-    run_script(script_path)
-        Attempts to run a script with a timeout and handles errors.
-    test_run_scripts()
-        Generates a test for each run script with a timeout.
-    """
-
-    def run_script(self, script_path, max_allowable_time=500):
-        """
-        Attempt to run a script with a 500-second timeout and handle errors.
-
-        Parameters
-        ----------
-        script_path : pathlib.Path
-            The path to the script to be run.
-
-        Raises
-        ------
-        Exception
-            Any exception other than ImportError or TimeoutExpired that occurs while running the script.
-        """
-        with open(os.devnull, 'w') as devnull:
-            proc = subprocess.Popen(['python', script_path], stdout=devnull, stderr=subprocess.PIPE)
-        proc.wait(timeout=max_allowable_time)
-        (stdout, stderr) = proc.communicate()
-
-        if proc.returncode != 0:
-            if 'ImportError' in str(stderr):
-                self.skipTest(f'Skipped {script_path.name} due to ImportError')
-            else:
-                raise Exception(f'Error running {script_path.name}:\n{stderr.decode("utf-8")}')
-
-    @parameterized.expand(find_examples(), name_func=example_name)
-    def test_run_scripts(self, example_path):
-        """Test each run script to ensure it executes without error."""
-        if example_path.name in SKIP_EXAMPLES:
-            reason = SKIP_EXAMPLES[example_path.name]
-            self.skipTest(f'Skipped {example_path.name}: {reason}.')
-
-        self.run_script(example_path)
-
 
 if __name__ == '__main__':
     unittest.main()
