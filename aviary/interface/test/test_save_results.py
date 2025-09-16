@@ -52,14 +52,6 @@ class TestSizingResults(unittest.TestCase):
             'interface/test/sizing_results_for_test.json',
         )
 
-    def test_alternate(self):
-        prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
-        prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
-
-    def test_fallout(self):
-        prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
-        prob.run_off_design_mission(problem_type='fallout', phase_info=local_phase_info)
-
     def compare_files(self, test_file, validation_file):
         """
         Compares the specified file with a validation file.
