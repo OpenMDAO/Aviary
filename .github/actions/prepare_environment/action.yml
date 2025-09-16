@@ -108,7 +108,7 @@ runs:
         conda config --add channels conda-forge
 
         pip install git+https://github.com/OpenMDAO/build_pyoptsparse
-        build_pyoptsparse -v $BRANCH $SNOPT
+        build_pyoptsparse -v
 
         echo "The build script has been grabbing an older version of IPOPT with some problems."
         conda install ipopt=3.14
@@ -153,18 +153,3 @@ runs:
         echo "Install Aviary"
         echo "============================================================="
         pip install -e .[all]
-
-    - name: Display conda environment info
-      shell: bash -l {0}
-      run: |
-        conda info
-        conda list
-        conda env export --file environment.yml
-        mv environment.yml ${{ inputs.NAME }}_environment.yml
-
-    - name: 'Upload environment artifact'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ inputs.NAME }}_environment
-        path: ${{ inputs.NAME }}_environment.yml
-        retention-days: 5
