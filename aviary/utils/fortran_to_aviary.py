@@ -713,7 +713,17 @@ def update_flops_options(vehicle_data):
 def update_aviary_options(vehicle_data):
     """Special handling for variables that occurs for either legacy code."""
     input_values: NamedValues = vehicle_data['input_values']
-    # do something here if necessary
+
+    # if reference + scaled thrust both provided, set scale factor
+    try:
+        ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
+        scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
+    except KeyError:
+        pass
+    else:
+        scale_factor = scaled_thrust / ref_thrust
+        input_values.set_val(Aircraft.Engine.SCALE_FACTOR, [scale_factor])
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
