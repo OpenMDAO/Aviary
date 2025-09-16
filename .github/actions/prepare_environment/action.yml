@@ -108,10 +108,8 @@ runs:
         conda config --add channels conda-forge
 
         pip install git+https://github.com/OpenMDAO/build_pyoptsparse
-        build_pyoptsparse -v
+        build_pyoptsparse -v -o
 
-        echo "The build script has been grabbing an older version of IPOPT with some problems."
-        conda install ipopt=3.14
 
     - name: Install OpenMDAO
       if: inputs.OPENMDAO
@@ -152,4 +150,4 @@ runs:
         echo "============================================================="
         echo "Install Aviary"
         echo "============================================================="
-        pip install -e .[all]
+        pip install -e .
