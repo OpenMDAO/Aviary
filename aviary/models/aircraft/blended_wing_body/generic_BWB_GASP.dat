@@ -200,6 +200,7 @@
  HBTP=0.465,	! GT Value for Refanned 1133
  SWSLS=.178884, 	! GT Value for Refanned 1133
  THIN=37451., 	! input thrust for one engine, lbf., if JENGSZ=4 and NTYE=7
+ THIN=19580.2,  ! copied from "SLS THRUST/ENG" in output
  EMCRU=0.80,	! design cruise Mach number for engine sizing (not mission analysis)
  HNCRU=41000.,	! design cruise altitude in feet
  HSCREQ=20000.,	! required engine-out service ceiling
