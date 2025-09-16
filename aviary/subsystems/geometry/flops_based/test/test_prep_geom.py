@@ -36,6 +36,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
 )
 from aviary.variable_info.functions import override_aviary_vars, setup_model_options
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 unit_data_sets = get_flops_case_names(
@@ -737,8 +738,176 @@ class BWBWingTest(unittest.TestCase):
         assert_near_equal(out1, exp1, tolerance=1e-9)
 
 
+class BWBPrepGeomTest(unittest.TestCase):
+    """Test computation of derived values of aircraft geometry for aerodynamics analysis."""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+        options.set_val(Aircraft.Wing.DETAILED_WING, val=1, units='unitless')
+        options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            units='unitless',
+        )
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        # BWBSimpleCabinLayout
+        prob.set_val(Aircraft.Fuselage.LENGTH, 137.5, units='ft')
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, units='ft')
+        prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, units='deg')
+        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11, units='unitless')
+        # BWBUpdateDetailedWingDist
+        prob.set_val(
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            val=[
+                -1.0,
+                58.03,
+                0.4491,
+                0.3884,
+                0.3317,
+                0.2886,
+                0.2537,
+                0.2269,
+                0.2121,
+                0.1983,
+                0.1843,
+                0.1704,
+                0.1565,
+                0.1426,
+                0.1287,
+            ],
+        )
+        prob.set_val(
+            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            val=[
+                -1.0,
+                0.15,
+                0.1132,
+                0.0928,
+                0.0822,
+                0.0764,
+                0.0742,
+                0.0746,
+                0.0758,
+                0.0758,
+                0.0756,
+                0.0756,
+                0.0758,
+                0.076,
+                0.076,
+            ],
+        )
+        prob.set_val(
+            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+        )
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
+        # BWBFuselagePrelim
+        # prob.set_val(Aircraft.Fuselage.MAX_HEIGHT, 15.125)
+        # BWBWingPrelim
+        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
+
+    def test_case1(self):
+        prob = self.prob
+        options = self.options
+
+        prob.run_model()
+
+        # BWBSimpleCabinLayout
+        pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
+        assert_near_equal(pax_compart_length, 96.25, tolerance=1e-9)
+        root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
+        assert_near_equal(root_chord, 63.96019518, tolerance=1e-9)
+        area_cabin = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
+        assert_near_equal(area_cabin, 5173.1872025, tolerance=1e-9)
+        fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
+        assert_near_equal(fuselage_height, 15.125, tolerance=1e-9)
+
+        # BWBUpdateDetailedWingDist
+        out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        exp0 = [
+            0.0,
+            32.29,
+            0.56275201612903225,
+            0.59918934811827951,
+            0.63562668010752688,
+            0.67206401209677424,
+            0.7085013440860215,
+            0.74486580141129033,
+            0.78137600806451613,
+            0.81781334005376349,
+            0.85425067204301075,
+            0.89068800403225801,
+            0.92705246135752695,
+            0.96356266801075263,
+            1.0,
+        ]
+        assert_near_equal(out0, exp0, tolerance=1e-10)
+
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
+        exp1 = [
+            137.5,
+            11.0145643,
+            0.327280116,
+            0.283045195,
+            0.241725260,
+            0.210316280,
+            0.184883023,
+            0.165352613,
+            0.154567162,
+            0.144510459,
+            0.134308006,
+            0.124178427,
+            0.114048849,
+            0.103919271,
+            0.0937896925,
+        ]
+        assert_near_equal(out1, exp1, tolerance=1e-9)
+
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
+        exp2 = [
+            0.11,
+            0.11,
+            0.1132,
+            0.0928,
+            0.0822,
+            0.0764,
+            0.0742,
+            0.0746,
+            0.0758,
+            0.0758,
+            0.0756,
+            0.0756,
+            0.0758,
+            0.076,
+            0.076,
+        ]
+        assert_near_equal(out2, exp2, tolerance=1e-10)
+
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
+        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
+        assert_near_equal(out3, exp3, tolerance=1e-10)
+        # # BWBWingPrelim
+        assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 8668.64638424, tolerance=1e-10)
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.ASPECT_RATIO), 6.6313480248646242, tolerance=1e-10
+        )
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.531071664997850196, tolerance=1e-10
+        )
+
+
 if __name__ == '__main__':
     # unittest.main()
-    test = BWBWingTest()
+    test = BWBPrepGeomTest()
     test.setUp()
     test.test_case1()
