@@ -549,7 +549,6 @@ class AviaryProblem(om.Problem):
         In all cases, a design variable is added for the final cruise mass of the
         aircraft, with no upper bound, and a residual mass constraint is added to ensure
         that the mass balances.
-
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -701,8 +700,10 @@ class AviaryProblem(om.Problem):
     ):
         """
         Add a design variable to the problem as well as initialized a default value for that design variable.
+
         The default value can be over-written after setup with prob.set_val()
-        Parameters.
+
+        Parameters
         ----------
         name : string
             A unique name that identifies this design variable.
@@ -716,6 +717,7 @@ class AviaryProblem(om.Problem):
             The default value to be assigned to this design variable.
         ref : float or ndarray, optional
             Value of design var that scales to 1.0 in the driver.
+
         """
         self.model.add_design_var(name=name, lower=lower, upper=upper, units=units, ref=ref)
         if default_val is not None:
