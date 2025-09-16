@@ -487,7 +487,7 @@ class AviaryGroup(om.Group):
         )
 
         # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
-        core_subsystems = self.subsystems[0:4]
+        core_subsystems = self.subsystems[0:5]
 
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
