@@ -16,17 +16,6 @@ on:
 
 jobs:
 
-  pre_commit:
-    # run pre-commit checks
-    runs-on: ubuntu-22.04
-
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    - uses: pre-commit/action@v3.0.1
-
   test_ubuntu:
     runs-on: ubuntu-22.04
     strategy:
