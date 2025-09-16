@@ -63,9 +63,3 @@ jobs:
           echo "============================================================="
           testflo . -n 1 --timeout=200 --show_skipped
 
-      - name: Checkout actions (again)
-        uses: actions/checkout@v3
-        with:
-          sparse-checkout: |
-            .github/actions
-          path: actions
