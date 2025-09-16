@@ -3773,7 +3773,7 @@ add_meta_data(
     Aircraft.HorizontalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SHT',
+        'GASP': 'INGASP.SHT',  # not an input in GASP
         'FLOPS': 'WTIN.SHT',  # ['&DEFINE.WTIN.SHT', 'EDETIN.SHT'],
         'LEAPS1': [
             'aircraft.inputs.L0_horizontal_tail.area',
@@ -4963,7 +4963,7 @@ add_meta_data(
     Aircraft.VerticalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SVT',
+        'GASP': 'INGASP.SVT',  # not an input in GASP
         'FLOPS': 'WTIN.SVT',  # ['&DEFINE.WTIN.SVT', 'EDETIN.SVT'],
         'LEAPS1': [
             'aircraft.inputs.L0_vertical_tails.area',
