@@ -360,22 +360,26 @@ class PhaseBuilderBase(ABC):
         meta_data[name] = dict(apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
 
     def _add_user_defined_constraints(self, phase, constraints):
-        """Add each constraint and its corresponding arguments to the phase."""
-        for constraint_name, kwargs in constraints.items():
-            if kwargs['type'] == 'boundary':
-                kwargs.pop('type')
-
-                if 'target' in kwargs:
+        """Add each constraint to this phase using the arguments given in the phase_info."""
+        for constraint_name, constraint_dict in constraints.items():
+            con_args = constraint_dict.copy()
+            con_type = con_args.pop('type')
+            if con_type == 'boundary':
+                if 'target' in con_args:
                     # Support for constraint aliases.
-                    target = kwargs.pop('target')
-                    kwargs['constraint_name'] = constraint_name
-                    phase.add_boundary_constraint(target, **kwargs)
+                    target = con_args.pop('target')
+                    con_args['constraint_name'] = constraint_name
+                    phase.add_boundary_constraint(target, **con_args)
                 else:
-                    phase.add_boundary_constraint(constraint_name, **kwargs)
+                    phase.add_boundary_constraint(constraint_name, **con_args)
 
-            elif kwargs['type'] == 'path':
-                kwargs.pop('type')
-                phase.add_path_constraint(constraint_name, **kwargs)
+            elif con_type == 'path':
+                phase.add_path_constraint(constraint_name, **con_args)
+
+            else:
+                raise ValueError(
+                    f'Invalid type "{con_type}" for constraint {constraint_name} in {phase.name}.'
+                )
 
     def add_state(self, name, target, rate_source):
         """

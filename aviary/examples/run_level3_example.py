@@ -1,631 +1,531 @@
-"""
-Sizing the N3CC using the level 3 API.
-
-Includes:
-  Takeoff, Climb, Cruise, Descent, Landing
-  Computed Aero
-  N3CC data
-"""
-
-import scipy.constants as _units
-
-import dymos as dm
+import aviary.api as av
+from aviary.core.pre_mission_group import PreMissionGroup
 import openmdao.api as om
-from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.testing_utils import require_pyoptsparse
-
+from aviary.models.missions.height_energy_default import phase_info
+from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.flops_based.phases.build_landing import Landing
-from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
-from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import set_aviary_input_defaults
-from aviary.utils.functions import set_aviary_initial_values
-from aviary.utils.preprocessors import preprocess_crewpayload, preprocess_propulsion
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
-from aviary.validation_cases.validation_tests import get_flops_inputs
-from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.functions import setup_trajectory_params, setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.utils.aviary_values import AviaryValues
+import dymos as dm
+from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import setup_trajectory_params
+import warnings
+from aviary.variable_info.functions import setup_model_options
 
 
-try:
-    import pyoptsparse
-except ImportError:
-    pyoptsparse = None
+class L3SubsystemsGroup(om.Group):
+    """Group that contains all pre-mission groups of core Aviary subsystems (geometry, mass, propulsion, aerodynamics)."""
+
+    def initialize(self):
+        self.options.declare(
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
+        self.code_origin_overrides = []
 
 
-from dymos.transcriptions.transcription_base import TranscriptionBase
+prob = av.AviaryProblem()
 
-FLOPS = LegacyCode.FLOPS
+#####
+# prob.load_inputs(csv_path, phase_info)
+csv_path = 'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'
 
-# benchmark for simple sizing problem on the N3CC
+aviary_inputs, _ = av.create_vehicle(csv_path)
 
+engine = av.build_engine_deck(aviary_inputs)
 
-def run_trajectory(sim=True):
-    # Level 2 Equivalent: Defining an AviaryProblem() from the interface methods
-    prob = om.Problem(model=om.Group())
+prob.model.phase_info = {}
+for phase_name in phase_info:
+    if phase_name not in ['pre_mission', 'post_mission']:
+        prob.model.phase_info[phase_name] = phase_info[phase_name]
+aviary_inputs.set_val(Mission.Summary.RANGE, 1906.0, units='NM')
+prob.require_range_residual = True
+prob.target_range = 1906.0
 
-    # Interface methods for level 2 processes drivers through the prob.add_driver
-    # function (specifying driver type, iterations, and verbosity)
-    if pyoptsparse:
-        driver = prob.driver = om.pyOptSparseDriver()
-        driver.options['optimizer'] = 'SNOPT'
-        # driver.declare_coloring()  # currently disabled pending resolve of issue 2507
-        if driver.options['optimizer'] == 'SNOPT':
-            driver.opt_settings['Major iterations limit'] = 45
-            driver.opt_settings['Major optimality tolerance'] = 1e-4
-            driver.opt_settings['Major feasibility tolerance'] = 1e-6
-            driver.opt_settings['iSumm'] = 6
-        elif driver.options['optimizer'] == 'IPOPT':
-            driver.opt_settings['max_iter'] = 100
-            driver.opt_settings['tol'] = 1e-3
-            driver.opt_settings['print_level'] = 4
+#####
+# prob.check_and_preprocess_inputs()
+av.preprocess_options(aviary_inputs, engine_models=[engine])
 
-    else:
-        driver = prob.driver = om.ScipyOptimizeDriver()
-        opt_settings = prob.driver.opt_settings
+#####
+# prob.add_pre_mission_systems()
+aerodynamics = av.CoreAerodynamicsBuilder(code_origin=av.LegacyCode('FLOPS'))
+geometry = av.CoreGeometryBuilder(code_origin=av.LegacyCode('FLOPS'))
+mass = av.CoreMassBuilder(code_origin=av.LegacyCode('FLOPS'))
+propulsion = av.CorePropulsionBuilder(engine_models=engine)
 
-        driver.options['optimizer'] = 'SLSQP'
-        opt_settings['maxiter'] = 100
-        opt_settings['ftol'] = 5.0e-3
-        opt_settings['eps'] = 1e-2
+prob.model.core_subsystems = {
+    'propulsion': propulsion,
+    'geometry': geometry,
+    'mass': mass,
+    'aerodynamics': aerodynamics,
+}
+prob.meta_data = BaseMetaData.copy()
 
-    ##########################################
-    # Aircraft Input Variables and Options   #
-    ##########################################
+#####
+# prob.add_pre_mission_systems()
+# overwrites calculated values in pre-mission with override values from .csv
+prob.model.add_subsystem(
+    'pre_mission',
+    PreMissionGroup(),
+    promotes_inputs=['aircraft:*', 'mission:*'],
+    promotes_outputs=['aircraft:*', 'mission:*'],
+)
 
-    # Level 2 Equivalent: loads inputs through the prob.load_inputs function,
-    # with arguments for the input csv and phase info python file.
+#####
+# This is a combination of prob.add_pre_mission_systems and prob.setup()
+# In the aviary code add_pre_mission_systems only instantiates the objects and methods, the build method is called in prob.setup()
+prob.model.pre_mission.add_subsystem(
+    'core_propulsion',
+    propulsion.build_pre_mission(aviary_inputs),
+)
 
-    aviary_inputs = get_flops_inputs('AdvancedSingleAisle')
+# adding another group subsystem to match the L2 example
+prob.model.pre_mission.add_subsystem(
+    'core_subsystems',
+    L3SubsystemsGroup(aviary_options=aviary_inputs),
+    promotes_inputs=['*'],
+    promotes_outputs=['*'],
+)
+prob.model.pre_mission.core_subsystems.add_subsystem(
+    'core_geometry',
+    geometry.build_pre_mission(aviary_inputs),
+    promotes_inputs=['*'],
+    promotes_outputs=['*'],
+)
+prob.model.pre_mission.core_subsystems.add_subsystem(
+    'core_aerodynamics',
+    aerodynamics.build_pre_mission(aviary_inputs),
+    promotes_inputs=['*'],
+    promotes_outputs=['*'],
+)
+prob.model.pre_mission.core_subsystems.add_subsystem(
+    'core_mass',
+    mass.build_pre_mission(aviary_inputs),
+    promotes_inputs=['*'],
+    promotes_outputs=['*'],
+)
 
-    aviary_inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.4, units='unitless')
-    aviary_inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2.0, units='unitless')
-    aviary_inputs.set_val(
-        Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, val=0.0175, units='unitless'
+#####
+# prob.add_phases()
+phases = ['climb', 'cruise', 'descent']
+prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
+default_mission_subsystems = [
+    prob.model.core_subsystems['aerodynamics'],
+    prob.model.core_subsystems['propulsion'],
+]
+for phase_idx, phase_name in enumerate(phases):
+    base_phase_options = prob.model.phase_info[phase_name]
+    phase_options = {}
+    for key, val in base_phase_options.items():
+        phase_options[key] = val
+    phase_options['user_options'] = {}
+    for key, val in base_phase_options['user_options'].items():
+        phase_options['user_options'][key] = val
+    phase_builder = EnergyPhase
+    phase_object = phase_builder.from_phase_info(
+        phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
     )
+    phase = phase_object.build_phase(aviary_options=aviary_inputs)
+    prob.traj.add_phase(phase_name, phase)
 
-    # Fuel is not included in the level 2 functionality, and these values must remain
+externs = {'climb': {}, 'cruise': {}, 'descent': {}}
+for default_subsys in default_mission_subsystems:
+    params = default_subsys.get_parameters(aviary_inputs=aviary_inputs, phase_info={})
+    for key, val in params.items():
+        for phname in externs:
+            externs[phname][key] = val
 
-    takeoff_fuel_burned = 577  # lbm TODO: where should this get connected from?
-    takeoff_thrust_per_eng = 24555.5  # lbf TODO: where should this get connected from?
-    takeoff_L_over_D = 17.35  # TODO: should this come from aero?
+prob.traj = setup_trajectory_params(
+    prob.model, prob.traj, aviary_inputs, external_parameters=externs
+)
 
-    aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, takeoff_fuel_burned, units='lbm')
-    aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, takeoff_L_over_D, units='unitless')
-    aviary_inputs.set_val(
-        Mission.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
-    )
+# need aviary inputs assigned to the problem object for other functions below
+# this maybe needs a better location in this script.
+prob.aviary_inputs = aviary_inputs
 
-    # Level 2 Equivalent: Constants are provided in a phase_info object, specifying
-    # parameters for the climb/cruise/descent phase. Phase_info is read through the
-    # load_inputs level 2 method
-    alt_airport = 0  # ft
+#####
+#  prob.add_post_mission_systems()
+prob.model.add_subsystem(
+    'post_mission',
+    om.Group(),
+    promotes_inputs=['*'],
+    promotes_outputs=['*'],
+)
 
-    alt_i_climb = 0 * _units.foot  # m
-    alt_f_climb = 35000.0 * _units.foot  # m
-    mass_i_climb = 131000 * _units.lb  # kg
-    mass_f_climb = 126000 * _units.lb  # kg
-    # initial mach set to lower value so it can intersect with takeoff end mach
-    # mach_i_climb = 0.3
-    mach_i_climb = 0.2
-    mach_f_climb = 0.79
-    distance_i_climb = 0 * _units.nautical_mile  # m
-    distance_f_climb = 160.3 * _units.nautical_mile  # m
-    t_i_climb = 2 * _units.minute  # sec
-    t_f_climb = 26.20 * _units.minute  # sec
-    t_duration_climb = t_f_climb - t_i_climb
+prob.traj._phases['climb'].set_state_options(
+    Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+)
 
-    alt_i_cruise = 35000 * _units.foot  # m
-    alt_f_cruise = 35000 * _units.foot  # m
-    alt_min_cruise = 35000 * _units.foot  # m
-    alt_max_cruise = 35000 * _units.foot  # m
-    mass_i_cruise = 126000 * _units.lb  # kg
-    mass_f_cruise = 102000 * _units.lb  # kg
-    cruise_mach = 0.79
-    distance_i_cruise = 160.3 * _units.nautical_mile  # m
-    distance_f_cruise = 3243.9 * _units.nautical_mile  # m
-    t_i_cruise = 26.20 * _units.minute  # sec
-    t_f_cruise = 432.38 * _units.minute  # sec
-    t_duration_cruise = t_f_cruise - t_i_cruise
+prob.traj._phases['climb'].set_state_options(
+    Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False
+)
 
-    alt_i_descent = 35000 * _units.foot
-    # final altitude set to 35 to ensure landing is feasible point
-    # alt_f_descent = 0*_units.foot
-    alt_f_descent = 35 * _units.foot
-    mach_i_descent = 0.79
-    mach_f_descent = 0.3
-    mass_i_descent = 102000 * _units.pound
-    mass_f_descent = 101000 * _units.pound
-    distance_i_descent = 3243.9 * _units.nautical_mile
-    distance_f_descent = 3378.7 * _units.nautical_mile
-    t_i_descent = 432.38 * _units.minute
-    t_f_descent = 461.62 * _units.minute
-    t_duration_descent = t_f_descent - t_i_descent
+prob.traj._phases['climb'].set_time_options(
+    fix_initial=False,
+    initial_bounds=(0, 0),
+    initial_ref=600,
+    duration_bounds=(3840, 11520),
+    duration_ref=7680.0,
+)
 
-    ##########################
-    # Design Variables       #
-    ##########################
+prob.traj._phases['cruise'].set_time_options(
+    duration_bounds=(3390, 10170),
+    duration_ref=6780.0,
+)
 
-    # Before design variables are added in level 2 formats, the program runs through
-    # the following commands
-    # prob.check_and_preprocess_inputs()
-    # prob.add_pre_mission_systems()
-    # prob.add_phases()
-    # prob.add_post_mission_systems()
-    # prob.link_phases()
+prob.traj._phases['descent'].set_time_options(
+    duration_bounds=(1740, 5220),
+    duration_ref=3480.0,
+)
 
-    # Nudge it a bit off the correct answer to verify that the optimize takes us there.
-    aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
+eq = prob.model.add_subsystem(
+    f'link_climb_mass',
+    om.EQConstraintComp(),
+    promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+)
 
-    # Level 2 Equivalent: Design variables are added through prob.add_design_variables()
-    # This function adds variables depending on the type of mission method
-    # (N3CC is HEIGHT_ENERGY)
-    prob.model.add_design_var(
-        Mission.Design.GROSS_MASS, units='lbm', lower=100000.0, upper=200000.0, ref=135000
-    )
-    prob.model.add_design_var(
-        Mission.Summary.GROSS_MASS, units='lbm', lower=100000.0, upper=200000.0, ref=135000
-    )
+eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True)
 
-    # Level 2 Equivalent: Takeoff is included by specifying "include_takeoff": True in the
-    # "pre_mission" portion of the phase info. That line is processed in the
-    # add_pre_mission_systems function
-    takeoff_options = Takeoff(
-        airport_altitude=alt_airport,  # ft
-        # no units
-        num_engines=aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-    )
+prob.model.connect(
+    f'traj.climb.states:mass',
+    f'link_climb_mass.lhs:mass',
+    src_indices=[0],
+    flat_src_indices=True,
+)
 
-    ##################
-    # Define Phases  #
-    ##################
+prob.model.add_subsystem(
+    'range_constraint',
+    om.ExecComp(
+        'range_resid = target_range - actual_range',
+        target_range={'val': prob.target_range, 'units': 'NM'},
+        actual_range={'val': prob.target_range, 'units': 'NM'},
+        range_resid={'val': 30, 'units': 'NM'},
+    ),
+    promotes_inputs=[
+        ('actual_range', Mission.Summary.RANGE),
+        'target_range',
+    ],
+    promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
+)
 
-    # Level 2 Equivalent: Phase information is specified in phase_info
-    num_segments_climb = 6
-    num_segments_cruise = 1
-    num_segments_descent = 5
+prob.model.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
+# for reference this is the end of builder.add_post_mission_systems()
 
-    climb_seg_ends, _ = dm.utils.lgl.lgl(num_segments_climb + 1)
-    descent_seg_ends, _ = dm.utils.lgl.lgl(num_segments_descent + 1)
+ecomp = om.ExecComp(
+    'fuel_burned = initial_mass - mass_final',
+    initial_mass={'units': 'lbm'},
+    mass_final={'units': 'lbm'},
+    fuel_burned={'units': 'lbm'},
+)
 
-    # Level 2 Equivalent: Phase builder processes the phase info and creates the
-    # transcription. All a part of add_phases
-    transcription_climb = dm.Radau(
-        num_segments=num_segments_climb, order=3, compressed=True, segment_ends=climb_seg_ends
-    )
-    transcription_cruise = dm.Radau(num_segments=num_segments_cruise, order=3, compressed=True)
-    transcription_descent = dm.Radau(
-        num_segments=num_segments_descent, order=3, compressed=True, segment_ends=descent_seg_ends
-    )
+prob.model.post_mission.add_subsystem(
+    'fuel_burned',
+    ecomp,
+    promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
+)
 
-    # Level 2 Equivalent: Load inputs creates the engine
-    # default subsystems
-    engines = [build_engine_deck(aviary_inputs)]
-    preprocess_propulsion(aviary_inputs, engines)
-    default_mission_subsystems = get_default_mission_subsystems('FLOPS', engines)
+prob.model.connect(
+    f'traj.climb.timeseries.mass',
+    'fuel_burned.initial_mass',
+    src_indices=[0],
+)
 
-    # Level 2 Equivalent: Phase options are specified during the add_phases function.
-    # In this example, the height energy problem configurator would pass the proper phase
-    # builder (EnergyPhase) to the add_phases function
-    climb_options = EnergyPhase(
-        'test_climb',
-        user_options=AviaryValues(
-            {
-                'altitude_initial': (alt_i_climb, 'm'),
-                'altitude_final': (alt_f_climb, 'm'),
-                'mach_initial': (mach_i_climb, 'unitless'),
-                'mach_final': (mach_f_climb, 'unitless'),
-                'fix_initial': (False, 'unitless'),
-                'input_initial': (True, 'unitless'),
-                'use_polynomial_control': (False, 'unitless'),
-            }
-        ),
-        subsystems=default_mission_subsystems,
-        subsystem_options={'aerodynamics': {'method': 'computed'}},
-        transcription=transcription_climb,
-    )
+prob.model.connect(
+    f'traj.descent.timeseries.mass',
+    'fuel_burned.mass_final',
+    src_indices=[-1],
+)
 
-    cruise_options = EnergyPhase(
-        'test_cruise',
-        user_options=AviaryValues(
-            {
-                'altitude_initial': (alt_min_cruise, 'm'),
-                'altitude_final': (alt_max_cruise, 'm'),
-                'mach_initial': (cruise_mach, 'unitless'),
-                'final_mach': (cruise_mach, 'unitless'),
-                'required_available_climb_rate': (300, 'ft/min'),
-                'fix_initial': (False, 'unitless'),
-            }
-        ),
-        subsystems=default_mission_subsystems,
-        subsystem_options={'aerodynamics': {'method': 'computed'}},
-        transcription=transcription_cruise,
-    )
+RESERVE_FUEL_ADDITIONAL = prob.aviary_inputs.get_val(
+    Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
+)
 
-    descent_options = EnergyPhase(
-        'test_descent',
-        user_options=AviaryValues(
-            {
-                'altitude_final': (alt_f_descent, 'm'),
-                'altitude_initial': (alt_i_descent, 'm'),
-                'mach_initial': (mach_i_descent, 'unitless'),
-                'mach_final': (mach_f_descent, 'unitless'),
-                'fix_initial': (False, 'unitless'),
-                'use_polynomial_control': (False, 'unitless'),
-            }
-        ),
-        subsystems=default_mission_subsystems,
-        subsystem_options={'aerodynamics': {'method': 'computed'}},
-        transcription=transcription_descent,
-    )
+reserve_fuel = om.ExecComp(
+    'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+    reserve_fuel={'units': 'lbm', 'shape': 1},
+    reserve_fuel_frac_mass={'units': 'lbm', 'val': 0},
+    reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
+    reserve_fuel_burned={'units': 'lbm', 'val': 0},
+)
+prob.model.post_mission.add_subsystem(
+    'reserve_fuel',
+    reserve_fuel,
+    promotes_inputs=[
+        'reserve_fuel_frac_mass',
+        ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
+        ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
+    ],
+    promotes_outputs=[('reserve_fuel', Mission.Design.RESERVE_FUEL)],
+)
 
-    # Level 2 Equivalent: Landing follows the same structure as Takeoff,
-    # where specification in the phase info is processed in the add
-    # post mission systems function call
-    landing_options = Landing(
-        ref_wing_area=aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2'),
-        Cl_max_ldg=aviary_inputs.get_val(Mission.Landing.LIFT_COEFFICIENT_MAX),  # no units
-    )
+ecomp = om.ExecComp(
+    'overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
+    overall_fuel={'units': 'lbm', 'shape': 1},
+    fuel_margin={'units': 'unitless', 'val': 0},
+    fuel_burned={'units': 'lbm'},  # from regular_phases only
+    reserve_fuel={'units': 'lbm', 'shape': 1},
+)
+prob.model.post_mission.add_subsystem(
+    'fuel_calc',
+    ecomp,
+    promotes_inputs=[
+        ('fuel_margin', Aircraft.Fuel.FUEL_MARGIN),
+        ('fuel_burned', Mission.Summary.FUEL_BURNED),
+        ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+    ],
+    promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
+)
 
-    # Level 2 Equivalent: The builders and preprocessing is handled in the
-    # check_and_preprocess_inputs level 2 function
-    preprocess_crewpayload(aviary_inputs)
+# If target distances have been set per phase then there is a block of code to add here.
+# In this case individual phases don't have target distances.
 
-    prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
-    mass = CoreMassBuilder('mass', BaseMetaData, FLOPS)
-    aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
-    geom = CoreGeometryBuilder('geometry', BaseMetaData, code_origin=FLOPS)
+ecomp = om.ExecComp(
+    'mass_resid = operating_empty_mass + overall_fuel + payload_mass - initial_mass',
+    operating_empty_mass={'units': 'lbm'},
+    overall_fuel={'units': 'lbm'},
+    payload_mass={'units': 'lbm'},
+    initial_mass={'units': 'lbm'},
+    mass_resid={'units': 'lbm'},
+)
 
-    subsystems = [prop, geom, mass, aero]
+# this seems clunky - we could just move this directly into the promotes inputs block?
+payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
 
-    # Level 2 Equivalent: add_pre_mission_systems function
-    # Upstream static analysis for aero
-    prob.model.add_subsystem(
-        'pre_mission',
-        CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
-        promotes_inputs=['aircraft:*', 'mission:*'],
-        promotes_outputs=['aircraft:*', 'mission:*'],
-    )
+prob.model.post_mission.add_subsystem(
+    'mass_constraint',
+    ecomp,
+    promotes_inputs=[
+        ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
+        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+        ('payload_mass', payload_mass_src),
+        ('initial_mass', Mission.Summary.GROSS_MASS),
+    ],
+    promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
+)
 
-    # directly connect phases (strong_couple = True), or use linkage constraints (weak
-    # coupling / strong_couple=False)
-    strong_couple = False
+#####
+# prob.link_phases()
 
-    # Level 2 Equivalent: Called in add_takeoff_systems in height energy problem configuration,
-    # which is called in level 2 add pre mission systems
-    takeoff = takeoff_options.build_phase(False)
+all_subsystems = []
+all_subsystems.append(prob.model.core_subsystems['propulsion'])
 
-    # Level 2 Equivalent: Completed through the add_phases routine in level 2,
-    # where each phase specified in phase info gets processed
-    climb = climb_options.build_phase(aviary_options=aviary_inputs)
+phases = list(prob.model.phase_info.keys())
+prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
+prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
+prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
 
-    cruise = cruise_options.build_phase(aviary_options=aviary_inputs)
+prob.model.connect(
+    f'traj.descent.timeseries.distance',
+    Mission.Summary.RANGE,
+    src_indices=[-1],
+    flat_src_indices=True,
+)
+#### End of link_phases
 
-    descent = descent_options.build_phase(aviary_options=aviary_inputs)
+#####
+# prob.add_driver('SLSQP', max_iter=50)
+# SLSQP Optimizer Settings
+prob.driver = om.ScipyOptimizeDriver()
+prob.driver.options['optimizer'] = 'SLSQP'
+prob.driver.declare_coloring(show_summary=False)
+prob.driver.options['disp'] = True
+prob.driver.options['tol'] = 1e-9
+prob.driver.options['maxiter'] = 50
 
-    landing = landing_options.build_phase(False)
+# IPOPT Optimizer Settings
+# prob.driver.opt_settings['print_user_options'] = 'no'
+# prob.driver.opt_settings['print_frequency_iter'] = 10
+# prob.driver.opt_settings['print_level'] = 3
+# prob.driver.opt_settings['tol'] = 1.0e-6
+# prob.driver.opt_settings['mu_init'] = 1e-5
+# prob.driver.opt_settings['max_iter'] = 50
+# prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
+# prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
+# prob.driver.opt_settings['mu_strategy'] = 'monotone'
+# prob.driver.options['print_results'] = 'minimal'
+# prob.driver.opt_settings['iSumm'] = 6
+# prob.driver.opt_settings['iPrint'] = 0
 
-    # Level 2 Equivalent: Called in add_takeoff_systems in height energy problem
-    # configuration, which is called in add pre mission systems
-    prob.model.add_subsystem(
-        'takeoff',
-        takeoff,
-        promotes_inputs=['aircraft:*', 'mission:*'],
-        promotes_outputs=['mission:*'],
-    )
+# SNOPT Optimizer Settings #
+# prob.driver.opt_settings['Major iterations limit'] = 50
+# prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
+# prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
+# prob.driver.opt_settings['iSumm'] = 6
+# prob.driver.opt_settings['iPrint'] = 0
 
-    # Level 2 Equivalent: Completed in add_phases
-    traj = prob.model.add_subsystem('traj', dm.Trajectory())
+#####
+# prob.add_design_variables()
+prob.model.add_design_var(
+    Mission.Design.GROSS_MASS,
+    lower=100000.0,
+    upper=None,
+    units='lbm',
+    ref=175e3,
+)
+prob.model.add_design_var(
+    Mission.Summary.GROSS_MASS,
+    lower=100000.0,
+    upper=None,
+    units='lbm',
+    ref=175e3,
+)
 
-    # Level 2 Equivalent: Completed through set_phase_options, which is called in add_phases
+prob.model.add_subsystem(
+    'gtow_constraint',
+    om.EQConstraintComp(
+        'GTOW',
+        eq_units='lbm',
+        normalize=True,
+        add_constraint=True,
+    ),
+    promotes_inputs=[
+        ('lhs:GTOW', Mission.Design.GROSS_MASS),
+        ('rhs:GTOW', Mission.Summary.GROSS_MASS),
+    ],
+)
+prob.model.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
 
-    # if fix_initial is false, can we always set input_initial to be true for
-    # necessary states, and then ignore if we use a linkage?
-    climb.set_time_options(
-        fix_initial=True,
-        fix_duration=False,
-        units='s',
-        duration_bounds=(t_duration_climb * 0.5, t_duration_climb * 2),
-        duration_ref=t_duration_climb,
-    )
-    cruise.set_time_options(
-        fix_initial=False,
-        fix_duration=False,
-        units='s',
-        duration_bounds=(t_duration_cruise * 0.5, t_duration_cruise * 2),
-        duration_ref=t_duration_cruise,
-        initial_bounds=(t_duration_climb * 0.5, t_duration_climb * 2),
-    )
-    descent.set_time_options(
-        fix_initial=False,
-        fix_duration=False,
-        units='s',
-        duration_bounds=(t_duration_descent * 0.5, t_duration_descent * 2),
-        duration_ref=t_duration_descent,
-        initial_bounds=(
-            (t_duration_cruise + t_duration_climb) * 0.5,
-            (t_duration_cruise + t_duration_climb) * 2,
-        ),
-    )
-
-    # Level 2 Equivalent: Completed through add_phase
-    traj.add_phase('climb', climb)
-
-    traj.add_phase('cruise', cruise)
-
-    traj.add_phase('descent', descent)
-
-    # Level 2 Equivalent: Processed similarly to takeoff, but in add_post_mission_systems
-    prob.model.add_subsystem(
-        'landing',
-        landing,
-        promotes_inputs=['aircraft:*', 'mission:*'],
-        promotes_outputs=['mission:*'],
-    )
-
-    # Level 2 Equivalent: link_phases function
-    traj.link_phases(
-        ['climb', 'cruise', 'descent'],
-        ['time', Dynamic.Vehicle.MASS, Dynamic.Mission.DISTANCE],
-        connected=strong_couple,
-    )
-
-    # Level 2 Equivalent: Completed in final steps of add_phases function
-    # Need to declare dymos parameters for every input that is promoted out of the missions.
-    externs = {'climb': {}, 'cruise': {}, 'descent': {}}
-    for default_subsys in default_mission_subsystems:
-        params = default_subsys.get_parameters(aviary_inputs=aviary_inputs, phase_info={})
-        for key, val in params.items():
-            for phname in externs:
-                externs[phname][key] = val
-
-    traj = setup_trajectory_params(prob.model, traj, aviary_inputs, external_parameters=externs)
-
-    # Level 2 Equivalent: Completed in add_post_mission_systems
-    ##################################
-    # Connect in Takeoff and Landing #
-    ##################################
-    prob.model.connect(Mission.Takeoff.FINAL_MASS, 'traj.climb.initial_states:mass')
-    prob.model.connect(Mission.Takeoff.GROUND_DISTANCE, 'traj.climb.initial_states:distance')
-
-    prob.model.connect('traj.descent.states:mass', Mission.Landing.TOUCHDOWN_MASS, src_indices=[-1])
-    # TODO: approach velocity should likely be connected
-    prob.model.connect(
-        'traj.descent.control_values:altitude', Mission.Landing.INITIAL_ALTITUDE, src_indices=[-1]
-    )
-
-    ##########################
-    # Constraints            #
-    ##########################
-    # Level 2 Equivalent: Completed at the end of the add_post_mission_systems
-    ecomp = om.ExecComp(
-        'fuel_burned = initial_mass - descent_mass_final',
-        initial_mass={'units': 'lbm', 'shape': 1},
-        descent_mass_final={'units': 'lbm', 'shape': 1},
-        fuel_burned={'units': 'lbm', 'shape': 1},
-    )
-
-    prob.model.add_subsystem(
-        'fuel_burn',
-        ecomp,
-        promotes_inputs=[('initial_mass', Mission.Design.GROSS_MASS)],
-        promotes_outputs=['fuel_burned'],
-    )
-
-    prob.model.connect('traj.descent.states:mass', 'fuel_burn.descent_mass_final', src_indices=[-1])
-
-    # TODO: need to add some sort of check that this value is less than the fuel capacity
-    # TODO: need to update this with actual FLOPS value, this gives unrealistic
-    # appearance of accuracy
-    # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
-    # also include the unused fuel, and the hierarchy variable name should be more clear
-    ecomp = om.ExecComp(
-        'overall_fuel = fuel_burned + fuel_reserve',
-        fuel_burned={'units': 'lbm', 'shape': 1},
-        fuel_reserve={'units': 'lbm', 'val': 2173.0},
+#####
+# prob.add_objective()
+prob.model.add_subsystem(
+    'fuel_obj',
+    om.ExecComp(
+        'reg_objective = overall_fuel/10000 + ascent_duration/30.',
+        reg_objective={'val': 0.0, 'units': 'unitless'},
+        ascent_duration={'units': 's', 'shape': 1},
         overall_fuel={'units': 'lbm'},
-    )
-    prob.model.add_subsystem(
-        'fuel_calc', ecomp, promotes_inputs=['fuel_burned'], promotes_outputs=['overall_fuel']
-    )
+    ),
+    promotes_inputs=[
+        ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
+        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+    ],
+    promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
+)
+prob.model.add_objective(Mission.Objectives.FUEL, ref=1)
 
-    ecomp = om.ExecComp(
-        'mass_resid = operating_empty_mass + overall_fuel + payload_mass - initial_mass',
-        operating_empty_mass={'units': 'lbm'},
-        overall_fuel={'units': 'lbm'},
-        payload_mass={'units': 'lbm'},
-        initial_mass={'units': 'lbm'},
-        mass_resid={'units': 'lbm'},
-    )
+prob.model.add_subsystem(
+    'range_obj',
+    om.ExecComp(
+        'reg_objective = -actual_range/1000 + ascent_duration/30.',
+        reg_objective={'val': 0.0, 'units': 'unitless'},
+        ascent_duration={'units': 's', 'shape': 1},
+        actual_range={'val': prob.target_range, 'units': 'NM'},
+    ),
+    promotes_inputs=[
+        ('actual_range', Mission.Summary.RANGE),
+        ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
+    ],
+    promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],
+)
 
-    prob.model.add_subsystem(
-        'mass_constraint',
-        ecomp,
-        promotes_inputs=[
-            ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
-            'overall_fuel',
-            ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-            ('initial_mass', Mission.Design.GROSS_MASS),
-        ],
-        promotes_outputs=['mass_resid'],
-    )
+#####
+# prob.setup()
+setup_model_options(prob, prob.aviary_inputs, prob.meta_data)
 
-    prob.model.add_constraint('mass_resid', equals=0.0, ref=1.0)
+with warnings.catch_warnings():
+    prob.model.aviary_inputs = prob.aviary_inputs
+    prob.model.meta_data = prob.meta_data
 
-    prob.model.add_subsystem(
-        'gtow_constraint',
-        om.EQConstraintComp(
-            'GTOW',
-            eq_units='lbm',
-            normalize=True,
-            add_constraint=True,
-        ),
-        promotes_inputs=[
-            ('lhs:GTOW', Mission.Design.GROSS_MASS),
-            ('rhs:GTOW', Mission.Summary.GROSS_MASS),
-        ],
-    )
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', om.OpenMDAOWarning)
+    warnings.simplefilter('ignore', om.PromotionWarning)
 
-    ##########################
-    # Add Objective Function #
-    ##########################
+    om.Problem.setup(prob, check=False)
 
-    # Level 2 Equivalent: Done in add_objective
+# set initial guesses manually
+control_keys = ['mach', 'altitude']
+state_keys = ['mass', Dynamic.Mission.DISTANCE]
+guesses = {}
+guesses['mach_climb'] = ([0.2, 0.72], 'unitless')
+guesses['altitude_climb'] = ([0, 32000.0], 'ft')
+guesses['time_climb'] = ([0, 3840.0], 's')
+guesses['mach_cruise'] = ([0.72, 0.72], 'unitless')
+guesses['altitude_cruise'] = ([32000.0, 34000.0], 'ft')
+guesses['time_cruise'] = ([3840.0, 3390.0], 's')
+guesses['mach_descent'] = ([0.72, 0.36], 'unitless')
+guesses['altitude_descent'] = ([34000.0, 500.0], 'ft')
+guesses['time_descent'] = ([7230.0, 1740.0], 's')
 
-    # This is an example of a overall mission objective
-    # create a compound objective that minimizes climb time and maximizes final mass
-    # we are maxing final mass b/c we don't have an independent value for fuel_mass yet
-    # we are going to normalize these (making each of the sub-objectives approx = 1 )
-    # TODO: change the scaling on climb_duration
-    prob.model.add_subsystem(
-        'regularization',
-        om.ExecComp(
-            'reg_objective = fuel_mass/1500',
-            reg_objective=0.0,
-            fuel_mass={'units': 'lbm', 'shape': 1},
-        ),
-        promotes_inputs=[('fuel_mass', Mission.Design.FUEL_MASS)],
-        promotes_outputs=['reg_objective'],
-    )
+prob.set_val('traj.climb.t_initial', guesses['time_climb'][0][0], units='s')
+prob.set_val('traj.climb.t_duration', guesses['time_climb'][0][1], units='s')
+prob.set_val(
+    'traj.climb.controls:mach',
+    prob.model.traj.phases.climb.interp('mach', xs=[-1, 1], ys=guesses['mach_climb'][0]),
+    units='unitless',
+)
+prob.set_val(
+    'traj.climb.controls:altitude',
+    prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_climb'][0]),
+    units='ft',
+)
 
-    prob.model.add_objective('reg_objective', ref=1)
+prob.set_val('traj.cruise.t_initial', guesses['time_cruise'][0][0], units='s')
+prob.set_val('traj.cruise.t_duration', guesses['time_cruise'][0][1], units='s')
+prob.set_val(
+    'traj.cruise.controls:mach',
+    prob.model.traj.phases.cruise.interp('mach', xs=[-1, 1], ys=guesses['mach_cruise'][0]),
+    units='unitless',
+)
+prob.set_val(
+    'traj.cruise.controls:altitude',
+    prob.model.traj.phases.cruise.interp('altitude', xs=[-1, 1], ys=guesses['altitude_cruise'][0]),
+    units='ft',
+)
 
-    # Level 2 Equivalent: load_inputs
-    varnames = [
-        Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
-        Aircraft.Wing.SWEEP,
-        Aircraft.Wing.TAPER_RATIO,
-        Aircraft.Wing.THICKNESS_TO_CHORD,
-        Mission.Design.GROSS_MASS,
-        Mission.Summary.GROSS_MASS,
-    ]
-    set_aviary_input_defaults(prob.model, varnames, aviary_inputs)
+prob.set_val('traj.descent.t_initial', guesses['time_descent'][0][0], units='s')
+prob.set_val('traj.descent.t_duration', guesses['time_descent'][0][1], units='s')
+prob.set_val(
+    'traj.descent.controls:mach',
+    prob.model.traj.phases.climb.interp('mach', xs=[-1, 1], ys=guesses['mach_descent'][0]),
+    units='unitless',
+)
+prob.set_val(
+    'traj.descent.controls:altitude',
+    prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_descent'][0]),
+    units='ft',
+)
+prob.set_val('traj.climb.states:mass', 125000, units='lbm')
+prob.set_val('traj.cruise.states:mass', 125000, units='lbm')
+prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 
-    # Level 2 Equivalent: setup function
+prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
+prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
-    setup_model_options(prob, aviary_inputs)
+prob.verbosity = Verbosity.VERBOSE
 
-    prob.setup(force_alloc_complex=True)
-
-    set_aviary_initial_values(prob, aviary_inputs)
-
-    ############################################
-    # Initial Settings for States and Controls #
-    ############################################
-
-    # Level 2 Equivalent: set_initial_guesses
-
-    prob.set_val('traj.climb.t_initial', t_i_climb, units='s')
-    prob.set_val('traj.climb.t_duration', t_duration_climb, units='s')
-
-    prob.set_val(
-        'traj.climb.controls:altitude',
-        climb.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_climb, alt_f_climb]),
-        units='m',
-    )
-    prob.set_val(
-        'traj.climb.controls:mach',
-        climb.interp(Dynamic.Atmosphere.MACH, ys=[mach_i_climb, mach_f_climb]),
-        units='unitless',
-    )
-    prob.set_val(
-        'traj.climb.states:mass',
-        climb.interp(Dynamic.Vehicle.MASS, ys=[mass_i_climb, mass_f_climb]),
-        units='kg',
-    )
-    prob.set_val(
-        'traj.climb.states:distance',
-        climb.interp(Dynamic.Mission.DISTANCE, ys=[distance_i_climb, distance_f_climb]),
-        units='m',
-    )
-
-    prob.set_val('traj.cruise.t_initial', t_i_cruise, units='s')
-    prob.set_val('traj.cruise.t_duration', t_duration_cruise, units='s')
-
-    prob.set_val(
-        f'traj.cruise.controls:altitude',
-        cruise.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_cruise, alt_f_cruise]),
-        units='m',
-    )
-    prob.set_val(
-        f'traj.cruise.controls:mach',
-        cruise.interp(Dynamic.Atmosphere.MACH, ys=[cruise_mach, cruise_mach]),
-        units='unitless',
-    )
-    prob.set_val(
-        'traj.cruise.states:mass',
-        cruise.interp(Dynamic.Vehicle.MASS, ys=[mass_i_cruise, mass_f_cruise]),
-        units='kg',
-    )
-    prob.set_val(
-        'traj.cruise.states:distance',
-        cruise.interp(Dynamic.Mission.DISTANCE, ys=[distance_i_cruise, distance_f_cruise]),
-        units='m',
-    )
-
-    prob.set_val('traj.descent.t_initial', t_i_descent, units='s')
-    prob.set_val('traj.descent.t_duration', t_duration_descent, units='s')
-
-    prob.set_val(
-        'traj.descent.controls:altitude',
-        descent.interp(Dynamic.Mission.ALTITUDE, ys=[alt_i_descent, alt_f_descent]),
-        units='m',
-    )
-    prob.set_val(
-        'traj.descent.controls:mach',
-        descent.interp(Dynamic.Atmosphere.MACH, ys=[mach_i_descent, mach_f_descent]),
-        units='unitless',
-    )
-    prob.set_val(
-        'traj.descent.states:mass',
-        descent.interp(Dynamic.Vehicle.MASS, ys=[mass_i_descent, mass_f_descent]),
-        units='kg',
-    )
-    prob.set_val(
-        'traj.descent.states:distance',
-        descent.interp(Dynamic.Mission.DISTANCE, ys=[distance_i_descent, distance_f_descent]),
-        units='m',
-    )
-
-    # Turn off solver printing so that the SNOPT output is readable.
-    prob.set_solver_print(level=0)
-
-    # Level 2 Equivalent: run_aviary_problem
-    dm.run_problem(
-        prob,
-        simulate=sim,
-        make_plots=False,
-        simulate_kwargs={'times_per_seg': 100, 'atol': 1e-9, 'rtol': 1e-9},
-        solution_record_file='N3CC_sizing.db',
-    )
-    # prob.run_model()
-    # z=prob.check_totals(method='cs', step=2e-40, compact_print=False)
-    # exit()
-    prob.record('final')
-    prob.cleanup()
-
-    return prob
-
-
-@use_tempdirs
-class ProblemPhaseTestCase:
-    """
-    Test sizing using N3CC data.
-    """
-
-    @require_pyoptsparse(optimizer='SNOPT')
-    def bench_test_sizing_N3CC(self):
-        prob = run_trajectory(sim=False)
-
-
-if __name__ == '__main__':
-    z = ProblemPhaseTestCase()
-    z.bench_test_sizing_N3CC()
+prob.run_aviary_problem()
+prob.model.list_vars(units=True, print_arrays=True)
+prob.list_driver_vars(
+    print_arrays=True,
+    desvar_opts=[
+        'lower',
+        'upper',
+        'ref',
+        'ref0',
+        'indices',
+        'adder',
+        'scaler',
+        'parallel_deriv_color',
+        'cache_linear_solution',
+        'units',
+        'min',
+        'max',
+    ],
+    cons_opts=[
+        'lower',
+        'upper',
+        'equals',
+        'ref',
+        'ref0',
+        'indices',
+        'adder',
+        'scaler',
+        'linear',
+        'parallel_deriv_color',
+        'cache_linear_solution',
+        'units',
+        'min',
+        'max',
+    ],
+)

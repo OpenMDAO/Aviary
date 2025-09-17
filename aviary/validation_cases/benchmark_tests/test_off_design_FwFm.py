@@ -26,7 +26,7 @@ class HeightEnergyTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((0.0, 2.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((5.0, 50.0), 'min'),
                     'no_descent': False,
                 },
@@ -126,7 +126,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -157,7 +156,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
@@ -193,7 +191,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
@@ -224,7 +221,6 @@ class TestOffDesign(HeightEnergyTestCase):
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)

@@ -12,24 +12,20 @@ methods have optional arguments, but none are necessary here. The selection of t
 limited to 50 iterations are included to demonstrate of how those common settings are set.
 """
 
-from example_phase_info import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 
 import aviary.api as av
 
 prob = av.AviaryProblem()
 
 # Load aircraft and options data from provided sources
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+prob.load_inputs(
+    'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+)
 
 prob.check_and_preprocess_inputs()
 
-prob.add_pre_mission_systems()
-
-prob.add_phases()
-
-prob.add_post_mission_systems()
-
-prob.link_phases()
+prob.build_model()
 
 # optimizer and iteration limit are optional provided here
 prob.add_driver('SLSQP', max_iter=50)
@@ -39,7 +35,5 @@ prob.add_design_variables()
 prob.add_objective()
 
 prob.setup()
-
-prob.set_initial_guesses()
 
 prob.run_aviary_problem()

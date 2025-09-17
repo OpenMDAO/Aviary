@@ -20,6 +20,7 @@ class TestAeroBuilder(av.TestSubsystemBuilderBase):
         self.subsystem_builder = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, GASP)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
+        self.aviary_values.set_val(Aircraft.Design.TYPE, 'transport', units='unitless')
 
     def test_build_mission(self):
         kwargs = {'method': 'cruise'}

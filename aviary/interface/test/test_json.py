@@ -34,11 +34,12 @@ class TestJson(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            local_phase_info,
         )
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
+
         prob.add_pre_mission_systems()
         prob.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob.add_post_mission_systems()
@@ -52,7 +53,6 @@ class TestJson(unittest.TestCase):
         # Detail which variables the optimizer can control
         prob.add_objective()
         prob.setup()
-        prob.set_initial_guesses()
 
     def test_save_json(self):
         self.prob.run_aviary_problem()

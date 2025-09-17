@@ -48,7 +48,7 @@ class CoreMassBuilder(MassBuilder):
     def build_pre_mission(self, aviary_inputs, **kwargs):
         code_origin = self.code_origin
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
         mass_group = None
@@ -65,7 +65,7 @@ class CoreMassBuilder(MassBuilder):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         # by default there is no mass mission, but call super for safety/future-proofing
         try:
-            method = kwargs.pop('method')
+            method = kwargs['method']
         except KeyError:
             method = None
         mass_group = None

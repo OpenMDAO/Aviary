@@ -9,6 +9,8 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:catering_items_mass_per_passenger,6,lbm
 aircraft:crew_and_payload:design:num_passengers,96,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_tourist,4,unitless
+aircraft:crew_and_payload:design:seat_pitch_tourist,31,inch
 aircraft:crew_and_payload:passenger_mass_with_bags,210,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:uld_mass_per_passenger,0.11,lbm
@@ -24,6 +26,7 @@ aircraft:design:reserve_fuel_fraction,0.125,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:drag_divergence_shift,0.025,unitless
+aircraft:design:type,transport,unitless
 aircraft:engine:additional_mass_fraction,0.14,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1.csv,unitless
 aircraft:engine:global_throttle, True, unitless
@@ -52,10 +55,8 @@ aircraft:fuselage:form_factor,1.55,unitless
 aircraft:fuselage:mass_coefficient,121.2,unitless
 aircraft:fuselage:nose_fineness,0.845,unitless
 aircraft:fuselage:num_aisles,1,unitless
-aircraft:fuselage:num_seats_abreast,4,unitless
 aircraft:fuselage:pilot_compartment_length,11.7,ft
 aircraft:fuselage:pressure_differential,7.5,psi
-aircraft:fuselage:seat_pitch,31,inch
 aircraft:fuselage:seat_width,24,inch
 aircraft:fuselage:tail_fineness,3.368,unitless
 aircraft:fuselage:wetted_area_scaler,1,unitless

@@ -9,7 +9,7 @@ limits. If this example is run without these constraints, wing area is increased
 and engine scale factor is reduced to its lower bound.
 """
 
-from example_phase_info import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 
 import aviary.api as av
 
@@ -46,8 +46,6 @@ prob.model.add_constraint(av.Aircraft.Design.WING_LOADING, lower=120, units='lbf
 prob.model.add_constraint(av.Aircraft.Design.THRUST_TO_WEIGHT_RATIO, lower=0.35)
 
 prob.setup()
-
-prob.set_initial_guesses()
 
 prob.run_aviary_problem()
 

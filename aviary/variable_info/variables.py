@@ -126,6 +126,14 @@ class Aircraft:
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
             NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
             NUM_PASSENGERS = 'aircraft:crew_and_payload:design:num_passengers'
+            NUM_SEATS_ABREAST_BUSINESS = (
+                'aircraft:crew_and_payload:design:num_seats_abreast_business'
+            )
+            NUM_SEATS_ABREAST_FIRST = 'aircraft:crew_and_payload:design:num_seats_abreast_first'
+            NUM_SEATS_ABREAST_TOURIST = 'aircraft:crew_and_payload:design:num_seats_abreast_tourist'
+            SEAT_PITCH_BUSINESS = 'aircraft:crew_and_payload:design:seat_pitch_business'
+            SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
+            SEAT_PITCH_TOURIST = 'aircraft:crew_and_payload:design:seat_pitch_tourist'
 
     class Design:
         # These variables are values that do not fall into a particular aircraft
@@ -340,7 +348,6 @@ class Aircraft:
         NOSE_FINENESS = 'aircraft:fuselage:nose_fineness'
         NUM_AISLES = 'aircraft:fuselage:num_aisles'
         NUM_FUSELAGES = 'aircraft:fuselage:num_fuselages'
-        NUM_SEATS_ABREAST = 'aircraft:fuselage:num_seats_abreast'
 
         PASSENGER_COMPARTMENT_LENGTH = 'aircraft:fuselage:passenger_compartment_length'
 
@@ -348,7 +355,6 @@ class Aircraft:
         PLANFORM_AREA = 'aircraft:fuselage:planform_area'
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
         PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
-        SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
@@ -751,6 +757,8 @@ class Mission:
         # based on the user-selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
+        FINAL_MASS = 'mission:summary:final_mass'
+        FINAL_TIME = 'mission:summary:final_time'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         GROSS_MASS = 'mission:summary:gross_mass'

@@ -14,7 +14,7 @@ phase_info = {
             'altitude_optimize': True,
             'altitude_bounds': ((0.0, 37000.0), 'ft'),
             'throttle_enforcement': 'path_constraint',
-            'time_initial_bounds': ((0.0, 0.0), 'min'),
+            'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((12.1, 60.0), 'min'),
             'no_descent': True,
         },
