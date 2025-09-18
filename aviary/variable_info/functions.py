@@ -27,6 +27,7 @@ def add_aviary_input(
     shape_by_conn=False,
     meta_data=_MetaData,
     shape=None,
+    primal_name=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -54,6 +55,9 @@ def add_aviary_input(
         be used.
     shape: tuple
         (Optional) shape for this input.
+    primal_name : str or None
+        Valid python name to represent the variable in compute_primal if 'name' is not a valid
+        python name.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -94,8 +98,6 @@ def add_aviary_input(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
-    primal_name = varname.replace(':', '__')
-
     comp.add_input(
         varname,
         val=val,
@@ -116,6 +118,7 @@ def add_aviary_output(
     shape_by_conn=False,
     meta_data=_MetaData,
     shape=None,
+    primal_name=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -144,6 +147,9 @@ def add_aviary_output(
         be used.
     shape: tuple
         (Optional) shape for this input.
+    primal_name : str or None
+        Valid python name to represent the variable in compute_primal if 'name' is not a valid
+        python name.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -183,8 +189,6 @@ def add_aviary_output(
     # check types
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
-
-    primal_name = varname.replace(':', '__')
 
     comp.add_output(
         varname,

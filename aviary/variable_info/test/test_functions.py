@@ -22,6 +22,10 @@ class InputOutputOptionTest(unittest.TestCase):
         assert_near_equal(5000, prob.get_val('mass'), tolerance=tol)
         assert_near_equal(11.0231, prob.get_val('mass_out'), tolerance=tol)
 
+        # Note: Checking OpenMDAO internals for primal_name.
+        self.assertEqual(prob.model.comp._valid_name_map['length'], 'aa')
+        self.assertEqual(prob.model.comp._valid_name_map['mass'], 'zz')
+
 
 class DummyComp(om.ExplicitComponent):
     """Simple component to test unit conversion."""
@@ -30,11 +34,11 @@ class DummyComp(om.ExplicitComponent):
         add_aviary_option(self, 'mass', units='lbm', meta_data=dummy_metadata)
 
     def setup(self):
-        add_aviary_input(self, 'length', units='ft', meta_data=dummy_metadata)
+        add_aviary_input(self, 'length', units='ft', meta_data=dummy_metadata, primal_name='aa')
 
         add_aviary_output(self, 'area', units='ft**2', meta_data=dummy_metadata)
         self.add_output('length_out', val=0)
-        add_aviary_output(self, 'mass', units='g', meta_data=dummy_metadata)
+        add_aviary_output(self, 'mass', units='g', meta_data=dummy_metadata, primal_name='zz')
         self.add_output('mass_out', val=0)
 
     def compute(self, inputs, outputs):
