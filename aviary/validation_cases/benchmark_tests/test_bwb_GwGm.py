@@ -5,11 +5,9 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.aircraft.blended_wing_body.generic_BWB_phase_info import (
-    two_dof_phase_info,
-)
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.models.aircraft.blended_wing_body.generic_BWB_phase_info import two_dof_phase_info
+from aviary.variable_info.variables import Mission
 
 
 @use_tempdirs
@@ -43,7 +41,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )  # WG = 150000.0
 
         assert_near_equal(
-            prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
+            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
             82444.5349,
             tolerance=rtol,
         )  # OWE = 82982.0
