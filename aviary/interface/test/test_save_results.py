@@ -1,15 +1,12 @@
 import unittest
 from copy import deepcopy
-from pathlib import Path
 
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.interface.methods_for_level2 import reload_aviary_problem
 from aviary.models.missions.height_energy_default import phase_info, phase_info_parameterization
 from aviary.utils.functions import get_path
-
-local_phase_info = deepcopy(phase_info)
 
 
 @use_tempdirs
@@ -20,7 +17,10 @@ class TestSizingResults(unittest.TestCase):
     mission ran correctly.
     """
 
+    @require_pyoptsparse(optimizer='SLSQP')
     def test_save_json(self):
+        local_phase_info = deepcopy(phase_info)
+
         prob = av.AviaryProblem()
         # Load aircraft and options data from user
         # Allow for user overrides here
@@ -52,11 +52,17 @@ class TestSizingResults(unittest.TestCase):
             'interface/test/sizing_results_for_test.json',
         )
 
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_alternate(self):
+        local_phase_info = deepcopy(phase_info)
+
         prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
         prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
 
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_fallout(self):
+        local_phase_info = deepcopy(phase_info)
+
         prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
         prob.run_off_design_mission(problem_type='fallout', phase_info=local_phase_info)
 
