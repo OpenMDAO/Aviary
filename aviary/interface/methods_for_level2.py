@@ -141,6 +141,7 @@ class AviaryProblem(om.Problem):
 
         # TODO try and find a better solution than a new custom flag - the issue is multimission
         #      problems don't have a consistent variable path to check the inputs later on
+        # BUG you can't specify generating payload-range diagram after load_inputs
         if Settings.PAYLOAD_RANGE in aviary_inputs:
             self.generate_payload_range = aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
@@ -1532,7 +1533,7 @@ class AviaryProblem(om.Problem):
             # MTOW. In this scenario, Max Economic Range and Ferry Range are the same, and the point
             # only needs to be run once.
             if operating_mass + fuel_capacity < gross_mass:
-                # Point 3 (Max Economic Mission): max fuel and remaining payload capacity
+                # Point 3 (Max Economic Range): max fuel and remaining payload capacity
 
                 economic_mission_total_payload = gross_mass - operating_mass - fuel_capacity
 
