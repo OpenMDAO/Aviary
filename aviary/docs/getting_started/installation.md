@@ -60,21 +60,30 @@ Features: Latest development version of Aviary with additional optimizers
 
 This installation guide will show you how to install Aviary with the ability to grab latest development versions, as well as a guide on how to install `pyoptsparse` with additional optimizers.
 
+If you installed Aviary following the Quick Start Guide, you can "upgrade" your installation to use more optimizers by skipping ahead to [Step 2](#install-pyoptsparse). Once you have pyoptsparse installed, proceed to [verifying your installation](#verify-installation).
+
+## Step 1: Install Aviary
+You can install the development version of Aviary directly from the github repository, rather than the latest tagged version from PyPi. If you don't have git, you can download the files from github, and install it using pip from inside the top-level Aviary directory (`pip install .`). If you don't want or need the latest, cutting-edge version of Aviary, installing it using the method shown in the Quick Start Guide is fine.
+
+```
+pip install git+https://github.com/OpenMDAO/Aviary@main
+```
+
+### Updating Aviary
+To update your copy of Aviary to the latest development version, run this command:
+
+```
+pip install --upgrade git+https://github.com/OpenMDAO/Aviary@main
+```
+
 (install-pyoptsparse)=
-## Step 1: Install pyOptSparse
-If you installed Aviary following the Quick Start Guide, you can "upgrade" your installation to use more optimizers by following this step. Once you have pyoptsparse installed, proceed to [verifying your installation](#verify-installation).
+## Step 2: Install pyOptSparse
 
 ### Installing with conda
 If you have a conda environment, then you can install pyOptSparse with access to the IPOPT optimizer. This is the most commonly used optimizer in Aviary, as it is generally more performant than SLSQP while also being free. Simply install `pyoptsparse` using conda:
 
 ```
 conda install pyoptsparse
-```
-
-```
-Note: There is currently an conflict caused by installing Aviary using pip *before* installing pyOptSparse with conda. Conda will overwrite the numpy version installed by pip with the latest available. This can cause problems, as Aviary does not yet support the latest versions of numpy (>=2.0). To resolve this issue, you may need need to re-install an older version of numpy:
-
-conda install "numpy<2.0"
 ```
 
 ### Installing with pip, or if you have SNOPT
@@ -94,20 +103,6 @@ If you have a copy of SNOPT, instead run the following command to install `pyopt
 
 ```
 build_pyoptsparse -s /path_to_SNOPT_dir
-```
-
-## Step 2: Install Aviary
-Grab the latest version of Aviary directly from the github repository, rather than from PyPi. If you don't have git, you can download the files from github, and install it using pip from inside the top-level Aviary directory (`pip install .`)
-
-```
-pip install git+https://github.com/OpenMDAO/Aviary@main
-```
-
-### Updating Aviary
-To update your copy of Aviary to the latest development version, run this command:
-
-```
-pip install --upgrade git+https://github.com/OpenMDAO/Aviary@main
 ```
 
 ## Troubleshooting
