@@ -57,6 +57,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             local_phase_info,
             verbosity=0,
             optimizer='SNOPT',
+            max_iter=60,
         )
 
         self.assertTrue(prob.result.success)
