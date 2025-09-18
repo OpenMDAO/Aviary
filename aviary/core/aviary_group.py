@@ -1022,7 +1022,9 @@ class AviaryGroup(om.Group):
             )
 
         if not ignore_capacity_constraint:
-            self.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, units='lbm')
+            self.add_constraint(
+                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=1000, units='lbm'
+            )
         else:
             if verbosity >= Verbosity.BRIEF:
                 warnings.warn(
