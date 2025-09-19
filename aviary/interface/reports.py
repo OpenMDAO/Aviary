@@ -231,10 +231,26 @@ def mission_report(prob, **kwargs):
             final_time = _get_phase_value(model, 'traj', phase, 't', 'min', -1)
             final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
-        totals = NamedValues()
-        totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
-        totals.set_val('Total Time', final_time - initial_time, 'min')
-        totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
+            totals = NamedValues()
+            totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
+
+            if multi_mission:
+                var_name = f'{name}.'
+            else:
+                var_name = ''
+
+            totals.set_val(
+                'Total Fuel Capacity',
+                prob.get_val(f'{var_name}aircraft:fuel:total_capacity', units='lbm')[0],
+                units='lbm',
+            )
+            totals.set_val(
+                'Excess Fuel Capacity',
+                prob.get_val(f'{var_name}mission:constraints:excess_fuel_capacity', units='lbm')[0],
+                units='lbm',
+            )
+            totals.set_val('Total Time', final_time - initial_time, 'min')
+            totals.set_val('Total Ground Distance', final_range - initial_range, 'nmi')
 
         all_data[name] = data
         all_totals[name] = totals
@@ -255,9 +271,17 @@ def mission_report(prob, **kwargs):
             write_markdown_variable_table(
                 f,
                 totals,
-                ['Total Fuel Burn', 'Total Time', 'Total Ground Distance'],
+                [
+                    'Total Fuel Burn',
+                    'Total Fuel Capacity',
+                    'Excess Fuel Capacity',
+                    'Total Time',
+                    'Total Ground Distance',
+                ],
                 {
                     'Total Fuel Burn': {'units': 'lbm'},
+                    'Total Fuel Capacity': {'units': 'lbm'},
+                    'Excess Fuel Capacity': {'units': 'lbm'},
                     'Total Time': {'units': 'min'},
                     'Total Ground Distance': {'units': 'nmi'},
                 },
