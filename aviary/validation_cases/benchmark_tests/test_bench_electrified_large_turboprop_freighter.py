@@ -78,6 +78,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         om.n2(prob)
 
         prob.run_aviary_problem('dymos_solution.db')
+        self.assertTrue(prob.result.success)
 
         om.n2(prob)
 

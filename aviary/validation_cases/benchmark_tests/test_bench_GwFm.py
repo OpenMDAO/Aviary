@@ -126,6 +126,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='IPOPT',
             verbosity=0,
         )
+        # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
@@ -137,8 +138,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='SNOPT',
             verbosity=0,
         )
+        # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.bench_test_swap_1_GwFm_IPOPT()

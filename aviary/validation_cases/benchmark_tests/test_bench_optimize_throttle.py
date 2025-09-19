@@ -131,6 +131,8 @@ class OptimizeThrottleTestCase(unittest.TestCase):
 
         prob.run_aviary_problem(simulate=False, optimization_history_filename='z.sql')
 
+        self.assertTrue(prob.result.success)
+
         gross_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
         assert_near_equal(gross_mass, 160689.0, tolerance=1e-3)
 

@@ -32,6 +32,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='IPOPT',
         )
 
+        self.assertTrue(prob.result.success)
+
         rtol = 1e-2
 
         # There are no truth values for these.
@@ -55,7 +57,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
             local_phase_info,
             verbosity=0,
             optimizer='SNOPT',
+            max_iter=60,
         )
+
+        self.assertTrue(prob.result.success)
 
         rtol = 1e-2
 

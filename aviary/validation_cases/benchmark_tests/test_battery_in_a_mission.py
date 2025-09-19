@@ -92,6 +92,7 @@ class TestSubsystemsMission(unittest.TestCase):
         prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
 
         prob.run_aviary_problem()
+        self.assertTrue(prob.result.success)
 
         electric_energy_used_cruise2 = prob.get_val(
             f'traj.cruise2.timeseries.{av.Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
