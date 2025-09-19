@@ -94,8 +94,7 @@ class CruisePhase(PhaseBuilderBase):
         initial_guesses=None,
         ode_class=None,
         transcription=None,
-        core_subsystems=None,
-        external_subsystems=None,
+        subsystems=None,
         meta_data=None,
     ):
         super().__init__(
@@ -105,8 +104,7 @@ class CruisePhase(PhaseBuilderBase):
             initial_guesses=initial_guesses,
             ode_class=ode_class,
             transcription=transcription,
-            core_subsystems=core_subsystems,
-            external_subsystems=external_subsystems,
+            subsystems=subsystems,
             meta_data=meta_data,
             is_analytic_phase=True,
         )

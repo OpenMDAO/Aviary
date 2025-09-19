@@ -211,7 +211,7 @@ class PropulsionMissionTest(unittest.TestCase):
             aviary_options=options,
             engine_models=engine_models,
         )
-        model.add_subsystem('core_propulsion', prop, promotes=['*'])
+        model.add_subsystem('propulsion', prop, promotes=['*'])
 
         self.prob.model.add_subsystem(
             Dynamic.Atmosphere.MACH,

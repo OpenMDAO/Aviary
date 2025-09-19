@@ -4,7 +4,7 @@ import aviary.api as av
 
 # fmt: off
 subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='ft'
         'angles_of_attack': [

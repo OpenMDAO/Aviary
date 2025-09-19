@@ -280,9 +280,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 subsystem_name, str, 'Each subsystem name in the list should be a string'
             )
 
-    def test_get_outputs(self):
-        outputs = self.subsystem_builder.get_outputs()
-        self.assertIsInstance(outputs, list, 'get_outputs should return a list')
+    def test_get_timeseries(self):
+        outputs = self.subsystem_builder.get_timeseries()
+        self.assertIsInstance(outputs, list, 'get_timeseries should return a list')
 
         for output_name in outputs:
             self.assertIsInstance(

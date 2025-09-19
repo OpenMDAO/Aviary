@@ -613,5 +613,5 @@ def setup_model_options(
                     val, units = aviary_inputs.get_item(key)
                     opts[key] = (val[idx], units)
 
-            path = f'{prefix}*core_propulsion.{eng_name}*'
+            path = f'{prefix}*propulsion.{eng_name}*'
             prob.model_options[path] = opts
