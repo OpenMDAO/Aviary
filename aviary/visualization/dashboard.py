@@ -1,10 +1,8 @@
 import argparse
-from collections import defaultdict
 import functools
 import importlib.util
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import traceback
@@ -104,21 +102,6 @@ def _dashboard_setup_parser(parser):
         nargs='*',
         help='Name of aviary script that was run (not including .py).',
     )
-
-    parser.add_argument(
-        '--problem_recorder',
-        type=str,
-        help='Problem case recorder file name',
-        dest='problem_recorder',
-        default='problem_history.db',
-    )
-    parser.add_argument(
-        '--driver_recorder',
-        type=_none_or_str,
-        help='Driver case recorder file name. Set to None if file is ignored',
-        dest='driver_recorder',
-        default='driver_history.db',
-    )
     parser.add_argument(
         '--port',
         dest='port',
@@ -189,7 +172,7 @@ def _dashboard_cmd(options, user_args):
         if not options.force and report_dir_path.is_dir():
             raise RuntimeError(
                 f'The reports directory {report_dir_path} already exists. If you wish '
-                'to overrite the existing directory, use the --force option'
+                'to overwrite the existing directory, use the --force option'
             )
         if (
             report_dir_path.is_dir()
@@ -199,8 +182,8 @@ def _dashboard_cmd(options, user_args):
         shutil.unpack_archive(options.script_name, report_dir_path)
         dashboard(
             report_dir_name,
-            options.problem_recorder,
-            options.driver_recorder,
+            # options.problem_recorder,
+            # options.driver_recorder,
             options.port,
             options.run_in_background,
         )
@@ -218,8 +201,8 @@ def _dashboard_cmd(options, user_args):
 
     dashboard(
         options.script_name,
-        options.problem_recorder,
-        options.driver_recorder,
+        # options.problem_recorder,
+        # options.driver_recorder,
         options.port,
         options.run_in_background,
     )
@@ -1138,7 +1121,7 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
 
 
 # The main script that generates all the tabs in the dashboard
-def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
+def dashboard(script_name, port=0, run_in_background=False):
     """
     Generate the dashboard app display.
 
@@ -1146,26 +1129,24 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     ----------
     script_name : str
         Name of the script file whose results will be displayed by this dashboard.
-    problem_recorder : str
-        Name of the recorder file containing the Problem cases.
-    driver_recorder : str or None
-        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    reports_dir = f'{script_name}_out/reports/'
-    out_dir = f'{script_name}_out/'
+    out_dir = Path(f'{script_name}')
+    if not out_dir.exists():
+        out_dir = Path(f'{script_name}_out')
+    if not out_dir.exists():
+        raise FileNotFoundError(f"Output directory for '{script_name}' could not be found.")
 
-    if not Path(reports_dir).is_dir():
-        raise ValueError(
-            f"The script name, '{script_name}', does not have a reports folder "
-            f"associated with it. The directory '{reports_dir}' does not exist."
-        )
+    reports_dir = out_dir / 'reports'
 
-    problem_recorder_path = Path(out_dir) / problem_recorder
+    if not reports_dir.is_dir():
+        raise FileNotFoundError(f"Reports directory could not be found in '{out_dir}'.")
+
+    problem_recorder_path = Path(out_dir) / 'problem_history.db'
 
     if not os.path.isfile(problem_recorder_path):
-        issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
+        issue_warning(f'Problem case recorder file {problem_recorder_path} does not exist.')
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
@@ -1185,15 +1166,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Debug Input List',
         model_tabs_list,
         """
-        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of inputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
+        A plain text display of the model inputs. Recommended for beginners. Only created if 
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
+        are listed in a tree structure. There are three columns. The left column is a list of 
+        variable names, the middle column is the value, and the right column is the promoted 
+        variable name. The hierarchy is phase, subgroups, components, and variables. An input 
+        variable can appear under different phases and within different components. Its values can 
+        be different because its value has been updated during the computation. On the top-left 
+        corner is the total number of inputs. That number counts the duplicates because one variable 
+        can appear in different phases.
+        """,
         'text',
-        Path(reports_dir) / 'input_list.txt',
+        reports_dir / 'input_list.txt',
     )
 
     #  Debug Output List
@@ -1201,15 +1185,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Debug Output List',
         model_tabs_list,
         """
-       A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of outputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
+        A plain text display of the model outputs. Recommended for beginners. Only created if 
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
+        are listed in a tree structure. There are three columns. The left column is a list of 
+        variable names, the middle column is the value, and the right column is the promoted 
+        variable name. The hierarchy is phase, subgroups, components, and variables. An output 
+        variable can appear under different phases and within different components. Its values can 
+        be different because its value has been updated during the computation. On the top-left 
+        corner is the total number of outputs. That number counts the duplicates because one 
+        variable can appear in different phases.
+        """,
         'text',
-        Path(reports_dir) / 'output_list.txt',
+        reports_dir / 'output_list.txt',
     )
 
     # Inputs
@@ -1218,7 +1205,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         model_tabs_list,
         'Detailed report on the model inputs.',
         'html',
-        Path(reports_dir) / 'inputs.html',
+        reports_dir / 'inputs.html',
     )
 
     # N2
@@ -1232,7 +1219,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         It can be used to systematically identify, define, tabulate, design, and analyze functional
         and physical interfaces.""",
         'html',
-        Path(reports_dir) / 'n2.html',
+        reports_dir / 'n2.html',
     )
 
     # Trajectory Linkage
@@ -1245,7 +1232,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         It can be used to identify errant linkages between fixed quantities.
         """,
         'html',
-        Path(reports_dir) / 'traj_linkage_report.html',
+        reports_dir / 'traj_linkage_report.html',
     )
 
     # Driver scaling
@@ -1259,19 +1246,19 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             design variables (DV).
         """,
         'html',
-        Path(reports_dir) / 'driver_scaling_report.html',
+        reports_dir / 'driver_scaling_report.html',
     )
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
 
     # Optimization History Plot
-    if driver_recorder:
-        if os.path.isfile(driver_recorder):
-            df = convert_driver_case_recorder_file_to_df(f'{driver_recorder}')
-            cr = om.CaseReader(f'{driver_recorder}')
-            opt_history_pane = create_optimization_history_plot(cr, df)
-            optimization_tabs_list.append(('Optimization History', opt_history_pane))
+    opt_history_path = out_dir / 'optimization_history.db'
+    if opt_history_path.exists():
+        df = convert_driver_case_recorder_file_to_df(opt_history_path)
+        cr = om.CaseReader(opt_history_path)
+        opt_history_pane = create_optimization_history_plot(cr, df)
+        optimization_tabs_list.append(('Optimization History', opt_history_pane))
 
     # IPOPT report
     if os.path.isfile(Path(reports_dir) / 'IPOPT.out'):
