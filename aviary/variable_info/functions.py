@@ -11,7 +11,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -27,6 +27,7 @@ def add_aviary_input(
     shape_by_conn=False,
     meta_data=_MetaData,
     shape=None,
+    primal_name=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -54,6 +55,9 @@ def add_aviary_input(
         be used.
     shape: tuple
         (Optional) shape for this input.
+    primal_name : str or None
+        Valid python name to represent the variable in compute_primal if 'name' is not a valid
+        python name.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -94,8 +98,6 @@ def add_aviary_input(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
-    primal_name = varname.replace(':', '__')
-
     comp.add_input(
         varname,
         val=val,
@@ -116,6 +118,7 @@ def add_aviary_output(
     shape_by_conn=False,
     meta_data=_MetaData,
     shape=None,
+    primal_name=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -144,6 +147,9 @@ def add_aviary_output(
         be used.
     shape: tuple
         (Optional) shape for this input.
+    primal_name : str or None
+        Valid python name to represent the variable in compute_primal if 'name' is not a valid
+        python name.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -183,8 +189,6 @@ def add_aviary_output(
     # check types
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
-
-    primal_name = varname.replace(':', '__')
 
     comp.add_output(
         varname,
@@ -281,23 +285,32 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
 def override_aviary_vars(
     group: om.Group,
     aviary_inputs: AviaryValues,
-    manual_overrides=None,
+    code_origin_overrides=None,
     external_overrides=None,
 ):
     """
-    This function provides the capability to override output variables
-    with variables from the aviary_inputs input. The user can also
-    optionally provide the names of variables that they would like to
-    override manually. (Manual overriding is simply suppressing the
-    promotion of the variable to make way for another output variable
-    of the same name, or to create an unconnected input elsewhere.).
+    This function gives Aviary the capability to override output variables with variables from the
+    aircraft represented in aviary_inputs.
+
+    This may also be called manually in a Level-3 model for the same purpose.
+
+    Parameters
+    ----------
+    group: om.Group
+        Group to execute the promotes, usually an AviaryGroup.
+    aviary_inputs : AviaryValues
+        Aircraft data container.
+    code_origin_overrides : list or None
+        List of Aviary variables names to prioritize when GASP and FLOPS both compute it.
+    external_overrides : list or None
+        List of Aviary variables names to override that are computed in external subsystems.
     """
 
     def name_filter(name):
         return 'aircraft:' in name or 'mission:' in name
 
-    if not manual_overrides:
-        manual_overrides = []
+    if not code_origin_overrides:
+        code_origin_overrides = []
 
     if not external_overrides:
         external_overrides = []
@@ -330,13 +343,16 @@ def override_aviary_vars(
         for abs_name in out_var_names:
             name = out_var_metadata[abs_name]['prom_name']
 
-            if abs_name in manual_overrides:
-                # These are handled outside of this function.
+            if abs_name in code_origin_overrides:
+                # These variables are ones that are computed in both GASP and FLOPS when both
+                # geometries are present. Aviary determines which one to favor, and which to
+                # remove by overriding it.
+                # TODO: What if user wants to override one of these?
                 continue
 
             elif name in external_overrides:
                 # Overridden variables are given a new name
-                comp_promoted_outputs.append((name, f'EXTERNAL_OVERRIDE:{name}'))
+                comp_promoted_outputs.append((name, f'EXTERNAL_SUBSYSTEM_OVERRIDE:{name}'))
                 external_overridden_outputs.append(name)
 
                 continue  # don't promote it
@@ -347,7 +363,7 @@ def override_aviary_vars(
                     group.set_input_defaults(name, val=val, units=units)
 
                 # Overridden variables are given a new name
-                comp_promoted_outputs.append((name, f'AUTO_OVERRIDE:{name}'))
+                comp_promoted_outputs.append((name, f'AIRCRAFT_DATA_OVERRIDE:{name}'))
                 overridden_outputs.append(name)
 
                 continue  # don't promote it
@@ -369,7 +385,7 @@ def override_aviary_vars(
 
     if overridden_outputs:
         if aviary_inputs.get_val(Settings.VERBOSITY).value >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            print('\nThe following variables have been overridden:')
+            print('\nThe following variables have been overridden in the aircraft definition:')
             for prom_name in sorted(overridden_outputs):
                 val, units = aviary_inputs.get_item(prom_name)
                 print(f"  '{prom_name}  {val}  {units}")
@@ -575,7 +591,8 @@ def setup_model_options(
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
 
-            # TODO: For future flexibility, need to tag the required engine options.
+            # TODO: For future flexibility, need get a list of options per engine (these are
+            # EngineDeck required options), so custom multiengine works
             opt_names = [
                 Aircraft.Engine.SCALE_PERFORMANCE,
                 Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
@@ -589,10 +606,12 @@ def setup_model_options(
             ]
             opts = {}
             for key in opt_names:
-                opts[key] = aviary_inputs.get_item(key)[0][idx]
+                if key in aviary_inputs:
+                    opts[key] = aviary_inputs.get_item(key)[0][idx]
             for key in opt_names_units:
-                val, units = aviary_inputs.get_item(key)
-                opts[key] = (val[idx], units)
+                if key in aviary_inputs:
+                    val, units = aviary_inputs.get_item(key)
+                    opts[key] = (val[idx], units)
 
             path = f'{prefix}*core_propulsion.{eng_name}*'
             prob.model_options[path] = opts

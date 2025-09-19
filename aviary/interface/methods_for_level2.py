@@ -5,11 +5,13 @@ import warnings
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from openmdao.utils.om_warnings import warn_deprecation
+from packaging import version
 
 import dymos as dm
 import numpy as np
+import openmdao
 import openmdao.api as om
+from openmdao.utils.om_warnings import warn_deprecation
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
 
@@ -884,12 +886,15 @@ class AviaryProblem(om.Problem):
         # Create the calculation string for the ExecComp() and the promotion reference values
         weighted_exprs = []
         connection_names = []
+        obj_inputs = []
         total_weight = sum(weight for _, _, weight in objectives_cleaned)
         for model, output, weight in objectives_cleaned:
             output_safe = output.replace(':', '_')
-            weighted_exprs.append(
-                f'{model}_{output_safe}*{weight}/{total_weight}'
-            )  # we use "_" here because ExecComp() cannot intake "."
+
+            # we use "_" here because ExecComp() cannot intake "."
+            obj_input = f'{model}_{output_safe}'
+            obj_inputs.append(obj_input)
+            weighted_exprs.append(f'{obj_input}*{weight}/{total_weight}')
             connection_names.append(
                 [f'{model}.{output}', f'composite_function.{model}_{output_safe}']
             )
@@ -897,10 +902,15 @@ class AviaryProblem(om.Problem):
 
         # weighted_str looks like:  'model1_fuelburn*0.67*0.5 + model1_gross_mass*0.33*0.5 + model2_fuelburn*0.67*0.5 + model2_gross_mass*0.33*0.5'
 
+        kwargs = {}
+        if version.parse(openmdao.__version__) >= version.parse('3.40'):
+            # We can get the correct unit from the source. This prevents a warning.
+            kwargs = {k: {'units_by_conn': True} for k in obj_inputs}
+
         # adding composite execComp to super problem
         self.model.add_subsystem(
             'composite_function',
-            om.ExecComp('composite_objective = ' + final_expr, has_diag_partials=True),
+            om.ExecComp('composite_objective = ' + final_expr, **kwargs),
             promotes_outputs=['composite_objective'],
         )
 
@@ -1203,7 +1213,7 @@ class AviaryProblem(om.Problem):
 
         # and run mission, and dynamics
         if run_driver:
-            failed = dm.run_problem(
+            self.result = dm.run_problem(
                 self,
                 run_driver=run_driver,
                 simulate=simulate,
@@ -1212,27 +1222,16 @@ class AviaryProblem(om.Problem):
                 restart=restart_filename,
             )
 
-            # TODO this is only used in a single test. Either self.problem_ran_successfully
-            #      should be removed, or rework this option to be more helpful (store
-            # entire "failed" object?) and implement more rigorously in benchmark
-            # tests
-            if failed.exit_status == 'FAIL':
-                self.problem_ran_successfully = False
-            else:
-                self.problem_ran_successfully = True
             # Manually print out a failure message for low verbosity modes that suppress
             # optimizer printouts, which may include the results message. Assumes success,
             # alerts user on a failure
             if (
-                not self.problem_ran_successfully and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
+                not self.result.success and verbosity <= Verbosity.BRIEF  # QUIET, BRIEF
             ):
                 warnings.warn('\nAviary run failed. See the dashboard for more details.\n')
         else:
-            # prevent UserWarning that is displayed when an event is triggered
-            warnings.filterwarnings('ignore', category=UserWarning)
-            # TODO failed doesn't exist for run_model(), no return from method
-            failed = self.run_model()
-            warnings.filterwarnings('default', category=UserWarning)
+            self.run_model()
+            self.result = self.driver.result
 
         # update n2 diagram after run.
         outdir = Path(self.get_reports_dir(force=True))
@@ -1247,9 +1246,8 @@ class AviaryProblem(om.Problem):
             with open('output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
-        self.problem_ran_successfully = not failed
-
-        # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
+        # Checks if the payload/range toggle in the aviary inputs csv file has been set and that the
+        # current problem is a sizing mission.
         if payload_range_bool:
             self.run_payload_range()
 
@@ -1271,7 +1269,7 @@ class AviaryProblem(om.Problem):
 
         # Checks if the sizing mission has run successfully.
         # If the problem is both a sizing problem has run successfully, if not, we do not run the payload/range function.
-        if self.problem_ran_successfully and self.model.problem_type is ProblemType.SIZING:
+        if self.result.success and self.problem_type is ProblemType.SIZING:
             # Off-design missions do not currently work for GASP masses or missions.
             mass_method = self.aviary_inputs.get_val(Settings.MASS_METHOD)
             equations_of_motion = self.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
@@ -1415,8 +1413,8 @@ class AviaryProblem(om.Problem):
                 # Check if fallout missions ran successfully before writing to csv file
                 # If both missions ran successfully, writes the payload/range data to a csv file
                 if (
-                    prob_fallout_ferry.problem_ran_successfully
-                    and prob_fallout_max_fuel_plus_payload.problem_ran_successfully
+                    prob_fallout_ferry.result.success
+                    and prob_fallout_max_fuel_plus_payload.result.success
                 ):
                     # TODO Temporary csv writing for payload/range data, should be replaced with a more robust solution
                     csv_filepath = Path(self.get_reports_dir()) / 'payload_range_data.csv'
@@ -1456,7 +1454,7 @@ class AviaryProblem(om.Problem):
                     'The payload/range analysis is only supported for FLOPS missions with Height Energy equations of motion; the payload/range analysis will not be run.'
                 )
         else:
-            if self.model.problem_type is ProblemType.SIZING:
+            if self.problem_type is ProblemType.SIZING:
                 warnings.warn(
                     'The sizing problem has not run successfully; therefore, the payload/range analysis will not be run.'
                 )
@@ -1681,6 +1679,10 @@ class AviaryProblem(om.Problem):
             # mission mass is sliced from a column vector numpy array, i.e. it is a len 1
             # numpy array
             mission_mass = self.get_val(Mission.Design.GROSS_MASS)[0]
+        elif mission_mass > self.get_val(Mission.Design.GROSS_MASS)[0]:
+            raise ValueError(
+                f'Fallout Mission aircraft gross mass {mission_mass} lbm cannot be greater than Mission.Design.GROSS_MASS {self.get_val(Mission.Design.GROSS_MASS)[0]}'
+            )
 
         optimizer = self.driver.options['optimizer']
 
@@ -2007,6 +2009,10 @@ def _load_off_design(
             """prob.aviary_inputs.set_val(Mission.Design.RANGE, mission_range, units='NM')"""
             prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
             phase_info['post_mission']['target_range'] = (mission_range, 'nmi')
+        # set initial guess for Mission.Summary.GROSS_MASS to help optimizer with new design variable bounds.
+        prob.aviary_inputs.set_val(
+            Mission.Summary.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
+        )
 
     elif problem_type == ProblemType.FALLOUT:
         # Set mission fuel and calculate gross weight, aviary will calculate range

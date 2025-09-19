@@ -11,14 +11,16 @@ aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
-aircraft:crew_and_payload:cargo_mass,15000,lbm
+aircraft:crew_and_payload:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,5,lbm
 aircraft:crew_and_payload:design:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,15000,lbm
-aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,150,unitless
 aircraft:crew_and_payload:design:num_tourist_class,139,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_tourist,18,unitless
+aircraft:crew_and_payload:design:seat_pitch_first,36,inch
+aircraft:crew_and_payload:design:seat_pitch_tourist,32,inch
 aircraft:crew_and_payload:passenger_mass_with_bags,225,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6,lbm
 aircraft:crew_and_payload:uld_mass_per_passenger,0.0667,lbm
@@ -45,7 +47,7 @@ aircraft:engine:num_fuselage_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_sls_thrust,19580.2,lbf
-aircraft:engine:scaled_sls_thrust,19580.1602,lbf
+aircraft:engine:scaled_sls_thrust,19580.2,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.0,unitless
 aircraft:fuel:density,6.687,lbm/galUS
@@ -65,11 +67,9 @@ aircraft:fuselage:lift_curve_slope_mach0,1.8265,1/rad
 aircraft:fuselage:mass_coefficient,0.889,unitless
 aircraft:fuselage:nose_fineness,0.6,unitless
 aircraft:fuselage:num_aisles,3,unitless
-aircraft:fuselage:num_seats_abreast,18,unitless
 aircraft:fuselage:pilot_compartment_length,7.5,ft
 aircraft:fuselage:pressure_differential,10,psi
 aircraft:fuselage:pressurized_width_additional,0,ft
-aircraft:fuselage:seat_pitch,32,inch
 aircraft:fuselage:seat_width,21,inch
 aircraft:fuselage:tail_fineness,1.75,unitless
 aircraft:fuselage:wetted_area_ratio_aftbody_to_total,0.2,unitless
@@ -157,7 +157,6 @@ mission:design:rate_of_climb_at_top_of_climb,300,ft/min
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
 mission:landing:glide_to_stall_ratio,1.3,unitless
-mission:landing:lift_coefficient_max,1.94034,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900,ft/min
 mission:landing:obstacle_height,50,ft
