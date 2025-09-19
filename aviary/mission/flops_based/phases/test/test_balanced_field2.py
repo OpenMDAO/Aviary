@@ -1,11 +1,11 @@
-import aviary.api as av
-import warnings
 import unittest
+import warnings
+
 import dymos as dm
 import openmdao.api as om
-from aviary.api import Dynamic, Mission
-from aviary.core.aviary_group import AviaryGroup
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+
+import aviary.api as av
+from aviary.api import Mission
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
 from aviary.utils.preprocessors import preprocess_options
 
@@ -70,7 +70,7 @@ class TestBalancedField(unittest.TestCase):
                                                                        subsystem_options=takeoff_subsystem_options,
                                                                        user_options=balanced_field_user_options)
 
-        test_problem = om.Problem() # model=AviaryGroup(aviary_options=aviary_options, aviary_metadata=BaseMetaData))
+        test_problem = om.Problem()
 
         # default subsystems
         default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
