@@ -196,7 +196,7 @@ class RCPropMission(om.Group):
         self.add_constraint('power_net_max', equals=0, ref=1e2)
         
         self.add_constraint('current_constraint', upper=0, ref=1e2)
-        self.add_constraint(Dynamic.Vehicle.Propulsion.RPM_MAX, lower=1, upper=7500, ref=1e3, units='rpm')
+        self.add_constraint(Dynamic.Vehicle.Propulsion.RPM_MAX, lower=1, upper=125, ref=1e3, units='rps')
 
         #Constraints to prevent ill-fated surrogate model predictions
         self.add_constraint('ct_max', lower=0, upper=0.12, ref=1.0, units='unitless')

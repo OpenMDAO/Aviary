@@ -64,7 +64,7 @@ class RCPropPreMission(om.Group):
                 'kv = m * max_current / motor_mass + b',
                 kv={'val': 0.0, 'units': 'rpm/V'},
                 max_current={'val': 0.0, 'units': 'A'},
-                motor_mass={'val': 0.0, 'units': 'kg'},
+                motor_mass={'val': 0.0, 'units': 'g'},
                 m=self.options[Aircraft.Engine.Motor.KV_EQ_SLOPE],
                 b=self.options[Aircraft.Engine.Motor.KV_EQ_INT],
             ),
@@ -74,7 +74,8 @@ class RCPropPreMission(om.Group):
             ],
             promotes_outputs=[('kv', Aircraft.Engine.Motor.KV)]
         )
-
+        
+        self.add_constraint(Aircraft.Engine.Motor.KV, upper=540, units='rpm/V')
         # self.add_subsystem(
         #     'total_mass',
         #     om.ExecComp(

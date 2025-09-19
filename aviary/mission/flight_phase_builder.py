@@ -64,7 +64,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
-            'mach_ref': 0.01,
+            'mach_ref': 0.001,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 

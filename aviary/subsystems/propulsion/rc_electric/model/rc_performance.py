@@ -132,9 +132,9 @@ class Motor(om.ExplicitComponent):
         self.add_input('current', val=np.zeros(nn), units = 'A')
 
         ################ TODO Alex #####################
-        add_aviary_output(self, Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn), units='rpm')
+        add_aviary_output(self, Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn),  units='rpm')
 
-        # self.add_output(Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn), ref=1e3, units='rpm')
+        # self.add_output(Dynamic.Vehicle.Propulsion.RPM, val=np.zeros(nn), upper=7500, ref=1e3, units='rpm')
         ################ TODO Alex #####################
         self.add_output('power', val=np.zeros(nn), units='W')
         self.add_output('current_constraint', val=np.zeros(nn), units='A')

@@ -46,7 +46,7 @@ aircraft:battery:mass, 0.707, kg
 aircraft:battery:resistance, 0.05, ohm
 aircraft:battery:voltage, 22.2, V
 aircraft:engine:motor:idle_current, 0.91, A
-aircraft:engine:motor:max_cont_current, 120, A
+aircraft:engine:motor:max_cont_current, 80, A
 aircraft:engine:motor:mass, 0.288, kg
 aircraft:engine:propeller:diameter, 20, inch
 aircraft:engine:propeller:pitch, 10, inch
@@ -76,7 +76,7 @@ aircraft:fuel:num_tanks,0,unitless
 aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,0.0,unitless
 aircraft:furnishings:mass_scaler,0.0,unitless
-aircraft:fuselage:length,0.549,m
+aircraft:fuselage:length,6,ft
 aircraft:fuselage:mass_scaler,0.0,unitless
 aircraft:fuselage:max_height,50,mm
 aircraft:fuselage:max_width,50,mm
@@ -85,15 +85,15 @@ aircraft:fuselage:num_fuselages,1,unitless
 aircraft:fuselage:passenger_compartment_length,0,ft
 aircraft:fuselage:planform_area,0.2954,ft**2
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
-aircraft:fuselage:wetted_area,0.2954,ft**2
-aircraft:horizontal_tail:area,0.142,m**2
+aircraft:fuselage:wetted_area,904.0,inch**2
+aircraft:horizontal_tail:area,0.15642,m**2
 aircraft:horizontal_tail:aspect_ratio,3.0,unitless
 aircraft:horizontal_tail:mass_scaler,0.0,unitless
 aircraft:horizontal_tail:taper_ratio,1,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
-aircraft:horizontal_tail:wetted_area,0.142,ft**2
+aircraft:horizontal_tail:wetted_area,0.352,m**2
 aircraft:hydraulics:mass_scaler,0.0,unitless
 aircraft:hydraulics:system_pressure,0,psi
 aircraft:instruments:mass_scaler,0.0,unitless
@@ -115,7 +115,7 @@ aircraft:vertical_tail:num_tails,1,unitless
 aircraft:vertical_tail:taper_ratio,0.33,unitless
 aircraft:vertical_tail:thickness_to_chord,0.12,unitless
 aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
-aircraft:vertical_tail:wetted_area,0.063,ft**2
+aircraft:vertical_tail:wetted_area,0.139,m**2
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1,unitless
 aircraft:wing:area,0.65039,m**2
@@ -147,7 +147,7 @@ aircraft:wing:thickness_to_chord,0.13,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
-aircraft:wing:wetted_area,0.65039,m**2
+aircraft:wing:wetted_area,0.85,m**2
 mission:constraints:max_mach,0.04,unitless
 mission:design:cruise_altitude,200,ft
 mission:design:gross_mass,7,kg
@@ -202,7 +202,7 @@ aircraft:horizontal_tail:dbf:sheeting_thickness,0.08,inch
 aircraft:horizontal_tail:dbf:spar_density,2.8,lbm/ft**3
 aircraft:horizontal_tail:dbf:spar_outer_diameter,1.5,inch
 aircraft:horizontal_tail:dbf:spar_wall_thickness,0.125,inch
-aircraft:horizontal_tail:dbf:skin_density,1.9,lbm/ft**2
+aircraft:horizontal_tail:dbf:skin_density,20.0,g/m**2
 aircraft:horizontal_tail:dbf:stringer_density,2.2,lbm/ft**3
 aircraft:horizontal_tail:dbf:stringer_thickness,0.1,inch
 aircraft:vertical_tail:root_chord,1.0,ft
@@ -224,7 +224,7 @@ aircraft:vertical_tail:dbf:sheeting_thickness,0.08,inch
 aircraft:vertical_tail:dbf:spar_density,2.8,lbm/ft**3
 aircraft:vertical_tail:dbf:spar_outer_diameter,1.5,inch
 aircraft:vertical_tail:dbf:spar_wall_thickness,0.125,inch
-aircraft:vertical_tail:dbf:skin_density,1.9,lbm/ft**2
+aircraft:vertical_tail:dbf:skin_density,20.0,g/m**2
 aircraft:vertical_tail:dbf:stringer_density,2.2,lbm/ft**3
 aircraft:vertical_tail:dbf:stringer_thickness,0.1,inch
 aircraft:wing:dbf:airfoil_path,/home/alopezco/Aviary/aviary/examples/external_subsystems/dbf_based_mass/mh84-il.csv,unitless

@@ -2647,7 +2647,7 @@ add_meta_data(
     Aircraft.Engine.Motor.KV_EQ_SLOPE,
     meta_data=_MetaData,
     units='unitless',
-    default_value = 1.3132,
+    default_value = 2105.53674,
     desc='__', #TODO Alex
     option=True,
     multivalue=True,
@@ -2657,7 +2657,7 @@ add_meta_data(
     Aircraft.Engine.Motor.KV_EQ_INT,
     meta_data=_MetaData,
     units='unitless',
-    default_value= 0.01,
+    default_value= -80.83469,
     desc='__',
     option=True,
     multivalue=True,

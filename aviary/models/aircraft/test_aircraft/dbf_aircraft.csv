@@ -44,7 +44,7 @@ aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1.15,unitless
 aircraft:engine:mass,7400,lbm
-aircraft:engine:num_engines,2,unitless
+aircraft:engine:num_engines,1,unitless
 aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,7400,lbm
