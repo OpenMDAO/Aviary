@@ -130,7 +130,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         for i in range(2, num_stations):
             J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][i] = 1.0
 
-        print(J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.LOAD_PATH_SWEEP_DIST])
+        # print(J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.LOAD_PATH_SWEEP_DIST])
 
 
 class BWBComputeDetailedWingDist(om.ExplicitComponent):
