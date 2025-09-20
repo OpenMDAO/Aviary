@@ -489,7 +489,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        num_bays = int(0.5 + max_width / bay_width_max)
+        num_bays = int(0.5 + max_width.real / bay_width_max.real)
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
         self.options[Aircraft.BWB.NUM_BAYS][0] = num_bays
