@@ -100,6 +100,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
 
 class BWBWingCharacteristicLengthsTest(unittest.TestCase):
+    """Test characteristic length and fineness ratio calculations for BWB."""
+
     def setUp(self):
         self.prob = om.Problem()
 

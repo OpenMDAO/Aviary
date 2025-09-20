@@ -130,18 +130,17 @@ class PrepGeom(om.Group):
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'wing', _BWBWing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-            )
+            self.add_subsystem('wing', _BWBWing(), promotes_inputs=['*'], promotes_outputs=['*'])
         else:
             self.add_subsystem(
                 'wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
 
-        self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
-        self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
-        self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
-        self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
+        if not design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
+            self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
+            self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
+            self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
 
         self.add_subsystem('tail', _Tail(), promotes_inputs=['aircraft*'], promotes_outputs=['*'])
 
@@ -149,9 +148,7 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'fuselage', _BWBFuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-            )
+            self.add_subsystem('fuselage', _BWBFuselage(), promotes_outputs=['*'])
         else:
             self.add_subsystem(
                 'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
@@ -160,9 +157,10 @@ class PrepGeom(om.Group):
             'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
-        self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
-        self.connect(f'prelim.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
-        self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
+        if not design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
+            self.connect(f'prelim.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
+            self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
 
         self.add_subsystem(
             'nacelles', Nacelles(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
@@ -193,7 +191,7 @@ class PrepGeom(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.connect(f'prelim.{Names.CROOT}', f'wing_characteristic_lengths.{Names.CROOT}')
+        self.connect(f'prelim.{Names.CROOT}', f'other_characteristic_lengths.{Names.CROOT}')
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
@@ -639,6 +637,8 @@ class _BWBWing(om.ExplicitComponent):
         self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
+
+        self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]

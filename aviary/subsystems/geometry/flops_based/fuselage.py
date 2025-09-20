@@ -61,6 +61,8 @@ class FuselagePrelim(om.ExplicitComponent):
 
 
 class BWBFuselagePrelim(om.ExplicitComponent):
+    """Calculate fuselage average diameter and planform area for BWB"""
+
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -90,6 +92,7 @@ class BWBFuselagePrelim(om.ExplicitComponent):
             wrt=[
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Wing.ROOT_CHORD,
                 'Rear_spar_percent_chord',
             ],
         )
@@ -99,33 +102,43 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
         max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
+        root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
 
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
                 print('Aircraft.Fuselage.LENGTH must be positive.')
+        if rear_spar_percent_chord <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Rear_spar_percent_chord must be positive. It is default to 0.7')
 
         # not sure if this is right definition and not sure if it is used for BWB.
         avg_diameter = 0.5 * (max_height + max_width)
-        planform_area = max_width * (length + max_width / rear_spar_percent_chord) / 2.0
+        planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
         outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
 
-    def compute_partials(self, inputs, partials, discrete_inputs=None):
+    def compute_partials(self, inputs, partials):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
+        root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
 
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.LENGTH] = max_width / 2.0
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
-            length / 2.0 + max_width / rear_spar_percent_chord
+            length + root_chord / rear_spar_percent_chord
+        ) / 2.0
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Wing.ROOT_CHORD] = (
+            max_width / rear_spar_percent_chord / 2.0
         )
-        partials[Aircraft.Fuselage.PLANFORM_AREA, 'Rear_spar_percent_chord'] = max_width**2 / 2.0
+        partials[Aircraft.Fuselage.PLANFORM_AREA, 'Rear_spar_percent_chord'] = (
+            -max_width * root_chord / rear_spar_percent_chord**2 / 2.0
+        )
 
 
 class SimpleCabinLayout(om.ExplicitComponent):
-    """Given fuselage length, compute passenger compartment length."""
+    """Given fuselage length, height and width, compute passenger compartment length."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -177,7 +190,7 @@ class SimpleCabinLayout(om.ExplicitComponent):
 
 
 class DetailedCabinLayout(om.ExplicitComponent):
-    """Compute fuselage length and passenger compartment length."""
+    """Compute fuselage dimensions using cabin seat information."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -394,6 +407,8 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+        add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -447,6 +462,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        bay_width_max = 12.0  # ft
 
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
@@ -470,6 +486,13 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         root_chord = pax_compart_length - tan_sweep * max_width / 2.0
         area_cabin = (pax_compart_length + root_chord) * max_width / 2.0
         max_height = height_to_width * length
+
+        # Enforce maximum number of bays
+        num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
+        num_bays = int(0.5 + max_width / bay_width_max)
+        if num_bays > num_bays_max and num_bays_max > 0:
+            num_bays = num_bays_max
+        self.options[Aircraft.BWB.NUM_BAYS][0] = num_bays
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
@@ -513,6 +536,8 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
 
 class BWBDetailedCabinLayout(om.ExplicitComponent):
+    """Compute BWB fuselage dimensions using cabin seat information."""
+
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)

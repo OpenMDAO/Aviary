@@ -13,6 +13,10 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 
 class BWBUpdateDetailedWingDistTest(unittest.TestCase):
+    """
+    For BWB, test the updated detailed wing information when detailed wing information is given.
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -145,8 +149,15 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
+
 
 class BWBComputeDetailedWingDistTest(unittest.TestCase):
+    """
+    For BWB, test the updated detailed wing information when detailed wing information is not given.
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -188,8 +199,15 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 36.40586234, 36.40586234]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
 
 class BWBWingPrelimTest(unittest.TestCase):
+    """
+    For BWB with given detailed wing information, test the computation of wing parameters.
+    """
+
     def setUp(self):
         self.prob = om.Problem()
 

@@ -7,6 +7,7 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     BWBSimpleCabinLayout,
     DetailedCabinLayout,
     SimpleCabinLayout,
+    BWBFuselagePrelim,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -164,8 +165,36 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
 
 
+class BWBFuselagePrelimTest(unittest.TestCase):
+    """Test simple cabin layout computation."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+        self.aviary_options = AviaryValues()
+        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        prob.model.add_subsystem(
+            'layout', BWBFuselagePrelim(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Fuselage.LENGTH, val=125.0, units='ft')
+
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58, units='ft')
+        prob.set_val(Aircraft.Fuselage.MAX_HEIGHT, val=17, units='ft')
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, val=7.71, units='ft')
+        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.run_model()
+
+        avg_diameter = prob.get_val(Aircraft.Fuselage.AVG_DIAMETER)
+        assert_near_equal(avg_diameter, 40.79, tolerance=1e-9)
+        planform_area = prob.get_val(Aircraft.Fuselage.PLANFORM_AREA)
+        assert_near_equal(planform_area, 4391.90128571, tolerance=1e-9)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
+
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBDetailedCabinLayoutTest()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
