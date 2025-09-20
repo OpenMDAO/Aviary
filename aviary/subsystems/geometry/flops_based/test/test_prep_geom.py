@@ -814,6 +814,45 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # TotalWettedArea
 
     def test_case1(self):
+        """
+        Testing FLOPS data case:
+        Aircraft.BWB.NUM_BAYS -- NBAY = 5
+        Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 96.25
+        Aircraft.Wing.ROOT_CHORD -- XLW = 63.960195184412598
+        Aircraft.Fuselage.CABIN_AREA -- ACABIN = 5173.1872025046832
+        Aircraft.Fuselage.MAX_HEIGHT -- DF = 15.125
+        Aircraft.Wing.INPUT_STATION_DIST -- ETAW = [0, 32.29, 1]
+        BWB_CHORD_PER_SEMISPAN_DIST -- CHD = [137.5, 91.371707406303713, 14.284802944808163]
+        BWB_THICKNESS_TO_CHORD_DIST -- TOC = [0.11, 0.11, 0.11]
+        BWB_LOAD_PATH_SWEEP_DIST -- SWL = [0, 15.337244816188816, 15.337244816188816]
+        Aircraft.Fuselage.AVG_DIAMETER -- XD = 39.8525
+        Aircraft.Fuselage.PLANFORM_AREA -- FPAREA = 7390.267432149546
+        Aircraft.Wing.AREA -- XW = 16555.972297926455
+        Aircraft.Wing.ASPECT_RATIO -- AR = 3.4488821268812084
+        Aircraft.Wing.LOAD_FRACTION -- PCTL = 0.53107174649913569
+        prelim.prep_geom:_Names:CROOT -- CROOT = 105.31056813183183
+        prelim.prep_geom:_Names:CROOTB -- CROOTB = 93.164834715181058
+        prelim.prep_geom:_Names:CROTM -- CROTM = 0.88466747799284229
+        prelim.prep_geom:_Names:CROTVT -- CROTVT = 0
+        prelim.prep_geom:_Names:CRTHTB -- CRTHTB = 0
+        prelim.prep_geom:_Names:SPANHT -- SPANHT = 0
+        prelim.prep_geom:_Names:SPANVT -- SPANVT = 0
+        prelim.prep_geom:_Names:XDX -- XDX = 39.8525
+        prelim.prep_geom:_Names:XMULT -- XMULT = 2.04257
+        prelim.prep_geom:_Names:XMULTH -- XMULTH = 2.04257
+        prelim.prep_geom:_Names:XMULTV -- XMULTV = 2.04257
+        Aircraft.Wing.WETTED_AREA -- SWET(1) = 33816.73
+        Aircraft.HorizontalTail.WETTED_AREA -- HORIZONTAL=  0.0
+        Aircraft.VerticalTail.WETTED_AREA -- VERTICAL TAIL SWET = 0.0
+        Aircraft.Fuselage.DIAMETER_TO_WING_SPAN -- DB = 0.16739117852998228
+        Aircraft.Fuselage.LENGTH_TO_DIAMETER -- BODYLD = 3.4502226961922089
+        Aircraft.Nacelle.TOTAL_WETTED_AREA -- SWTNA = 498.27*3
+        Aircraft.Nacelle.WETTED_AREA -- SWET(5)-SWET(7) = 498.26795086
+        Aircraft.Wing.CHARACTERISTIC_LENGTH -- EL(1) = 69.539519845923053
+        Aircraft.Fuselage.CHARACTERISTIC_LENGTH -- EL(4) = 137.5
+        Aircraft.Nacelle.CHARACTERISTIC_LENGTH -- EL(5)-EL(7) = 15.686120387590995
+        Aircraft.Design.TOTAL_WETTED_AREA -- SWTWG + SWTHT + SWTVT + SWTFU + SWTNA + SWTCN = 35311.536998566495
+        """
         prob = self.prob
         options = self.options
 
@@ -821,132 +860,98 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
 
         # BWBSimpleCabinLayout
         num_bays = options.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [5], tolerance=1e-9)  # NBAY 5
+        assert_near_equal(num_bays, [5], tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
-        assert_near_equal(pax_compart_length, 96.25, tolerance=1e-8)  # XLP 96.25
+        assert_near_equal(pax_compart_length, 96.25, tolerance=1e-8)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 63.96019518, tolerance=1e-8)  # XLW 63.960195184412598
+        assert_near_equal(root_chord, 63.96019518, tolerance=1e-8)
         area_cabin = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
-        assert_near_equal(area_cabin, 5173.1872025, tolerance=1e-8)  # ACABIN 5173.1872025046832
+        assert_near_equal(area_cabin, 5173.1872025, tolerance=1e-8)
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
-        assert_near_equal(fuselage_height, 15.125, tolerance=1e-8)  # DF 15.125
+        assert_near_equal(fuselage_height, 15.125, tolerance=1e-8)
 
         # BWBUpdateDetailedWingDist
         out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
         exp0 = [0.0, 32.29, 1.0]
-        assert_near_equal(out0, exp0, tolerance=1e-8)  # ETAW [0, 32.29, 1]
+        assert_near_equal(out0, exp0, tolerance=1e-8)
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [137.5, 91.37170741, 14.2848]
-        assert_near_equal(
-            out1, exp1, tolerance=1e-8
-        )  # CHD [137.5, 91.371707406303713, 14.284802944808163]
+        assert_near_equal(out1, exp1, tolerance=1e-8)
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
         exp2 = [0.11, 0.11, 0.11]
-        assert_near_equal(out2, exp2, tolerance=1e-8)  # TOC [0.11, 0.11, 0.11]
+        assert_near_equal(out2, exp2, tolerance=1e-8)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
         exp3 = [0.0, 15.33723721, 15.33723721]
-        assert_near_equal(
-            out3, exp3, tolerance=1e-8
-        )  # SWL [0, 15.337244816188816, 15.337244816188816]
+        assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
-        assert_near_equal(
-            prob.get_val(Aircraft.Fuselage.AVG_DIAMETER), 39.8525, tolerance=1e-8
-        )  # XD 39.8525
+        assert_near_equal(prob.get_val(Aircraft.Fuselage.AVG_DIAMETER), 39.8525, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.PLANFORM_AREA), 7390.26743215, tolerance=1e-8
-        )  # FPAREA 7390.267432149546
+        )
 
         # BWBWingPrelim
-        assert_near_equal(
-            prob.get_val(Aircraft.Wing.AREA), 16555.96944965, tolerance=1e-8
-        )  # SW 16555.972297926455
+        assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 16555.96944965, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Wing.ASPECT_RATIO),
             3.4488813,
-            tolerance=1e-8,  # AR 3.4488821268812084
+            tolerance=1e-8,
         )
         assert_near_equal(
             prob.get_val(Aircraft.Wing.LOAD_FRACTION),
             0.531071664997850196,
-            tolerance=1e-8,  # PCTL 0.53107174649913569
+            tolerance=1e-8,
         )
         # _Prelim
         assert_near_equal(
             prob.get_val('prelim.prep_geom:_Names:CROOT'), 105.310571594, tolerance=1e-8
-        )  # CROOT 105.31056813183183
+        )
         assert_near_equal(
             prob.get_val('prelim.prep_geom:_Names:CROOTB'), 93.16483527, tolerance=1e-8
-        )  # CROOTB 93.164834715181058
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CROTM'), 0.88466745, tolerance=1e-8
-        )  # CROTM 0.88466747799284229
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CROTVT'), 0.0, tolerance=1e-7
-        )  # CROTVT 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CRTHTB'), 0.0, tolerance=1e-8
-        )  # CRTHTB 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:SPANHT'), 0.0, tolerance=1e-8
-        )  # SPANHT 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:SPANVT'), 0.0, tolerance=1e-8
-        )  # SPANVT 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XDX'), 39.8525, tolerance=1e-8
-        )  # XDX 39.852499999999999
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XMULT'), 2.04257, tolerance=1e-8
-        )  # XMULT 2.04257
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XMULTH'), 2.04257, tolerance=1e-8
-        )  # XMULTH 2.04257
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XMULTV'), 2.04257, tolerance=1e-8
-        )  # XMULTV 2.04257
+        )
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CROTM'), 0.88466745, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CROTVT'), 0.0, tolerance=1e-7)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CRTHTB'), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:SPANHT'), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:SPANVT'), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XDX'), 39.8525, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULT'), 2.04257, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULTH'), 2.04257, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULTV'), 2.04257, tolerance=1e-8)
         # _BWBWing
-        assert_near_equal(
-            prob.get_val(Aircraft.Wing.WETTED_AREA), 33816.72651876, tolerance=1e-8
-        )  # SWET(1) 33816.73
+        assert_near_equal(prob.get_val(Aircraft.Wing.WETTED_AREA), 33816.72651876, tolerance=1e-8)
         # _Tail
-        assert_near_equal(
-            prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8
-        )  # HORIZONTAL 0.0
-        assert_near_equal(
-            prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8
-        )  # VERTICAL TAIL SWET 0.0
+        assert_near_equal(prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8)
         # _BWBFuselage
         # _FuselageRatios
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN), 0.167391212, tolerance=1e-8
-        )  # DB 0.16739117852998228
+        )
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER), 3.4502227, tolerance=1e-8
-        )  # BODYLD 3.4502226961922089
+        )
         # Nacelles
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80385257, tolerance=1e-8
-        )  # SWTNA 498.27*3
-        assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26795086, tolerance=1e-8
-        )  # SWET(5)-SWET(7) 498.26795086
+        )
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26795086, tolerance=1e-8)
         # Canard
         assert_near_equal(prob.get_val(Aircraft.Canard.WETTED_AREA), 0.0, tolerance=1e-8)
         # BWBWingCharacteristicLength
         assert_near_equal(
             prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH), 69.53952222, tolerance=1e-8
-        )  # EL(1) 69.539519845923053
+        )
         assert_near_equal(prob.get_val(Aircraft.Wing.FINENESS), 0.11, tolerance=1e-8)
         # OtherCharacteristicLengths
         assert_near_equal(prob.get_val(Aircraft.Canard.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.Canard.FINENESS), 0.0, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH), 137.5, tolerance=1e-8
-        )  # EL(4) 137.5
+        )
         assert_near_equal(prob.get_val(Aircraft.Fuselage.FINENESS), 3.4502227, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8
@@ -954,7 +959,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.FINENESS), 0.11, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68611614, tolerance=1e-8
-        )  # EL(5)-EL(7) 15.686120387590995
+        )
         assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8
@@ -963,7 +968,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # TotalWettedArea
         assert_near_equal(
             prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 35311.53037134, tolerance=1e-8
-        )  # sum of SWTWG + SWTHT + SWTVT + SWTFU + SWTNA + SWTCN 35311.536998566495
+        )
 
 
 class BWBDetailedPrepGeomTest(unittest.TestCase):
@@ -1098,6 +1103,42 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # TotalWettedArea
 
     def test_case1(self):
+        """
+        Testing FLOPS data case:
+        Aircraft.BWB.NUM_BAYS -- NBAY = 7
+        Aircraft.Fuselage.LENGTH -- XL = 112.3
+        Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 78.61
+        Aircraft.Fuselage.MAX_WIDTH -- WF = 80.22
+        Aircraft.Fuselage.MAX_HEIGHT -- DF = 12.35
+        Aircraft.Fuselage.CABIN_AREA -- ACABIN = 4697.33
+        Aircraft.Wing.ROOT_CHORD -- XLW = 38.50
+        Aircraft.Fuselage.AVG_DIAMETER -- XD = 46.2868886894979
+        Aircraft.Fuselage.PLANFORM_AREA -- FPAREA = 6710.4740143724875
+        Aircraft.Wing.AREA -- SW = 12109.9
+        Aircraft.Wing.ASPECT_RATIO -- AR = 5.370
+        Aircraft.Wing.LOAD_FRACTION -- PCTL = 0.4676
+        prelim.prep_geom:_Names:CROOT -- CROOT = 72.085530500256112
+        prelim.prep_geom:_Names:CROOTB -- CROOTB = 63.024672729456938
+        prelim.prep_geom:_Names:CROTM -- CROTM = 0.87430407034644797
+        prelim.prep_geom:_Names:CROTVT -- CROTVT = 0
+        prelim.prep_geom:_Names:CRTHTB -- CRTHTB = 0
+        prelim.prep_geom:_Names:SPANHT -- SPANHT = 0
+        prelim.prep_geom:_Names:SPANVT -- SPANVT = 0
+        prelim.prep_geom:_Names:XDX -- XDX = 46.2868886894979
+        prelim.prep_geom:_Names:XMULT -- XMULT = 2.04257
+        prelim.prep_geom:_Names:XMULTH -- XMULTH = 2.04257
+        prelim.prep_geom:_Names:XMULTV -- XMULTV = 2.04257
+        Aircraft.Wing.WETTED_AREA -- SWET(1) = 24713.661297561481
+        Aircraft.HorizontalTail.WETTED_AREA -- HORIZONTAL TAIL SWET = 0.0
+        Aircraft.VerticalTail.WETTED_AREA -- VERTICAL TAIL SWET = 0.0
+        Aircraft.Fuselage.DIAMETER_TO_WING_SPAN -- DB = 0.18243240878599712
+        Aircraft.Fuselage.LENGTH_TO_DIAMETER -- BODYLD = 2.4261771932742167
+        Aircraft.Nacelle.TOTAL_WETTED_AREA -- SWTNA = 498.27*3
+        Aircraft.Nacelle.WETTED_AREA -- SWET(5)-SWET(7) = 498.26822066361945
+        Aircraft.Wing.CHARACTERISTIC_LENGTH -- EL(1) = 47.729164562158907
+        Aircraft.Fuselage.CHARACTERISTIC_LENGTH -- EL(4) = 112.3001936860821
+        Aircraft.Nacelle.CHARACTERISTIC_LENGTH -- EL(5)-EL(7) = 15.686120387590995
+        """
         prob = self.prob
         options = self.options
 
@@ -1105,19 +1146,19 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
         # BWBDetailedCabinLayout
         num_bays = options.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [7], tolerance=1e-9)  # NBAY 7
+        assert_near_equal(num_bays, [7], tolerance=1e-9)
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
-        assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)  # XL 112.3
+        assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
-        assert_near_equal(pax_compart_length, 78.61013558, tolerance=1e-9)  # XLP 78.61
+        assert_near_equal(pax_compart_length, 78.61013558, tolerance=1e-9)
         fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
-        assert_near_equal(fuselage_width, 80.22075607, tolerance=1e-9)  # WF 80.22
+        assert_near_equal(fuselage_width, 80.22075607, tolerance=1e-9)
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
-        assert_near_equal(fuselage_height, 12.35302131, tolerance=1e-9)  # DF 12.35
+        assert_near_equal(fuselage_height, 12.35302131, tolerance=1e-9)
         cabin_area = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
-        assert_near_equal(cabin_area, 4697.33181006, tolerance=1e-9)  # 4697.33
+        assert_near_equal(cabin_area, 4697.33181006, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 38.5, tolerance=1e-9)  # XLW 38.50
+        assert_near_equal(root_chord, 38.5, tolerance=1e-9)
 
         # BWBUpdateDetailedWingDist
         out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
@@ -1185,99 +1226,63 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
-        assert_near_equal(
-            prob.get_val(Aircraft.Fuselage.AVG_DIAMETER), 46.28688869, tolerance=1e-8
-        )  # XD 46.2868886894979
+        assert_near_equal(prob.get_val(Aircraft.Fuselage.AVG_DIAMETER), 46.28688869, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.PLANFORM_AREA), 6710.47401437, tolerance=1e-8
-        )  # FPAREA 6710.4740143724875
+        )
 
         # BWBWingPrelim
-        assert_near_equal(
-            prob.get_val(Aircraft.Wing.AREA), 12109.8797157, tolerance=1e-8
-        )  # SW 12109.9
-        assert_near_equal(
-            prob.get_val(Aircraft.Wing.ASPECT_RATIO), 5.36951675, tolerance=1e-8
-        )  # AR 5.370
-        assert_near_equal(
-            prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.46761342, tolerance=1e-8
-        )  # PCTL 0.4676
+        assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 12109.8797157, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Wing.ASPECT_RATIO), 5.36951675, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.46761342, tolerance=1e-8)
         # _Prelim
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CROOT'), 72.0855305, tolerance=1e-8
-        )  # CROOT 72.085530500256112
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CROOT'), 72.0855305, tolerance=1e-8)
         assert_near_equal(
             prob.get_val('prelim.prep_geom:_Names:CROOTB'), 63.02467273, tolerance=1e-8
-        )  # CROOTB 63.024672729456938
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CROTM'), 0.87430407, tolerance=1e-8
-        )  # CROTM 0.87430407034644797
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CROTVT'), 0.0, tolerance=1e-7
-        )  # CROTVT 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:CRTHTB'), 0.0, tolerance=1e-8
-        )  # CRTHTB 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:SPANHT'), 0.0, tolerance=1e-8
-        )  # SPANHT 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:SPANVT'), 0.0, tolerance=1e-8
-        )  # SPANVT 0
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XDX'), 46.28688869, tolerance=1e-8
-        )  # XDX 46.2868886894979
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XMULT'), 2.04257, tolerance=1e-8
-        )  # XMULT 2.04257
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XMULTH'), 2.04257, tolerance=1e-8
-        )  # XMULTH 2.04257
-        assert_near_equal(
-            prob.get_val('prelim.prep_geom:_Names:XMULTV'), 2.04257, tolerance=1e-8
-        )  # XMULTV 2.04257
+        )
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CROTM'), 0.87430407, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CROTVT'), 0.0, tolerance=1e-7)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:CRTHTB'), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:SPANHT'), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:SPANVT'), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XDX'), 46.28688869, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULT'), 2.04257, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULTH'), 2.04257, tolerance=1e-8)
+        assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULTV'), 2.04257, tolerance=1e-8)
         # _BWBWing
-        assert_near_equal(
-            prob.get_val(Aircraft.Wing.WETTED_AREA), 24713.66128988, tolerance=1e-8
-        )  # SWET(1) 24713.661297561481
+        assert_near_equal(prob.get_val(Aircraft.Wing.WETTED_AREA), 24713.66128988, tolerance=1e-8)
         # _Tail
-        assert_near_equal(
-            prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8
-        )  # HORIZONTAL TAIL SWET 0.0
-        assert_near_equal(
-            prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8
-        )  # VERTICAL TAIL SWET 0.0
+        assert_near_equal(prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8)
         # _BWBFuselage
         # skip
         # _FuselageRatios
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN),
             0.18243241,
-            tolerance=1e-8,  # DB 0.18243240878599712
+            tolerance=1e-8,
         )
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER), 2.42617719, tolerance=1e-8
-        )  # BODYLD 2.4261771932742167
+        )
         # Nacelles
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80385258, tolerance=1e-8
-        )  # SWTNA 498.27*3
-        assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26795086, tolerance=1e-8
-        )  # SWET(5)-SWET(7) 498.26822066361945
+        )
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26795086, tolerance=1e-8)
         # Canard
         assert_near_equal(prob.get_val(Aircraft.Canard.WETTED_AREA), 0.0, tolerance=1e-8)
         # BWBWingCharacteristicLength
         assert_near_equal(
             prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH), 47.72916456, tolerance=1e-8
-        )  # EL(1) 47.729164562158907
+        )
         assert_near_equal(prob.get_val(Aircraft.Wing.FINENESS), 0.11, tolerance=1e-8)
         # OtherCharacteristicLengths
         assert_near_equal(prob.get_val(Aircraft.Canard.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.Canard.FINENESS), 0.0, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH), 112.30019369, tolerance=1e-8
-        )  # EL(4) = 112.3001936860821
+        )
         assert_near_equal(prob.get_val(Aircraft.Fuselage.FINENESS), 2.42617719, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8
@@ -1285,7 +1290,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.FINENESS), 0.11, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68611614, tolerance=1e-8
-        )  # EL(5)-EL(7) 15.686120387590995
+        )
         assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8
@@ -1294,7 +1299,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # TotalWettedArea
         assert_near_equal(
             prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 26208.46514246, tolerance=1e-8
-        )  # sum of SWTWG + SWTHT + SWTVT + SWTFU + SWTNA + SWTCN
+        )
 
 
 if __name__ == '__main__':

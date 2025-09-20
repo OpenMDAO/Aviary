@@ -43,8 +43,8 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=num_stations, units='deg')
 
     def setup_partials(self):
-        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
         self.declare_partials('BWB_CHORD_PER_SEMISPAN_DIST', '*', method='fd', form='forward')
+
         self.declare_partials(
             'BWB_THICKNESS_TO_CHORD_DIST',
             [
@@ -105,18 +105,14 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             outputs['BWB_LOAD_PATH_SWEEP_DIST'][i] = x
 
     def compute_partials(self, inputs, J):
-        verbosity = self.options[Settings.VERBOSITY]
-        width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
-        wingspan = inputs[Aircraft.Wing.SPAN][0]
-        rate_span = (wingspan - width) / wingspan
-        length = inputs[Aircraft.Fuselage.LENGTH][0]
-        tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD][0]
-        root_chord = inputs[Aircraft.Wing.ROOT_CHORD][0]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
-        if rear_spar_percent_chord <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be positive.')
-        xl_out = root_chord / rear_spar_percent_chord
+        # width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
+        # wingspan = inputs[Aircraft.Wing.SPAN][0]
+        # rate_span = (wingspan - width) / wingspan
+        # length = inputs[Aircraft.Fuselage.LENGTH][0]
+        # tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD][0]
+        # root_chord = inputs[Aircraft.Wing.ROOT_CHORD][0]
+        # rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
+        # xl_out = root_chord / rear_spar_percent_chord
 
         num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
 
@@ -125,12 +121,10 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         for i in range(2, num_stations):
             J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD][i] = 0.0
 
+        id_matrix = np.identity(num_stations)
+        J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST] = id_matrix
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][0] = 0.0
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][1] = 0.0
-        for i in range(2, num_stations):
-            J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][i] = 1.0
-
-        # print(J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.LOAD_PATH_SWEEP_DIST])
 
 
 class BWBComputeDetailedWingDist(om.ExplicitComponent):

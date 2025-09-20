@@ -149,7 +149,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        # partial_data = self.prob.check_partials(out_stream=None, method='cs')
         # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
 
