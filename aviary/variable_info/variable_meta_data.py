@@ -2881,42 +2881,13 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.CAPACITY_FACTOR,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISWT.FWMAX',
-        'LEAPS1': '(WeightABC)self._wing_fuel_capacity_factor',
-    },
-    units='unitless',
-    desc='fuel capacity factor',
-    default_value=1.0,
-)
-
-add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN', 'LEAPS1': None},
     units='lbm/galUS',
-    desc='fuel density',
-    default_value=0.0,
-)
-
-# TODO replace with actual fuel density
-add_meta_data(
-    Aircraft.Fuel.DENSITY_RATIO,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FULDEN',  # ['&DEFINE.WTIN.FULDEN', 'UPFUEL.FULDEN'],
-        'LEAPS1': 'aircraft.inputs.L0_fuel.density_ratio',
-    },
-    units='unitless',
-    desc='Fuel density ratio for alternate fuels compared to jet fuel (typical '
-    'density of 6.7 lbm/gal), used in the calculation of wing_capacity (if '
-    'wing_capacity is not input) and in the calculation of fuel system '
-    'weight.',
-    default_value=1.0,
+    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
+    '(if wing_capacity is not input) and in the calculation of fuel system weight.',
+    default_value=6.7,
 )
 
 add_meta_data(
@@ -2986,6 +2957,18 @@ add_meta_data(
     units='lbm',
     desc='fuel capacity of the fuselage',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU', 'LEAPS1': None},
+    units='unitless',
+    desc='Flag to control enforcement of fuel_capacity constraint. '
+    'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
+    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use carefully!',
+    default_value=False,
+    types=bool,
 )
 
 add_meta_data(
@@ -7099,6 +7082,15 @@ add_meta_data(
 # | |____  | (_) | | | | | \__ \ | |_  | |    | (_| | | | | | | | | |_  \__ \
 #  \_____|  \___/  |_| |_| |___/  \__| |_|     \__,_| |_| |_| |_|  \__| |___/
 # ===========================================================================
+
+add_meta_data(
+    Mission.Constraints.EXCESS_FUEL_CAPACITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. '
+    'Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
+)
 
 add_meta_data(
     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,

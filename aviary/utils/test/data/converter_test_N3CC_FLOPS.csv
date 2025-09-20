@@ -54,13 +54,14 @@ aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density_ratio,1.0,unitless
+aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
+aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
-aircraft:fuel:wing_fuel_capacity,25.903,lbm
+aircraft:fuel:wing_fuel_fraction,0.7752373238926116,unitless
 aircraft:furnishings:mass_scaler,0.81859,unitless
 aircraft:fuselage:laminar_flow_lower,0.0,unitless
 aircraft:fuselage:laminar_flow_upper,0.0,unitless
@@ -427,7 +428,6 @@ WTIN.cgzwf,0
 WTIN.dldwt,0
 WTIN.einl,1
 WTIN.enoz,1
-WTIN.ifufu,0
 WTIN.ispowe,0
 WTIN.mldwt,0
 WTIN.mywts,0
