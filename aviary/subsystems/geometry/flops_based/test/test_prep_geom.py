@@ -870,7 +870,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
         assert_near_equal(fuselage_height, 15.125, tolerance=1e-8)
 
-        # BWBUpdateDetailedWingDist
+        # BWBComputeDetailedWingDist
         out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
         exp0 = [0.0, 32.29, 1.0]
         assert_near_equal(out0, exp0, tolerance=1e-8)
