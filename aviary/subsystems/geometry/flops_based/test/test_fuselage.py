@@ -1,6 +1,7 @@
 import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.fuselage import (
     BWBDetailedCabinLayout,
@@ -110,6 +111,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
+@use_tempdirs
 class BWBDetailedCabinLayoutTest(unittest.TestCase):
     """Test simple cabin layout computation."""
 
@@ -165,6 +167,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
 
 
+@use_tempdirs
 class BWBFuselagePrelimTest(unittest.TestCase):
     """Test simple cabin layout computation."""
 

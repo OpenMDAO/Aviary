@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
@@ -99,6 +100,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class BWBWingCharacteristicLengthsTest(unittest.TestCase):
     """Test characteristic length and fineness ratio calculations for BWB."""
 

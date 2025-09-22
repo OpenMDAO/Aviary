@@ -1,6 +1,7 @@
 import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.wing_detailed import (
     BWBComputeDetailedWingDist,
@@ -153,6 +154,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
 
+@use_tempdirs
 class BWBComputeDetailedWingDistTest(unittest.TestCase):
     """
     For BWB, test the updated detailed wing information when detailed wing information is not given.
@@ -276,7 +278,4 @@ class BWBWingPrelimTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBUpdateDetailedWingDistTest()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

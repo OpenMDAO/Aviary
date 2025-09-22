@@ -740,6 +740,7 @@ class BWBWingTest(unittest.TestCase):
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
 
+@use_tempdirs
 class BWBSimplePrepGeomTest(unittest.TestCase):
     """
     Test computation of derived values of aircraft geometry for aerodynamics analysis.
@@ -971,6 +972,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         )
 
 
+@use_tempdirs
 class BWBDetailedPrepGeomTest(unittest.TestCase):
     """
     Test computation of derived values of aircraft geometry for aerodynamics analysis.
