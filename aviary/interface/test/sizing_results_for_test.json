@@ -492,12 +492,6 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:fuel:density_ratio",
-        1.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
         "aircraft:fuel:fuel_system_mass_scaler",
         1.0,
         "unitless",
@@ -1147,5 +1141,11 @@
         2,
         "unitless",
         "<class 'int'>"
+    ],
+    [
+        "aircraft:fuel:ignore_fuel_capacity_constraint",
+        false,
+        "unitless",
+        "<class 'bool'>"
     ]
 ]
