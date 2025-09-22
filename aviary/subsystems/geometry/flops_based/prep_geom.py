@@ -147,15 +147,15 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.XMULTH}', f'tail.{Names.XMULTH}')
         self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
+        self.add_subsystem(
+            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+        )
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem('fuselage', _BWBFuselage(), promotes_outputs=['*'])
         else:
             self.add_subsystem(
                 'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
-        self.add_subsystem(
-            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-        )
 
         if not design_type is AircraftTypes.BLENDED_WING_BODY:
             self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
