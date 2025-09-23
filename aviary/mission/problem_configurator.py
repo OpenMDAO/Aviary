@@ -150,7 +150,7 @@ class ProblemConfiguratorBase:
 
         # Loop through phases to find where option_name is True
         for idx, phase_name in enumerate(phases):
-            if aviary_group.phase_info[phase_name]['user_options'].get(option_name, False):
+            if aviary_group.mission_info[phase_name]['user_options'].get(option_name, False):
                 true_option_indices.append(idx)
 
         # Determine the groups of phases to link based on consecutive indices
