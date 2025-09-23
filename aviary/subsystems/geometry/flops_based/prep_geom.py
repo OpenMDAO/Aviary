@@ -86,7 +86,7 @@ class PrepGeom(om.Group):
                 )
             else:
                 raise ('For BWB, we always use detailed wing.')
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             if is_simple_layout:
                 self.add_subsystem(
                     'fuselage_layout',
@@ -101,6 +101,8 @@ class PrepGeom(om.Group):
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
+        else:
+            raise ('This aircraft types have not been implemented.')
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
@@ -109,7 +111,7 @@ class PrepGeom(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
             )
@@ -118,7 +120,7 @@ class PrepGeom(om.Group):
             self.add_subsystem(
                 'wing_prelim', BWBWingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
             )
@@ -136,7 +138,7 @@ class PrepGeom(om.Group):
                 'wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
 
-        if not design_type is AircraftTypes.BLENDED_WING_BODY:
+        if design_type is AircraftTypes.TRANSPORT:
             self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
             self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
             self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
@@ -152,12 +154,12 @@ class PrepGeom(om.Group):
         )
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem('fuselage', _BWBFuselage(), promotes_outputs=['*'])
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
 
-        if not design_type is AircraftTypes.BLENDED_WING_BODY:
+        if design_type is AircraftTypes.TRANSPORT:
             self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
             self.connect(f'prelim.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
             self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
@@ -177,7 +179,7 @@ class PrepGeom(om.Group):
                 promotes_inputs=['aircraft*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'wing_characteristic_lengths',
                 WingCharacteristicLength(),
