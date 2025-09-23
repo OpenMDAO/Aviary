@@ -2,8 +2,9 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class WingBendingMass(om.ExplicitComponent):
@@ -226,14 +227,11 @@ class WingShearControlMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aircraft_type',
-            default='Transport',
-            values=['Transport', 'HWB', 'GA'],
-            desc='Aircfaft type: Tranpsport, HWB, or GA',
-        )
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
+        design_type = self.options[Aircraft.Design.TYPE]
         add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, units='unitless')
         add_aviary_input(self, Aircraft.Wing.CONTROL_SURFACE_AREA, units='ft**2')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
@@ -241,13 +239,11 @@ class WingShearControlMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
 
-        if (self.options['aircraft_type'] == 'Transport') or (
-            self.options['aircraft_type'] == 'HWB'
-        ):
+        if design_type in [AircraftTypes.BLENDED_WING_BODY, AircraftTypes.TRANSPORT]:
             self.A3 = 0.68
             self.A4 = 0.34
             self.A5 = 0.60
-        elif self.options['aircraft_type'] == 'GA':
+        elif design_type is AircraftTypes.GENERAL_AVIATION:
             self.A3 = 0.25
             self.A4 = 0.50
             self.A5 = 0.50
@@ -311,26 +307,21 @@ class WingMiscMass(om.ExplicitComponent):
     """
 
     def initialize(self):
-        self.options.declare(
-            'aircraft_type',
-            default='Transport',
-            values=['Transport', 'HWB', 'GA'],
-            desc='Aircfaft type: Tranpsport, HWB, or GA',
-        )
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
+        design_type = self.options[Aircraft.Design.TYPE]
         add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.MISC_MASS, units='lbm')
 
-        if (self.options['aircraft_type'] == 'Transport') or (
-            self.options['aircraft_type'] == 'HWB'
-        ):
+        if design_type in [AircraftTypes.BLENDED_WING_BODY, AircraftTypes.TRANSPORT]:
             self.A6 = 0.035
             self.A7 = 1.50
-        elif self.options['aircraft_type'] == 'GA':
+        elif design_type is AircraftTypes.GENERAL_AVIATION:
             self.A6 = 0.16
             self.A7 = 1.2
 
