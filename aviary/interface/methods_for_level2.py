@@ -2,6 +2,7 @@ import csv
 import json
 import os
 import warnings
+from copy import deepcopy
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -1335,7 +1336,7 @@ class AviaryProblem(om.Problem):
         off_design_prob = AviaryProblem(name=self._name + '_off_design')
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
-        inputs = self.aviary_inputs.copy()
+        inputs = deepcopy(self.aviary_inputs)
 
         design_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
         inputs.set_val(Mission.Design.GROSS_MASS, design_gross_mass, units='lbm')
@@ -1398,7 +1399,7 @@ class AviaryProblem(om.Problem):
                 mission_range,
                 'nmi',
             )
-        om.Problem()
+
         # reset the AviaryProblem to run the new mission
         off_design_prob.load_inputs(inputs, phase_info, verbosity=verbosity)
 
@@ -1466,8 +1467,8 @@ class AviaryProblem(om.Problem):
 
         Returns
         -------
-        payload_range_data : tuple
-            Tuple containing the data points for the max economic and ferry ranges
+        payload_range_problems : tuple
+            Tuple containing the off-design AviaryProblems for the max economic and ferry ranges
 
         TODO currently does not account for reserve fuel
         """
@@ -1514,6 +1515,8 @@ class AviaryProblem(om.Problem):
                     {'time_duration_bounds': ((min_duration, 2 * max_duration), cruise_units)}
                 )
 
+            # TODO Verify that previously run point is actually max payload/fuel point, and if not
+            #      run off-design mission for that point
             # Point 1 is along the y axis (range=0)
             payload_1 = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
             range_1 = 0
@@ -1525,6 +1528,8 @@ class AviaryProblem(om.Problem):
 
             range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
             gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
+            # NOTE this operating mass is based on the previously run mission - assumed this is the
+            # design mission!! Includes cargo containers needed for design (max payload)
             operating_mass = float(self.get_val(Mission.Summary.OPERATING_MASS)[0])
             fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])

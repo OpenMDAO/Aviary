@@ -354,18 +354,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                         f'Design.MAX_CARGO_MASS equals Design.CARGO_MASS ({des_cargo})'
                     )
             else:
-                # user has set cargo only: assume intention to set max only for backwards compatibility.
-                # TODO we eventually want to fix these and have des & flown cargo = max cargo
-                #      that fix will possibly require updating fortran_to_aviary
-                max_cargo = cargo
-                cargo = des_cargo = 0
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
-                    warnings.warn(
-                        'As-flown cargo mass was specified but design cargo mass and max cargo mass '
-                        'were not. To maintain backwards-compatibility with converted GASP files, '
-                        f'setting max cargo mass to {cargo} and maximum and design cargo masses to '
-                        'zero.'
-                    )
+                # user has set cargo only: assume design and max cargo is equal to flown cargo
+                des_cargo = max_cargo = cargo
 
         elif max_cargo is not None:
             if des_cargo is not None:
@@ -381,8 +371,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
                     warnings.warn(
                         'Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS '
-                        'missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on'
-                        'any mission.'
+                        'missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on '
+                        'mission.'
                     )
 
         elif des_cargo is not None:

@@ -72,9 +72,9 @@ print(f'Payload Mass = {prob_fallout.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLO
 print(f'Design Gross Mass = {prob_fallout.get_val(av.Mission.Design.GROSS_MASS)[0]} lbm')
 print(f'Mission Gross Mass = {prob_fallout.get_val(av.Mission.Summary.GROSS_MASS)[0]} lbm')
 
-print('\n---------------')
+print('\n-----------------')
 print('Alternate Results')
-print('---------------')
+print('-----------------')
 print(f'Design Range = {prob_alternate.get_val(av.Mission.Design.RANGE)[0]} nmi')
 print(f'Mission Range = {prob_alternate.get_val(av.Mission.Summary.RANGE)[0]} nmi')
 print(f'Fuel Mass = {prob_alternate.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)[0]} lbm')
