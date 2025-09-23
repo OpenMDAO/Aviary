@@ -6,9 +6,9 @@ aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
-aircraft:crew_and_payload:cargo_mass,10040,lbm
-#aircraft:crew_and_payload:design:cargo_mass,0,lbm
-#aircraft:crew_and_payload:design:max_cargo_mass,0,lbm
+aircraft:crew_and_payload:cargo_mass,0,lbm
+aircraft:crew_and_payload:design:cargo_mass,0,lbm
+aircraft:crew_and_payload:design:max_cargo_mass,10040,lbm
 aircraft:crew_and_payload:design:num_seats_abreast_tourist,6,unitless
 aircraft:crew_and_payload:design:seat_pitch_tourist,29,inch
 aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
