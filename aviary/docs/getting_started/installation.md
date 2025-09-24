@@ -173,7 +173,7 @@ The following tags are available:
 - `all`: installs all optional packages listed in this section
 
 (tests-packages)=
-### Packages For Running Tests
+## Packages For Running Tests
 In order to run Aviary's test suite, you will need the following packages:
 - *testflo*
 - *ambiance*
@@ -182,7 +182,7 @@ In order to run Aviary's test suite, you will need the following packages:
 `testflo` is the core package that automates testing. The other two packages, `ambiance` and `openaerostruct`, are needed to run example cases that incorporate them as external subsystems. It is useful to be able to run these cases even if you have no interest in those specific tools to ensure that the interface for external subsystems is working correctly.
 
 (contribution-packages)=
-### Packages For Contributing Code
+## Packages For Contributing Code
 To contribute code, you will need to follow Aviary's [contribution guidelines](../developer_guide/contributing_guidelines.md). This involves the use of additional packages:
 - *pre-commit*
 
@@ -194,7 +194,7 @@ pre-commit install
 ```
 
 (docs-packages)=
-### Packages For Building Docs
+## Packages For Building Docs
 Several additional packages are needed to build a copy of the Aviary documentation locally:
 - *jupyter-book*
 - *itables*
