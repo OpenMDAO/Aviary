@@ -179,7 +179,7 @@ In order to run Aviary's test suite, you will need the following packages:
 - *ambiance*
 - *openaerostruct*
 
-`Testflo` is the core package that automates testing. The other two packages, `ambiance` and `openaerostruct`, are needed to run example cases that incorporate them as external subsystems. It is useful to be able to run these cases even if you have no interest in those specific tools to ensure that the interface for external subsystems is working correctly.
+`testflo` is the core package that automates testing. The other two packages, `ambiance` and `openaerostruct`, are needed to run example cases that incorporate them as external subsystems. It is useful to be able to run these cases even if you have no interest in those specific tools to ensure that the interface for external subsystems is working correctly.
 
 (contribution-packages)=
 ### Packages For Contributing Code
