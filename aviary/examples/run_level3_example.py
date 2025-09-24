@@ -496,37 +496,6 @@ prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 prob.verbosity = Verbosity.BRIEF
 
 prob.run_aviary_problem()
+
 # prob.model.list_vars(units=True, print_arrays=True)
-# prob.list_driver_vars(
-#     print_arrays=True,
-#     desvar_opts=[
-#         'lower',
-#         'upper',
-#         'ref',
-#         'ref0',
-#         'indices',
-#         'adder',
-#         'scaler',
-#         'parallel_deriv_color',
-#         'cache_linear_solution',
-#         'units',
-#         'min',
-#         'max',
-#     ],
-#     cons_opts=[
-#         'lower',
-#         'upper',
-#         'equals',
-#         'ref',
-#         'ref0',
-#         'indices',
-#         'adder',
-#         'scaler',
-#         'linear',
-#         'parallel_deriv_color',
-#         'cache_linear_solution',
-#         'units',
-#         'min',
-#         'max',
-#     ],
-# )
+# prob.list_driver_vars(print_arrays=True)
