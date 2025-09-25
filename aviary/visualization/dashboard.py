@@ -444,7 +444,7 @@ def create_report_frame(documentation, format, text_filepath):
     return report_pane
 
 
-def create_aviary_variables_table_data_nested(script_name, recorder_file):
+def create_aviary_variables_table_data_nested(output_dir, recorder_file):
     """
     Create a JSON file with information about Aviary variables.
 
@@ -458,6 +458,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     Parameters
     ----------
+    output_dir : Path, str
+        Output directory for case
     recorder_file : str
         Name of the recorder file containing the Problem cases.
 
@@ -547,7 +549,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             )
 
     aviary_variables_file_path = (
-        f'{script_name}_out/reports/aviary_vars/{aviary_variables_json_file_name}'
+        f'{output_dir}/reports/aviary_vars/{aviary_variables_json_file_name}'
     )
     with open(aviary_variables_file_path, 'w') as fp:
         json.dump(table_data_nested, fp)
@@ -1356,11 +1358,11 @@ def dashboard(script_name, port=0, run_in_background=False):
     # Make the Aviary variables table pane
     if os.path.isfile(problem_recorder_path):
         try:
-            # Make dir reports/script_name/aviary_vars if needed
+            # Make dir reports/out_dir/aviary_vars if needed
             aviary_vars_dir = Path(reports_dir) / 'aviary_vars'
             aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
-            # copy index.html file to reports/script_name/aviary_vars/index.html
+            # copy index.html file to reports/out_dir/aviary_vars/index.html
             aviary_dir = Path(importlib.util.find_spec('aviary').origin).parent
 
             shutil.copy(
@@ -1371,12 +1373,12 @@ def dashboard(script_name, port=0, run_in_background=False):
                 aviary_dir.joinpath('visualization/assets/aviary_vars/script.js'),
                 aviary_vars_dir.joinpath('script.js'),
             )
-            # copy script.js file to reports/script_name/aviary_vars/index.html.
+            # copy script.js file to reports/out_dir/aviary_vars/index.html.
             # mod the script.js file to point at the json file
             # create the json file and put it in
-            # reports/script_name/aviary_vars/aviary_vars.json
+            # reports/out_dir/aviary_vars/aviary_vars.json
             create_aviary_variables_table_data_nested(
-                script_name, problem_recorder_path
+                out_dir, problem_recorder_path
             )  # create the json file
         except Exception as e:
             pane = _create_message_pane(
