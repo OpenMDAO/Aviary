@@ -41,6 +41,6 @@ prob.add_design_variables()
 prob.add_objective()
 
 prob.setup()
+
+# TODO: N3CC optimization does not return success.
 prob.run_aviary_problem('dymos_solution.db')
-
-
