@@ -20,8 +20,8 @@ class SizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 6)
-        options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
 
         self.prob = om.Problem()
@@ -38,7 +38,7 @@ class SizeGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
         )
@@ -146,8 +146,8 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 6)
-        options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
 
         self.prob = om.Problem()
@@ -167,7 +167,7 @@ class SizeGroupTestCase2(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Strut.ATTACHMENT_LOCATION, val=12, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Strut.AREA_RATIO, val=0.021893, units='unitless'
@@ -333,9 +333,10 @@ class SizeGroupTestCase3(unittest.TestCase):
         )
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 1)
-        options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 1)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -351,7 +352,7 @@ class SizeGroupTestCase3(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=25, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
@@ -519,8 +520,8 @@ class SizeGroupTestCase4(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
-        options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 1)
-        options.set_val(Aircraft.Fuselage.SEAT_PITCH, 29, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 1)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
 
         self.prob = om.Problem()
@@ -537,7 +538,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0, units='unitless'
         )
@@ -695,8 +696,9 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
-        options.set_val(Aircraft.Fuselage.NUM_SEATS_ABREAST, 18)
-        options.set_val(Aircraft.Fuselage.SEAT_PITCH, 32, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 18)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
 
@@ -714,7 +716,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless'
         )

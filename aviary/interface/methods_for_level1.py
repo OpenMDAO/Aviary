@@ -1,7 +1,8 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
-from importlib.machinery import SourceFileLoader
+from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
+import sys
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
@@ -85,9 +86,9 @@ def run_aviary(
     # Allow for user overrides here
     prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
 
-    # Preprocess inputs
     prob.check_and_preprocess_inputs(verbosity=verbosity)
 
+    # Add Systems
     prob.add_pre_mission_systems(verbosity=verbosity)
 
     prob.add_phases(phase_info_parameterization=phase_info_parameterization, verbosity=verbosity)
@@ -105,9 +106,7 @@ def run_aviary(
     # Detail which variables the optimizer can control
     prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
-    prob.setup()
-
-    prob.set_initial_guesses(verbosity=verbosity)
+    prob.setup(verbosity=verbosity)
 
     prob.run_aviary_problem(
         record_filename,
@@ -132,7 +131,11 @@ def run_level_1(
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
-        phase_info_file = SourceFileLoader('phase_info_file', str(phase_info_path)).load_module()
+        spec = spec_from_file_location('phase_info_file', str(phase_info_path))
+        phase_info_file = module_from_spec(spec)
+        sys.modules['phase_info_file'] = phase_info_file
+        spec.loader.exec_module(phase_info_file)
+
         phase_info = getattr(phase_info_file, 'phase_info')
         kwargs['phase_info_parameterization'] = getattr(
             phase_info_file, 'phase_info_parameterization', None

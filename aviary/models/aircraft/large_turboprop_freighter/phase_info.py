@@ -39,7 +39,7 @@ energy_phase_info = {
             'mass_ref': (154000, 'lbm'),
             'throttle_enforcement': 'control',
             'time_initial_bounds': ((24.0, 128.0), 'min'),
-            'time_duration_bounds': ((56.5, 1000.), 'min'),
+            'time_duration_bounds': ((56.5, 1000.0), 'min'),
         },
         'initial_guesses': {
             'altitude': ([21_000, 21_000.0], 'ft'),

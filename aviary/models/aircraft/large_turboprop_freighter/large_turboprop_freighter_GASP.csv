@@ -22,6 +22,7 @@ aircraft:design:reserve_fuel_additional, 0.667, lbm
 aircraft:design:static_margin, 0.05, unitless
 aircraft:design:structural_mass_increment, 0, lbm
 aircraft:design:drag_divergence_shift, 0, unitless
+aircraft:design:type,transport,unitless
 
 # Misc Systems
 aircraft:air_conditioning:mass_coefficient, 2.65, unitless
@@ -39,6 +40,8 @@ aircraft:instruments:mass_coefficient, 0.0416, unitless
 # Crew and Payload
 aircraft:crew_and_payload:cargo_mass, 31273, lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger, 0, lbm
+aircraft:crew_and_payload:design:num_seats_abreast_tourist, 6, unitless
+aircraft:crew_and_payload:design:seat_pitch_tourist, 41.24, inch
 aircraft:crew_and_payload:num_passengers, 60, unitless
 aircraft:crew_and_payload:passenger_mass_with_bags, 190, lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger, 0, lbm
@@ -88,10 +91,8 @@ aircraft:fuselage:form_factor, 1.25, unitless
 aircraft:fuselage:mass_coefficient, 145.87, unitless
 aircraft:fuselage:nose_fineness, 1, unitless
 aircraft:fuselage:num_aisles, 1, unitless
-aircraft:fuselage:num_seats_abreast, 6, unitless
 aircraft:fuselage:pilot_compartment_length, 10.6, ft
 aircraft:fuselage:pressure_differential, 6.55, psi
-aircraft:fuselage:seat_pitch, 41.24, inch
 aircraft:fuselage:seat_width, 18, inch
 aircraft:fuselage:tail_fineness, 2.9, unitless
 aircraft:fuselage:wetted_area_scaler, 1, unitless
@@ -153,7 +154,7 @@ aircraft:wing:has_strut, False, unitless
 aircraft:wing:height, 14.5, ft
 aircraft:wing:high_lift_mass_coefficient, 1.2, unitless
 aircraft:wing:incidence, 2, deg
-aircraft:wing:loading, 88.846, lbf/ft**2
+aircraft:design:wing_loading, 88.846, lbf/ft**2
 aircraft:wing:mass_coefficient, 131.32, unitless
 aircraft:wing:max_lift_ref, 1.5, unitless
 aircraft:wing:max_slat_deflection_landing, 0, deg

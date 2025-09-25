@@ -45,7 +45,6 @@ aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,6293.8,lbm
 aircraft:engine:reference_sls_thrust,22200.5,lbf
-aircraft:engine:scale_factor,0.99997747798473,unitless
 aircraft:engine:scaled_sls_thrust,22200.0,0.0,0.0,0.0,0.0,0.0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
@@ -55,13 +54,14 @@ aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density_ratio,1.0,unitless
+aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
+aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
-aircraft:fuel:wing_fuel_capacity,25.903,lbm
+aircraft:fuel:wing_fuel_fraction,0.7752373238926116,unitless
 aircraft:furnishings:mass_scaler,0.81859,unitless
 aircraft:fuselage:laminar_flow_lower,0.0,unitless
 aircraft:fuselage:laminar_flow_upper,0.0,unitless
@@ -119,6 +119,7 @@ aircraft:wing:bwb_aft_body_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan,0.273522534166506,0.204274849507037,0.0888152947868224,0.0725353313595661,unitless
 aircraft:wing:composite_fraction,0.33333,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
+aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,6.0,deg
 aircraft:wing:glove_and_bat,0.0,ft**2
 aircraft:wing:input_station_dist,0.0,0.34453777998,0.919,1.0,unitless
@@ -143,7 +144,6 @@ aircraft:wing:thickness_to_chord,0.12233,0.0,0.0,0.0,0.0,0.0,unitless
 aircraft:wing:thickness_to_chord_dist,0.14233,0.12233,0.1108,0.1058,unitless
 aircraft:wing:thickness_to_chord_reference,0.116565,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
-aircraft:wing:use_detailed_mass,True,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
@@ -188,6 +188,7 @@ CONFIN.htvc,1
 CONFIN.pglov,0
 CONFIN.plr,0.0,0.0,0.0,0.0,0.0,0.0
 CONFIN.rotvel,0.0,0.0,0.0,0.0,0.0,0.0
+CONFIN.twr,0.0
 CONFIN.varth,0.0,0.0,0.0,0.0,0.0,0.0
 CONFIN.vtvc,1
 CONFIN.wsr,0
@@ -427,7 +428,6 @@ WTIN.cgzwf,0
 WTIN.dldwt,0
 WTIN.einl,1
 WTIN.enoz,1
-WTIN.ifufu,0
 WTIN.ispowe,0
 WTIN.mldwt,0
 WTIN.mywts,0

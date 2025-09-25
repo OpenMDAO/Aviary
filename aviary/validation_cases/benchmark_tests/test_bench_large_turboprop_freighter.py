@@ -49,11 +49,9 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         #     prob.aviary_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 
         prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
-        prob.add_driver('SNOPT')
+
+        prob.build_model()
+        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()

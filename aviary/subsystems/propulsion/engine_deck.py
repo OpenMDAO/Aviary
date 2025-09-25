@@ -237,7 +237,7 @@ class EngineDeck(EngineModel):
                 val = self.meta_data[key]['default_value']
                 units = self.meta_data[key]['units']
 
-                if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                if self.get_val(Settings.VERBOSITY) > Verbosity.BRIEF:
                     warnings.warn(
                         f'<{key}> is a required option for EngineDecks, but has not been '
                         f'specified for EngineDeck <{self.name}>. The default value '

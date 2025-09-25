@@ -63,7 +63,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'altitude_final': (32000.0, 'ft'),
                     'altitude_bounds': ((0.0, 34000.0), 'ft'),
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
             },
@@ -112,17 +112,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
         # Allow for user overrides here
         prob.load_inputs(self.aircraft_definition_file, self.phase_info)
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP', verbosity=0)
 
@@ -133,8 +125,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
         prob.add_objective()
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.run_aviary_problem(run_driver=False, make_plots=False)
 

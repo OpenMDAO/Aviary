@@ -316,13 +316,13 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:fuselage:num_seats_abreast",
+        "aircraft:crew_and_payload:design:num_seats_abreast_tourist",
         6,
         "unitless",
         "<class 'int'>"
     ],
     [
-        "aircraft:fuselage:seat_pitch",
+        "aircraft:crew_and_payload:design:seat_pitch_tourist",
         29,
         "inch",
         "<class 'int'>"
@@ -1072,7 +1072,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:wing:use_detailed_mass",
+        "aircraft:wing:detailed_wing",
         true,
         "unitless",
         "<class 'bool'>"

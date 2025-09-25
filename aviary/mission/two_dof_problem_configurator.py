@@ -144,29 +144,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryProblem
             Problem that owns this configurator.
         """
-        OptionsToValues = create_opts2vals(
-            [
-                Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE,
-            ]
-        )
-
-        # Add thrust-to-weight ratio subsystem
-        aviary_group.add_subsystem(
-            'tw_ratio',
-            om.ExecComp(
-                f'TW_ratio = Fn_SLS / (takeoff_mass * {GRAV_ENGLISH_LBM})',
-                TW_ratio={'units': 'unitless'},
-                Fn_SLS={'units': 'lbf'},
-                takeoff_mass={'units': 'lbm'},
-            ),
-            promotes_inputs=[
-                ('Fn_SLS', Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST),
-                ('takeoff_mass', Mission.Summary.GROSS_MASS),
-            ],
-            promotes_outputs=[('TW_ratio', Aircraft.Design.THRUST_TO_WEIGHT_RATIO)],
-        )
-
         aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(
             Mission.Design.CRUISE_ALTITUDE, units='ft'
         )
@@ -525,23 +502,11 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             src_indices=[-1],
         )
 
-        connect_map = {
-            f'traj.{aviary_group.regular_phases[-1]}.timeseries.distance': Mission.Summary.RANGE,
-        }
-
         # promote all ParamPort inputs for analytic segments as well
         param_list = list(ParamPort.param_data)
         aviary_group.promotes('taxi', inputs=param_list)
         aviary_group.promotes('landing', inputs=param_list)
         aviary_group.connect('taxi.mass', 'vrot.mass')
-
-        for source, target in connect_map.items():
-            aviary_group.connect(
-                source,
-                target,
-                src_indices=[-1],
-                flat_src_indices=True,
-            )
 
         if 'ascent' in aviary_group.phase_info:
             self._add_groundroll_eq_constraint(aviary_group)

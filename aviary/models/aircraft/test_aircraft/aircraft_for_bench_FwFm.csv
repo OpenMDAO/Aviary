@@ -25,6 +25,7 @@ aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
 aircraft:design:touchdown_mass,152800.0,lbm
 aircraft:design:reserve_fuel_additional,3000.,lbm
+aircraft:design:reserve_fuel_fraction,0,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:use_alt_mass,False,unitless
@@ -63,7 +64,6 @@ aircraft:fins:mass,0.0,lbm
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,10.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density_ratio,1.0,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:num_tanks,7,unitless
@@ -119,7 +119,7 @@ aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2
 aircraft:wing:control_surface_area_ratio,0.1,unitless
-aircraft:wing:use_detailed_mass,True,unitless
+aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:glove_and_bat,134.0,ft**2
 aircraft:wing:input_station_dist,0.,0.2759,0.9367,unitless
 aircraft:wing:load_distribution_control,2.0,unitless

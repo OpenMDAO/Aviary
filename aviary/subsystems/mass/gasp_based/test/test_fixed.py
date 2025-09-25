@@ -454,6 +454,7 @@ class EngineTestCase2(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -720,7 +721,9 @@ class HighLiftTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.FLAP_SPAN_RATIO, val=0.88, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=93.1, units='lbf/ft**2')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.WING_LOADING, val=93.1, units='lbf/ft**2'
+        )
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.11, units='unitless'
         )
@@ -1110,7 +1113,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128)
         self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
@@ -1196,6 +1199,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=200, units='lbm'
         )  # bug fixed value and original value
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
+        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1419,7 +1423,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
-        self.prob.model.set_input_defaults(Aircraft.Wing.LOADING, val=128)
+        self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128)
         self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
 
@@ -1608,7 +1612,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 Aircraft.Wing.FLAP_CHORD_RATIO: (0.3, 'unitless'),
                 Aircraft.Wing.SLAT_SPAN_RATIO: (0.9, 'unitless'),
                 Aircraft.Wing.FLAP_SPAN_RATIO: (0.65, 'unitless'),
-                Aircraft.Wing.LOADING: (128.0, 'lbf/ft**2'),
+                Aircraft.Design.WING_LOADING: (128.0, 'lbf/ft**2'),
                 Aircraft.Wing.THICKNESS_TO_CHORD_ROOT: (0.15, 'unitless'),
                 Aircraft.Fuselage.AVG_DIAMETER: (11.0, 'ft'),
                 Aircraft.Wing.CENTER_CHORD: (17.0, 'ft'),
@@ -1846,7 +1850,7 @@ class BWBHighLiftTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.27444, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, 0.831687927, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_SPAN_RATIO, 0.61, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0, units='lbf/ft**2')
+        prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
@@ -2073,7 +2077,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001)
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2)
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, 0.831687927)
-        prob.model.set_input_defaults(Aircraft.Wing.LOADING, 70.0)
+        prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0)
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165)
         prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, 22.97244452)
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
