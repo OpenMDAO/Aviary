@@ -16,7 +16,7 @@ import numpy as np
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.flops_based.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
 from aviary.mission.initial_guess_builders import InitialGuess
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.functions import setup_trajectory_params

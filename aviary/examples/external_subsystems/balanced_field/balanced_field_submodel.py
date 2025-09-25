@@ -1,14 +1,11 @@
 """
 Group containing a submodel component with detailed landing.
 """
-from copy import copy
 import warnings
 
 import openmdao.api as om
 
 import aviary.api as av
-from aviary.utils.preprocessors import preprocess_options
-from aviary.variable_info.enums import EquationsOfMotion
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
