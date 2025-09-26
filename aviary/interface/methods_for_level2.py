@@ -464,9 +464,11 @@ class AviaryProblem(om.Problem):
                 print_level = 0
                 driver.opt_settings['print_user_options'] = 'no'
             elif verbosity == Verbosity.BRIEF:
-                print_level = 5  # minimum to show iterations
+                print_level = 3  # minimum to get exit status
                 driver.opt_settings['print_user_options'] = 'no'
                 driver.opt_settings['print_frequency_iter'] = 10
+            elif verbosity == Verbosity.VERBOSE:
+                print_level = 5
             else:  # DEBUG
                 print_level = 7
             driver.opt_settings['print_level'] = print_level
@@ -500,15 +502,13 @@ class AviaryProblem(om.Problem):
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            driver.options['debug_print'] = ['desvars']
-            if verbosity == Verbosity.DEBUG:
-                driver.options['debug_print'] = [
-                    'desvars',
-                    'ln_cons',
-                    'nl_cons',
-                    'objs',
-                ]
+        if verbosity == Verbosity.DEBUG:
+            driver.options['debug_print'] = [
+                'desvars',
+                'ln_cons',
+                'nl_cons',
+                'objs',
+            ]
 
     def add_design_variables(self, verbosity=None):
         """
