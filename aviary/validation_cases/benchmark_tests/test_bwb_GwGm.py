@@ -41,25 +41,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
             141345.01347269,
             tolerance=rtol,
-        )  # WG = 150000.0
+        )
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
             80199.17943303,
             tolerance=rtol,
-        )  # OWE = 82982.0
+        )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
             27395.83401138,
             tolerance=rtol,
-        )  # WFA = 33268.0
+        )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
             2203.95598924,
             tolerance=rtol,
-        )  # DLT
+        )
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3500.0, tolerance=rtol)
 
