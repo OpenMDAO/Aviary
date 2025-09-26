@@ -22,7 +22,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_bench_GwGm(self):
+    def test_bench_GwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',

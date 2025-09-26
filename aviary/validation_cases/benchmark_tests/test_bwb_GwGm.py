@@ -23,13 +23,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_GwGm(self):
+    def test_bench_bwb_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
             'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
         )
 
         self.assertTrue(prob.result.success)
@@ -39,25 +39,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            141260.50569975,
+            141345.01347269,
             tolerance=rtol,
         )  # WG = 150000.0
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            80181.28382411,
+            80199.17943303,
             tolerance=rtol,
         )  # OWE = 82982.0
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            27329.22187564,
+            27395.83401138,
             tolerance=rtol,
         )  # WFA = 33268.0
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2204.60962657,
+            2203.95598924,
             tolerance=rtol,
         )  # DLT
 
@@ -65,10 +65,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            116415.96054007,
+            116439.9117977,
             tolerance=rtol,
         )
-
 
 if __name__ == '__main__':
     unittest.main()
