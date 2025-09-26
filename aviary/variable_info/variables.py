@@ -521,7 +521,7 @@ class Aircraft:
         CENTER_DISTANCE = 'aircraft:wing:center_distance'
         CHARACTERISTIC_LENGTH = 'aircraft:wing:characteristic_length'
         CHOOSE_FOLD_LOCATION = 'aircraft:wing:choose_fold_location'
-        CHORD_PER_SEMISPAN_DIST = 'aircraft:wing:chord_per_semispan'
+        CHORD_PER_SEMISPAN_DIST = 'aircraft:wing:chord_per_semispan_list'
         COMPOSITE_FRACTION = 'aircraft:wing:composite_fraction'
         CONTROL_SURFACE_AREA = 'aircraft:wing:control_surface_area'
         CONTROL_SURFACE_AREA_RATIO = 'aircraft:wing:control_surface_area_ratio'
