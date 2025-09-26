@@ -7,7 +7,7 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
 from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
 from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
 from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
-from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
+from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase, ElectricCruisePhase
 from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
 from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
