@@ -1,10 +1,13 @@
-from aviary.mission.gasp_based.ode.breguet_cruise_ode import BreguetCruiseODE
+from aviary.mission.gasp_based.ode.breguet_cruise_ode import (
+    BreguetCruiseODE,
+    ElectricBreguetCruiseODE,
+)
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class CruisePhaseOptions(AviaryOptionsDictionary):
@@ -169,3 +172,8 @@ CruisePhase._add_initial_guess_meta_data(
 )
 
 CruisePhase._add_initial_guess_meta_data(InitialGuessState('mach'), desc='initial guess for mach')
+
+
+class ElectricCruisePhase(CruisePhase):
+    default_name = 'electric_cruise_phase'
+    default_ode_class = ElectricBreguetCruiseODE

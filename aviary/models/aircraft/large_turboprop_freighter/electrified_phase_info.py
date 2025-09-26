@@ -259,7 +259,7 @@ two_dof_phase_info = {
             'throttle': ([0.956, 0.956], 'unitless'),
         },
     },
-    'cruise': {
+    'electric_cruise': {
         'external_subsystems': [BatteryBuilder()],
         'user_options': {
             'alt_cruise': (21_000, 'ft'),
