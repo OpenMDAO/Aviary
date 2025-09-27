@@ -21,9 +21,14 @@ from aviary.subsystems.mass.flops_based.fuel_system import (
 from aviary.subsystems.mass.flops_based.furnishings import (
     AltFurnishingsGroupMass,
     AltFurnishingsGroupMassBase,
+    BWBFurnishingsGroupMass,
     TransportFurnishingsGroupMass,
 )
-from aviary.subsystems.mass.flops_based.fuselage import AltFuselageMass, TransportFuselageMass
+from aviary.subsystems.mass.flops_based.fuselage import (
+    AltFuselageMass,
+    BWBFuselageMass,
+    TransportFuselageMass,
+)
 from aviary.subsystems.mass.flops_based.horizontal_tail import (
     AltHorizontalTailMass,
     HorizontalTailMass,
@@ -54,6 +59,7 @@ from aviary.subsystems.mass.flops_based.unusable_fuel import (
 )
 from aviary.subsystems.mass.flops_based.vertical_tail import AltVerticalTailMass, VerticalTailMass
 from aviary.subsystems.mass.flops_based.wing_group import WingMassGroup
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
@@ -67,9 +73,11 @@ class MassPremission(om.Group):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
         alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
+        design_type = self.options[Aircraft.Design.TYPE]
 
         self.add_subsystem('cargo', CargoMass(), promotes_inputs=['*'], promotes_outputs=['*'])
 
@@ -137,12 +145,20 @@ class MassPremission(om.Group):
                 promotes_outputs=['*'],
             )
 
-            self.add_subsystem(
-                'furnishings',
-                AltFurnishingsGroupMass(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                self.add_subsystem(
+                    'furnishings',
+                    BWBFurnishingsGroupMass(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'furnishings',
+                    AltFurnishingsGroupMass(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
             self.add_subsystem(
                 'hydraulics',
@@ -192,12 +208,20 @@ class MassPremission(om.Group):
                 promotes_outputs=['*'],
             )
 
-            self.add_subsystem(
-                'furnishings',
-                TransportFurnishingsGroupMass(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                self.add_subsystem(
+                    'furnishings',
+                    BWBFurnishingsGroupMass(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'furnishings',
+                    TransportFurnishingsGroupMass(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
             self.add_subsystem(
                 'hydraulics',
@@ -267,16 +291,28 @@ class MassPremission(om.Group):
                 'surf_ctrl', AltSurfaceControlMass(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
-            self.add_subsystem(
-                'fuselage',
-                AltFuselageMass(),
-                promotes_inputs=[
-                    '*',
-                ],
-                promotes_outputs=[
-                    '*',
-                ],
-            )
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                self.add_subsystem(
+                    'fuselage',
+                    BWBFuselageMass(),
+                    promotes_inputs=[
+                        '*',
+                    ],
+                    promotes_outputs=[
+                        '*',
+                    ],
+                )
+            else:
+                self.add_subsystem(
+                    'fuselage',
+                    AltFuselageMass(),
+                    promotes_inputs=[
+                        '*',
+                    ],
+                    promotes_outputs=[
+                        '*',
+                    ],
+                )
 
             self.add_subsystem(
                 'htail',
@@ -298,16 +334,28 @@ class MassPremission(om.Group):
                 'surf_ctrl', SurfaceControlMass(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
-            self.add_subsystem(
-                'fuselage',
-                TransportFuselageMass(),
-                promotes_inputs=[
-                    '*',
-                ],
-                promotes_outputs=[
-                    '*',
-                ],
-            )
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                self.add_subsystem(
+                    'fuselage',
+                    BWBFuselageMass(),
+                    promotes_inputs=[
+                        '*',
+                    ],
+                    promotes_outputs=[
+                        '*',
+                    ],
+                )
+            else:
+                self.add_subsystem(
+                    'fuselage',
+                    TransportFuselageMass(),
+                    promotes_inputs=[
+                        '*',
+                    ],
+                    promotes_outputs=[
+                        '*',
+                    ],
+                )
 
             self.add_subsystem(
                 'htail',

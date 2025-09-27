@@ -1,10 +1,16 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.fuselage import AltFuselageMass, TransportFuselageMass
+from aviary.subsystems.mass.flops_based.fuselage import (
+    AltFuselageMass,
+    BWBAftBodyMass,
+    BWBFuselageMass,
+    TransportFuselageMass,
+)
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     Version,
@@ -13,7 +19,8 @@ from aviary.validation_cases.validation_tests import (
     get_flops_options,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class FuselageMassTest(unittest.TestCase):
@@ -148,5 +155,74 @@ class AltFuselageMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class BWBFuselageMassTest(unittest.TestCase):
+    """Test BWB fuselage mass"""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'fuselage',
+            BWBFuselageMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=5173.187, units='ft**2')
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        prob.run_model()
+
+        tol = 1e-8
+        assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 152790.65666018, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
+
+class BWBAftBodyMassTest(unittest.TestCase):
+    """Test BWB aft body mass"""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3, units='unitless')
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'aftbody',
+            BWBAftBodyMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, val=7390.267, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=5173.187, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=137.5, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.ROOT_CHORD, val=63.96, units='ft')
+
+        setup_model_options(self.prob, aviary_options)
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        prob.run_model()
+
+        tol = 1e-8
+        assert_near_equal(self.prob[Aircraft.Fuselage.AFTBODY_MASS], 24278.05868511, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBFuselageMassTest()
+    test.setUp()
+    test.test_case1()
