@@ -32,6 +32,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='IPOPT',
         )
 
+        # TODO: This problem does not always converge.
+        # self.assertTrue(prob.result.success)
+
         rtol = 1e-2
 
         # There are no truth values for these.
@@ -55,7 +58,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
             local_phase_info,
             verbosity=0,
             optimizer='SNOPT',
+            max_iter=60,
         )
+
+        # TODO: This problem does not always converge.
+        # self.assertTrue(prob.result.success)
 
         rtol = 1e-2
 

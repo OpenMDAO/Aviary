@@ -122,7 +122,9 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         takeoff_trajectory_builder.apply_initial_guesses(takeoff, 'traj')
 
         # run the problem
-        dm.run_problem(takeoff, run_driver=True, simulate=True, make_plots=False)
+        takeoff.result = dm.run_problem(takeoff, run_driver=True, simulate=True, make_plots=False)
+
+        self.assertTrue(takeoff.result.success)
 
         # takeoff.model.traj.phases.brake_release_to_decision_speed.list_inputs(print_arrays=True)
         # takeoff.model.list_outputs(print_arrays=True)
