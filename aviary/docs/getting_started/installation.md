@@ -113,7 +113,7 @@ build_pyoptsparse -s /path_to_SNOPT_dir
 ```
 
 #### Troubleshooting
-There are several places this installation can fail, here are steps to resolve some common errors. First, try running `build_pyoptsparse -v` to get a more verbose output.
+Here are steps to resolve some common errors seen when installing pyOptSparse. First, try running `build_pyoptsparse -v` to get a more verbose output.
 
 *If you see an error for a missing command:*
 ```
@@ -255,7 +255,7 @@ testflo
 
 The tests should begin running. You will see a series of characters printed to the screen, along with normal printouts from running Aviary cases. Periods indicate successful tests, "E" for failed tests, and "S" represents a skipped test. Skipped tests are not a concern. Tests are flagged to be skipped for a variety of reasons, and do not mean there is a problem with your installation.
 
-If you are missing optional packages, tests that require them will simply be skipped, so you should never be seeing failures because of which installation guide you used. If you run into an MPI error, you can add the `--nompi` option to the testflo command run.
+If you are missing optional packages, tests that require them will simply be skipped, so you should never be seeing failures because of which installation guide you used. If you receive an MPI error, you can add the `--nompi` option to the testflo command run.
 
 A successful test run should look like the following once complete. The exact number of tests ran will vary as Aviary development continues, but there should be not be any failed tests.
 
