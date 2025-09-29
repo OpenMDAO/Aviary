@@ -29,7 +29,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=0,
+            verbosity=2,
+            max_iter=60,
         )
 
         self.assertTrue(prob.result.success)
