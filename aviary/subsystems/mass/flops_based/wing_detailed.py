@@ -4,7 +4,6 @@ from openmdao.components.interp_util.interp import InterpND
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
-import pdb
 
 
 class DetailedWingBendingFact(om.ExplicitComponent):

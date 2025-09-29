@@ -472,9 +472,10 @@ class BWBDetailedWingBendingTest1(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 2.68745091
+        BENDING_MATERIAL_FACTOR_expected = 2.68745091  # FLOPS W = 2.6874568870727225
         pod_inertia_expected = 0.84
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
+        # current BWB data set does not check the following
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
 
@@ -484,7 +485,7 @@ class BWBDetailedWingBendingTest2(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def ttest_case1(self):
+    def test_case1(self):
         prob = self.prob
 
         aviary_options = AviaryValues()
@@ -493,11 +494,27 @@ class BWBDetailedWingBendingTest2(unittest.TestCase):
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DIST,
-            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            [
+                0,
+                40.110378036763386,
+                0.58970640947549269,
+                0.62389754201920156,
+                0.65808867456291043,
+                0.6922798071066194,
+                0.72647093965032838,
+                0.76059368992894993,
+                0.79485320473774623,
+                0.82904433728145521,
+                0.86323546982516419,
+                0.89742660236887306,
+                0.93154935264749461,
+                0.96580886745629091,
+                0.99999999999999989,
+            ],
             units='unitless',
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
-        aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 16, units='unitless')
+        aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 100, units='unitless')
 
         prob.model.add_subsystem(
             'fuselage',
@@ -520,7 +537,7 @@ class BWBDetailedWingBendingTest2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         prob.set_val(Aircraft.Engine.POD_MASS, np.array([0]), units='lbm')
-        prob.set_val(Aircraft.Wing.SPAN, val=238.080049)
+        prob.set_val(Aircraft.Wing.SPAN, val=253.72075607352679)
 
         wing_location = np.zeros(0)
         wing_location = np.append(wing_location, [0.0])
@@ -529,21 +546,21 @@ class BWBDetailedWingBendingTest2(unittest.TestCase):
         prob.set_val(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             [
-                137.5,
-                11.0145643,
-                0.327280116,
-                0.283045195,
-                0.241725260,
-                0.210316280,
-                0.184883023,
-                0.165352613,
-                0.154567162,
-                0.144510459,
-                0.134308006,
-                0.124178427,
-                0.114048849,
-                0.103919271,
-                0.0937896925,
+                112.3001936860821,
+                55,
+                0.30710475250759373,
+                0.26559671759953107,
+                0.22682397329496512,
+                0.19735121704228803,
+                0.17348580652677914,
+                0.15515935948335116,
+                0.14503878425041333,
+                0.13560203166834967,
+                0.12602851455611114,
+                0.11652337970896007,
+                0.10701824486180898,
+                0.0975131100146579,
+                0.088007975167506816,
             ],
             units='unitless',
         )
@@ -579,20 +596,12 @@ class BWBDetailedWingBendingTest2(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 3.9706324730627931
+        BENDING_MATERIAL_FACTOR_expected = 3.93931503  # FLOPS W=3.9724796254619563
         pod_inertia_expected = 0.84
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
+        # current BWB data set does not check the following
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
 
 if __name__ == '__main__':
     unittest.main()
-    n = 2
-    if n == 1:
-        test = DetailedWingBendingTest()
-        test.setUp()
-        test.test_case_fuselage_engines()
-    elif n == 2:
-        test = BWBDetailedWingBendingTest2()
-        test.setUp()
-        test.test_case1()
