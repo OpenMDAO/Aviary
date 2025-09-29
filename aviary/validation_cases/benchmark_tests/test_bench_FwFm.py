@@ -209,7 +209,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=0,
+            verbosity=1,
             max_iter=50,
             optimizer='SNOPT',
         )

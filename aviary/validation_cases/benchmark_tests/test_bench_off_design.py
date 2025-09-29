@@ -488,10 +488,16 @@ class PayloadRangeTest(unittest.TestCase):
         # run design case
         prob = self.prob = AviaryProblem(verbosity=1)
         energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
-
+        energy_phase_info['climb']['user_options']['time_duration_bounds'] = ((20.0, 90.0), 'min')
+        energy_phase_info['cruise']['user_options']['time_initial_bounds'] = ((20.0, 192.0), 'min')
+        energy_phase_info['descent']['user_options']['time_duration_bounds'] = (
+            (25.0, 60.0),
+            'min',
+        )
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', energy_phase_info
         )
+        # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -530,9 +536,9 @@ class PayloadRangeTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = Test2DOFOffDesign()
-    test.setUp()
-    test.test_fallout_mission_changed()
+    # test = Test2DOFOffDesign()
+    # test.setUp()
+    # test.test_fallout_mission_changed()
 
-    # test = PayloadRangeTest()
-    # test.test_payload_range()
+    test = PayloadRangeTest()
+    test.test_payload_range()

@@ -1268,6 +1268,7 @@ class AviaryProblem(om.Problem):
         mission_gross_mass=None,
         mission_range=None,
         optimizer=None,
+        name=None,
         verbosity=None,
     ):
         """
@@ -1318,6 +1319,8 @@ class AviaryProblem(om.Problem):
             used for the previously ran sizing mission is used. If that cannot be found, such as
             when a problem is loaded from a json output file, then the default optimizer (SLSQP)
             is chosen.
+        name : str, optional
+            Name of the off-design problem. Defaults to "{original problem name}_off_design".
         verbosity : int, Verbosity
             Sets the printout level for the entire off-design problem that is ran.
         """
@@ -1333,7 +1336,9 @@ class AviaryProblem(om.Problem):
         if problem_type is ProblemType.SIZING:
             raise UserWarning('Off-design missions cannot be SIZING missions.')
 
-        off_design_prob = AviaryProblem(name=self._name + '_off_design')
+        if name is None:
+            name = name = self._name + '_off_design'
+        off_design_prob = AviaryProblem(name=name)
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
         inputs = deepcopy(self.aviary_inputs)
@@ -1584,6 +1589,7 @@ class AviaryProblem(om.Problem):
                     num_tourist=economic_mission_num_tourist,
                     wing_cargo=economic_mission_wing_cargo,
                     misc_cargo=economic_mission_misc_cargo,
+                    name=self._name + '_max_economic_range',
                     verbosity=verbosity,
                 )
 
@@ -1616,6 +1622,7 @@ class AviaryProblem(om.Problem):
                 misc_cargo=0,
                 cargo_mass=0,
                 mission_gross_mass=ferry_range_gross_mass,
+                name=self._name + '_ferry_range',
                 verbosity=verbosity,
             )
 
