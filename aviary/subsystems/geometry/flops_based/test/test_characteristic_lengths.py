@@ -3,8 +3,10 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
+    BWBWingCharacteristicLength,
     WingCharacteristicLength,
     OtherCharacteristicLengths,
 )
@@ -98,8 +100,30 @@ class CharacteristicLengthsTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
+class BWBWingCharacteristicLengthsTest(unittest.TestCase):
+    """Test characteristic length and fineness ratio calculations for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+        prob.model.add_subsystem(
+            'cl', BWBWingCharacteristicLength(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.AREA, val=8668.64638424)
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.run_model()
+
+        out1 = prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH)
+        exp1 = 36.410645095113139
+        assert_near_equal(out1, exp1, tolerance=1e-9)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == '__main__':
     unittest.main()
-    # test = CharacteristicLengthsTest()
-    # test.setUp()
-    # test.test_case_multiengine()

@@ -6,6 +6,7 @@ class AircraftTypes(Enum):
 
     TRANSPORT = 'transport'
     BLENDED_WING_BODY = 'BWB'
+    GENERAL_AVIATION = 'GA'  # incomplete in FLOPS, unavailable in GASP
 
 
 class AlphaModes(Enum):
@@ -43,6 +44,17 @@ class AlphaModes(Enum):
     ALTITUDE_RATE = auto()
     CONSTANT_ALTITUDE = auto()
     FLIGHT_PATH_ANGLE = auto()
+
+
+class DetailedWing(Enum):
+    """
+    To flag where users provide detailed wing or want to create detailed wing (if the aircraft is BWB)
+    or not to use detailed wing
+    """
+
+    TO_PROVIDE = 1
+    TO_COMPUTE = -1
+    NOT_TO_USE = 0
 
 
 class EquationsOfMotion(Enum):
