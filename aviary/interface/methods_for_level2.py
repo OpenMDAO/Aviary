@@ -1477,6 +1477,13 @@ class AviaryProblem(om.Problem):
 
         TODO currently does not account for reserve fuel
         """
+        # For off-design missions, provided verbosity will be used for all L2 method calls
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         if not self.result.success and verbosity > Verbosity.QUIET:
             warnings.warn(
                 'Payload Range Diagrams cannot be generated for unconverged Aviary problems.'
@@ -1488,14 +1495,6 @@ class AviaryProblem(om.Problem):
                 'using multimission capability.'
             )
             return ()
-
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
-        if verbosity is not None:
-            # compatibility with being passed int for verbosity
-            verbosity = Verbosity(verbosity)
-        else:
-            verbosity = self.verbosity  # defaults to BRIEF
 
         # Off-design missions do not currently work for GASP masses or missions.
         mass_method = self.model.aviary_inputs.get_val(Settings.MASS_METHOD)
