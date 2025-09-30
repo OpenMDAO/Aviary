@@ -34,7 +34,7 @@ RUN wget -q -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/
 
 # Create conda environment
 RUN source $HOME/miniforge3/etc/profile.d/conda.sh ;\
-    conda create -n mdaowork python=3.11 'numpy<2' scipy cython swig -y
+    conda create -n mdaowork python=3.11 numpy scipy cython swig -y
 
 # Modify .bashrc
 RUN echo "## Always activate mdaowork environment on startup ##" >> ~/.bashrc ;\

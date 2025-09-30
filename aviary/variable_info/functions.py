@@ -11,7 +11,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -27,6 +27,7 @@ def add_aviary_input(
     shape_by_conn=False,
     meta_data=_MetaData,
     shape=None,
+    primal_name=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -54,6 +55,9 @@ def add_aviary_input(
         be used.
     shape: tuple
         (Optional) shape for this input.
+    primal_name : str or None
+        Valid python name to represent the variable in compute_primal if 'name' is not a valid
+        python name.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -94,8 +98,6 @@ def add_aviary_input(
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
 
-    primal_name = varname.replace(':', '__')
-
     comp.add_input(
         varname,
         val=val,
@@ -116,6 +118,7 @@ def add_aviary_output(
     shape_by_conn=False,
     meta_data=_MetaData,
     shape=None,
+    primal_name=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -144,6 +147,9 @@ def add_aviary_output(
         be used.
     shape: tuple
         (Optional) shape for this input.
+    primal_name : str or None
+        Valid python name to represent the variable in compute_primal if 'name' is not a valid
+        python name.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -183,8 +189,6 @@ def add_aviary_output(
     # check types
     val = cast_type(varname, val, meta_data)
     check_type(varname, val, meta_data)
-
-    primal_name = varname.replace(':', '__')
 
     comp.add_output(
         varname,
@@ -587,7 +591,8 @@ def setup_model_options(
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
 
-            # TODO: For future flexibility, need to tag the required engine options.
+            # TODO: For future flexibility, need get a list of options per engine (these are
+            # EngineDeck required options), so custom multiengine works
             opt_names = [
                 Aircraft.Engine.SCALE_PERFORMANCE,
                 Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
@@ -601,10 +606,12 @@ def setup_model_options(
             ]
             opts = {}
             for key in opt_names:
-                opts[key] = aviary_inputs.get_item(key)[0][idx]
+                if key in aviary_inputs:
+                    opts[key] = aviary_inputs.get_item(key)[0][idx]
             for key in opt_names_units:
-                val, units = aviary_inputs.get_item(key)
-                opts[key] = (val[idx], units)
+                if key in aviary_inputs:
+                    val, units = aviary_inputs.get_item(key)
+                    opts[key] = (val[idx], units)
 
             path = f'{prefix}*core_propulsion.{eng_name}*'
             prob.model_options[path] = opts

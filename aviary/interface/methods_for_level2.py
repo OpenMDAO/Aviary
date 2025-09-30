@@ -502,15 +502,13 @@ class AviaryProblem(om.Problem):
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            driver.options['debug_print'] = ['desvars']
-            if verbosity == Verbosity.DEBUG:
-                driver.options['debug_print'] = [
-                    'desvars',
-                    'ln_cons',
-                    'nl_cons',
-                    'objs',
-                ]
+        if verbosity == Verbosity.DEBUG:
+            driver.options['debug_print'] = [
+                'desvars',
+                'ln_cons',
+                'nl_cons',
+                'objs',
+            ]
 
     def add_design_variables(self, verbosity=None):
         """
@@ -1239,7 +1237,8 @@ class AviaryProblem(om.Problem):
             with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
-        # Checks of the payload/range toggle in the aviary inputs csv file has been set and that the current problem is a sizing mission.
+        # Checks if the payload/range toggle in the aviary inputs csv file has been set and that the
+        # current problem is a sizing mission.
         if payload_range_bool:
             self.run_payload_range()
 

@@ -305,6 +305,27 @@ prob.model.post_mission.add_subsystem(
     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
 )
 
+ecomp = om.ExecComp(
+    'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
+    total_fuel_capacity={'units': 'lbm'},
+    unusable_fuel={'units': 'lbm'},
+    overall_fuel={'units': 'lbm'},
+    excess_fuel_capacity={'units': 'lbm'},
+)
+
+prob.model.post_mission.add_subsystem(
+    'excess_fuel_constraint',
+    ecomp,
+    promotes_inputs=[
+        ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+        ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
+        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+    ],
+    promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+)
+
+prob.model.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, units='lbm')
+
 #####
 # prob.link_phases()
 

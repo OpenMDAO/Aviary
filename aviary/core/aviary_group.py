@@ -1,4 +1,5 @@
 import inspect
+import warnings
 from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 import sys
@@ -985,6 +986,52 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
         )
 
+        ecomp = om.ExecComp(
+            'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
+            total_fuel_capacity={'units': 'lbm'},
+            unusable_fuel={'units': 'lbm'},
+            overall_fuel={'units': 'lbm'},
+            excess_fuel_capacity={'units': 'lbm'},
+        )
+
+        post_mission.add_subsystem(
+            'excess_fuel_constraint',
+            ecomp,
+            promotes_inputs=[
+                ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+                ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
+                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+            ],
+            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+        )
+
+        # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
+        try:
+            # for backwards compatability check to see if variable exists, if not assume default value = False
+            ignore_capacity_constraint = self.aviary_inputs.get_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
+            )
+        except:
+            ignore_capacity_constraint = self.meta_data[
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT
+            ]['default_value']
+            self.aviary_inputs.set_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+                val=ignore_capacity_constraint,
+                units='unitless',
+            )
+
+        if not ignore_capacity_constraint:
+            self.add_constraint(
+                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=1000, units='lbm'
+            )
+        else:
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem.'
+                    'The aircraft may not have enough space for fuel, so check the value of Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
+                )
+
     def link_phases(self, verbosity=None, comm=None):
         """
         Link phases together after they've been added.
@@ -1385,7 +1432,7 @@ class AviaryGroup(om.Group):
             # If not, fetch the initial guesses specific to the phase
             # check if guesses exist for this phase
             if 'initial_guesses' in self.phase_info[phase_name]:
-                guesses = self.phase_info[phase_name]['initial_guesses']
+                guesses = self.phase_info[phase_name]['initial_guesses'].copy()
             else:
                 guesses = {}
 
@@ -1434,20 +1481,24 @@ class AviaryGroup(om.Group):
             initial_guesses = subsystem.get_initial_guesses()
 
             # Loop over each guess
-            for key, val in initial_guesses.items():
+            for key, val_dict in initial_guesses.items():
                 # Identify the type of the guess (state or control)
-                type = val.pop('type')
-                if 'state' in type:
+                var_type = val_dict['type']
+                if 'state' in var_type:
                     path_string = 'states'
-                elif 'control' in type:
+                elif 'control' in var_type:
                     path_string = 'controls'
 
                 # Process the guess variable (handles array interpolation)
                 # val['val'] = self.process_guess_var(val['val'], key, phase)
-                val['val'] = process_guess_var(val['val'], key, phase)
+                val = process_guess_var(val_dict['val'], key, phase)
 
                 # Set the initial guess in the problem
-                target_prob.set_val(parent_prefix + f'traj.{phase_name}.{path_string}:{key}', **val)
+                target_prob.set_val(
+                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}',
+                    val,
+                    units=val_dict.get('units', None),
+                )
 
     def add_fuel_reserve_component(
         self, post_mission=True, reserves_name=Mission.Design.RESERVE_FUEL
