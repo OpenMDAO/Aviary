@@ -27,7 +27,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective(objective_type if objective_type else None)
         prob.setup()
-        prob.run_aviary_problem('dymos_solution.db', make_plots=False)
+        prob.run_aviary_problem(make_plots=False)
 
 
 @use_tempdirs

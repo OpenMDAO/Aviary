@@ -81,7 +81,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
+        prob.run_aviary_problem(suppress_solver_print=True)
 
         self.assertTrue(prob.result.success)
 
@@ -120,7 +120,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
+        prob.run_aviary_problem(suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
@@ -156,7 +156,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
+        prob.run_aviary_problem(suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')
