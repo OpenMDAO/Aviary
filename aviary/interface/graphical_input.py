@@ -1431,7 +1431,6 @@ class AviaryMissionEditor(tk.Tk):
                     self.data[0][idx + 1] = timevals[1] + timevals[0]
                     for i in range(self.num_dep_vars):
                         self.data[i + 1][idx + 1] = usr_opts[f'{ylabs[i]}_final'][0]
-                        self.data[i + 1][idx + 1] = usr_opts[f'{ylabs[i]}_final'][0]
                         bool_list[i][idx] = usr_opts[f'{ylabs[i]}_optimize']
 
                     idx += 1
