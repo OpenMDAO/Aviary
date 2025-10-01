@@ -1401,39 +1401,40 @@ class AviaryMissionEditor(tk.Tk):
                         # Skip pre/post
                         continue
 
-                    value = phase_dict['user_options'].get('distance_solve_segments', None)
+                    usr_opts = phase_dict['user_options']
+
+                    value = usr_opts.get('distance_solve_segments', None)
                     if value is not None:
                         self.advanced_options['distance_solve_segments'].set(value=value)
 
-                    mach_poly = phase_dict['user_options'].get('mach_polynomial_order', None)
-                    alt_poly = phase_dict['user_options'].get('altitude_polynomial_order', None)
+                    mach_poly = usr_opts.get('mach_polynomial_order', None)
+                    alt_poly = usr_opts.get('altitude_polynomial_order', None)
 
                     if mach_poly is not None:
                         self.advanced_options['polynomial_order'].set(value=mach_poly)
                     elif alt_poly is not None:
                         self.advanced_options['polynomial_order'].set(value=alt_poly)
 
-                    self.phase_order_list.append(phase_dict['user_options']['order'])
+                    self.phase_order_list.append(usr_opts['order'])
 
                     timevals, units[0] = phase_dict['initial_guesses']['time']
                     if first_phase:
                         # For first phase, initialize internal lists with correct num of elements
-                        numpts = phase_dict['user_options']['num_segments'] + 1
+                        numpts = usr_opts['num_segments'] + 1
                         self.data = [[0] * numpts for _ in range(self.num_dep_vars + 1)]
                         bool_list = [[0] * (numpts - 1) for _ in range(self.num_dep_vars)]
                         self.data[0][0] = timevals[0]
                         for i in range(self.num_dep_vars):
-                            self.data[i + 1][0], units[i + 1] = phase_dict['user_options'][
+                            self.data[i + 1][0], units[i + 1] = usr_opts[
                                 f'{ylabs[i]}_initial'
                             ]
                         first_phase = False
 
                     self.data[0][idx + 1] = timevals[1] + timevals[0]
                     for i in range(self.num_dep_vars):
-                        self.data[i + 1][idx + 1] = phase_dict['user_options'][
-                            f'{ylabs[i]}_final'
-                        ][0]
-                        bool_list[i][idx] = phase_dict['user_options'][f'{ylabs[i]}_optimize']
+                        self.data[i + 1][idx + 1] = usr_opts[f'{ylabs[i]}_final'][0]
+                        self.data[i + 1][idx + 1] = usr_opts[f'{ylabs[i]}_final'][0]
+                        bool_list[i][idx] = usr_opts[f'{ylabs[i]}_optimize']
 
                     idx += 1
 
