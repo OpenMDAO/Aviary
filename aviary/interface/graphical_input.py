@@ -1425,9 +1425,7 @@ class AviaryMissionEditor(tk.Tk):
                         bool_list = [[0] * (numpts - 1) for _ in range(self.num_dep_vars)]
                         self.data[0][0] = timevals[0]
                         for i in range(self.num_dep_vars):
-                            self.data[i + 1][0], units[i + 1] = usr_opts[
-                                f'{ylabs[i]}_initial'
-                            ]
+                            self.data[i + 1][0], units[i + 1] = usr_opts[f'{ylabs[i]}_initial']
                         first_phase = False
 
                     self.data[0][idx + 1] = timevals[1] + timevals[0]
