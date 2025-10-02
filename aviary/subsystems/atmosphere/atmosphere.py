@@ -1,5 +1,5 @@
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmos_1976 import USatm1976Comp
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import SpeedType
@@ -40,15 +40,44 @@ class Atmosphere(om.Group):
             desc='defines input airspeed as equivalent airspeed, true airspeed, or mach number',
         )
 
+        self.options.declare(
+            'output_abs_humidity', 
+            types=bool, 
+            default=True,
+            desc='If true, absolute humidity derived from an empirical model will be added as an output'
+        )
+
+        self.options.declare(
+            'rel_humidity_sl', 
+            types=float, 
+            default=0.70,
+            desc='Fraction relative humidity at sea level to be used in absolute humidity model'
+        )
+
+        self.options.declare(
+            'isa_delta_T',
+            default=0.0,
+            desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Rankine)',
+        )
+
     def setup(self):
         nn = self.options['num_nodes']
         speed_type = self.options['input_speed_type']
         h_def = self.options['h_def']
         output_dsos_dh = self.options['output_dsos_dh']
+        output_abs_humidity = self.options['output_abs_humidity']
+        rel_humidity_sl = self.options['rel_humidity_sl']
+        isa_delta_T = self.options['isa_delta_T']
 
         self.add_subsystem(
             name='standard_atmosphere',
-            subsys=USatm1976Comp(num_nodes=nn, h_def=h_def, output_dsos_dh=output_dsos_dh),
+            subsys=USatm1976Comp(
+                num_nodes=nn, 
+                h_def=h_def, 
+                output_dsos_dh=output_dsos_dh, 
+                output_abs_humidity=output_abs_humidity, 
+                rel_humidity_sl=rel_humidity_sl,
+                isa_delta_T=isa_delta_T),
             promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
                 '*',
