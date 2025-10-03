@@ -8,7 +8,7 @@ from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_pars
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
 from aviary.interface.test_installation import _exec_installation_test, _setup_installation_test
 from aviary.utils.aero_table_conversion import _exec_ATC, _setup_ATC_parser
-from aviary.utils.engine_deck_conversion import EDC_description, _exec_EDC, _setup_EDC_parser
+from aviary.utils.engine_deck_conversion import _exec_EDC, _setup_EDC_parser
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
 from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
 from aviary.visualization.dashboard import _dashboard_cmd, _dashboard_setup_parser
@@ -47,45 +47,54 @@ _command_map = {
     'check': (
         _setup_installation_test,
         _exec_installation_test,
-        'Verifies Aviary installation',
+        'Verify Aviary installation',
     ),
     'fortran_to_aviary': (
         _setup_F2A_parser,
         _exec_F2A,
-        'Converts legacy Fortran input decks to Aviary csv based decks',
+        'Convert legacy Fortran (FLOPS OR GASP) input file to Aviary input file.',
     ),
-    'run_mission': (_setup_level1_parser, _exec_level1, 'Runs Aviary using a provided input deck'),
+    'run_mission': (_setup_level1_parser, _exec_level1, 'Run Aviary using a provided input deck.'),
     'draw_mission': (
         _setup_flight_profile_parser,
         _exec_flight_profile,
-        'Allows users to draw a mission profile for use in Aviary.',
+        'Open the mission profile drawing GUI.',
     ),
-    'dashboard': (_dashboard_setup_parser, _dashboard_cmd, 'Run the Dashboard tool'),
+    'dashboard': (
+        _dashboard_setup_parser,
+        _dashboard_cmd,
+        'Open the results dashboard for a provided Aviary run.',
+    ),
     'hangar': (
         _setup_hangar_parser,
         _exec_hangar,
-        'Allows users that pip installed Aviary to download models from the Aviary hangar',
+        'Copy aircraft and engine models included with Aviary to specified folder. Allows users'
+        'who did not install Aviary locally to still access model files.',
     ),
-    'convert_engine': (_setup_EDC_parser, _exec_EDC, EDC_description),
+    'convert_engine': (
+        _setup_EDC_parser,
+        _exec_EDC,
+        'Convert FLOPS- or GASP-formatted engine decks into Aviary csv format.',
+    ),
     'convert_aero_table': (
         _setup_ATC_parser,
         _exec_ATC,
-        'Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.',
+        'Convert FLOPS- or GASP-formatted aero data files into Aviary csv format.',
     ),
     'convert_prop_table': (
         _setup_PMC_parser,
         _exec_PMC,
-        'Converts GASP-formatted propeller map file into Aviary csv format.',
+        'Convert GASP-formatted propeller map file into Aviary csv format.',
     ),
     'plot_drag_polar': (
         _setup_plot_drag_polar_parser,
         _exec_plot_drag_polar,
-        'Plot a Drag Polar Graph using a provided polar data csv input',
+        'Plot a Drag Polar Graph using a provided polar data csv input.',
     ),
     'rtplot': (
         _rtplot_setup_parser,
         _rtplot_cmd,
-        'Run a script and automatically show a real-time plot of the optimization progress',
+        'Run a script and show a real-time plot of the optimization progress.',
     ),
 }
 

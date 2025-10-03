@@ -502,15 +502,13 @@ class AviaryProblem(om.Problem):
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            driver.options['debug_print'] = ['desvars']
-            if verbosity == Verbosity.DEBUG:
-                driver.options['debug_print'] = [
-                    'desvars',
-                    'ln_cons',
-                    'nl_cons',
-                    'objs',
-                ]
+        if verbosity == Verbosity.DEBUG:
+            driver.options['debug_print'] = [
+                'desvars',
+                'ln_cons',
+                'nl_cons',
+                'objs',
+            ]
 
     def add_design_variables(self, verbosity=None):
         """
