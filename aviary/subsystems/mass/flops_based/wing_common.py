@@ -26,7 +26,7 @@ class WingBendingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LOAD_FRACTION, units='unitless')
         add_aviary_input(self, Aircraft.Wing.MISC_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS)
+        add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
@@ -318,7 +318,7 @@ class WingMiscMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.MISC_MASS, units='lbm')
 
-        if design_type in [AircraftTypes.BLENDED_WING_BODY, AircraftTypes.TRANSPORT]:
+        if design_type is AircraftTypes.TRANSPORT:
             self.A6 = 0.035
             self.A7 = 1.50
         elif design_type is AircraftTypes.GENERAL_AVIATION:
@@ -326,7 +326,14 @@ class WingMiscMass(om.ExplicitComponent):
             self.A7 = 1.2
 
     def setup_partials(self):
-        self.declare_partials('*', '*')
+        self.declare_partials(
+            Aircraft.Wing.MISC_MASS,
+            [
+                Aircraft.Wing.COMPOSITE_FRACTION,
+                Aircraft.Wing.MISC_MASS_SCALER,
+                Aircraft.Wing.AREA,
+            ],
+        )
 
     def compute(self, inputs, outputs):
         comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
@@ -346,6 +353,65 @@ class WingMiscMass(om.ExplicitComponent):
             -0.3 * self.A6 * area**self.A7 * scaler / GRAV_ENGLISH_LBM
         )
         J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.AREA] = (
+            self.A6
+            * (1.0 - 0.3 * comp_frac)
+            * self.A7
+            * area ** (self.A7 - 1)
+            * scaler
+            / GRAV_ENGLISH_LBM
+        )
+        J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.MISC_MASS_SCALER] = (
+            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 / GRAV_ENGLISH_LBM
+        )
+
+
+class BWBWingMiscMass(om.ExplicitComponent):
+    """
+    Calculates the mass of wing miscellaneous material. The methodology is
+    based on the FLOPS weight equations, modified to output mass instead of weight.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.MISC_MASS_SCALER, units='unitless')
+        self.add_input('calculated_wing_area', units='ft**2')
+
+        add_aviary_output(self, Aircraft.Wing.MISC_MASS, units='lbm')
+
+        self.A6 = 0.035
+        self.A7 = 1.50
+
+    def setup_partials(self):
+        self.declare_partials(
+            Aircraft.Wing.MISC_MASS,
+            [
+                Aircraft.Wing.COMPOSITE_FRACTION,
+                Aircraft.Wing.MISC_MASS_SCALER,
+                'calculated_wing_area',
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
+        area = inputs['calculated_wing_area']
+        scaler = inputs[Aircraft.Wing.MISC_MASS_SCALER]
+
+        outputs[Aircraft.Wing.MISC_MASS] = (
+            self.A6 * (1.0 - 0.3 * comp_frac) * area**self.A7 * scaler / GRAV_ENGLISH_LBM
+        )
+
+    def compute_partials(self, inputs, J):
+        comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
+        area = inputs['calculated_wing_area']
+        scaler = inputs[Aircraft.Wing.MISC_MASS_SCALER]
+
+        J[Aircraft.Wing.MISC_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
+            -0.3 * self.A6 * area**self.A7 * scaler / GRAV_ENGLISH_LBM
+        )
+        J[Aircraft.Wing.MISC_MASS, 'calculated_wing_area'] = (
             self.A6
             * (1.0 - 0.3 * comp_frac)
             * self.A7
