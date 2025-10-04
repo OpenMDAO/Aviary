@@ -312,6 +312,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
+        self.add_output('calculated_wing_area', units='ft**2')
 
     def setup_partials(self):
         # TODO: Analytic derivs will be challenging, but possible.
@@ -324,7 +325,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN][0]
 
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
-        inp_stations = np.array(input_station_dist)
+        # inp_stations = np.array(input_station_dist)
         inp_stations_mod = []
         for x in input_station_dist:
             if x > 1.0:
@@ -463,76 +464,81 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         pm = np.sum((bma[:-1] + bma[1:]) * dy[:-1] * 0.5)
 
-        # why comment out? Note the AR in FLOPS is a local variable in subroutine BNDMAT.
         s = np.sum((chord_int_stations[:-1] + chord_int_stations[1:]) * dy * 0.5)
-        ar_loc = 2.0 / s
+        # calculated aspect ratio and calculated wing area
+        calc_ar = 2.0 / s
+        calc_area = wingspan**2 / calc_ar
+        outputs['calculated_wing_area'] = calc_area
 
         btb = 4 * pm / el
 
         sa = np.sin(avg_sweep * np.pi / 180.0)
-        if ar_loc <= 5.0:
+        if calc_ar <= 5.0:
             caya = 0.0
         else:
-            caya = ar_loc - 5.0
+            caya = calc_ar - 5.0
 
-        den = ar_loc ** (0.25 * fstrt) * (
+        den = calc_ar ** (0.25 * fstrt) * (
             1.0 + (0.5 * faert - 0.16 * fstrt) * sa**2 + 0.03 * caya * (1.0 - 0.5 * faert) * sa
         )
         bt = btb / den
 
         outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt
 
-        # TODO: the rest is not checked.
-        inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)
-        eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
+        if np.sum(num_wing_engines) > 0:
+            # TODO: the rest is not checked.
+            inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)
+            eel = np.zeros(len(dy) + 1, dtype=chord.dtype)
 
-        # idx is the index where this engine type begins in location list
-        idx = 0
-        # i is the counter for which engine model we are checking
-        for i in range(num_engine_type):
-            # idx2 is the last index for the range of engines of this type
-            idx2 = idx + int(num_wing_engines[i] / 2)
-            if num_wing_engines[i] > 1:
-                # engine locations must be in order from wing root to tip
-                eng_loc = np.sort(engine_locations[idx:idx2])
+            # idx is the index where this engine type begins in location list
+            idx = 0
+            # i is the counter for which engine model we are checking
+            for i in range(num_engine_type):
+                # idx2 is the last index for the range of engines of this type
+                idx2 = idx + int(num_wing_engines[i] / 2)
+                if num_wing_engines[i] > 1:
+                    # engine locations must be in order from wing root to tip
+                    eng_loc = np.sort(engine_locations[idx:idx2])
 
-            else:
-                continue
+                else:
+                    continue
 
-            if eng_loc[0] <= integration_stations[0]:
-                inertia_factor[i] = 1.0
+                if eng_loc[0] <= integration_stations[0]:
+                    inertia_factor[i] = 1.0
 
-            elif eng_loc[0] >= integration_stations[-1]:
-                inertia_factor[i] = 0.84
+                elif eng_loc[0] >= integration_stations[-1]:
+                    inertia_factor[i] = 0.84
 
-            else:
-                eel[:] = 0.0
-                # Find all points on integration station before first engine
-                loc = np.where(integration_stations < eng_loc[0])[0]
-                eel[loc] = 1.0
+                else:
+                    eel[:] = 0.0
+                    # Find all points on integration station before first engine
+                    loc = np.where(integration_stations < eng_loc[0])[0]
+                    eel[loc] = 1.0
 
-                delme = dy * eel[1:]
+                    delme = dy * eel[1:]
 
-                delme[loc[-1]] = eng_loc[0] - integration_stations[loc[-1]]
+                    delme[loc[-1]] = eng_loc[0] - integration_stations[loc[-1]]
 
-                eem = delme * csw
-                eem = np.cumsum(eem[::-1])[::-1]
+                    eem = delme * csw
+                    eem = np.cumsum(eem[::-1])[::-1]
 
-                ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
+                    ea = eem * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
 
-                bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
+                    bte = 8 * np.sum((ea[:-1] + ea[1:]) * dy[:-1] * 0.5)
 
-                inertia_factor_i = 1 - bte / bt[0] * pod_mass[i] / gross_mass[0]
-                # avoid passing an array into specific index of inertia_factor
-                inertia_factor[i] = inertia_factor_i
+                    inertia_factor_i = 1 - bte / bt[0] * pod_mass[i] / gross_mass[0]
+                    # avoid passing an array into specific index of inertia_factor
+                    inertia_factor[i] = inertia_factor_i
 
-            # increment idx to next engine set
-            idx = idx2
+                # increment idx to next engine set
+                idx = idx2
 
-        # LEAPS updated multiengine routine applies each engine pod's factor
-        # multiplicatively, and enforces a minimum bound of 0.84
-        inertia_factor_prod = np.prod(inertia_factor)
-        if inertia_factor_prod < 0.84:
-            inertia_factor_prod = 0.84
+            # LEAPS updated multiengine routine applies each engine pod's factor
+            # multiplicatively, and enforces a minimum bound of 0.84
+            inertia_factor_prod = np.prod(inertia_factor)
+            if inertia_factor_prod < 0.84:
+                inertia_factor_prod = 0.84
+        else:
+            inertia_factor_prod = 1.0
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = inertia_factor_prod
