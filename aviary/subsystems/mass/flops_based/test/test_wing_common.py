@@ -2,20 +2,25 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_common import (
+    BWBWingMiscMass,
     WingBendingMass,
     WingMiscMass,
     WingShearControlMass,
 )
+
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     flops_validation_test,
     get_flops_case_names,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class WingShearControlMassTest(unittest.TestCase):
@@ -233,5 +238,123 @@ class WingBendingMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class BWBWingMiscMassTest(unittest.TestCase):
+    def setUp(self):
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        aviary_options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'wing_misc',
+            BWBWingMiscMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
+        prob.model.set_input_defaults('calculated_wing_area', 9165.7048657769119, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.MISC_MASS_SCALER, 1.0, units='unitless')
+
+        setup_model_options(self.prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case(self):
+        prob = self.prob
+        prob.run_model()
+        # In FLOPS, W3 = 21498.833077784657
+        assert_near_equal(prob[Aircraft.Wing.MISC_MASS], 21498.83307778, 1e-9)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BWBShearControlMassTest(unittest.TestCase):
+    def setUp(self):
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        aviary_options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'wing_sc',
+            WingShearControlMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.CONTROL_SURFACE_AREA, 5513.13877521, units='ft**2'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0, units='unitless'
+        )
+
+        setup_model_options(self.prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case(self):
+        prob = self.prob
+        prob.run_model()
+        # FLOPS W2 = 38779.214997388881
+        assert_near_equal(prob[Aircraft.Wing.SHEAR_CONTROL_MASS], 38779.21499739, 1e-9)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BWBWingBendingMassTest(unittest.TestCase):
+    def setUp(self):
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        aviary_options.set_val(Aircraft.Fuselage.NUM_FUSELAGES, val=1, units='unitless')
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'wing_bending',
+            WingBendingMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.BENDING_MATERIAL_FACTOR, 2.68745091, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.LOAD_FRACTION, 0.5311, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.MISC_MASS, 21498.83307778, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.MISC_MASS_SCALER, 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.SHEAR_CONTROL_MASS, 38779.2149974, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 238.080049, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 35.7, units='deg')
+        prob.model.set_input_defaults(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0.0, units='unitless')
+
+        setup_model_options(self.prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case(self):
+        prob = self.prob
+        prob.run_model()
+        tol = 1e-9
+        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 6313.44762977, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == '__main__':
     unittest.main()
+    test = BWBWingBendingMassTest()
+    test.setUp()
+    # test.test_case()
