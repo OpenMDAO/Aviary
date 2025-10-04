@@ -3,6 +3,7 @@ import openmdao.api as om
 from aviary.subsystems.mass.flops_based.engine_pod import EnginePodMass
 from aviary.subsystems.mass.flops_based.fuselage import BWBAftBodyMass
 from aviary.subsystems.mass.flops_based.wing_common import (
+    BWBWingMiscMass,
     WingBendingMass,
     WingMiscMass,
     WingShearControlMass,
@@ -62,9 +63,14 @@ class WingMassGroup(om.Group):
                 promotes_outputs=['*'],
             )
 
-        self.add_subsystem(
-            'wing_misc', WingMiscMass(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        if design_type == AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing_misc', BWBWingMiscMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+        else:
+            self.add_subsystem(
+                'wing_misc', WingMiscMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
 
         self.add_subsystem(
             'wing_shear_control',
