@@ -208,6 +208,7 @@ class BWBAftBodyMassTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=5173.187, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=137.5, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.ROOT_CHORD, val=63.96, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
 
         setup_model_options(self.prob, aviary_options)
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -216,6 +217,7 @@ class BWBAftBodyMassTest(unittest.TestCase):
 
         tol = 1e-8
         assert_near_equal(self.prob[Aircraft.Fuselage.AFTBODY_MASS], 24278.05868511, tol)
+        assert_near_equal(self.prob[Aircraft.Wing.BWB_AFTBODY_MASS], 20150.78870864, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
@@ -223,6 +225,6 @@ class BWBAftBodyMassTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = BWBFuselageMassTest()
+    test = BWBAftBodyMassTest()
     test.setUp()
     test.test_case1()
