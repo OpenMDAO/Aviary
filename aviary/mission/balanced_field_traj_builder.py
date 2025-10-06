@@ -16,7 +16,7 @@ import numpy as np
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.flops_based.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
 from aviary.mission.initial_guess_builders import InitialGuess
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.functions import setup_trajectory_params
@@ -148,7 +148,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
             initial_guesses = AviaryValues()
 
         self.initial_guesses = initial_guesses
-        self.validate_initial_guesses()
 
         self.ode_class = self.default_ode_class
         self.num_nodes = num_nodes
@@ -198,9 +197,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
         `build_trajectory()` and the call to `apply_initial_guesses()`, or the behavior
         is undefined, no diagnostic required.
         """
-        # ode_class = self.ode_class
-
-        # transcription = dm.PicardShooting(nodes_per_seg=10)
 
         if traj is None:
             self._traj = traj = dm.Trajectory(parallel_phases=False)
@@ -212,18 +208,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         if aviary_options is None:
             aviary_options = AviaryValues()
-
-        # kwargs = self._extra_ode_init_kwargs()
-
-        # kwargs = {'aviary_options': aviary_options, **kwargs}
-
-        # # if subsystem_options is not None:
-        # #     kwargs['subsystem_options'] = subsystem_options
-
-        # kwargs['core_subsystems'] = self.core_subsystems
-        # kwargs['external_subsystems'] = self.external_subsystems
-
-        # Add all phase builders here.
 
         common_user_options = AviaryValues()
         common_user_options.set_val('max_duration', val=100.0, units='s')
@@ -240,7 +224,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
         common_user_options.set_val('linear_solver', val=om.DirectSolver())
 
         common_initial_guesses = AviaryValues()
-
         common_initial_guesses.set_val('time', [0.0, 30.0], 's')
         common_initial_guesses.set_val('distance', [0.0, 4100.0], 'ft')
         common_initial_guesses.set_val('velocity', [0.01, 150.0], 'kn')
@@ -527,17 +510,10 @@ class BalancedFieldTrajectoryBuilder(ABC):
             # We need to create parameters for just the inputs we have.
             # They mostly come from the low-speed aero subsystem.
 
-            # aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
-
-            # for cs in self.core_subsystems:
-            #     print(cs.name)
-            #     print(cs.get_parameters(**kwargs))
-            # exit(0)
-
             kwargs = {'method': 'low_speed'}
 
             # TODO: Why is get_parameters different for different subsystems?
-            # Do with without blindly indexing.
+            # Do without blindly indexing.
             aero_builder = self.core_subsystems[0]
 
             params = aero_builder.get_parameters(aviary_options, **kwargs)
@@ -558,25 +534,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         return self._traj
 
-    def validate_initial_guesses(self):
-        """
-        Raise TypeError if an unsupported initial guess is found.
-
-        Users can call this method when updating initial guesses after initialization.
-        """
-        initial_guesses = self.initial_guesses
-
-        # if not initial_guesses:
-        #     return  # acceptable
-
-        # meta_data = self._initial_guesses_meta_data_
-
-        # for key in get_keys(initial_guesses):
-        #     if key not in meta_data:
-        #         raise TypeError(
-        #             f'{self.__class__.__name__}: {self.name}: unsupported initial guess: {key}'
-        #         )
-
     def apply_initial_guesses(self, prob: om.Problem, traj_name):  # , phase: dm.Phase):
         """Apply any stored initial guesses; return a list of guesses not applied."""
         not_applied = {}
@@ -593,249 +550,6 @@ class BalancedFieldTrajectoryBuilder(ABC):
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
         return {}
-
-    def to_phase_info(self):
-        """
-        Return the stored settings as phase info.
-
-        Returns
-        -------
-        tuple
-            name : str
-                object label
-            phase_info : dict
-                stored settings
-        """
-        subsystem_options = self.subsystem_options  # TODO: aero info?
-        user_options = self.user_options.to_phase_info()
-        initial_guesses = dict(self.initial_guesses)
-
-        # TODO some of these may be purely programming API hooks, rather than for use
-        # with phase info
-        # - ode_class
-        # - transcription
-        # - external_subsystems
-        # - meta_data
-
-        phase_info = dict(
-            subsystem_options=subsystem_options,
-            user_options=user_options,
-            initial_guesses=initial_guesses,
-        )
-
-        return (self.name, phase_info)
-
-    @classmethod
-    def from_phase_info(
-        cls, name, phase_info: dict, core_subsystems=None, meta_data=None, transcription=None
-    ):
-        """
-        Return a new phase builder based on the specified phase info.
-
-        Note, calling code is responsible for matching phase info to the correct phase
-        builder type, or the behavior is undefined.
-
-        Parameters
-        ----------
-        name : str
-            object label
-        phase_info : dict
-            stored settings
-        """
-        # loop over user_options dict entries
-        # if the value is not a tuple, wrap it in a tuple with the second entry of 'unitless'
-        for key, value in phase_info['user_options'].items():
-            if not isinstance(value, tuple):
-                phase_info['user_options'][key] = (value, 'unitless')
-
-        subsystem_options = phase_info.get('subsystem_options', {})  # TODO: aero info?
-        user_options = phase_info.get('user_options', ())
-        initial_guesses = AviaryValues(phase_info.get('initial_guesses', ()))
-        external_subsystems = phase_info.get('external_subsystems', [])
-        # TODO core subsystems in phase info?
-
-        # TODO some of these may be purely programming API hooks, rather than for use
-        # with phase info
-        # - ode_class
-        # - transcription
-        # - external_subsystems
-        # - meta_data
-
-        phase_builder = cls(
-            name,
-            subsystem_options=subsystem_options,
-            user_options=user_options,
-            initial_guesses=initial_guesses,
-            meta_data=meta_data,
-            core_subsystems=core_subsystems,
-            external_subsystems=external_subsystems,
-            transcription=transcription,
-        )
-
-        return phase_builder
-
-    @classmethod
-    def _add_initial_guess_meta_data(cls, initial_guess: InitialGuess, desc=None):
-        """
-        Update supported initial guesses with a new item.
-
-        Raises
-        ------
-        ValueError
-            if a repeat initial guess is found
-        """
-        meta_data = cls._initial_guesses_meta_data_
-        name = initial_guess.key
-
-        meta_data[name] = dict(apply_initial_guess=initial_guess.apply_initial_guess, desc=desc)
-
-    def _add_user_defined_constraints(self, phase, constraints):
-        """Add each constraint and its corresponding arguments to the phase."""
-        for constraint_name, kwargs in constraints.items():
-            if kwargs['type'] == 'boundary':
-                kwargs.pop('type')
-
-                if 'target' in kwargs:
-                    # Support for constraint aliases.
-                    target = kwargs.pop('target')
-                    kwargs['constraint_name'] = constraint_name
-                    phase.add_boundary_constraint(target, **kwargs)
-                else:
-                    phase.add_boundary_constraint(constraint_name, **kwargs)
-
-            elif kwargs['type'] == 'path':
-                kwargs.pop('type')
-                phase.add_path_constraint(constraint_name, **kwargs)
-
-    def add_state(self, name, target, rate_source):
-        """
-        Add a state to this phase using the options in the phase_info.
-
-        Parameters
-        ----------
-        name : str
-            The name of this state in the phase_info options.
-        target : str
-            State promoted variable path to the ODE.
-        rate_source : str
-            Source of the state rate in the ODE.
-        """
-        options = self.user_options
-
-        initial, _ = options[f'{name}_initial']
-        final, _ = options[f'{name}_final']
-        bounds, units = options[f'{name}_bounds']
-        ref, _ = options[f'{name}_ref']
-        ref0, _ = options[f'{name}_ref0']
-        defect_ref, _ = options[f'{name}_defect_ref']
-        solve_segments = options[f'{name}_solve_segments']
-
-        # If a value is specified for the starting node, then fix_initial is True.
-        # Otherwise, input_initial is True.
-        # The problem configurator may change input_initial to False requested or necessary, (e.g.,
-        # for parallel phases in MPI.)
-
-        self.phase.add_state(
-            target,
-            fix_initial=initial is not None,
-            input_initial=False,
-            lower=bounds[0],
-            upper=bounds[1],
-            units=units,
-            rate_source=rate_source,
-            ref=ref,
-            ref0=ref0,
-            defect_ref=defect_ref,
-            solve_segments='forward' if solve_segments else None,
-        )
-
-        if final is not None:
-            constraint_ref, _ = options[f'{name}_constraint_ref']
-            if constraint_ref is None:
-                # If unspecified, final is a good value for it.
-                constraint_ref = final
-            self.phase.add_boundary_constraint(
-                target,
-                loc='final',
-                equals=final,
-                units=units,
-                ref=final,
-            )
-
-    def add_control(
-        self, name, target, rate_targets=None, rate2_targets=None, add_constraints=True
-    ):
-        """
-        Add a control to this phase using the options in the phase-info.
-
-        Parameters
-        ----------
-        name : str
-            The name of this control in the phase_info options.
-        target : str
-            Control promoted variable path to the ODE.
-        rate_source : list of str
-            List of rate targets for this control.
-        rate2_targets : Sequence of str or None
-            (Optional) The parameter in the ODE to which the control 2nd derivative is connected.
-        add_constraints : bool
-            When True, add constraints on any declared initial and final values if this control is
-            being optimized. Default is True.
-        """
-        options = self.user_options
-        phase = self.phase
-
-        initial, _ = options[f'{name}_initial']
-        final, _ = options[f'{name}_final']
-        bounds, units = options[f'{name}_bounds']
-        ref, _ = options[f'{name}_ref']
-        ref0, _ = options[f'{name}_ref0']
-        polynomial_order = options[f'{name}_polynomial_order']
-        opt = options[f'{name}_optimize']
-
-        if ref == 1.0:
-            # This has not been moved from default, so find a good value.
-            candidates = [x for x in (bounds[0], bounds[1], initial, final) if x is not None]
-            if len(candidates) > 0:
-                ref = np.max(np.abs(np.array(candidates)))
-
-        extra_options = {}
-        if polynomial_order is not None:
-            extra_options['control_type'] = 'polynomial'
-            extra_options['order'] = polynomial_order
-
-        if opt is True:
-            extra_options['lower'] = bounds[0]
-            extra_options['upper'] = bounds[1]
-            extra_options['ref'] = ref
-            extra_options['ref0'] = ref0
-
-        if units not in ['unitless', None]:
-            extra_options['units'] = units
-
-        if rate_targets is not None:
-            extra_options['rate_targets'] = rate_targets
-
-        if rate2_targets is not None:
-            extra_options['rate2_targets'] = rate2_targets
-
-        phase.add_control(target, targets=target, opt=opt, **extra_options)
-
-        # Add timeseries for any control.
-        phase.add_timeseries_output(target)
-
-        if not add_constraints:
-            return
-
-        # Add an initial constraint.
-        if opt and initial is not None:
-            phase.add_boundary_constraint(
-                target, loc='initial', equals=initial, units=units, ref=ref
-            )
-
-        # Add a final constraint.
-        if opt and final is not None:
-            phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
 
     def _add_phase(self, phase_builder: PhaseBuilderBase, aviary_options: AviaryValues):
         name = phase_builder.name

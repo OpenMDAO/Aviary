@@ -44,7 +44,6 @@ TakeoffTrajectory : a trajectory builder for detailed takeoff
 from collections import namedtuple
 
 import dymos as dm
-import openmdao.api as om
 from openmdao.solvers.solver import NonlinearSolver, LinearSolver
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
@@ -52,16 +51,11 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
     InitialGuessParameter,
-    InitialGuessPolynomialControl,
     InitialGuessState,
 )
 from aviary.mission.phase_builder_base import PhaseBuilderBase
-from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
