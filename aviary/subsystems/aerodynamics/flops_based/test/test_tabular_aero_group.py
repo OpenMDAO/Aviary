@@ -11,7 +11,7 @@ from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import set_aviary_initial_values

@@ -1,10 +1,21 @@
 import openmdao.api as om
 
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
+from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class PostMissionGroup(om.Group):
     """OpenMDAO group that holds all post-mission systems."""
+
+    def initialize(self):
+        self.options.declare(
+            'aviary_options',
+            types=AviaryValues,
+            desc='collection of Aircraft/Mission specific options',
+        )
+        self.options.declare('subsystems', desc='list of core subsystem builders')
+        self.options.declare('meta_data', desc='problem metadata', default=_MetaData)
 
     def configure(self):
         """

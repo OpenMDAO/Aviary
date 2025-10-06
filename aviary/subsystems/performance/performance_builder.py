@@ -13,3 +13,6 @@ class CorePerformanceBuilder(SubsystemBuilderBase):
 
     def build_pre_mission(self, aviary_inputs, **kwargs):
         return PerformancePremission()
+
+    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths):
+        pass #return group
