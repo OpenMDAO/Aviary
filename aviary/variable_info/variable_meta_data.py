@@ -967,7 +967,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': None,  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
+        'FLOPS': 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
         'LEAPS1': None,  # 'aircraft.inputs.L0_crew_and_payload.first_class_count',
     },
     units='unitless',
@@ -1053,7 +1053,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': None,  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+        'FLOPS': 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
         'LEAPS1': None,  # 'aircraft.inputs.L0_crew_and_payload.tourist_class_count',
     },
     units='unitless',
