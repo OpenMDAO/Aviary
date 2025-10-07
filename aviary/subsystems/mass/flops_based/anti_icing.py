@@ -77,6 +77,7 @@ class AntiIcingMass(om.ExplicitComponent):
         span = inputs[Aircraft.Wing.SPAN]
         sweep = inputs[Aircraft.Wing.SWEEP]
 
+        # scale avg_diam by thrust ratio
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         ref_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
         thrust_rat = thrust / ref_sls_thrust
