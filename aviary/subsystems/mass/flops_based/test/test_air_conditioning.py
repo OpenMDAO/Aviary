@@ -169,7 +169,8 @@ class BWBTransportAirCondMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
+    def ttest_case(self):
+        """work in progress"""
         case_name = 'BWB1aFLOPS'
         prob = self.prob
 

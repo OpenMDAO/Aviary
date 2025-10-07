@@ -163,5 +163,44 @@ class AntiIcingMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class BWBAntiIcingMassTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def ttest_case(self):
+        """work in progress"""
+        case_name = 'BWB1aFLOPS'
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'anti_icing',
+            AntiIcingMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        options = get_flops_options('BWB1aFLOPS')
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([3])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 3
+
+        prob.model_options['*'] = options
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.AntiIcing.MASS_SCALER,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.SWEEP,
+            ],
+            output_keys=Aircraft.AntiIcing.MASS,
+            tol=3.0e-3,
+        )
+
+
 if __name__ == '__main__':
     unittest.main()
