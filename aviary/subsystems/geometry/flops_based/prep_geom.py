@@ -640,7 +640,7 @@ class _BWBWing(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 
-        self.declare_partials('*', '*', method='fd', form='forward')
+        self.declare_partials('*', '*', method='cs', form='forward')
 
     def compute(self, inputs, outputs):
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
