@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine_controls import TransportEngineCtrlsMass
@@ -15,6 +16,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class BasicTransportEngineCtrlsTest(unittest.TestCase):
     """Test the BasicTransportEngineCtrls component."""
 
