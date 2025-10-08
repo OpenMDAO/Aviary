@@ -46,17 +46,6 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
-class DetailedWing(Enum):
-    """
-    To flag where users provide detailed wing or want to create detailed wing (if the aircraft is BWB)
-    or not to use detailed wing
-    """
-
-    TO_PROVIDE = 1
-    TO_COMPUTE = -1
-    NOT_TO_USE = 0
-
-
 class EquationsOfMotion(Enum):
     """Available equations of motion for use during mission analysis."""
 

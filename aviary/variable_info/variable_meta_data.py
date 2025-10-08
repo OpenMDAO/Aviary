@@ -10,7 +10,6 @@ import numpy as np
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
     AircraftTypes,
-    DetailedWing,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
@@ -342,6 +341,17 @@ add_meta_data(
 #                                                                                  __/ |                             __/ |
 #                                                                                 |___/                             |___/
 # ========================================================================================================================
+
+add_meta_data(
+    Aircraft.BWB.DETAILED_WING_PROVIDED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Flag if the detailed wing model is provided',
+    option=True,
+    types=bool,
+    default_value=True,
+)
 
 add_meta_data(
     Aircraft.BWB.MAX_NUM_BAYS,
@@ -5576,8 +5586,8 @@ add_meta_data(
     units='unitless',
     desc='Flag that sets if FLOPS mass should use the detailed wing model',
     option=True,
-    types=DetailedWing,
-    default_value=DetailedWing.NOT_TO_USE,
+    types=bool,
+    default_value=False,
 )
 
 add_meta_data(

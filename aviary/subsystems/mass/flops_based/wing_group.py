@@ -9,7 +9,6 @@ from aviary.subsystems.mass.flops_based.wing_common import (
 )
 from aviary.subsystems.mass.flops_based.wing_detailed import DetailedWingBendingFact
 from aviary.subsystems.mass.flops_based.wing_simple import SimpleWingBendingFact
-from aviary.variable_info.enums import DetailedWing
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft
 
@@ -31,7 +30,7 @@ class WingMassGroup(om.Group):
             promotes_outputs=['*'],
         )
 
-        if not self.options[Aircraft.Wing.DETAILED_WING] == DetailedWing.NOT_TO_USE:
+        if self.options[Aircraft.Wing.DETAILED_WING]:
             self.add_subsystem(
                 'wing_bending_material_factor',
                 DetailedWingBendingFact(),

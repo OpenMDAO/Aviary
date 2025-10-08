@@ -38,7 +38,7 @@ from aviary.subsystems.geometry.flops_based.bwb_wing_detailed import (
     BWBComputeDetailedWingDist,
     BWBWingPrelim,
 )
-from aviary.variable_info.enums import AircraftTypes, DetailedWing, Verbosity
+from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
 
@@ -49,7 +49,7 @@ class PrepGeom(om.Group):
     def initialize(self):
         add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
         add_aviary_option(self, Aircraft.Design.TYPE)
-        add_aviary_option(self, Aircraft.Wing.DETAILED_WING)
+        add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
 
     def setup(self):
         is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
@@ -70,22 +70,20 @@ class PrepGeom(om.Group):
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
-            if self.options[Aircraft.Wing.DETAILED_WING] == DetailedWing.TO_PROVIDE:
+            if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
                 self.add_subsystem(
                     'detailed_wing',
                     BWBUpdateDetailedWingDist(),
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
-            elif self.options[Aircraft.Wing.DETAILED_WING] == DetailedWing.TO_COMPUTE:
+            else:
                 self.add_subsystem(
                     'detailed_wing',
                     BWBComputeDetailedWingDist(),
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
-            else:
-                raise ('For BWB, we always use detailed wing.')
         elif design_type is AircraftTypes.TRANSPORT:
             if is_simple_layout:
                 self.add_subsystem(
