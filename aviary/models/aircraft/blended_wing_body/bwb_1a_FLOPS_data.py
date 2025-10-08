@@ -103,7 +103,7 @@ inputs.set_val(
 
 # Electrical
 # ---------------------------
-inputs.set_val(Aircraft.Electrical.MASS_SCALER, 1.25)  # WELEC not in bwb.in, set to Aviary default
+inputs.set_val(Aircraft.Electrical.MASS_SCALER, 1.0)  # WELEC not in bwb.in, set to Aviary default
 
 # Fins
 # ---------------------------
@@ -210,7 +210,7 @@ inputs.set_val(
 )  # WOIL not in bwb.in, set to Aviary default
 inputs.set_val(Aircraft.Propulsion.MISC_MASS_SCALER, 0.0)  # WPMSC in bwb.in
 
-filename = get_path('models/engines/ENGDEK.csv')
+filename = get_path('models/engines/PAX300_baseline_ENGDEK.csv')
 
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 # inputs.set_val(Aircraft.Engine.MASS, 7400, 'lbm')  # not in bwb.in, not a FLOPS variable
@@ -384,7 +384,7 @@ outputs.set_val(Aircraft.AirConditioning.MASS, 4383.96064972, 'lbm')
 
 outputs.set_val(Aircraft.AntiIcing.MASS, 533.77301314, 'lbm')
 
-outputs.set_val(Aircraft.APU.MASS, 1142.0, 'lbm')
+outputs.set_val(Aircraft.APU.MASS, 2148.13002234, 'lbm')
 
 outputs.set_val(Aircraft.Avionics.MASS, 2896.223816950469, 'lbm')
 
@@ -397,12 +397,12 @@ outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 7436.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 1400.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS, 450.0, 'lbm')
-outputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, 465.0, 'lbm')
+outputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, 3410.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 3022.74805809, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS, 30420.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 37856.0, 'lbm')
 
-outputs.set_val(Aircraft.Electrical.MASS, 2464.0, 'lbm')
+outputs.set_val(Aircraft.Electrical.MASS, 4514.28869169, 'lbm')
 
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 669.58, 'lbm')
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 501.3, 'lbm')
