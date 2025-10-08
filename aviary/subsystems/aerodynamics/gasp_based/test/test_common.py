@@ -20,7 +20,7 @@ class TestTanhRampComp(unittest.TestCase):
     def test_tanh_ramp_up(self):
         p = om.Problem()
 
-        nn = 100
+        nn = 99
 
         c = TanhRampComp(time_units='s', num_nodes=nn)
 
