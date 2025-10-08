@@ -752,7 +752,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options = self.options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
-        options.set_val(Aircraft.Wing.DETAILED_WING, val=False, units='unitless')
+        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, val=False, units='unitless')
         options.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0], units='unitless')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
@@ -1305,7 +1305,4 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBWingTest()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
