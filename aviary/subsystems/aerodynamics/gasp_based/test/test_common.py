@@ -55,7 +55,7 @@ class TestTanhRampComp(unittest.TestCase):
         self.assertTrue(np.all(thruput >= 30))
         self.assertTrue(np.all(thruput <= 40))
 
-        #assert_check_partials(cpd, atol=1.0e-9, rtol=1.0e-12)
+        assert_check_partials(cpd, atol=1.0e-9, rtol=1.0e-12)
 
 
 if __name__ == '__main__':
