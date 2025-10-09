@@ -46,7 +46,6 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
         max_sls_thrust = inputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST]
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_engines)
 
-        # Note: This is not exactly WEC in FLOPS
         total_controls_weight = 0.26 * num_engines_factor * thrust_factor**0.5
 
         outputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = (
