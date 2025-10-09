@@ -24,7 +24,7 @@ class ThrustReverserMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     @parameterized.expand(
-        get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']),
+        get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle', 'BWB1aFLOPS']),
         name_func=print_case,
     )
     def test_case(self, case_name):

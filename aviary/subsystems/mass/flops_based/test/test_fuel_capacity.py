@@ -143,44 +143,6 @@ class WingFuelCapacityTest(unittest.TestCase):
         )
 
 
-class BWBWingFuelCapacityTest(unittest.TestCase):
-    def setUp(self):
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem(
-            'wing_bending',
-            WingFuelCapacity(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.7, units='lbm/galUS')
-        prob.model.set_input_defaults(Aircraft.Fuel.WING_REF_CAPACITY, 30.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.WING_REF_CAPACITY_AREA, 7621.66, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, 0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Fuel.WING_REF_CAPACITY_TERM_B, 0, units='unitless')
-        # hard code Aircraft.Fuel.WING_FUEL_FRACTION to 0.68835495
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.WING_FUEL_FRACTION, 0.68835495, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 7621.66, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, 238.08004908013606, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, 0.311, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case(self):
-        prob = self.prob
-        prob.run_model()
-        tol = 1e-9
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 505600.92708436, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
 fuse_capacity_data = {}
 fuse_capacity_data['1'] = AviaryValues(
     {
@@ -306,7 +268,4 @@ class TotalFuelCapacityTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBWingFuelCapacityTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()

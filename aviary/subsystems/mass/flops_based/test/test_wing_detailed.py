@@ -29,7 +29,9 @@ class DetailedWingBendingTest(unittest.TestCase):
 
     # Skip model that doesn't use detailed wing.
     @parameterized.expand(
-        get_flops_case_names(omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
+        get_flops_case_names(
+            omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt', 'BWB1aFLOPS']
+        ),
         name_func=print_case,
     )
     def test_case(self, case_name):

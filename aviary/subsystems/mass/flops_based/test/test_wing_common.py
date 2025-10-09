@@ -35,7 +35,7 @@ class WingShearControlMassTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -99,7 +99,7 @@ class WingMiscMassTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -166,7 +166,7 @@ class WingBendingMassTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 

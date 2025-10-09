@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fuel_system import (
@@ -19,6 +20,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class AltFuelSystemTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -89,11 +91,12 @@ class AltFuelSystemTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class TransportFuelSystemTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -166,5 +169,44 @@ class TransportFuelSystemTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class BWBTransportFuelSystemTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case(self):
+        case_name = 'BWB1aFLOPS'
+        prob = self.prob
+
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_ENGINES
+            ),
+            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
+        }
+
+        prob.model.add_subsystem(
+            'transport_fuel_sys_test',
+            TransportFuelSystemMass(**options),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
+            output_keys=Aircraft.Fuel.FUEL_SYSTEM_MASS,
+            version=Version.TRANSPORT,  # TODO: Version.BWB
+            tol=8.0e-4,
+        )
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBTransportFuelSystemTest()
+    test.setUp()
+    test.test_case()
