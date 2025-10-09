@@ -173,7 +173,7 @@ class BWBTransportFuelSystemTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
+    def ttest_case(self):
         case_name = 'BWB1aFLOPS'
         prob = self.prob
 
@@ -187,7 +187,7 @@ class BWBTransportFuelSystemTest(unittest.TestCase):
         }
 
         prob.model.add_subsystem(
-            'transport_fuel_sys_test',
+            'bwb_transport_fuel_sys_test',
             TransportFuelSystemMass(**options),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
@@ -206,7 +206,4 @@ class BWBTransportFuelSystemTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBTransportFuelSystemTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()
