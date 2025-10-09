@@ -24,4 +24,4 @@ class CorePerformanceBuilder(SubsystemBuilderBase):
             if post.get('balanced_field', False):
                 return create_balance_field_subprob(aviary_inputs)
 
-        pass #return group
+        return
