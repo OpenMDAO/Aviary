@@ -215,7 +215,9 @@ filename = get_path('models/engines/PAX300_baseline_ENGDEK.csv')
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 # inputs.set_val(Aircraft.Engine.MASS, 7400, 'lbm')  # not in bwb.in, not a FLOPS variable
 inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 22017, 'lbm')  # WENG in bwb.in
-inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, [70000, 1, 0, 0, 0, 0], 'lbf')  # THRUST in bwb.in
+inputs.set_val(
+    Aircraft.Engine.SCALED_SLS_THRUST, 70000, 'lbf'
+)  # THRUST in bwb.in [70000, 1, 0, 0, 0, 0]
 inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, 'lbf')  # THRSO in bwb.in
 inputs.set_val(
     Aircraft.Engine.NUM_ENGINES, [3]
@@ -451,24 +453,24 @@ outputs.set_val(
 outputs.set_val(Aircraft.Paint.MASS, 306.2, 'lbm')
 
 outputs.set_val(
-    Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 28928.1 * 3, 'lbf'
-)  # output from propulsion
+    Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 70000.0 * 3, 'lbf'
+)  # output from propulsion,
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 3)
 
-engine_ctrls_mass = 88.44
+engine_ctrls_mass = 206.36860226
 engine_ctrls_mass_units = 'lbm'
 outputs.set_val(Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units)
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units
 )
 
-outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 130.23, 'lbm')
+outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 346.93557352, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0)
 
-outputs.set_val(Aircraft.Engine.MASS, 14800 / 2, 'lbm')
+outputs.set_val(Aircraft.Engine.MASS, 17825.63336233, 'lbm')
 outputs.set_val(Aircraft.Engine.POD_MASS, 9000, 'lbm')
 outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 648.83, 'lbm')
@@ -477,7 +479,7 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, 0, 'lbm')
 outputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS, 0, 'lbm')
 outputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 28928.1, 'lbf')
 
-outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 7400 * 2, 'lbm')
+outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 53476.90008698, 'lbm')
 
 outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 12.74, 'ft')
 outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.1195)
