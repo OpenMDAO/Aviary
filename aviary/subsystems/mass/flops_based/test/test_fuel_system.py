@@ -200,7 +200,7 @@ class BWBTransportFuelSystemTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
             output_keys=Aircraft.Fuel.FUEL_SYSTEM_MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,  # TODO: Version.BWB
             tol=8.0e-4,
         )
 
