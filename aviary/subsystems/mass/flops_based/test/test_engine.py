@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine import EngineMass
@@ -12,6 +13,7 @@ from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
@@ -20,11 +22,12 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Settings
 
 
+@use_tempdirs
 class EngineMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -133,6 +136,47 @@ class EngineMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+@use_tempdirs
+class BWBEngineMassTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case(self):
+        case_name = 'BWB1aFLOPS'
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'engine_mass',
+            EngineMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.ones(1))
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Engine.SCALED_SLS_THRUST,
+                Aircraft.Engine.ADDITIONAL_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
+            ],
+            output_keys=[
+                Aircraft.Engine.MASS,
+                Aircraft.Engine.ADDITIONAL_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
+            ],
+            list_inputs=True,
+            list_outputs=True,
+            version=Version.TRANSPORT,  # TODO: Version.BWB
+            rtol=1e-10,
+        )
 
 
 if __name__ == '__main__':
