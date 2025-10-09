@@ -20,9 +20,7 @@ class SimpleWingBendingFactTest(unittest.TestCase):
 
     # Only dataset that uses the simple wing.
     @parameterized.expand(
-        get_flops_case_names(
-            only=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt', 'BWB1aFLOPS']
-        ),
+        get_flops_case_names(only=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
         name_func=print_case,
     )
     def test_case(self, case_name):

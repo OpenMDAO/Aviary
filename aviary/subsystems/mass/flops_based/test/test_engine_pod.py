@@ -154,7 +154,4 @@ class BWBEnginePodMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBEnginePodMassTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()
