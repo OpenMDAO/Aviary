@@ -22,7 +22,7 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 

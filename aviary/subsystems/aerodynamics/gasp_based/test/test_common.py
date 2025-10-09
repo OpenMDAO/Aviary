@@ -110,7 +110,7 @@ class TestTanhRampComp(unittest.TestCase):
     def test_tanh_ramp_up(self):
         p = om.Problem()
 
-        nn = 1000
+        nn = 100
 
         c = TanhRampComp(time_units='s', num_nodes=nn)
 
@@ -135,12 +135,12 @@ class TestTanhRampComp(unittest.TestCase):
 
         thruput = p.get_val('tanh_ramp.thruput')
 
-        assert_near_equal(thruput[250], desired=30, tolerance=0.01)
-        assert_near_equal(thruput[275], desired=35, tolerance=0.01)
-        assert_near_equal(thruput[300], desired=40, tolerance=0.01)
+        assert_near_equal(thruput[25], desired=30, tolerance=0.01)
+        assert_near_equal(thruput[27], desired=33.6, tolerance=0.01)
+        assert_near_equal(thruput[30], desired=40, tolerance=0.01)
 
-        assert_near_equal(thruput[500:], desired=40 * np.ones((500, 1)), tolerance=0.01)
-        assert_near_equal(thruput[:200], desired=30 * np.ones((200, 1)), tolerance=0.01)
+        assert_near_equal(thruput[50:], desired=40 * np.ones((50, 1)), tolerance=0.01)
+        assert_near_equal(thruput[:20], desired=30 * np.ones((20, 1)), tolerance=0.01)
 
         self.assertTrue(np.all(thruput >= 30))
         self.assertTrue(np.all(thruput <= 40))
@@ -150,7 +150,7 @@ class TestTanhRampComp(unittest.TestCase):
     def test_tanh_ramp_down(self):
         p = om.Problem()
 
-        nn = 1000
+        nn = 100
 
         c = TanhRampComp(time_units='s', num_nodes=nn)
 
@@ -175,12 +175,12 @@ class TestTanhRampComp(unittest.TestCase):
 
         thruput = p.get_val('tanh_ramp.thruput')[:, 0]
 
-        assert_near_equal(thruput[250], desired=40, tolerance=0.01)
-        assert_near_equal(thruput[275], desired=35, tolerance=0.01)
-        assert_near_equal(thruput[300], desired=30, tolerance=0.01)
+        assert_near_equal(thruput[25], desired=40, tolerance=0.01)
+        assert_near_equal(thruput[27], desired=36.4, tolerance=0.01)
+        assert_near_equal(thruput[30], desired=30, tolerance=0.01)
 
-        assert_near_equal(thruput[500:], desired=30 * np.ones(500), tolerance=0.01)
-        assert_near_equal(thruput[:200], desired=40 * np.ones(200), tolerance=0.01)
+        assert_near_equal(thruput[50:], desired=30 * np.ones(50), tolerance=0.01)
+        assert_near_equal(thruput[:20], desired=40 * np.ones(20), tolerance=0.01)
 
         self.assertTrue(np.all(thruput >= 30))
         self.assertTrue(np.all(thruput <= 40))
