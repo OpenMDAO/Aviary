@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.anti_icing import AntiIcingMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
@@ -16,11 +18,12 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class AntiIcingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -167,8 +170,8 @@ class BWBAntiIcingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def ttest_case(self):
-        """work in progress"""
+    def test_case(self):
+        """test AntiIcingMass component for BWB"""
         case_name = 'BWB1aFLOPS'
         prob = self.prob
 
@@ -198,6 +201,7 @@ class BWBAntiIcingMassTest(unittest.TestCase):
                 Aircraft.Wing.SWEEP,
             ],
             output_keys=Aircraft.AntiIcing.MASS,
+            version=Version.TRANSPORT,  # TODO: Version.BWB
             tol=3.0e-3,
         )
 

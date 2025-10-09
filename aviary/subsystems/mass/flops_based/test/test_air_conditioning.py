@@ -22,7 +22,7 @@ class TransportAirCondMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -102,7 +102,7 @@ class AltAirCondMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -196,7 +196,7 @@ class BWBTransportAirCondMassTest(unittest.TestCase):
             ],
             output_keys=Aircraft.AirConditioning.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.Design.NUM_PASSENGERS],
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT,  # TODO: Version.BWB
             tol=3.0e-4,
             atol=1e-11,
         )

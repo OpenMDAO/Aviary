@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
@@ -16,6 +17,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class ElectricMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -133,6 +135,7 @@ class ElectricMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AltElectricMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -164,6 +167,45 @@ class AltElectricMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+@use_tempdirs
+class BWBElectricMassTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case(self):
+        case_name = 'BWB1aFLOPS'
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'electric_test',
+            ElectricalMass(),
+            promotes_outputs=[
+                Aircraft.Electrical.MASS,
+            ],
+            promotes_inputs=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Electrical.MASS_SCALER,
+            ],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            self.prob,
+            case_name,
+            input_keys=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Electrical.MASS_SCALER,
+            ],
+            output_keys=Aircraft.Electrical.MASS,
+            version=Version.TRANSPORT,  # TODO: Version.BWB
+        )
 
 
 if __name__ == '__main__':
