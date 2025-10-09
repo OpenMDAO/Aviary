@@ -14,7 +14,8 @@ from aviary.variable_info.variables import Mission
 
 local_phase_info = deepcopy(phase_info)
 
-local_phase_info['post_mission']['external_subsystems'] = [BalancedFieldBuilder()]
+#local_phase_info['post_mission']['external_subsystems'] = [BalancedFieldBuilder()]
+local_phase_info['post_mission']['balanced_field'] = True
 
 prob = AviaryProblem()
 
@@ -43,4 +44,4 @@ prob.add_objective()
 prob.setup()
 
 # TODO: N3CC optimization does not return success.
-prob.run_aviary_problem('dymos_solution.db')
+prob.run_aviary_problem()

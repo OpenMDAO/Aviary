@@ -58,13 +58,6 @@ class InitialGuess:
             # raise ValueError(f'{phase.msginfo} Attempting to apply initial guess for {self.key}.\n'
             #                  'Not find in the states, control, parameters, or integration variable of the phase.')
 
-    # def _get_complete_key(self, traj_name, phase_name):
-    #     """Compose the complete key for setting the initial guess."""
-    #     _ = traj_name
-    #     _ = phase_name
-
-    #     return self.key
-
 
 class InitialGuessControl(InitialGuess):
     """

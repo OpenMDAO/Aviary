@@ -17,6 +17,10 @@ class PostMissionGroup(om.Group):
         self.options.declare('subsystems', desc='list of core subsystem builders')
         self.options.declare('meta_data', desc='problem metadata', default=_MetaData)
 
+    def setup(self):
+        # rely on openMDAO's auto-ordering for this group
+        self.options['auto_order'] = True
+
     def configure(self):
         """
         Configure this group for post-mission.
