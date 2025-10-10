@@ -383,7 +383,7 @@ add_meta_data(
     desc='fixed number of passenger bays',
     types=int,
     multivalue=True,
-    option=True,
+    option=False,
     default_value=[0],
 )
 

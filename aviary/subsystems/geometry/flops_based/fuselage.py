@@ -3,6 +3,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.utils.functions import smooth_int_tanh, d_smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -408,7 +409,6 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
-        add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -423,6 +423,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
     def setup_partials(self):
         self.declare_partials(
@@ -492,7 +493,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         num_bays = int(0.5 + max_width.real / bay_width_max.real)
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
-        self.options[Aircraft.BWB.NUM_BAYS][0] = num_bays
+        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
@@ -551,7 +552,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
-        add_aviary_option(self, Aircraft.BWB.NUM_BAYS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
@@ -566,6 +566,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
         self.declare_partials('*', '*', method='fd', form='forward')
 
@@ -684,7 +685,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
-        self.options[Aircraft.BWB.NUM_BAYS][0] = num_bays
+        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
         outputs[Aircraft.Fuselage.LENGTH] = length
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length

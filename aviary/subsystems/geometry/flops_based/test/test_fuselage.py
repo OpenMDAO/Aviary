@@ -98,6 +98,8 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11, units='unitless')
         prob.run_model()
 
+        num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
+        assert_near_equal(num_bays, [5], tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
@@ -133,7 +135,6 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
-        options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
 
         prob.model.add_subsystem(
             'layout', BWBDetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
@@ -145,7 +146,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 
-        num_bays = options.get_val(Aircraft.BWB.NUM_BAYS)
+        num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
         assert_near_equal(num_bays, [7], tolerance=1e-9)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)

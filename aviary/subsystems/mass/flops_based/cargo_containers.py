@@ -2,9 +2,9 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.utils.functions import sin_int4, dydx_sin_int4
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
-from aviary.utils.functions import sin_int4, dydx_sin_int4
 
 
 class TransportCargoContainersMass(om.ExplicitComponent):

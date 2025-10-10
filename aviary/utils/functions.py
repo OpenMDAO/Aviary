@@ -667,7 +667,7 @@ def dydx_sin_int4(val):
 
 
 # 'int' function can be approximated by recursively applying this sin function
-# which makes a smooth, differentialbe function
+# which makes a smooth, differentialbe function (is there a good one?)
 def sin_int(val):
     """
     Define one step in approximating the 'int' function with a smooth,
@@ -683,3 +683,27 @@ def dydx_sin_int(val):
     dydx = 1.0 - np.cos(2 * np.pi * (val + 0.5))
 
     return dydx
+
+
+def smooth_int_tanh(x, mu=10.0):
+    """
+    Smooth approximation of int(x) using tanh.
+    """
+    f = np.floor(x)
+    frac = x - f
+    t = np.tanh(mu * (frac - 0.5))
+    s = 0.5 * (t + 1)
+    y = f + s
+    return y
+
+
+def d_smooth_int_tanh(x, mu=10.0):
+    """
+    Smooth approximation of int(x) using tanh.
+    Returns (y, dy_dx).
+    """
+    f = np.floor(x)
+    frac = x - f
+    t = np.tanh(mu * (frac - 0.5))
+    dy_dx = 0.5 * mu * (1 - t**2)
+    return dy_dx
