@@ -858,12 +858,11 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         Aircraft.Design.TOTAL_WETTED_AREA -- SWTWG + SWTHT + SWTVT + SWTFU + SWTNA + SWTCN = 35311.536998566495
         """
         prob = self.prob
-        options = self.options
 
         prob.run_model()
 
         # BWBSimpleCabinLayout
-        num_bays = options.get_val(Aircraft.BWB.NUM_BAYS)
+        num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
         assert_near_equal(num_bays, [5], tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-8)
@@ -1147,7 +1146,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.run_model()
 
         # BWBDetailedCabinLayout
-        num_bays = options.get_val(Aircraft.BWB.NUM_BAYS)
+        num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
         assert_near_equal(num_bays, [7], tolerance=1e-9)
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
         assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)
