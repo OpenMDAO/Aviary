@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.furnishings import (
@@ -22,6 +23,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class TransportFurnishingsGroupMassTest(unittest.TestCase):
     """Tests transport/GA furnishings mass calculation."""
 
@@ -60,6 +62,7 @@ class TransportFurnishingsGroupMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class BWBFurnishingsGroupMassTest(unittest.TestCase):
     """Tests BWB furnishings mass calculation."""
 
@@ -72,7 +75,6 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
         flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
         opts = {
-            Aircraft.BWB.NUM_BAYS: 5,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS: flops_inputs.get_val(
                 Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
             ),
@@ -106,6 +108,7 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
         # case will only check the partials.
         prob.set_val(Aircraft.Fuselage.CABIN_AREA, 1000.0, units='ft**2')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 30.0, units='deg')
+        prob.set_val(Aircraft.BWB.NUM_BAYS, 5.0, units='unitless')
 
         flops_validation_test(
             prob,
@@ -128,6 +131,7 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class BWBFurnishingsGroupMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
@@ -147,7 +151,6 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
         flops_inputs = get_flops_inputs('AdvancedSingleAisle', preprocess=True)
 
         opts = {
-            Aircraft.BWB.NUM_BAYS: 5,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS: flops_inputs.get_val(
                 Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
             ),
@@ -172,12 +175,14 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=100.0, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Fuselage.MAX_WIDTH, val=30.0, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.MAX_HEIGHT, val=15.0, units='ft')
+        prob.model.set_input_defaults(Aircraft.BWB.NUM_BAYS, 5.0, units='unitless')
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
     """Tests alternate base furnishings mass calculation."""
 
@@ -211,6 +216,7 @@ class AltFurnishingsGroupMassBaseTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class AltFurnishingsGroupMassTest(unittest.TestCase):
     """Tests alternate furnishings mass calculation."""
 

@@ -643,3 +643,67 @@ def d_smooth_max(x, b, mu=10.0):
     denominator = np.exp(mu_x - m) + np.exp(mu_b - m)
     d_sum_log_exp = mu * numerator / denominator
     return d_sum_log_exp
+
+
+def sin_int4(val):
+    """Define a smooth, differentialbe approximation to the 'int' function."""
+    return sin_int(sin_int(sin_int(sin_int(val)))) - 0.5
+
+
+def dydx_sin_int4(val):
+    """Define the derivative (dy/dx) of sin_int4, at x = val."""
+    y0 = sin_int(val)
+    y1 = sin_int(y0)
+    y2 = sin_int(y1)
+
+    dydx3 = dydx_sin_int(y2)
+    dydx2 = dydx_sin_int(y1)
+    dydx1 = dydx_sin_int(y0)
+    dydx0 = dydx_sin_int(val)
+
+    dydx = dydx3 * dydx2 * dydx1 * dydx0
+
+    return dydx
+
+
+# 'int' function can be approximated by recursively applying this sin function
+# which makes a smooth, differentialbe function (is there a good one?)
+def sin_int(val):
+    """
+    Define one step in approximating the 'int' function with a smooth,
+    differentialbe function.
+    """
+    int_val = val - np.sin(2 * np.pi * (val + 0.5)) / (2 * np.pi)
+
+    return int_val
+
+
+def dydx_sin_int(val):
+    """Define the derivative (dy/dx) of sin_int, at x = val."""
+    dydx = 1.0 - np.cos(2 * np.pi * (val + 0.5))
+
+    return dydx
+
+
+def smooth_int_tanh(x, mu=10.0):
+    """
+    Smooth approximation of int(x) using tanh.
+    """
+    f = np.floor(x)
+    frac = x - f
+    t = np.tanh(mu * (frac - 0.5))
+    s = 0.5 * (t + 1)
+    y = f + s
+    return y
+
+
+def d_smooth_int_tanh(x, mu=10.0):
+    """
+    Smooth approximation of int(x) using tanh.
+    Returns (y, dy_dx).
+    """
+    f = np.floor(x)
+    frac = x - f
+    t = np.tanh(mu * (frac - 0.5))
+    dy_dx = 0.5 * mu * (1 - t**2)
+    return dy_dx
