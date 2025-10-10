@@ -107,6 +107,7 @@ def create_prob(aviary_inputs, use_spoiler=False):
     traj = dto_build.build_trajectory(aviary_options=aviary_inputs, model=subprob.model)
 
     setup_model_options(subprob, aviary_inputs)
+    subprob.set_solver_print(2)
 
     # This is kind of janky, but we need these after the subproblem sets it up.
     subprob.aviary_inputs = aviary_inputs
