@@ -657,6 +657,7 @@ Canard_test_data = AviaryValues(
 )
 
 
+@use_tempdirs
 class BWBWingTest(unittest.TestCase):
     "BWBWing computation test using detailed wing inputs"
 
@@ -666,8 +667,12 @@ class BWBWingTest(unittest.TestCase):
     def test_case1(self):
         prob = self.prob
         self.aviary_options = AviaryValues()
-        self.aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+        self.aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
+        prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(
+            'BWB_INPUT_STATION_DIST',
             [
                 0.0,
                 32.29,
@@ -687,9 +692,6 @@ class BWBWingTest(unittest.TestCase):
             ],
             units='unitless',
         )
-        prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
-        setup_model_options(self.prob, self.aviary_options)
-        prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             val=[
@@ -758,6 +760,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
+        options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 3, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -872,10 +875,6 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(fuselage_height, 15.125, tolerance=1e-8)
 
         # BWBComputeDetailedWingDist
-        out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
-        exp0 = [0.0, 32.29, 1.0]
-        assert_near_equal(out0, exp0, tolerance=1e-8)
-
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [137.5, 91.37170741, 14.2848]
         assert_near_equal(out1, exp1, tolerance=1e-8)
@@ -1001,6 +1000,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
+        options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
 
@@ -1163,26 +1163,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
 
         # BWBUpdateDetailedWingDist
-        out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
-        exp0 = [
-            0.0,
-            40.110378036763386,
-            0.5897064095304685,
-            0.623897542069596,
-            0.6580886746087238,
-            0.6922798071478513,
-            0.726470939686979,
-            0.7605936899610284,
-            0.7948532047652341,
-            0.8290443373043619,
-            0.8632354698434895,
-            0.8974266023826171,
-            0.9315493526566665,
-            0.9658088674608724,
-            1.0,
-        ]
-        assert_near_equal(out0, exp0, tolerance=1e-8)
-
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [
             112.3001936861,
