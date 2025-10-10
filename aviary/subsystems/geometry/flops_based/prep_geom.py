@@ -99,8 +99,6 @@ class PrepGeom(om.Group):
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
-        else:
-            raise ('This aircraft types have not been implemented.')
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
@@ -625,14 +623,15 @@ class _BWBWing(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
 
     def setup(self):
-        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        self.add_input('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
         self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
         self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
 
@@ -641,8 +640,8 @@ class _BWBWing(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
-        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        input_station_dist = inputs['BWB_INPUT_STATION_DIST']
+        num_stations = len(inputs['BWB_INPUT_STATION_DIST'])
 
         span = inputs[Aircraft.Wing.SPAN]
 

@@ -86,7 +86,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
         prob.run_model()
 
-        out0 = options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        out0 = prob.get_val('BWB_INPUT_STATION_DIST')
         exp0 = [
             0.0,
             32.29,
@@ -185,7 +185,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()
 
-        out0 = self.aviary_options.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        out0 = prob.get_val('BWB_INPUT_STATION_DIST')
         exp0 = [0.0, 32.29, 1.0]
         assert_near_equal(out0, exp0, tolerance=1e-10)
 
@@ -205,6 +205,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
+@use_tempdirs
 class BWBWingPrelimTest(unittest.TestCase):
     """
     For BWB with given detailed wing information, test the computation of wing parameters.
@@ -217,8 +218,17 @@ class BWBWingPrelimTest(unittest.TestCase):
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
-        self.aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+        self.aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
+        prob.model.add_subsystem(
+            'dist', BWBWingPrelim(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
+        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(
+            'BWB_INPUT_STATION_DIST',
             [
                 0.0,
                 32.29,
@@ -238,14 +248,6 @@ class BWBWingPrelimTest(unittest.TestCase):
             ],
             units='unitless',
         )
-        prob.model.add_subsystem(
-            'dist', BWBWingPrelim(), promotes_outputs=['*'], promotes_inputs=['*']
-        )
-        setup_model_options(self.prob, self.aviary_options)
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
-        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
-        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
         prob.set_val(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             val=[
