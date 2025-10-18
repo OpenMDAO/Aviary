@@ -1170,9 +1170,7 @@ class AviaryGroup(om.Group):
                                     static_target=True,
                                     units=base_units,
                                     shape=shape,
-                                    targets={
-                                        phase_name: [mission_var_name] for phase_name in base_phases
-                                    },
+                                    targets={phase_name: [targets] for phase_name in base_phases},
                                 )
 
                                 self.connect(
