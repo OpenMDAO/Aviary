@@ -1115,7 +1115,7 @@ class AviaryGroup(om.Group):
         self.configurator.check_trajectory(self)
 
     def _add_bus_variables_and_connect(self):
-        all_subsystems = self.get_all_subsystems()
+        all_subsystems = self.get_all_subsystems(group='pre_mission')
 
         base_phases = list(self.phase_info.keys())
 
@@ -1195,7 +1195,7 @@ class AviaryGroup(om.Group):
                             )
 
     def _connect_mission_bus_variables(self):
-        all_subsystems = self.get_all_subsystems()
+        all_subsystems = self.get_all_subsystems(group='post_mission')
 
         # Loop through all external subsystems.
         for external_subsystem in all_subsystems:
@@ -1448,10 +1448,13 @@ class AviaryGroup(om.Group):
                 self, phase_name, phase, guesses, target_prob, parent_prefix
             )
 
-    def get_all_subsystems(self, external_subsystems=None):
+    def get_all_subsystems(self, external_subsystems=None, group='pre_mission'):
         all_subsystems = []
         if external_subsystems is None:
-            all_subsystems.extend(self.pre_mission_info['external_subsystems'])
+            if group == 'pre_mission':
+                all_subsystems.extend(self.pre_mission_info['external_subsystems'])
+            elif group == 'post_mission':
+                all_subsystems.extend(self.post_mission_info['external_subsystems'])
         else:
             all_subsystems.extend(external_subsystems)
 
