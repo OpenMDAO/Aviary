@@ -824,9 +824,9 @@ class EngineDeck(EngineModel):
 
         no_scale_variables = [TEMPERATURE, RPM]
 
-        # Add the first three inputs in the requested order.
+        # Add the first table inputs in the requested order.
         for variable in independent_variables:
-            if variable in self.inputs:
+            if variable in self.inputs and variable in self.engine_variables:
                 engine.add_input(
                     variable.value,
                     self.data[variable],
@@ -836,16 +836,18 @@ class EngineDeck(EngineModel):
         # Add the remaining variables.
         for variable in self.engine_variables:
 
-            if variable in independent_variables:
-                # Already handled above.
-                continue
-
             if variable in self.inputs:
+
+                if variable in independent_variables:
+                    # Already handled above.
+                    continue
+
                 engine.add_input(
                     variable.value,
                     self.data[variable],
                     units=default_units[variable],
                 )
+
             else:
                 # don't append 'unscaled' to variables that will not be passed to scaling
                 if variable in no_scale_variables:
