@@ -835,9 +835,7 @@ class EngineDeck(EngineModel):
 
         # Add the remaining variables.
         for variable in self.engine_variables:
-
             if variable in self.inputs:
-
                 if variable in independent_variables:
                     # Already handled above.
                     continue
@@ -1527,20 +1525,20 @@ class EngineDeck(EngineModel):
         if interp_sort == 'altitude':
             # Sort by mach, then altitude, then throttle, then hybrid throttle
             sort_keys = [
-                    engine_data[HYBRID_THROTTLE],
-                    engine_data[THROTTLE],
-                    engine_data[MACH],
-                    engine_data[ALTITUDE],
-                ]
+                engine_data[HYBRID_THROTTLE],
+                engine_data[THROTTLE],
+                engine_data[MACH],
+                engine_data[ALTITUDE],
+            ]
 
         else:
             # Sort by mach, then altitude, then throttle, then hybrid throttle
             sort_keys = [
-                    engine_data[HYBRID_THROTTLE],
-                    engine_data[THROTTLE],
-                    engine_data[ALTITUDE],
-                    engine_data[MACH],
-                ]
+                engine_data[HYBRID_THROTTLE],
+                engine_data[THROTTLE],
+                engine_data[ALTITUDE],
+                engine_data[MACH],
+            ]
 
         sorted_values = sorted_values[np.lexsort(sort_keys)]
 
