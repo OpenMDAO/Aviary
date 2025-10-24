@@ -14,6 +14,10 @@ from aviary.variable_info.variables import Mission
 
 local_phase_info = deepcopy(phase_info)
 
+# First way is the manual way using the files in this directory.
+# Second is automated. You can turn balanced-field on with a single switch.
+# Note: Aero is still hardcoded in this directory. Initial guesses are also hardcoded,
+# but it is unclear which ones need to be tuned by the user.
 #local_phase_info['post_mission']['external_subsystems'] = [BalancedFieldBuilder()]
 local_phase_info['post_mission']['balanced_field'] = True
 
