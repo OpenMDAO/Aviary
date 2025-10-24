@@ -9,18 +9,17 @@ PhaseBuilderBase : the interface for a phase builder
 from abc import ABC
 from collections import namedtuple
 
+import numpy as np
+
 import dymos as dm
 import openmdao.api as om
-import numpy as np
 
 from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
 from aviary.mission.flops_based.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
-from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.api import Aircraft, Dynamic, Mission
 
 from aviary.mission.phase_builder_base import PhaseBuilderBase
 

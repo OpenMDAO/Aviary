@@ -5,7 +5,14 @@ import warnings
 
 import openmdao.api as om
 
-import aviary.api as av
+from aviary.mission.balanced_field_traj_builder import BalancedFieldTrajectoryBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.propulsion.utils import build_engine_deck
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import set_aviary_initial_values
+from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -36,8 +43,8 @@ def create_prob(aviary_inputs, use_spoiler=False):
     """
     Return a problem
     """
-    aero_builder = av.CoreAerodynamicsBuilder(
-        name='low_speed_aero', code_origin=av.LegacyCode.FLOPS
+    aero_builder = CoreAerodynamicsBuilder(
+        name='low_speed_aero', code_origin=LegacyCode.FLOPS
     )
 
     # fmt: off
@@ -79,19 +86,16 @@ def create_prob(aviary_inputs, use_spoiler=False):
 
     # We also need propulsion analysis for takeoff and landing. No additional configuration
     # is needed for this builder
-    engines = [av.build_engine_deck(aviary_inputs)]
+    engines = [build_engine_deck(aviary_inputs)]
     # Note that the aviary_inputs is already in a pre-processed state.
-    prop_builder = av.CorePropulsionBuilder(engine_models=engines)
+    prop_builder = CorePropulsionBuilder(engine_models=engines)
 
-    balanced_field_user_options = av.AviaryValues()
+    balanced_field_user_options = AviaryValues()
 
-    from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
-    from aviary.variable_info.functions import setup_model_options
-
-    dto_build = av.BalancedFieldTrajectoryBuilder('balanced_field_traj',
-                                                  core_subsystems=[aero_builder, prop_builder],
-                                                  subsystem_options=takeoff_subsystem_options,
-                                                  user_options=balanced_field_user_options)
+    dto_build = BalancedFieldTrajectoryBuilder('balanced_field_traj',
+                                               core_subsystems=[aero_builder, prop_builder],
+                                               subsystem_options=takeoff_subsystem_options,
+                                               user_options=balanced_field_user_options)
 
     subprob = om.Problem()
 
@@ -129,7 +133,7 @@ class AviarySubmodelComp(om.SubmodelComp):
 
 
         sub = self._subprob
-        av.set_aviary_initial_values(sub, sub.aviary_inputs)
+        set_aviary_initial_values(sub, sub.aviary_inputs)
         sub.dto_build.apply_initial_guesses(sub, 'traj')
 
         sub.final_setup()
