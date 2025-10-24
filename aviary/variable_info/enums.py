@@ -6,6 +6,7 @@ class AircraftTypes(Enum):
 
     TRANSPORT = 'transport'
     BLENDED_WING_BODY = 'BWB'
+    # GENERAL_AVIATION = 'GA'  # incomplete in FLOPS, unavailable in GASP
 
 
 class AlphaModes(Enum):

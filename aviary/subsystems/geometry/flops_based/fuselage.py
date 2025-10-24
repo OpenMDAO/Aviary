@@ -3,6 +3,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.utils.functions import smooth_int_tanh, d_smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -60,8 +61,85 @@ class FuselagePrelim(om.ExplicitComponent):
         partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = length
 
 
+class BWBFuselagePrelim(om.ExplicitComponent):
+    """Calculate fuselage average diameter and planform area for BWB"""
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        self.add_input(
+            'Rear_spar_percent_chord',
+            0.7,
+            units='unitless',
+            desc='RSPSOB: Rear spar percent chord for BWB at side of body',
+        )
+
+        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
+
+    def setup_partials(self):
+        self.declare_partials(
+            of=[Aircraft.Fuselage.AVG_DIAMETER],
+            wrt=[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH],
+            val=0.5,
+        )
+        self.declare_partials(
+            of=[Aircraft.Fuselage.PLANFORM_AREA],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Wing.ROOT_CHORD,
+                'Rear_spar_percent_chord',
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        length = inputs[Aircraft.Fuselage.LENGTH]
+        max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
+        root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+
+        if length <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.LENGTH must be positive.')
+        if rear_spar_percent_chord <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Rear_spar_percent_chord must be positive. It is default to 0.7')
+
+        # not sure if this is right definition and not sure if it is used for BWB.
+        avg_diameter = 0.5 * (max_height + max_width)
+        planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
+
+        outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
+
+    def compute_partials(self, inputs, partials):
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        length = inputs[Aircraft.Fuselage.LENGTH]
+        root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.LENGTH] = max_width / 2.0
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
+            length + root_chord / rear_spar_percent_chord
+        ) / 2.0
+        partials[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Wing.ROOT_CHORD] = (
+            max_width / rear_spar_percent_chord / 2.0
+        )
+        partials[Aircraft.Fuselage.PLANFORM_AREA, 'Rear_spar_percent_chord'] = (
+            -max_width * root_chord / rear_spar_percent_chord**2 / 2.0
+        )
+
+
 class SimpleCabinLayout(om.ExplicitComponent):
-    """Given fuselage length, compute passenger compartment length."""
+    """Given fuselage length, height and width, compute passenger compartment length."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -103,17 +181,17 @@ class SimpleCabinLayout(om.ExplicitComponent):
                 )
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
 
-    def compute_partials(self, inputs, partials):
+    def compute_partials(self, inputs, J):
         length = inputs[Aircraft.Fuselage.LENGTH]
         atan = np.arctan(length / 59.0)
         deriv = 0.6085 * (
             (atan) ** 1.1 + 1.1 * length * atan**0.1 / (1 + (length / 59.0) ** 2) / 59.0
         )
-        partials[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = deriv
+        J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = deriv
 
 
 class DetailedCabinLayout(om.ExplicitComponent):
-    """Compute fuselage length and passenger compartment length."""
+    """Compute fuselage dimensions using cabin seat information."""
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
@@ -323,3 +401,304 @@ class DetailedCabinLayout(om.ExplicitComponent):
         width_fuselage = np.maximum(width_first_class, width_tourist_class) * 1.06
         outputs[Aircraft.Fuselage.MAX_WIDTH] = width_fuselage
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = width_fuselage + 0.9
+
+
+class BWBSimpleCabinLayout(om.ExplicitComponent):
+    """Given fuselage length, compute passenger compartment length for BWB."""
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
+        self.add_input(
+            'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
+        )
+
+        add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
+        add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
+        add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
+
+    def setup_partials(self):
+        self.declare_partials(
+            of=[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH],
+            wrt=[Aircraft.Fuselage.LENGTH, 'Rear_spar_percent_chord'],
+        )
+        self.declare_partials(
+            of=[Aircraft.Wing.ROOT_CHORD],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
+                'Rear_spar_percent_chord',
+            ],
+        )
+        self.declare_partials(
+            of=[Aircraft.Fuselage.CABIN_AREA],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
+                'Rear_spar_percent_chord',
+            ],
+        )
+        self.declare_partials(
+            of=[Aircraft.Fuselage.MAX_HEIGHT],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
+        length = inputs[Aircraft.Fuselage.LENGTH]
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        bay_width_max = 12.0  # ft
+
+        if length <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
+        if max_width <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print(
+                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
+                )
+
+        pax_compart_length = rear_spar_percent_chord * length
+        if pax_compart_length > 190.0:
+            if verbosity > Verbosity.BRIEF:
+                print(
+                    'Passenger compartiment lenght is longer than recommended maximum length. '
+                    'Suggest use detailed laylout algorithm.'
+                )
+
+        sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
+        tan_sweep = np.tan(sweep / 57.296)
+        root_chord = pax_compart_length - tan_sweep * max_width / 2.0
+        area_cabin = (pax_compart_length + root_chord) * max_width / 2.0
+        max_height = height_to_width * length
+
+        # Enforce maximum number of bays
+        num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
+        num_bays = int(0.5 + max_width.real / bay_width_max.real)
+        if num_bays > num_bays_max and num_bays_max > 0:
+            num_bays = num_bays_max
+        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
+
+        outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
+        outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
+        outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
+        outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
+
+    def compute_partials(self, inputs, J):
+        length = inputs[Aircraft.Fuselage.LENGTH]
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
+        tan_sweep = np.tan(sweep / 57.296)
+        pax_compart_length = rear_spar_percent_chord * length
+        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+
+        J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = (
+            rear_spar_percent_chord
+        )
+        J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'Rear_spar_percent_chord'] = length
+
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.LENGTH] = rear_spar_percent_chord
+        J[Aircraft.Wing.ROOT_CHORD, 'Rear_spar_percent_chord'] = length
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
+            -max_width / (np.cos(sweep / 57.296)) ** 2 / 57.296 / 2.0
+        )
+        J[Aircraft.Wing.ROOT_CHORD, Aircraft.Fuselage.MAX_WIDTH] = -tan_sweep / 2.0
+
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.LENGTH] = (
+            rear_spar_percent_chord * max_width
+        )
+        J[Aircraft.Fuselage.CABIN_AREA, 'Rear_spar_percent_chord'] = length * max_width
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP] = (
+            -(max_width**2) / 4.0 / (np.cos(sweep / 57.296)) ** 2 / 57.296
+        )
+        J[Aircraft.Fuselage.CABIN_AREA, Aircraft.Fuselage.MAX_WIDTH] = (
+            pax_compart_length - tan_sweep * max_width / 2.0
+        )
+
+        J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.LENGTH] = height_to_width
+        J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = length
+
+
+class BWBDetailedCabinLayout(om.ExplicitComponent):
+    """Compute BWB fuselage dimensions using cabin seat information."""
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
+        add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
+        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
+        self.add_input(
+            'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
+        )
+
+        add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
+        add_aviary_output(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
+        add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
+        add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
+
+        self.declare_partials('*', '*', method='fd', form='forward')
+
+    def compute(self, inputs, outputs):
+        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
+        sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
+        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        tan_sweep = np.tan(sweep / 57.296)
+
+        bay_width_max = 12.0  # ft
+        num_bays = 0
+        num_bays_loc = num_bays
+        num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
+        root_chord_min = 38.5  # ft
+        width_lava = 36.0  # inch
+        width_galley = 36.0  # inch
+        width_closet = 12.0  # inch
+
+        # Establish defaults for Number of Passengers Abreast
+        # and Seat Pitch for First, Business and Tourist classes
+
+        num_seat_abreast_business = self.options[
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS
+        ]
+        if num_seat_abreast_business <= 0:
+            num_seat_abreast_business = 5
+        num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
+        if num_seat_abreast_first <= 0:
+            num_seat_abreast_first = 4
+        num_seat_abreast_tourist = self.options[
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST
+        ]
+        if num_seat_abreast_tourist <= 0:
+            num_seat_abreast_tourist = 6
+
+        seat_pitch_business = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
+        if seat_pitch_business <= 0:
+            seat_pitch_business = 39.0  # inch
+        seat_pitch_first = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
+        if seat_pitch_first <= 0:
+            seat_pitch_first = 61.0  # inch
+        seat_pitch_tourist = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST][0]
+        if seat_pitch_tourist <= 0:
+            seat_pitch_tourist = 32.0  # inch
+
+        # Determine unit seat areas for each type of passenger
+        area_seat_business = bay_width_max * seat_pitch_business / 12.0 / num_seat_abreast_business
+        area_seat_first = bay_width_max * seat_pitch_first / 12.0 / num_seat_abreast_first
+        area_seat_tourist = bay_width_max * seat_pitch_tourist / 12.0 / num_seat_abreast_tourist
+
+        # Find the number of lavatories, galleys and closets based on the
+        # number of passengers for each class and the area for each
+        num_business_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
+        num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        num_tourist_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        num_lavas = (
+            int(0.99 + num_first_class_pax / 16.0)
+            + int(0.99 + num_business_class_pax / 24.0)
+            + int(0.99 + num_tourist_class_pax / 40.0)
+        )
+        num_galleys = int(0.99 + 0.6 * num_lavas)
+        num_closets = int(0.99 + 0.4 * num_lavas)
+
+        area_lava = (bay_width_max / 2.0) * (width_lava / 12.0)
+        area_galley = (bay_width_max / 2.0) * (width_galley / 12.0)
+        area_closet = (bay_width_max / 2.0) * (width_closet / 12.0)
+
+        # Calculate area required for passengers and services
+        area_seats = (
+            num_tourist_class_pax * area_seat_tourist
+            + num_business_class_pax * area_seat_business
+            + num_first_class_pax * area_seat_first
+        )
+        area_service = num_lavas * area_lava + num_galleys * area_galley + num_closets * area_closet
+
+        # Estimate number of bays based on these areas
+        num_bays = int(0.5 + (area_seats + area_service) / 550.0)
+        if num_bays > num_bays_max and num_bays_max > 0:
+            num_bays = num_bays_max
+
+        while num_bays_loc != num_bays:
+            num_bays_loc = num_bays
+            # Cabin area wasted due to slanted  != side wall
+            area_waste = num_bays * tan_sweep * (bay_width_max / 2.0) ** 2
+
+            # Aisle area for horseshoe (5'), cross (2') and rear (3') aisles
+            # Aisles only go to center of outboard bays, hence num_bays-1
+            area_aisle = 10.0 * (num_bays - 1) * bay_width_max
+
+            # Total pressurized cabin area
+            area_cabin = area_seats + area_service + area_waste + area_aisle
+
+            # Calculate cabin dimensions
+            root_chord = root_chord_min
+            max_width = (
+                2.0 * (-root_chord + np.sqrt(root_chord**2 + tan_sweep * area_cabin)) / tan_sweep
+            )
+            pax_compart_length = root_chord + tan_sweep * max_width / 2.0
+
+            # Enforce maximum number of bays
+            num_bays = int(0.5 + max_width / bay_width_max)
+            if num_bays > num_bays_max and num_bays_max > 0:
+                num_bays = num_bays_max
+
+            # Enforce maximum bay width
+            bay_width = max_width / num_bays
+            if bay_width > bay_width_max:
+                bay_width = bay_width_max
+                num_bays = int(0.999 + max_width / bay_width)
+                if num_bays > num_bays_max and num_bays_max > 0:
+                    num_bays = num_bays_max
+                    max_width = bay_width_max * bay_width
+                    pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0
+                    root_chord = pax_compart_length - tan_sweep * max_width / 2.0
+            # If number of bays has changed, recalculate cabin area
+
+        length = pax_compart_length / rear_spar_percent_chord
+        max_height = height_to_width * length
+        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
+
+        outputs[Aircraft.Fuselage.LENGTH] = length
+        outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
+        outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
+        outputs[Aircraft.Fuselage.MAX_WIDTH] = max_width
+        outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
+        outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
+
+        # TODO: For the int calls, I see that those are part of a while loop that solves
+        # a nonlinear equation by Gauss-Siedel until it converges. The interesting part is
+        # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
+        # the algorithm will probably take many more iteratiions. I wonder if it would still
+        # converge. One solution might be to rewrite this using an openmado solver, solve for
+        # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
+        # with the skin friction calculation, except there were no ints. I rewrote the equations
+        # in residual form and used a Newton solver on them. (Ken)
