@@ -209,11 +209,17 @@ class CustomBuilder(SubsystemBuilderBase):
             phase_d = {}
             if phase_data.get('do_the_zz_thing', False):
                 if self.mangle_names:
-                    phase_d[f'{name}.{name}_zz'] = f'{name}.{phase_name}_{name}_zz'
-                    phase_d[Dynamic.Mission.VELOCITY] = f'{name}.{phase_name}_{name}_velocity'
+                    phase_d[f'{name}.{name}_zz'] = {
+                        'post_mission_name': f'{name}.{phase_name}_{name}_zz'
+                    }
+                    phase_d[Dynamic.Mission.VELOCITY] = {
+                        'post_mission_name': f'{name}.{phase_name}_{name}_velocity'
+                    }
                 else:
-                    phase_d[f'{name}.zz'] = f'{name}.{phase_name}_zz'
-                    phase_d[Dynamic.Mission.VELOCITY] = f'{name}.{phase_name}_velocity'
+                    phase_d[f'{name}.zz'] = {'post_mission_name': f'{name}.{phase_name}_zz'}
+                    phase_d[Dynamic.Mission.VELOCITY] = {
+                        'post_mission_name': f'{name}.{phase_name}_velocity'
+                    }
             out[phase_name] = phase_d
         return out
 
