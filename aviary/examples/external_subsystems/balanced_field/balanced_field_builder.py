@@ -10,6 +10,12 @@ from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
 class BalancedFieldBuilder(SubsystemBuilderBase):
 
+    def __init__(self, name=None, meta_data=None):
+        if name is None:
+            name = 'balanced_field_length'
+
+        super().__init__(name=name, meta_data=meta_data)
+
     def build_post_mission(
         self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
     ):

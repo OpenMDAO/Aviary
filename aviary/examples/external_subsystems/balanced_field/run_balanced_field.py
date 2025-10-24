@@ -46,4 +46,4 @@ prob.setup()
 # TODO: N3CC optimization does not return success.
 prob.run_aviary_problem()
 
-prob.model.list_vars(units=True, print_arrays=True)
+#prob.model.list_vars(units=True, print_arrays=True)
