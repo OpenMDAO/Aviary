@@ -2197,6 +2197,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.INTERPOLATION_SORT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value='mach',
+    types=str,
+    desc='Specify the first interpolation variable in the semi-structured metamodel. '
+    'Choose from mach or altitude. Mach is usually the first column in the deck, but '
+    'altitude is more robust for semi-structured data.',
+    multivalue=True,
+)
+
+add_meta_data(
     Aircraft.Engine.MASS,
     meta_data=_MetaData,
     historical_name={
