@@ -282,9 +282,13 @@ class BWBBodyLiftCurveSlope(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         mach = inputs[Dynamic.Atmosphere.MACH]
-        if any(x < 0.0 or x >= 1.0 for x in mach.real):
+
+        # Provide a little buffer for being close to the limit.
+        eps = 1e-8
+
+        if any(x < -eps or x >= 1.0 + eps for x in mach.real):
             raise om.AnalysisError('Mach number must be within the range (0, 1).')
-        elif any(x > 0.8 for x in mach.real):
+        elif any(x > 0.8 + eps for x in mach.real):
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
                     f"Mach range should be less or equal to 0.8. You've provided a Mach number {mach}."

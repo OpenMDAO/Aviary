@@ -1115,7 +1115,7 @@ class AviaryGroup(om.Group):
         self.configurator.check_trajectory(self)
 
     def _add_bus_variables_and_connect(self):
-        all_subsystems = self.get_all_subsystems()
+        all_subsystems = self.get_all_subsystems(group='pre_mission')
 
         base_phases = list(self.phase_info.keys())
 
@@ -1124,6 +1124,7 @@ class AviaryGroup(om.Group):
             if bus_variables is not None:
                 for bus_variable, variable_data in bus_variables.items():
                     mission_variable_name = variable_data['mission_name']
+                    src_indices = variable_data.get('src_indices', None)
 
                     # check if mission_variable_name is a list
                     if not isinstance(mission_variable_name, list):
@@ -1161,6 +1162,7 @@ class AviaryGroup(om.Group):
                                     self.connect(
                                         f'pre_mission.{bus_variable}',
                                         f'traj.{phase_name}.parameters:{mission_var_name}',
+                                        src_indices=src_indices,
                                     )
 
                             else:
@@ -1170,14 +1172,13 @@ class AviaryGroup(om.Group):
                                     static_target=True,
                                     units=base_units,
                                     shape=shape,
-                                    targets={
-                                        phase_name: [mission_var_name] for phase_name in base_phases
-                                    },
+                                    targets={phase_name: [targets] for phase_name in base_phases},
                                 )
 
                                 self.connect(
                                     f'pre_mission.{bus_variable}',
                                     'traj.parameters:' + mission_var_name,
+                                    src_indices=src_indices,
                                 )
 
                     if 'post_mission_name' in variable_data:
@@ -1190,17 +1191,20 @@ class AviaryGroup(om.Group):
                             self.connect(
                                 f'pre_mission.{bus_variable}',
                                 post_mission_var_name,
+                                src_indices=src_indices,
                             )
 
     def _connect_mission_bus_variables(self):
-        all_subsystems = self.get_all_subsystems()
+        all_subsystems = self.get_all_subsystems(group='post_mission')
 
         # Loop through all external subsystems.
         for external_subsystem in all_subsystems:
             for phase_name, var_mapping in external_subsystem.get_post_mission_bus_variables(
                 aviary_inputs=self.aviary_inputs, phase_info=self.phase_info
             ).items():
-                for mission_variable_name, post_mission_variable_names in var_mapping.items():
+                for mission_variable_name, variable_data in var_mapping.items():
+                    post_mission_variable_names = variable_data['post_mission_name']
+                    src_indices = variable_data.get('src_indices', None)
                     if not isinstance(post_mission_variable_names, list):
                         post_mission_variable_names = [post_mission_variable_names]
 
@@ -1208,7 +1212,7 @@ class AviaryGroup(om.Group):
                         # Remove possible prefix before a `.`, like <external_subsystem_name>.<var_name>"
                         mvn_basename = mission_variable_name.rpartition('.')[-1]
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
-                        self.connect(src_name, post_mission_var_name)
+                        self.connect(src_name, post_mission_var_name, src_indices=src_indices)
 
     def add_design_variables(self, problem_type: ProblemType = None, verbosity=None):
         """
@@ -1444,10 +1448,13 @@ class AviaryGroup(om.Group):
                 self, phase_name, phase, guesses, target_prob, parent_prefix
             )
 
-    def get_all_subsystems(self, external_subsystems=None):
+    def get_all_subsystems(self, external_subsystems=None, group='pre_mission'):
         all_subsystems = []
         if external_subsystems is None:
-            all_subsystems.extend(self.pre_mission_info['external_subsystems'])
+            if group == 'pre_mission':
+                all_subsystems.extend(self.pre_mission_info['external_subsystems'])
+            elif group == 'post_mission':
+                all_subsystems.extend(self.post_mission_info['external_subsystems'])
         else:
             all_subsystems.extend(external_subsystems)
 

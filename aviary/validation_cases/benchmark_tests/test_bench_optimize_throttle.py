@@ -129,7 +129,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem(simulate=False, optimization_history_filename='z.sql')
+        prob.run_aviary_problem(simulate=False)
 
         self.assertTrue(prob.result.success)
 

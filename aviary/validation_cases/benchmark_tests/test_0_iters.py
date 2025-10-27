@@ -3,12 +3,10 @@ from copy import deepcopy
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.height_energy_default import (
-    phase_info as height_energy_phase_info,
-)
-from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
+from aviary.models.missions.height_energy_default import phase_info as height_energy_phase_info
+from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
@@ -27,7 +25,7 @@ class BaseProblemPhaseTestCase(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective(objective_type if objective_type else None)
         prob.setup()
-        prob.run_aviary_problem('dymos_solution.db', make_plots=False)
+        prob.run_aviary_problem(make_plots=False)
 
 
 @use_tempdirs
