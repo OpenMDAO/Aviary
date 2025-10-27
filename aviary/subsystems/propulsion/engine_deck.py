@@ -312,7 +312,6 @@ class EngineDeck(EngineModel):
                 f' Expected "altitude" or "mach", but found "{interp_sort}".'
             )
 
-
     def _set_variable_flags(self):
         """
         Sets flags in EngineDeck to communicate which (non-required) variables are
