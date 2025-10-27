@@ -146,5 +146,6 @@ class EngineDeckTest(unittest.TestCase):
             build_engine_deck(aviary_values)
         self.assertEqual(str(cm.exception), msg)
 
+
 if __name__ == '__main__':
     unittest.main()
