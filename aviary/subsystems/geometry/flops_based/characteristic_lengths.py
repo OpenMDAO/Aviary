@@ -100,6 +100,46 @@ class WingCharacteristicLength(om.ExplicitComponent):
             )
 
 
+class BWBWingCharacteristicLength(om.ExplicitComponent):
+    """
+    Calculate the characteristic length and fineness ratio of the wing of BWB.
+    """
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
+
+        add_aviary_output(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, units='ft')
+        add_aviary_output(self, Aircraft.Wing.FINENESS, units='unitless')
+
+    def setup_partials(self):
+        wrt = [
+            Aircraft.Wing.SPAN,
+            Aircraft.Wing.AREA,
+        ]
+
+        self.declare_partials(Aircraft.Wing.CHARACTERISTIC_LENGTH, wrt)
+
+        self.declare_partials(Aircraft.Wing.FINENESS, Aircraft.Wing.THICKNESS_TO_CHORD, val=1.0)
+
+    def compute(self, inputs, outputs):
+        wing_span = inputs[Aircraft.Wing.SPAN]
+        wing_area = inputs[Aircraft.Wing.AREA]
+        cl = wing_area / wing_span
+        outputs[Aircraft.Wing.CHARACTERISTIC_LENGTH] = cl
+
+        # a little redundant but FLOPS used two variables
+        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
+        outputs[Aircraft.Wing.FINENESS] = thickness_to_chord
+
+    def compute_partials(self, inputs, J):
+        wing_span = inputs[Aircraft.Wing.SPAN]
+        wing_area = inputs[Aircraft.Wing.AREA]
+        J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.SPAN] = -wing_area / wing_span**2
+        J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.AREA] = 1.0 / wing_span
+
+
 class OtherCharacteristicLengths(om.ExplicitComponent):
     """
     Calculate the characteristic length and fineness ratio of the
