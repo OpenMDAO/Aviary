@@ -163,7 +163,9 @@ class EnergyODE(_BaseODE):
                     promotes_outputs=['*'],
                 )
 
-            self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless')
+            self.set_input_defaults(
+                Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
+            )
 
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
