@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class NacelleTest(unittest.TestCase):
     """Test nacelle wetted area computation."""
 
@@ -52,7 +54,4 @@ class NacelleTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = NacelleTest()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
