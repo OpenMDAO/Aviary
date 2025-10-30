@@ -499,6 +499,8 @@ class PhaseBuilderBase(ABC):
             extra_options['upper'] = bounds[1]
             extra_options['ref'] = ref
             extra_options['ref0'] = ref0
+            extra_options['continuity_ref'] = ref
+            extra_options['rate_continuity_ref'] = ref
 
         if units not in ['unitless', None]:
             extra_options['units'] = units
