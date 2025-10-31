@@ -15,7 +15,7 @@ except ImportError:
     PETScVector = None
 
 
-#@use_tempdirs
+@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
@@ -200,7 +200,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=2,
+            verbosity=0,
             max_iter=50,
             optimizer='IPOPT',
         )
@@ -213,7 +213,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=2,
+            verbosity=0,
             max_iter=100,
             optimizer='SNOPT',
         )
