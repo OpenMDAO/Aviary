@@ -44,6 +44,7 @@ class AntiIcingMassTest(unittest.TestCase):
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Wing.SPAN,
                 Aircraft.Wing.SWEEP,
+                Aircraft.Engine.SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.AntiIcing.MASS,
             tol=3.0e-3,
@@ -73,6 +74,15 @@ class AntiIcingMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
         prob.set_val(Aircraft.Wing.SPAN, 117.83, 'ft')
         prob.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
+        prob.set_val(
+            Aircraft.Engine.SCALED_SLS_THRUST,
+            np.array(
+                [
+                    28928.1,
+                ]
+            ),
+            'lbf',
+        )
 
         prob.run_model()
 
@@ -100,6 +110,9 @@ class AntiIcingMassTest(unittest.TestCase):
         )
 
         prob.model_options['*'] = options
+        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array(
+            [28928.1, 28928.1, 28928.1]
+        )
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -108,6 +121,9 @@ class AntiIcingMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94, 8, 5]), 'ft')
         prob.set_val(Aircraft.Wing.SPAN, 117.83, 'ft')
         prob.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
+        prob.set_val(
+            Aircraft.Engine.SCALED_SLS_THRUST, np.array([28928.1, 28928.1, 28928.1]), 'lbf'
+        )
 
         prob.run_model()
 
@@ -158,6 +174,15 @@ class AntiIcingMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
         prob.set_val(Aircraft.Wing.SPAN, 117.83, 'ft')
         prob.set_val(Aircraft.Wing.SWEEP, 25.0, 'deg')
+        prob.set_val(
+            Aircraft.Engine.SCALED_SLS_THRUST,
+            np.array(
+                [
+                    28928.1,
+                ]
+            ),
+            'lbf',
+        )
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
