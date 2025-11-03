@@ -30,6 +30,7 @@ try:
 except ImportError:
     myst_nb = False
 
+
 @unittest.skipIf(
     myst_nb is False,
     'Skipping because myst_nb is not installed for doc testing.',

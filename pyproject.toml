@@ -21,7 +21,7 @@ dependencies = [
 
 [project.optional-dependencies]
 docs = [
-    "jupyter-book",
+    "jupyter-book<2",
     "itables"
 ]
 dev = [
