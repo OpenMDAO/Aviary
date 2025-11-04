@@ -1151,7 +1151,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:wing:surface_ctrl_mass_scaler",
+        "aircraft:wing:surface_control_mass_scaler",
         1,
         "unitless",
         "<class 'int'>"

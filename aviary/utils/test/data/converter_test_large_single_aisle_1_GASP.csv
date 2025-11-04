@@ -134,7 +134,7 @@ aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20.0,deg
 aircraft:wing:slat_chord_ratio,0.15,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
-aircraft:wing:surface_ctrl_mass_coefficient,0.95,unitless
+aircraft:wing:surface_control_mass_coefficient,0.95,unitless
 aircraft:wing:sweep,25.0,deg
 aircraft:wing:taper_ratio,0.33,unitless
 aircraft:wing:thickness_to_chord_root,0.15,unitless
