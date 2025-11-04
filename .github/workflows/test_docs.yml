@@ -56,7 +56,7 @@ jobs:
         id: build_docs
         shell: bash -l {0}
         run: |
-          pip install -U jupyter-book
+          pip install -U "jupyter-book<2"
           cd aviary/docs
           echo "============================================================="
           echo "Build the docs"
