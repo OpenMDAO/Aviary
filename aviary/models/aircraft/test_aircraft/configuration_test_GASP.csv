@@ -130,7 +130,7 @@ aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.1,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
 aircraft:wing:slat_span_ratio,0.9,unitless
-aircraft:wing:surface_ctrl_mass_coefficient,0.5936,unitless
+aircraft:wing:surface_control_mass_coefficient,0.5936,unitless
 aircraft:wing:sweep,22.47,deg
 aircraft:wing:taper_ratio,0.346,unitless
 aircraft:wing:thickness_to_chord_root,0.11,unitless

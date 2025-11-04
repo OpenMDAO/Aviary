@@ -49,7 +49,7 @@ aircraft:crew_and_payload:water_mass_per_occupant, 0, lbm
 
 # Engine/Propulsion
 # setting electrical mass may not do anything
-aircraft:electrical:mass, 300, lbm 
+aircraft:electrical:mass, 300, lbm
 aircraft:engine:additional_mass_fraction, 0.34, unitless
 aircraft:engine:data_file, models/engines/turboshaft_4465hp.csv
 aircraft:engine:mass_scaler, 1, unitless
@@ -167,7 +167,7 @@ aircraft:wing:optimum_slat_deflection, 45, deg
 aircraft:wing:slat_chord_ratio, 0, unitless
 aircraft:wing:slat_lift_increment_optimum, 0.93, unitless
 aircraft:wing:slat_span_ratio, 0.9, unitless
-aircraft:wing:surface_ctrl_mass_coefficient, 0.588, unitless
+aircraft:wing:surface_control_mass_coefficient, 0.588, unitless
 aircraft:wing:sweep, 0, deg
 aircraft:wing:taper_ratio, 0.52, unitless
 aircraft:wing:thickness_to_chord_root, 0.18, unitless
