@@ -224,6 +224,7 @@ class BWBAntiIcingMassTest(unittest.TestCase):
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Wing.SPAN,
                 Aircraft.Wing.SWEEP,
+                Aircraft.Engine.SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.AntiIcing.MASS,
             version=Version.TRANSPORT,  # TODO: Version.BWB
