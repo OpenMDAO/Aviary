@@ -384,7 +384,7 @@ outputs.set_val(Mission.Design.FUEL_MASS, 45352.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 4383.96064972, 'lbm')
 
-outputs.set_val(Aircraft.AntiIcing.MASS, 533.77301314, 'lbm')
+outputs.set_val(Aircraft.AntiIcing.MASS, 519.37038003, 'lbm')
 
 outputs.set_val(Aircraft.APU.MASS, 2148.13002234, 'lbm')
 
