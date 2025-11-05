@@ -116,6 +116,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CW(7)',
+        # The following note is for FLOPS
         # ['WTS.WSP(24, 2)', '~WEIGHT.WAI', '~WTSTAT.WSP(24, 2)'],
         'FLOPS': None,
         'LEAPS1': [
