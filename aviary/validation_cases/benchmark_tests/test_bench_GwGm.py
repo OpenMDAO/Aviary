@@ -10,7 +10,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-@use_tempdirs
+#@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using

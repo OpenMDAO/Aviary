@@ -456,7 +456,7 @@ class AviaryProblem(om.Problem):
             # Optimizer Settings #
             driver.opt_settings['Major iterations limit'] = max_iter
             driver.opt_settings['Major optimality tolerance'] = 1e-4
-            driver.opt_settings['Major feasibility tolerance'] = 1e-7
+            driver.opt_settings['Major feasibility tolerance'] = 1e-6
 
         elif driver.options['optimizer'] == 'IPOPT':
             # Print Options #

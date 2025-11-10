@@ -12,8 +12,8 @@ class HeightEnergyTestCase(unittest.TestCase):
     """Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation."""
 
     def setUp(self) -> None:
-        self.sized_mass = 175871.04745399
-        self.sized_range = 3375
+        self.sized_mass = 177534.
+        self.sized_range = 3500
         phase_info = {
             'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
             'climb': {
@@ -24,7 +24,8 @@ class HeightEnergyTestCase(unittest.TestCase):
                     'mach_optimize': True,
                     'mach_bounds': ((0.1, 0.8), 'unitless'),
                     'altitude_optimize': True,
-                    'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'altitude_bounds': ((0.0, 36000.0), 'ft'),
+                    'mass_ref': (2.0e5, 'lbm'),
                     'throttle_enforcement': 'path_constraint',
                     'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((5.0, 50.0), 'min'),
@@ -48,7 +49,8 @@ class HeightEnergyTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'altitude_polynomial_order': 1,
                     'altitude_initial': (35000.0, 'ft'),
-                    'altitude_bounds': ((35000.0, 35000.0), 'ft'),
+                    'altitude_bounds': ((34000.0, 36000.0), 'ft'),
+                    'mass_ref': (2.0e5, 'lbm'),
                     'throttle_enforcement': 'boundary_constraint',
                     'time_initial_bounds': ((20.0, 192.0), 'min'),
                     'time_duration_bounds': ((60.0, 720.0), 'min'),
@@ -71,10 +73,12 @@ class HeightEnergyTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'altitude_initial': (35000.0, 'ft'),
                     'altitude_final': (35.0, 'ft'),
-                    'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'altitude_bounds': ((0.0, 36000.0), 'ft'),
+                    'mass_ref': (2.0e5, 'lbm'),
+                    'distance_ref': (3500, 'nmi'),
                     'throttle_enforcement': 'path_constraint',
                     'time_initial_bounds': ((120.0, 800.0), 'min'),
-                    'time_duration_bounds': ((5.0, 35.0), 'min'),
+                    'time_duration_bounds': ((5.0, 45.0), 'min'),
                     'no_climb': True,
                 },
                 'initial_guesses': {
@@ -84,7 +88,7 @@ class HeightEnergyTestCase(unittest.TestCase):
             'post_mission': {
                 'include_landing': True,
                 'constrain_range': True,
-                'target_range': (3375.0, 'nmi'),
+                'target_range': (3500.0, 'nmi'),
             },
         }
 

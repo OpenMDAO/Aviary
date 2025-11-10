@@ -83,6 +83,8 @@ class PolynomialFitTest(unittest.TestCase):
         assert_near_equal(self.prob['h_init_gear'], -600, tol)
         assert_near_equal(self.prob['h_init_flaps'], -250, tol)
 
+        print('done')
+
 
 if __name__ == '__main__':
     unittest.main()

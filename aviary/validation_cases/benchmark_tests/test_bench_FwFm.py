@@ -172,6 +172,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
                     'mass_ref': (200000, 'lbm'),
+                    'distance_ref': (3375, 'nmi'),
                     'time_initial_bounds': ((80.0, 780.0), 'min'),
                     'time_duration_bounds': ((5.0, 45.0), 'min'),
                     'no_climb': True,
@@ -213,7 +214,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=0,
+            verbosity=2,
             max_iter=100,
             optimizer='SNOPT',
         )
