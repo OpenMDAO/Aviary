@@ -55,7 +55,7 @@ class FlightPathODETestCase(unittest.TestCase):
             Dynamic.Mission.VELOCITY_RATE: [14.08998135, 14.08998135],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
+            Dynamic.Mission.GROUND_DISTANCE_RATE: [168.781, 168.781],
             'normal_force': [74910.12, 74910.12],
             'fuselage_pitch': [0.0, 0.0],
             'load_factor': [0.2508988, 0.2508988],
@@ -92,7 +92,7 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.run_model()
         testvals = {
             Dynamic.Mission.VELOCITY_RATE: [13.60756024, 13.60756024],
-            Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
+            Dynamic.Mission.GROUND_DISTANCE_RATE: [168.781, 168.781],
             'normal_force': [74910.12, 74910.12],
             'fuselage_pitch': [0.0, 0.0],
             'load_factor': [0.2508988, 0.2508988],

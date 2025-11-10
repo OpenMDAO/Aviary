@@ -38,7 +38,7 @@ class FlareEOM(om.Group):
         kwargs = {'num_nodes': nn, 'climbing': True}
 
         inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY]
-        outputs = [Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE]
+        outputs = [Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE]
 
         self.add_subsystem(
             'distance_rates',
@@ -77,7 +77,7 @@ class FlareEOM(om.Group):
         inputs = [
             'acceleration_horizontal',
             'acceleration_vertical',
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             Dynamic.Mission.ALTITUDE_RATE,
         ]
 
@@ -93,7 +93,7 @@ class FlareEOM(om.Group):
         )
 
         inputs = [
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             Dynamic.Mission.ALTITUDE_RATE,
             'acceleration_horizontal',
             'acceleration_vertical',

@@ -148,7 +148,9 @@ class RotationPhase(PhaseBuilderBase):
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
-        self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+        self.add_state(
+            'distance', Dynamic.Mission.GROUND_DISTANCE, Dynamic.Mission.GROUND_DISTANCE_RATE
+        )
 
         # Add parameters
         phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=100)

@@ -86,7 +86,7 @@ class EnergyODE(_BaseODE):
             promotes_outputs=[
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 Dynamic.Mission.ALTITUDE_RATE_MAX,
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 'thrust_required',
             ],
         )

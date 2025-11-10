@@ -29,7 +29,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([0.5403023, 0.5403023]), tol
+            self.prob[Dynamic.Mission.GROUND_DISTANCE_RATE], np.array([0.5403023, 0.5403023]), tol
         )
         assert_near_equal(self.prob['normal_force'], np.array([-0.0174524, -0.0174524]), tol)
         assert_near_equal(self.prob['fuselage_pitch'], np.array([58.2958, 58.2958]), tol)
@@ -62,7 +62,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([0.5403023, 0.5403023]), tol
+            self.prob[Dynamic.Mission.GROUND_DISTANCE_RATE], np.array([0.5403023, 0.5403023]), tol
         )
         assert_near_equal(self.prob['normal_force'], np.array([-0.0, -0.0]), tol)
         assert_near_equal(self.prob['fuselage_pitch'], np.array([57.29578, 57.29578]), tol)

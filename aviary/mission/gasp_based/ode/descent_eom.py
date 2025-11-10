@@ -51,7 +51,7 @@ class DescentRates(om.ExplicitComponent):
             desc='rate of change of altitude',
         )
         self.add_output(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             val=np.zeros(nn),
             units='ft/s',
             desc='rate of change of horizontal distance covered',
@@ -81,7 +81,7 @@ class DescentRates(om.ExplicitComponent):
             cols=arange,
         )
         self.declare_partials(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             [
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -123,7 +123,7 @@ class DescentRates(om.ExplicitComponent):
         gamma = (thrust - drag) / weight
 
         outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
-        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
+        outputs[Dynamic.Mission.GROUND_DISTANCE_RATE] = TAS * np.cos(gamma)
         outputs['required_lift'] = weight * np.cos(gamma) - thrust * np.sin(alpha)
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE] = gamma
 
@@ -145,14 +145,14 @@ class DescentRates(om.ExplicitComponent):
             TAS * np.cos(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
         )
 
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
+        J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
+        J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = (
             -TAS * np.sin(gamma) / weight
         )
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.DRAG] = (
+        J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Vehicle.DRAG] = (
             -TAS * np.sin(gamma) * (-1 / weight)
         )
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Vehicle.MASS] = (
+        J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Vehicle.MASS] = (
             -TAS * np.sin(gamma) * (-(thrust - drag) / weight**2) * GRAV_ENGLISH_LBM
         )
 

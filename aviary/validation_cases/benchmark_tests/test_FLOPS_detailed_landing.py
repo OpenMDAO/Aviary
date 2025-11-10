@@ -95,7 +95,9 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         distance_max, units = landing_fullstop_user_options.get_item('distance_max')
         fullstop = landing_trajectory_builder.get_phase('landing_fullstop')
 
-        fullstop.add_objective(Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
+        fullstop.add_objective(
+            Dynamic.Mission.GROUND_DISTANCE, loc='final', ref=distance_max, units=units
+        )
 
         varnames = [Aircraft.Wing.ASPECT_RATIO]
         set_aviary_input_defaults(landing.model, varnames, aviary_options)

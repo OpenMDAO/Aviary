@@ -69,7 +69,7 @@ class ClimbODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE_RATE: 58.0148345,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
-            Dynamic.Mission.DISTANCE_RATE: 424.21929709,  # ft/s
+            Dynamic.Mission.GROUND_DISTANCE_RATE: 424.21929709,  # ft/s
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13447.80297433,  # lbm/h
             'theta': 0.22600284,  # rad (12.8021 deg)
             # rad (7.638135 deg)
@@ -115,7 +115,7 @@ class ClimbODETestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE_RATE: [52.44471763, 9.11523198],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
-            Dynamic.Mission.DISTANCE_RATE: [536.08501758, 774.38047573],
+            Dynamic.Mission.GROUND_DISTANCE_RATE: [536.08501758, 774.38047573],
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
                 -11417.86519196,
                 -6042.88107957,

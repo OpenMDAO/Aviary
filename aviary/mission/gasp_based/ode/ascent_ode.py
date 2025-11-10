@@ -63,7 +63,7 @@ class AscentODE(TwoDOFODE):
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 'angle_of_attack_rate',
                 'normal_force',
                 'fuselage_pitch',

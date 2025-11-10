@@ -48,7 +48,7 @@ class TakeoffEOMTest(unittest.TestCase):
                 Dynamic.Vehicle.DRAG,
             ],
             output_keys=[
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY_RATE,
             ],
@@ -73,7 +73,7 @@ class TakeoffEOMTest(unittest.TestCase):
                 Dynamic.Vehicle.DRAG,
             ],
             output_keys=[
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY_RATE,
             ],
@@ -159,7 +159,9 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
-        assert_near_equal(prob[Dynamic.Mission.DISTANCE_RATE], np.array([4.280758, -1.56085]), tol)
+        assert_near_equal(
+            prob[Dynamic.Mission.GROUND_DISTANCE_RATE], np.array([4.280758, -1.56085]), tol
+        )
         assert_near_equal(
             prob[Dynamic.Mission.ALTITUDE_RATE],
             np.array([3.004664, -2.203122]),
@@ -184,7 +186,7 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
-        assert_near_equal(prob[Dynamic.Mission.DISTANCE_RATE], np.array([1.0, 2.0]), tol)
+        assert_near_equal(prob[Dynamic.Mission.GROUND_DISTANCE_RATE], np.array([1.0, 2.0]), tol)
         assert_near_equal(prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
@@ -212,7 +214,9 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.model.add_subsystem('vel_rate', VelocityRate(num_nodes=2), promotes=['*'])
         prob.model.set_input_defaults('acceleration_horizontal', [100.0, 200.0], units='m/s**2')
         prob.model.set_input_defaults('acceleration_vertical', [50.0, 100.0], units='m/s**2')
-        prob.model.set_input_defaults(Dynamic.Mission.DISTANCE_RATE, [160.98, 166.25], units='m/s')
+        prob.model.set_input_defaults(
+            Dynamic.Mission.GROUND_DISTANCE_RATE, [160.98, 166.25], units='m/s'
+        )
         prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, [1.72, 11.91], units='m/s')
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -233,7 +237,9 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.model.add_subsystem('gamma_rate', FlightPathAngleRate(num_nodes=2), promotes=['*'])
         prob.model.set_input_defaults('acceleration_horizontal', [100.0, 200.0], units='m/s**2')
         prob.model.set_input_defaults('acceleration_vertical', [50.0, 100.0], units='m/s**2')
-        prob.model.set_input_defaults(Dynamic.Mission.DISTANCE_RATE, [160.98, 166.25], units='m/s')
+        prob.model.set_input_defaults(
+            Dynamic.Mission.GROUND_DISTANCE_RATE, [160.98, 166.25], units='m/s'
+        )
         prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, [1.72, 11.91], units='m/s')
 
         prob.setup(check=False, force_alloc_complex=True)

@@ -223,7 +223,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         aviary_group.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
         aviary_group.traj.link_phases(
-            phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.0e3, connected=False
+            phases, [Dynamic.Mission.GROUND_DISTANCE], units='ft', ref=1.0e3, connected=False
         )
         aviary_group.traj.link_phases(phases, ['time'], connected=False)
 
