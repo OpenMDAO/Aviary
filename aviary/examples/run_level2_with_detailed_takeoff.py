@@ -27,13 +27,14 @@ subsystem_options = {
 
 mach_optimize = True
 altitude_optimize = True
-optimizer = 'SLSQP'
+optimizer = 'IPOPT'
+num_segments = 2
 
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'AB': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'ground_roll': True,
             'time_duration_ref': (100.0, 'kn'),
@@ -50,7 +51,7 @@ phase_info = {
     },
     'rotate': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'ground_roll': True,
             'clean': False,
@@ -88,7 +89,7 @@ phase_info = {
     },
     'BC': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -115,7 +116,7 @@ phase_info = {
     },
     'CD_to_P2': {
         'user_options': {
-            'num_segments': 4,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -150,7 +151,7 @@ phase_info = {
     },
     'P2_to_DE': {
         'user_options': {
-            'num_segments': 4,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -185,7 +186,7 @@ phase_info = {
     },
     'DE': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -219,7 +220,7 @@ phase_info = {
     },
     'EF_to_P1': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -260,7 +261,7 @@ phase_info = {
     },
     'EF_past_P1': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -317,7 +318,11 @@ if __name__ == '__main__':
 
     prob.build_model()
 
-    prob.add_driver(optimizer, max_iter=25)
+    prob.add_driver(optimizer, max_iter=200, verbosity=2)
+    # custom optimizer seettings
+    prob.driver.opt_settings['mu_init'] = 1.0
+    prob.driver.opt_settings['nlp_scaling_method'] = 'none'
+    prob.driver.opt_settings['limited_memory_max_history'] = 50
 
     prob.add_design_variables()
 
