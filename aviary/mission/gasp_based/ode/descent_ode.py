@@ -155,7 +155,7 @@ class DescentODE(TwoDOFODE):
             ],
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 'required_lift',
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
             ],

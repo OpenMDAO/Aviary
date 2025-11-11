@@ -136,7 +136,7 @@ class TakeoffEOM(om.Group):
         kwargs = {'num_nodes': nn, 'climbing': climbing}
 
         inputs = [Dynamic.Mission.FLIGHT_PATH_ANGLE, Dynamic.Mission.VELOCITY]
-        outputs = [Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE]
+        outputs = [Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.ALTITUDE_RATE]
 
         self.add_subsystem(
             'distance_rates',
@@ -210,7 +210,7 @@ class DistanceRates(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
         add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='m/s')
 
-        add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, val=np.zeros(nn), units='m/s')
+        add_aviary_output(self, Dynamic.Mission.GROUND_DISTANCE_RATE, val=np.zeros(nn), units='m/s')
         add_aviary_output(self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
 
     def setup_partials(self):
@@ -225,13 +225,13 @@ class DistanceRates(om.ExplicitComponent):
 
         else:
             self.declare_partials(
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 dependent=False,
             )
 
             self.declare_partials(
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.VELOCITY,
                 val=np.identity(nn),
             )
@@ -255,7 +255,7 @@ class DistanceRates(om.ExplicitComponent):
         else:
             range_rate = velocity
 
-        outputs[Dynamic.Mission.DISTANCE_RATE] = range_rate
+        outputs[Dynamic.Mission.GROUND_DISTANCE_RATE] = range_rate
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         if self.options['climbing']:
@@ -265,8 +265,10 @@ class DistanceRates(om.ExplicitComponent):
             cgam = np.cos(flight_path_angle)
             sgam = np.sin(flight_path_angle)
 
-            J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = -sgam * velocity
-            J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = cgam
+            J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
+                -sgam * velocity
+            )
+            J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.VELOCITY] = cgam
 
             J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = cgam * velocity
             J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = sgam
@@ -395,7 +397,7 @@ class VelocityRate(om.ExplicitComponent):
             units='m/s**2',
         )
 
-        add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE, val=np.zeros(nn), units='m/s')
+        add_aviary_input(self, Dynamic.Mission.GROUND_DISTANCE_RATE, val=np.zeros(nn), units='m/s')
         add_aviary_input(self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
 
         add_aviary_output(self, Dynamic.Mission.VELOCITY_RATE, val=np.ones(nn), units='m/s**2')
@@ -407,7 +409,7 @@ class VelocityRate(om.ExplicitComponent):
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
-        v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
+        v_h = inputs[Dynamic.Mission.GROUND_DISTANCE_RATE]
         v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
 
         v_mag = np.sqrt(v_h**2 + v_v**2)
@@ -416,7 +418,7 @@ class VelocityRate(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
-        v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
+        v_h = inputs[Dynamic.Mission.GROUND_DISTANCE_RATE]
         v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
 
         num = a_h * v_h + a_v * v_v
@@ -426,7 +428,7 @@ class VelocityRate(om.ExplicitComponent):
         J[Dynamic.Mission.VELOCITY_RATE, 'acceleration_horizontal'] = v_h / den
         J[Dynamic.Mission.VELOCITY_RATE, 'acceleration_vertical'] = v_v / den
 
-        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.DISTANCE_RATE] = (
+        J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Mission.GROUND_DISTANCE_RATE] = (
             a_h / den - 0.5 * num / fact ** (3 / 2) * 2.0 * v_h
         )
 
@@ -446,7 +448,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Mission.DISTANCE_RATE, val=np.zeros(nn), units='m/s')
+        add_aviary_input(self, Dynamic.Mission.GROUND_DISTANCE_RATE, val=np.zeros(nn), units='m/s')
         add_aviary_input(self, Dynamic.Mission.ALTITUDE_RATE, val=np.zeros(nn), units='m/s')
 
         self.add_input(
@@ -475,7 +477,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
         self.declare_partials('*', '*', rows=rows_cols, cols=rows_cols)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
+        v_h = inputs[Dynamic.Mission.GROUND_DISTANCE_RATE]
         v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
@@ -485,7 +487,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
         outputs[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE] = x
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        v_h = inputs[Dynamic.Mission.DISTANCE_RATE]
+        v_h = inputs[Dynamic.Mission.GROUND_DISTANCE_RATE]
         v_v = inputs[Dynamic.Mission.ALTITUDE_RATE]
         a_h = inputs['acceleration_horizontal']
         a_v = inputs['acceleration_vertical']
@@ -501,7 +503,7 @@ class FlightPathAngleRate(om.ExplicitComponent):
 
         df_dav = v_h / den
 
-        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.DISTANCE_RATE] = df_dvh
+        J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.GROUND_DISTANCE_RATE] = df_dvh
         J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, Dynamic.Mission.ALTITUDE_RATE] = df_dvv
         J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, 'acceleration_horizontal'] = df_dah
         J[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, 'acceleration_vertical'] = df_dav

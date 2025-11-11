@@ -234,7 +234,7 @@ class TwoDOFPhase(FlightPhaseBase):
             fix_initial=fix_initial,
             fix_duration=fix_duration,
             units=time_units,
-            name=Dynamic.Mission.DISTANCE,
+            name=Dynamic.Mission.GROUND_DISTANCE,
             **extra_options,
         )
 

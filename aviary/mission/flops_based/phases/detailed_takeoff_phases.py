@@ -204,14 +204,14 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=True,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         max_velocity, units = user_options['max_velocity']
@@ -404,14 +404,14 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         max_velocity, units = user_options['max_velocity']
@@ -735,14 +735,14 @@ class TakeoffRotateToLiftoff(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         max_velocity, units = user_options['max_velocity']
@@ -990,14 +990,14 @@ class TakeoffLiftoffToObstacle(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -1302,14 +1302,14 @@ class TakeoffObstacleToMicP2(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -1606,14 +1606,14 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -1703,7 +1703,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
         final_range, units = user_options['final_range']
 
         phase.add_boundary_constraint(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             loc='final',
             equals=final_range,
             ref=final_range,
@@ -1889,14 +1889,14 @@ class TakeoffEngineCutback(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -2178,14 +2178,14 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -2271,7 +2271,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
         mic_range, units = user_options['mic_range']
 
         phase.add_boundary_constraint(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             loc='final',
             equals=mic_range,
             ref=mic_range,
@@ -2478,14 +2478,14 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -2571,7 +2571,7 @@ class TakeoffMicP1ToClimb(PhaseBuilderBase):
         mic_range, units = user_options['mic_range']
 
         phase.add_boundary_constraint(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             loc='final',
             equals=mic_range,
             ref=mic_range,
@@ -2733,14 +2733,14 @@ class TakeoffBrakeToAbort(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
             upper=distance_max,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         max_velocity, units = user_options['max_velocity']

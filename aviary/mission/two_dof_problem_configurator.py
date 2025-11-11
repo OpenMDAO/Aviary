@@ -401,7 +401,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 # we always want time, distance, and mass to be continuous
                 states_to_link = {
                     'time': connect_directly,
-                    Dynamic.Mission.DISTANCE: connect_directly,
+                    Dynamic.Mission.GROUND_DISTANCE: connect_directly,
                     Dynamic.Vehicle.MASS: False,
                 }
 
@@ -683,7 +683,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         state_keys = [
             'altitude',
             'mass',
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             Dynamic.Mission.VELOCITY,
             'flight_path_angle',
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
@@ -812,5 +812,5 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # variable
             target_prob.set_val(
                 parent_prefix + f'traj.{phase_name}.states:distance',
-                phase.interp(Dynamic.Mission.DISTANCE, ys=ys),
+                phase.interp(Dynamic.Mission.GROUND_DISTANCE, ys=ys),
             )

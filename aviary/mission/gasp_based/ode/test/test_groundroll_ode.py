@@ -54,7 +54,7 @@ class GroundrollODETestCase(unittest.TestCase):
             Dynamic.Mission.VELOCITY_RATE: [1415679.28759478, 1415679.28759478],
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [0.0, 0.0],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
+            Dynamic.Mission.GROUND_DISTANCE_RATE: [168.781, 168.781],
             'normal_force': [0.0, 0.0],
             'fuselage_pitch': [0.0, 0.0],
             'dmass_dv': [-5.02403534e-06, -5.02403534e-06],

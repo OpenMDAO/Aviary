@@ -73,7 +73,7 @@ class FlareODE(_BaseODE):
                 Mission.Landing.FLARE_RATE,
             ],
             promotes_outputs=[
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY_RATE,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,

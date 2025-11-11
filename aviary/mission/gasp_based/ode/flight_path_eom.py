@@ -97,7 +97,7 @@ class FlightPathEOM(om.ExplicitComponent):
             )
 
         self.add_output(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             val=np.ones(nn),
             desc='distance rate',
             units='ft/s',
@@ -190,7 +190,7 @@ class FlightPathEOM(om.ExplicitComponent):
             )
 
         self.declare_partials(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             [Dynamic.Mission.VELOCITY, Dynamic.Mission.FLIGHT_PATH_ANGLE],
             rows=arange,
             cols=arange,
@@ -254,7 +254,7 @@ class FlightPathEOM(om.ExplicitComponent):
             )
             outputs[Dynamic.Mission.ALTITUDE_RATE] = TAS * np.sin(gamma)
 
-        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS * np.cos(gamma)
+        outputs[Dynamic.Mission.GROUND_DISTANCE_RATE] = TAS * np.cos(gamma)
 
         outputs['normal_force'] = normal_force
 
@@ -400,8 +400,10 @@ class FlightPathEOM(om.ExplicitComponent):
             J['fuselage_pitch', Aircraft.Wing.INCIDENCE] = -1
             J['load_factor', Aircraft.Wing.INCIDENCE] = dTAcF_dIwing / (weight * np.cos(gamma))
 
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
-        J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * np.sin(gamma)
+        J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.VELOCITY] = np.cos(gamma)
+        J[Dynamic.Mission.GROUND_DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * np.sin(
+            gamma
+        )
 
         J['normal_force', Dynamic.Vehicle.MASS] = dNF_dWeight * GRAV_ENGLISH_LBM
         J['normal_force', Dynamic.Vehicle.LIFT] = dNF_dLift

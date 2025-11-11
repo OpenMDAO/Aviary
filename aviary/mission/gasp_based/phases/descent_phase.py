@@ -131,7 +131,9 @@ class DescentPhase(PhaseBuilderBase):
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
-        self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+        self.add_state(
+            'distance', Dynamic.Mission.GROUND_DISTANCE, Dynamic.Mission.GROUND_DISTANCE_RATE
+        )
 
         # Add parameter if necessary
         if input_speed_type == SpeedType.EAS:

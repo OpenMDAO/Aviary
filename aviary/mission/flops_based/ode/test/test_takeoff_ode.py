@@ -44,7 +44,7 @@ class TakeoffODETest(unittest.TestCase):
                 Dynamic.Vehicle.DRAG,
             ],
             output_keys=[
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY_RATE,
             ],
@@ -74,7 +74,7 @@ class TakeoffODETest(unittest.TestCase):
                 Dynamic.Vehicle.DRAG,
             ],
             output_keys=[
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY_RATE,
             ],

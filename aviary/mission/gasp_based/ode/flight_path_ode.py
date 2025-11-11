@@ -142,7 +142,7 @@ class FlightPathODE(TwoDOFODE):
             promotes_inputs=EOM_inputs,
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 'normal_force',
                 'fuselage_pitch',
                 'load_factor',

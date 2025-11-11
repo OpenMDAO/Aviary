@@ -138,7 +138,7 @@ class GroundrollPhase(PhaseBuilderBase):
         )
 
         phase.set_state_options(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             rate_source='over_a',
             fix_initial=True,
             fix_final=False,

@@ -46,7 +46,7 @@ class DescentTestCase(unittest.TestCase):
             tol,
         )  # note: values from GASP are: np.array([-39.75, -39.75])
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE],
+            self.prob[Dynamic.Mission.GROUND_DISTANCE_RATE],
             np.array([773.70165638, 773.70165638]),
             tol,
             # note: these values are finite differenced and lose accuracy. Fd values are:np.array([964.4634921, 964.4634921])

@@ -51,7 +51,7 @@ class AccelerationRates(om.ExplicitComponent):
             desc='rate of change of true air speed',
         )
         self.add_output(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             val=np.zeros(nn),
             units='ft/s',
             desc='rate of change of horizontal distance covered',
@@ -68,7 +68,7 @@ class AccelerationRates(om.ExplicitComponent):
             cols=arange,
         )
         self.declare_partials(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             [Dynamic.Mission.VELOCITY],
             rows=arange,
             cols=arange,
@@ -82,7 +82,7 @@ class AccelerationRates(om.ExplicitComponent):
         TAS = inputs[Dynamic.Mission.VELOCITY]
 
         outputs[Dynamic.Mission.VELOCITY_RATE] = (GRAV_ENGLISH_GASP / weight) * (thrust - drag)
-        outputs[Dynamic.Mission.DISTANCE_RATE] = TAS
+        outputs[Dynamic.Mission.GROUND_DISTANCE_RATE] = TAS
 
     def compute_partials(self, inputs, J):
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM

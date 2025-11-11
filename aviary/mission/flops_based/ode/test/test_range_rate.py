@@ -17,7 +17,7 @@ class RangeRateTest(unittest.TestCase):
         time, _ = data.get_item('time')
 
         prob.model.add_subsystem(
-            Dynamic.Mission.DISTANCE_RATE,
+            Dynamic.Mission.GROUND_DISTANCE_RATE,
             RangeRate(num_nodes=len(time)),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -32,7 +32,7 @@ class RangeRateTest(unittest.TestCase):
             input_validation_data=data,
             output_validation_data=data,
             input_keys=[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],
-            output_keys=Dynamic.Mission.DISTANCE_RATE,
+            output_keys=Dynamic.Mission.GROUND_DISTANCE_RATE,
             tol=1e-12,
         )
 

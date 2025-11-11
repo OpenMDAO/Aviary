@@ -62,7 +62,7 @@ class RotationODETestCase(unittest.TestCase):
         )
         assert_near_equal(self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol)
         assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([168.781, 168.781]), tol
+            self.prob[Dynamic.Mission.GROUND_DISTANCE_RATE], np.array([168.781, 168.781]), tol
         )
         assert_near_equal(self.prob['normal_force'], np.array([66932.7, 66932.7]), tol)
         assert_near_equal(self.prob['fuselage_pitch'], np.array([0.0, 0.0]), tol)

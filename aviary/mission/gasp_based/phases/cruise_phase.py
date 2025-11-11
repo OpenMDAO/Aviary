@@ -141,7 +141,7 @@ class CruisePhase(PhaseBuilderBase):
 
         phase.add_timeseries_output('time', units='s', output_name='time')
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
-        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
+        phase.add_timeseries_output(Dynamic.Mission.GROUND_DISTANCE, units='nmi')
 
         return phase
 

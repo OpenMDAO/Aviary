@@ -161,7 +161,9 @@ class ClimbPhase(PhaseBuilderBase):
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
-        self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+        self.add_state(
+            'distance', Dynamic.Mission.GROUND_DISTANCE, Dynamic.Mission.GROUND_DISTANCE_RATE
+        )
 
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max

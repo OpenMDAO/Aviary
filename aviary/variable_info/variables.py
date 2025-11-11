@@ -639,8 +639,8 @@ class Dynamic:
         ALTITUDE_RATE = 'altitude_rate'
         ALTITUDE_RATE_MAX = 'altitude_rate_max'
         # TODO Angle of Attack
-        DISTANCE = 'distance'
-        DISTANCE_RATE = 'distance_rate'
+        GROUND_DISTANCE = 'ground_distance'
+        GROUND_DISTANCE_RATE = 'ground_distance_rate'
         FLIGHT_PATH_ANGLE = 'flight_path_angle'
         FLIGHT_PATH_ANGLE_RATE = 'flight_path_angle_rate'
         SPECIFIC_ENERGY = 'specific_energy'

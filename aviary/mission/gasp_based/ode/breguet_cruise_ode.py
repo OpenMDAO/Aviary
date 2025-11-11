@@ -112,7 +112,7 @@ class BreguetCruiseODESolution(TwoDOFODE):
                 ('TAS_cruise', Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[
-                ('cruise_range', Dynamic.Mission.DISTANCE),
+                ('cruise_range', Dynamic.Mission.GROUND_DISTANCE),
                 ('cruise_time', 'time'),
             ],
         )
@@ -253,7 +253,7 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
                 ('TAS_cruise', Dynamic.Mission.VELOCITY),
             ],
             promotes_outputs=[
-                ('cruise_range', Dynamic.Mission.DISTANCE),
+                ('cruise_range', Dynamic.Mission.GROUND_DISTANCE),
                 ('cruise_time', 'time'),
             ],
         )

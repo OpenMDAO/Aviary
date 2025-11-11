@@ -301,7 +301,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         )
         aviary_group.traj.link_phases(
             phases,
-            [Dynamic.Mission.DISTANCE],
+            [Dynamic.Mission.GROUND_DISTANCE],
             ref=None if connect_directly else 1e3,
             connected=connect_directly,
         )
@@ -311,12 +311,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             for phase_name in phases[1:]:
                 phase = aviary_group.traj._phases[phase_name]
                 phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
-                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
+                phase.set_state_options(Dynamic.Mission.GROUND_DISTANCE, input_initial=False)
 
         phase = aviary_group.traj._phases[phases[0]]
 
         # Currently expects Distance to be an input.
-        phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=True)
+        phase.set_state_options(Dynamic.Mission.GROUND_DISTANCE, input_initial=True)
 
         if aviary_group.pre_mission_info['include_takeoff']:
             # Allow these to connect to outputs in the pre-mission takeoff system.
@@ -336,7 +336,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         stems = [
             Dynamic.Vehicle.MASS,
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             Dynamic.Atmosphere.MACH,
             Dynamic.Mission.ALTITUDE,
         ]
@@ -543,7 +543,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             Location of this trajectory in the hierarchy.
         """
         control_keys = ['mach', 'altitude']
-        state_keys = ['mass', Dynamic.Mission.DISTANCE]
+        state_keys = ['mass', Dynamic.Mission.GROUND_DISTANCE]
         prob_keys = ['tau_gear', 'tau_flaps']
 
         options = aviary_group.phase_info[phase_name]['user_options']

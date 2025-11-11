@@ -221,7 +221,9 @@ class FlightPhaseBase(PhaseBuilderBase):
         self.add_state('mass', Dynamic.Vehicle.MASS, rate_source)
 
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
-            self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+            self.add_state(
+                'distance', Dynamic.Mission.GROUND_DISTANCE, Dynamic.Mission.GROUND_DISTANCE_RATE
+            )
 
         phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
 
