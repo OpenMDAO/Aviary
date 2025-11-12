@@ -182,7 +182,7 @@ mission:summary:fuel_flow_scaler,1,unitless
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:angle_of_attack_runway,0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
-mission:takeoff:drag_coefficient_min,0.045,unitless
+mission:takeoff:drag_coefficient_min,0.05,unitless
 mission:takeoff:final_altitude,35,ft
 mission:takeoff:fuel_simple,577,lbm
 mission:takeoff:lift_coefficient_max,2,unitless
