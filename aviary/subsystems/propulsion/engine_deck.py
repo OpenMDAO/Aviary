@@ -303,6 +303,15 @@ class EngineDeck(EngineModel):
                 'aircraft:engine:scale_performance to True to enable scaling.'
             )
 
+        # Check validity of interp_sort.
+        # TODO: support this as an enum instead.
+        interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)
+        if interp_sort not in ['mach', 'altitude']:
+            raise ValueError(
+                f'EngineDeck <{self.name}>: Invalid value of Aircraft.Engine.INTERPOLATION_SORT.'
+                f' Expected "altitude" or "mach", but found "{interp_sort}".'
+            )
+
     def _set_variable_flags(self):
         """
         Sets flags in EngineDeck to communicate which (non-required) variables are
@@ -1510,7 +1519,9 @@ class EngineDeck(EngineModel):
 
     def _sort_data(self):
         """
-        Sort unpacked engine data in order of Mach number, altitude, throttle,
+        Sort unpacked engine data in order based on Aircraft.Engine.INTERPOLATION_SORT. When this
+        is set to "mach", sort by Mach number, altitude, throttle. When it is set to "altitude",
+        sort by altitude, Mach number, throttle.
         hybrid throttle.
         """
         interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)

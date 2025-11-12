@@ -118,7 +118,7 @@ aircraft:wing:shear_control_mass_scaler,1.01,unitless   #check
 aircraft:wing:span,118,ft
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,1.01,unitless   #check
-aircraft:wing:surface_ctrl_mass_scaler,1.01,unitless   #check
+aircraft:wing:surface_control_mass_scaler,1.01,unitless   #check
 aircraft:wing:sweep,25,deg
 aircraft:wing:taper_ratio,0.33,unitless
 aircraft:wing:thickness_to_chord,0.1,unitless

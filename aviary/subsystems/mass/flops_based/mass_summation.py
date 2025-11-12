@@ -189,11 +189,11 @@ class SystemsEquipMass(om.ExplicitComponent):
         furnish_mass = inputs[Aircraft.Furnishings.MASS]
         hydraulics_mass = inputs[Aircraft.Hydraulics.MASS]
         instrument_mass = inputs[Aircraft.Instruments.MASS]
-        surf_ctrl_mass = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
+        surf_control_mass = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
         subsystems_mass = inputs[Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS]
 
         outputs[Aircraft.Design.SYSTEMS_EQUIP_MASS] = (
-            surf_ctrl_mass
+            surf_control_mass
             + APU_mass
             + instrument_mass
             + hydraulics_mass
@@ -233,11 +233,11 @@ class AltSystemsEquipMassBase(om.ExplicitComponent):
         furnish_mass_base = inputs[Aircraft.Furnishings.MASS_BASE]
         hydraulics_mass = inputs[Aircraft.Hydraulics.MASS]
         instrument_mass = inputs[Aircraft.Instruments.MASS]
-        surf_ctrl_mass = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
+        surf_control_mass = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
         subsystems_mass = inputs[Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS]
 
         outputs[Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE] = (
-            surf_ctrl_mass
+            surf_control_mass
             + APU_mass
             + instrument_mass
             + hydraulics_mass

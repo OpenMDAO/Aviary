@@ -37,7 +37,6 @@ class WingMassGroup(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-
         else:
             self.add_subsystem(
                 'wing_bending_material_factor',

@@ -36,6 +36,8 @@ class Aircraft:
         VOLUME = 'aircraft:battery:volume'
 
     class BWB:
+        DETAILED_WING_PROVIDED = 'aircraft:blended_wing_body_design:detailed_wing_provided'
+        MAX_NUM_BAYS = 'aircraft:blended_wing_body_design:max_num_bays'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
@@ -589,10 +591,10 @@ class Aircraft:
         SPAN_EFFICIENCY_FACTOR = 'aircraft:wing:span_efficiency_factor'
         SPAN_EFFICIENCY_REDUCTION = 'aircraft:wing:span_efficiency_reduction'
         STRUT_BRACING_FACTOR = 'aircraft:wing:strut_bracing_factor'
-        SURFACE_CONTROL_MASS = 'aircraft:wing:surface_ctrl_mass'
-        SURFACE_CONTROL_MASS_COEFFICIENT = 'aircraft:wing:surface_ctrl_mass_coefficient'
+        SURFACE_CONTROL_MASS = 'aircraft:wing:surface_control_mass'
+        SURFACE_CONTROL_MASS_COEFFICIENT = 'aircraft:wing:surface_control_mass_coefficient'
 
-        SURFACE_CONTROL_MASS_SCALER = 'aircraft:wing:surface_ctrl_mass_scaler'
+        SURFACE_CONTROL_MASS_SCALER = 'aircraft:wing:surface_control_mass_scaler'
 
         SWEEP = 'aircraft:wing:sweep'
         TAPER_RATIO = 'aircraft:wing:taper_ratio'
