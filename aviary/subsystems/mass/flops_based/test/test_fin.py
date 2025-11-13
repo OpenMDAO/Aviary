@@ -1,7 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fin import FinMass
@@ -101,5 +101,39 @@ class FinMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+class BWBFinMassTest(unittest.TestCase):
+    """Tests fin mass calculation for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case(self):
+        prob = self.prob
+        options = {
+            Aircraft.Fins.NUM_FINS: 2,
+        }
+        prob.model.add_subsystem(
+            'fin',
+            FinMass(**options),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Mission.Design.GROSS_MASS, 874099.0, 'lbm')
+        prob.set_val(Aircraft.Fins.TAPER_RATIO, 0.464, 'unitless')
+        prob.set_val(Aircraft.Fins.AREA, 184.89, 'ft**2')
+
+        prob.run_model()
+
+        tol = 1e-8
+        assert_near_equal(self.prob[Aircraft.Fins.MASS], 3159.3781042368792, tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBFinMassTest()
+    test.setUp()
+    test.test_case()

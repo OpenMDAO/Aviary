@@ -2,13 +2,17 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.mass.flops_based.wing_group import WingMassGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
+@use_tempdirs
 class BWBWingGroupTest(unittest.TestCase):
+    """Tests wing mass calculation for BWB."""
+
     def setUp(self):
         aviary_options = AviaryValues()
         aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -115,7 +119,4 @@ class BWBWingGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBWingGroupTest()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

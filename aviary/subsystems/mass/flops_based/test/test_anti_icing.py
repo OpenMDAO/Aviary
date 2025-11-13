@@ -192,6 +192,8 @@ class AntiIcingMassTest2(unittest.TestCase):
 
 
 class BWBAntiIcingMassTest(unittest.TestCase):
+    """Test anti-icing mass calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -227,7 +229,7 @@ class BWBAntiIcingMassTest(unittest.TestCase):
                 Aircraft.Engine.SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.AntiIcing.MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             tol=3.0e-3,
         )
 

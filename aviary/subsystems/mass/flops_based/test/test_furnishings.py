@@ -69,8 +69,8 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    def test_case(self):
+        case_name = 'BWB1aFLOPS'
         prob = self.prob
         flops_inputs = get_flops_inputs(case_name, preprocess=True)
 
@@ -101,37 +101,25 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
 
-        # TODO: add FLOPS tests cases with BWB furnishings mass calculations
-
-        # These inputs aren't in the FLOPS input data so we'll give dummy values here,
-        # instead of trying to transfer them from the FLOPS input data. The test
-        # case will only check the partials.
-        prob.set_val(Aircraft.Fuselage.CABIN_AREA, 1000.0, units='ft**2')
-        prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 30.0, units='deg')
-        prob.set_val(Aircraft.BWB.NUM_BAYS, 5.0, units='unitless')
-
         flops_validation_test(
             prob,
             case_name,
             input_keys=[
                 Aircraft.Furnishings.MASS_SCALER,
-                # Aircraft.Fuselage.CABIN_AREA,
-                # Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
+                Aircraft.Fuselage.CABIN_AREA,
+                Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP,
                 Aircraft.Fuselage.MAX_WIDTH,
                 Aircraft.Fuselage.MAX_HEIGHT,
+                Aircraft.BWB.NUM_BAYS,
             ],
-            output_keys=Aircraft.AirConditioning.MASS,
+            output_keys=Aircraft.Furnishings.MASS,
             version=Version.BWB,
             tol=1.0e-3,
             atol=1e-11,
-            check_values=False,  # Currently no BWB validation data.
+            check_values=True,
         )
 
-    def test_IO(self):
-        assert_match_varnames(self.prob.model)
 
-
-@use_tempdirs
 class BWBFurnishingsGroupMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 

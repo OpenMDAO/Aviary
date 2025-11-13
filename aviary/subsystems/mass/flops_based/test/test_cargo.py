@@ -100,6 +100,7 @@ class BWBCargoMassTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-8
+        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.BAGGAGE_MASS], 20592.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 97812.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_MASS], 0.0, tol)

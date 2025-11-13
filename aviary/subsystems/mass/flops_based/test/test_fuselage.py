@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fuselage import (
@@ -23,6 +24,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class FuselageMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -91,6 +93,7 @@ class FuselageMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AltFuselageMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -155,13 +158,15 @@ class AltFuselageMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBFuselageMassTest(unittest.TestCase):
-    """Test BWB fuselage mass"""
+    """Tests fuselage mass calculation for BWB."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     def test_case1(self):
+        case_name = 'BWB1aFLOPS'
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -171,27 +176,32 @@ class BWBFuselageMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=5173.187, units='ft**2')
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        prob.run_model()
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Mission.Design.GROSS_MASS,
+                Aircraft.Fuselage.CABIN_AREA,
+            ],
+            output_keys=Aircraft.Fuselage.MASS,
+            version=Version.BWB,
+            atol=1e-10,
+        )
 
-        tol = 1e-8
-        assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 152790.65666018, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
-
-
+@use_tempdirs
 class BWBAftBodyMassTest(unittest.TestCase):
-    """Test BWB aft body mass"""
+    """Tests aft body mass calculation for BWB."""
 
     def setUp(self):
         self.prob = om.Problem()
 
     def test_case1(self):
+        case_name = 'BWB1aFLOPS'
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3, units='unitless')
         prob = self.prob
@@ -203,28 +213,26 @@ class BWBAftBodyMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, val=7390.267, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=5173.187, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=137.5, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.ROOT_CHORD, val=63.96, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         setup_model_options(self.prob, aviary_options)
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        prob.run_model()
-
-        tol = 1e-8
-        assert_near_equal(self.prob[Aircraft.Fuselage.AFTBODY_MASS], 24278.05868511, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.BWB_AFTBODY_MASS], 20150.78870864, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Mission.Design.GROSS_MASS,
+                Aircraft.Fuselage.PLANFORM_AREA,
+                Aircraft.Fuselage.CABIN_AREA,
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Wing.ROOT_CHORD,
+                Aircraft.Wing.COMPOSITE_FRACTION,
+            ],
+            output_keys=[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Wing.BWB_AFTBODY_MASS],
+            version=Version.BWB,
+        )
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBAftBodyMassTest()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

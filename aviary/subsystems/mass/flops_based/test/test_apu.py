@@ -81,6 +81,8 @@ class APUMassTest2(unittest.TestCase):
 
 
 class BWBAPUMassTest(unittest.TestCase):
+    """Test APU mass calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -104,7 +106,7 @@ class BWBAPUMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.APU.MASS_SCALER, Aircraft.Fuselage.PLANFORM_AREA],
             output_keys=Aircraft.APU.MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             tol=5.0e-4,
         )
 

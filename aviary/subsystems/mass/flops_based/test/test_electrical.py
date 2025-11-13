@@ -171,6 +171,8 @@ class AltElectricMassTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBElectricMassTest(unittest.TestCase):
+    """Test electric mass calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -204,7 +206,7 @@ class BWBElectricMassTest(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER,
             ],
             output_keys=Aircraft.Electrical.MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
         )
 
 

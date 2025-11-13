@@ -239,6 +239,8 @@ class WingBendingMassTest2(unittest.TestCase):
 
 
 class BWBWingMiscMassTest(unittest.TestCase):
+    """Tests wing misc mass calculation for BWB."""
+
     def setUp(self):
         aviary_options = AviaryValues()
         aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -269,6 +271,8 @@ class BWBWingMiscMassTest(unittest.TestCase):
 
 
 class BWBShearControlMassTest(unittest.TestCase):
+    """Tests shear control mass calculation for BWB."""
+
     def setUp(self):
         aviary_options = AviaryValues()
         aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -281,7 +285,7 @@ class BWBShearControlMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099, units='lbm')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.CONTROL_SURFACE_AREA, 5513.13877521, units='ft**2'
@@ -304,6 +308,8 @@ class BWBShearControlMassTest(unittest.TestCase):
 
 
 class BWBWingBendingMassTest(unittest.TestCase):
+    """Tests wing bending mass calculation for BWB."""
+
     def setUp(self):
         aviary_options = AviaryValues()
         aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
@@ -316,7 +322,7 @@ class BWBWingBendingMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099, units='lbm')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0, units='unitless'

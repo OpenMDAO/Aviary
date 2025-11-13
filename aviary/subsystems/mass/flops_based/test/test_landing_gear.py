@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.landing_gear import (
@@ -21,6 +22,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class LandingGearMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -85,6 +87,7 @@ class LandingGearMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class AltLandingGearMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -193,6 +196,42 @@ class LandingGearLengthTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+@use_tempdirs
+class BWBLandingGearMassTest(unittest.TestCase):
+    """Tests landing gear mass calculation for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case(self):
+        case_name = 'BWB1aFLOPS'
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'landing_gear',
+            LandingGearMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            self.prob,
+            case_name,
+            input_keys=[
+                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
+                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                Aircraft.Design.TOUCHDOWN_MASS,
+            ],
+            output_keys=[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS],
+            version=Version.BWB,
+            atol=1e-11,
+        )
 
 
 if __name__ == '__main__':

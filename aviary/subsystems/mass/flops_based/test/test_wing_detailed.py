@@ -445,7 +445,7 @@ class BWBDetailedWingBendingTest1(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 3.4488821, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REF, 3.4488821, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
@@ -474,7 +474,7 @@ class BWBDetailedWingBendingTest1(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 2.68745091  # FLOPS W = 2.6874568870727225
+        BENDING_MATERIAL_FACTOR_expected = 2.68745091  # FLOPS BT = 2.6874568870727225
         pod_inertia_expected = 1.0
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
         assert_near_equal(prob.get_val('calculated_wing_area'), 9165.70396358, tolerance=1e-9)
@@ -599,7 +599,7 @@ class BWBDetailedWingBendingTest2(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 3.93931503  # FLOPS W=3.9724796254619563
+        BENDING_MATERIAL_FACTOR_expected = 3.93931503  # FLOPS BT = 3.9724796254619563
         pod_inertia_expected = 1.0
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
         assert_near_equal(prob.get_val('calculated_wing_area'), 5399.4057051, tolerance=1e-9)

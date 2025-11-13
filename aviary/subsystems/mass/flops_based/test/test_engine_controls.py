@@ -87,7 +87,10 @@ class BasicTransportEngineCtrlsTest2(unittest.TestCase):
 
 @use_tempdirs
 class BWBBasicTransportEngineCtrlsTest(unittest.TestCase):
-    """Test the BasicTransportEngineCtrls component."""
+    """
+    Test empty mass margin calculation for BWB data.
+    In FLOPS, WEC is scaled after override. We ignore the difference for now.
+    """
 
     def setUp(self):
         self.prob = om.Problem()
@@ -112,7 +115,7 @@ class BWBBasicTransportEngineCtrlsTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST],
             output_keys=Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             atol=2e-12,
             excludes=['size_prop.*'],
         )

@@ -169,11 +169,14 @@ class TransportFuelSystemTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBTransportFuelSystemTest(unittest.TestCase):
+    """Tests fuel system mass calculation for BWB."""
+
     def setUp(self):
         self.prob = om.Problem()
 
-    def ttest_case(self):
+    def test_case(self):
         case_name = 'BWB1aFLOPS'
         prob = self.prob
 
@@ -200,7 +203,7 @@ class BWBTransportFuelSystemTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
             output_keys=Aircraft.Fuel.FUEL_SYSTEM_MASS,
-            version=Version.BWB,  # TODO: Version.BWB
+            version=Version.BWB,
             tol=8.0e-4,
         )
 

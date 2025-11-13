@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.surface_controls import (
@@ -22,6 +23,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
+@use_tempdirs
 class SurfaceCtrlMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -84,6 +86,7 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AltSurfaceCtrlMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -147,36 +150,38 @@ class AltSurfaceCtrlMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBSurfaceCtrlMassTest(unittest.TestCase):
+    """Tests surface contraol mass calculation for BWB."""
+
     def setUp(self):
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
-        aviary_options.set_val(Mission.Constraints.MAX_MACH, val=0.85, units='unitless')
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem('surf_ctrl', SurfaceControlMass(), promotes=['*'])
-
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.0, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 16555.972297926455, units='ft**2')
-
-        setup_model_options(self.prob, aviary_options)
-        prob.setup(check=False, force_alloc_complex=True)
+        self.prob = om.Problem()
 
     def test_case(self):
+        case_name = 'BWB1aFLOPS'
         prob = self.prob
-        prob.run_model()
 
-        tol = 1e-9
-        assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 14152.3734702, tol)
-        assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 5513.13877521, tol)
+        prob.model.add_subsystem('surf_ctrl', SurfaceControlMass(), promotes=['*'])
 
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER,
+                Mission.Design.GROSS_MASS,
+                Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO,
+                Aircraft.Wing.AREA,
+            ],
+            output_keys=[Aircraft.Wing.SURFACE_CONTROL_MASS, Aircraft.Wing.CONTROL_SURFACE_AREA],
+            version=Version.BWB,
+            tol=2e-4,
+            atol=1e-11,
+            rtol=1e-11,
+        )
 
 
 if __name__ == '__main__':

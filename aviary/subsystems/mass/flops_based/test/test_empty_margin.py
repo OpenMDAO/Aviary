@@ -56,6 +56,8 @@ class EmptyMassMarginTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBEmptyMassMarginTest(unittest.TestCase):
+    """Test empty mass margin calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -84,13 +86,10 @@ class BWBEmptyMassMarginTest(unittest.TestCase):
                 Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
             ],
             output_keys=Aircraft.Design.EMPTY_MASS_MARGIN,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             tol=1e-3,
             atol=2e-11,
         )
-
-    def test_IO(self):
-        assert_match_varnames(self.prob.model)
 
 
 if __name__ == '__main__':

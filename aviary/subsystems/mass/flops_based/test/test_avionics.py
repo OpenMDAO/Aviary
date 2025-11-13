@@ -91,7 +91,7 @@ class TransportAvionicsMassTest2(unittest.TestCase):
 
 @use_tempdirs
 class BWBTransportAvionicsMassTest(unittest.TestCase):
-    """Test BWB fuselage mass"""
+    """Test fuselage mass calculation for BWB data."""
 
     def setUp(self):
         self.prob = om.Problem()

@@ -166,6 +166,8 @@ class AltAirCondMassTest2(unittest.TestCase):
 
 @use_tempdirs
 class BWBTransportAirCondMassTest(unittest.TestCase):
+    """Test air conditioning mass calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -196,7 +198,7 @@ class BWBTransportAirCondMassTest(unittest.TestCase):
             ],
             output_keys=Aircraft.AirConditioning.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.Design.NUM_PASSENGERS],
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             tol=3.0e-4,
             atol=1e-11,
         )

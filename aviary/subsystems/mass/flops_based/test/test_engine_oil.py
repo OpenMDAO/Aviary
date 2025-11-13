@@ -167,7 +167,7 @@ class AltEngineOilMassTest2(unittest.TestCase):
 
 
 class BWBTransportEngineOilMassTest(unittest.TestCase):
-    """Tests transport/GA engine oil mass calculation."""
+    """Tests transport/GA engine oil mass calculation for BWB."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -199,7 +199,7 @@ class BWBTransportEngineOilMassTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
             ],
             output_keys=[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS],
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             tol=4.0e-3,
         )
 

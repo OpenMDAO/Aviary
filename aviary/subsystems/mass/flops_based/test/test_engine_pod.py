@@ -105,8 +105,9 @@ class EnginePodMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class BWBEnginePodMassTest(unittest.TestCase):
-    """Tests the engine pod mass needed for the detailed wing calculation."""
+    """Tests the engine pod mass needed for the detailed wing calculation for BWB."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -148,7 +149,7 @@ class BWBEnginePodMassTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.Engine.POD_MASS,
-            version=Version.BWB,  # TODO: Version.BWB,
+            version=Version.BWB,
             tol=3e-3,
         )
 

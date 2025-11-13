@@ -82,6 +82,8 @@ class FlightCrewMassTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBNonFlightCrewMassTest(unittest.TestCase):
+    """Test non-flight crew mass calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -105,13 +107,15 @@ class BWBNonFlightCrewMassTest(unittest.TestCase):
             case_name,
             input_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
             output_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             atol=1e-11,
         )
 
 
 @use_tempdirs
 class BWBFlightCrewMassTest(unittest.TestCase):
+    """Test flight crew mass calculation for BWB data."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -135,7 +139,7 @@ class BWBFlightCrewMassTest(unittest.TestCase):
             case_name,
             input_keys=Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
             output_keys=Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             atol=1e-11,
         )
 

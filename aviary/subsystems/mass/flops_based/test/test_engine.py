@@ -50,7 +50,6 @@ class EngineMassTest(unittest.TestCase):
                 Aircraft.Engine.SCALED_SLS_THRUST,
                 Aircraft.Engine.MASS,
                 Aircraft.Engine.ADDITIONAL_MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
             ],
             output_keys=[
                 Aircraft.Engine.MASS,
@@ -140,6 +139,8 @@ class EngineMassTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBEngineMassTest(unittest.TestCase):
+    """Tests engine mass calculation for BWB."""
+
     def setUp(self):
         self.prob = om.Problem()
 
@@ -165,7 +166,6 @@ class BWBEngineMassTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Engine.SCALED_SLS_THRUST,
                 Aircraft.Engine.ADDITIONAL_MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
             ],
             output_keys=[
                 Aircraft.Engine.MASS,
@@ -174,7 +174,7 @@ class BWBEngineMassTest(unittest.TestCase):
             ],
             list_inputs=True,
             list_outputs=True,
-            version=Version.TRANSPORT,  # TODO: Version.BWB
+            version=Version.BWB,
             rtol=1e-10,
         )
 
