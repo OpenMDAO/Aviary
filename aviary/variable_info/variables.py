@@ -248,7 +248,6 @@ class Aircraft:
         SCALE_MASS = 'aircraft:engine:scale_mass'
         SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
         SCALED_SLS_THRUST = 'aircraft:engine:scaled_sls_thrust'
-        STARTER_MASS = 'aircraft:engine:starter_mass'
         SUBSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:subsonic_fuel_flow_scaler'
         SUPERSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:supersonic_fuel_flow_scaler'
         THRUST_REVERSERS_MASS = 'aircraft:engine:thrust_reversers_mass'
