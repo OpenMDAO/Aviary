@@ -116,6 +116,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CW(7)',
+        # The following note is for FLOPS
         # ['WTS.WSP(24, 2)', '~WEIGHT.WAI', '~WTSTAT.WSP(24, 2)'],
         'FLOPS': None,
         'LEAPS1': [
@@ -2493,20 +2494,6 @@ add_meta_data(
     desc='Maximum sea-level static thrust of an engine after scaling. Optional for '
     'EngineDecks if Aircraft.Engine.SCALE_FACTOR is provided, in which case this '
     'variable is computed.',
-    default_value=0.0,
-    multivalue=True,
-)
-
-add_meta_data(
-    Aircraft.Engine.STARTER_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.WSTART',
-        'LEAPS1': '(WeightABC)self._starter_weight',
-    },
-    units='lbm',
-    desc='mass of engine starter subsystem',
     default_value=0.0,
     multivalue=True,
 )
