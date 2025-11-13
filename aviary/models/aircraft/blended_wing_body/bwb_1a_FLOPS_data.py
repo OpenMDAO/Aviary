@@ -28,6 +28,7 @@ inputs.set_val(
 )  # FCDSUP not in bwb.in, set to default
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO in bwb.in
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
+inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
 
 # Air Conditioning
 # ---------------------------
@@ -343,8 +344,6 @@ inputs.set_val(Mission.Summary.CRUISE_MACH, 0.85)  # VCMN in bwb.in
 inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)  # FACT not in bwb.in, set to default
 inputs.set_val(Mission.Design.RANGE, 7750.0, 'NM')  # DESRNG in bwb.in
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO in bwb.in
-# TODO investigate the origin of these values (taken from benchmark tests)
-# TODO: where should this get connected from?
 # inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')  # FTKOFL not in bwb.in
 
 # region TODO: should this come from aero?
@@ -397,9 +396,9 @@ outputs.set_val(Aircraft.APU.MASS, 2148.13002234, 'lbm')  # WAPU
 
 outputs.set_val(Aircraft.Avionics.MASS, 2896.223816950469, 'lbm')  # WAVONC
 
-outputs.set_val(Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0, 'ft')
-outputs.set_val(Aircraft.Canard.FINENESS, 0.0)
-outputs.set_val(Aircraft.Canard.WETTED_AREA, 0.0, 'ft**2')
+outputs.set_val(Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # TODO EL[-1]
+outputs.set_val(Aircraft.Canard.FINENESS, 0.0)  # TODO FR[-1]
+outputs.set_val(Aircraft.Canard.WETTED_AREA, 0.0, 'ft**2')  # SWTCN
 outputs.set_val(Aircraft.Canard.MASS, 0.0, 'lbm')  # WCAN
 
 outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 20592.0, 'lbm')  # WPBAG
@@ -424,16 +423,16 @@ outputs.set_val(Aircraft.BWB.NUM_BAYS, 5.0, 'unitless')  # NBAY
 outputs.set_val(Aircraft.Fuselage.CABIN_AREA, 5173.187202504683, 'ft**2')  # ACABIN
 outputs.set_val(Aircraft.Furnishings.MASS, 61482.097969438299, 'lbm')  # WFURN
 
-avg_diameter = 12.75
+avg_diameter = 39.8525  # XD
 avg_diameter_units = 'ft'
 outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
-outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 128.0, 'ft')
+outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 137.5, 'ft')  # EL(4)
 outputs.set_val(
     Aircraft.Fuselage.CROSS_SECTION, np.pi * (avg_diameter / 2.0) ** 2.0, f'{avg_diameter_units}**2'
 )
-outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.108207)
-outputs.set_val(Aircraft.Fuselage.FINENESS, 10.0392)
-outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 10.039216)
+outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.16739117852998228)  # DB
+outputs.set_val(Aircraft.Fuselage.FINENESS, 3.4502227)  # FR(4)
+outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 3.4502226961922089)  # BODYLD
 outputs.set_val(Aircraft.Fuselage.MASS, 152790.66300003964, 'lbm')  # WFUSE
 outputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 15.125, 'ft')  # DF
 outputs.set_val(Aircraft.Fuselage.PLANFORM_AREA, 7390.267432149546, 'ft**2')  # FPAREA
@@ -441,8 +440,8 @@ outputs.set_val(Aircraft.Fuselage.PLANFORM_AREA, 7390.267432149546, 'ft**2')  # 
 outputs.set_val(Aircraft.Fuselage.AFTBODY_MASS, 24278.05868511, 'lbm')  # WAFTB
 outputs.set_val(Aircraft.Wing.BWB_AFTBODY_MASS, 20150.78870864, 'lbm')  # W4
 
-outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 7.69, 'ft')
-outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.1250)
+outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(2)
+outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.11)  # FR(2)
 outputs.set_val(Aircraft.HorizontalTail.MASS, 0.0, 'lbm')  # WHT
 
 outputs.set_val(Aircraft.Hydraulics.MASS, 7368.5077321194321, 'lbm')  # WHYD
@@ -452,11 +451,11 @@ outputs.set_val(Aircraft.Instruments.MASS, 1383.9538229392606, 'lbm')  # WIN
 outputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, 28200.322805698346, 'lbm')  # WLGM
 outputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, 2698.6740002098945, 'lbm')  # WLGN
 
-outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([12.30]), 'ft')
-outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.5491]))
+outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([15.68611614]), 'ft')  # EL(5)
+outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.38269353]))  # FR(5)
 outputs.set_val(Aircraft.Nacelle.MASS, 0.0, 'lbm')  # WNAC
 
-nacelle_wetted_area = np.array([273.45])
+nacelle_wetted_area = np.array([498.26795086])  # SWET(5)
 nacelle_wetted_area_units = 'ft**2'
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
 
@@ -500,8 +499,8 @@ outputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 28928.1, 'lbf')  # THRUST
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 53476.90008698, 'lbm')  # WENG
 
-outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 12.74, 'ft')
-outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.1195)
+outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(3)
+outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.11)  # FR(3)
 outputs.set_val(Aircraft.VerticalTail.MASS, 0.0, 'lbm')  # WVT
 
 outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 2.68745091)  # BT
@@ -510,7 +509,7 @@ outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 69.53953418, 'ft')  # EL(1)
 # Not in FLOPS output; calculated from inputs.
 outputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 5513.13877521, 'ft**2')  # SFLAP
 outputs.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1.0)  # CAYE
-outputs.set_val(Aircraft.Wing.FINENESS, 0.1300)
+outputs.set_val(Aircraft.Wing.FINENESS, 0.11)  # FR(1)
 outputs.set_val(Aircraft.Wing.MISC_MASS, 21498.83307778, 'lbm')  # W3
 outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 38779.21499739, 'lbm')  # W2
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 14152.3734702, 'lbm')  # WSC
@@ -520,7 +519,7 @@ outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW, always computed for BWB
 
 outputs.set_val(Mission.Design.MACH, 0.800)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)
+# outputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
 
 # Unconverted Values
 # AERIN.FLLDG,11000  # Maximum allowable landing field length, ft
