@@ -2499,20 +2499,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.STARTER_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.WSTART',
-        'LEAPS1': '(WeightABC)self._starter_weight',
-    },
-    units='lbm',
-    desc='mass of engine starter subsystem',
-    default_value=0.0,
-    multivalue=True,
-)
-
-add_meta_data(
     Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
     meta_data=_MetaData,
     historical_name={
