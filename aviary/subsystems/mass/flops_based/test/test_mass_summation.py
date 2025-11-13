@@ -22,6 +22,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
+@use_tempdirs
 class TotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -100,6 +101,7 @@ class TotalSummationTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class AltTotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -184,6 +186,7 @@ class AltTotalSummationTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class StructureMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
