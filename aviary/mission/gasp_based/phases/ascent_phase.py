@@ -59,7 +59,6 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'flight_path_angle_ref': np.deg2rad(1),
-            'flight_path_angle_defect_ref': 0.01,
             'flight_path_angle_bounds': (-15 * np.pi / 180, 25.0 * np.pi / 180),
         }
         self.add_state_options('flight_path_angle', units='rad', defaults=defaults)

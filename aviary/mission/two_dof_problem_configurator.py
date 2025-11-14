@@ -82,7 +82,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_group.target_range = wrapped_convert_units(
-                aviary_group.post_mission_info['post_mission']['target_range'], 'NM'
+                aviary_group.post_mission_info['target_range'], 'NM'
             )
             aviary_inputs.set_val(Mission.Summary.RANGE, aviary_group.target_range, units='NM')
         else:
