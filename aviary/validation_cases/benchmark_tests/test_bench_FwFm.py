@@ -214,7 +214,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=2,
+            verbosity=0,
             max_iter=100,
             optimizer='SNOPT',
         )
@@ -252,5 +252,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = TestBenchFwFmSerial()
     test.setUp()
-    #test.test_bench_FwFm_IPOPT()
+    # test.test_bench_FwFm_IPOPT()
     test.test_bench_FwFm_SNOPT()

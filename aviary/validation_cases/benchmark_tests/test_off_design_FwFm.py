@@ -12,8 +12,8 @@ class HeightEnergyTestCase(unittest.TestCase):
     """Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation."""
 
     def setUp(self) -> None:
-        self.sized_mass = 177534.
-        self.sized_range = 3500
+        self.sized_mass = 177534.0
+        self.sized_range = 3500.0
         phase_info = {
             'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
             'climb': {

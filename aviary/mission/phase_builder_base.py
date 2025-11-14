@@ -505,7 +505,9 @@ class PhaseBuilderBase(ABC):
             extra_options['ref'] = ref
             extra_options['ref0'] = ref0
             extra_options['continuity_ref'] = ref
-            #extra_options['rate_continuity_ref'] = ref
+
+            # TODO: We may want to consider letting the user setting this.
+            # extra_options['rate_continuity_ref'] = ref
 
         if units not in ['unitless', None]:
             extra_options['units'] = units

@@ -10,7 +10,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-#@use_tempdirs
+@use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
@@ -38,25 +38,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171153.09615393,
+            171646.48312684,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            94980.81775929,
+            95100.07583783,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40172.27839464,
+            40546.40728901,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2659.48660897,
+            2655.5028412,
             tolerance=rtol,
         )
 
@@ -64,7 +64,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            135978.8177593,
+            136098.07583783,
             tolerance=rtol,
         )
 
@@ -85,25 +85,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171153.09615393,
+            171646.48312684,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            94980.81775929,
+            95100.07583783,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40172.27839464,
+            40546.40728901,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2659.48660897,
+            2655.5028412,
             tolerance=rtol,
         )
 
@@ -111,7 +111,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            135978.8177593,
+            136098.07583783,
             tolerance=rtol,
         )
 
