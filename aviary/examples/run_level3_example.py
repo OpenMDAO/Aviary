@@ -338,7 +338,7 @@ prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
 prob.traj.link_phases(phases, [Dynamic.Mission.GROUND_DISTANCE], ref=None, connected=True)
 
 prob.model.connect(
-    f'traj.descent.timeseries.distance',
+    f'traj.descent.timeseries.ground_distance',
     Mission.Summary.RANGE,
     src_indices=[-1],
     flat_src_indices=True,

@@ -200,7 +200,7 @@ output_data[point_name]['altitude'] = case.get_val(
     f'traj.{phase_name}.timeseries.altitude', units='ft'
 )[-1][0]
 output_data[point_name]['distance'] = case.get_val(
-    f'traj.{phase_name}.timeseries.distance', units='ft'
+    f'traj.{phase_name}.timeseries.ground_distance', units='ft'
 )[-1][0]
 
 print(output_data)
