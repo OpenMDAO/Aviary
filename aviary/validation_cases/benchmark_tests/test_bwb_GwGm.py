@@ -5,7 +5,7 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.aircraft.blended_wing_body.generic_BWB_phase_info import phase_info
+from aviary.models.aircraft.blended_wing_body.generic_BWB_2dof_phase_info import phase_info
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
