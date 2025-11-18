@@ -57,6 +57,8 @@ wetted_area_overide = get_flops_case_names(
     ]
 )
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 # TODO: We have no integration tests for canard, so canard-related names are commented
 # out.
@@ -67,7 +69,7 @@ class PrepGeomTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         class PreMission(om.Group):
             def initialize(self):

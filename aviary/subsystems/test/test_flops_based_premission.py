@@ -19,13 +19,15 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 @use_tempdirs
 class PreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
         flops_outputs = get_flops_outputs(case_name)
