@@ -341,12 +341,14 @@ inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)  # PCTL not in bwb.in, set to d
 
 inputs.set_val(
     Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-    np.array([0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]),
+    np.array([0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]),
     'deg',
 )  # SWL not in bwb.in
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM in bwb.in
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3 not in bwb.in, set to Aviary default
-# inputs.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50)  # NSTD not in bwb.in
+inputs.set_val(
+    Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50
+)  # NSTD not in bwb.in, set to Aviary default
 inputs.set_val(
     Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0
 )  # FRWI2 not in bwb.in, set to Aviary default
@@ -530,12 +532,12 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0)
 
 outputs.set_val(Aircraft.Engine.MASS, 17825.63336233, 'lbm')  # WSP
 
-# In FLOPS, WPOD = 19067.983045931636 because WSTART is scaled by
+# In FLOPS, WPOD = 18782.055842810063 because WSTART is scaled by
 # WPMSC (Aircraft.Propulsion.MISC_MASS_SCALER) but not in Aviary.
 # In Aviary, starter mass and engine controls are scaled later in EngineMiscMass()
 # but it does not help for engine POD mass.
 # In FLOPS, WSTART = 0.0 for the same reason (WPMSC = 0.0).
-outputs.set_val(Aircraft.Engine.POD_MASS, 19593.89025207, 'lbm')  # WPOD
+outputs.set_val(Aircraft.Engine.POD_MASS, 19307.96319637, 'lbm')  # WPOD
 outputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 1526.1294678475103, 'lbm')  # WSTART
 # In FLOPS, WEC = 0.0 because WEC is scaled by WPMSC (Aircraft.Propulsion.MISC_MASS_SCALER)
 engine_ctrls_mass = 206.36860226  # WEC
@@ -571,70 +573,3 @@ outputs.set_val(Aircraft.Wing.AREA, 12109.9, 'ft**2')  # SW, always computed for
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 # outputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
-
-# Unconverted Values
-# AERIN.FLLDG,11000  # Maximum allowable landing field length, ft
-# AERIN.FLTO,11000  # Maximum allowable takeoff field length, ft
-# AERIN.ITPAER,2  # Aerodynamic data interpolation switch
-# AERIN.MYAERO,0  # Controls type of user-supplied aerodynamic data
-# AERIN.XLLAM,0  # Turbulent flow or Laminar Flow
-# CONFIN.CH,39000  # Maximum cruise altitude, ft
-# CONFIN.GW,874099  # Ramp weight
-# CONFIN.OFF,0  # Objective function weighting factor for mission fuel
-# CONFIN.OFG,1  # Objective function weighting factor for gross weight
-# ENGDIN.MAXCR,1  # Maximum power setting used for cruise
-# FUSEIN.OSSPAN,86.75  # Outboard semispan, ft
-# MISSIN.ALTRAN,200  # Range to alternate airport, n.mi.
-# MISSIN.APPRTM,4  # Approach time, min
-# MISSIN.CLAMIN,0  # CLAMIN(I) Minimum altitude, ft
-# MISSIN.CRALT,45000,25000,1500  # CRALT(I) Maximum or fixed altitude, ft
-# MISSIN.CRMACH,0.85,0.6,0  # CRMACH(I) Maximum or fixed Mach number (or velocity, kts)
-# MISSIN.DEAMIN,0  # Minimum altitude, ft
-# MISSIN.FWF,-0.001  # FWF(I) Climb profile optimization function control parameter
-# MISSIN.HOLDTM,30  # Reserve holding time, min
-# MISSIN.IATA,0  # Range is adjusted for ATA Traffic Allowance or otherwise
-# MISSIN.IFLAG,2  # print flag
-# MISSIN.IHOPOS,1  # Hold position switch
-# MISSIN.IOC,1,4,4  # IOC(I) Cruise option switch
-# MISSIN.IRS,1  # Reserve fuel calculation switch
-# MISSIN.IRW,1  # Calculates ramp weight with fixed range or fixed
-# MISSIN.ISKAL,1  # Special option used to turn off engine scaling
-# MISSIN.ITTFF,1  #  Engine deck power setting for takeoff or not
-# MISSIN.IVS,1  # Descent option switch
-# MISSIN.MSUMPT,1  # Detailed mission summary will be calculated and printed or otherwise
-# MISSIN.NCLIMB,1  # Number of climb schedules to be defined
-# MISSIN.NCLRES,1  # Climb schedule number used in reserve mission
-# MISSIN.NCRHOL,3  # Cruise schedule number for hold
-# MISSIN.NCRRES,2  # Cruise schedule number used in reserve mission
-# MISSIN.NCRTH,1  # Cruise schedule number for THOLD
-# MISSIN.NCRUSE,3  # Number of cruise schedules to be defined
-# MISSIN.NPCON,0  # Number of performance constraints - primarily for fighters
-# MISSIN.RCIN,300  # Instantaneous rate of climb for ceiling calculation, ft/min
-# MISSIN.RESTRP,0.05  # Reserve fuel as a fraction of total trip fuel weight
-# MISSIN.TAKOTM,2  # Takeoff time, min
-# MISSIN.TAXITM,5  # Taxi in time, min
-# MISSIN.TAXOTM,9  # Taxi out time, min
-# MISSIN.THOLD,0.1  # Reserve holding time flag
-# MISSIN.TIMMAP,2  # Missed approach time, min
-# OPTION.IANAL,3  # compute flag
-# OPTION.ICOST,0  # cost analysis flag? not in manual
-# OPTION.IFITE,3  # should be read in
-# OPTION.ILAND,0  # Detailed landing performance or otherwise
-# OPTION.INENG,1  # Engine data flag
-# OPTION.IPLTTH,0  # Engine data flag
-# OPTION.ITAKOF,0  # Detailed takeoff performance or otherwise
-# OPTION.IXFL,1  # Cruise, mission and takeoff and landing plot or otherwise
-# OPTION.MPRINT,1  # Master print control
-# OPTION.NOPRO,0  # Detailed takeoff and climb profiles
-# PCONIN.CONALT,35000  # Altitude at which constraint is to be evaluated, ft
-# PCONIN.CONLIM,300  # The type of constraint is indicated by ICONTP, and the limiting or target value for the performance indicator being constrained
-# PCONIN.CONMCH,0.85  # Velocity at which constraint is to be evaluated, kts
-# PCONIN.CONPC,1  # Engine power setting parameter
-# PCONIN.ICONSG,2  # Weight at start of mission segment ICONSG is used
-# PCONIN.ICONTP,5  # CONLIM Definition
-# WTIN.ARFIN,1.952  # Vertical fin theoretical aspect ratio
-# WTIN.ISPOWE,0  # Normal FLOPS weight equations or Special equation
-# WTIN.NETAW,0  # Number of input wing stations
-# WTIN.SWPFIN,39.42  # Vertical fin sweep angle at 25% chord, deg
-# WTIN.TCFIN,0.08  # Vertical fin thickness - chord ratio
-# WTIN.WINL,0  # Inlet weight for baseline engine if not included in WENG above
