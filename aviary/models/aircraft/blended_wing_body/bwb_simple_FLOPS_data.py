@@ -5,9 +5,9 @@ from aviary.utils.functions import get_path
 from aviary.variable_info.enums import AircraftTypes, EquationsOfMotion, LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-BWB1aFLOPS = {}
-inputs = BWB1aFLOPS['inputs'] = AviaryValues()
-outputs = BWB1aFLOPS['outputs'] = AviaryValues()
+BWBsimpleFLOPS = {}
+inputs = BWBsimpleFLOPS['inputs'] = AviaryValues()
+outputs = BWBsimpleFLOPS['outputs'] = AviaryValues()
 
 # Overall Aircraft
 # ---------------------------
@@ -346,23 +346,18 @@ inputs.set_val(Mission.Design.RANGE, 7750.0, 'NM')  # DESRNG in bwb.in
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO in bwb.in
 # inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')  # FTKOFL not in bwb.in
 
-# region TODO: should this come from aero?
-inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)  # CLLDM not in bwb.in
-inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM not in bwb.in
+inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM not in bwb.in, set to default
+inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM not in bwb.in, set to default
 # inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)  # not in bwb.in, not a FLOPS variable
-# endregion TODO: should this come from aero?
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO in bwb.in
 inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140, 'ft/s')  # VAPPR in bwb.in
-
-# TODO: should this be a user input or should it be hard coded somewhere assuming it will
-# # never change?
 inputs.set_val(
     Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025
 )  # ROLLMU not in bwb.in, set to default
 # lbf TODO: where should this get connected from?
 inputs.set_val(
     Mission.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf'
-)  # THROFF in bwb.in, output is 52724.3
+)  # THROFF in bwb.in, output is 52724.3 lbf
 
 # Settings
 # ---------------------------
@@ -380,7 +375,7 @@ outputs.set_val(Aircraft.Design.OPERATING_MASS, 455464.65969526308, 'lbm')  # WO
 outputs.set_val(Aircraft.Propulsion.MASS, 61597.102467771889, 'lbm')  # WPRO
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 273591.31917826, 'lbm')  # WSTRCT
 outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 98848.9061107412710, 'lbm')  # WSYS
-outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8275.86, 'ft**2')  # TWET
+outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 0.0, 'ft**2')  # TWET
 outputs.set_val(Aircraft.Design.ZERO_FUEL_MASS, 553276.65969526302, 'lbm')  # WZF
 outputs.set_val(Mission.Design.FUEL_MASS, 320822.34030473698, 'lbm')  # FUELM
 
@@ -396,8 +391,8 @@ outputs.set_val(Aircraft.APU.MASS, 2148.13002234, 'lbm')  # WAPU
 
 outputs.set_val(Aircraft.Avionics.MASS, 2896.223816950469, 'lbm')  # WAVONC
 
-outputs.set_val(Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # TODO EL[-1]
-outputs.set_val(Aircraft.Canard.FINENESS, 0.0)  # TODO FR[-1]
+outputs.set_val(Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL[-1]
+outputs.set_val(Aircraft.Canard.FINENESS, 0.0)  # FR[-1]
 outputs.set_val(Aircraft.Canard.WETTED_AREA, 0.0, 'ft**2')  # SWTCN
 outputs.set_val(Aircraft.Canard.MASS, 0.0, 'lbm')  # WCAN
 
@@ -419,10 +414,10 @@ outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 2163.999415070652, 'lbm')  # W
 
 outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
 
-outputs.set_val(Aircraft.BWB.NUM_BAYS, 5.0, 'unitless')  # NBAY
-outputs.set_val(Aircraft.Fuselage.CABIN_AREA, 5173.187202504683, 'ft**2')  # ACABIN
 outputs.set_val(Aircraft.Furnishings.MASS, 61482.097969438299, 'lbm')  # WFURN
 
+outputs.set_val(Aircraft.BWB.NUM_BAYS, 5.0, 'unitless')  # NBAY
+outputs.set_val(Aircraft.Fuselage.CABIN_AREA, 5173.187202504683, 'ft**2')  # ACABIN
 avg_diameter = 39.8525  # XD
 avg_diameter_units = 'ft'
 outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
@@ -436,7 +431,6 @@ outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 3.4502226961922089)  # BOD
 outputs.set_val(Aircraft.Fuselage.MASS, 152790.66300003964, 'lbm')  # WFUSE
 outputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 15.125, 'ft')  # DF
 outputs.set_val(Aircraft.Fuselage.PLANFORM_AREA, 7390.267432149546, 'ft**2')  # FPAREA
-
 outputs.set_val(Aircraft.Fuselage.AFTBODY_MASS, 24278.05868511, 'lbm')  # WAFTB
 outputs.set_val(Aircraft.Wing.BWB_AFTBODY_MASS, 20150.78870864, 'lbm')  # W4
 
