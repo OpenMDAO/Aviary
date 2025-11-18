@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_detailed import (
@@ -22,11 +23,12 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 omit_cases = ['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']
-omit_cases.append(bwb_cases)
+omit_cases.append('BWBsimpleFLOPS')
+omit_cases.append('BWBdetailedFLOPS')
 
 
+@use_tempdirs
 class DetailedWingBendingTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -418,6 +420,7 @@ class DetailedWingBendingTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class BWBDetailedWingBendingTest1(unittest.TestCase):
     """The BWB detailed wing bending material factor when detailed wing data is not provided."""
 
@@ -481,6 +484,7 @@ class BWBDetailedWingBendingTest1(unittest.TestCase):
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
 
+@use_tempdirs
 class BWBDetailedWingBendingTest2(unittest.TestCase):
     """The BWB detailed wing bending material factor when detailed wing data is provided."""
 

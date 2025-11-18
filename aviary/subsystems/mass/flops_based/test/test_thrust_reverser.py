@@ -20,9 +20,9 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 omit_cases = ['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']
-omit_cases.append(bwb_cases)
+omit_cases.append('BWBsimpleFLOPS')
+omit_cases.append('BWBdetailedFLOPS')
 
 
 @use_tempdirs

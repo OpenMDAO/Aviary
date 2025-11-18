@@ -24,7 +24,6 @@ omit_cases = [
     'BWBsimpleFLOPS',
     'BWBdetailedFLOPS',
 ]
-omit_cases.append(bwb_cases)
 
 
 @use_tempdirs
