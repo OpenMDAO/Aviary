@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fuel_capacity import (
@@ -24,6 +25,7 @@ from aviary.variable_info.functions import override_aviary_vars
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class FuelCapacityGroupTest(unittest.TestCase):
     @parameterized.expand(get_flops_case_names(only=['AdvancedSingleAisle']), name_func=print_case)
     def test_case(self, case_name):
@@ -190,6 +192,7 @@ aux_capacity_data['1'] = AviaryValues(
 aux_capacity_cases = [key for key in aux_capacity_data]
 
 
+@use_tempdirs
 class AuxFuelCapacityTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()

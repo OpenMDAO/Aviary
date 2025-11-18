@@ -1,8 +1,8 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_common import (
@@ -25,6 +25,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
 
+@use_tempdirs
 class WingShearControlMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -89,6 +90,7 @@ class WingShearControlMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class WingMiscMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -151,6 +153,7 @@ class WingMiscMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class WingBendingMassTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()
@@ -240,6 +243,7 @@ class WingBendingMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBWingMiscMassTest(unittest.TestCase):
     """Tests wing misc mass calculation for BWB."""
 
@@ -272,6 +276,7 @@ class BWBWingMiscMassTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBShearControlMassTest(unittest.TestCase):
     """Tests shear control mass calculation for BWB."""
 
