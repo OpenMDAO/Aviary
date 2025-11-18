@@ -133,7 +133,4 @@ class BWBFinMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBFinMassTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()
