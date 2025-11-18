@@ -11,7 +11,6 @@ from aviary.subsystems.mass.flops_based.wing_common import (
     WingMiscMass,
     WingShearControlMass,
 )
-
 from aviary.variable_info.functions import setup_model_options
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
