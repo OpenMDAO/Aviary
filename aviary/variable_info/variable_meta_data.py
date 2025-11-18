@@ -7344,7 +7344,7 @@ add_meta_data(
         'GASP': None,
         # FLOPS may scale the input value as it resizes the engine if requested by
         # the user
-        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROF', 'LANDG.THROFF'],
+        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROFF'],
         'FLOPS': 'AERIN.THROFF',
         # LEAPS1 uses the average thrust_takeoff of all operational engines
         # actually on the airplane, possibly after resizing (as with FLOPS)
