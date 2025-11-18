@@ -421,8 +421,11 @@ class DetailedWingBendingTest(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBDetailedWingBendingTest1(unittest.TestCase):
-    """The BWB detailed wing bending material factor when detailed wing data is not provided."""
+class BWBSimpleWingBendingTest(unittest.TestCase):
+    """
+    The BWB detailed wing bending material factor when detailed wing data is not provided.
+    Here, "simple wing" is relative simple.
+    """
 
     def setUp(self):
         self.prob = om.Problem()
@@ -485,7 +488,7 @@ class BWBDetailedWingBendingTest1(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBDetailedWingBendingTest2(unittest.TestCase):
+class BWBDetailedWingBendingTest(unittest.TestCase):
     """The BWB detailed wing bending material factor when detailed wing data is provided."""
 
     def setUp(self):
