@@ -1,7 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -9,18 +9,15 @@ from aviary.subsystems.mass.flops_based.surface_controls import (
     AltSurfaceControlMass,
     SurfaceControlMass,
 )
-from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
-    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
