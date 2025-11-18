@@ -6,7 +6,13 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.mass_summation import MassSummation, StructureMass
+from aviary.subsystems.mass.flops_based.mass_summation import (
+    EmptyMass,
+    MassSummation,
+    OperatingMass,
+    PropulsionMass,
+    StructureMass,
+)
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -21,13 +27,15 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 @use_tempdirs
 class TotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -241,6 +249,115 @@ class StructureMassTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-6, rtol=1e-6)
 
 
+class BWBPropulsionTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'prop',
+            PropulsionMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(
+            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([3], 'unitless')})
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+                Aircraft.Propulsion.TOTAL_MISC_MASS,
+                Aircraft.Fuel.FUEL_SYSTEM_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
+            ],
+            output_keys=[
+                Aircraft.Propulsion.MASS,
+            ],
+            version=Version.BWB,
+            atol=1e-10,
+        )
+
+
+class BWBEmptyMassTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'empty',
+            EmptyMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Design.EMPTY_MASS_MARGIN,
+                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Propulsion.MASS,
+                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+            ],
+            output_keys=[
+                Aircraft.Design.EMPTY_MASS,
+            ],
+            version=Version.BWB,
+            atol=1e-10,
+        )
+
+
+class BWBOperatingMassTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'operating',
+            OperatingMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
+                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
+                Aircraft.Design.EMPTY_MASS,
+                Aircraft.Fuel.UNUSABLE_FUEL_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
+            ],
+            output_keys=[
+                Aircraft.Design.OPERATING_MASS,
+            ],
+            version=Version.BWB,
+            atol=1e-10,
+        )
+
+
 @use_tempdirs
 class BWBTotalSummationTest(unittest.TestCase):
     """Tests total summation mass calculation for BWB."""
@@ -248,8 +365,8 @@ class BWBTotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
-        case_name = 'BWB1aFLOPS'
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(

@@ -17,13 +17,15 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 @use_tempdirs
 class CargoContainerMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 

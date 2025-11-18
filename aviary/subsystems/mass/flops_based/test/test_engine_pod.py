@@ -17,6 +17,15 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+omit_cases = [
+    'LargeSingleAisle2FLOPS',
+    'LargeSingleAisle2FLOPSalt',
+    'BWBsimpleFLOPS',
+    'BWBdetailedFLOPS',
+]
+omit_cases.append(bwb_cases)
+
 
 @use_tempdirs
 class EnginePodMassTest(unittest.TestCase):
@@ -26,12 +35,7 @@ class EnginePodMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     # Only cases that use detailed wing weight.
-    @parameterized.expand(
-        get_flops_case_names(
-            omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt', 'BWB1aFLOPS']
-        ),
-        name_func=print_case,
-    )
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -112,8 +116,8 @@ class BWBEnginePodMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
-        case_name = 'BWB1aFLOPS'
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)

@@ -22,18 +22,17 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+omit_cases = ['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']
+omit_cases.append(bwb_cases)
+
 
 class DetailedWingBendingTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    # Skip model that doesn't use detailed wing.
-    @parameterized.expand(
-        get_flops_case_names(
-            omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt', 'BWB1aFLOPS']
-        ),
-        name_func=print_case,
-    )
+    # Skip model that doesn't use detailed wing and BWB cases.
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 

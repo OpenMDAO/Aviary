@@ -14,15 +14,15 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
+omit_cases = ['LargeSingleAisle1FLOPS', 'BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 @use_tempdirs
 class LandingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(
-        get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'BWB1aFLOPS']), name_func=print_case
-    )
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
         prob.model.add_subsystem('landing_mass', LandingMass(), promotes=['*'])
@@ -40,6 +40,9 @@ class LandingMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
+
 @use_tempdirs
 class BWBLandingMassTest(unittest.TestCase):
     """Tests landing mass calculation for BWB."""
@@ -47,8 +50,8 @@ class BWBLandingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
-        case_name = 'BWB1aFLOPS'
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
         prob.model.add_subsystem('landing_mass', LandingMass(), promotes=['*'])
 

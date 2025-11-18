@@ -15,13 +15,15 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 @use_tempdirs
 class EmptyMassMarginTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -61,8 +63,8 @@ class BWBEmptyMassMarginTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
-        case_name = 'BWB1aFLOPS'
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(

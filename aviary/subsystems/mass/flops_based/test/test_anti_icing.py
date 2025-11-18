@@ -17,13 +17,15 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 @use_tempdirs
 class AntiIcingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='BWB1aFLOPS'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -197,9 +199,9 @@ class BWBAntiIcingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case(self):
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
         """test AntiIcingMass component for BWB"""
-        case_name = 'BWB1aFLOPS'
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -209,7 +211,7 @@ class BWBAntiIcingMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        options = get_flops_options('BWB1aFLOPS')
+        options = get_flops_options(case_name)
         options[Aircraft.Engine.NUM_ENGINES] = np.array([3])
         options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 3
 
