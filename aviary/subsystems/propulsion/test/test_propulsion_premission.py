@@ -125,7 +125,7 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
             aviary_options=options, engine_models=[build_engine_deck(options)]
         )
 
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, np.ones(1))
+        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, [0.8096304384])
 
         setup_model_options(self.prob, options)
 
@@ -137,7 +137,7 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
 
         sls_thrust = self.prob.get_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
 
-        expected_sls_thrust = np.array([259377.6])  # There is no FLOPS data
+        expected_sls_thrust = np.array([70000.0 * 3])
 
         assert_near_equal(sls_thrust, expected_sls_thrust, tolerance=1e-10)
 
