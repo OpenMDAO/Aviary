@@ -167,7 +167,7 @@ inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # SHT in bwb.in
 inputs.set_val(
     Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0
 )  # SWETH not in bwb.in, set to Aviary default
-# inputs.set_val(Aircraft.HorizontalTail.SWEEP, 0)  # SWPHT in bwb.in, but should not be here
+# inputs.set_val(Aircraft.HorizontalTail.SWEEP, 0.0)  # SWPHT in bwb.in, but should not be here
 
 # Hydraulics
 # ---------------------------
@@ -217,7 +217,7 @@ inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 # inputs.set_val(Aircraft.Engine.MASS, 7400, 'lbm')  # not in bwb.in, not a FLOPS variable
 inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 22017, 'lbm')  # WENG in bwb.in
 inputs.set_val(
-    Aircraft.Engine.SCALED_SLS_THRUST, 70000, 'lbf'
+    Aircraft.Engine.SCALED_SLS_THRUST, 70000.0, 'lbf'
 )  # THRUST in bwb.in [70000, 1, 0, 0, 0, 0]
 inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, 'lbf')  # THRSO in bwb.in
 inputs.set_val(
@@ -297,8 +297,8 @@ inputs.set_val(
 inputs.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0)  # FAERT in bwb.in
 inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 2.0)  # AITEK in bwb.in
 # inputs.set_val(Aircraft.Wing.AREA, 7621.66, 'ft**2')  # SW in bwb.in, always output for BWB
-inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488821)  # AR in bwb.in
-inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488821)  # ARREF not in bwb.in, default to AR
+inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 7.557)  # AR in bwb.in
+inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 7.557)  # ARREF not in bwb.in, default to AR
 inputs.set_val(
     Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0
 )  # FRWI1 not in bwb.in, set to Aviary default
@@ -324,7 +324,7 @@ inputs.set_val(
             0.1287,
         ]
     ),
-)  # CHD not in bwb.in,
+)  # CHD
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 1.0)  # FCOMP in bwb.in
 # inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 137, 'ft**2')  # not in bwb.in, not a FLOPS variable
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR in bwb.in
@@ -343,7 +343,7 @@ inputs.set_val(
     Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
     np.array([0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]),
     'deg',
-)  # SWL not in bwb.in
+)  # SWL
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM in bwb.in
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3 not in bwb.in, set to Aviary default
 inputs.set_val(
@@ -406,7 +406,7 @@ inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM not in bwb.in
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM not in bwb.in, set to default
 # inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)  # not in bwb.in, not a FLOPS variable
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO in bwb.in
-inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140, 'ft/s')  # VAPPR in bwb.in
+inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140.0, 'ft/s')  # VAPPR in bwb.in
 inputs.set_val(
     Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025
 )  # ROLLMU not in bwb.in, set to default
@@ -526,9 +526,9 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 3)
 
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 346.93557352, 'lbm')  # WOIL
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 2)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0)
 
-outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 0)
+outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3)
 
 outputs.set_val(Aircraft.Engine.MASS, 17825.63336233, 'lbm')  # WSP
 
@@ -548,7 +548,7 @@ outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')  # WPMISC
 outputs.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 0.0, 'lbm')  # not in FLOPS
 outputs.set_val(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, 0.0, 'lbm')  # sum of zeros
 outputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS, 0.0, 'lbm')  # WTHR
-outputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 28928.1, 'lbf')  # THRUST
+# outputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 70000.0, 'lbf')  # THRUST
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 53476.90008698, 'lbm')  # WENG
 
