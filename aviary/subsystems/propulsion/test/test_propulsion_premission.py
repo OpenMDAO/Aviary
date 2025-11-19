@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_data import (
     engine_1_inputs,
@@ -16,6 +17,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Settings
 
 
+@use_tempdirs
 class PropulsionPreMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -108,11 +110,12 @@ class PropulsionPreMissionTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
 
+@use_tempdirs
 class BWBPropulsionPreMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def ttest_case(self):
+    def test_case(self):
         """work in progress"""
         options = get_flops_inputs('BWBsimpleFLOPS')
         options.set_val(Settings.VERBOSITY, 0)
@@ -134,7 +137,7 @@ class BWBPropulsionPreMissionTest(unittest.TestCase):
 
         sls_thrust = self.prob.get_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
 
-        expected_sls_thrust = np.array([54602.0])
+        expected_sls_thrust = np.array([259377.6])  # There is no FLOPS data
 
         assert_near_equal(sls_thrust, expected_sls_thrust, tolerance=1e-10)
 
