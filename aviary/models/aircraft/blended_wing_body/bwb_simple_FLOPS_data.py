@@ -318,6 +318,9 @@ inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)  # PCTL not in bwb.in, set to d
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM in bwb.in
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3 not in bwb.in, set to Aviary default
 inputs.set_val(
+    Aircraft.Wing.NUM_INPUT_STATION_DIST, 3
+)  # NETAW in bwb.in, needed for BWB, not default
+inputs.set_val(
     Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50
 )  # NSTD not in bwb.in, set to Aviary default
 inputs.set_val(
