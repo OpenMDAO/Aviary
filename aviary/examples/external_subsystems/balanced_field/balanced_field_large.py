@@ -12,7 +12,7 @@ from aviary.utils.preprocessors import preprocess_options
 
 # Note, only creating this aviary problem so that it can read the aircraft csv for us.
 prob = AviaryProblem()
-prob.load_inputs("models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv", verbosity=2)
+prob.load_inputs("models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv", verbosity=0)
 aviary_options = prob.aviary_inputs.deepcopy()
 
 # These inputs aren't in the aircraft file yet.
@@ -27,6 +27,7 @@ aviary_options.set_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT, 0.085000)
 aviary_options.set_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT, -0.810000)
 aviary_options.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
 aviary_options.set_val(Mission.Takeoff.FUEL_SIMPLE, 577.0, 'lbm')
+aviary_options.set_val(Mission.Design.GROSS_MASS, 160000, units='lbm')
 
 # This builder can be used for both takeoff and landing phases
 aero_builder = av.CoreAerodynamicsBuilder(
