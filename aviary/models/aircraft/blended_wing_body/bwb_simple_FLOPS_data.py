@@ -221,7 +221,7 @@ inputs.set_val(
 )  # THRUST in bwb.in [70000, 1, 0, 0, 0, 0]
 inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, 'lbf')  # THRSO in bwb.in
 inputs.set_val(
-    Aircraft.Engine.NUM_ENGINES, [3]
+    Aircraft.Engine.NUM_ENGINES, np.array([3])
 )  # not in bwb.in, not a FLOPS variable, set to NEW+NEF
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3)  # NEF in bwb.in
 inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)  # NEW in bwb.in
