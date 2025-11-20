@@ -309,6 +309,9 @@ inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR in bwb.
 inputs.set_val(Aircraft.Wing.DETAILED_WING, True)  # for BWB, always true
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 121.05, 'ft**2')  # GLOV in bwb.in
 # inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.2759, 0.9367]))  # ETAW not in bwb.in
+inputs.set_val(
+    Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.5, 1.0])
+)  # ETAW not in bwb.in, it will be computed during the run
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST not in bwb.in, set to default
 inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)  # PCTL not in bwb.in, set to default
 # inputs.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, np.array([0.0, 22.0]), 'deg')  # SWL not in bwb.in
