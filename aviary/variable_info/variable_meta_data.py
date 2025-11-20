@@ -6130,6 +6130,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.NUM_INPUT_STATION_DIST,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.NETAW',
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='number of wing station locations',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.Wing.NUM_INTEGRATION_STATIONS,
     meta_data=_MetaData,
     historical_name={

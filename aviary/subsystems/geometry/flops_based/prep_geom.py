@@ -623,17 +623,17 @@ class _BWBWing(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
+        add_aviary_option(self, Aircraft.Wing.NUM_INPUT_STATION_DIST)
 
     def setup(self):
-        num_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
+        num_inp_stations = self.options[Aircraft.Wing.NUM_INPUT_STATION_DIST]
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
-        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
-        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_INPUT_STATION_DIST', shape=num_inp_stations, units='unitless')
+        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
+        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_inp_stations, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 

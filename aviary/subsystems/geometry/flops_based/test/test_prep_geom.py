@@ -669,7 +669,7 @@ class BWBWingTest(unittest.TestCase):
     def test_case1(self):
         prob = self.prob
         self.aviary_options = AviaryValues()
-        self.aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
+        self.aviary_options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 15, units='unitless')
         prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
         setup_model_options(self.prob, self.aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
@@ -762,7 +762,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 3, units='unitless')
+        options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 3, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -1001,7 +1001,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
-        options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
+        options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 15, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
 

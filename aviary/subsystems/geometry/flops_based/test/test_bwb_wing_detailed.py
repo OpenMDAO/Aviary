@@ -218,7 +218,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
-        self.aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
+        self.aviary_options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 15, units='unitless')
         prob.model.add_subsystem(
             'dist', BWBWingPrelim(), promotes_outputs=['*'], promotes_inputs=['*']
         )
