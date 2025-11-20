@@ -110,4 +110,6 @@ class TestFortranToAviary(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestFortranToAviary()
+    test.test_advanced_single_aisle()
