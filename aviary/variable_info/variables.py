@@ -575,7 +575,6 @@ class Aircraft:
         MISC_MASS = 'aircraft:wing:misc_mass'
         MISC_MASS_SCALER = 'aircraft:wing:misc_mass_scaler'
         NUM_FLAP_SEGMENTS = 'aircraft:wing:num_flap_segments'
-        NUM_INPUT_STATION_DIST = 'aircraft:wing:num_input_station_dist'
         NUM_INTEGRATION_STATIONS = 'aircraft:wing:num_integration_stations'
         OPTIMUM_FLAP_DEFLECTION = 'aircraft:wing:optimum_flap_deflection'
         OPTIMUM_SLAT_DEFLECTION = 'aircraft:wing:optimum_slat_deflection'

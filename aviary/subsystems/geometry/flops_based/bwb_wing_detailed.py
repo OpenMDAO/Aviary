@@ -40,14 +40,11 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        self.add_output('BWB_INPUT_STATION_DIST', shape=num_inp_stations, units='unitless')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
         self.add_output('BWB_THICKNESS_TO_CHORD_DIST', shape=num_inp_stations, units='unitless')
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=num_inp_stations, units='deg')
 
     def setup_partials(self):
-        self.declare_partials('BWB_INPUT_STATION_DIST', '*', method='fd', form='forward')
-
         self.declare_partials('BWB_CHORD_PER_SEMISPAN_DIST', '*', method='fd', form='forward')
 
         self.declare_partials(
@@ -77,18 +74,6 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 print('Rear_spar_percent_chord must be positive.')
         xl_out = root_chord / rear_spar_percent_chord
-
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
-        )
-        bwb_input_station_dist = np.where(
-            bwb_input_station_dist <= 1.0,
-            bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-            bwb_input_station_dist + width / 2.0,  # else
-        )
-        bwb_input_station_dist[0] = 0.0
-        bwb_input_station_dist[1] = width / 2.0
-        outputs['BWB_INPUT_STATION_DIST'] = bwb_input_station_dist
 
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'] = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST]
         idx = np.where(inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST] < 5.0)
@@ -151,18 +136,11 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        self.add_output('BWB_INPUT_STATION_DIST', shape=3, units='unitless')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DIST', shape=3, units='unitless')
         self.add_output('BWB_THICKNESS_TO_CHORD_DIST', shape=3, units='unitless')
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=3, units='deg')
 
     def setup_partials(self):
-        self.declare_partials(
-            'BWB_INPUT_STATION_DIST',
-            [
-                Aircraft.Fuselage.MAX_WIDTH,
-            ],
-        )
         self.declare_partials(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             [
@@ -210,10 +188,6 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         angle = np.tan(sweep / 57.2958) - 2.0 * (1 - tr_out) / (1 + tr_out) / ar_out
         swp_ld_path = 57.2958 * np.arctan(angle)
 
-        outputs['BWB_INPUT_STATION_DIST'][0] = 0.0
-        outputs['BWB_INPUT_STATION_DIST'][1] = width / 2.0
-        outputs['BWB_INPUT_STATION_DIST'][2] = 1.0
-
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'][0] = length
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'][1] = xl_out
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'][2] = wing_tip_chord
@@ -237,8 +211,6 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         tr_out = wing_tip_chord / xl_out
         ar_out = 2.0 * (wingspan - width) / (wing_tip_chord + xl_out)
         angle = np.tan(sweep / 57.2958) - 2.0 * (1 - tr_out) / (1 + tr_out) / ar_out
-
-        J['BWB_INPUT_STATION_DIST', Aircraft.Fuselage.MAX_WIDTH] = [0.0, 0.5, 0.0]
 
         J['BWB_CHORD_PER_SEMISPAN_DIST', Aircraft.Fuselage.LENGTH] = [1.0, 0.0, 0.0]
         J['BWB_CHORD_PER_SEMISPAN_DIST', Aircraft.Wing.ROOT_CHORD] = [
@@ -343,15 +315,15 @@ class BWBWingPrelim(om.ExplicitComponent):
     """preliminary calculations of wing aspect ratio for BWB using detailed wing information"""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.NUM_INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_inp_stations = self.options[Aircraft.Wing.NUM_INPUT_STATION_DIST]
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_INPUT_STATION_DIST', shape=num_inp_stations, units='unitless')
         self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.AREA, units='ft**2')
@@ -361,8 +333,26 @@ class BWBWingPrelim(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
-        input_station_dist = inputs['BWB_INPUT_STATION_DIST']
-        num_stations = len(inputs['BWB_INPUT_STATION_DIST'])
+        verbosity = self.options[Settings.VERBOSITY]
+        width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
+        wingspan = inputs[Aircraft.Wing.SPAN][0]
+        if wingspan <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.SPAN must be positive.')
+        rate_span = (wingspan - width) / wingspan
+
+        # This part is repeated in _BWBWing()
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        bwb_input_station_dist = np.array(
+            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+        )
+        bwb_input_station_dist = np.where(
+            bwb_input_station_dist <= 1.0,
+            bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+            bwb_input_station_dist + width / 2.0,  # else
+        )
+        bwb_input_station_dist[0] = 0.0
+        bwb_input_station_dist[1] = width / 2.0
 
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
@@ -376,19 +366,19 @@ class BWBWingPrelim(om.ExplicitComponent):
             C1 = bwb_chord_per_semispan_dist[0] * span / 2.0
         else:
             C1 = bwb_chord_per_semispan_dist[0]
-        if input_station_dist[0] <= 1.1:
-            Y1 = input_station_dist[0] * span / 2.0
+        if bwb_input_station_dist[0] <= 1.1:
+            Y1 = bwb_input_station_dist[0] * span / 2.0
         else:
-            Y1 = input_station_dist[0]
-        for n in range(1, num_stations):
+            Y1 = bwb_input_station_dist[0]
+        for n in range(1, num_inp_stations):
             if bwb_chord_per_semispan_dist[n] <= 5.0:
                 C2 = bwb_chord_per_semispan_dist[n] * span / 2.0
             else:
                 C2 = bwb_chord_per_semispan_dist[n]
-            if input_station_dist[n] <= 1.1:
-                Y2 = input_station_dist[n] * span / 2.0
+            if bwb_input_station_dist[n] <= 1.1:
+                Y2 = bwb_input_station_dist[n] * span / 2.0
             else:
-                Y2 = input_station_dist[n]
+                Y2 = bwb_input_station_dist[n]
             axp = (Y2 - Y1) * (C1 + C2)
             C1 = C2
             Y1 = Y2
