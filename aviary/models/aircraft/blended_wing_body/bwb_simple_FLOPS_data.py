@@ -157,8 +157,8 @@ inputs.set_val(
 
 # Horizontal Tail
 # ---------------------------
-inputs.set_val(Aircraft.HorizontalTail.AREA, 0.0, 'ft**2')  # SHT in bwb.in
-inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.0)  # SHT in bwb.in
+inputs.set_val(Aircraft.HorizontalTail.AREA, 0.01, 'ft**2')  # SHT in bwb.in, set to 0.01 not 0.0
+inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.01)  # SHT in bwb.in, set to 0.01 not 0.0
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT in bwb.in
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)  # TCHT in bwb.in
 # inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT not in bwb.in,
@@ -276,10 +276,12 @@ inputs.set_val(
 # Vertical Tail
 # ---------------------------
 inputs.set_val(Aircraft.VerticalTail.NUM_TAILS, 0)  # NVERT in bwb.in
-inputs.set_val(Aircraft.VerticalTail.AREA, 0.0, 'ft**2')  # SVT not in bwb.in, set to default
 inputs.set_val(
-    Aircraft.VerticalTail.ASPECT_RATIO, 0.0
-)  # ARVT not in bwb.in, set to default ARHT/2 = 0/2
+    Aircraft.VerticalTail.AREA, 0.01, 'ft**2'
+)  # SVT not in bwb.in, set to 0.01, not default
+inputs.set_val(
+    Aircraft.VerticalTail.ASPECT_RATIO, 0.01
+)  # ARVT not in bwb.in, set to 0.01, not default ARHT/2 = 0/2
 inputs.set_val(
     Aircraft.VerticalTail.TAPER_RATIO, 0.0
 )  # TRVT not in bwb.in, set to default TRHT = 0
