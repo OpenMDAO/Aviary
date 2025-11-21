@@ -1270,6 +1270,7 @@ class AviaryProblem(om.Problem):
         optimizer=None,
         name=None,
         verbosity=None,
+        payload_range_controls=None,
     ):
         """
         Runs the aircraft model in a off-design mission of the specified type. It is assumed that
@@ -1312,8 +1313,8 @@ class AviaryProblem(om.Problem):
             gross mass. For missions where mass is solved for (such as ALTERNATE missions), this is
             the initial guess.
         mission_range : float, optional
-            [FALLOUT missions only] Sets fixed range of flown off-design mission, in nautical miles.
-            Unused for other mission types.
+            [ALTERNATE missions only] Sets fixed range of flown off-design mission, in nautical
+            miles. Unused for other mission types.
         optimizer : string, optional
             Set which optimizer to use for the off-design mission. If not provided, the optimizer
             used for the previously ran sizing mission is used. If that cannot be found, such as
@@ -1323,6 +1324,12 @@ class AviaryProblem(om.Problem):
             Name of the off-design problem. Defaults to "{original problem name}_off_design".
         verbosity : int, Verbosity
             Sets the printout level for the entire off-design problem that is ran.
+        payload_range_controls : bool
+            Flag used by run_payload_range method call. Adds a cargo variable as a design variable
+            (chosen based on the specific problem), which is allowed to float a small amount to
+            account for issues when hardcoding payload & fuel mass for certain points on the
+            payload-range diagram. This argument is generally not needed for users manually running
+            off-design missions.
         """
         # For off-design missions, provided verbosity will be used for all L2 method calls
         if verbosity is not None:
@@ -1449,6 +1456,45 @@ class AviaryProblem(om.Problem):
                 optimizer = None
         off_design_prob.add_driver(optimizer, verbosity=verbosity)
         off_design_prob.add_design_variables(verbosity=verbosity)
+
+        # Handle edge case for payload-range diagrams
+        # Select which cargo variable makes the most sense to float, and then set a tolerance
+        # based on rough guesses on what is sufficient to get the problem to converge without
+        # setting design variable bounds too large
+        if payload_range_controls:
+            # prefer to directly float cargo_mass, as it is present in both FLOPS and GASP
+            if cargo_mass is None or cargo_mass == 0:
+                # See if misc_cargo is being used, float that as a backup
+                if misc_cargo is None or misc_cargo == 0:
+                    # We aren't using cargo_mass OR misc_mass - try wing cargo as last resort
+                    if wing_cargo is None or wing_cargo == 0:
+                        # We don't know enough about the aircraft to make any informed guesses. Use
+                        # arbitrary values
+                        control_var = Aircraft.CrewPayload.CARGO_MASS
+                        val = 1000
+                        tol = 1.2
+                        inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0, 'lbm')
+
+                    else:
+                        control_var = Aircraft.CrewPayload.WING_CARGO
+                        val = wing_cargo
+                        tol = 1.1
+                else:
+                    control_var = Aircraft.CrewPayload.MISC_CARGO
+                    val = misc_cargo
+                    tol = 1.1
+            else:
+                control_var = Aircraft.CrewPayload.CARGO_MASS
+                val = cargo_mass
+                tol = 1.05
+
+            off_design_prob.model.add_design_var(
+                control_var,
+                lower=0,
+                upper=val * tol,
+                ref=val,
+            )
+
         off_design_prob.add_objective(verbosity=verbosity)
         off_design_prob.setup(verbosity=verbosity)
         off_design_prob.set_initial_guesses(verbosity=verbosity)
@@ -1507,15 +1553,33 @@ class AviaryProblem(om.Problem):
             phase_info = self.model.mission_info.copy()
             phase_info['pre_mission'] = self.model.pre_mission_info.copy()
             phase_info['post_mission'] = self.model.post_mission_info.copy()
-            # This checks if the 'cruise' phase exists, then automatically extends duration
-            # bounds of the cruise stage to allow for the economic and ferry missions.
+            # This checks if the 'cruise' phase exists, then automatically extends duration bounds
+            # of the cruise stage to allow for the longer economic and ferry missions.
             if phase_info['cruise']:
                 min_duration = phase_info['cruise']['user_options']['time_duration_bounds'][0][0]
                 max_duration = phase_info['cruise']['user_options']['time_duration_bounds'][0][1]
                 cruise_units = phase_info['cruise']['user_options']['time_duration_bounds'][1]
 
-                # Simply doubling the amount of time the optimizer is allowed to stay in the cruise phase, as well as ensure cruise is optimized
                 phase_info['cruise']['user_options'].update(
+                    {'time_duration_bounds': ((min_duration, 2.5 * max_duration), cruise_units)}
+                )
+
+            # do the same for climb & descent
+            if phase_info['climb']:
+                min_duration = phase_info['climb']['user_options']['time_duration_bounds'][0][0]
+                max_duration = phase_info['climb']['user_options']['time_duration_bounds'][0][1]
+                cruise_units = phase_info['climb']['user_options']['time_duration_bounds'][1]
+
+                phase_info['climb']['user_options'].update(
+                    {'time_duration_bounds': ((min_duration, 1.2 * max_duration), cruise_units)}
+                )
+
+            if phase_info['descent']:
+                min_duration = phase_info['descent']['user_options']['time_duration_bounds'][0][0]
+                max_duration = phase_info['descent']['user_options']['time_duration_bounds'][0][1]
+                cruise_units = phase_info['descent']['user_options']['time_duration_bounds'][1]
+
+                phase_info['descent']['user_options'].update(
                     {'time_duration_bounds': ((min_duration, 2 * max_duration), cruise_units)}
                 )
 
@@ -1580,6 +1644,18 @@ class AviaryProblem(om.Problem):
                     * payload_frac
                 )
 
+                # Need to allow cargo mass to float here to account for passenger number rounding
+                # and potentially cargo container mass changing, so the "payload_range_controls"
+                # flag is used
+                if mass_method is FLOPS:
+                    # For FLOPS missions, cargo mass cannot be a design variable, therefore we set
+                    # misc_cargo to an arbitrary value so it will be selected as the "floating" mass
+                    # later. This should only happen if no other cargo mass types are given, so we
+                    # make sure wing cargo is not being used.
+                    if (
+                        economic_mission_wing_cargo is not None or economic_mission_wing_cargo != 0
+                    ) and (economic_mission_misc_cargo is None or economic_mission_misc_cargo == 0):
+                        economic_mission_misc_cargo = economic_mission_total_payload * 0.05
                 economic_range_prob = self.run_off_design_mission(
                     problem_type=ProblemType.FALLOUT,
                     phase_info=phase_info,
@@ -1590,6 +1666,7 @@ class AviaryProblem(om.Problem):
                     misc_cargo=economic_mission_misc_cargo,
                     name=self._name + '_max_economic_range',
                     verbosity=verbosity,
+                    payload_range_controls=True,
                 )
 
                 # Pull the payload and range values from the fallout mission
@@ -1637,8 +1714,8 @@ class AviaryProblem(om.Problem):
 
             # Check if fallout missions ran successfully before writing to csv file
             # If both missions ran successfully, writes the payload/range data to a csv file
+            self.payload_range_data = payload_range_data = NamedValues()
             if ferry_range_prob.result.success and economic_range_prob.result.success:
-                self.payload_range_data = payload_range_data = NamedValues()
                 payload_range_data.set_val(
                     'Mission Name',
                     ['Zero Fuel', 'Design Mission', 'Max Economic Mission', 'Ferry Mission'],

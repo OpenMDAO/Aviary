@@ -1,5 +1,5 @@
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
@@ -519,7 +519,12 @@ class PayloadRangeTest(unittest.TestCase):
         prob.run_payload_range()
         assert_near_equal(
             prob.payload_range_data.get_val('Payload', 'lbm'),
-            [38025.0, 38025.0, 23625.0, 225.0],  # due to bug ferry mission must carry 1 passenger
+            [
+                38025.0,
+                38025.0,
+                24256.8376,
+                225.0,
+            ],  # due to bug ferry mission must carry 1 passenger
             tolerance=1e-12,
         )
         assert_near_equal(
