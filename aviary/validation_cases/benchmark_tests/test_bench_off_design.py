@@ -522,19 +522,19 @@ class PayloadRangeTest(unittest.TestCase):
             [
                 38025.0,
                 38025.0,
-                24256.8376,
+                24256.837625,
                 225.0,
             ],  # due to bug ferry mission must carry 1 passenger
-            tolerance=1e-12,
+            tolerance=1e-10,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Fuel', 'lbm'),
-            [0, 28538.30, 43524.41, 43780.55],
+            [0, 28108.99, 42192.70, 42192.70],
             tolerance=1e-7,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
-            [0, 2500, 4064.07, 4509.02],
+            [0, 2500, 3973.34, 4415.77],
             tolerance=1e-6,
         )
 

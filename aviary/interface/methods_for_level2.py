@@ -1260,6 +1260,8 @@ class AviaryProblem(om.Problem):
         mission_range=None,
         optimizer=None,
         name=None,
+        fill_cargo=False,
+        fill_fuel=False,
         verbosity=None,
         payload_range_controls=None,
     ):
@@ -1304,8 +1306,9 @@ class AviaryProblem(om.Problem):
             gross mass. For missions where mass is solved for (such as ALTERNATE missions), this is
             the initial guess.
         mission_range : float, optional
-            [ALTERNATE missions only] Sets fixed range of flown off-design mission, in nautical
-            miles. Unused for other mission types.
+            [ALTERNATE missions only]
+            Sets fixed range of flown off-design mission, in nautical miles. Unused for other
+            mission types.
         optimizer : string, optional
             Set which optimizer to use for the off-design mission. If not provided, the optimizer
             used for the previously ran sizing mission is used. If that cannot be found, such as
@@ -1313,6 +1316,15 @@ class AviaryProblem(om.Problem):
             is chosen.
         name : str, optional
             Name of the off-design problem. Defaults to "{original problem name}_off_design".
+        fill_cargo : bool, optional
+            Adds a design variable to vary cargo mass to exactly fill the aircraft to design
+            takeoff gross weight. Useful for cases where precise cargo mass required is not known,
+            or when operating mass can change between missions. Defaults to False. Cannot be used at
+            the same time as fill_fuel.
+        fill_fuel : bool, optional
+            Adds takeoff gross mass as a design variable. Useful for cases when operating mass can
+            change between missions. Defaults to False. Cannot be used at the same time as
+            fill_cargo.
         verbosity : int, Verbosity
             Sets the printout level for the entire off-design problem that is ran.
         payload_range_controls : bool
@@ -1333,6 +1345,12 @@ class AviaryProblem(om.Problem):
         problem_type = ProblemType(problem_type)
         if problem_type is ProblemType.SIZING:
             raise UserWarning('Off-design missions cannot be SIZING missions.')
+
+        if fill_cargo and fill_fuel:
+            warnings.warn(
+                'Cannot run an off-design mission with both "fill_cargo" and "fill_fuel" flags '
+                'active.'
+            )
 
         if name is None:
             name = name = self._name + '_off_design'
@@ -1452,7 +1470,7 @@ class AviaryProblem(om.Problem):
         # Select which cargo variable makes the most sense to float, and then set a tolerance
         # based on rough guesses on what is sufficient to get the problem to converge without
         # setting design variable bounds too large
-        if payload_range_controls:
+        if fill_cargo:
             # prefer to directly float cargo_mass, as it is present in both FLOPS and GASP
             if cargo_mass is None or cargo_mass == 0:
                 # See if misc_cargo is being used, float that as a backup
@@ -1486,6 +1504,14 @@ class AviaryProblem(om.Problem):
                 ref=val,
             )
 
+        if fill_fuel:
+            off_design_prob.model.add_design_var(
+                Mission.Summary.GROSS_MASS,
+                lower=0,
+                upper=off_design_prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+                ref=off_design_prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+            )
+
         off_design_prob.add_objective(verbosity=verbosity)
         off_design_prob.setup(verbosity=verbosity)
         off_design_prob.set_initial_guesses(verbosity=verbosity)
@@ -1497,10 +1523,10 @@ class AviaryProblem(om.Problem):
         """
         This function runs Payload/Range analysis for the aircraft model.
 
-        For an aircraft model that has been sized with a mission has has  successfully converged,
+        For an aircraft model that has been sized with a mission has has successfully converged,
         this function will adjust the given phase information, assuming that there is a phase named
-        'cruise' and elongates the duration bounds to allow the optimizer to arrive at a local
-        maximum for the max economic and ferry missions.
+        'cruise' and elongates the duration bounds to allow the optimizer
+        to converge for the max economic and ferry missions.
 
         Parameters
         ----------
@@ -1553,25 +1579,6 @@ class AviaryProblem(om.Problem):
 
                 phase_info['cruise']['user_options'].update(
                     {'time_duration_bounds': ((min_duration, 2.5 * max_duration), cruise_units)}
-                )
-
-            # do the same for climb & descent
-            if phase_info['climb']:
-                min_duration = phase_info['climb']['user_options']['time_duration_bounds'][0][0]
-                max_duration = phase_info['climb']['user_options']['time_duration_bounds'][0][1]
-                cruise_units = phase_info['climb']['user_options']['time_duration_bounds'][1]
-
-                phase_info['climb']['user_options'].update(
-                    {'time_duration_bounds': ((min_duration, 1.2 * max_duration), cruise_units)}
-                )
-
-            if phase_info['descent']:
-                min_duration = phase_info['descent']['user_options']['time_duration_bounds'][0][0]
-                max_duration = phase_info['descent']['user_options']['time_duration_bounds'][0][1]
-                cruise_units = phase_info['descent']['user_options']['time_duration_bounds'][1]
-
-                phase_info['descent']['user_options'].update(
-                    {'time_duration_bounds': ((min_duration, 2 * max_duration), cruise_units)}
                 )
 
             # TODO Verify that previously run point is actually max payload/fuel point, and if not
@@ -1656,8 +1663,8 @@ class AviaryProblem(om.Problem):
                     wing_cargo=economic_mission_wing_cargo,
                     misc_cargo=economic_mission_misc_cargo,
                     name=self._name + '_max_economic_range',
+                    fill_cargo=True,
                     verbosity=verbosity,
-                    payload_range_controls=True,
                 )
 
                 # Pull the payload and range values from the fallout mission
@@ -1690,6 +1697,7 @@ class AviaryProblem(om.Problem):
                 cargo_mass=0,
                 mission_gross_mass=ferry_range_gross_mass,
                 name=self._name + '_ferry_range',
+                fill_fuel=True,
                 verbosity=verbosity,
             )
 
