@@ -1125,6 +1125,14 @@
         "<class 'list'>"
     ],
     [
+        "aircraft:engine:interpolation_sort",
+        [
+            "mach"
+        ],
+        "unitless",
+        "<class 'list'>"
+    ],
+    [
         "aircraft:propulsion:total_num_engines",
         2,
         "unitless",
