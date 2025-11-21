@@ -59,18 +59,3 @@ def get_geom_and_mass_subsystems(legacy_code):
     geom = CoreGeometryBuilder('core_geometry', BaseMetaData, legacy_code)
 
     return [geom, mass]
-
-
-def get_geom_subsystems(legacy_code):
-    """
-    Get geometry premission subsystem in this order.
-
-    Arguments:
-    ----------
-    legacy_code : str, LegacyCode
-        either FLOPS or GASP LegacyCode Enums, or their strings equivalents ('FLOPS', 'GASP')
-    """
-    legacy_code = LegacyCode(legacy_code)
-    geom = CoreGeometryBuilder('core_geometry', BaseMetaData, legacy_code)
-
-    return [geom]
