@@ -131,7 +131,6 @@ aircraft:wing:load_path_sweep_dist,0.0,23.6286942529271,23.6286942529271,deg
 aircraft:wing:mass_scaler,0.7412,unitless
 aircraft:wing:max_camber_at_70_semispan,0.015,unitless
 aircraft:wing:misc_mass_scaler,1.7,unitless
-aircraft:wing:num_input_station_dist,4,unitless
 aircraft:wing:num_integration_stations,100,unitless
 aircraft:wing:shear_control_mass_scaler,0.749,unitless
 aircraft:wing:span,118.7505278165,ft
@@ -432,6 +431,7 @@ WTIN.enoz,1
 WTIN.ispowe,0
 WTIN.mldwt,0
 WTIN.mywts,0
+WTIN.netaw,4
 WTIN.nwref,39
 WTIN.paylmx,52000
 WTIN.spwcon,38584
