@@ -669,31 +669,14 @@ class BWBWingTest(unittest.TestCase):
     def test_case1(self):
         prob = self.prob
         self.aviary_options = AviaryValues()
-        self.aviary_options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 15, units='unitless')
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            units='unitless',
+        )
         prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
         setup_model_options(self.prob, self.aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(
-            'BWB_INPUT_STATION_DIST',
-            [
-                0.0,
-                32.29,
-                0.56275201612903225,
-                0.59918934811827951,
-                0.63562668010752688,
-                0.67206401209677424,
-                0.7085013440860215,
-                0.74486580141129033,
-                0.78137600806451613,
-                0.81781334005376349,
-                0.85425067204301075,
-                0.89068800403225801,
-                0.92705246135752695,
-                0.96356266801075263,
-                1.0,
-            ],
-            units='unitless',
-        )
         prob.set_val(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             val=[
@@ -762,7 +745,6 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 3, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -1001,7 +983,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
-        options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 15, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
 

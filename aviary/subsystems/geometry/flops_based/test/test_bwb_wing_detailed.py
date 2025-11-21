@@ -86,26 +86,6 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
         prob.run_model()
 
-        out0 = prob.get_val('BWB_INPUT_STATION_DIST')
-        exp0 = [
-            0.0,
-            32.29,
-            0.56275201612903225,
-            0.59918934811827951,
-            0.63562668010752688,
-            0.67206401209677424,
-            0.7085013440860215,
-            0.74486580141129033,
-            0.78137600806451613,
-            0.81781334005376349,
-            0.85425067204301075,
-            0.89068800403225801,
-            0.92705246135752695,
-            0.96356266801075263,
-            1.0,
-        ]
-        assert_near_equal(out0, exp0, tolerance=1e-10)
-
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [
             137.5,
@@ -185,10 +165,6 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()
 
-        out0 = prob.get_val('BWB_INPUT_STATION_DIST')
-        exp0 = [0.0, 32.29, 1.0]
-        assert_near_equal(out0, exp0, tolerance=1e-10)
-
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [137.5, 11.01456429, 14.2848]
         assert_near_equal(out1, exp1, tolerance=1e-10)
@@ -218,7 +194,11 @@ class BWBWingPrelimTest(unittest.TestCase):
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
-        self.aviary_options.set_val(Aircraft.Wing.NUM_INPUT_STATION_DIST, 15, units='unitless')
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            units='unitless',
+        )
         prob.model.add_subsystem(
             'dist', BWBWingPrelim(), promotes_outputs=['*'], promotes_inputs=['*']
         )
@@ -227,27 +207,6 @@ class BWBWingPrelimTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         prob.set_val(Aircraft.Wing.SPAN, val=238.08)
-        prob.set_val(
-            'BWB_INPUT_STATION_DIST',
-            [
-                0.0,
-                32.29,
-                0.56275201612903225,
-                0.59918934811827951,
-                0.63562668010752688,
-                0.67206401209677424,
-                0.7085013440860215,
-                0.74486580141129033,
-                0.78137600806451613,
-                0.81781334005376349,
-                0.85425067204301075,
-                0.89068800403225801,
-                0.92705246135752695,
-                0.96356266801075263,
-                1.0,
-            ],
-            units='unitless',
-        )
         prob.set_val(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             val=[
