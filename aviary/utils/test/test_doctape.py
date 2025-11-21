@@ -25,7 +25,16 @@ from aviary.utils.doctape import (
     get_all_non_aviary_names,
 )
 
+try:
+    import myst_nb
+except ImportError:
+    myst_nb = False
 
+
+@unittest.skipIf(
+    myst_nb is False,
+    'Skipping because myst_nb is not installed for doc testing.',
+)
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions

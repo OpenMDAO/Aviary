@@ -465,6 +465,15 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
                 )
 
+                # This isn't computed, but is instead set in the cruise phase_info.
+                # We still need altitude continuity.
+                # Note: if both sides are Breguet Range, the user is doing something odd like a
+                # step cruise, so don't enforce a constraint.
+                if not (analytic1 and analytic2):
+                    aviary_group.traj.add_linkage_constraint(
+                        phase1, phase2, 'altitude', 'altitude', connected=False, ref=1.0e4
+                    )
+
         # add all params and promote them to aviary_group level
         ParamPort.promote_params(
             aviary_group,

@@ -762,18 +762,8 @@ def _exec_EDC(args, user_args):
     )
 
 
-EDC_description = (
-    'Converts FLOPS- or GASP-formatted '
-    'engine decks into Aviary csv format.\nFLOPS decks '
-    'are changed from column-delimited to csv format '
-    'with added headers.\nGASP decks are reorganized '
-    'into column based csv. T4 is recovered through '
-    'calculation. Data points whose T4 exceeds T4max '
-    'are removed.'
-)
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(EDC_description)
+    parser = argparse.ArgumentParser()
     _setup_EDC_parser(parser)
     args = parser.parse_args()
     _exec_EDC(args, None)

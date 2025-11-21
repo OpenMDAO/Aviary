@@ -509,15 +509,13 @@ class AviaryProblem(om.Problem):
                 driver.options['print_opt_prob'] = True
 
         # optimizer agnostic settings
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            driver.options['debug_print'] = ['desvars']
-            if verbosity == Verbosity.DEBUG:
-                driver.options['debug_print'] = [
-                    'desvars',
-                    'ln_cons',
-                    'nl_cons',
-                    'objs',
-                ]
+        if verbosity == Verbosity.DEBUG:
+            driver.options['debug_print'] = [
+                'desvars',
+                'ln_cons',
+                'nl_cons',
+                'objs',
+            ]
 
     def add_design_variables(self, verbosity=None):
         """
@@ -1155,8 +1153,6 @@ class AviaryProblem(om.Problem):
 
     def run_aviary_problem(
         self,
-        record_filename='problem_history.db',
-        optimization_history_filename=None,
         restart_filename=None,
         suppress_solver_print=True,
         run_driver=True,
@@ -1170,12 +1166,6 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        record_filename : str, optional
-            The name of the database file where the solutions are to be recorded. The
-            default is "problem_history.db".
-        optimization_history_filename : str, None
-            The name of the database file where the driver iterations are to be
-            recorded. The default is None.
         restart_filename : str, optional
             The name of the file that contains previously computed solutions which are
             to be used as starting points for this run. If it is None (default), no
@@ -1193,6 +1183,8 @@ class AviaryProblem(om.Problem):
             False.
         make_plots : bool, optional
             If True (default), Dymos html plots will be generated as part of the output.
+        verbosity : Verbosity or int, optional
+            Controls the level of printouts for this method.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1204,15 +1196,14 @@ class AviaryProblem(om.Problem):
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             self.final_setup()
-            with open('input_list.txt', 'w') as outfile:
+            with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
+
+            recorder = om.SqliteRecorder('optimization_history.db')
+            self.driver.add_recorder(recorder)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
-
-        if optimization_history_filename:
-            recorder = om.SqliteRecorder(optimization_history_filename)
-            self.driver.add_recorder(recorder)
 
         # and run mission, and dynamics
         if run_driver:
@@ -1221,7 +1212,7 @@ class AviaryProblem(om.Problem):
                 run_driver=run_driver,
                 simulate=simulate,
                 make_plots=make_plots,
-                solution_record_file=record_filename,
+                solution_record_file='problem_history.db',
                 restart=restart_filename,
             )
 
@@ -1246,7 +1237,7 @@ class AviaryProblem(om.Problem):
         )
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            with open('output_list.txt', 'w') as outfile:
+            with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
         if self.generate_payload_range:
