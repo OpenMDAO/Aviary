@@ -516,7 +516,8 @@ class PayloadRangeTest(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
         prob.run_aviary_problem()
-        prob.run_payload_range()
+        off_design_probs = prob.run_payload_range()
+        # test outputted payload-range data
         assert_near_equal(
             prob.payload_range_data.get_val('Payload', 'lbm'),
             [
@@ -536,6 +537,18 @@ class PayloadRangeTest(unittest.TestCase):
             prob.payload_range_data.get_val('Range', 'NM'),
             [0, 2500, 3973.34, 4415.77],
             tolerance=1e-6,
+        )
+
+        # verify TOGW for each off-design problem
+        assert_near_equal(
+            off_design_probs[0].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            165896.26754754,
+            tolerance=1e-12,
+        )
+        assert_near_equal(
+            off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            140868.42657438,
+            tolerance=1e-12,
         )
 
 
