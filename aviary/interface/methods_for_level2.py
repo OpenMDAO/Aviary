@@ -1347,7 +1347,7 @@ class AviaryProblem(om.Problem):
             raise UserWarning('Off-design missions cannot be SIZING missions.')
 
         if fill_cargo and fill_fuel:
-            warnings.warn(
+            raise UserWarning(
                 'Cannot run an off-design mission with both "fill_cargo" and "fill_fuel" flags '
                 'active.'
             )
