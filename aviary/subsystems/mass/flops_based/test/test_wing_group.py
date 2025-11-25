@@ -54,9 +54,7 @@ class BWBWingGroupTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 1900000.0, units='lbf'
         )
         # BWBDetailedWingBendingFact
-        prob.model.set_input_defaults(
-            'BWB_LOAD_PATH_SWEEP_DIST', [0.0, 15.337244816, 15.337244816], units='deg'
-        )
+        prob.model.set_input_defaults('BWB_LOAD_PATH_SWEEP_DIST', [0.0, 15.337244816], units='deg')
         prob.model.set_input_defaults(
             'BWB_THICKNESS_TO_CHORD_DIST', [0.11, 0.11, 0.11], units='unitless'
         )

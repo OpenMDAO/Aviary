@@ -867,7 +867,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-8)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 15.33723721, 15.33723721]
+        exp3 = [0.0, 15.33723721]
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
@@ -1040,7 +1040,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Wing.SPAN, val=253.720756)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
@@ -1186,7 +1186,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-8)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
+        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
