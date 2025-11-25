@@ -519,7 +519,7 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
     curr_glued: list
         the parameters that have been glued
     glue_default: boolean
-        flag whether the default values should be glued.
+        flag whether the default values should be glued
     """
     if curr_glued is None:
         curr_glued = []
