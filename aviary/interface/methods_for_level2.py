@@ -1598,17 +1598,19 @@ class AviaryProblem(om.Problem):
             # design mission!! Includes cargo containers needed for design (max payload)
             operating_mass = float(self.get_val(Mission.Summary.OPERATING_MASS)[0])
             fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
+            unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
             fuel_2 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
 
-            # An aircraft may be designed with fuel tank capacity that, if filled, would exceed
-            # MTOW. In this scenario, Max Economic Range and Ferry Range are the same, and the point
-            # only needs to be run once.
-            if operating_mass + fuel_capacity < gross_mass:
-                # Point 3 (Max Economic Range): max fuel and remaining payload capacity
+            max_usable_fuel = fuel_capacity - unusable_fuel
 
-                economic_mission_total_payload = gross_mass - operating_mass - fuel_capacity
+            # An aircraft may be designed with fuel tank capacity that, if fully filled, would
+            # exceed MTOW. In that scenario, Max Economic Range and Ferry Range are the same, and
+            # the point only needs to be run once.
+            if operating_mass + max_usable_fuel < gross_mass:
+                # Point 3 (Max Economic Range): max fuel and remaining payload capacity
+                economic_mission_total_payload = gross_mass - operating_mass - max_usable_fuel
 
                 payload_frac = economic_mission_total_payload / max_payload
 
@@ -1642,14 +1644,14 @@ class AviaryProblem(om.Problem):
                     * payload_frac
                 )
 
-                # Need to allow cargo mass to float here to account for passenger number rounding
-                # and potentially cargo container mass changing, so the "payload_range_controls"
-                # flag is used
+                # Passenger number rounding and potentially cargo container mass changing means
+                # we don't know if we actually filled the aircraft to exactly TOGW yet. Need to use
+                # "fill_payload" flag in off-design call
                 if mass_method is FLOPS:
                     # For FLOPS missions, cargo mass cannot be a design variable, therefore we set
                     # misc_cargo to an arbitrary value so it will be selected as the "floating" mass
                     # later. This should only happen if no other cargo mass types are given, so we
-                    # make sure wing cargo is not being used.
+                    # check wing cargo is not being used.
                     if (
                         economic_mission_wing_cargo is not None or economic_mission_wing_cargo != 0
                     ) and (economic_mission_misc_cargo is None or economic_mission_misc_cargo == 0):
@@ -1677,14 +1679,12 @@ class AviaryProblem(om.Problem):
 
                 prob_3_skip = False
             else:
-                # only fill fuel until TOGW reached
                 prob_3_skip = True
-                fuel_capacity = (
-                    gross_mass - operating_mass
-                )  # override theoretical fuel capacity with flyable amount
+                # only fill fuel until hit TOGW
+                max_usable_fuel = gross_mass - operating_mass
 
             # Point 4 (Ferry Range): maximum fuel and 0 payload
-            ferry_range_gross_mass = operating_mass + fuel_capacity
+            ferry_range_gross_mass = operating_mass + max_usable_fuel
             # BUG 0 passengers breaks the problem, so 1 must be used
             ferry_range_prob = self.run_off_design_mission(
                 problem_type=ProblemType.FALLOUT,
