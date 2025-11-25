@@ -463,7 +463,7 @@ class AviaryProblem(om.Problem):
             # Optimizer Settings #
             driver.opt_settings['Major iterations limit'] = max_iter
             driver.opt_settings['Major optimality tolerance'] = 1e-4
-            driver.opt_settings['Major feasibility tolerance'] = 1e-7
+            driver.opt_settings['Major feasibility tolerance'] = 1e-6
 
         elif driver.options['optimizer'] == 'IPOPT':
             # Print Options #
@@ -683,6 +683,9 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
             elif self.problem_type is ProblemType.FALLOUT:
+                if ref > 0:
+                    # Maximize range.
+                    ref = -ref
                 self.model.add_objective(Mission.Objectives.RANGE, ref=ref)
 
             else:
@@ -1515,6 +1518,7 @@ class AviaryProblem(om.Problem):
         off_design_prob.add_objective(verbosity=verbosity)
         off_design_prob.setup(verbosity=verbosity)
         off_design_prob.set_initial_guesses(verbosity=verbosity)
+
         off_design_prob.run_aviary_problem(verbosity=verbosity)
 
         return off_design_prob
