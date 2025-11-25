@@ -136,6 +136,16 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(thrust, expected_thrust, tolerance=tol)
         assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
 
+    def test_error_message(self):
+        aviary_values = get_flops_inputs('LargeSingleAisle1FLOPS')
+        aviary_values.set_val(Aircraft.Engine.INTERPOLATION_SORT, 'junk', units='unitless')
+
+        msg = 'EngineDeck <turbofan_28k>: Invalid value of Aircraft.Engine.INTERPOLATION_SORT.'
+        msg += ' Expected "altitude" or "mach", but found "junk".'
+        with self.assertRaises(ValueError) as cm:
+            build_engine_deck(aviary_values)
+        self.assertEqual(str(cm.exception), msg)
+
 
 if __name__ == '__main__':
     unittest.main()
