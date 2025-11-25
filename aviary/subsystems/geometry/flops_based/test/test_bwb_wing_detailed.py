@@ -13,6 +13,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Settings
 
 
+@use_tempdirs
 class BWBUpdateDetailedWingDistTest(unittest.TestCase):
     """
     For BWB, test the updated detailed wing information when detailed wing information is given.
@@ -77,7 +78,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
         prob.set_val(Aircraft.Wing.SPAN, val=238.08)
@@ -127,7 +128,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
+        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
         # partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -174,7 +175,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 36.40586234, 36.40586234]
+        exp3 = [0.0, 36.40586234]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')

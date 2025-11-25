@@ -286,7 +286,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        self.add_input('BWB_LOAD_PATH_SWEEP_DIST', shape=num_input_stations, units='deg')
+        self.add_input('BWB_LOAD_PATH_SWEEP_DIST', shape=num_input_stations - 1, units='deg')
         self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_input_stations, units='unitless')
         self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_input_stations, units='unitless')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')

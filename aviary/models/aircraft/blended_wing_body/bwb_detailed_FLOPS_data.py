@@ -224,7 +224,7 @@ inputs.set_val(
     Aircraft.Engine.NUM_ENGINES, np.array([3])
 )  # not in bwb.in, not a FLOPS variable, set to NEW+NEF
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3)  # NEF in bwb.in
-inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 0)  # NEW in bwb.in
+inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]))  # NEW in bwb.in
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)  # WTHR in bwb.in
 inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0)  # ETAE not in bwb.in, not a FLOPS variable
 inputs.set_val(
