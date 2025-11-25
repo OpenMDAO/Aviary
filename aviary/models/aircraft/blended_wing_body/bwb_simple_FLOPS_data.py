@@ -157,7 +157,7 @@ inputs.set_val(
 
 # Horizontal Tail
 # ---------------------------
-inputs.set_val(Aircraft.HorizontalTail.AREA, 0.00001, 'ft**2')  # SHT in bwb.in, set to 0.01 not 0.0
+inputs.set_val(Aircraft.HorizontalTail.AREA, 0.0, 'ft**2')  # SHT in bwb.in,
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.01)  # SHT in bwb.in, set to 0.01 not 0.0
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT in bwb.in
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.0)  # TCHT in bwb.in
