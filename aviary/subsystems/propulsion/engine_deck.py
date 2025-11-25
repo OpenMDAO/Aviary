@@ -553,8 +553,6 @@ class EngineDeck(EngineModel):
 
         self._set_variable_flags()
 
-        self.model_length = len(self.data[ALTITUDE])
-
         # check that all required variables are present in engine data
         if not self.required_variables.issubset(engine_variables):
             # gather all missing required variables
@@ -569,16 +567,18 @@ class EngineDeck(EngineModel):
                     f'Required variables {missing_variables} are missing from {self.error_message}'
                 )
 
-        # Set all unused variables to default value of zero
-        for key in data:
-            if not len(data[key]):
-                data[key] = np.zeros(self.model_length)
-
         # removes data points with negative thrust if requested
         if self.get_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST):
             keep_idx = np.where(data[THRUST] >= 0)
             for key in data:
                 data[key] = data[key][keep_idx]
+
+        self.model_length = len(self.data[ALTITUDE])
+
+        # Set all unused variables to default value of zero
+        for key in data:
+            if not len(data[key]):
+                data[key] = np.zeros(self.model_length)
 
         # set flags using updated engine_variables
         self._set_variable_flags()
