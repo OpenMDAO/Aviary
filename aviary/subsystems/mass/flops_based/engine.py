@@ -55,15 +55,21 @@ class EngineMass(om.ExplicitComponent):
         # scale engine mass using equation chosen by value of user-provided mass scaler
         thrust_ratio = scaled_sls_thrust / ref_sls_thrust
 
-        calc_mass[scale_idx] = (
-            ref_engine_mass[scale_idx]
-            + (scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
-            * scaling_parameter[scale_idx]
-        )
+        if not isinstance(ref_sls_thrust, float):
+            calc_mass[scale_idx] = (
+                ref_engine_mass[scale_idx]
+                + (scaled_sls_thrust[scale_idx] - ref_sls_thrust[scale_idx])
+                * scaling_parameter[scale_idx]
+            )
+        else:
+            calc_mass = ref_engine_mass + (scaled_sls_thrust - ref_sls_thrust) * scaling_parameter
 
-        calc_mass[param_idx] = (
-            ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
-        )
+        if not isinstance(ref_engine_mass, float):
+            calc_mass[param_idx] = (
+                ref_engine_mass[param_idx] * thrust_ratio[param_idx] ** scaling_parameter[param_idx]
+            )
+        else:
+            calc_mass = ref_engine_mass * thrust_ratio**scaling_parameter
 
         addtl_mass = addtl_mass_fraction * calc_mass
 
