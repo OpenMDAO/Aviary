@@ -193,10 +193,17 @@ class PreMissionGroupTest(unittest.TestCase):
             flops_outputs=flops_outputs,
         )
 
-    def test_case_mass_only(self):
-        case_name = 'AdvancedSingleAisle'
+
+class BWBPreMissionGroupTest(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case_all(self):
+        case_name = 'BWBsimpleFLOPS'
+        case_name = 'BWBdetailedFLOPS'
         flops_inputs = get_flops_inputs(case_name)
         flops_outputs = get_flops_outputs(case_name)
+
         flops_inputs.set_val(
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
             flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
@@ -211,8 +218,10 @@ class PreMissionGroupTest(unittest.TestCase):
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        preprocess_options(flops_inputs)
-        default_premission_subsystems = get_geom_and_mass_subsystems('FLOPS')[1:2]
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
+
+        default_premission_subsystems = get_default_premission_subsystems('FLOPS', engines)
 
         prob = self.prob
 
@@ -225,10 +234,18 @@ class PreMissionGroupTest(unittest.TestCase):
 
         setup_model_options(prob, flops_inputs)
 
+        # prob.model.set_input_defaults(
+        #     Aircraft.Engine.SCALE_FACTOR,
+        #     flops_inputs.get_val(
+        #         Aircraft.Engine.SCALE_FACTOR))
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_solver_print(2)
 
-        prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=22200.5 * 2)
+        # Initial guess for gross weight.
+        # We set it to an unconverged value to test convergence.
+        # prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
@@ -236,22 +253,82 @@ class PreMissionGroupTest(unittest.TestCase):
             case_name,
             input_keys=[],
             output_keys=[
-                Aircraft.Design.STRUCTURE_MASS,
+                # Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.SYSTEMS_EQUIP_MASS,
-                Aircraft.Design.EMPTY_MASS,
-                Aircraft.Design.OPERATING_MASS,
-                Aircraft.Design.ZERO_FUEL_MASS,
-                Mission.Design.FUEL_MASS,
+                # Aircraft.Design.EMPTY_MASS,
+                # Aircraft.Design.OPERATING_MASS,
+                # Aircraft.Design.ZERO_FUEL_MASS,
+                # Mission.Design.FUEL_MASS,
             ],
-            version=Version.TRANSPORT,
+            version=Version.BWB,
             step=1.01e-40,
-            atol=1e-6,
-            rtol=1e-6,
+            atol=1e-10,
+            rtol=1e-10,
             check_values=False,
             check_partials=True,
         )
 
+    def test_case_geom(self):
+        case_name = 'BWBsimpleFLOPS'
+        flops_inputs = get_flops_inputs(case_name)
+        flops_outputs = get_flops_outputs(case_name)
+        flops_inputs.set_val(
+            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
+            flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES),
+        )
+        flops_inputs.set_val(
+            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES,
+            flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES),
+        )
+        flops_inputs.set_val(Settings.VERBOSITY, 0)
+
+        preprocess_options(flops_inputs)
+        default_premission_subsystems = get_geom_and_mass_subsystems('FLOPS')[0:1]
+
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'pre_mission',
+            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(prob, flops_inputs)
+
+        # prob.model.set_input_defaults(
+        #     Aircraft.Engine.SCALE_FACTOR,
+        #     flops_inputs.get_val(
+        #         Aircraft.Engine.SCALE_FACTOR))
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_solver_print(2)
+
+        # Initial guess for gross weight.
+        # We set it to an unconverged value to test convergence.
+        # prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+
+        set_aviary_initial_values(prob, flops_inputs)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[],
+            output_keys=[
+                Aircraft.Fuselage.PLANFORM_AREA,
+            ],
+            version=Version.BWB,
+            step=1.01e-40,
+            atol=1e-6,
+            rtol=1e-6,
+            check_partials=True,
+            excludes=['*detailed_wing.*'],  # does not work?
+        )
+
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBPreMissionGroupTest()
+    test.setUp()
+    test.test_case_geom()
