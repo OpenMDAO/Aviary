@@ -1456,10 +1456,17 @@ class EngineDeck(EngineModel):
 
             return norm_hybrid_list
 
+        # vectors of the normalized throttle data
         normalized_throttle = np.array([])
         normalized_hybrid_throttle = np.array([])
+
+        # Min and max throttle value vectors
+        # If using "global" throttle setting, max & min are single values and these are unused,
+        # otherwise they contain min or max throttle per unique flight condition
         throttle_min = np.array([])
         throttle_max = np.array([])
+        hybrid_throttle_min = np.array([])
+        hybrid_throttle_max = np.array([])
 
         # information on packed data
         packed_throttle = self.packed_data[THROTTLE]
@@ -1474,8 +1481,8 @@ class EngineDeck(EngineModel):
                     continue
 
                 if not self.global_throttle:
-                    throttle_list = normalize(packed_throttle[M, A][: data_indices[M, A] + 1])
                     # normalize throttles for this flight condition from 0 to 1
+                    throttle_list = normalize(packed_throttle[M, A][: data_indices[M, A] + 1])
                     normalized_throttle = np.append(normalized_throttle, throttle_list)
                     throttle_min = np.append(throttle_min, min(throttle_list))
                     throttle_max = np.append(throttle_max, max(throttle_list))
