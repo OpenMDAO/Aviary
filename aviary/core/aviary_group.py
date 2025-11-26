@@ -1022,7 +1022,7 @@ class AviaryGroup(om.Group):
 
         if not ignore_capacity_constraint:
             self.add_constraint(
-                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=100, units='lbm'
+                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=1.0e5, units='lbm'
             )
         else:
             if verbosity >= Verbosity.BRIEF:
@@ -1319,7 +1319,7 @@ class AviaryGroup(om.Group):
                 )
 
                 if self.require_range_residual:
-                    self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
+                    self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
             elif problem_type is ProblemType.ALTERNATE:
                 # target range problem
@@ -1334,7 +1334,7 @@ class AviaryGroup(om.Group):
                     ref=MTOW,
                 )
 
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
+                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
             elif problem_type is ProblemType.FALLOUT:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
@@ -1353,7 +1353,7 @@ class AviaryGroup(om.Group):
                 # TODO: RANGE_RESIDUAL constraint should be added based on what the
                 # user sets as the objective. if Objective is not range or Mission.Summary.Range,
                 # the range constriant should be added to make target rage = summary range
-                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
+                self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
                 # We must ensure that design.gross_mass is greater than
                 # mission.summary.gross_mass and this must hold true for each of the
