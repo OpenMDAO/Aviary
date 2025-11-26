@@ -1329,7 +1329,7 @@ class AviaryGroup(om.Group):
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
-                    upper=MTOW * 1.2,  # Optimizer has problems if this constraint is active.
+                    upper=MTOW,
                     units='lbm',
                     ref=MTOW,
                 )

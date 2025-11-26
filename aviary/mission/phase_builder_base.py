@@ -420,6 +420,7 @@ class PhaseBuilderBase(ABC):
         defect_ref, _ = options[f'{name}_defect_ref']
         solve_segments = options[f'{name}_solve_segments']
 
+        # Try to only use arguments that aren't None because dymos' default is _undefined.
         extra_options = {}
         if ref0 is not None:
             extra_options['ref0'] = ref0
@@ -494,6 +495,7 @@ class PhaseBuilderBase(ABC):
             if len(candidates) > 0:
                 ref = np.max(np.abs(np.array(candidates)))
 
+        # Try to only use arguments that aren't None because dymos' default is _undefined.
         extra_options = {}
         if polynomial_order is not None:
             extra_options['control_type'] = 'polynomial'
