@@ -1339,7 +1339,7 @@ class AviaryGroup(om.Group):
             elif problem_type is ProblemType.FALLOUT:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
                 if verbosity >= Verbosity.VERBOSE:
-                    print('No design variables for Fallout missions')
+                    print('No additional aircraft design variables added for Fallout missions')
 
             elif problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(
