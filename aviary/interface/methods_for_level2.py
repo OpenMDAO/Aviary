@@ -683,7 +683,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
             elif self.problem_type is ProblemType.FALLOUT:
-                #if ref > 0:
+                # if ref > 0:
                 #    # Maximize range.
                 #    ref = -ref
                 self.model.add_objective(Mission.Objectives.RANGE, ref=ref)
