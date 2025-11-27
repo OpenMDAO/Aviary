@@ -351,38 +351,37 @@ class BWBWingPrelim(om.ExplicitComponent):
 
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]
-        span = inputs[Aircraft.Wing.SPAN][0]
 
         ssm = 0.0
         bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
 
         # Calculate Wing Area and Aspect Ratio for modified planform
         if bwb_chord_per_semispan_dist[0] <= 5.0:
-            C1 = bwb_chord_per_semispan_dist[0] * span / 2.0
+            C1 = bwb_chord_per_semispan_dist[0] * wingspan / 2.0
         else:
             C1 = bwb_chord_per_semispan_dist[0]
         if bwb_input_station_dist[0] <= 1.1:
-            Y1 = bwb_input_station_dist[0] * span / 2.0
+            Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
         for n in range(1, num_inp_stations):
             if bwb_chord_per_semispan_dist[n] <= 5.0:
-                C2 = bwb_chord_per_semispan_dist[n] * span / 2.0
+                C2 = bwb_chord_per_semispan_dist[n] * wingspan / 2.0
             else:
                 C2 = bwb_chord_per_semispan_dist[n]
             if bwb_input_station_dist[n] <= 1.1:
-                Y2 = bwb_input_station_dist[n] * span / 2.0
+                Y2 = bwb_input_station_dist[n] * wingspan / 2.0
             else:
                 Y2 = bwb_input_station_dist[n]
             axp = (Y2 - Y1) * (C1 + C2)
             C1 = C2
             Y1 = Y2
             ssm = ssm + axp
-        ar = span**2 / (ssm - glove_and_bat)
+        ar = wingspan**2 / (ssm - glove_and_bat)
         # Calculated wing area for aerodynamics
         outputs[Aircraft.Wing.AREA] = ssm
         outputs[Aircraft.Wing.ASPECT_RATIO] = ar
 
         # Estimate the percent load carried by the outboard wing
-        pct_load = (1.0 - width / span) ** 2
+        pct_load = (1.0 - width / wingspan) ** 2
         outputs[Aircraft.Wing.LOAD_FRACTION] = pct_load
