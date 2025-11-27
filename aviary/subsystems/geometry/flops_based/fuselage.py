@@ -667,7 +667,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays = int(0.5 + max_width / bay_width_max)
+            z = 0.5 + max_width / bay_width_max
+            num_bays = int(z.real)
             if num_bays > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
 
