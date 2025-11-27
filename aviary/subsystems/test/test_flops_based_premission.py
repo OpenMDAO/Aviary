@@ -200,7 +200,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
     def test_case_all(self):
         case_name = 'BWBsimpleFLOPS'
-        case_name = 'BWBdetailedFLOPS'
+        # case_name = 'BWBdetailedFLOPS'
         flops_inputs = get_flops_inputs(case_name)
         flops_outputs = get_flops_outputs(case_name)
 
@@ -215,6 +215,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         flops_inputs.set_val(
             Aircraft.Propulsion.TOTAL_NUM_ENGINES,
             flops_outputs.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES),
+        )
+        flops_inputs.set_val(
+            Aircraft.Fuel.TOTAL_CAPACITY,
+            flops_outputs.get_val(Aircraft.Fuel.TOTAL_CAPACITY, units='lbm'),
+            units='lbm',
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
@@ -253,7 +258,87 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             case_name,
             input_keys=[],
             output_keys=[
-                # Aircraft.Design.STRUCTURE_MASS,
+                # Geometry
+                # BWBSimpleCabinLayout
+                Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
+                Aircraft.Wing.ROOT_CHORD,
+                Aircraft.Fuselage.CABIN_AREA,
+                Aircraft.Fuselage.MAX_HEIGHT,
+                Aircraft.BWB.NUM_BAYS,
+                # BWBFuselagePrelim
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.PLANFORM_AREA,
+                # BWBWingPrelim
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.LOAD_FRACTION,
+                # _BWBWing
+                Aircraft.Wing.WETTED_AREA,
+                # _Tail
+                Aircraft.HorizontalTail.WETTED_AREA,
+                Aircraft.VerticalTail.WETTED_AREA,
+                # _FuselageRatios
+                Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+                Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+                # Nacelles
+                Aircraft.Nacelle.TOTAL_WETTED_AREA,
+                Aircraft.Nacelle.WETTED_AREA,
+                # Canard
+                Aircraft.Canard.WETTED_AREA,
+                # BWBWingCharacteristicLength
+                Aircraft.Wing.CHARACTERISTIC_LENGTH,
+                Aircraft.Wing.FINENESS,
+                # OtherCharacteristicLengths
+                Aircraft.Canard.CHARACTERISTIC_LENGTH,
+                Aircraft.Canard.FINENESS,
+                Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+                Aircraft.Fuselage.FINENESS,
+                Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+                Aircraft.HorizontalTail.FINENESS,
+                Aircraft.Nacelle.CHARACTERISTIC_LENGTH,
+                Aircraft.Nacelle.FINENESS,
+                Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+                Aircraft.VerticalTail.FINENESS,
+                # TotalWettedArea
+                Aircraft.Design.TOTAL_WETTED_AREA,
+                # Mass
+                # CargoMass
+                Aircraft.CrewPayload.PASSENGER_MASS,
+                Aircraft.CrewPayload.BAGGAGE_MASS,
+                Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
+                Aircraft.CrewPayload.CARGO_MASS,
+                Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
+                # TransportCargoContainersMass
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
+                # TransportEngineCtrlsMass
+                Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
+                # TransportAvionicsMass
+                Aircraft.Avionics.MASS,
+                # FuelCapacityGroup
+                Aircraft.Fuel.WING_FUEL_CAPACITY,
+                Aircraft.Fuel.TOTAL_CAPACITY,
+                # EngineMass
+                Aircraft.Engine.MASS,
+                Aircraft.Engine.ADDITIONAL_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
+                # TransportFuelSystemMass
+                Aircraft.Fuel.FUEL_SYSTEM_MASS,
+                # TransportAirCondMass
+                Aircraft.AirConditioning.MASS,
+                # TransportEngineOilMass
+                Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
+                # BWBFurnishingsGroupMass
+                Aircraft.Furnishings.MASS,
+                # TransportHydraulicsGroupMass
+                Aircraft.Hydraulics.MASS,
+                # PassengerServiceMass
+                Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
+                # ElectricalMass
+                Aircraft.Electrical.MASS,
+                # AntiIcingMass
+                Aircraft.AntiIcing.MASS,
+                #
+                Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.SYSTEMS_EQUIP_MASS,
                 # Aircraft.Design.EMPTY_MASS,
@@ -263,9 +348,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             ],
             version=Version.BWB,
             step=1.01e-40,
-            atol=1e-10,
-            rtol=1e-10,
-            check_values=False,
+            atol=1e-6,
+            rtol=1e-6,
+            check_values=True,
             check_partials=True,
         )
 
@@ -331,4 +416,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = BWBPreMissionGroupTest()
     test.setUp()
-    test.test_case_geom()
+    test.test_case_all()
