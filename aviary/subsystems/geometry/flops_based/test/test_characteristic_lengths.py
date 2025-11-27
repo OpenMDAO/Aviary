@@ -7,8 +7,9 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
-    WingCharacteristicLength,
+    NacelleCharacteristicLength,
     OtherCharacteristicLengths,
+    WingCharacteristicLength,
 )
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
@@ -47,6 +48,18 @@ class CharacteristicLengthsTest(unittest.TestCase):
         prob.model.add_subsystem(
             'other_char_lengths',
             OtherCharacteristicLengths(**aviary_options_others),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        aviary_options_nacelle = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+            Aircraft.Engine.REFERENCE_SLS_THRUST: (np.array([28928.1]), 'lbf'),
+        }
+
+        prob.model.add_subsystem(
+            'nac_char_lengths',
+            NacelleCharacteristicLength(**aviary_options_nacelle),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
@@ -102,7 +115,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBWingCharacteristicLengthsTest(unittest.TestCase):
-    """Test characteristic length and fineness ratio calculations for BWB."""
+    """Test wing characteristic length and fineness ratio calculations for BWB."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -125,6 +138,44 @@ class BWBWingCharacteristicLengthsTest(unittest.TestCase):
         out2 = prob.get_val(Aircraft.Wing.FINENESS)
         exp2 = 0.11
         assert_near_equal(out2, exp2, tolerance=1e-9)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+class BWBNacelleCharacteristicLengthTest(unittest.TestCase):
+    """Test nacelle characteristic length and fineness ratio calculations for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([3]),
+            Aircraft.Engine.REFERENCE_SLS_THRUST: (np.array([86459.2]), 'lbf'),
+        }
+
+        prob.model.add_subsystem(
+            'cl', NacelleCharacteristicLength(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        prob.model_options['*'] = options
+        # prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([86459.2])
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([12.608]))
+        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([17.433]))
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
+        prob.run_model()
+
+        out1 = prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH)
+        exp1 = np.array([15.68612039])
+        assert_near_equal(out1, exp1, tolerance=1e-9)
+
+        out2 = prob.get_val(Aircraft.Nacelle.FINENESS)
+        exp2 = np.array([1.382693531])
+        assert_near_equal(out2, exp2, tolerance=3e-9)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

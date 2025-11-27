@@ -150,7 +150,11 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DIST,
-            [0.0, 0.5, 1.0],
+            [
+                0.0,
+                0.5,
+                1.0,
+            ],  # always set [0, 0.5, 1] but actual value in the middle will be computed
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -162,12 +166,12 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SPAN, val=238.08)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
-        prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 63.96)
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
-        exp1 = [137.5, 11.01456429, 14.2848]
+        exp1 = [137.5, 91.37142857, 14.2848]
         assert_near_equal(out1, exp1, tolerance=1e-10)
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
@@ -175,7 +179,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 36.40586234]
+        exp3 = [0.0, 15.33732285330093]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -192,6 +196,53 @@ class BWBWingPrelimTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def test_case1(self):
+        prob = self.prob
+        self.aviary_options = AviaryValues()
+        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            units='unitless',
+        )
+        prob.model.add_subsystem(
+            'dist', BWBWingPrelim(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
+        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DIST',
+            val=[
+                137.5,
+                11.014564549160855,
+                0.32728011592741935,
+                0.28304519489247315,
+                0.24172526041666667,
+                0.21031628024193549,
+                0.18488302251344085,
+                0.16535261256720429,
+                0.1545671622983871,
+                0.14451045866935486,
+                0.13430800571236559,
+                0.12417842741935484,
+                0.11404884912634408,
+                0.10391927083333334,
+                0.093789692540322586,
+            ],
+        )
+        prob.run_model()
+
+        assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 8668.64638424, tolerance=1e-10)
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.ASPECT_RATIO), 6.6313480248646242, tolerance=1e-10
+        )
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.531071664997850196, tolerance=1e-10
+        )
+
+    def test_case2(self):
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
