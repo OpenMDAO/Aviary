@@ -29,6 +29,7 @@ inputs.set_val(
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO in bwb.in
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
 inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
+inputs.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, False)
 
 # Air Conditioning
 # ---------------------------
@@ -148,7 +149,10 @@ inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 1.0)  # FRFU in bwb.in
 inputs.set_val(
     Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, 'deg'
 )  # SWPLE, not in bwb.in, default 45.0 degrees
-
+inputs.set_val(
+    Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11
+)  # TCF not in bwb.in, set to default TCA
+inputs.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True)
 
 # inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 0.0, 'ft**2')  # For BWB, see _BWBFuselage()
 inputs.set_val(
@@ -510,7 +514,7 @@ outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([15.68611614]),
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.38269353]))  # FR(5)
 outputs.set_val(Aircraft.Nacelle.MASS, 0.0, 'lbm')  # WNAC
 
-nacelle_wetted_area = np.array([498.26795086])  # SWET(5)
+nacelle_wetted_area = np.array([498.26822066])  # SWET(5)
 nacelle_wetted_area_units = 'ft**2'
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
 
