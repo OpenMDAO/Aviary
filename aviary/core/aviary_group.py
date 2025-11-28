@@ -916,12 +916,12 @@ class AviaryGroup(om.Group):
                     ),
                 )
                 self.connect(
-                    f'traj.{phase_name}.timeseries.distance',
+                    f'traj.{phase_name}.timeseries.ground_distance',
                     f'{phase_name}_distance_constraint.final_distance',
                     src_indices=[-1],
                 )
                 self.connect(
-                    f'traj.{phase_name}.timeseries.distance',
+                    f'traj.{phase_name}.timeseries.ground_distance',
                     f'{phase_name}_distance_constraint.initial_distance',
                     src_indices=[0],
                 )
@@ -1062,7 +1062,7 @@ class AviaryGroup(om.Group):
             src_indices=[-1],
         )
         self.connect(
-            f'traj.{final_phase}.timeseries.distance',
+            f'traj.{final_phase}.timeseries.ground_distance',
             'state_output.range_in',
             src_indices=[-1],
         )

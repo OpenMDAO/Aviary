@@ -69,7 +69,7 @@ class DescentODETestCase(unittest.TestCase):
             # ft/s
             Dynamic.Mission.ALTITUDE_RATE: np.array([-37.02561983, -44.211356]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
-            Dynamic.Mission.DISTANCE_RATE: [773.25678423, 737.1789493],  # ft/s
+            Dynamic.Mission.GROUND_DISTANCE_RATE: [773.25678423, 737.1789493],  # ft/s
             # lbm/h
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29466667, -997.41373745]
@@ -113,7 +113,7 @@ class DescentODETestCase(unittest.TestCase):
             'CD': 0.02534414,
             Dynamic.Mission.ALTITUDE_RATE: -17.70801923,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
-            Dynamic.Mission.DISTANCE_RATE: 430.97461539,
+            Dynamic.Mission.GROUND_DISTANCE_RATE: 430.97461539,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11818529,
             # rad (-2.52149 deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04106521,

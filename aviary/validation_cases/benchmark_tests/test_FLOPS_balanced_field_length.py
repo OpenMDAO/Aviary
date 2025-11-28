@@ -101,7 +101,9 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
         distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         liftoff = takeoff_trajectory_builder.get_phase('balanced_liftoff')
 
-        liftoff.add_objective(Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
+        liftoff.add_objective(
+            Dynamic.Mission.GROUND_DISTANCE, loc='final', ref=distance_max, units=units
+        )
 
         varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)

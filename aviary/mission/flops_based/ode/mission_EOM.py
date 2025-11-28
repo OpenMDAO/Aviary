@@ -38,7 +38,7 @@ class MissionEOM(om.Group):
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY,
             ],
-            promotes_outputs=[Dynamic.Mission.DISTANCE_RATE],
+            promotes_outputs=[Dynamic.Mission.GROUND_DISTANCE_RATE],
         )
 
         self.add_subsystem(

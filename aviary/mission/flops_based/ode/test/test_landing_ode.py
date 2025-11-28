@@ -68,7 +68,7 @@ class FlareODETest(unittest.TestCase):
                 Dynamic.Vehicle.DRAG,
             ],
             output_keys=[
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
             ],
             tol=1e-2,

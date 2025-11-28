@@ -159,7 +159,7 @@ prob.traj._phases['climb'].set_state_options(
 )
 
 prob.traj._phases['climb'].set_state_options(
-    Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False
+    Dynamic.Mission.GROUND_DISTANCE, fix_initial=True, input_initial=False
 )
 
 prob.traj._phases['climb'].set_time_options(
@@ -335,10 +335,10 @@ all_subsystems.append(prob.model.core_subsystems['propulsion'])
 phases = list(prob.model.phase_info.keys())
 prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
 prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
-prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
+prob.traj.link_phases(phases, [Dynamic.Mission.GROUND_DISTANCE], ref=None, connected=True)
 
 prob.model.connect(
-    f'traj.descent.timeseries.distance',
+    f'traj.descent.timeseries.ground_distance',
     Mission.Summary.RANGE,
     src_indices=[-1],
     flat_src_indices=True,
@@ -457,7 +457,7 @@ with warnings.catch_warnings():
 
 # set initial guesses manually
 control_keys = ['mach', 'altitude']
-state_keys = ['mass', Dynamic.Mission.DISTANCE]
+state_keys = ['mass', Dynamic.Mission.GROUND_DISTANCE]
 guesses = {}
 guesses['mach_climb'] = ([0.2, 0.72], 'unitless')
 guesses['altitude_climb'] = ([0, 32000.0], 'ft')

@@ -52,7 +52,7 @@ class AccelODE(TwoDOFODE):
             ],
             promotes_outputs=[
                 Dynamic.Mission.VELOCITY_RATE,
-                Dynamic.Mission.DISTANCE_RATE,
+                Dynamic.Mission.GROUND_DISTANCE_RATE,
             ],
         )
 

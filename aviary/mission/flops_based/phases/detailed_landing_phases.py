@@ -210,14 +210,14 @@ class LandingApproachToMicP3(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             fix_final=False,
             upper=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -416,7 +416,7 @@ class LandingMicP3ToObstacle(LandingApproachToMicP3):
 
         # at the moment, these state options are the only differences between phases of
         # this class and phases of its base class
-        phase.set_state_options(Dynamic.Mission.DISTANCE, fix_final=True)
+        phase.set_state_options(Dynamic.Mission.GROUND_DISTANCE, fix_final=True)
         phase.set_state_options(Dynamic.Mission.VELOCITY, fix_final=True)
         phase.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False)
 
@@ -536,13 +536,13 @@ class LandingObstacleToFlare(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=True,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -802,13 +802,13 @@ class LandingFlareToTouchdown(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         altitude_ref, units = user_options['altitude_ref']
@@ -1056,13 +1056,13 @@ class LandingTouchdownToNoseDown(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         max_velocity, units = user_options['max_velocity']
@@ -1264,14 +1264,14 @@ class LandingNoseDownToStop(PhaseBuilderBase):
         distance_max, units = user_options['distance_max']
 
         phase.add_state(
-            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.GROUND_DISTANCE,
             fix_initial=False,
             fix_final=False,
             lower=0,
             ref=distance_max,
             defect_ref=distance_max,
             units=units,
-            rate_source=Dynamic.Mission.DISTANCE_RATE,
+            rate_source=Dynamic.Mission.GROUND_DISTANCE_RATE,
         )
 
         max_velocity, units = user_options['max_velocity']

@@ -6705,7 +6705,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.DISTANCE,
+    Dynamic.Mission.GROUND_DISTANCE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'range', 'LEAPS1': None},
     units='NM',
@@ -6714,7 +6714,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.DISTANCE_RATE,
+    Dynamic.Mission.GROUND_DISTANCE_RATE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'range_rate', 'LEAPS1': None},
     units='NM/s',

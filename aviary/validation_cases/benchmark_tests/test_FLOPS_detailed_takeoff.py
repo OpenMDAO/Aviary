@@ -101,7 +101,9 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         liftoff = takeoff_trajectory_builder.get_phase('takeoff_liftoff')
 
-        liftoff.add_objective(Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
+        liftoff.add_objective(
+            Dynamic.Mission.GROUND_DISTANCE, loc='final', ref=distance_max, units=units
+        )
 
         # Insert a constraint for a fake decision speed, until abort is added.
         takeoff.model.add_constraint(

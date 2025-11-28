@@ -48,7 +48,9 @@ class GroundrollEOMTestCase(unittest.TestCase):
             self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array([0.0, 0.0]), tol
         )
         assert_near_equal(self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([10.0, 10.0]), tol)
+        assert_near_equal(
+            self.prob[Dynamic.Mission.GROUND_DISTANCE_RATE], np.array([10.0, 10.0]), tol
+        )
         assert_near_equal(self.prob['normal_force'], np.array([175200.0, 175200.0]), tol)
         assert_near_equal(self.prob['fuselage_pitch'], np.array([0.0, 0.0]), tol)
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
