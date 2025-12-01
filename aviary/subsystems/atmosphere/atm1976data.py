@@ -1,25 +1,14 @@
-"""
-United States standard atmosphere 1976 tables, data
-obtained from http://www.digitaldutch.com/atmoscalc/index.htm
-based on NASA-TM-X-74335.
-
-Code obtained from github.com/OpenMDAO/dymos and modified to include option for deviation from standard day temperature.
-A temperature correction is applied to the computed values, since the tables assume a fixed temperature for a given altitude.
-The current setup does not account for attenuation of the temperature delta with increasing altitude (which ends at the 
-tropopause), so this option must be toggled manually by the user to accurately represent real atmosphere conditions.
-"""
+'''
+Data for the model was obtained from http://www.digitaldutch.com/atmoscalc/index.htm.
+Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/
+miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
+'''
 from collections import namedtuple
-import sys
-
 import numpy as np
-import math
-
-import openmdao.api as om
-
-USatm1976Data = namedtuple('USatm1976Data', ['alt', 'temp', 'pres', 'rho', 'a', 'viscosity'])
-USatm1976Data.__doc__ = \
+atm_data = namedtuple('atm_data', ['alt', 'temp', 'pres', 'rho', 'a', 'viscosity'])
+atm_data.__doc__ = \
     """
-    A namedtuple to hold data for the 1976 standard atmosphere model.
+    A namedtuple to hold data for the atmosphere model.
 
     Parameters
     ----------
@@ -36,7 +25,6 @@ USatm1976Data.__doc__ = \
     viscosity : float
         Dynamic viscosity in lbf*s/ft**2.
     """
-
 
 _raw_data = np.array([
     -1.50E+04, 5.72162E+02, 2.46176E+01, 3.60978E-03, 1.17261E+03, 4.08728E-07,
@@ -234,27 +222,7 @@ _raw_data = np.array([
     2.40E+05, 3.78623E+02, 4.05997E-04, 8.99644E-08, 9.53888E+02, 2.91635E-07,
     2.50E+05, 3.67650E+02, 2.45671E-04, 5.60626E-08, 9.39964E+02, 2.84296E-07])
 
-_raw_data = np.reshape(_raw_data, (_raw_data.size // 6, 6))
-
-# units='ft'
-USatm1976Data.alt = _raw_data[:, 0]
-
-# units='degR'
-USatm1976Data.T = _raw_data[:, 1]
-
-# units='psi'
-USatm1976Data.P = _raw_data[:, 2]
-
-# units='slug/ft**3'
-USatm1976Data.rho = _raw_data[:, 3]
-
-# units='ft/s'
-USatm1976Data.a = _raw_data[:, 4]
-
-# units='lbf*s/ft**2'
-USatm1976Data.viscosity = _raw_data[:, 5]
-
-USatm1976Data.akima_T = \
+atm_data.akima_T = \
     np.array([[5.7216200000000003e+02, -3.5660000000000310e-03, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [5.7216200000000003e+02, -3.5660000000000310e-03, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [5.6859600000000000e+02, -3.5660000000000310e-03, 0.0000000000000000e+00, 0.0000000000000000e+00],
@@ -451,7 +419,7 @@ USatm1976Data.akima_T = \
               [3.7862299999999999e+02, -1.1352152426520876e-03, 1.1330485304171784e-09, 2.6584757347914487e-13],
               [3.6764999999999998e+02, -1.0328000000000004e-03, 0.0000000000000000e+00, 0.0000000000000000e+00]])
 
-USatm1976Data.akima_P = \
+atm_data.akima_P = \
     np.array([[2.4617599999999999e+01, -8.0625000000000022e-04, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [2.4617599999999999e+01, -8.0625000000000022e-04, 1.0374457831324778e-08, 7.5542168675611302e-14],
               [2.3821800000000000e+01, -7.8527445783132394e-04, 1.0247940052894697e-08, 1.2651777843062340e-13],
@@ -648,7 +616,7 @@ USatm1976Data.akima_P = \
               [4.0599700000000001e-04, -1.9837626840177898e-08, 2.8643536803557908e-13, 9.4067315982210068e-18],
               [2.4567099999999999e-04, -1.1286900000000008e-08, 0.0000000000000000e+00, 0.0000000000000000e+00]])
 
-USatm1976Data.akima_rho = \
+atm_data.akima_rho = \
     np.array([[3.6097799999999999e-03, -9.5735000000000017e-08, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [3.6097799999999999e-03, -9.5735000000000017e-08, 9.4997368421066252e-13, 5.0263157893351928e-18],
               [3.5149999999999999e-03, -9.3819973684210739e-08, 9.4241421192221942e-13, 7.5594722884429751e-18],
@@ -845,7 +813,7 @@ USatm1976Data.akima_rho = \
               [8.9964400000000006e-08, -4.1533473952434869e-12, 6.2334479048697462e-17, 1.3982260475651308e-21],
               [5.6062600000000002e-08, -2.4871900000000012e-12, 0.0000000000000000e+00, 0.0000000000000000e+00]])
 
-USatm1976Data.akima_viscosity = \
+atm_data.akima_viscosity = \
     np.array([[4.0872799999999998e-07, -1.9719999999999859e-12, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [4.0872799999999998e-07, -1.9719999999999859e-12, -3.0000000000035212e-18, 0.0000000000000000e+00],
               [4.0675299999999999e-07, -1.9779999999999930e-12, -3.0000000000035212e-18, 0.0000000000000000e+00],
@@ -1042,7 +1010,7 @@ USatm1976Data.akima_viscosity = \
               [2.9163500000000000e-07, -7.5570413067968367e-13, 5.5082613593695840e-19, 1.6295869320315468e-22],
               [2.8429600000000002e-07, -6.9579999999999760e-13, 0.0000000000000000e+00, 0.0000000000000000e+00]])
 
-USatm1976Data.akima_drho = \
+atm_data.akima_drho = \
     np.array([[-9.5735000000000017e-08, 1.9187860533291385e-12, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [-9.5735000000000017e-08, 1.9187860533291385e-12, -6.0140624093047896e-18, 2.2543248694968982e-21],
               [-9.3819973684210686e-08, 1.9135209031190196e-12, -7.0129900876662186e-18, 9.9892767836142818e-22],
@@ -1239,7 +1207,7 @@ USatm1976Data.akima_drho = \
               [-4.1533473952434885e-12, 1.7009023252670026e-16, 3.0793816165788615e-22, -6.5538746189301104e-26],
               [-2.4871899999999984e-12, 1.5658737190306762e-16, 0.0000000000000000e+00, 0.0000000000000000e+00]])
 
-USatm1976Data.akima_dT = \
+atm_data.akima_dT = \
     np.array([[-3.5660000000000310e-03, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [-3.5660000000000310e-03, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00],
               [-3.5660000000000310e-03, 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00],
@@ -1435,282 +1403,3 @@ USatm1976Data.akima_dT = \
               [-1.5361999999999835e-03, 5.0310683262928160e-21, 9.7310966662702481e-12, -5.7212490927918054e-16],
               [-1.1352152426520887e-03, 2.2984460541655878e-08, -1.0557396818103798e-12, -2.1855394583432683e-17],
               [-1.0328000000000006e-03, -4.6869514695815243e-09, 0.0000000000000000e+00, 0.0000000000000000e+00]])
-
-
-class USatm1976Comp(om.ExplicitComponent):
-    """
-    Component model for the United States standard atmosphere 1976 tables.
-
-    Data for the model was obtained from http://www.digitaldutch.com/atmoscalc/index.htm.
-    Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/
-    miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
-
-    Parameters
-    ----------
-    **kwargs : dict
-        Dictionary of optional arguments.
-    """
-
-    def initialize(self):
-        """
-        Declare component options.
-        """
-        self.options.declare('num_nodes', types=int,
-                             desc='Number of nodes to be evaluated in the RHS')
-
-        gamma = 1.4  # Ratio of specific heads
-        gas_c = 1716.49  # Gas constant (ft lbf)/(slug R)
-        self._K = gamma * gas_c
-
-        self.options.declare('h_def', values=('geopotential', 'geodetic'), default='geopotential',
-                             desc='The definition of altitude provided as input to the component.  If "geodetic",'
-                                  'it will be converted to geopotential based on Equation 19 in the original standard.')
-        self.options.declare('output_dsos_dh', types=bool, default=False,
-                             desc='If true, the derivative of the speed of sound will be added as an output')
-        self.options.declare('output_abs_humidity', types=bool, default=False,
-                             desc='If true, humidity derived from an empirical, non gradient-based model will be added as an output')
-        self.options.declare('rel_humidity_sl', types=float, default=0.70,
-                             desc='Fraction relative humidity at sea level to be used in absolute humidity model')
-        self.options.declare('isa_delta_T', types=float, default=0.,
-                             desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Rankine)')
-
-    def setup(self):
-        """
-        Add component inputs and outputs.
-        """
-        nn = self.options['num_nodes']
-        output_dsos_dh = self.options['output_dsos_dh']
-        output_abs_humidity = self.options['output_abs_humidity']
-
-        self._geodetic = self.options['h_def'] == 'geodetic'
-        self._R0 = 6_356_766 / 0.3048  # Value of R0 from the original standard (m -> ft)
-
-        self.add_input('h', val=1. * np.ones(nn), units='ft')
-
-        self.add_output('temp', val=1. * np.ones(nn), units='degR')
-        self.add_output('pres', val=1. * np.ones(nn), units='psi')
-        self.add_output('rho', val=1. * np.ones(nn), units='slug/ft**3')
-        self.add_output('viscosity', val=1. * np.ones(nn), units='lbf*s/ft**2')
-        self.add_output('drhos_dh', val=1. * np.ones(nn), units='slug/ft**4')
-        self.add_output('sos', val=1. * np.ones(nn), units='ft/s')
-        if output_dsos_dh:
-            self.add_output('dsos_dh', val=1. * np.ones(nn), units='1/s')
-        if output_abs_humidity:
-            self.add_output('abs_humidity', val=1. * np.ones(nn), units=None) # Given as % mole fraction
-
-        arange = np.arange(nn, dtype=int)
-        self.declare_partials(['temp', 'pres', 'rho', 'viscosity', 'drhos_dh', 'sos'], 'h',
-                              rows=arange, cols=arange)
-        if output_dsos_dh:
-            self.declare_partials('dsos_dh', 'h', rows=arange, cols=arange)
-        if output_abs_humidity:
-            self.declare_partials('abs_humidity', 'h', rows=arange, cols=arange, method='cs')
-
-    def compute(self, inputs, outputs):
-        """
-        Interpolate atmospheric properties for a given altitude.
-
-        Parameters
-        ----------
-        inputs : `Vector`
-            `Vector` containing inputs.
-        outputs : `Vector`
-            `Vector` containing outputs.
-        """
-        table_points = USatm1976Data.alt
-        h = inputs['h']
-        output_dsos_dh = self.options['output_dsos_dh']
-        delta_T = self.options['isa_delta_T']
-        output_abs_humidity = self.options['output_abs_humidity']
-        rel_humidity_sl = self.options['rel_humidity_sl']
-
-        if self._geodetic:
-            h = h / (self._R0 + h) * self._R0  # Equation 19 from the original standard.
-
-        # From this point forward, h is geopotential altitude (z in the original reference).
-
-        idx = np.searchsorted(table_points, h, side='left')
-        h_bin_left = np.hstack((table_points[0], table_points))
-        dx = h - h_bin_left[idx]
-
-        coeffs = USatm1976Data.akima_T[idx]
-        T = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-        outputs['temp'] = T + delta_T
-
-        coeffs = USatm1976Data.akima_P[idx]
-        pres = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-        outputs['pres'] = pres #
-
-        coeffs = USatm1976Data.akima_rho[idx]
-        rho = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-        outputs['rho'] = rho * T / (T + delta_T)
-        drhos_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
-        outputs['drhos_dh'] = drhos_dh * T / (T + delta_T)
-
-        coeffs = USatm1976Data.akima_viscosity[idx]
-        viscosity = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-        outputs['viscosity'] = viscosity * ((T + 198.72)/(T + delta_T + 198.72)) * ((T + delta_T) / T)**1.5 # Sutherland's Law
-
-        outputs['sos'] = np.sqrt(self._K * (T + delta_T))
-        if output_dsos_dh:
-            coeffs = USatm1976Data.akima_dT[idx]
-            dT_dh = (coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))).ravel()
-            outputs['dsos_dh'] = (0.5 / np.sqrt(self._K * (T + delta_T)) * dT_dh * self._K)
-        
-        if output_abs_humidity:
-            idx = np.searchsorted(table_points, 0*h, side='left') # sea level
-            h_bin_left = np.hstack((table_points[0], table_points))
-            dx = 0 - h_bin_left[idx]
-
-            coeffs = USatm1976Data.akima_T[idx]
-            temp_SL = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-            coeffs = USatm1976Data.akima_P[idx]
-            pres_SL = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-            TR = (T + delta_T) / temp_SL
-            PR = pres / pres_SL
-            abs_humidity = (rel_humidity_sl * 100 / PR) * 10**(8.4256 - (10.1995 / TR) - 4.922 * np.log(TR))
-            outputs['abs_humidity'] = abs_humidity
-
-    def compute_partials(self, inputs, partials):
-        """
-        Compute sub-jacobian parts. The model is assumed to be in an unscaled state.
-
-        Parameters
-        ----------
-        inputs : Vector
-            Unscaled, dimensional input variables read via inputs[key].
-        partials : Jacobian
-            Subjac components written to partials[output_name, input_name].
-        """
-        table_points = USatm1976Data.alt
-        h = inputs['h']
-        dz_dh = 1.0
-        output_dsos_dh = self.options['output_dsos_dh']
-        delta_T = self.options['isa_delta_T']
-        output_abs_humidity = self.options['output_abs_humidity']
-        rel_humidity_sl = self.options['rel_humidity_sl']
-
-        if self._geodetic:
-            dz_dh = (self._R0 / (self._R0 + h)) ** 2
-            h = h / (self._R0 + h) * self._R0  # Equation 19 from the original standard.
-
-        # From this point forward, h is geopotential altitude (z in the original reference).
-        
-        idx = np.searchsorted(table_points, h, side='left')
-        h_index = np.hstack((table_points[0], table_points))
-        dx = h - h_index[idx]
-
-        coeffs = USatm1976Data.akima_T[idx]
-        dT_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
-        T = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-
-        coeffs = USatm1976Data.akima_P[idx]
-        dP_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) #
-
-        coeffs = USatm1976Data.akima_rho[idx]
-        drho_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) * T / (T + delta_T)
-
-        coeffs = USatm1976Data.akima_viscosity[idx]
-        dvisc_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) * ((T + 198.72)/(T + delta_T + 198.72)) * ((T + delta_T) / T)**1.5
-
-        coeffs = USatm1976Data.akima_drho[idx]
-        d2rho_dh2 = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) * T / (T + delta_T)
-        
-        partials['temp', 'h'][...] = dT_dh.ravel()
-        partials['pres', 'h'][...] = dP_dh.ravel()
-        partials['rho', 'h'][...] = drho_dh.ravel()
-        partials['viscosity', 'h'][...] = dvisc_dh.ravel()
-        partials['drhos_dh', 'h'][...] = d2rho_dh2.ravel()
-        partials['sos', 'h'][...] = (0.5 / np.sqrt(self._K * (T + delta_T)) * partials['temp', 'h'] * self._K)
-        if output_dsos_dh:
-            coeffs = USatm1976Data.akima_dT[idx]
-            _dT_dh = (coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))).ravel()
-            d2T_dh2 = (coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)).ravel()
-            partials['dsos_dh', 'h'] = 0.5 * np.sqrt(self._K / (T + delta_T)) * (d2T_dh2 - 0.5 * dT_dh**2 / (T + delta_T))
-
-        if self._geodetic:
-            partials['sos', 'h'][...] *= dz_dh
-            partials['temp', 'h'][...] *= dz_dh
-            partials['viscosity', 'h'][...] *= dz_dh
-            partials['rho', 'h'][...] *= dz_dh
-            partials['pres', 'h'][...] *= dz_dh
-            partials['drhos_dh', 'h'][...] *= dz_dh ** 2
-            if output_dsos_dh:
-                partials['dsos_dh', 'h'] *= dz_dh ** 2
-
-
-def _build_akima_coefs(out_stream=sys.stdout):
-    """
-    Print out the Akima coefficients based on the raw atmospheric data.
-
-    This is used to more rapidly interpolate the data and the rate of change of rho wrt altitude.
-
-    Returns
-    -------
-    dict
-        A mapping of the variable name and Akima coeffcient values for each table in the atmosphere.
-    """
-    import textwrap
-    from openmdao.components.interp_util.interp import InterpND
-
-    coeff_data = {}
-
-    T_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.T, extrapolate=True)
-    P_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.P, extrapolate=True)
-    rho_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.rho, extrapolate=True)
-    visc_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.viscosity,
-                           extrapolate=True)
-
-    _, _drho_dh = rho_interp.interpolate(USatm1976Data.alt, compute_derivative=True)
-    drho_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=_drho_dh.ravel(), extrapolate=True)
-
-    _, _dT_dh = T_interp.interpolate(USatm1976Data.alt, compute_derivative=True)
-    dT_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=_dT_dh.ravel(), extrapolate=True)
-
-    # Find midpoints of all bins plus an extrapolation point on each end.
-    min_alt = np.min(USatm1976Data.alt)
-    max_alt = np.max(USatm1976Data.alt)
-
-    # We need to compute coeffs in the "extrapolation bins" as well, so append these.
-    h = np.hstack((min_alt - 5000, USatm1976Data.alt, max_alt + 5000))
-    hbin = h[:-1] + 0.5 * np.diff(h)
-    n = len(hbin)
-
-    coeffs_T = np.empty((n, 4))
-    coeffs_P = np.empty((n, 4))
-    coeffs_rho = np.empty((n, 4))
-    coeffs_visc = np.empty((n, 4))
-    coeffs_drho = np.empty((n, 4))
-    coeffs_dT = np.empty((n, 4))
-
-    interps = [T_interp, P_interp, rho_interp, visc_interp, drho_interp, dT_interp]
-    coeff_arrays = [coeffs_T, coeffs_P, coeffs_rho, coeffs_visc, coeffs_drho, coeffs_dT]
-
-    np.set_printoptions(precision=18)
-    vars = ['T', 'P', 'rho', 'viscosity', 'drho', 'dT']
-    with np.printoptions(linewidth=1024):
-        for var, interp, coeff_array in zip(vars, interps, coeff_arrays):
-            _ = interp.interpolate(hbin, compute_derivative=False)
-            coeff_cache = interp.table.vec_coeff
-
-            for i in range(n):
-                a, b, c, d = coeff_cache[i]
-                coeff_array[i, 0] = a
-                coeff_array[i, 1] = b
-                coeff_array[i, 2] = c
-                coeff_array[i, 3] = d
-
-            if out_stream is not None:
-                print(f'USatm1976Data.akima_{var} = \\', file=out_stream)
-                print(textwrap.indent(repr(coeff_array).replace('array', 'np.array'), '    '),
-                      file=out_stream)
-                print('', file=out_stream)
-
-            coeff_data[f'USatm1976Data.akima_{var}'] = coeff_array
-
-    return coeff_data
-
-
-if __name__ == "__main__":
-    # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
-    _build_akima_coefs()
