@@ -167,13 +167,13 @@ prob.add_objective('mass')
 
 prob.setup()
 
-prob.run_aviary_problem(record_filename='detailed_landing.db')
+prob.run_aviary_problem()
 
 try:
     loc = prob.get_outputs_dir()
-    cr = om.CaseReader(f'{loc}/detailed_landing.db')
+    cr = om.CaseReader(f'{loc}/problem_history.db')
 except:
-    cr = om.CaseReader('detailed_landing.db')
+    cr = om.CaseReader('problem_history.db')
 
 cases = cr.get_cases('problem')
 case = cases[0]

@@ -56,10 +56,10 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_objective()
         prob.setup()
 
-        prob.set_initial_guesses()
         prob.run_aviary_problem()
 
         return prob
+        # self.assertTrue(prob.result.success)
 
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')

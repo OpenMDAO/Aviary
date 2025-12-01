@@ -94,7 +94,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db')
+        prob.run_aviary_problem()
+        self.assertTrue(prob.result.success)
 
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')

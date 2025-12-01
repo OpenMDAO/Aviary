@@ -1,10 +1,8 @@
 import argparse
-from collections import defaultdict
 import functools
 import importlib.util
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import traceback
@@ -104,21 +102,6 @@ def _dashboard_setup_parser(parser):
         nargs='*',
         help='Name of aviary script that was run (not including .py).',
     )
-
-    parser.add_argument(
-        '--problem_recorder',
-        type=str,
-        help='Problem case recorder file name',
-        dest='problem_recorder',
-        default='problem_history.db',
-    )
-    parser.add_argument(
-        '--driver_recorder',
-        type=_none_or_str,
-        help='Driver case recorder file name. Set to None if file is ignored',
-        dest='driver_recorder',
-        default='driver_history.db',
-    )
     parser.add_argument(
         '--port',
         dest='port',
@@ -189,7 +172,7 @@ def _dashboard_cmd(options, user_args):
         if not options.force and report_dir_path.is_dir():
             raise RuntimeError(
                 f'The reports directory {report_dir_path} already exists. If you wish '
-                'to overrite the existing directory, use the --force option'
+                'to overwrite the existing directory, use the --force option'
             )
         if (
             report_dir_path.is_dir()
@@ -199,8 +182,8 @@ def _dashboard_cmd(options, user_args):
         shutil.unpack_archive(options.script_name, report_dir_path)
         dashboard(
             report_dir_name,
-            options.problem_recorder,
-            options.driver_recorder,
+            # options.problem_recorder,
+            # options.driver_recorder,
             options.port,
             options.run_in_background,
         )
@@ -218,8 +201,8 @@ def _dashboard_cmd(options, user_args):
 
     dashboard(
         options.script_name,
-        options.problem_recorder,
-        options.driver_recorder,
+        # options.problem_recorder,
+        # options.driver_recorder,
         options.port,
         options.run_in_background,
     )
@@ -461,7 +444,7 @@ def create_report_frame(documentation, format, text_filepath):
     return report_pane
 
 
-def create_aviary_variables_table_data_nested(script_name, recorder_file):
+def create_aviary_variables_table_data_nested(output_dir, recorder_file):
     """
     Create a JSON file with information about Aviary variables.
 
@@ -475,6 +458,8 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
 
     Parameters
     ----------
+    output_dir : Path, str
+        Output directory for case
     recorder_file : str
         Name of the recorder file containing the Problem cases.
 
@@ -564,7 +549,7 @@ def create_aviary_variables_table_data_nested(script_name, recorder_file):
             )
 
     aviary_variables_file_path = (
-        f'{script_name}_out/reports/aviary_vars/{aviary_variables_json_file_name}'
+        f'{output_dir}/reports/aviary_vars/{aviary_variables_json_file_name}'
     )
     with open(aviary_variables_file_path, 'w') as fp:
         json.dump(table_data_nested, fp)
@@ -652,7 +637,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     ----------
     recorder_file : str
         Name of the case recorder file.
-    reports_dir : str
+    reports_dir : Path
         Path of the directory containing the reports from the run.
     outfilepath : str
         The path to the location where the file should be created.
@@ -667,7 +652,7 @@ def create_aircraft_3d_file(recorder_file, reports_dir, outfilepath):
     #  next to the HTML file
     shutil.copy(
         aviary_dir.joinpath('visualization/assets/aviary_airlines.png'),
-        Path(reports_dir) / 'aviary_airlines.png',
+        reports_dir / 'aviary_airlines.png',
     )
 
     aircraft_3d_model = Aircraft3DModel(recorder_file)
@@ -1138,7 +1123,7 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
 
 
 # The main script that generates all the tabs in the dashboard
-def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_background=False):
+def dashboard(script_name, port=0, run_in_background=False):
     """
     Generate the dashboard app display.
 
@@ -1146,26 +1131,24 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     ----------
     script_name : str
         Name of the script file whose results will be displayed by this dashboard.
-    problem_recorder : str
-        Name of the recorder file containing the Problem cases.
-    driver_recorder : str or None
-        Name of the recorder file containing the Driver cases. If None, the driver tab will not be added
     port : int
         HTTP port used for the dashboard webapp. If 0, use any free port
     """
-    reports_dir = f'{script_name}_out/reports/'
-    out_dir = f'{script_name}_out/'
+    out_dir = Path(f'{script_name}')
+    if not out_dir.exists():
+        out_dir = Path(f'{script_name}_out')
+    if not out_dir.exists():
+        raise FileNotFoundError(f"Output directory for '{script_name}' could not be found.")
 
-    if not Path(reports_dir).is_dir():
-        raise ValueError(
-            f"The script name, '{script_name}', does not have a reports folder "
-            f"associated with it. The directory '{reports_dir}' does not exist."
-        )
+    reports_dir = out_dir / 'reports'
 
-    problem_recorder_path = Path(out_dir) / problem_recorder
+    if not reports_dir.is_dir():
+        raise FileNotFoundError(f"Reports directory could not be found in '{out_dir}'.")
+
+    problem_recorder_path = Path(out_dir) / 'problem_history.db'
 
     if not os.path.isfile(problem_recorder_path):
-        issue_warning(f'Given Problem case recorder file {problem_recorder_path} does not exist.')
+        issue_warning(f'Problem case recorder file {problem_recorder_path} does not exist.')
 
     # TODO - use lists and functions to do this with a lot less code
     ####### Model Tab #######
@@ -1177,7 +1160,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         model_tabs_list,
         'Detailed checks on the model inputs.',
         'markdown',
-        Path(reports_dir) / 'input_checks.md',
+        reports_dir / 'input_checks.md',
     )
 
     #  Debug Input List
@@ -1185,15 +1168,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Debug Input List',
         model_tabs_list,
         """
-        A plain text display of the model inputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An input variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of inputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
+        A plain text display of the model inputs. Recommended for beginners. Only created if 
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
+        are listed in a tree structure. There are three columns. The left column is a list of 
+        variable names, the middle column is the value, and the right column is the promoted 
+        variable name. The hierarchy is phase, subgroups, components, and variables. An input 
+        variable can appear under different phases and within different components. Its values can 
+        be different because its value has been updated during the computation. On the top-left 
+        corner is the total number of inputs. That number counts the duplicates because one variable 
+        can appear in different phases.
+        """,
         'text',
-        Path(reports_dir) / 'input_list.txt',
+        reports_dir / 'input_list.txt',
     )
 
     #  Debug Output List
@@ -1201,15 +1187,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Debug Output List',
         model_tabs_list,
         """
-       A plain text display of the model outputs. Recommended for beginners. Only created if Settings.VERBOSITY is set to at least 2 in the input deck.
-        The variables are listed in a tree structure. There are three columns. The left column is a list of variable names,
-        the middle column is the value, and the right column is the
-        promoted variable name. The hierarchy is phase, subgroups, components, and variables. An output variable can appear under
-        different phases and within different components. Its values can be different because its value has
-        been updated during the computation. On the top-left corner is the total number of outputs.
-        That number counts the duplicates because one variable can appear in different phases.""",
+        A plain text display of the model outputs. Recommended for beginners. Only created if 
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
+        are listed in a tree structure. There are three columns. The left column is a list of 
+        variable names, the middle column is the value, and the right column is the promoted 
+        variable name. The hierarchy is phase, subgroups, components, and variables. An output 
+        variable can appear under different phases and within different components. Its values can 
+        be different because its value has been updated during the computation. On the top-left 
+        corner is the total number of outputs. That number counts the duplicates because one 
+        variable can appear in different phases.
+        """,
         'text',
-        Path(reports_dir) / 'output_list.txt',
+        reports_dir / 'output_list.txt',
     )
 
     # Inputs
@@ -1218,7 +1207,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         model_tabs_list,
         'Detailed report on the model inputs.',
         'html',
-        Path(reports_dir) / 'inputs.html',
+        reports_dir / 'inputs.html',
     )
 
     # N2
@@ -1232,7 +1221,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         It can be used to systematically identify, define, tabulate, design, and analyze functional
         and physical interfaces.""",
         'html',
-        Path(reports_dir) / 'n2.html',
+        reports_dir / 'n2.html',
     )
 
     # Trajectory Linkage
@@ -1245,7 +1234,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         It can be used to identify errant linkages between fixed quantities.
         """,
         'html',
-        Path(reports_dir) / 'traj_linkage_report.html',
+        reports_dir / 'traj_linkage_report.html',
     )
 
     # Driver scaling
@@ -1259,22 +1248,22 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             design variables (DV).
         """,
         'html',
-        Path(reports_dir) / 'driver_scaling_report.html',
+        reports_dir / 'driver_scaling_report.html',
     )
 
     ####### Optimization Tab #######
     optimization_tabs_list = []
 
     # Optimization History Plot
-    if driver_recorder:
-        if os.path.isfile(driver_recorder):
-            df = convert_driver_case_recorder_file_to_df(f'{driver_recorder}')
-            cr = om.CaseReader(f'{driver_recorder}')
-            opt_history_pane = create_optimization_history_plot(cr, df)
-            optimization_tabs_list.append(('Optimization History', opt_history_pane))
+    opt_history_path = out_dir / 'optimization_history.db'
+    if opt_history_path.exists():
+        df = convert_driver_case_recorder_file_to_df(opt_history_path)
+        cr = om.CaseReader(opt_history_path)
+        opt_history_pane = create_optimization_history_plot(cr, df)
+        optimization_tabs_list.append(('Optimization History', opt_history_pane))
 
     # IPOPT report
-    if os.path.isfile(Path(reports_dir) / 'IPOPT.out'):
+    if os.path.isfile(reports_dir / 'IPOPT.out'):
         ipopt_pane = create_report_frame(
             'IPOPT Output',
             optimization_tabs_list,
@@ -1282,7 +1271,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             This report is generated by the IPOPT optimizer.
                                         """,
             'text',
-            Path(reports_dir) / 'IPOPT.out',
+            reports_dir / 'IPOPT.out',
         )
 
     # Optimization report
@@ -1294,11 +1283,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         On the top is a summary of the optimization, followed by the objective, design variables, constraints,
         and optimizer settings. This report is important when dissecting optimal results produced by Aviary.""",
         'html',
-        Path(reports_dir) / 'opt_report.html',
+        reports_dir / 'opt_report.html',
     )
 
     # PyOpt report
-    if os.path.isfile(Path(reports_dir) / 'pyopt_solution.out'):
+    if os.path.isfile(reports_dir / 'pyopt_solution.out'):
         create_report_frame(
             'PyOpt Solution',
             optimization_tabs_list,
@@ -1306,11 +1295,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             This report is generated by the pyOptSparse optimizer.
             """,
             'text',
-            Path(reports_dir) / 'pyopt_solution.txt',
+            reports_dir / 'pyopt_solution.txt',
         )
 
     # SNOPT report
-    if os.path.isfile(Path(reports_dir) / 'SNOPT_print.out'):
+    if os.path.isfile(reports_dir / 'SNOPT_print.out'):
         create_report_frame(
             'SNOPT Output',
             optimization_tabs_list,
@@ -1318,18 +1307,18 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             This report is generated by the SNOPT optimizer.
                                         """,
             'text',
-            Path(reports_dir) / 'SNOPT_print.out',
+            reports_dir / 'SNOPT_print.out',
         )
 
     # SNOPT summary
-    if os.path.isfile(Path(reports_dir) / 'SNOPT_summary.out'):
+    if os.path.isfile(reports_dir / 'SNOPT_summary.out'):
         create_report_frame(
             'SNOPT Summary',
             optimization_tabs_list,
             """
             This is a report generated by the SNOPT optimizer that summarizes the optimization results.""",
             'text',
-            Path(reports_dir) / 'SNOPT_summary.out',
+            reports_dir / 'SNOPT_summary.out',
         )
 
     # Coloring report
@@ -1338,7 +1327,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         optimization_tabs_list,
         'The report shows metadata associated with the creation of the coloring.',
         'html',
-        Path(reports_dir) / 'total_coloring.html',
+        reports_dir / 'total_coloring.html',
     )
 
     ####### Results Tab #######
@@ -1348,7 +1337,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     if problem_recorder_path:
         if os.path.isfile(problem_recorder_path):
             try:
-                aircraft_3d_file = Path(reports_dir) / 'aircraft_3d.html'
+                aircraft_3d_file = reports_dir / 'aircraft_3d.html'
                 create_aircraft_3d_file(problem_recorder_path, reports_dir, aircraft_3d_file)
                 create_report_frame(
                     'Aircraft 3d model',
@@ -1369,11 +1358,11 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     # Make the Aviary variables table pane
     if os.path.isfile(problem_recorder_path):
         try:
-            # Make dir reports/script_name/aviary_vars if needed
-            aviary_vars_dir = Path(reports_dir) / 'aviary_vars'
+            # Make dir reports/out_dir/aviary_vars if needed
+            aviary_vars_dir = reports_dir / 'aviary_vars'
             aviary_vars_dir.mkdir(parents=True, exist_ok=True)
 
-            # copy index.html file to reports/script_name/aviary_vars/index.html
+            # copy index.html file to reports/out_dir/aviary_vars/index.html
             aviary_dir = Path(importlib.util.find_spec('aviary').origin).parent
 
             shutil.copy(
@@ -1384,12 +1373,12 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
                 aviary_dir.joinpath('visualization/assets/aviary_vars/script.js'),
                 aviary_vars_dir.joinpath('script.js'),
             )
-            # copy script.js file to reports/script_name/aviary_vars/index.html.
+            # copy script.js file to reports/out_dir/aviary_vars/index.html.
             # mod the script.js file to point at the json file
             # create the json file and put it in
-            # reports/script_name/aviary_vars/aviary_vars.json
+            # reports/out_dir/aviary_vars/aviary_vars.json
             create_aviary_variables_table_data_nested(
-                script_name, problem_recorder_path
+                out_dir, problem_recorder_path
             )  # create the json file
         except Exception as e:
             pane = _create_message_pane(
@@ -1403,7 +1392,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             results_tabs_list,
             'Table showing Aviary variables.',
             'html',
-            Path(reports_dir) / 'aviary_vars/index.html',
+            reports_dir / 'aviary_vars/index.html',
         )
 
     # Mission Summary
@@ -1412,7 +1401,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         results_tabs_list,
         'A report of mission results from an Aviary problem.',
         'markdown',
-        Path(reports_dir) / 'mission_summary.md',
+        reports_dir / 'mission_summary.md',
     )
 
     # Run status pane
@@ -1420,7 +1409,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         'Run status pane',
         results_tabs_list,
         'A high level overview of the status of the run.',
-        Path(reports_dir) / 'status.json',
+        reports_dir / 'status.json',
     )
     run_status_pane_tab_number = len(results_tabs_list) - 1
 
@@ -1433,7 +1422,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         Any value that is included in the timeseries data is included in this report.
         This data is useful for post-processing, especially those used for acoustic analysis.
         """,
-        Path(reports_dir) / 'mission_timeseries_data.csv',
+        reports_dir / 'mission_timeseries_data.csv',
     )
 
     # Paylaod Range Output Pane
@@ -1443,7 +1432,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
         """
         Defines key operating points on the aircraft's payload-range envelope from Design and Fallout missions.
         """,
-        Path(reports_dir) / 'payload_range_data.csv',
+        reports_dir / 'payload_range_data.csv',
     )
 
     # Trajectory results
@@ -1460,7 +1449,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
             zooming into a particular region for details, etc.
         """,
         'html',
-        Path(reports_dir) / 'traj_results_report.html',
+        reports_dir / 'traj_results_report.html',
     )
 
     # Interactive XY plot of mission variables
@@ -1531,7 +1520,7 @@ def dashboard(script_name, problem_recorder, driver_recorder, port, run_in_backg
     tabs.active = 0  # make the Results tab active initially
 
     # get status of run for display in the header of each page
-    status_string_for_header = get_run_status(Path(reports_dir) / 'status.json')
+    status_string_for_header = get_run_status(reports_dir / 'status.json')
 
     template = pn.template.FastListTemplate(
         title=f'Aviary Dashboard for {script_name}:  {status_string_for_header}',

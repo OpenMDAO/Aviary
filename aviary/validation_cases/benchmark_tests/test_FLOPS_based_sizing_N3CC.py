@@ -69,7 +69,7 @@ def run_trajectory(sim=True):
     # Initial Settings for States and Controls #
     ############################################
     prob.setup()
-    prob.run_aviary_problem('dymos_solution.db')
+    prob.run_aviary_problem()
 
     return prob
 
@@ -81,6 +81,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_sizing_N3CC(self):
         prob = run_trajectory(sim=False)
+
+        # self.assertTrue(prob.result.success)
 
         times_climb = prob.get_val('traj.climb.timeseries.time', units='s')
         thrusts_climb = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')

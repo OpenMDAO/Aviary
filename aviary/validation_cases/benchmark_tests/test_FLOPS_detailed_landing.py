@@ -116,7 +116,9 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
         landing_trajectory_builder.apply_initial_guesses(landing, 'traj')
 
         # run the problem
-        dm.run_problem(landing, run_driver=True, simulate=True, make_plots=False)
+        landing.result = dm.run_problem(landing, run_driver=True, simulate=True, make_plots=False)
+
+        # self.assertTrue(landing.result.success)
 
         # Field length
         # N3CC FLOPS output line 1773
