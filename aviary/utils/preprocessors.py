@@ -395,13 +395,6 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                     'Design.CARGO_MASS equal to 0.'
                 )
 
-        # check for potential cargo errors:
-        if cargo > max_cargo:
-            if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG:
-                warnings.warn(
-                    f'As-flown cargo ({cargo}) is greater than design cargo ({des_cargo})'
-                )
-
         if cargo > max_cargo or des_cargo > max_cargo:
             raise UserWarning(
                 f'Aircraft.CrewPayload.CARGO_MASS ({cargo}) and/or '

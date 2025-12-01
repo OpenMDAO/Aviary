@@ -142,7 +142,7 @@ class AviaryProblem(om.Problem):
 
         # TODO try and find a better solution than a new custom flag - the issue is multimission
         #      problems don't have a consistent variable path to check the inputs later on
-        # BUG you can't specify generating payload-range diagram after load_inputs
+        # BUG you can't specify generating payload-range diagram via aviary_inputs after load_inputs
         if Settings.PAYLOAD_RANGE in aviary_inputs:
             self.generate_payload_range = aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
@@ -1475,7 +1475,7 @@ class AviaryProblem(om.Problem):
         # setting design variable bounds too large
         if fill_cargo:
             # GASP cargo mass is an input, can directly use as control variable
-            if off_design_prob.get_val(Settings.MASS_METHOD is GASP):
+            if off_design_prob.get_val(Settings.MASS_METHOD) is GASP:
                 control_var = Aircraft.CrewPayload.CARGO_MASS
                 val = cargo_mass
                 tol = 1.05
@@ -1582,7 +1582,7 @@ class AviaryProblem(om.Problem):
                 cruise_units = phase_info['cruise']['user_options']['time_duration_bounds'][1]
 
                 phase_info['cruise']['user_options'].update(
-                    {'time_duration_bounds': ((min_duration, 2.5 * max_duration), cruise_units)}
+                    {'time_duration_bounds': ((min_duration, 2 * max_duration), cruise_units)}
                 )
 
             # TODO Verify that previously run point is actually max payload/fuel point, and if not
@@ -1924,14 +1924,14 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
                     warnings.warn(
                         f'Could not add item in json output to AviaryValues: input string = '
                         f'{inputs}, attempted to set_value({var_name}, {var_values}, {var_units}). '
-                        'This variable was not added to the AviaryProblem.'
+                        'This variable was skipped.'
                     )
         else:
             # Not in the MetaData
             if verbosity >= Verbosity.VERBOSE:
                 warnings.warn(
                     f'While reading json output, item was not found in MetaData: {inputs}. This '
-                    'variable was not added to the AviaryProblem.'
+                    'variable was skipped.'
                 )
 
     return aviary_inputs
