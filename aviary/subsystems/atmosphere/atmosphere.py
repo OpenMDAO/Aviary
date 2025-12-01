@@ -60,6 +60,12 @@ class Atmosphere(om.Group):
             desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Rankine)',
         )
 
+        self.options.declare(
+            'data_source',
+            default='USatm1976',
+            desc='The atmospheric model used. Chose one of USatm1976, tropical, polar, hot, cold.'
+        )
+
     def setup(self):
         nn = self.options['num_nodes']
         speed_type = self.options['input_speed_type']
@@ -68,6 +74,7 @@ class Atmosphere(om.Group):
         output_abs_humidity = self.options['output_abs_humidity']
         rel_humidity_sl = self.options['rel_humidity_sl']
         isa_delta_T = self.options['isa_delta_T']
+        data_source = self.options['data_source']
 
         self.add_subsystem(
             name='standard_atmosphere',
@@ -77,7 +84,8 @@ class Atmosphere(om.Group):
                 output_dsos_dh=output_dsos_dh, 
                 output_abs_humidity=output_abs_humidity, 
                 rel_humidity_sl=rel_humidity_sl,
-                isa_delta_T=isa_delta_T),
+                isa_delta_T=isa_delta_T,
+                data_source=data_source),
             promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=[
                 '*',

@@ -1,7 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from Aviary.aviary.subsystems.atmosphere.atmosphereComp import AtmosphereComp
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
@@ -154,7 +154,7 @@ class TestMission(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'atmos',
-            USatm1976Comp(num_nodes=nn),
+            AtmosphereComp(num_nodes=nn),
             promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
             promotes_outputs=['rho', 'viscosity', ('temp', Dynamic.Atmosphere.TEMPERATURE)],
         )
