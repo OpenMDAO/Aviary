@@ -461,7 +461,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         length = inputs[Aircraft.Fuselage.LENGTH]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
-        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
         bay_width_max = 12.0  # ft
 
@@ -668,6 +668,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
             # Enforce maximum number of bays
             z = 0.5 + max_width / bay_width_max
+            z = z[0]
             num_bays = int(z.real)
             if num_bays > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
