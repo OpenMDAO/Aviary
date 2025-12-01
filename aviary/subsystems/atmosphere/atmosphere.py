@@ -1,5 +1,5 @@
 import openmdao.api as om
-from aviary.subsystems.atmosphere.atmos_1976 import USatm1976Comp
+from Aviary.aviary.subsystems.atmosphere.atmosphereComp import AtmosphereComp
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import SpeedType
@@ -71,7 +71,7 @@ class Atmosphere(om.Group):
 
         self.add_subsystem(
             name='standard_atmosphere',
-            subsys=USatm1976Comp(
+            subsys=AtmosphereComp(
                 num_nodes=nn, 
                 h_def=h_def, 
                 output_dsos_dh=output_dsos_dh, 

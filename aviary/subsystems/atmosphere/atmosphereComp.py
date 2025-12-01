@@ -20,15 +20,15 @@ from MIL_SPEC_210A_hot import atm_data as hot_210A
 from MIL_SPEC_210A_cold import atm_data as cold_210A
 
 
-class USatmComp(om.ExplicitComponent):
+class AtmosphereComp(om.ExplicitComponent):
     """
-    Component model for the United States 
-    - standard atmosphere 1976 tables
-    - MIL-SPEC-201A atmosphere tables
+    Atmosphere component model for the 
+    - United States standard atmosphere 1976 tables
+    - United States MIL-SPEC-201A atmosphere tables
 
     To build a set of custom atmosphere tables you will need to build new akima coefficients
-    using _build_akima_coefs() at the end of this file and add your new coefficients as 
-    an option intput to this component.
+    using _build_akima_coefs() (see the end of this file) and then add your new coefficients 
+    as options intput to this component.
 
     Parameters
     ----------
@@ -346,7 +346,7 @@ def _build_akima_coefs(raw_data, out_stream):
 if __name__ == "__main__":
     # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    from USatmComp import _raw_data # replace this with your new raw data
+    from Aviary.aviary.subsystems.atmosphere.atmosphereComp import _raw_data # replace this with your new raw data
 
     import sys
     _build_akima_coefs(raw_data=_raw_data, out_stream=sys.stdout)
