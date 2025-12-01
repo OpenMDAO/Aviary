@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
-from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
