@@ -1474,19 +1474,23 @@ class AviaryProblem(om.Problem):
         # based on rough guesses on what is sufficient to get the problem to converge without
         # setting design variable bounds too large
         if fill_cargo:
-            # prefer to directly float cargo_mass, as it is present in both FLOPS and GASP
-            if cargo_mass is None or cargo_mass == 0:
+            # GASP cargo mass is an input, can directly use as control variable
+            if off_design_prob.get_val(Settings.MASS_METHOD is GASP):
+                control_var = Aircraft.CrewPayload.CARGO_MASS
+                val = cargo_mass
+                tol = 1.05
+            # FLOPS cargo mass is an output, not valid for control variable. Pick control var.
+            else:
                 # See if misc_cargo is being used, float that as a backup
                 if misc_cargo is None or misc_cargo == 0:
                     # We aren't using cargo_mass OR misc_mass - try wing cargo as last resort
                     if wing_cargo is None or wing_cargo == 0:
                         # We don't know enough about the aircraft to make any informed guesses. Use
                         # arbitrary values
-                        control_var = Aircraft.CrewPayload.CARGO_MASS
-                        val = 1000
-                        tol = 1.2
+                        control_var = Aircraft.CrewPayload.MISC_CARGO
+                        val = self.get_val(Mission.Design.GROSS_MASS)
+                        tol = 0.05
                         inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0, 'lbm')
-
                     else:
                         control_var = Aircraft.CrewPayload.WING_CARGO
                         val = wing_cargo
@@ -1495,10 +1499,6 @@ class AviaryProblem(om.Problem):
                     control_var = Aircraft.CrewPayload.MISC_CARGO
                     val = misc_cargo
                     tol = 1.1
-            else:
-                control_var = Aircraft.CrewPayload.CARGO_MASS
-                val = cargo_mass
-                tol = 1.05
 
             off_design_prob.model.add_design_var(
                 control_var,
@@ -1650,16 +1650,7 @@ class AviaryProblem(om.Problem):
 
                 # Passenger number rounding and potentially cargo container mass changing means
                 # we don't know if we actually filled the aircraft to exactly TOGW yet. Need to use
-                # "fill_payload" flag in off-design call
-                if mass_method is FLOPS:
-                    # For FLOPS missions, cargo mass cannot be a design variable, therefore we set
-                    # misc_cargo to an arbitrary value so it will be selected as the "floating" mass
-                    # later. This should only happen if no other cargo mass types are given, so we
-                    # check wing cargo is not being used.
-                    if (
-                        economic_mission_wing_cargo is not None or economic_mission_wing_cargo != 0
-                    ) and (economic_mission_misc_cargo is None or economic_mission_misc_cargo == 0):
-                        economic_mission_misc_cargo = economic_mission_total_payload * 0.05
+                # "fill_cargo" flag in off-design call
                 economic_range_prob = self.run_off_design_mission(
                     problem_type=ProblemType.FALLOUT,
                     phase_info=phase_info,
