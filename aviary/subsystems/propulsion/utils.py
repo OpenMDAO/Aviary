@@ -12,18 +12,15 @@ import numpy as np
 import openmdao.api as om
 
 import aviary.constants as constants
-
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.named_values import NamedValues, get_keys, get_items
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.utils import isiterable
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.enums import GASPEngineType
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class EngineModelVariables(Enum):
-    """
-    Define constants that map to supported variable names in an engine model.
-    """
+    """Define constants that map to supported variable names in an engine model."""
 
     MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Mission.ALTITUDE
@@ -35,6 +32,7 @@ class EngineModelVariables(Enum):
     SHAFT_POWER = Dynamic.Vehicle.Propulsion.SHAFT_POWER
     SHAFT_POWER_CORRECTED = 'shaft_power_corrected'
     RAM_DRAG = 'ram_drag'
+    RPM = Dynamic.Vehicle.Propulsion.RPM
     FUEL_FLOW = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE
     ELECTRIC_POWER_IN = Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN
     NOX_RATE = Dynamic.Vehicle.Propulsion.NOX_RATE
@@ -59,6 +57,7 @@ default_units = {
     EngineModelVariables.NOX_RATE: 'lb/h',
     EngineModelVariables.TEMPERATURE_T4: 'degR',
     EngineModelVariables.TORQUE: 'ft*lbf',
+    EngineModelVariables.RPM: 'rpm',
     # EngineModelVariables.EXIT_AREA: 'ft**2',
 }
 
@@ -67,6 +66,15 @@ max_variables = {
     EngineModelVariables.THRUST: Dynamic.Vehicle.Propulsion.THRUST_MAX,
     EngineModelVariables.SHAFT_POWER: Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
 }
+
+# class InstallationDragFlag(Enum):
+#     """
+#     Define constants that map to supported options for scaling of installation drag.
+#     """
+#     OFF = auto()
+#     DELTA_MAX_NOZZLE_AREA = auto()
+#     MAX_NOZZLE_AREA = auto()
+#     REF_NOZZLE_EXIT_AREA = auto()
 
 
 def convert_geopotential_altitude(altitude):
@@ -80,7 +88,7 @@ def convert_geopotential_altitude(altitude):
         geopotential altitudes (in ft) to be converted.
 
     Returns
-    ----------
+    -------
     altitude_list : <list of floats>
         geometric altitudes (ft).
     """
@@ -105,10 +113,7 @@ def convert_geopotential_altitude(altitude):
         while abs(DH) > 1.0:
             R = radius_earth + Z
             GN = GNS * (radius_earth / R) ** (CM1 + 1.0)
-            H = (
-                R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1
-                - Z * (R - Z / 2.0) * OC2
-            ) / g
+            H = (R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2) / g
 
             DH = HO - H
             Z += DH
@@ -121,22 +126,37 @@ def convert_geopotential_altitude(altitude):
 
 # TODO build test for this function
 # TODO upgrade to be able to turn vectorized AviaryValues into multiple engine decks
-def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
+def build_engine_deck(
+    options: AviaryValues,
+    name: str = None,
+    required_variables=None,
+    meta_data=_MetaData,
+):
     """
-    Creates an EngineDeck using avaliable inputs and options in aviary_options.
+    Creates an EngineDeck using available inputs and options in aviary_options.
 
     Parameter
     ----------
-    aviary_options : AviaryValues
-        Options to use in creation of EngineDecks.
+    options : AviaryValues
+        Options to use in creation of EngineDeck
+
+    name : str, optional
+        The name of the newly created EngineDeck
+
+    required_variables : set, optional
+        A set of required variables (from EngineModelVariables) for the newly created
+        EngineDeck. Defaults to the required set {ALTITUDE, MACH, THROTTLE, THRUST}.
+
+    meta_data : dict, optional
+        The metadata to be used while creating the EngineDeck. If None, use Aviary's
+        default metadata.
 
     Returns
-    ----------
-    engine_models : <list of EngineDecks>
-        List of EngineDecks created using provided aviary_options.
+    -------
+    EngineDeck
+        EngineDeck created using provided options.
     """
-
-    # Required engine vars include one setting from Mission.Summary.
+    # Required engine vars include one setting from Mission.Summary
     engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
     engine_vars.append(Mission.Summary.FUEL_FLOW_SCALER)
 
@@ -146,52 +166,28 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
     for var in engine_vars:
         # check if this variable exist with useable metadata
         try:
-            units = _MetaData[var]['units']
+            units = meta_data[var]['units']
+        except (KeyError, TypeError):
+            continue
+        else:
             try:
-                aviary_val = aviary_options.get_val(var, units)
-                default_value = meta_data[var]['default_value']
+                aviary_val = options.get_val(var, units)
             # if not, use default value from _MetaData?
             except KeyError:
-                # engine_options.set_val(var, _MetaData[var]['default_value'], units)
+                # currently skipping filling "missing" variables with defaults
+                # engine_options.set_val(var, meta_data[var]['default_value'], units)
                 continue
-            # add value from aviary_options to engine_options
+            # add value from options to engine_options
             else:
-                # special handling for numpy arrays - check if they are multidimensional,
-                # which implies multiple engine models, and only use the value intended
-                # for the first engine model
-                if isinstance(aviary_val, np.ndarray) and isinstance(
-                    default_value, np.ndarray
-                ):
-                    expected_dim = default_value.ndim
-                    val_dim = aviary_val.ndim
-                    # if aviary_values has one more dimension than expected per-engine,
-                    # we know aviary_values is for heterogeneous engine type. Currently only using
-                    # first index
-                    if val_dim == expected_dim + 1:
-                        aviary_val = aviary_val[0]
-                    # if aviary_values has more than one dimension from expected, then
-                    # something is very wrong and cannot be fixed here
-                    if val_dim > expected_dim + 1:
-                        UserWarning(
-                            f'Provided vector for {var} has too many dimensions: '
-                            f'expecting a {expected_dim+1}D array ({expected_dim}D '
-                            'per engine)'
-                        )
-                # if neither metadata nor aviary_val are numpy arrays, cannot check dimensions
-                # in robust way, so a reduced check is done. No raised, errors, must
-                # assume aviary_val data is formatted correctly
-                elif isinstance(aviary_val, (list, tuple, np.ndarray)):
+                if isiterable(aviary_val):
                     try:
                         aviary_val_0 = aviary_val[0]
                     except TypeError:
                         pass
                     else:
-                        # if item in first index is also iterable, aviary_val is multi-dimensional array
-                        # if array only contains a single value, use that
-                        if (
-                            isinstance(aviary_val_0, (list, tuple, np.ndarray))
-                            or len(aviary_val) == 1
-                        ):
+                        # if item in first index is also iterable, or if array only
+                        # contains a single value, use that
+                        if isiterable(aviary_val_0) or len(aviary_val) == 1:
                             aviary_val = aviary_val_0
                 # "Convert" numpy types to standard Python types. Wrap first
                 # index in numpy array before calling item() to safeguard against
@@ -200,28 +196,31 @@ def build_engine_deck(aviary_options: AviaryValues, meta_data=_MetaData):
                     aviary_val = np.array(aviary_val).item()
                 engine_options.set_val(var, aviary_val, units)
 
-        except (KeyError, TypeError):
-            continue
+    # Build EngineDeck object
+    # gather arguments for building EngineDeck
+    kwargs = {'options': engine_options}
 
-    # name engine deck after filename
+    # name engine deck after filename if name is not provided
+    if name is None:
+        kwargs['name'] = Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem
+    else:
+        kwargs['name'] = name
+
+    if required_variables is not None:
+        kwargs['required_variables'] = required_variables
+
     # local import to avoid circular import
     from aviary.subsystems.propulsion.engine_deck import EngineDeck
 
-    # name engine deck after filename
-    return [
-        EngineDeck(
-            Path(engine_options.get_val(Aircraft.Engine.DATA_FILE)).stem,
-            options=engine_options,
-        )
-    ]
+    return EngineDeck(**kwargs)
 
 
 # TODO combine with aviary/utils/data_interpolator_builder.py build_data_interpolator
 class EngineDataInterpolator(om.Group):
-    '''
+    """
     Group that contains interpolators that get passed training data directly through
-    openMDAO connections
-    '''
+    openMDAO connections.
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -243,7 +242,7 @@ class EngineDataInterpolator(om.Group):
         self.options.declare(
             'interpolator_outputs',
             types=dict,
-            desc='Dictionary describing which variables will be avaliable to the '
+            desc='Dictionary describing which variables will be available to the '
             'interpolator as training data at runtime, and their units',
         )
 
@@ -287,8 +286,7 @@ class EngineDataInterpolator(om.Group):
             model_length = len(val)
             if model_length != prev_model_length:
                 raise IndexError(
-                    'Lengths of data provided for engine performance '
-                    'interpolation do not match.'
+                    'Lengths of data provided for engine performance interpolation do not match.'
                 )
 
         # add inputs and outputs to interpolator
@@ -332,13 +330,9 @@ class EngineDataInterpolator(om.Group):
             )
 
         # add created subsystems to engine_group
-        self.add_subsystem(
-            'interpolation', engine, promotes_inputs=['*'], promotes_outputs=['*']
-        )
+        self.add_subsystem('interpolation', engine, promotes_inputs=['*'], promotes_outputs=['*'])
 
-        self.add_subsystem(
-            'fixed_max_throttles', fixed_throttles, promotes_outputs=['*']
-        )
+        self.add_subsystem('fixed_max_throttles', fixed_throttles, promotes_outputs=['*'])
 
         self.add_subsystem(
             'max_thrust_interpolation',
@@ -349,9 +343,7 @@ class EngineDataInterpolator(om.Group):
 
 
 class UncorrectData(om.Group):
-    """
-    Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions
-    """
+    """Calculations to recover physical parameter values that have been corrected based on ambient atmospheric conditions."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, default=1)
@@ -368,7 +360,7 @@ class UncorrectData(om.Group):
             'pressure_term',
             om.ExecComp(
                 'delta_T = (P0 * (1 + .2*mach**2)**3.5) / P_amb',
-                delta_T={'units': "unitless", 'shape': num_nodes},
+                delta_T={'units': 'unitless', 'shape': num_nodes},
                 P0={'units': 'psi', 'shape': num_nodes},
                 mach={'units': 'unitless', 'shape': num_nodes},
                 P_amb={
@@ -388,7 +380,7 @@ class UncorrectData(om.Group):
             'temperature_term',
             om.ExecComp(
                 'theta_T = T0 * (1 + .2*mach**2)/T_amb',
-                theta_T={'units': "unitless", 'shape': num_nodes},
+                theta_T={'units': 'unitless', 'shape': num_nodes},
                 T0={'units': 'degR', 'shape': num_nodes},
                 mach={'units': 'unitless', 'shape': num_nodes},
                 T_amb={
@@ -408,42 +400,11 @@ class UncorrectData(om.Group):
             'uncorrection',
             om.ExecComp(
                 'uncorrected_data = corrected_data * (delta_T * theta_T**.5)',
-                uncorrected_data={'units': "hp", 'shape': num_nodes},
-                delta_T={'units': "unitless", 'shape': num_nodes},
-                theta_T={'units': "unitless", 'shape': num_nodes},
-                corrected_data={'units': "hp", 'shape': num_nodes},
+                uncorrected_data={'units': 'hp', 'shape': num_nodes},
+                delta_T={'units': 'unitless', 'shape': num_nodes},
+                theta_T={'units': 'unitless', 'shape': num_nodes},
+                corrected_data={'units': 'hp', 'shape': num_nodes},
                 has_diag_partials=True,
             ),
             promotes=['*'],
         )
-
-
-# class InstallationDragFlag(Enum):
-#     """
-#     Define constants that map to supported options for scaling of installation drag.
-#     """
-#     OFF = auto()
-#     DELTA_MAX_NOZZLE_AREA = auto()
-#     MAX_NOZZLE_AREA = auto()
-#     REF_NOZZLE_EXIT_AREA = auto()
-
-
-class PropellerModelVariables(Enum):
-    """
-    Define constants that map to supported variable names in a propeller model.
-    """
-
-    HELICAL_MACH = 'Helical_Mach'
-    MACH = 'Mach'
-    CP = 'CP'  # power coefficient
-    CT = 'CT'  # thrust coefficient
-    J = 'J'  # advanced ratio
-
-
-default_propeller_units = {
-    PropellerModelVariables.HELICAL_MACH: 'unitless',
-    PropellerModelVariables.MACH: 'unitless',
-    PropellerModelVariables.CP: 'unitless',
-    PropellerModelVariables.CT: 'unitless',
-    PropellerModelVariables.J: 'unitless',
-}

@@ -27,6 +27,9 @@ parts:
       - file: user_guide/examples_of_the_same_mission_at_different_UI_levels
       - file: user_guide/aviary_commands
       - file: user_guide/input_files
+      - file: user_guide/phase_info
+      - file: user_guide/phase_info_detailed
+      - file: user_guide/phase_info_conversion
     - file: user_guide/drawing_and_running_simple_missions
     - file: user_guide/pre_mission_and_mission
     - file: user_guide/postprocessing_and_visualizing_results
@@ -36,6 +39,8 @@ parts:
       - file: user_guide/aerodynamics
       - file: user_guide/external_aero
       - file: user_guide/propulsion
+        sections:
+          - file: user_guide/creating_a_turboprop_engine.ipynb
       - file: user_guide/hamilton_standard
       - file: user_guide/mass
       - file: user_guide/subsystems
@@ -47,7 +52,8 @@ parts:
       - file: user_guide/reserve_missions
       - file: user_guide/multi_mission
       - file: user_guide/off_design_missions
-      - file: user_guide/SGM_capabilities
+      - file: user_guide/payload_range_functionality
+      - file: user_guide/features/blended_wing_body
     - file: user_guide/troubleshooting
 
 - caption: Examples
@@ -74,13 +80,17 @@ parts:
       - file: theory_guide/mass
       - file: theory_guide/mission
       - file: theory_guide/propulsion
+        sections:
+          - file: theory_guide/turboprop
     - file: theory_guide/optimization_algorithms
     - file: theory_guide/validation
+    - file: theory_guide/gasp_based_bwb
 
 - caption: Developer Guide
   chapters:
     - file: developer_guide/codebase_overview
     - file: developer_guide/coding_standards
+    - file: developer_guide/ai_policy.md
     - file: developer_guide/unit_tests
     - file: developer_guide/contributing_guidelines
     - file: developer_guide/how_to_contribute_docs

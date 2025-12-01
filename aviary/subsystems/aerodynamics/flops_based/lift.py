@@ -2,16 +2,14 @@ import numpy as np
 import openmdao.api as om
 
 import aviary.constants as constants
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 grav_metric = constants.GRAV_METRIC_FLOPS
 
 
 class SimpleLift(om.ExplicitComponent):
-    '''
-    Calculate lift as a function of wing area, dynamic pressure, and lift coefficient.
-    '''
+    """Calculate lift as a function of wing area, dynamic pressure, and lift coefficient."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -19,21 +17,15 @@ class SimpleLift(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1., units='m**2')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
+
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
         self.add_input(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='N/m**2',
-            desc='pressure caused by fluid motion',
+            name='cl', val=np.ones(nn), desc='current coefficient of lift', units='unitless'
         )
 
-        self.add_input(
-            name='cl', val=np.ones(nn), desc='current coefficient of lift',
-            units='unitless')
-
-        self.add_output(name=Dynamic.Vehicle.LIFT,
-                        val=np.ones(nn), desc='Lift', units='N')
+        add_aviary_output(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -78,32 +70,25 @@ class LiftEqualsWeight(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, varname=Aircraft.Wing.AREA, val=1.0, units='m**2')
+        add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
 
-        self.add_input(
-            name=Dynamic.Vehicle.MASS, val=np.ones(nn), desc='current aircraft mass',
-            units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
 
-        self.add_input(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.ones(nn),
-            units='N/m**2',
-            desc='pressure caused by fluid motion',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
 
         self.add_output(
-            name='cl', val=np.ones(nn), desc='current coefficient of lift',
-            units='unitless')
+            name='cl', val=np.ones(nn), desc='current coefficient of lift', units='unitless'
+        )
 
-        self.add_output(name=Dynamic.Vehicle.LIFT,
-                        val=np.ones(nn), desc='Lift', units='N')
+        add_aviary_output(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
         row_col = np.arange(nn)
 
         self.declare_partials(
-            Dynamic.Vehicle.LIFT, Dynamic.Vehicle.MASS, rows=row_col, cols=row_col, val=grav_metric)
+            Dynamic.Vehicle.LIFT, Dynamic.Vehicle.MASS, rows=row_col, cols=row_col, val=grav_metric
+        )
 
         self.declare_partials(
             Dynamic.Vehicle.LIFT,

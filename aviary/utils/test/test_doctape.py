@@ -1,17 +1,44 @@
 import unittest
+
 import numpy as np
+from openmdao.utils.assert_utils import (
+    assert_equal_arrays,
+    assert_equal_numstrings,
+    assert_near_equal,
+)
 
-from openmdao.utils.assert_utils import assert_near_equal, assert_equal_numstrings, assert_equal_arrays
+from aviary.utils.doctape import (
+    check_args,
+    check_contains,
+    check_value,
+    get_all_keys,
+    get_attribute_name,
+    get_previous_line,
+    get_value,
+    get_variable_name,
+    glue_class_functions,
+    glue_class_options,
+    glue_keys,
+    glue_variable,
+    gramatical_list,
+    run_command_no_file_error,
+    get_all_non_aviary_names,
+)
 
-from aviary.utils.doctape import (gramatical_list, check_value, check_contains, check_args,
-                                  run_command_no_file_error, get_attribute_name, get_all_keys, get_value, get_previous_line,
-                                  get_variable_name, glue_variable, glue_keys)
+try:
+    import myst_nb
+except ImportError:
+    myst_nb = False
 
 
+@unittest.skipIf(
+    myst_nb is False,
+    'Skipping because myst_nb is not installed for doc testing.',
+)
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
-    Docs are only built with latest, but these test will be run with latest and dev as well
+    Docs are only built with latest, but these test will be run with latest and dev as well.
     """
 
     def test_gramatical_list(self):
@@ -33,6 +60,7 @@ class DocTAPETests(unittest.TestCase):
     def test_get_attribute_name(self):
         class dummy_object:
             attr1 = 1
+
         name = get_attribute_name(dummy_object, 1)
         assert_equal_numstrings(name, 'attr1')
 
@@ -45,10 +73,9 @@ class DocTAPETests(unittest.TestCase):
         assert_near_equal(val, 2)
 
     def test_get_previous_line(self):
-        something = "something_else"
         line1 = get_previous_line()
         line2 = get_previous_line(2)
-        assert_equal_numstrings(line1, 'something = "something_else"')
+        assert_equal_numstrings(line2[0].strip(), line1)
         assert_equal_numstrings(line2[1].strip(), 'line1 = get_previous_line()')
 
     def test_get_variable_name(self):
@@ -61,9 +88,42 @@ class DocTAPETests(unittest.TestCase):
         glue_variable('plain_text', display=False)
 
     # requires IPython shell
+    def test_glue_variable_non_str(self):
+        glue_variable((9, 'ft'), display=False)
+
+    # requires IPython shell
     def test_glue_keys(self):
         glue_keys({'d1': {'d2': 2}}, display=False)
 
+    def test_glue_class_functions(self):
+        from aviary.interface.methods_for_level2 import AviaryProblem
+
+        curr_glued = []
+        glue_class_functions(AviaryProblem, curr_glued, prefix='zz')
+
+        self.assertTrue('load_inputs' in curr_glued)
+        self.assertTrue('load_inputs()' in curr_glued)
+        self.assertTrue('zz.load_inputs' in curr_glued)
+        self.assertTrue('zz.load_inputs()' in curr_glued)
+
+    def test_glue_class_options_attributes(self):
+        from aviary.core.aviary_group import AviaryGroup
+
+        curr_glued = []
+        glue_class_options(AviaryGroup, curr_glued)
+
+        self.assertTrue('auto_order' in curr_glued)
+        self.assertTrue('phase_info' in curr_glued)
+
+    def test_get_all_non_aviary_names(self):
+        from aviary.subsystems.aerodynamics.gasp_based.gaspaero import UFac
+
+        names = get_all_non_aviary_names(UFac)
+        expected_names = ['lift_ratio', 'bbar_alt', 'sigma', 'sigstr', 'ufac']
+        assert_equal_arrays(np.array(names), np.array(expected_names))
+
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = DocTAPETests()
+    test.test_get_all_non_aviary_names()

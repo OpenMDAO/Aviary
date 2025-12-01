@@ -21,10 +21,11 @@ aircraft:crew_and_payload:wing_cargo,0.01,lbm   #check
 aircraft:design:empty_mass_margin_scaler,0.01,unitless   #check
 aircraft:design:landing_to_takeoff_mass_ratio,0.95,unitless
 aircraft:design:use_alt_mass,False,unitless
+aircraft:design:type,transport,unitless
 aircraft:electrical:mass_scaler,1.01,unitless   #check
 aircraft:engine:additional_mass_fraction,0.001,unitless
 aircraft:engine:constant_fuel_consumption,0.,lb/h
-aircraft:engine:data_file,validation_cases/validation_data/flops_data/engine_only/turbofan_23k_2.deck,unitless
+aircraft:engine:data_file,validation_cases/validation_data/flops_data/engine_only/turbofan_23k_2.csv,unitless
 aircraft:engine:scale_factor,1.0,unitless
 aircraft:engine:flight_idle_max_fraction,1.01,unitless   #check
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
@@ -51,7 +52,7 @@ aircraft:engine:thrust_reversers_mass_scaler,0.01,unitless   #check
 aircraft:engine:wing_locations,0.22,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.01,lbm   #check
-aircraft:fuel:density_ratio,1.01,unitless   #check
+aircraft:fuel:density,6.767,lbm/galUS   #check
 aircraft:fuel:fuel_system_mass_scaler,1.01,unitless   #check
 aircraft:fuel:fuselage_fuel_capacity,7000.0,lbm
 aircraft:fuel:num_tanks,6,unitless
@@ -75,7 +76,6 @@ aircraft:horizontal_tail:vertical_tail_fraction,1.01,unitless   #check
 aircraft:hydraulics:mass_scaler,1.01,unitless   #check
 aircraft:hydraulics:system_pressure,5010.0,lbf/ft**2
 aircraft:instruments:mass_scaler,1.01,unitless   #check
-aircraft:landing_gear:carrier_based,False,unitless
 aircraft:landing_gear:main_gear_mass_scaler,1.01,unitless   #check
 aircraft:landing_gear:main_gear_oleo_length,55,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.01,unitless   #check
@@ -87,7 +87,7 @@ aircraft:nacelle:mass_scaler,1.01,unitless   #check
 aircraft:paint:mass_per_unit_area,0.01,lbm/ft**2   #check
 aircraft:propulsion:engine_oil_mass_scaler,1.01,unitless   #check
 aircraft:propulsion:misc_mass_scaler,1.01,unitless   #check
-aircraft:propulsion:total_num_wing_engines,[2],unitless
+aircraft:propulsion:total_num_wing_engines,2,unitless
 aircraft:vertical_tail:area,297,ft**2
 aircraft:vertical_tail:aspect_ratio,0.821,unitless
 aircraft:vertical_tail:mass_scaler,1.01,unitless   #check
@@ -99,11 +99,12 @@ aircraft:wing:aeroelastic_tailoring_factor,0.01,unitless   #check
 aircraft:wing:airfoil_technology,1.01,unitless   #check
 aircraft:wing:area,1480,ft**2
 aircraft:wing:aspect_ratio_reference,0.01,unitless   #check
-aircraft:wing:BENDING_MATERIAL_MASS_SCALER,1.01,unitless   #check
+aircraft:wing:bending_material_mass_scaler,1.01,unitless   #check
 aircraft:wing:chord_per_semispan,0.13,0.115,0.06,unitless
 aircraft:wing:composite_fraction,0.01,unitless   #check
 aircraft:wing:dihedral,-1.0,deg
 aircraft:wing:control_surface_area_ratio,0.2234,unitless
+aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:glove_and_bat,0.01,ft**2   #check
 aircraft:wing:input_station_dist,0.,0.5,1.,unitless
 aircraft:wing:load_distribution_control,3,unitless
@@ -117,7 +118,7 @@ aircraft:wing:shear_control_mass_scaler,1.01,unitless   #check
 aircraft:wing:span,118,ft
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,1.01,unitless   #check
-aircraft:wing:surface_ctrl_mass_scaler,1.01,unitless   #check
+aircraft:wing:surface_control_mass_scaler,1.01,unitless   #check
 aircraft:wing:sweep,25,deg
 aircraft:wing:taper_ratio,0.33,unitless
 aircraft:wing:thickness_to_chord,0.1,unitless
@@ -138,4 +139,5 @@ mission:takeoff:lift_coefficient_max,2.55,unitless
 mission:takeoff:lift_over_drag,25,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 settings:equations_of_motion,height_energy
+settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS

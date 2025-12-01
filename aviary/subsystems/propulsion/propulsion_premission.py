@@ -4,16 +4,16 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class PropulsionPreMission(om.Group):
-    '''
+    """
     Group that contains propulsion calculations for pre-mission analysis, such as
     computing scaling factors, and sums propulsion-system level totals.
-    '''
+    """
 
     def initialize(self):
         self.options.declare(
@@ -21,15 +21,24 @@ class PropulsionPreMission(om.Group):
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
         )
+
+        self.options.declare('engine_models', types=list, desc='list of EngineModels on aircraft')
+
+        # engine options is optional
         self.options.declare(
-            'engine_models', types=list, desc='list of EngineModels on aircraft'
+            'engine_options',
+            types=dict,
+            default={},
+            desc='dictionary of options for each EngineModel',
         )
+
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        options = self.options['aviary_options']
+        aviary_options = self.options['aviary_options']
         engine_models = self.options['engine_models']
+        engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
         # Each engine model pre_mission component only needs to accept and output single
@@ -38,7 +47,10 @@ class PropulsionPreMission(om.Group):
         # each component here
         # Promotions are handled in configure()
         for engine in engine_models:
-            subsys = engine.build_pre_mission(options)
+            options = {}
+            if engine.name in engine_options:
+                options = engine_options[engine.name]
+            subsys = engine.build_pre_mission(aviary_options, **options)
             if subsys:
                 if num_engine_type > 1:
                     proms = None
@@ -53,9 +65,7 @@ class PropulsionPreMission(om.Group):
         if num_engine_type > 1:
             # Add an empty mux comp, which will be customized to handle all required
             # outputs in configure()
-            self.add_subsystem(
-                'pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*']
-            )
+            self.add_subsystem('pre_mission_mux', subsys=om.MuxComp(), promotes_outputs=['*'])
 
         self.add_subsystem(
             'propulsion_sum',
@@ -118,9 +128,7 @@ class PropulsionPreMission(om.Group):
             )
             # only keep inputs if they contain the pattern
             input_dict[engine.name] = dict(
-                (key, eng_inputs[key])
-                for key in eng_inputs
-                if any([x in key for x in pattern])
+                (key, eng_inputs[key]) for key in eng_inputs if any([x in key for x in pattern])
             )
 
             # do the same thing with outputs
@@ -135,9 +143,7 @@ class PropulsionPreMission(om.Group):
                 ]
             )
             output_dict[engine.name] = dict(
-                (key, eng_outputs[key])
-                for key in eng_outputs
-                if any([x in key for x in pattern])
+                (key, eng_outputs[key]) for key in eng_outputs if any([x in key for x in pattern])
             )
             unique_outputs.update(
                 [
@@ -164,15 +170,9 @@ class PropulsionPreMission(om.Group):
             # promote all other inputs/outputs for this engine normally (handle vectorized outputs later)
             self.promotes(
                 engine.name,
-                inputs=[
-                    input
-                    for input in eng_inputs
-                    if input not in input_dict[engine.name]
-                ],
+                inputs=[input for input in eng_inputs if input not in input_dict[engine.name]],
                 outputs=[
-                    output
-                    for output in eng_outputs
-                    if output not in output_dict[engine.name]
+                    output for output in eng_outputs if output not in output_dict[engine.name]
                 ],
             )
 
@@ -200,9 +200,7 @@ class PropulsionPreMission(om.Group):
 
 
 class PropulsionSum(om.ExplicitComponent):
-    '''
-    Calculates propulsion system level sums of individual engine performance parameters.
-    '''
+    """Calculates propulsion system level sums of individual engine performance parameters."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -210,9 +208,7 @@ class PropulsionSum(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(
-            self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type)
-        )
+        add_aviary_input(self, Aircraft.Engine.SCALED_SLS_THRUST, val=np.zeros(num_engine_type))
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=0.0)
 
@@ -230,6 +226,4 @@ class PropulsionSum(om.ExplicitComponent):
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
-        outputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST] = np.dot(
-            thrust, num_engines
-        )
+        outputs[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST] = np.dot(thrust, num_engines)

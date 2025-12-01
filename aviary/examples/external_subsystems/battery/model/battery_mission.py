@@ -2,7 +2,7 @@
 Battery Performance Modeling on Maxwell X-57
 Jeffrey C. Chin, Sydney L. Schnulo, Thomas B. Miller,
 Kevin Prokopius, and Justin Gray
-http://openmdao.org/pubs/chin_battery_performance_x57_2019.pdf
+http://openmdao.org/pubs/chin_battery_performance_x57_2019.pdf.
 
 Thevenin voltage equation based on paper
 "Evaluation of Lithium Ion Battery Equivalent Circuit Models
@@ -16,56 +16,59 @@ Tarun Huria, Massimo Ceraolo, Javier Gazzarri, Robyn Jackey
 """
 
 from openmdao.api import Group
-from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
-from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import RegTheveninInterpGroup
 
+from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
+from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
+from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import (
+    RegTheveninInterpGroup,
+)
 from aviary.utils.aviary_values import AviaryValues
-from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
 
 
 class BatteryMission(Group):
     """Assembly to connect subcomponents of the Thevenin Battery Equivalent
-    Circuit Model From Interpolated Performance Maps
+    Circuit Model From Interpolated Performance Maps.
     """
 
     def initialize(self):
-        self.options.declare("num_nodes", types=int)
+        self.options.declare('num_nodes', types=int)
         self.options.declare(
-            'aviary_inputs', types=AviaryValues,
+            'aviary_inputs',
+            types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
             default=None,
         )
 
     def setup(self):
-        n = self.options["num_nodes"]
+        n = self.options['num_nodes']
 
         self.add_subsystem(
-            name="interp_group",
+            name='interp_group',
             subsys=RegTheveninInterpGroup(num_nodes=n),
         )
 
-        self.add_subsystem(name="cell", subsys=CellComp(num_nodes=n))
+        self.add_subsystem(name='cell', subsys=CellComp(num_nodes=n))
 
         # Connect internal names
-        self.connect("interp_group.U_oc", "cell.U_oc")
-        self.connect("interp_group.C_Th", "cell.C_Th")
-        self.connect("interp_group.R_Th", "cell.R_Th")
-        self.connect("interp_group.R_0", "cell.R_0")
+        self.connect('interp_group.U_oc', 'cell.U_oc')
+        self.connect('interp_group.C_Th', 'cell.C_Th')
+        self.connect('interp_group.R_Th', 'cell.R_Th')
+        self.connect('interp_group.R_0', 'cell.R_0')
 
         # Promote interp group inputs to match Aviary variable names
         self.promotes(
-            "interp_group",
+            'interp_group',
             inputs=[
-                ("T_batt", "mission:battery:temperature"),
-                ("SOC", "mission:battery:state_of_charge"),
+                ('T_batt', 'dynamic:battery:temperature'),
+                ('SOC', 'dynamic:battery:state_of_charge'),
             ],
         )
 
         self.promotes(
-            "cell",
+            'cell',
             inputs=[
-                Mission.Battery.VOLTAGE_THEVENIN,
-                Mission.Battery.CURRENT,
+                Dynamic.Battery.VOLTAGE_THEVENIN,
+                Dynamic.Battery.CURRENT,
                 Aircraft.Battery.N_SERIES,
                 Aircraft.Battery.N_PARALLEL,
                 Aircraft.Battery.Cell.ENERGY_CAPACITY_MAX,
@@ -73,12 +76,12 @@ class BatteryMission(Group):
         )
 
         self.promotes(
-            "cell",
+            'cell',
             outputs=[
-                Mission.Battery.VOLTAGE,
-                Mission.Battery.VOLTAGE_THEVENIN_RATE,
-                Mission.Battery.STATE_OF_CHARGE_RATE,
-                Mission.Battery.HEAT_OUT,
-                Aircraft.Battery.EFFICIENCY,
+                Dynamic.Battery.VOLTAGE,
+                Dynamic.Battery.VOLTAGE_THEVENIN_RATE,
+                Dynamic.Battery.STATE_OF_CHARGE_RATE,
+                Dynamic.Battery.HEAT_OUT,
+                Dynamic.Battery.EFFICIENCY,
             ],
         )

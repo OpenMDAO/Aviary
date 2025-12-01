@@ -5,22 +5,18 @@ from aviary.variable_info.variables import Aircraft
 
 
 class PaintMass(om.ExplicitComponent):
-    '''
-    Calculates the mass of paint based on total wetted area.
-    '''
+    """Calculates the mass of paint based on total wetted area."""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.TOTAL_WETTED_AREA)
-        add_aviary_input(self, Aircraft.Paint.MASS_PER_UNIT_AREA)
+        add_aviary_input(self, Aircraft.Design.TOTAL_WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Paint.MASS_PER_UNIT_AREA, units='lbm/ft**2')
 
-        add_aviary_output(self, Aircraft.Paint.MASS)
+        add_aviary_output(self, Aircraft.Paint.MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
 
-    def compute(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         wetted_area = inputs[Aircraft.Design.TOTAL_WETTED_AREA]
         mass_per_area = inputs[Aircraft.Paint.MASS_PER_UNIT_AREA]
 
@@ -30,8 +26,6 @@ class PaintMass(om.ExplicitComponent):
         wetted_area = inputs[Aircraft.Design.TOTAL_WETTED_AREA]
         mass_per_area = inputs[Aircraft.Paint.MASS_PER_UNIT_AREA]
 
-        J[Aircraft.Paint.MASS, Aircraft.Design.TOTAL_WETTED_AREA] = \
-            mass_per_area
+        J[Aircraft.Paint.MASS, Aircraft.Design.TOTAL_WETTED_AREA] = mass_per_area
 
-        J[Aircraft.Paint.MASS, Aircraft.Paint.MASS_PER_UNIT_AREA] = \
-            wetted_area
+        J[Aircraft.Paint.MASS, Aircraft.Paint.MASS_PER_UNIT_AREA] = wetted_area

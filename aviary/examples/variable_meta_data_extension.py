@@ -1,7 +1,7 @@
-'''
-Define meta data associated with variables in the disciplinary data hierarchy.
-'''
+"""Define meta data associated with variables in the disciplinary data hierarchy."""
+
 from copy import deepcopy
+
 import numpy as np
 
 import aviary.api as av
@@ -38,6 +38,8 @@ av.add_meta_data(
     Aircraft.CG,
     units='ft',
     desc='Center of gravity',
+    types=float,
+    multivalue=True,
     default_value=np.zeros(3),
     meta_data=ExtendedMetaData,
     # note that VSP_example is not a real code and center_of_gravity is not a real variable name. These are here to show how the historical_name argument can be used.
@@ -48,8 +50,8 @@ av.add_meta_data(
     Aircraft.MASS,
     units='lbm',
     desc='Total aircraft mass.',
-    default_value=1.,
-    meta_data=ExtendedMetaData
+    default_value=1.0,
+    meta_data=ExtendedMetaData,
 )
 
 #  _    _                  _                         _             _   _______           _   _
@@ -65,7 +67,7 @@ av.add_meta_data(
     units='ft',
     desc='Mean aerodynamic chord.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -73,7 +75,7 @@ av.add_meta_data(
     units='ft**2',
     desc='Area of each elevator element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -81,7 +83,7 @@ av.add_meta_data(
     units='ft',
     desc='Root chord of each elevator element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -89,7 +91,7 @@ av.add_meta_data(
     units='ft',
     desc='Span of each elevator element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 #       _
@@ -107,7 +109,7 @@ av.add_meta_data(
     units='kg',
     desc='mass of the aircraft`s jury',
     default_value=0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 #  _                            _   _                    _____
@@ -125,7 +127,7 @@ av.add_meta_data(
     units='ft',
     desc='Main gear oleo diameter',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 # __      __                _     _                  _   _______           _   _
@@ -141,7 +143,7 @@ av.add_meta_data(
     units='ft',
     desc='Mean aerodynamic chord.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -149,7 +151,7 @@ av.add_meta_data(
     units='ft**2',
     desc='Area of each rudder element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -157,7 +159,7 @@ av.add_meta_data(
     units='ft',
     desc='Root chord of each rudder element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -165,7 +167,7 @@ av.add_meta_data(
     units='ft',
     desc='Span of each rudder element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 # __          __  _
@@ -182,8 +184,10 @@ av.add_meta_data(
     Aircraft.Wing.AERO_CENTER,
     units='ft',
     desc='aerodynamic center.',
+    types=float,
+    multivalue=True,
     default_value=np.zeros(3),
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -191,7 +195,7 @@ av.add_meta_data(
     units='ft',
     desc='Reference chord.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -199,7 +203,7 @@ av.add_meta_data(
     units='ft**2',
     desc='Area of each flap element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -207,7 +211,7 @@ av.add_meta_data(
     units='ft',
     desc='Root chord of each flap element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -215,7 +219,7 @@ av.add_meta_data(
     units='ft',
     desc='Span of each flap element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -223,7 +227,7 @@ av.add_meta_data(
     units='ft**2',
     desc='Area of each Krueger element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -231,7 +235,7 @@ av.add_meta_data(
     units='ft',
     desc='Root chord of each krueger element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -239,7 +243,7 @@ av.add_meta_data(
     units='ft',
     desc='Span of each krueger element.',
     default_value=0.0,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 # ============================================================================================================================================
@@ -269,7 +273,7 @@ av.add_meta_data(
     units='lbm',
     desc='Fuel mass states along cruise phase',
     default_value=None,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -277,7 +281,7 @@ av.add_meta_data(
     units='unitless',
     desc='Mach number states along cruise phase',
     default_value=None,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 av.add_meta_data(
@@ -285,7 +289,7 @@ av.add_meta_data(
     units='lbm',
     desc='Gross mass states along cruise phase',
     default_value=None,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
 )
 
 #  _______                  _
@@ -301,7 +305,7 @@ av.update_meta_data(
     units='h',
     desc='I am changing the description of this variable to demonstrate the update_meta_data function',
     default_value=0.167,
-    meta_data=ExtendedMetaData
+    meta_data=ExtendedMetaData,
     # We use the ExtendedMetaData because this is the metadata we want to edit.
     # Despite the fact that we never added Mission.Taxi.DURATION to the ExtendedMetaData,
     # the variable is already there because it exists in the av.CoreMetaData

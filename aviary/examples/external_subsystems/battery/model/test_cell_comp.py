@@ -1,13 +1,13 @@
-from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
-from openmdao.api import Problem, Group
-from openmdao.utils.testing_utils import use_tempdirs
 import unittest
+
+from openmdao.api import Group, Problem
+from openmdao.utils.testing_utils import use_tempdirs
+
+from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
 
 
 class Test_cell_comp(unittest.TestCase):
-    """
-    test partials in CellComp component
-    """
+    """test partials in CellComp component."""
 
     @use_tempdirs
     def test_cell_comp(self):
@@ -19,5 +19,5 @@ class Test_cell_comp(unittest.TestCase):
         p.check_partials(compact_print=True, method='cs', step=1e-50)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

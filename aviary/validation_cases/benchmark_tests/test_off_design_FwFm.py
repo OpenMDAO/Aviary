@@ -1,104 +1,90 @@
 import unittest
-import aviary.api as av
 
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info_parameterization
+import aviary.api as av
+from aviary.models.missions.height_energy_default import phase_info_parameterization
 from aviary.variable_info.enums import ProblemType, Verbosity
 
 
 class HeightEnergyTestCase(unittest.TestCase):
-    """
-    Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation. 
-    """
+    """Setup basic aircraft mass and range and select climb, cruise, and descent phases for simulation."""
 
     def setUp(self) -> None:
         self.sized_mass = 175871.04745399
         self.sized_range = 3375
         phase_info = {
-            "pre_mission": {"include_takeoff": True, "optimize_mass": True},
-            "climb": {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
-                    'fix_initial': False,
-                    'input_initial': True,
-                    "optimize_mach": True,
-                    "optimize_altitude": True,
-                    "use_polynomial_control": False,
-                    "num_segments": 6,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.3, "unitless"),
-                    "final_mach": (0.79, "unitless"),
-                    "mach_bounds": ((0.1, 0.8), "unitless"),
-                    "initial_altitude": (35., "ft"),
-                    "final_altitude": (35000.0, "ft"),
-                    "altitude_bounds": ((0.0, 35000.0), "ft"),
-                    "throttle_enforcement": "path_constraint",
-                    "constrain_final": False,
-                    "fix_duration": False,
-                    "initial_bounds": ((0.0, 2.0), "min"),
-                    "duration_bounds": ((5.0, 50.0), "min"),
-                    "no_descent": False,
-                    "add_initial_mass_constraint": False,
+            'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
+            'climb': {
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
+                    'num_segments': 6,
+                    'order': 3,
+                    'mach_optimize': True,
+                    'mach_bounds': ((0.1, 0.8), 'unitless'),
+                    'altitude_optimize': True,
+                    'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'throttle_enforcement': 'path_constraint',
+                    'time_initial': (0.0, 'min'),
+                    'time_duration_bounds': ((5.0, 50.0), 'min'),
+                    'no_descent': False,
                 },
-                "initial_guesses": {"time": ([0, 40.0], "min")},
-            },
-            "cruise": {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
-                    "optimize_mach": True,
-                    "optimize_altitude": True,
-                    "polynomial_control_order": 1,
-                    "use_polynomial_control": True,
-                    "num_segments": 1,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.79, "unitless"),
-                    "final_mach": (0.79, "unitless"),
-                    "mach_bounds": ((0.79, 0.79), "unitless"),
-                    "initial_altitude": (35000.0, "ft"),
-                    "final_altitude": (35000.0, "ft"),
-                    "altitude_bounds": ((35000.0, 35000.0), "ft"),
-                    "throttle_enforcement": "boundary_constraint",
-                    "fix_initial": False,
-                    "constrain_final": False,
-                    "fix_duration": False,
-                    "initial_bounds": ((64.0, 192.0), "min"),
-                    "duration_bounds": ((60.0, 720.0), "min"),
+                'initial_guesses': {
+                    'time': ([0, 40.0], 'min'),
+                    'altitude': ([35, 35000.0], 'ft'),
+                    'mach': ([0.3, 0.79], 'unitless'),
                 },
-                "initial_guesses": {"time": ([128, 113], "min")},
             },
-            "descent": {
-                "subsystem_options": {"core_aerodynamics": {"method": "computed"}},
-                "user_options": {
-                    "optimize_mach": True,
-                    "optimize_altitude": True,
-                    "use_polynomial_control": False,
-                    "num_segments": 5,
-                    "order": 3,
-                    "solve_for_distance": False,
-                    "initial_mach": (0.79, "unitless"),
-                    "final_mach": (0.3, "unitless"),
-                    "mach_bounds": ((0.2, 0.8), "unitless"),
-                    "initial_altitude": (35000.0, "ft"),
-                    "final_altitude": (35.0, "ft"),
-                    "altitude_bounds": ((0.0, 35000.0), "ft"),
-                    "throttle_enforcement": "path_constraint",
-                    "fix_initial": False,
-                    "constrain_final": True,
-                    "fix_duration": False,
-                    "initial_bounds": ((120., 800.), "min"),
-                    "duration_bounds": ((5.0, 35.0), "min"),
-                    "no_climb": True,
+            'cruise': {
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
+                    'num_segments': 1,
+                    'order': 3,
+                    'mach_optimize': True,
+                    'mach_polynomial_order': 1,
+                    'mach_initial': (0.79, 'unitless'),
+                    'mach_bounds': ((0.785, 0.8), 'unitless'),
+                    'altitude_optimize': True,
+                    'altitude_polynomial_order': 1,
+                    'altitude_initial': (35000.0, 'ft'),
+                    'altitude_bounds': ((35000.0, 35000.0), 'ft'),
+                    'throttle_enforcement': 'boundary_constraint',
+                    'time_initial_bounds': ((20.0, 192.0), 'min'),
+                    'time_duration_bounds': ((60.0, 720.0), 'min'),
                 },
-                "initial_guesses": {"time": ([241, 30], "min")},
+                'initial_guesses': {
+                    'time': ([40.0, 201], 'min'),
+                    'altitude': ([35000, 35000.0], 'ft'),
+                    'mach': ([0.79, 0.79], 'unitless'),
+                },
             },
-            "post_mission": {
-                "include_landing": True,
-                "constrain_range": True,
-                "target_range": (3375.0, "nmi"),
+            'descent': {
+                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'user_options': {
+                    'num_segments': 5,
+                    'order': 3,
+                    'mach_optimize': True,
+                    'mach_initial': (0.79, 'unitless'),
+                    'mach_final': (0.3, 'unitless'),
+                    'mach_bounds': ((0.2, 0.8), 'unitless'),
+                    'altitude_optimize': True,
+                    'altitude_initial': (35000.0, 'ft'),
+                    'altitude_final': (35.0, 'ft'),
+                    'altitude_bounds': ((0.0, 35000.0), 'ft'),
+                    'throttle_enforcement': 'path_constraint',
+                    'time_initial_bounds': ((120.0, 800.0), 'min'),
+                    'time_duration_bounds': ((5.0, 35.0), 'min'),
+                    'no_climb': True,
+                },
+                'initial_guesses': {
+                    'time': ([241, 30], 'min'),
+                },
+            },
+            'post_mission': {
+                'include_landing': True,
+                'constrain_range': True,
+                'target_range': (3375.0, 'nmi'),
             },
         }
 
@@ -112,59 +98,64 @@ class TestOffDesign(HeightEnergyTestCase):
     FLOPS mass method and HEIGHT_ENERGY mission method. Run a fallout mission to test off design.
     """
 
-    @require_pyoptsparse(optimizer="IPOPT")
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_off_design_IPOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
-        prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                                 self.phase_info, verbosity=Verbosity.QUIET)
+        prob_fallout.load_inputs(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            self.phase_info,
+            verbosity=Verbosity.QUIET,
+        )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
-        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT,
-                                           units='unitless')
+        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
         prob_fallout.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm')
+            'mission:design:gross_mass', self.sized_mass, units='lbm'
+        )
         prob_fallout.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm')
+            'mission:summary:gross_mass', self.sized_mass, units='lbm'
+        )
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases(
-            phase_info_parameterization=phase_info_parameterization)
+        prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_fallout.add_post_mission_systems()
         prob_fallout.link_phases()
         prob_fallout.add_driver('IPOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
         prob_alternate.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info,
-            verbosity=Verbosity.QUIET)
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            self.phase_info,
+            verbosity=Verbosity.QUIET,
+        )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
-            'problem_type', ProblemType.ALTERNATE, units='unitless')
+            'problem_type', ProblemType.ALTERNATE, units='unitless'
+        )
 
         prob_alternate.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm')
+            'mission:design:gross_mass', self.sized_mass, units='lbm'
+        )
         prob_alternate.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm')
+            'mission:summary:gross_mass', self.sized_mass, units='lbm'
+        )
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases(
-            phase_info_parameterization=phase_info_parameterization)
+        prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_alternate.add_post_mission_systems()
         prob_alternate.link_phases()
         prob_alternate.add_driver('IPOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
@@ -176,55 +167,60 @@ class TestOffDesign(HeightEnergyTestCase):
     def test_off_design_SNOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
-        prob_fallout.load_inputs('models/test_aircraft/aircraft_for_bench_FwFm.csv',
-                                 self.phase_info, verbosity=Verbosity.QUIET)
+        prob_fallout.load_inputs(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            self.phase_info,
+            verbosity=Verbosity.QUIET,
+        )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
-        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT,
-                                           units='unitless')
+        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
         prob_fallout.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm')
+            'mission:design:gross_mass', self.sized_mass, units='lbm'
+        )
         prob_fallout.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm')
+            'mission:summary:gross_mass', self.sized_mass, units='lbm'
+        )
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.add_pre_mission_systems()
-        prob_fallout.add_phases(
-            phase_info_parameterization=phase_info_parameterization)
+        prob_fallout.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_fallout.add_post_mission_systems()
         prob_fallout.link_phases()
         prob_fallout.add_driver('SNOPT', max_iter=100)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
-        prob_fallout.set_initial_guesses()
         prob_fallout.run_aviary_problem()
 
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
         prob_alternate.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv', self.phase_info,
-            verbosity=Verbosity.QUIET)
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            self.phase_info,
+            verbosity=Verbosity.QUIET,
+        )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
-            'problem_type', ProblemType.ALTERNATE, units='unitless')
+            'problem_type', ProblemType.ALTERNATE, units='unitless'
+        )
 
         prob_alternate.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm')
+            'mission:design:gross_mass', self.sized_mass, units='lbm'
+        )
         prob_alternate.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm')
+            'mission:summary:gross_mass', self.sized_mass, units='lbm'
+        )
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.add_pre_mission_systems()
-        prob_alternate.add_phases(
-            phase_info_parameterization=phase_info_parameterization)
+        prob_alternate.add_phases(phase_info_parameterization=phase_info_parameterization)
         prob_alternate.add_post_mission_systems()
         prob_alternate.link_phases()
         prob_alternate.add_driver('SNOPT', max_iter=100)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
-        prob_alternate.set_initial_guesses()
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)

@@ -8,26 +8,27 @@ from openmdao.core.driver import Driver
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.N3CC.N3CC_data import (
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     inputs as _inputs,
+)
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+    takeoff_liftoff_user_options as _takeoff_liftoff_user_options,
+)
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     takeoff_trajectory_builder as _takeoff_trajectory_builder,
-    takeoff_liftoff_user_options as _takeoff_liftoff_user_options)
-
+)
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import \
-    set_aviary_initial_values, set_aviary_input_defaults
-from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
+from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
+from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
 class TestFLOPSDetailedTakeoff(unittest.TestCase):
-    """
-    Test detailed takeoff using N3CC data
-    """
+    """Test detailed takeoff using N3CC data."""
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT(self):
@@ -72,22 +73,19 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
 
         driver.declare_coloring()
 
-        driver.add_recorder(om.SqliteRecorder(
-            f'FLOPS_detailed_takeoff_traj_{optimizer}.sql'))
+        driver.add_recorder(om.SqliteRecorder(f'FLOPS_detailed_takeoff_traj_{optimizer}.sql'))
 
         driver.recording_options['record_derivatives'] = False
 
-        engine = build_engine_deck(aviary_options)
-        preprocess_options(aviary_options, engine_models=engine)
+        engines = [build_engine_deck(aviary_options)]
+        preprocess_options(aviary_options, engine_models=engines)
 
-        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engine)
+        default_premission_subsystems = get_default_mission_subsystems('FLOPS', engines)
 
         # Upstream static analysis for aero
         takeoff.model.add_subsystem(
             'pre_mission',
-            CorePreMission(
-                aviary_options=aviary_options, subsystems=default_premission_subsystems
-            ),
+            CorePreMission(aviary_options=aviary_options, subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
@@ -97,22 +95,30 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         takeoff.model.add_subsystem('traj', traj)
 
         takeoff_trajectory_builder.build_trajectory(
-            aviary_options=aviary_options, model=takeoff.model, traj=traj)
+            aviary_options=aviary_options, model=takeoff.model, traj=traj
+        )
 
         distance_max, units = takeoff_liftoff_user_options.get_item('distance_max')
         liftoff = takeoff_trajectory_builder.get_phase('takeoff_liftoff')
 
-        liftoff.add_objective(
-            Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
+        liftoff.add_objective(Dynamic.Mission.DISTANCE, loc='final', ref=distance_max, units=units)
 
         # Insert a constraint for a fake decision speed, until abort is added.
         takeoff.model.add_constraint(
             'traj.takeoff_brake_release.states:velocity',
-            equals=149.47, units='kn', ref=150.0, indices=[-1])
+            equals=149.47,
+            units='kn',
+            ref=150.0,
+            indices=[-1],
+        )
 
         takeoff.model.add_constraint(
             'traj.takeoff_decision_speed.states:velocity',
-            equals=155.36, units='kn', ref=159.0, indices=[-1])
+            equals=155.36,
+            units='kn',
+            ref=159.0,
+            indices=[-1],
+        )
 
         varnames = [Aircraft.Wing.ASPECT_RATIO, Aircraft.Engine.SCALE_FACTOR]
         set_aviary_input_defaults(takeoff.model, varnames, aviary_options)
@@ -122,8 +128,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         # suppress warnings:
         # "input variable '...' promoted using '*' was already promoted using 'aircraft:*'
         with warnings.catch_warnings():
-
-            warnings.simplefilter("ignore", om.PromotionWarning)
+            warnings.simplefilter('ignore', om.PromotionWarning)
             takeoff.setup(check=True)
 
         set_aviary_initial_values(takeoff, aviary_options)
@@ -134,7 +139,9 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         takeoff_trajectory_builder.apply_initial_guesses(takeoff, 'traj')
 
         # run the problem
-        dm.run_problem(takeoff, run_driver=True, simulate=True, make_plots=False)
+        takeoff.result = dm.run_problem(takeoff, run_driver=True, simulate=True, make_plots=False)
+
+        self.assertTrue(takeoff.result.success)
 
         # liftoff.rhs_all.list_inputs(print_arrays=True)
         # takeoff.model.list_outputs(print_arrays=True)
@@ -143,8 +150,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
         # N3CC FLOPS output line 2393
         desired = 5649.9  # ft
 
-        actual = takeoff.model.get_val(
-            'traj.takeoff_liftoff.states:distance', units='ft')[-1]
+        actual = takeoff.model.get_val('traj.takeoff_liftoff.states:distance', units='ft')[-1]
 
         assert_near_equal(actual, desired, 2e-2)
 

@@ -9,11 +9,11 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 class PropulsionMission(om.Group):
-    '''
+    """
     Group that tracks all engine models used during mission analysis. Accounts for
     number of engines for each type and returns aircraft-total dynamic values such
     as net thrust and fuel flow rate.
-    '''
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, lower=0)
@@ -24,14 +24,21 @@ class PropulsionMission(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
 
+        self.options.declare('engine_models', types=list, desc='list of EngineModels on aircraft')
+
+        # engine options is optional
         self.options.declare(
-            'engine_models', types=list, desc='list of EngineModels on aircraft'
+            'engine_options',
+            types=dict,
+            default={},
+            desc='dictionary of options for each EngineModel',
         )
 
     def setup(self):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = self.options['engine_models']
+        engine_options = self.options['engine_options']
         num_engine_type = len(engine_models)
 
         if num_engine_type > 1:
@@ -77,14 +84,17 @@ class PropulsionMission(om.Group):
                     )
 
             self.add_subsystem(
-                "parameter_passthrough",
+                'parameter_passthrough',
                 comp,
             )
 
             for i, engine in enumerate(engine_models):
+                kwargs = {}
+                if engine.name in engine_options:
+                    kwargs = engine_options[engine.name]
                 self.add_subsystem(
                     engine.name,
-                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
+                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs),
                     promotes_inputs=['*'],
                 )
 
@@ -114,27 +124,25 @@ class PropulsionMission(om.Group):
                     )
         else:
             engine = engine_models[0]
+            kwargs = {}
+            if engine.name in engine_options:
+                kwargs = engine_options[engine.name]
+            self.add_subsystem(
+                engine.name,
+                subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs),
+                promotes_inputs=['*'],
+            )
 
-            for i, engine in enumerate(engine_models):
-                self.add_subsystem(
-                    engine.name,
-                    subsys=engine.build_mission(num_nodes=nn, aviary_inputs=options),
-                    promotes_inputs=['*'],
-                )
+            self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.THROTTLE])
 
-                self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.THROTTLE])
-                if engine.use_hybrid_throttle:
-                    self.promotes(
-                        engine.name, inputs=[Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE]
-                    )
+            if engine.use_hybrid_throttle:
+                self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE])
 
         # TODO might be able to avoid hardcoding using propulsion Enums
         # mux component to vectorize individual engine outputs into 2d arrays
         perf_mux = om.MuxComp(vec_size=num_engine_type)
         # add each engine data variable to mux component
-        perf_mux.add_var(
-            Dynamic.Vehicle.Propulsion.THRUST, val=0, shape=(nn,), axis=1, units='lbf'
-        )
+        perf_mux.add_var(Dynamic.Vehicle.Propulsion.THRUST, val=0, shape=(nn,), axis=1, units='lbf')
         perf_mux.add_var(
             Dynamic.Vehicle.Propulsion.THRUST_MAX,
             val=0,
@@ -190,9 +198,7 @@ class PropulsionMission(om.Group):
         #     axis=1,
         #     units='ft**2')
 
-        self.add_subsystem(
-            'vectorize_performance', subsys=perf_mux, promotes_outputs=['*']
-        )
+        self.add_subsystem('vectorize_performance', subsys=perf_mux, promotes_outputs=['*'])
 
         self.add_subsystem(
             'propulsion_sum',
@@ -248,8 +254,7 @@ class PropulsionMission(om.Group):
                 key for key in comp_outputs if '.' not in comp_outputs[key]['prom_name']
             ]
             output_dict[comp.name] = dict(
-                (comp_outputs[key]['prom_name'], comp_outputs[key])
-                for key in promoted_outputs
+                (comp_outputs[key]['prom_name'], comp_outputs[key]) for key in promoted_outputs
             )
             unique_outputs.update(
                 [
@@ -311,9 +316,7 @@ class PropulsionMission(om.Group):
 
 
 class PropulsionSum(om.ExplicitComponent):
-    '''
-    Calculates propulsion system level sums of individual engine performance parameters.
-    '''
+    """Calculates propulsion system level sums of individual engine performance parameters."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int, lower=0)
@@ -321,9 +324,7 @@ class PropulsionSum(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        num_engine_type = len(
-            self.options[Aircraft.Engine.NUM_ENGINES]
-        )
+        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
             Dynamic.Vehicle.Propulsion.THRUST,
@@ -351,9 +352,7 @@ class PropulsionSum(om.ExplicitComponent):
             units='lbm/h',
         )
 
-        self.add_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.zeros(nn), units='lbf'
-        )
+        self.add_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.zeros(nn), units='lbf')
         self.add_output(
             Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL,
             val=np.zeros(nn),
@@ -369,9 +368,7 @@ class PropulsionSum(om.ExplicitComponent):
             val=np.zeros(nn),
             units='kW',
         )
-        self.add_output(
-            Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, val=np.zeros(nn), units='lbm/h'
-        )
+        self.add_output(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, val=np.zeros(nn), units='lbm/h')
 
     def setup_partials(self):
         nn = self.options['num_nodes']
@@ -429,13 +426,9 @@ class PropulsionSum(om.ExplicitComponent):
         nox = inputs[Dynamic.Vehicle.Propulsion.NOX_RATE]
 
         outputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = np.dot(thrust, num_engines)
-        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL] = np.dot(
-            thrust_max, num_engines
-        )
+        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL] = np.dot(thrust_max, num_engines)
         outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL] = np.dot(
             fuel_flow, num_engines
         )
-        outputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL] = np.dot(
-            electric, num_engines
-        )
+        outputs[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL] = np.dot(electric, num_engines)
         outputs[Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL] = np.dot(nox, num_engines)

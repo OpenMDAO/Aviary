@@ -1,7 +1,6 @@
 import openmdao.api as om
-import numpy as np
 
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft
 
 
 class GearboxPreMission(om.Group):
@@ -12,8 +11,10 @@ class GearboxPreMission(om.Group):
     gearbox is fixed and RPM going out of the gearbox is fixed over the whole mission.
     """
 
-    def initialize(self, ):
-        self.options.declare("simple_mass", types=bool, default=True)
+    def initialize(
+        self,
+    ):
+        self.options.declare('simple_mass', types=bool, default=True)
         self.name = 'gearbox_premission'
 
     def setup(self):
@@ -43,14 +44,12 @@ class GearboxPreMission(om.Group):
                 RPM_out={'val': 1.0, 'units': 'rad/s'},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[
-                ('shaft_power', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN)
-            ],
+            promotes_inputs=[('shaft_power', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN)],
             # 'RPM_out'],
             # promotes_outputs=['torque_max'],
         )
 
-        if self.options["simple_mass"]:
+        if self.options['simple_mass']:
             # Simple gearbox mass will always produce positive values for mass based
             # on a fixed specific torque
             self.add_subsystem(
@@ -92,7 +91,7 @@ class GearboxPreMission(om.Group):
             )
 
         self.connect('gearbox_RPM.RPM_out', 'torque_comp.RPM_out')
-        if self.options["simple_mass"]:
+        if self.options['simple_mass']:
             self.connect('torque_comp.torque_max', 'mass_comp.torque_max')
         else:
             self.connect('gearbox_RPM.RPM_out', 'gearbox_mass.RPM_out')

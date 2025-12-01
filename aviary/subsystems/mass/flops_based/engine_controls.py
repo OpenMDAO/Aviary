@@ -2,13 +2,15 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.flops_based.distributed_prop import (
-    distributed_engine_count_factor, distributed_thrust_factor)
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output, add_aviary_option
+    distributed_engine_count_factor,
+    distributed_thrust_factor,
+)
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class TransportEngineCtrlsMass(om.ExplicitComponent):
-    '''
+    """
     Calculate the estimated mass of the engine controls.
 
     Use for both traditional and blended-wing-body type transports.
@@ -21,19 +23,21 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
     Calculates total propulsion-system level mass of all engine controls
 
     All engines have engine controls that use this equation
-    '''
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, units='lbf')
 
-        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS)
+        add_aviary_output(self, Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-                              [Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST])
+        self.declare_partials(
+            Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
+            [Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST],
+        )
 
     def compute(self, inputs, outputs):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -44,8 +48,9 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
 
         total_controls_weight = 0.26 * num_engines_factor * thrust_factor**0.5
 
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = \
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS] = (
             total_controls_weight / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -56,5 +61,5 @@ class TransportEngineCtrlsMass(om.ExplicitComponent):
 
         J[
             Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
         ] = 0.13 / distributed_thrust_factor_exp / GRAV_ENGLISH_LBM

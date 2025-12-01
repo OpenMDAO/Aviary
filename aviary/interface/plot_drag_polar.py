@@ -1,37 +1,39 @@
-import numpy as np
+import tkinter as tk
+from tkinter import Button, Label, StringVar, filedialog, messagebox
+from tkinter.ttk import Combobox
+
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-import tkinter as tk
-from tkinter import Label, Button, StringVar, filedialog, messagebox
-from tkinter.ttk import Combobox
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+
 import aviary.api as av
 from aviary.utils.functions import get_path
 
 
 def plot_drag_polar(input_file=None):
-    """
-    Plot drag polar
-    """
+    """Plot drag polar."""
     if input_file is None:
-        input_file = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
+        input_file = filedialog.askopenfilename(filetypes=[('CSV files', '*.csv')])
         if not input_file:
-            messagebox.showerror(
-                "Error", "No file selected")
+            messagebox.showerror('Error', 'No file selected')
             exit()
         return
 
     try:
         input_path = get_path(input_file)
-        polar_data = av.read_data_file(input_path, aliases={
-            'altitude': 'altitude',
-            'mach_number': 'mach_number',
-            'alpha': 'angle_of_attack',
-            'CL': 'lift_coefficient',
-            'CD': 'total_drag_coefficient'
-        })
+        polar_data, _, _ = av.read_data_file(
+            input_path,
+            aliases={
+                'altitude': 'altitude',
+                'mach_number': 'mach_number',
+                'alpha': 'angle_of_attack',
+                'CL': 'lift_coefficient',
+                'CD': 'total_drag_coefficient',
+            },
+        )
     except Exception as e:
-        messagebox.showerror("Error", f"Failed to read the file: {str(e)}")
+        messagebox.showerror('Error', f'Failed to read the file: {str(e)}')
         return
 
     mach = polar_data.get_val('mach_number')
@@ -70,13 +72,11 @@ def plot_drag_polar(input_file=None):
         ax.clear()
 
         if fix_variable == 'Mach':
-
             indices = mach == fix_value
 
             fixed_values = altitude_values
             fixed_label = 'Altitude'
         else:
-
             index = altitude == fix_value
             fixed_values = mach_values
             fixed_label = 'Mach'
@@ -111,7 +111,7 @@ def plot_drag_polar(input_file=None):
                 x_val = alpha
 
             elif x_var == 'CL/CD':
-                x_val = np.array(CL)/np.array(CD)
+                x_val = np.array(CL) / np.array(CD)
 
             if y_var == 'CD':
                 y_val = CD
@@ -123,7 +123,7 @@ def plot_drag_polar(input_file=None):
                 y_val = alpha
 
             elif y_var == 'CL/CD':
-                y_val = np.array(CL)/np.array(CD)
+                y_val = np.array(CL) / np.array(CD)
 
             plot_polar(ax, x_val, y_val, color=colors[i], label=f'{fixed_label} {val}')
 
@@ -146,36 +146,39 @@ def plot_drag_polar(input_file=None):
 
     set_x_var = StringVar(value='CD')
 
-    set_x_label = Label(master=window, text="x-axis")
+    set_x_label = Label(master=window, text='x-axis')
     set_x_label.pack(side='left', padx=5, pady=5)
-    set_x_combobox = Combobox(master=window, textvariable=set_x_var, values=[
-        'CD', 'CL', 'Alpha', 'CL/CD'])
+    set_x_combobox = Combobox(
+        master=window, textvariable=set_x_var, values=['CD', 'CL', 'Alpha', 'CL/CD']
+    )
 
     set_x_combobox.pack(side='left', padx=5, pady=5)
     set_y_var = StringVar(value='CL')
-    set_y_label = Label(master=window, text="y-axis")
+    set_y_label = Label(master=window, text='y-axis')
     set_y_label.pack(side='left', padx=5, pady=5)
-    set_y_combobox = Combobox(master=window, textvariable=set_y_var, values=[
-        'CL', 'CD', 'Alpha', 'CL/CD'])
+    set_y_combobox = Combobox(
+        master=window, textvariable=set_y_var, values=['CL', 'CD', 'Alpha', 'CL/CD']
+    )
     set_y_combobox.pack(side='left', padx=5, pady=5)
     fix_variable_var = StringVar(value='Mach')
     fix_value_var = StringVar(value=float(mach_values[0]))
-    fix_variable_label = Label(master=window, text="Fix Variable:")
+    fix_variable_label = Label(master=window, text='Fix Variable:')
     fix_variable_label.pack(side='left', padx=5, pady=5)
 
     fix_variable_combobox = Combobox(
-        master=window, textvariable=fix_variable_var, values=['Mach', 'Altitude'])
+        master=window, textvariable=fix_variable_var, values=['Mach', 'Altitude']
+    )
     fix_variable_combobox.pack(side='left', padx=5, pady=5)
-    fix_variable_combobox.bind("<<ComboboxSelected>>", update_fix_value_combobox)
+    fix_variable_combobox.bind('<<ComboboxSelected>>', update_fix_value_combobox)
     fix_variable_combobox.current(0)
-    fix_value_label = Label(master=window, text="Fix Value:")
+    fix_value_label = Label(master=window, text='Fix Value:')
     fix_value_label.pack(side='left', padx=5, pady=5)
 
     fix_value_combobox = Combobox(master=window, textvariable=fix_value_var)
     fix_value_combobox.pack(side='left', padx=5, pady=5)
     update_fix_value_combobox()
 
-    plot_button = Button(master=window, text="Plot", command=update_plot)
+    plot_button = Button(master=window, text='Plot', command=update_plot)
     plot_button.pack(side='right', padx=5, pady=5)
     window.mainloop()
 
@@ -183,6 +186,7 @@ def plot_drag_polar(input_file=None):
 def _setup_plot_drag_polar_parser(parser):
     """
     Set up the command line options for the Model Building tool.
+
     Parameters
     ----------
     parser : argparse.ArgumentParser
@@ -190,13 +194,13 @@ def _setup_plot_drag_polar_parser(parser):
     parser : argparse subparser
         The parser we're adding options to.
     """
-
     pass
 
 
 def _exec_plot_drag_polar(options, user_args):
     """
     Run the Model Building tool.
+
     Parameters
     ----------
     options : argparse.Namespace
@@ -207,5 +211,5 @@ def _exec_plot_drag_polar(options, user_args):
     plot_drag_polar()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     plot_drag_polar()

@@ -7,18 +7,18 @@ from aviary.variable_info.variables import Aircraft
 class TotalWettedArea(om.ExplicitComponent):
     """
     Sum of wetted areas of canard, fuselage, horizontal tail, nacelle, vertical tail and wing.
-    It is simple enought to skip unit test
+    It is simple enough to skip unit test.
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Canard.WETTED_AREA)
-        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA)
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA)
-        add_aviary_input(self, Aircraft.Nacelle.TOTAL_WETTED_AREA)
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA)
-        add_aviary_input(self, Aircraft.Wing.WETTED_AREA)
+        add_aviary_input(self, Aircraft.Canard.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 
-        add_aviary_output(self, Aircraft.Design.TOTAL_WETTED_AREA)
+        add_aviary_output(self, Aircraft.Design.TOTAL_WETTED_AREA, units='ft**2')
 
     def setup_partials(self):
         self.declare_partials('*', '*', val=1.0)
@@ -30,4 +30,5 @@ class TotalWettedArea(om.ExplicitComponent):
             + inputs[Aircraft.HorizontalTail.WETTED_AREA]
             + inputs[Aircraft.Nacelle.TOTAL_WETTED_AREA]
             + inputs[Aircraft.VerticalTail.WETTED_AREA]
-            + inputs[Aircraft.Wing.WETTED_AREA])
+            + inputs[Aircraft.Wing.WETTED_AREA]
+        )

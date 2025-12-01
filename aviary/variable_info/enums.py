@@ -1,8 +1,16 @@
 from enum import Enum, IntEnum, auto, unique
 
 
+class AircraftTypes(Enum):
+    """Aircraft types."""
+
+    TRANSPORT = 'transport'
+    BLENDED_WING_BODY = 'BWB'
+    # GENERAL_AVIATION = 'GA'  # incomplete in FLOPS, unavailable in GASP
+
+
 class AlphaModes(Enum):
-    '''
+    """
     AlphaModes is used to specify how angle of attack is defined during
         climb and descent.
     DEFAUT:
@@ -25,7 +33,8 @@ class AlphaModes(Enum):
     ALTITUDE_RATE
         Alpha is calculated to target a specified altitude rate, the default
         is 0 (Constant Altitude).
-    '''
+    """
+
     DEFAULT = auto()
     ROTATION = auto()
     LOAD_FACTOR = auto()
@@ -37,30 +46,13 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
-class AnalysisScheme(Enum):
-    """
-    AnalysisScheme is used to select from Collocation and shooting.
-
-    COLLOCATION uses the collocation method to optimize all points simultaneously
-    and can be run in parallel. However, it requires reasonable initial guesses
-    for the trajectory and is fairly sensitive to those initial guesses.
-
-    SHOOTING is a forward in time integration method that simulates the trajectory.
-    This does not require initial guesses and will always produce physically valid
-    trajectories, even during optimizer failures. The shooting method cannot be run
-    in parallel.
-    """
-    COLLOCATION = auto()
-    SHOOTING = auto()
-
-
 class EquationsOfMotion(Enum):
-    """
-    Available equations of motion for use during mission analysis
-    """
+    """Available equations of motion for use during mission analysis."""
+
     HEIGHT_ENERGY = 'height_energy'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
+    CUSTOM = 'custom'
 
 
 @unique
@@ -68,8 +60,9 @@ class GASPEngineType(Enum):
     """
     Defines the type of engine to use in GASP-based mass calculations.
     Note that only the value for the first engine model will be used.
-    Currenly only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
+    Currently only the TURBOJET and TURBOPROP options are implemented, but other types of engines will be added in the future.
     """
+
     # Reciprocating engine with carburator
     RECIP_CARB = 1
 
@@ -107,12 +100,15 @@ class GASPEngineType(Enum):
     # for geometry and mass
     ROTARY_RCWSZ = 14
 
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
+
 
 @unique
 class FlapType(Enum):
-    """
-    Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations.
-    """
+    """Defines the type of flap used on the wing. Used in GASP-based aerodynamics and mass calculations."""
+
     PLAIN = 1
     SPLIT = 2
     SINGLE_SLOTTED = 3
@@ -121,11 +117,14 @@ class FlapType(Enum):
     FOWLER = 6
     DOUBLE_SLOTTED_FOWLER = 7
 
+    @classmethod
+    def get_element_by_name(cls, val: str):
+        return next((c for c in cls if c.name == val), None)
+
 
 class LegacyCode(Enum):
-    """
-    Flag for legacy codebases
-    """
+    """Flag for legacy codebases."""
+
     FLOPS = 'FLOPS'
     GASP = 'GASP'
 
@@ -152,13 +151,14 @@ class ProblemType(Enum):
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
 
-    MULTI_MISSION: Similar to a SIZING mission, however it varies the 
-    design gross weight and actual gross weight across multiple missions 
-    to and closes design range for each mission. This causes the empty 
-    weight and the fuel weight to change. The final result will be a 
+    MULTI_MISSION: Similar to a SIZING mission, however it varies the
+    design gross weight and actual gross weight across multiple missions
+    to and closes design range for each mission. This causes the empty
+    weight and the fuel weight to change. The final result will be a
     single empty weight, for all the different missions, and multiple
     values for fuel weight, unique to each mission.
     """
+
     SIZING = 'sizing'
     ALTERNATE = 'alternate'
     FALLOUT = 'fallout'
@@ -166,12 +166,13 @@ class ProblemType(Enum):
 
 
 class SpeedType(Enum):
-    '''
+    """
     SpeedType is used to specify the type of speed being used.
     EAS is equivalent airspeed.
     TAS is true airspeed.
-    MACH is mach
-    '''
+    MACH is mach.
+    """
+
     EAS = 'EAS'
     TAS = 'TAS'
     MACH = 'mach'
@@ -188,18 +189,20 @@ class ThrottleAllocation(Enum):
     STATIC is specified by the optimizer as one value for the whole phase.
     DYNAMIC is specified by the optimizer at each point in the phase.
     """
-    FIXED = 1
-    STATIC = 2
-    DYNAMIC = 3
+
+    FIXED = 'fixed'
+    STATIC = 'static'
+    DYNAMIC = 'dynamic'
 
 
 class Verbosity(IntEnum):
     """
-    Sets how much information Aviary outputs when run
+    Sets how much information Aviary outputs when run.
 
     Verbosity levels are based on ubuntu's standard:
     https://discourse.ubuntu.com/t/cli-verbosity-levels/26973
     """
+
     QUIET = 0
     BRIEF = 1
     VERBOSE = 2
@@ -211,17 +214,3 @@ class Verbosity(IntEnum):
     @classmethod
     def values(cls):
         return {c.value for c in cls}
-
-
-class OutMachType(Enum):
-    '''
-    OutMachType is an indicator which mach number to output.
-    helical_mach = sqrt(mach*mach + tip_mach*tip_mach)
-    '''
-    MACH = 'mach'
-    TIP_MACH = 'tip_mach'
-    HELICAL_MACH = 'helical_mach'
-
-    @classmethod
-    def get_element_by_value(cls, val: str):
-        return next((c for c in cls if c.value == val), None)

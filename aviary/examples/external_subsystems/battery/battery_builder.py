@@ -1,12 +1,14 @@
-from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Mission
-from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.battery.battery_variable_meta_data import (
+    ExtendedMetaData,
+)
+from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
 from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
 from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 
 
 class BatteryBuilder(SubsystemBuilderBase):
-    '''
+    """
     Define the builder for a battery subsystem that provides methods to define the battery subsystem's states, design variables, fixed values, initial guesses, and mass names.
     It also provides methods to build OpenMDAO systems for the pre-mission and mission computations of the subsystem, to get the constraints for the subsystem, and to preprocess the inputs for the subsystem.
 
@@ -44,14 +46,14 @@ class BatteryBuilder(SubsystemBuilderBase):
         Returns a list of names for the battery subsystem mass.
     preprocess_inputs(self, aviary_inputs) -> aviary_inputs:
         preprocesses the inputs for the battery subsystem, setting the values for battery performance based on the battery cell type.
-    '''
+    """
 
     def __init__(self, name='battery', include_constraints=True):
         self.include_constraints = include_constraints
         super().__init__(name, meta_data=ExtendedMetaData)
 
     def get_states(self):
-        '''
+        """
         Return a dictionary of states for the battery subsystem.
 
         Returns
@@ -64,31 +66,31 @@ class BatteryBuilder(SubsystemBuilderBase):
                 The units for the state variable.
             - any additional keyword arguments required by OpenMDAO for the state
               variable.
-        '''
+        """
         states_dict = {
-            Mission.Battery.STATE_OF_CHARGE: {
-                'rate_source': Mission.Battery.STATE_OF_CHARGE_RATE,
+            Dynamic.Battery.STATE_OF_CHARGE: {
+                'rate_source': Dynamic.Battery.STATE_OF_CHARGE_RATE,
                 'fix_initial': True,
             },
-            Mission.Battery.VOLTAGE_THEVENIN: {
+            Dynamic.Battery.VOLTAGE_THEVENIN: {
                 'units': 'V',
-                'rate_source': Mission.Battery.VOLTAGE_THEVENIN_RATE,
-                'defect_ref': 1.e5,
-                'ref': 1.e5,
+                'rate_source': Dynamic.Battery.VOLTAGE_THEVENIN_RATE,
+                'defect_ref': 1.0e5,
+                'ref': 1.0e5,
             },
         }
 
         return states_dict
 
     def get_linked_variables(self):
-        '''
+        """
         Return the list of linked variables for the battery subsystem; in this case
         it's our two state variables.
-        '''
-        return [Mission.Battery.VOLTAGE_THEVENIN, Mission.Battery.STATE_OF_CHARGE]
+        """
+        return [Dynamic.Battery.VOLTAGE_THEVENIN, Dynamic.Battery.STATE_OF_CHARGE]
 
     def build_pre_mission(self, aviary_inputs):
-        '''
+        """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 
         Returns
@@ -97,11 +99,11 @@ class BatteryBuilder(SubsystemBuilderBase):
             An OpenMDAO system containing all computations that need to happen in
             the pre-mission part of the Aviary problem. This
             includes sizing, design, and other non-mission parameters.
-        '''
+        """
         return BatteryPreMission()
 
     def build_mission(self, num_nodes, aviary_inputs):
-        '''
+        """
         Build an OpenMDAO system for the mission computations of the subsystem.
 
         Returns
@@ -111,11 +113,11 @@ class BatteryBuilder(SubsystemBuilderBase):
             during the mission. This includes time-dependent states that are
             being integrated as well as any other variables that vary during
             the mission.
-        '''
+        """
         return BatteryMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
 
     def get_constraints(self):
-        '''
+        """
         Return a dictionary of constraints for the battery subsystem.
 
         Returns
@@ -134,15 +136,15 @@ class BatteryBuilder(SubsystemBuilderBase):
           below 0.2 at the final mission point.
         - thevenin voltage constraint: A path constraint that ensures the Thevenin voltage does not
           fall below 0.
-        '''
+        """
         if self.include_constraints:
             constraints = {
-                Mission.Battery.STATE_OF_CHARGE: {
+                Dynamic.Battery.STATE_OF_CHARGE: {
                     'lower': 0.2,
                     'type': 'boundary',
                     'loc': 'final',
                 },
-                Mission.Battery.VOLTAGE_THEVENIN: {
+                Dynamic.Battery.VOLTAGE_THEVENIN: {
                     'lower': 0,
                     'type': 'path',
                 },
@@ -153,7 +155,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         return constraints
 
     def get_design_vars(self):
-        '''
+        """
         Return a dictionary of design variables for the battery subsystem.
 
         Returns
@@ -170,8 +172,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                 The upper bound for the design variable
             - any additional keyword arguments required by OpenMDAO for the design
               variable
-        '''
-
+        """
         DVs = {
             Aircraft.Battery.Cell.DISCHARGE_RATE: {
                 'units': 'A',
@@ -183,7 +184,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         return DVs
 
     def get_parameters(self, aviary_inputs=None, phase_info=None):
-        '''
+        """
         Return a dictionary of fixed values exposed to the phases for the battery subsystem.
 
         Returns
@@ -197,17 +198,16 @@ class BatteryBuilder(SubsystemBuilderBase):
             - 'units': str or None
                 The units for the variable.
             - any additional keyword arguments required by OpenMDAO for the variable.
-        '''
-
+        """
         parameters_dict = {
-            Mission.Battery.TEMPERATURE: {'val': 25.0, 'units': 'degC'},
-            Mission.Battery.CURRENT: {'val': 3.25, 'units': 'A'}
+            Dynamic.Battery.TEMPERATURE: {'val': 25.0, 'units': 'degC'},
+            Dynamic.Battery.CURRENT: {'val': 3.25, 'units': 'A'},
         }
 
         return parameters_dict
 
     def get_initial_guesses(self):
-        '''
+        """
         Return a dictionary of initial guesses for the battery subsystem.
 
         Returns
@@ -216,14 +216,13 @@ class BatteryBuilder(SubsystemBuilderBase):
             A dictionary where the keys are the names of the initial guesses
             and the values are dictionaries with any additional keyword
             arguments required by OpenMDAO for the variable.
-        '''
-
+        """
         initial_guess_dict = {
-            Mission.Battery.STATE_OF_CHARGE: {
+            Dynamic.Battery.STATE_OF_CHARGE: {
                 'val': 1.0,
                 'type': 'state',
             },
-            Mission.Battery.VOLTAGE_THEVENIN: {
+            Dynamic.Battery.VOLTAGE_THEVENIN: {
                 'val': 5.0,
                 'units': 'V',
                 'type': 'state',
@@ -233,32 +232,32 @@ class BatteryBuilder(SubsystemBuilderBase):
         return initial_guess_dict
 
     def get_mass_names(self):
-        '''
+        """
         Return a list of names for the battery subsystem.
 
         Returns
         -------
         mass_names : list
             A list of names for the battery subsystem.
-        '''
+        """
         return [Aircraft.Battery.MASS]
 
     def preprocess_inputs(self, aviary_inputs):
-        '''
+        """
         Preprocess the inputs for the battery subsystem.
 
         Description
         -----------
         This method preprocesses the inputs for the battery subsystem.
         In this case, it sets the values battery performance based on the battery cell type.
-        '''
+        """
         battery_cell_info_18650 = {
             Aircraft.Battery.Cell.DISCHARGE_RATE: [2.0, 'A'],
             Aircraft.Battery.Cell.ENERGY_CAPACITY_MAX: [3.5, 'A*h'],
             Aircraft.Battery.Cell.HEAT_CAPACITY: [1020.0, 'J/(kg*K)'],
             Aircraft.Battery.Cell.MASS: [0.045, 'kg'],
             Aircraft.Battery.Cell.VOLTAGE_LOW: [2.9, 'V'],
-            Aircraft.Battery.Cell.VOLUME: [1.125, 'inch**3']
+            Aircraft.Battery.Cell.VOLUME: [1.125, 'inch**3'],
         }
 
         for key, val in battery_cell_info_18650.items():
@@ -267,13 +266,16 @@ class BatteryBuilder(SubsystemBuilderBase):
         return aviary_inputs
 
     def get_outputs(self):
-        '''
+        """
         Return a list of output names for the battery subsystem.
 
         Returns
         -------
         outputs : list
             A list of variable names for the battery subsystem.
-        '''
-
-        return [Mission.Battery.VOLTAGE, Mission.Battery.HEAT_OUT, Aircraft.Battery.EFFICIENCY]
+        """
+        return [
+            Dynamic.Battery.VOLTAGE,
+            Dynamic.Battery.HEAT_OUT,
+            Dynamic.Battery.EFFICIENCY,
+        ]

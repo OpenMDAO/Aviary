@@ -1,11 +1,12 @@
 """
-This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing options,
-and setting initial guesses for aircraft design parameters. It works primarily with .csv files,
-allowing for the specification of units, comments, and lists within these files.
+This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing
+options, and setting initial guesses for aircraft design parameters. It works primarily with .csv
+files, allowing for the specification of units, comments, and lists within these files.
 
-The module supports various functions like creating a vehicle, parsing input files, updating options based
-on inputs, and handling initial guesses for different aircraft design aspects. It heavily relies on the
-aviary and openMDAO libraries for processing and interpreting the aircraft design parameters.
+The module supports various functions like creating a vehicle, parsing input files, updating options
+based on inputs, and handling initial guesses for different aircraft design aspects. It heavily
+relies on the aviary and openMDAO libraries for processing and interpreting the aircraft design
+parameters.
 
 Functions:
     create_vehicle(vehicle_deck=''): Create and initialize a vehicle with default or specified parameters.
@@ -22,22 +23,19 @@ import numpy as np
 from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.utils.functions import convert_strings_to_data, set_value
-from aviary.variable_info.options import get_option_defaults
+from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
-from aviary.utils.functions import get_path
-
 
 operation_dict = {
-    "<": lt,
-    "<=": le,
-    "==": eq,
-    "!=": ne,
-    ">=": ge,
-    ">": gt,
-    "isinstance": isinstance,
+    '<': lt,
+    '<=': le,
+    '==': eq,
+    '!=': ne,
+    '>=': ge,
+    '>': gt,
+    'isinstance': isinstance,
 }
 problem_types = {
     'sizing': ProblemType.SIZING,
@@ -53,27 +51,42 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
 
     Parameters
     ----------
-    vehicle_deck (str):
-        Path to the vehicle deck file. Default is an empty string.
+    vehicle_deck (str, AviaryValues):
+        Path to the vehicle deck file, or an AviaryValues object that contains aircraft
+        inputs. Default is an empty string.
     meta_data (dict):
         Variable metadata used when reading input file for unit validation,
-        default values, and other checks
+        default values, and other checks.
+    verbosity (int, Verbosity):
+        Verbosity level for the AviaryProblem. If provided, this overrides verbosity
+        specified in the aircraft data. Default is None, and verbosity will be taken
+        from aircraft data or defaulted to Verbosity.BRIEF if not found.
 
     Returns
     -------
     (aircraft_values, initialization_guesses): (tuple)
         Returns a tuple containing aircraft values and initial guesses.
     """
-    aircraft_values = get_option_defaults(engine=False)
+    if verbosity is None:
+        verbosity = Verbosity.BRIEF
+
+    aircraft_values = AviaryValues()
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
+    # We should only set FLOPS- or GASP-specific variables for those aircraft models
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
-    # TODO problem_type should get set by get_option_defaults??
+
+    # TODO setting defaults for variables needed outside OM problem during load_inputs()
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
-    aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
+    aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
+    # these are used in initialization_guessing()
+    aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
+    aircraft_values.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=0, units='lbm')
 
     initialization_guesses = {
         # initialization_guesses is a dictionary that contains values used to initialize the trajectory
@@ -91,12 +104,10 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     if isinstance(vehicle_deck, AviaryValues):
         for key, (val, units) in vehicle_deck:
             if key.startswith('initialization_guesses:'):
-                initialization_guesses[key.removeprefix('initialization_guesses:')] = (
-                    val
-                )
+                initialization_guesses[key.removeprefix('initialization_guesses:')] = val
         aircraft_values.update(vehicle_deck)
     else:
-        if verbosity >= 1:  # BRIEF
+        if verbosity >= Verbosity.BRIEF:
             verbose = True
         else:
             verbose = False
@@ -109,13 +120,13 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
         )
 
     # make sure verbosity is always set
-    # if verbosity set via parameter, use that
+    # if verbosity set via parameter, use that - override what is in the file
     if verbosity is not None:
         # Enum conversion here, so user can pass either number or actual Enum as parameter
         aircraft_values.set_val(Settings.VERBOSITY, Verbosity(verbosity))
     # else, if verbosity not specified anywhere, use default of BRIEF
     elif verbosity is None and Settings.VERBOSITY not in aircraft_values:
-        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
+        aircraft_values.set_val(Settings.VERBOSITY, _MetaData[Settings.VERBOSITY]['default_value'])
 
     return aircraft_values, initialization_guesses
 
@@ -142,7 +153,6 @@ def parse_inputs(
     """
     if aircraft_values is None:
         aircraft_values = AviaryValues()
-        aircraft_values.set_val(Settings.VERBOSITY, Verbosity.BRIEF)
 
     if initialization_guesses is None:
         initialization_guesses = {}
@@ -151,7 +161,7 @@ def parse_inputs(
 
     with open(vehicle_deck, newline='') as f_in:
         for line in f_in:
-            used, data_units = False, None
+            data_units = None
 
             tmp = [*line.split('#', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first # is a comment
@@ -173,46 +183,41 @@ def parse_inputs(
                 # if the last element is a unit, remove it from the list and update the variable's units
                 data_units = data_list.pop()
 
-            is_array = False
-            if '[' in data_list[0]:
-                is_array = True
-
-            var_values = convert_strings_to_data(data_list)
+            var_value = convert_strings_to_data(data_list)
+            # If var_value is length 1 list and is not supposed to be a list, pull out
+            # individual value. Otherwise, convert list to numpy array
+            if len(var_value) <= 1:
+                if var_name in meta_data and meta_data[var_name]['multivalue']:
+                    # if data is numeric, convert to numpy array
+                    if isinstance(var_value[0], (int, float)):
+                        var_value = np.array(var_value)
+                else:
+                    var_value = var_value[0]
 
             if var_name in meta_data.keys():
-                aircraft_values = set_value(
-                    var_name,
-                    var_values,
-                    aircraft_values,
-                    units=data_units,
-                    is_array=is_array,
-                    meta_data=meta_data,
-                )
+                if data_units is None:
+                    data_units = meta_data[var_name]['units']
+                aircraft_values.set_val(var_name, var_value, data_units, meta_data)
                 continue
 
             elif var_name in guess_names:
                 # all initial guesses take only a single value
                 # get values from supplied dictionary
-                initialization_guesses[var_name] = float(var_values[0])
+                initialization_guesses[var_name] = var_value
                 continue
 
             elif var_name.startswith('initialization_guesses:'):
-                # get values labelled as initialization_guesses in .csv input file
-                initialization_guesses[
-                    var_name.removeprefix('initialization_guesses:')
-                ] = float(var_values[0])
+                # get values labeled as initialization_guesses in .csv input file
+                initialization_guesses[var_name.removeprefix('initialization_guesses:')] = var_value
                 continue
 
-            elif ":" in var_name:
+            elif ':' in var_name:
                 warnings.warn(
                     f"Variable '{var_name}' is not in meta_data nor in 'guess_names'. "
-                    "It will be ignored.",
+                    'It will be ignored.',
                     UserWarning,
                 )
                 continue
-
-            if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-                print('Unused:', var_name, var_values, comment)
 
     return aircraft_values, initialization_guesses
 
@@ -239,27 +244,19 @@ def update_GASP_options(aircraft_values: AviaryValues):
 
     ## STRUT AND FOLD ##
     if not aircraft_values.get_val(Aircraft.Wing.HAS_STRUT):
-        aircraft_values.set_val(
-            Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False
-        )
+        aircraft_values.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
     if aircraft_values.get_val(Aircraft.Wing.HAS_FOLD):
         if not aircraft_values.get_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION):
-            aircraft_values.set_val(
-                Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True
-            )
+            aircraft_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True)
         else:
-            dim_loc_spec = aircraft_values.get_val(
-                Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED
-            )
+            dim_loc_spec = aircraft_values.get_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED)
             aircraft_values.set_val(
                 Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=dim_loc_spec
             )
     else:
         aircraft_values.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=True)
-        aircraft_values.set_val(
-            Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False
-        )
+        aircraft_values.set_val(Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=False)
 
     if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
         print('\nOptions')
@@ -296,7 +293,7 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
                     if comp(var_value, dependency['val'])
                     else dependency['alternate']
                 )
-            elif dependency['relation'] == "in":
+            elif dependency['relation'] == 'in':
                 outcome = (
                     dependency['result']
                     if var_value in dependency['val']
@@ -308,9 +305,7 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     return aircraft_values
 
 
-def initialization_guessing(
-    aircraft_values: AviaryValues, initialization_guesses, engine_builders
-):
+def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_builders):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
@@ -333,21 +328,15 @@ def initialization_guessing(
     """
     problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
-    reserve_val = aircraft_values.get_val(
-        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
-    )
-    reserve_frac = aircraft_values.get_val(
-        Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
-    )
+    reserve_val = aircraft_values.get_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
+    reserve_frac = aircraft_values.get_val(Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
 
     if initialization_guesses['fuel_burn_per_passenger_mile'] <= 0:
         initialization_guesses['fuel_burn_per_passenger_mile'] = 0.1
 
     reserves = initialization_guesses['reserves']
     if reserves < 0.0:
-        raise ValueError(
-            'initialization_guesses["reserves"] must be greater than or equal to 0.'
-        )
+        raise ValueError('initialization_guesses["reserves"] must be greater than or equal to 0.')
     elif reserves == 0:
         reserves += reserve_val
         reserves += reserve_frac * (
@@ -370,9 +359,7 @@ def initialization_guessing(
         mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
 
     if Mission.Summary.CRUISE_MASS_FINAL in aircraft_values:
-        cruise_mass_final = aircraft_values.get_val(
-            Mission.Summary.CRUISE_MASS_FINAL, units='lbm'
-        )
+        cruise_mass_final = aircraft_values.get_val(Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
     else:
         cruise_mass_final = initialization_guesses['cruise_mass_final']
 
@@ -398,9 +385,7 @@ def initialization_guessing(
                 + fuel_mass
             )
         elif problem_type == ProblemType.FALLOUT or problem_type == ProblemType.SIZING:
-            mission_mass = aircraft_values.get_val(
-                Mission.Design.GROSS_MASS, units='lbm'
-            )
+            mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
     initialization_guesses['actual_takeoff_mass'] = mission_mass
 
     if cruise_mass_final == 0:  # no guess given
@@ -413,9 +398,7 @@ def initialization_guessing(
         cruise_mass_final = (
             initialization_guesses['operating_empty_mass']
             + num_pax
-            * aircraft_values.get_val(
-                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm'
-            )
+            * aircraft_values.get_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm')
             + reserves
         )
     # fraction of takeoff mass
@@ -442,9 +425,9 @@ def initialization_guessing(
             * (60 * 60)
         )
     elif initialization_guesses['flight_duration'] <= 15:  # duration entered in hours
-        initialization_guesses['flight_duration'] = initialization_guesses[
-            'flight_duration'
-        ] * (60 * 60)
+        initialization_guesses['flight_duration'] = initialization_guesses['flight_duration'] * (
+            60 * 60
+        )
 
     # TODO this does not work at all for mixed-type engines (some propeller and some not)
     try:
@@ -456,9 +439,7 @@ def initialization_guessing(
         if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
             # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
             total_thrust = np.dot(
-                aircraft_values.get_val(
-                    Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'
-                ),
+                aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'),
                 aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
             )
         else:
@@ -470,20 +451,20 @@ def initialization_guessing(
 
     except KeyError:
         if engine_builders is not None and len(engine_builders) > 1:
-
             # heterogeneous engine-model case. Get thrust from the engine models instead.
             total_thrust = 0
             for model in engine_builders:
-                thrust = model.get_val(
-                    Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf'
-                ) * model.get_val(Aircraft.Engine.SCALE_FACTOR)
+                thrust = model.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * model.get_val(
+                    Aircraft.Engine.SCALE_FACTOR
+                )
                 num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
                 total_thrust += thrust * num_engines
 
         else:
-            total_thrust = aircraft_values.get_val(
-                Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'
-            ) * aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+            total_thrust = np.dot(
+                aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'),
+                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
+            )
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
@@ -493,9 +474,9 @@ def initialization_guessing(
             Mission.Design.CRUISE_ALTITUDE, units='ft'
         ) / (avg_speed_guess * np.sin(gamma_guess))
     elif initialization_guesses['time_to_climb'] <= 2:  # duration entered in hours
-        initialization_guesses['time_to_climb'] = initialization_guesses[
-            'time_to_climb'
-        ] * (60 * 60)
+        initialization_guesses['time_to_climb'] = initialization_guesses['time_to_climb'] * (
+            60 * 60
+        )
     elif initialization_guesses['time_to_climb'] <= 200:  # average climb rate in ft/s
         initialization_guesses['time_to_climb'] = (
             aircraft_values.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
@@ -534,7 +515,7 @@ dependent_options = [
     # [Aircraft.Engine.WING_LOCATIONS, {
     #     'val': 0, 'relation': '==', 'target': Aircraft.Engine.FUSELAGE_MOUNTED, 'result': True, 'alternate': False}],
     [
-        Aircraft.Wing.LOADING,
+        Aircraft.Design.WING_LOADING,
         {
             'val': 20,
             'relation': '>',

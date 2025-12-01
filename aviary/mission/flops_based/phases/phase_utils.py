@@ -21,10 +21,8 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
         The modified phase object with added variables.
 
     """
-
     # Loop through each subsystem in the list of external_subsystems
     for subsystem in external_subsystems:
-
         # Fetch the states from the current subsystem
         subsystem_states = subsystem.get_states()
 
@@ -48,14 +46,14 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
 
         # Add each constraint and its corresponding arguments to the phase
         for constraint_name in constraints:
-            kwargs = constraints[constraint_name]
-            if kwargs['type'] == 'boundary':
-                kwargs.pop('type')
-                phase.add_boundary_constraint(constraint_name, **kwargs)
-            elif kwargs['type'] == 'path':
-                kwargs.pop('type')
-                phase.add_path_constraint(constraint_name, **kwargs)
-
+            con_args = constraints[constraint_name].copy()
+            con_type = con_args.pop('type')
+            if con_type == 'boundary':
+                phase.add_boundary_constraint(constraint_name, **con_args)
+            elif con_type == 'path':
+                phase.add_path_constraint(constraint_name, **con_args)
+            else:
+                raise ValueError(f'Invalid type "{con_type}" in builder for {subsystem.pathname}.')
     return phase
 
 

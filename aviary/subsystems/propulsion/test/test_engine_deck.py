@@ -6,23 +6,23 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.utils import EngineModelVariables as keys
-from aviary.utils.named_values import NamedValues
-from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import \
-    FLOPS_Test_Data
 from aviary.subsystems.propulsion.utils import build_engine_deck
-
+from aviary.utils.named_values import NamedValues
+from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
 class EngineDeckTest(unittest.TestCase):
     def test_flight_idle(self):
-        tol = 1e-6
+        # original test data was created with old version of converted GASP engine deck w/o
+        # rounding, so tol must be lower here for comparison with modern engine
+        tol = 1e-4
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
         # Test data grabbed from LEAPS uses the global throttle approach
         aviary_values.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
 
-        model = build_engine_deck(aviary_values)[0]
+        model = build_engine_deck(aviary_values)
 
         expected_mach_number = []
         expected_altitude = []
@@ -57,9 +57,9 @@ class EngineDeckTest(unittest.TestCase):
     def test_flight_idle_2(self):
         tol = 1e-6
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle1FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle1FLOPS')
 
-        model = build_engine_deck(aviary_values)[0]
+        model = build_engine_deck(aviary_values)
 
         # hardcoded data of processed engine model from LEAPS1 after flight idle
         # point generation, sorted in Aviary order
@@ -83,7 +83,7 @@ class EngineDeckTest(unittest.TestCase):
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
-        throttle = model.data[keys.THROTTLE]
+        # throttle = model.data[keys.THROTTLE]
         thrust = model.data[keys.THRUST]
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 
@@ -96,7 +96,7 @@ class EngineDeckTest(unittest.TestCase):
     def test_load_from_memory(self):
         tol = 1e-6
 
-        aviary_values = FLOPS_Test_Data['LargeSingleAisle2FLOPS']['inputs']
+        aviary_values = get_flops_inputs('LargeSingleAisle2FLOPS')
 
         expected_mach_number = []
         expected_altitude = []
@@ -126,7 +126,7 @@ class EngineDeckTest(unittest.TestCase):
 
         mach_number = model.data[keys.MACH]
         altitude = model.data[keys.ALTITUDE]
-        throttle = model.data[keys.THROTTLE]
+        # throttle = model.data[keys.THROTTLE]
         thrust = model.data[keys.THRUST]
         fuel_flow_rate = model.data[keys.FUEL_FLOW]
 
@@ -136,6 +136,16 @@ class EngineDeckTest(unittest.TestCase):
         assert_near_equal(thrust, expected_thrust, tolerance=tol)
         assert_near_equal(fuel_flow_rate, expected_fuel_flow_rate, tolerance=tol)
 
+    def test_error_message(self):
+        aviary_values = get_flops_inputs('LargeSingleAisle1FLOPS')
+        aviary_values.set_val(Aircraft.Engine.INTERPOLATION_SORT, 'junk', units='unitless')
 
-if __name__ == "__main__":
+        msg = 'EngineDeck <turbofan_28k>: Invalid value of Aircraft.Engine.INTERPOLATION_SORT.'
+        msg += ' Expected "altitude" or "mach", but found "junk".'
+        with self.assertRaises(ValueError) as cm:
+            build_engine_deck(aviary_values)
+        self.assertEqual(str(cm.exception), msg)
+
+
+if __name__ == '__main__':
     unittest.main()

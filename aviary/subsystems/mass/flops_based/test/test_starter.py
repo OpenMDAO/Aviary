@@ -7,37 +7,38 @@ from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.starter import TransportStarterMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import (flops_validation_test,
-                                                      get_flops_case_names,
-                                                      get_flops_inputs,
-                                                      print_case)
+from aviary.validation_cases.validation_tests import (
+    flops_validation_test,
+    get_flops_case_names,
+    get_flops_inputs,
+    print_case,
+)
 from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TransportStarterMassTest(unittest.TestCase):
-
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='N3CC'),
-                          name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='AdvancedSingleAisle'), name_func=print_case)
     def test_case_1(self, case_name):
-
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
 
         options = {
             Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES),
+            Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(
+                Aircraft.Propulsion.TOTAL_NUM_ENGINES
+            ),
             Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
         }
 
         prob.model.add_subsystem(
-            "starter_test",
+            'starter_test',
             TransportStarterMass(**options),
             promotes_outputs=['*'],
-            promotes_inputs=['*']
+            promotes_inputs=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -46,7 +47,8 @@ class TransportStarterMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[Aircraft.Nacelle.AVG_DIAMETER],
-            output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS)
+            output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
+        )
 
     def test_case_2(self):
         # test with more than 4 engines
@@ -59,10 +61,10 @@ class TransportStarterMassTest(unittest.TestCase):
         }
 
         prob.model.add_subsystem(
-            "starter_test",
+            'starter_test',
             TransportStarterMass(**options),
             promotes_outputs=['*'],
-            promotes_inputs=['*']
+            promotes_inputs=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -76,7 +78,7 @@ class TransportStarterMassTest(unittest.TestCase):
 
         assert_near_equal(mass, expected_mass, tolerance=1e-10)
 
-        partial_data = self.prob.check_partials(out_stream=None, method="cs")
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
     def test_IO(self):
@@ -84,16 +86,16 @@ class TransportStarterMassTest(unittest.TestCase):
 
 
 class TransportStarterMassTest2(unittest.TestCase):
-    """
-    Test mass-weight conversion
-    """
+    """Test mass-weight conversion."""
 
     def setUp(self):
         import aviary.subsystems.mass.flops_based.starter as starter
+
         starter.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
         import aviary.subsystems.mass.flops_based.starter as starter
+
         starter.GRAV_ENGLISH_LBM = 1.0
 
     def test_case_2(self):
@@ -106,17 +108,17 @@ class TransportStarterMassTest2(unittest.TestCase):
         }
 
         prob.model.add_subsystem(
-            "starter_test",
+            'starter_test',
             TransportStarterMass(**options),
             promotes_outputs=['*'],
-            promotes_inputs=['*']
+            promotes_inputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
 
-        partial_data = prob.check_partials(out_stream=None, method="cs")
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
