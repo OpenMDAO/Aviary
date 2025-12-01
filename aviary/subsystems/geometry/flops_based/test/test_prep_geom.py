@@ -946,7 +946,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.Wing.FINENESS), 0.11, tolerance=1e-8)
         # NacelleCharacteristicLength
         assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68611614, tolerance=1e-8
+            prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68612039, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
         # OtherCharacteristicLengths
@@ -966,7 +966,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.FINENESS), 0.11, tolerance=1e-8)
         # TotalWettedArea
         assert_near_equal(
-            prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 35311.53037134, tolerance=1e-8
+            prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 35311.53118076, tolerance=1e-8
         )
 
 

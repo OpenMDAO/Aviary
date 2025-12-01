@@ -16,6 +16,7 @@ from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class CharacteristicLengthsTest(unittest.TestCase):
     """Test characteristic length and fineness ratio calculations."""
 
@@ -71,6 +72,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Canard.ASPECT_RATIO, 'unitless'),
             (Aircraft.Canard.THICKNESS_TO_CHORD, 'unitless'),
             # (Aircraft.Fuselage.AVG_DIAMETER, 'ft'),
+            (Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'),
             (Aircraft.Fuselage.LENGTH, 'ft'),
             (Aircraft.HorizontalTail.AREA, 'ft**2'),
             (Aircraft.HorizontalTail.ASPECT_RATIO, 'unitless'),
@@ -92,6 +94,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([28928.1, 28928.1, 28928.1]))
 
         prob.run_model()
 
@@ -143,6 +146,7 @@ class BWBWingCharacteristicLengthsTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBNacelleCharacteristicLengthTest(unittest.TestCase):
     """Test nacelle characteristic length and fineness ratio calculations for BWB."""
 

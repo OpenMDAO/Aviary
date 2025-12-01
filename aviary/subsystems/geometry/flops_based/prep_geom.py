@@ -186,7 +186,7 @@ class PrepGeom(om.Group):
             )
         self.add_subsystem(
             'nacelle_characteristic_lengths',
-            NacelleCharacteristicLengths(),
+            NacelleCharacteristicLength(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
         )

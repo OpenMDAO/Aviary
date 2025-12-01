@@ -485,8 +485,10 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
             self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type, units='lbf'
         )
 
-        add_aviary_output(self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, units='ft')
-        add_aviary_output(self, Aircraft.Nacelle.FINENESS, units='unitless')
+        add_aviary_output(
+            self, Aircraft.Nacelle.CHARACTERISTIC_LENGTH, shape=num_engine_type, units='ft'
+        )
+        add_aviary_output(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type, units='unitless')
 
     def setup_partials(self):
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
@@ -553,7 +555,6 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         ref_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
         thrust_rat = thrust / ref_sls_thrust
         adjusted_avg_diam = avg_diam * np.sqrt(thrust_rat)
-        adjusted_avg_length = avg_length * np.sqrt(thrust_rat)
 
         deriv_char_len = np.zeros(len(num_eng), dtype=avg_diam.dtype)
         deriv_char_thrust = np.zeros(len(num_eng), dtype=avg_diam.dtype)
