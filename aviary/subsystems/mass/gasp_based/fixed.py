@@ -220,7 +220,7 @@ class MassParameters(om.ExplicitComponent):
             ) + 1 * (100) * dSigmoidXdx(loc_main_gear, 0.005, 0.01 / 320.0)
 
 
-class PayloadMass(om.ExplicitComponent):
+class PayloadGroup(om.ExplicitComponent):
     """Computation of maximum payload that the aircraft is being asked to carry."""
 
     def initialize(self):
@@ -2841,7 +2841,7 @@ class FixedMassGroup(om.Group):
 
         self.add_subsystem(
             'payload',
-            PayloadMass(),
+            PayloadGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
