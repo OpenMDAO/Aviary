@@ -1304,7 +1304,8 @@ class AviaryProblem(om.Problem):
         cargo_mass : float, optional
             Total cargo mass flying on off-design mission, in pounds-mass. Optional if using FLOPS-
             based mass, individual wing and/or misc cargo is defined, and no additional cargo is
-            being carried elsewhere.
+            being carried elsewhere. Note: if using FLOPS-based mass, this variable is an override
+            for total cargo mass.
         mission_gross_mass : float, optional
             Gross mass of aircraft flying off-design mission, in pounds-mass. Defaults to design
             gross mass. For missions where mass is solved for (such as ALTERNATE missions), this is
@@ -1385,13 +1386,12 @@ class AviaryProblem(om.Problem):
 
         # Sanity check passenger counts - cover specific edge case that preprocessors won't catch
         # Since we inherit mission pax count from sizing mission, we need to overwrite it
-        if num_pax is None and not any((num_tourist, num_business, num_first_class)):
+        if (
+            mass_method is FLOPS
+            and num_pax is None
+            and not any((num_tourist, num_business, num_first_class))
+        ):
             num_pax = sum(filter(None, [num_tourist, num_business, num_first_class]))
-
-        # Sanity check cargo counts - cover specific edge case that preprocessors won't catch
-        # Since we inherit mission cargo mass from sizing mission, we need to overwrite it
-        if cargo_mass is None and not any((wing_cargo, misc_cargo)):
-            cargo_mass = sum(filter(None, [wing_cargo, misc_cargo]))
 
         # only FLOPS cares about seat class or specific cargo categories
         if mass_method == LegacyCode.FLOPS:
@@ -1574,13 +1574,10 @@ class AviaryProblem(om.Problem):
             )
             return ()
 
-        # Off-design missions do not currently work for GASP masses or missions.
+        # Off-design missions are not tested with 2DOF missions.
         mass_method = self.model.aviary_inputs.get_val(Settings.MASS_METHOD)
         equations_of_motion = self.model.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
-        if (
-            mass_method == LegacyCode.FLOPS
-            and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
-        ):
+        if equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY:
             # make a copy of the phase_info to avoid modifying the original.
             phase_info = self.model.mission_info.copy()
             phase_info['pre_mission'] = self.model.pre_mission_info.copy()
@@ -1685,6 +1682,12 @@ class AviaryProblem(om.Problem):
                 max_usable_fuel = gross_mass - operating_mass
 
             # Point 4 (Ferry Range): maximum fuel and 0 payload
+            # Total cargo mass is an input in GASP, but an output in FLOPS. Avoid overriding cargo
+            # mass to 0 if not using GASP
+            if mass_method is GASP:
+                ferry_cargo_mass = 0
+            else:
+                ferry_cargo_mass = None
             ferry_range_gross_mass = operating_mass + max_usable_fuel
             ferry_range_prob = self.run_off_design_mission(
                 problem_type=ProblemType.FALLOUT,
@@ -1694,7 +1697,7 @@ class AviaryProblem(om.Problem):
                 num_tourist=0,
                 wing_cargo=0,
                 misc_cargo=0,
-                cargo_mass=0,
+                cargo_mass=ferry_cargo_mass,
                 mission_gross_mass=ferry_range_gross_mass,
                 name=self._name + '_ferry_range',
                 fill_fuel=True,
