@@ -113,13 +113,18 @@ class BWBWingCharacteristicLengthsTest(unittest.TestCase):
             'cl', BWBWingCharacteristicLength(), promotes_outputs=['*'], promotes_inputs=['*']
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Wing.AREA, val=8668.64638424)
+        prob.set_val(Aircraft.Wing.AREA, val=16555.972297926455)
         prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11)
         prob.run_model()
 
         out1 = prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH)
-        exp1 = 36.410645095113139
+        exp1 = 69.53953418
         assert_near_equal(out1, exp1, tolerance=1e-9)
+
+        out2 = prob.get_val(Aircraft.Wing.FINENESS)
+        exp2 = 0.11
+        assert_near_equal(out2, exp2, tolerance=1e-9)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
