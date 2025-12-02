@@ -113,7 +113,7 @@ class DocTAPETests(unittest.TestCase):
         glue_class_options(AviaryGroup, curr_glued)
 
         self.assertTrue('auto_order' in curr_glued)
-        self.assertTrue('phase_info' in curr_glued)
+        self.assertTrue('mission_info' in curr_glued)
 
     def test_get_all_non_aviary_names(self):
         from aviary.subsystems.aerodynamics.gasp_based.gaspaero import UFac
@@ -124,6 +124,6 @@ class DocTAPETests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = DocTAPETests()
-    test.test_get_all_non_aviary_names()
+    unittest.main()
+    # test = DocTAPETests()
+    # test.test_get_all_non_aviary_names()
