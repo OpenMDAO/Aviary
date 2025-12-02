@@ -15,11 +15,6 @@ class EnergyODE(_BaseODE):
     def initialize(self):
         super().initialize()
 
-        self.options.declare(
-            'use_actual_takeoff_mass',
-            default=False,
-            desc='flag to use actual takeoff mass in the climb phase, otherwise assume 100 kg fuel burn',
-        )
         # TODO throttle enforcement & allocation should be moved to BaseODE for
         # use in 2DOF
         self.options.declare(
@@ -168,7 +163,9 @@ class EnergyODE(_BaseODE):
                     promotes_outputs=['*'],
                 )
 
-            self.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, val=1.0, units='unitless')
+            self.set_input_defaults(
+                Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
+            )
 
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')

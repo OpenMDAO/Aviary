@@ -343,6 +343,32 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
+    Aircraft.BWB.DETAILED_WING_PROVIDED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Flag if the detailed wing model is provided',
+    option=True,
+    types=bool,
+    default_value=True,
+)
+
+add_meta_data(
+    Aircraft.BWB.MAX_NUM_BAYS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.NBAYMX',  # ['&DEFINE.FUSEIN.NBAYMX', 'FUSDTA.NBAYMX'],
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='fixed number of bays',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -354,10 +380,11 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='fixed number of bays',
+    desc='fixed number of passenger bays',
     types=int,
-    option=True,
-    default_value=0,
+    multivalue=True,
+    option=False,
+    default_value=[0],
 )
 
 add_meta_data(
@@ -1686,7 +1713,7 @@ add_meta_data(
         'GASP': None,
         'FLOPS': None,
         'LEAPS1': None,
-        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary's value is the actual T/W, while TWR is
+        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary\'s value is the actual T/W, while TWR is
         #      the desired T/W ratio
         # 'FLOPS': 'CONFIN.TWR',
         # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
@@ -2193,6 +2220,20 @@ add_meta_data(
     types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.INTERPOLATION_SORT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value='mach',
+    types=str,
+    desc='Specify the first interpolation variable in the semi-structured metamodel. '
+    'Choose from mach or altitude. Mach is usually the first column in the deck, but '
+    'altitude is more robust for semi-structured data.',
     multivalue=True,
 )
 
@@ -3397,7 +3438,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': 'WTIN.TCF', 'LEAPS1': None},
     units='unitless',
     types=float,
     default_value=1.0,
@@ -6852,9 +6893,9 @@ add_meta_data(
 # add_meta_data(
 #     Dynamic.Vehicle.Propulsion.EXIT_AREA,
 #     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                     "FLOPS": None,
-#                     "LEAPS1": None
+#     historical_name={'GASP': None,
+#                     'FLOPS': None,
+#                     'LEAPS1': None
 #                     },
 #     units='kW',
 #     desc='Current nozzle exit area of engines, per single instance of each '
