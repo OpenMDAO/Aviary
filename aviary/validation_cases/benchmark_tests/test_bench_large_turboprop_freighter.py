@@ -40,7 +40,9 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
-        prob.run_aviary_problem('dymos_solution.db')
+        prob.run_aviary_problem()
+
+        self.assertTrue(prob.result.success)
         # om.n2(prob)
 
 

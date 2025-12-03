@@ -10,8 +10,19 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
-from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
+    BWBWingCharacteristicLength,
+    OtherCharacteristicLengths,
+    WingCharacteristicLength,
+)
+from aviary.subsystems.geometry.flops_based.fuselage import (
+    BWBDetailedCabinLayout,
+    BWBFuselagePrelim,
+    BWBSimpleCabinLayout,
+    DetailedCabinLayout,
+    FuselagePrelim,
+    SimpleCabinLayout,
+)
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
@@ -22,21 +33,93 @@ from aviary.subsystems.geometry.flops_based.utils import (
 )
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
+from aviary.subsystems.geometry.flops_based.bwb_wing_detailed import (
+    BWBUpdateDetailedWingDist,
+    BWBComputeDetailedWingDist,
+    BWBWingPrelim,
+)
+from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class PrepGeom(om.Group):
     """Prepare derived values of aircraft geometry for aerodynamics analysis."""
 
-    def setup(self):
-        self.add_subsystem(
-            'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
 
-        self.add_subsystem(
-            'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
+    def setup(self):
+        is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
+        design_type = self.options[Aircraft.Design.TYPE]
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            if is_simple_layout:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    BWBSimpleCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    BWBDetailedCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
+                self.add_subsystem(
+                    'detailed_wing',
+                    BWBUpdateDetailedWingDist(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'detailed_wing',
+                    BWBComputeDetailedWingDist(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+        elif design_type is AircraftTypes.TRANSPORT:
+            if is_simple_layout:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    SimpleCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'fuselage_layout',
+                    DetailedCabinLayout(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'fuselage_prelim',
+                BWBFuselagePrelim(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+        elif design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'fuselage_prelim', FuselagePrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing_prelim', BWBWingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+        elif design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'wing_prelim', WingPrelim(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
 
         self.add_subsystem(
             'prelim',
@@ -44,12 +127,18 @@ class PrepGeom(om.Group):
             promotes_inputs=['*'],
         )
 
-        self.add_subsystem('wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*'])
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem('wing', _BWBWing(), promotes_inputs=['*'], promotes_outputs=['*'])
+        else:
+            self.add_subsystem(
+                'wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
 
-        self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
-        self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
-        self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
-        self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
+        if design_type is AircraftTypes.TRANSPORT:
+            self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
+            self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
+            self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
+            self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
 
         self.add_subsystem('tail', _Tail(), promotes_inputs=['aircraft*'], promotes_outputs=['*'])
 
@@ -57,12 +146,19 @@ class PrepGeom(om.Group):
         self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
         self.add_subsystem(
-            'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem('fuselage', _BWBFuselage(), promotes_outputs=['*'])
+        elif design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
 
-        self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
-        self.connect(f'prelim.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
-        self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
+        if design_type is AircraftTypes.TRANSPORT:
+            self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
+            self.connect(f'prelim.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
+            self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
 
         self.add_subsystem(
             'nacelles', Nacelles(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
@@ -72,14 +168,28 @@ class PrepGeom(om.Group):
             'canard', Canard(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing_characteristic_lengths',
+                BWBWingCharacteristicLength(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
+            )
+        elif design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'wing_characteristic_lengths',
+                WingCharacteristicLength(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
+            )
         self.add_subsystem(
-            'characteristic_lengths',
-            CharacteristicLengths(),
+            'other_characteristic_lengths',
+            OtherCharacteristicLengths(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
         )
 
-        self.connect(f'prelim.{Names.CROOT}', f'characteristic_lengths.{Names.CROOT}')
+        self.connect(f'prelim.{Names.CROOT}', f'other_characteristic_lengths.{Names.CROOT}')
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
@@ -509,6 +619,63 @@ class _Wing(om.ExplicitComponent):
         )
 
 
+class _BWBWing(om.ExplicitComponent):
+    """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
+
+    def setup(self):
+        num_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
+
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        self.add_input('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
+
+        add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
+
+        self.declare_partials('*', '*', method='cs')
+
+    def compute(self, inputs, outputs):
+        input_station_dist = inputs['BWB_INPUT_STATION_DIST']
+        num_stations = len(inputs['BWB_INPUT_STATION_DIST'])
+
+        span = inputs[Aircraft.Wing.SPAN]
+
+        ssmw = 0.0
+        bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
+        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DIST']
+
+        if bwb_chord_per_semispan_dist[0] <= 5.0:
+            C1 = bwb_chord_per_semispan_dist[0] * span / 2.0
+        else:
+            C1 = bwb_chord_per_semispan_dist[0]
+        if input_station_dist[0] <= 1.1:
+            Y1 = input_station_dist[0] * span / 2.0
+        else:
+            Y1 = input_station_dist[0]
+        for n in range(1, num_stations):
+            avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
+            ckt = 2.0 + 0.387 * avg_toc
+            if bwb_chord_per_semispan_dist[n] <= 5.0:
+                C2 = bwb_chord_per_semispan_dist[n] * span / 2.0
+            else:
+                C2 = bwb_chord_per_semispan_dist[n]
+            if input_station_dist[n] <= 1.1:
+                Y2 = input_station_dist[n] * span / 2.0
+            else:
+                Y2 = input_station_dist[n]
+            axp = (Y2 - Y1) * (C1 + C2)
+            C1 = C2
+            Y1 = Y2
+            ssmw = ssmw + axp * ckt
+
+        outputs[Aircraft.Wing.WETTED_AREA] = ssmw
+
+
 class _Tail(om.ExplicitComponent):
     """
     Calculate horizontal wing and vertical wing wetted areas of aircraft geometry
@@ -645,16 +812,30 @@ class _Tail(om.ExplicitComponent):
         )
 
 
+class _BWBFuselage(om.ExplicitComponent):
+    """
+    Set BWB fuselage cross sectional area, and fuselage wetted area to zero
+    for FLOPS-based aerodynamics analysis when BWB has detailed wings.
+    """
+
+    def setup(self):
+        add_aviary_output(self, Aircraft.Fuselage.CROSS_SECTION, units='ft**2')
+        add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
+
+    def compute(self, inputs, outputs):
+        outputs[Aircraft.Fuselage.CROSS_SECTION] = 0.0
+        outputs[Aircraft.Fuselage.WETTED_AREA] = 0.0
+
+
 class _Fuselage(om.ExplicitComponent):
     """
-    Calculate fuselage cross sectional area, fuselage diameter to wing span ratio,
-    fuselage length to diameter ratio, and fuselage wetted area of aircraft geometry
+    Calculate fuselage cross sectional area, and fuselage wetted area of aircraft geometry
     for FLOPS-based aerodynamics analysis.
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         self.add_input(Names.CROOTB, 0.0, units='unitless')
@@ -667,39 +848,14 @@ class _Fuselage(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
-
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
-
-        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         add_aviary_output(self, Aircraft.Fuselage.CROSS_SECTION, units='ft**2')
-        add_aviary_output(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, units='unitless')
-        add_aviary_output(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER, units='unitless')
         add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
 
     def setup_partials(self):
-        self.declare_partials(
-            Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
-            [
-                Aircraft.Wing.AREA,
-                Aircraft.Wing.ASPECT_RATIO,
-                Aircraft.Fuselage.AVG_DIAMETER,
-                Aircraft.Wing.GLOVE_AND_BAT,
-            ],
-        )
-
         self.declare_partials(Aircraft.Fuselage.CROSS_SECTION, Aircraft.Fuselage.AVG_DIAMETER)
-
-        self.declare_partials(
-            Aircraft.Fuselage.LENGTH_TO_DIAMETER,
-            [
-                Aircraft.Fuselage.LENGTH,
-                Aircraft.Fuselage.AVG_DIAMETER,
-            ],
-        )
 
         self.declare_partials(
             Aircraft.Fuselage.WETTED_AREA,
@@ -718,32 +874,19 @@ class _Fuselage(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        verbosity = self.options[Settings.VERBOSITY]
         num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
+        if num_fuselages < 1:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.NUM_FUSELAGES must be positive.')
 
-        area = inputs[Aircraft.Wing.AREA]
-        aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
         avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
-        glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
-
-        diam_to_wing_span = avg_diam / (aspect_ratio * (area - glove_and_bat)) ** 0.5
-
-        outputs[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN] = diam_to_wing_span
+        if avg_diam <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Fuselage.AVG_DIAMETER must be positive.')
 
         cross_section = pi * (avg_diam / 2.0) ** 2.0
-
         outputs[Aircraft.Fuselage.CROSS_SECTION] = cross_section
-
-        length_to_diam = 100.0  # FLOPS default value
-
-        if 0.0 < avg_diam:
-            length = inputs[Aircraft.Fuselage.LENGTH]
-
-            length_to_diam = length / avg_diam
-
-        outputs[Aircraft.Fuselage.LENGTH_TO_DIAMETER] = length_to_diam
-
-        wetted_area = 0.0
-        scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
 
         if (0 < num_fuselages) and (0.0 < avg_diam):
             CROOTB = inputs[Names.CROOTB]
@@ -751,12 +894,14 @@ class _Fuselage(om.ExplicitComponent):
 
             CRTHTB = inputs[Names.CRTHTB]
 
+            scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
             ht_thickness_chord = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
 
             vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
 
             CROTVT = inputs[Names.CROTVT]
 
+            length = inputs[Aircraft.Fuselage.LENGTH]
             vt_thickness_chord = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
 
             cfa = calc_fuselage_adjustment(CROOTB, thickness_chord)
@@ -769,49 +914,17 @@ class _Fuselage(om.ExplicitComponent):
                 - 2.0 * cfah * (1.0 - vertical_tail_fraction)
                 - cfav
             )
+        else:
+            wetted_area = 0.0
 
         outputs[Aircraft.Fuselage.WETTED_AREA] = wetted_area
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
-        area = inputs[Aircraft.Wing.AREA]
-        aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
         avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
-        glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
-
-        fact = aspect_ratio * (area - glove_and_bat)
-        fact2 = 1.0 / fact**1.5
-
-        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Fuselage.AVG_DIAMETER] = 1.0 / fact**0.5
-
-        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.ASPECT_RATIO] = (
-            -0.5 * avg_diam * (area - glove_and_bat) * fact2
-        )
-
-        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.AREA] = (
-            -0.5 * avg_diam * aspect_ratio * fact2
-        )
-
-        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.GLOVE_AND_BAT] = (
-            0.5 * avg_diam * aspect_ratio * fact2
-        )
 
         J[Aircraft.Fuselage.CROSS_SECTION, Aircraft.Fuselage.AVG_DIAMETER] = 0.5 * pi * avg_diam
-
-        if 0.0 < avg_diam:
-            length = inputs[Aircraft.Fuselage.LENGTH]
-
-            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.AVG_DIAMETER] = (
-                -length / avg_diam**2
-            )
-
-            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.LENGTH] = 1.0 / avg_diam
-
-        else:
-            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.AVG_DIAMETER] = J[
-                Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.LENGTH
-            ] = 0.0
 
         if (0 < num_fuselages) and (0.0 < avg_diam):
             CROOTB = inputs[Names.CROOTB]
@@ -826,6 +939,7 @@ class _Fuselage(om.ExplicitComponent):
 
             vt_thickness_chord = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
 
+            length = inputs[Aircraft.Fuselage.LENGTH]
             vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
 
             cfa = calc_fuselage_adjustment(CROOTB, thickness_chord)
@@ -872,7 +986,6 @@ class _Fuselage(om.ExplicitComponent):
             J[Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = (
                 scaler * 2.0 * cfah
             )
-
         else:
             J[Aircraft.Fuselage.WETTED_AREA, Names.CROOTB] = J[
                 Aircraft.Fuselage.WETTED_AREA, Names.CRTHTB
@@ -884,4 +997,97 @@ class _Fuselage(om.ExplicitComponent):
                 Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION
             ] = J[Aircraft.Fuselage.WETTED_AREA, Aircraft.VerticalTail.THICKNESS_TO_CHORD] = J[
                 Aircraft.Fuselage.WETTED_AREA, Aircraft.Wing.THICKNESS_TO_CHORD
+            ] = 0.0
+
+
+class _FuselageRatios(om.ExplicitComponent):
+    """
+    Calculate fuselage diameter to wing span ratio and fuselage length to diameter ratio
+    of aircraft geometry for FLOPS-based aerodynamics analysis.
+    """
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+
+        add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
+
+        add_aviary_output(self, Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, units='unitless')
+        add_aviary_output(self, Aircraft.Fuselage.LENGTH_TO_DIAMETER, units='unitless')
+
+    def setup_partials(self):
+        self.declare_partials(
+            Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+            [
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Wing.GLOVE_AND_BAT,
+            ],
+        )
+
+        self.declare_partials(
+            Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+            [
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.AVG_DIAMETER,
+            ],
+        )
+
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        area = inputs[Aircraft.Wing.AREA]
+        aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
+        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
+
+        diam_to_wing_span = avg_diam / (aspect_ratio * (area - glove_and_bat)) ** 0.5
+
+        outputs[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN] = diam_to_wing_span
+
+        if 0.0 < avg_diam:
+            length = inputs[Aircraft.Fuselage.LENGTH]
+
+            length_to_diam = length / avg_diam
+        else:
+            length_to_diam = 100.0  # FLOPS default value
+
+        outputs[Aircraft.Fuselage.LENGTH_TO_DIAMETER] = length_to_diam
+
+    def compute_partials(self, inputs, J, discrete_inputs=None):
+        area = inputs[Aircraft.Wing.AREA]
+        aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
+        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
+
+        fact = aspect_ratio * (area - glove_and_bat)
+        fact2 = 1.0 / fact**1.5
+
+        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Fuselage.AVG_DIAMETER] = 1.0 / fact**0.5
+
+        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.ASPECT_RATIO] = (
+            -0.5 * avg_diam * (area - glove_and_bat) * fact2
+        )
+
+        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.AREA] = (
+            -0.5 * avg_diam * aspect_ratio * fact2
+        )
+
+        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.GLOVE_AND_BAT] = (
+            0.5 * avg_diam * aspect_ratio * fact2
+        )
+
+        if 0.0 < avg_diam:
+            length = inputs[Aircraft.Fuselage.LENGTH]
+
+            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.AVG_DIAMETER] = (
+                -length / avg_diam**2
+            )
+
+            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.LENGTH] = 1.0 / avg_diam
+
+        else:
+            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.AVG_DIAMETER] = J[
+                Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.LENGTH
             ] = 0.0

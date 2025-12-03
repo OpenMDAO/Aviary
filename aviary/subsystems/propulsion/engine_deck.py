@@ -102,6 +102,7 @@ required_options = (
     Aircraft.Engine.GEOPOTENTIAL_ALT,
     Aircraft.Engine.GENERATE_FLIGHT_IDLE,
     Aircraft.Engine.INTERPOLATION_METHOD,
+    Aircraft.Engine.INTERPOLATION_SORT,
     # TODO fuel flow scaler is required for the EngineScaling component but does not need
     #      to be defined on a per-engine basis, so it could exist only in the problem-
     #      level aviary_options without issue. Is this a propulsion_preprocessor task?
@@ -300,6 +301,15 @@ class EngineDeck(EngineModel):
                 f'EngineDeck <{self.name}>: Scaling targets are provided, but will be '
                 'ignored because performance scaling is disabled. Set '
                 'aircraft:engine:scale_performance to True to enable scaling.'
+            )
+
+        # Check validity of interp_sort.
+        # TODO: support this as an enum instead.
+        interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)
+        if interp_sort not in ['mach', 'altitude']:
+            raise ValueError(
+                f'EngineDeck <{self.name}>: Invalid value of Aircraft.Engine.INTERPOLATION_SORT.'
+                f' Expected "altitude" or "mach", but found "{interp_sort}".'
             )
 
     def _set_variable_flags(self):
@@ -793,6 +803,7 @@ class EngineDeck(EngineModel):
         Currently only the semistructured model is supported.
         """
         interp_method = self.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
+        interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)
         # interpolator object for engine data
         engine = om.MetaModelSemiStructuredComp(
             method=interp_method, extrapolate=True, vec_size=num_nodes
@@ -805,7 +816,11 @@ class EngineDeck(EngineModel):
 
         # add inputs and outputs to interpolator
         # independent variables that currently MUST be inputs
-        independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
+        if interp_sort == 'altitude':
+            independent_variables = [ALTITUDE, MACH, THROTTLE, HYBRID_THROTTLE]
+        else:
+            independent_variables = [MACH, ALTITUDE, THROTTLE, HYBRID_THROTTLE]
+
         if self.inputs == []:
             self.inputs = independent_variables
         else:
@@ -817,13 +832,29 @@ class EngineDeck(EngineModel):
                     )
 
         no_scale_variables = [TEMPERATURE, RPM]
-        for variable in self.engine_variables:
-            if variable in self.inputs:
+
+        # Add the first table inputs in the requested order.
+        for variable in independent_variables:
+            if variable in self.inputs and variable in self.engine_variables:
                 engine.add_input(
                     variable.value,
                     self.data[variable],
                     units=default_units[variable],
                 )
+
+        # Add the remaining variables.
+        for variable in self.engine_variables:
+            if variable in self.inputs:
+                if variable in independent_variables:
+                    # Already handled above.
+                    continue
+
+                engine.add_input(
+                    variable.value,
+                    self.data[variable],
+                    units=default_units[variable],
+                )
+
             else:
                 # don't append 'unscaled' to variables that will not be passed to scaling
                 if variable in no_scale_variables:
@@ -857,6 +888,7 @@ class EngineDeck(EngineModel):
             needed for this EngineDeck.
         """
         interp_method = self.get_val(Aircraft.Engine.INTERPOLATION_METHOD)
+        interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)
 
         engine_group = om.Group()
 
@@ -906,18 +938,33 @@ class EngineDeck(EngineModel):
                             alt_table = np.append(alt_table, packed_data[ALTITUDE][M, A, 0])
 
                 # add inputs and outputs to interpolator
-                interp_throttles.add_input(
-                    Dynamic.Atmosphere.MACH,
-                    mach_table,
-                    units='unitless',
-                    desc='Current flight Mach number',
-                )
-                interp_throttles.add_input(
-                    Dynamic.Mission.ALTITUDE,
-                    alt_table,
-                    units=units[ALTITUDE],
-                    desc='Current flight altitude',
-                )
+                if interp_sort == 'altitude':
+                    interp_throttles.add_input(
+                        Dynamic.Mission.ALTITUDE,
+                        alt_table,
+                        units=units[ALTITUDE],
+                        desc='Current flight altitude',
+                    )
+                    interp_throttles.add_input(
+                        Dynamic.Atmosphere.MACH,
+                        mach_table,
+                        units='unitless',
+                        desc='Current flight Mach number',
+                    )
+                else:
+                    interp_throttles.add_input(
+                        Dynamic.Atmosphere.MACH,
+                        mach_table,
+                        units='unitless',
+                        desc='Current flight Mach number',
+                    )
+                    interp_throttles.add_input(
+                        Dynamic.Mission.ALTITUDE,
+                        alt_table,
+                        units=units[ALTITUDE],
+                        desc='Current flight altitude',
+                    )
+
                 if not self.global_throttle:
                     interp_throttles.add_output(
                         'throttle_max',
@@ -939,18 +986,33 @@ class EngineDeck(EngineModel):
                 method=interp_method, extrapolate=False, vec_size=num_nodes
             )
 
-            max_thrust_engine.add_input(
-                Dynamic.Atmosphere.MACH,
-                self.data[MACH],
-                units='unitless',
-                desc='Current flight Mach number',
-            )
-            max_thrust_engine.add_input(
-                Dynamic.Mission.ALTITUDE,
-                self.data[ALTITUDE],
-                units=units[ALTITUDE],
-                desc='Current flight altitude',
-            )
+            if interp_sort == 'altitude':
+                max_thrust_engine.add_input(
+                    Dynamic.Mission.ALTITUDE,
+                    self.data[ALTITUDE],
+                    units=units[ALTITUDE],
+                    desc='Current flight altitude',
+                )
+                max_thrust_engine.add_input(
+                    Dynamic.Atmosphere.MACH,
+                    self.data[MACH],
+                    units='unitless',
+                    desc='Current flight Mach number',
+                )
+            else:
+                max_thrust_engine.add_input(
+                    Dynamic.Atmosphere.MACH,
+                    self.data[MACH],
+                    units='unitless',
+                    desc='Current flight Mach number',
+                )
+                max_thrust_engine.add_input(
+                    Dynamic.Mission.ALTITUDE,
+                    self.data[ALTITUDE],
+                    units=units[ALTITUDE],
+                    desc='Current flight altitude',
+                )
+
             # replace throttle coming from mission with max value based on flight condition
             max_thrust_engine.add_input(
                 'throttle_max',
@@ -1457,9 +1519,12 @@ class EngineDeck(EngineModel):
 
     def _sort_data(self):
         """
-        Sort unpacked engine data in order of Mach number, altitude, throttle,
+        Sort unpacked engine data in order based on Aircraft.Engine.INTERPOLATION_SORT. When this
+        is set to "mach", sort by Mach number, altitude, throttle. When it is set to "altitude",
+        sort by altitude, Mach number, throttle.
         hybrid throttle.
         """
+        interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)
         engine_data = self.data
 
         # sort engine data to ensure independent variables are always in
@@ -1468,17 +1533,26 @@ class EngineDeck(EngineModel):
         # convert engine_data from dict to list so it can be sorted
         sorted_values = np.array([engine_data[key] for key in engine_data]).transpose()
 
-        # Sort by mach, then altitude, then throttle, then hybrid throttle
-        sorted_values = sorted_values[
-            np.lexsort(
-                [
-                    engine_data[HYBRID_THROTTLE],
-                    engine_data[THROTTLE],
-                    engine_data[ALTITUDE],
-                    engine_data[MACH],
-                ]
-            )
-        ]
+        if interp_sort == 'altitude':
+            # Sort by mach, then altitude, then throttle, then hybrid throttle
+            sort_keys = [
+                engine_data[HYBRID_THROTTLE],
+                engine_data[THROTTLE],
+                engine_data[MACH],
+                engine_data[ALTITUDE],
+            ]
+
+        else:
+            # Sort by mach, then altitude, then throttle, then hybrid throttle
+            sort_keys = [
+                engine_data[HYBRID_THROTTLE],
+                engine_data[THROTTLE],
+                engine_data[ALTITUDE],
+                engine_data[MACH],
+            ]
+
+        sorted_values = sorted_values[np.lexsort(sort_keys)]
+
         for idx, var in enumerate(engine_data):
             engine_data[var] = sorted_values[:, idx]
 
@@ -1532,6 +1606,8 @@ class EngineDeck(EngineModel):
             If insufficient number of altitude points (<2) provided for a given Mach
             number.
         """
+        interp_sort = self.get_val(Aircraft.Engine.INTERPOLATION_SORT)
+
         mach_count = 0
         # First Mach number must have at least one altitude associated with it
         alt_count = 1
@@ -1563,6 +1639,17 @@ class EngineDeck(EngineModel):
 
                 else:
                     # new altitude for this Mach number, count it
+
+                    # if there are less than two Machs for this altitude, quit
+                    if interp_sort == 'altitude':
+                        if mach_count < 2 and alt_count > 0:
+                            raise UserWarning(
+                                'Only one Mach provided for altitude '
+                                f'{altitudes[alt_count]:6.3f} in engine data '
+                                'file '
+                                f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
+                            )
+
                     curr_alt = alt
                     alt_count += 1
                     data_indices = extend_array(data_indices, [mach_count, alt_count])
@@ -1576,14 +1663,16 @@ class EngineDeck(EngineModel):
 
             else:
                 # new Mach number
+
                 # if there are less than two altitudes for this Mach number, quit
-                if alt_count < 2 and mach_count > 0:
-                    raise UserWarning(
-                        'Only one altitude provided for Mach number '
-                        f'{mach_numbers[mach_count]:6.3f} in engine data '
-                        'file '
-                        f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
-                    )
+                if interp_sort == 'mach':
+                    if alt_count < 2 and mach_count > 0:
+                        raise UserWarning(
+                            'Only one altitude provided for Mach number '
+                            f'{mach_numbers[mach_count]:6.3f} in engine data '
+                            'file '
+                            f'<{self.get_val(Aircraft.Engine.DATA_FILE).name}>'
+                        )
 
                 # record and count Mach numbers
                 curr_mach = mach_num

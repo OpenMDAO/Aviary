@@ -45,7 +45,6 @@ aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,6293.8,lbm
 aircraft:engine:reference_sls_thrust,22200.5,lbf
-aircraft:engine:scale_factor,0.99997747798473,unitless
 aircraft:engine:scaled_sls_thrust,22200.0,0.0,0.0,0.0,0.0,0.0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
@@ -55,13 +54,14 @@ aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density_ratio,1.0,unitless
+aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
+aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,0.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
-aircraft:fuel:wing_fuel_capacity,25.903,lbm
+aircraft:fuel:wing_fuel_fraction,0.7752373238926116,unitless
 aircraft:furnishings:mass_scaler,0.81859,unitless
 aircraft:fuselage:laminar_flow_lower,0.0,unitless
 aircraft:fuselage:laminar_flow_upper,0.0,unitless
@@ -137,7 +137,7 @@ aircraft:wing:span,118.7505278165,ft
 aircraft:wing:span_efficiency_factor,0.95,unitless
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,0.0,unitless
-aircraft:wing:surface_ctrl_mass_scaler,1.77696,unitless
+aircraft:wing:surface_control_mass_scaler,1.77696,unitless
 aircraft:wing:sweep,23.6286942529271,0.0,0.0,0.0,0.0,0.0,deg
 aircraft:wing:taper_ratio,0.265189599754917,0.0,0.0,0.0,0.0,0.0,unitless
 aircraft:wing:thickness_to_chord,0.12233,0.0,0.0,0.0,0.0,0.0,unitless
@@ -428,7 +428,6 @@ WTIN.cgzwf,0
 WTIN.dldwt,0
 WTIN.einl,1
 WTIN.enoz,1
-WTIN.ifufu,0
 WTIN.ispowe,0
 WTIN.mldwt,0
 WTIN.mywts,0

@@ -1,16 +1,17 @@
+import warnings
+
+import dymos as dm
+import openmdao.api as om
+
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
-import openmdao.api as om
-from aviary.models.missions.height_energy_default import phase_info
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
-import dymos as dm
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import setup_trajectory_params
-import warnings
-from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class L3SubsystemsGroup(om.Group):
@@ -304,6 +305,27 @@ prob.model.post_mission.add_subsystem(
     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
 )
 
+ecomp = om.ExecComp(
+    'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
+    total_fuel_capacity={'units': 'lbm'},
+    unusable_fuel={'units': 'lbm'},
+    overall_fuel={'units': 'lbm'},
+    excess_fuel_capacity={'units': 'lbm'},
+)
+
+prob.model.post_mission.add_subsystem(
+    'excess_fuel_constraint',
+    ecomp,
+    promotes_inputs=[
+        ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+        ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
+        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+    ],
+    promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+)
+
+prob.model.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, units='lbm')
+
 #####
 # prob.link_phases()
 
@@ -492,40 +514,9 @@ prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
-prob.verbosity = Verbosity.VERBOSE
+prob.verbosity = Verbosity.BRIEF
 
 prob.run_aviary_problem()
-prob.model.list_vars(units=True, print_arrays=True)
-prob.list_driver_vars(
-    print_arrays=True,
-    desvar_opts=[
-        'lower',
-        'upper',
-        'ref',
-        'ref0',
-        'indices',
-        'adder',
-        'scaler',
-        'parallel_deriv_color',
-        'cache_linear_solution',
-        'units',
-        'min',
-        'max',
-    ],
-    cons_opts=[
-        'lower',
-        'upper',
-        'equals',
-        'ref',
-        'ref0',
-        'indices',
-        'adder',
-        'scaler',
-        'linear',
-        'parallel_deriv_color',
-        'cache_linear_solution',
-        'units',
-        'min',
-        'max',
-    ],
-)
+
+# prob.model.list_vars(units=True, print_arrays=True)
+# prob.list_driver_vars(print_arrays=True)

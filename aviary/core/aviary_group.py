@@ -1,4 +1,5 @@
 import inspect
+import warnings
 from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 import sys
@@ -949,6 +950,52 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
         )
 
+        ecomp = om.ExecComp(
+            'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
+            total_fuel_capacity={'units': 'lbm'},
+            unusable_fuel={'units': 'lbm'},
+            overall_fuel={'units': 'lbm'},
+            excess_fuel_capacity={'units': 'lbm'},
+        )
+
+        post_mission.add_subsystem(
+            'excess_fuel_constraint',
+            ecomp,
+            promotes_inputs=[
+                ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+                ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
+                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+            ],
+            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+        )
+
+        # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
+        try:
+            # for backwards compatability check to see if variable exists, if not assume default value = False
+            ignore_capacity_constraint = self.aviary_inputs.get_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, units='unitless'
+            )
+        except:
+            ignore_capacity_constraint = self.meta_data[
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT
+            ]['default_value']
+            self.aviary_inputs.set_val(
+                Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+                val=ignore_capacity_constraint,
+                units='unitless',
+            )
+
+        if not ignore_capacity_constraint:
+            self.add_constraint(
+                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=1000, units='lbm'
+            )
+        else:
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem.'
+                    'The aircraft may not have enough space for fuel, so check the value of Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
+                )
+
     def link_phases(self, verbosity=None, comm=None):
         """
         Link phases together after they've been added.
@@ -1039,6 +1086,7 @@ class AviaryGroup(om.Group):
             if bus_variables is not None:
                 for bus_variable, variable_data in bus_variables.items():
                     mission_variable_name = variable_data['mission_name']
+                    src_indices = variable_data.get('src_indices', None)
 
                     # check if mission_variable_name is a list
                     if not isinstance(mission_variable_name, list):
@@ -1076,6 +1124,7 @@ class AviaryGroup(om.Group):
                                     self.connect(
                                         f'pre_mission.{bus_variable}',
                                         f'traj.{phase_name}.parameters:{mission_var_name}',
+                                        src_indices=src_indices,
                                     )
 
                             else:
@@ -1085,14 +1134,13 @@ class AviaryGroup(om.Group):
                                     static_target=True,
                                     units=base_units,
                                     shape=shape,
-                                    targets={
-                                        phase_name: [mission_var_name] for phase_name in base_phases
-                                    },
+                                    targets={phase_name: [targets] for phase_name in base_phases},
                                 )
 
                                 self.connect(
                                     f'pre_mission.{bus_variable}',
                                     'traj.parameters:' + mission_var_name,
+                                    src_indices=src_indices,
                                 )
 
                     if 'post_mission_name' in variable_data:
@@ -1105,6 +1153,7 @@ class AviaryGroup(om.Group):
                             self.connect(
                                 f'pre_mission.{bus_variable}',
                                 post_mission_var_name,
+                                src_indices=src_indices,
                             )
 
     def _connect_mission_bus_variables(self):
@@ -1115,7 +1164,9 @@ class AviaryGroup(om.Group):
             for phase_name, var_mapping in subsystem.get_post_mission_bus_variables(
                 aviary_inputs=self.aviary_inputs, phase_info=self.phase_info
             ).items():
-                for mission_variable_name, post_mission_variable_names in var_mapping.items():
+                for mission_variable_name, variable_data in var_mapping.items():
+                    post_mission_variable_names = variable_data['post_mission_name']
+                    src_indices = variable_data.get('src_indices', None)
                     if not isinstance(post_mission_variable_names, list):
                         post_mission_variable_names = [post_mission_variable_names]
 
@@ -1123,7 +1174,7 @@ class AviaryGroup(om.Group):
                         # Remove possible prefix before a `.`, like <external_subsystem_name>.<var_name>"
                         mvn_basename = mission_variable_name.rpartition('.')[-1]
                         src_name = f'traj.{phase_name}.mission_bus_variables.{mvn_basename}'
-                        self.connect(src_name, post_mission_var_name)
+                        self.connect(src_name, post_mission_var_name, src_indices=src_indices)
 
     def add_design_variables(self, problem_type: ProblemType = None, verbosity=None):
         """

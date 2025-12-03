@@ -13,17 +13,15 @@ dependencies = [
     "hvplot",
     "importlib_resources",
     "matplotlib",
-    "numpy<2",
     "openmdao>=3.37.0",
     "pandas",
     "panel>=1.0.0",
     "parameterized",
-    "simupy",
 ]
 
 [project.optional-dependencies]
 docs = [
-    "jupyter-book",
+    "jupyter-book<2",
     "itables"
 ]
 dev = [

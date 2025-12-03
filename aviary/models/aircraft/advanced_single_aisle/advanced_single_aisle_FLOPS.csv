@@ -63,8 +63,7 @@ aircraft:fins:mass_scaler,1,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0,lbm
-aircraft:fuel:capacity_factor,25.903,unitless
-aircraft:fuel:density_ratio,1,unitless
+aircraft:fuel:wing_fuel_fraction,0.7752,unitless
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
 aircraft:fuel:fuselage_fuel_capacity,0,lbm
 aircraft:fuel:num_tanks,7,unitless
@@ -154,7 +153,7 @@ aircraft:wing:span,118.7505278165,ft
 aircraft:wing:span_efficiency_factor,0.95,unitless
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,0,unitless
-aircraft:wing:surface_ctrl_mass_scaler,1.77696,unitless
+aircraft:wing:surface_control_mass_scaler,1.77696,unitless
 aircraft:wing:sweep,23.6286942529271,deg
 aircraft:wing:taper_ratio,0.265189599754917,unitless
 aircraft:wing:thickness_to_chord,0.12233,unitless

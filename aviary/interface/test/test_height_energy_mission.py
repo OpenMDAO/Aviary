@@ -122,7 +122,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
             make_plots=self.make_plots,
             max_iter=self.max_iter,
             optimizer=optimizer,
-            optimization_history_filename='driver_test.db',
             verbosity=0,
         )
 
@@ -141,10 +140,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertIsNotNone(prob)
         self.assertTrue(prob.result.success)
 
-        cmd = (
-            'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder '
-            f'driver_test.db {prob.driver._problem()._name}'
-        )
+        cmd = f'aviary dashboard {prob.driver._problem()._name}'
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested separately.

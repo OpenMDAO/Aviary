@@ -130,7 +130,7 @@ aircraft:wing:optimum_flap_deflection,55,deg
 aircraft:wing:optimum_slat_deflection,20,deg
 aircraft:wing:slat_chord_ratio,0.15,unitless
 aircraft:wing:slat_lift_increment_optimum,0.93,unitless
-aircraft:wing:surface_ctrl_mass_coefficient,0.95,unitless
+aircraft:wing:surface_control_mass_coefficient,0.95,unitless
 aircraft:wing:sweep,25.0,deg
 aircraft:wing:taper_ratio,0.278,unitless
 aircraft:wing:thickness_to_chord_root,0.15,unitless
@@ -189,7 +189,6 @@ aircraft:fins:mass,0.0,lbm
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,10.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density_ratio,1.0,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,45694.0,lbm
@@ -236,7 +235,7 @@ aircraft:wing:num_integration_stations,50,unitless
 aircraft:wing:shear_control_mass_scaler,1.0,unitless
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,0.0,unitless
-aircraft:wing:surface_ctrl_mass_scaler,1.0,unitless
+aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:thickness_to_chord_dist,0.145,0.115,0.104,unitless
 aircraft:wing:thickness_to_chord,0.13,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless

@@ -343,6 +343,32 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
+    Aircraft.BWB.DETAILED_WING_PROVIDED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Flag if the detailed wing model is provided',
+    option=True,
+    types=bool,
+    default_value=True,
+)
+
+add_meta_data(
+    Aircraft.BWB.MAX_NUM_BAYS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.NBAYMX',  # ['&DEFINE.FUSEIN.NBAYMX', 'FUSDTA.NBAYMX'],
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='fixed number of bays',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -354,10 +380,11 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='fixed number of bays',
+    desc='fixed number of passenger bays',
     types=int,
-    option=True,
-    default_value=0,
+    multivalue=True,
+    option=False,
+    default_value=[0],
 )
 
 add_meta_data(
@@ -1686,7 +1713,7 @@ add_meta_data(
         'GASP': None,
         'FLOPS': None,
         'LEAPS1': None,
-        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary's value is the actual T/W, while TWR is
+        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary\'s value is the actual T/W, while TWR is
         #      the desired T/W ratio
         # 'FLOPS': 'CONFIN.TWR',
         # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
@@ -2193,6 +2220,20 @@ add_meta_data(
     types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.INTERPOLATION_SORT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value='mach',
+    types=str,
+    desc='Specify the first interpolation variable in the semi-structured metamodel. '
+    'Choose from mach or altitude. Mach is usually the first column in the deck, but '
+    'altitude is more robust for semi-structured data.',
     multivalue=True,
 )
 
@@ -2864,42 +2905,13 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.CAPACITY_FACTOR,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISWT.FWMAX',
-        'LEAPS1': '(WeightABC)self._wing_fuel_capacity_factor',
-    },
-    units='unitless',
-    desc='fuel capacity factor',
-    default_value=1.0,
-)
-
-add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN', 'LEAPS1': None},
     units='lbm/galUS',
-    desc='fuel density',
-    default_value=0.0,
-)
-
-# TODO replace with actual fuel density
-add_meta_data(
-    Aircraft.Fuel.DENSITY_RATIO,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FULDEN',  # ['&DEFINE.WTIN.FULDEN', 'UPFUEL.FULDEN'],
-        'LEAPS1': 'aircraft.inputs.L0_fuel.density_ratio',
-    },
-    units='unitless',
-    desc='Fuel density ratio for alternate fuels compared to jet fuel (typical '
-    'density of 6.7 lbm/gal), used in the calculation of wing_capacity (if '
-    'wing_capacity is not input) and in the calculation of fuel system '
-    'weight.',
-    default_value=1.0,
+    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
+    '(if wing_capacity is not input) and in the calculation of fuel system weight.',
+    default_value=6.7,
 )
 
 add_meta_data(
@@ -2969,6 +2981,18 @@ add_meta_data(
     units='lbm',
     desc='fuel capacity of the fuselage',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU', 'LEAPS1': None},
+    units='unitless',
+    desc='Flag to control enforcement of fuel_capacity constraint. '
+    'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
+    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use carefully!',
+    default_value=False,
+    types=bool,
 )
 
 add_meta_data(
@@ -3414,7 +3438,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': 'WTIN.TCF', 'LEAPS1': None},
     units='unitless',
     types=float,
     default_value=1.0,
@@ -3718,6 +3742,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.SIMPLE_LAYOUT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='carry out simple or detailed layout of fuselage.',
+    option=True,
+    default_value=True,
+)
+
+add_meta_data(
     Aircraft.Fuselage.TAIL_FINENESS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.ELODT', 'FLOPS': None, 'LEAPS1': None},
@@ -3780,7 +3814,7 @@ add_meta_data(
     Aircraft.HorizontalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SHT',
+        'GASP': 'INGASP.SHT',  # not an input in GASP
         'FLOPS': 'WTIN.SHT',  # ['&DEFINE.WTIN.SHT', 'EDETIN.SHT'],
         'LEAPS1': [
             'aircraft.inputs.L0_horizontal_tail.area',
@@ -4970,7 +5004,7 @@ add_meta_data(
     Aircraft.VerticalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SVT',
+        'GASP': 'INGASP.SVT',  # not an input in GASP
         'FLOPS': 'WTIN.SVT',  # ['&DEFINE.WTIN.SVT', 'EDETIN.SVT'],
         'LEAPS1': [
             'aircraft.inputs.L0_vertical_tails.area',
@@ -6859,9 +6893,9 @@ add_meta_data(
 # add_meta_data(
 #     Dynamic.Vehicle.Propulsion.EXIT_AREA,
 #     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                     "FLOPS": None,
-#                     "LEAPS1": None
+#     historical_name={'GASP': None,
+#                     'FLOPS': None,
+#                     'LEAPS1': None
 #                     },
 #     units='kW',
 #     desc='Current nozzle exit area of engines, per single instance of each '
@@ -7072,6 +7106,15 @@ add_meta_data(
 # | |____  | (_) | | | | | \__ \ | |_  | |    | (_| | | | | | | | | |_  \__ \
 #  \_____|  \___/  |_| |_| |___/  \__| |_|     \__,_| |_| |_| |_|  \__| |___/
 # ===========================================================================
+
+add_meta_data(
+    Mission.Constraints.EXCESS_FUEL_CAPACITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. '
+    'Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
+)
 
 add_meta_data(
     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,

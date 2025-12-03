@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.utils.functions import sin_int4, dydx_sin_int4
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -58,47 +59,3 @@ class TransportCargoContainersMass(om.ExplicitComponent):
         J[Aircraft.CrewPayload.CARGO_CONTAINER_MASS, Aircraft.CrewPayload.BAGGAGE_MASS] = (
             partial * scaler / GRAV_ENGLISH_LBM
         )
-
-
-# region TODO: move this to an appropriate module for import
-def sin_int4(val):
-    """Define a smooth, differentialbe approximation to the 'int' function."""
-    return sin_int(sin_int(sin_int(sin_int(val)))) - 0.5
-
-
-def dydx_sin_int4(val):
-    """Define the derivative (dy/dx) of sin_int4, at x = val."""
-    y0 = sin_int(val)
-    y1 = sin_int(y0)
-    y2 = sin_int(y1)
-
-    dydx3 = dydx_sin_int(y2)
-    dydx2 = dydx_sin_int(y1)
-    dydx1 = dydx_sin_int(y0)
-    dydx0 = dydx_sin_int(val)
-
-    dydx = dydx3 * dydx2 * dydx1 * dydx0
-
-    return dydx
-
-
-# 'int' function can be approximated by recursively applying this sin function
-# which makes a smooth, differentialbe function
-def sin_int(val):
-    """
-    Define one step in approximating the 'int' function with a smooth,
-    differentialbe function.
-    """
-    int_val = val - np.sin(2 * np.pi * (val + 0.5)) / (2 * np.pi)
-
-    return int_val
-
-
-def dydx_sin_int(val):
-    """Define the derivative (dy/dx) of sin_int, at x = val."""
-    dydx = 1.0 - np.cos(2 * np.pi * (val + 0.5))
-
-    return dydx
-
-
-# endregion TODO: move this to an appropriate module for import
