@@ -296,6 +296,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
         if total_num_wing_engines > 1:
             add_aviary_input(
@@ -322,12 +323,28 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
         num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
         num_engine_type = len(num_wing_engines)
+        width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
+        rate_span = (wingspan - width) / wingspan
 
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
         # inp_stations = np.array(input_station_dist)
+        bwb_input_station_dist = np.array(
+            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+        )
+        chk = len(input_station_dist) == 3 and input_station_dist == [0.0, 0.5, 1.0]
+        if len(input_station_dist) == 3 and chk.all():
+            bwb_input_station_dist[1] = width / 2.0
+        else:
+            bwb_input_station_dist = np.where(
+                bwb_input_station_dist <= 1.0,
+                bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+                bwb_input_station_dist + width / 2.0,  # else
+            )
+            bwb_input_station_dist[0] = 0.0
+            bwb_input_station_dist[1] = width / 2.0
         inp_stations_mod = []
-        for x in input_station_dist:
+        for x in bwb_input_station_dist:
             if x > 1.0:
                 inp_stations_mod.append(2 * x / wingspan)
             else:
