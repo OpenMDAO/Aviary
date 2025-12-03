@@ -164,7 +164,7 @@ inputs.set_val(
 inputs.set_val(Aircraft.HorizontalTail.AREA, 1e-14, 'ft**2')  # SHT in bwb.in, set to 1E-14 not 0.0
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # SHT in bwb.in, set to 0.1 not 0.0
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT in bwb.in
-inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT in bwb.in
+inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT=0 in bwb.in, default to TCA
 # inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT not in bwb.in,
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # SHT in bwb.in
 # inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 592.65, 'ft**2')  # SWTHT not in bwb.in
@@ -282,10 +282,10 @@ inputs.set_val(
 inputs.set_val(Aircraft.VerticalTail.NUM_TAILS, 0)  # NVERT in bwb.in
 inputs.set_val(
     Aircraft.VerticalTail.AREA, 1e-14, 'ft**2'
-)  # SVT not in bwb.in, set to 0.00001, not default
+)  # SVT not in bwb.in, set to 1e-14, not default
 inputs.set_val(
     Aircraft.VerticalTail.ASPECT_RATIO, 0.1
-)  # ARVT not in bwb.in, set to 0.01, not default ARHT/2 = 0/2
+)  # ARVT not in bwb.in, set to 0.1, not default ARHT/2 = 0/2
 inputs.set_val(
     Aircraft.VerticalTail.TAPER_RATIO, 0.0
 )  # TRVT not in bwb.in, set to default TRHT = 0
@@ -301,8 +301,6 @@ inputs.set_val(
 inputs.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0)  # FAERT in bwb.in
 inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 2.0)  # AITEK in bwb.in
 # inputs.set_val(Aircraft.Wing.AREA, 7621.66, 'ft**2')  # SW in bwb.in, always output for BWB
-# inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 7.557)  # AR in bwb.in
-inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 7.557)  # ARREF not in bwb.in, default to AR
 inputs.set_val(
     Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0
 )  # FRWI1 not in bwb.in, set to Aviary default
@@ -317,7 +315,6 @@ inputs.set_val(
     Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.5, 1.0])
 )  # ETAW not in bwb.in, it will be computed during the run
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST not in bwb.in, set to default
-# inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)  # PCTL not in bwb.in, set to default
 # inputs.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, np.array([0.0, 22.0]), 'deg')  # SWL not in bwb.in
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM in bwb.in
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3 not in bwb.in, set to Aviary default
@@ -420,6 +417,8 @@ outputs.set_val(Aircraft.Electrical.MASS, 4514.28869169, 'lbm')  # WELEC
 outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 2385712.4988316689, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 8120.2023807944415, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 2163.999415070652, 'lbm')  # WUF
+outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 0, 'lbm')  # FULWMX
+# outputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0, 'lbm')  # FULFMX
 
 outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
 
@@ -449,9 +448,6 @@ outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(
 outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.11)  # FR(2)
 outputs.set_val(Aircraft.HorizontalTail.MASS, 0.0, 'lbm')  # WHT
 outputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.0, 'ft**2')  # SWTHT not in bwb.in
-outputs.set_val(
-    Aircraft.VerticalTail.WETTED_AREA, 0.0, 'ft**2'
-)  # not in bwb.in, not a FLOPS variable
 
 outputs.set_val(Aircraft.Hydraulics.MASS, 7368.5077321194321, 'lbm')  # WHYD
 
@@ -511,8 +507,11 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 53476.90008698, 'lbm')  #
 outputs.set_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(3)
 outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.11)  # FR(3)
 outputs.set_val(Aircraft.VerticalTail.MASS, 0.0, 'lbm')  # WVT
+outputs.set_val(
+    Aircraft.VerticalTail.WETTED_AREA, 0.0, 'ft**2'
+)  # not in bwb.in, not a FLOPS variable
 
-outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 2.68745091)  # BT
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 2.68745091)  # BT 2.7108906906553494
 outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 6313.44762977, 'lbm')  # W1
 outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 69.53953418, 'ft')  # EL(1)
 # Not in FLOPS output; calculated from inputs.
@@ -527,12 +526,9 @@ outputs.set_val(Aircraft.Wing.MASS, 86742.28126808, 'lbm')  # WWING
 outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW, always computed for BWB
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488813)  # AR in bwb.in, always computed for BWB
-outputs.set_val(
-    Aircraft.Wing.LOAD_FRACTION, 0.53107166
-)  # PCTL not in bwb.in, always computed for BWB
-outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWETW not in bwb.in,
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 0, 'lbm')  # FULWMX
-# outputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0, 'lbm')  # FULFMX
+outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 3.4488813)  # AR in bwb.in, always computed for BWB
+outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.53107166)  # PCTL, always computed for BWB
+outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWET(1)
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 # outputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
