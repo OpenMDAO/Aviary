@@ -56,6 +56,7 @@ class WingMassGroup(om.Group):
                 )
 
         else:
+            # Skip BWB because it is never a simple wing
             self.add_subsystem(
                 'wing_bending_material_factor',
                 SimpleWingBendingFact(),

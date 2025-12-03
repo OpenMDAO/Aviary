@@ -84,23 +84,15 @@ class MassPremission(om.Group):
         self.add_subsystem(
             'cargo_containers',
             TransportCargoContainersMass(),
-            promotes_inputs=[
-                '*',
-            ],
-            promotes_outputs=[
-                '*',
-            ],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'engine_controls',
             TransportEngineCtrlsMass(),
-            promotes_inputs=[
-                '*',
-            ],
-            promotes_outputs=[
-                '*',
-            ],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
@@ -122,12 +114,8 @@ class MassPremission(om.Group):
             self.add_subsystem(
                 'fuel_system',
                 AltFuelSystemMass(),
-                promotes_inputs=[
-                    '*',
-                ],
-                promotes_outputs=[
-                    '*',
-                ],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
             self.add_subsystem(
@@ -189,12 +177,8 @@ class MassPremission(om.Group):
             self.add_subsystem(
                 'fuel_system',
                 TransportFuelSystemMass(),
-                promotes_inputs=[
-                    '*',
-                ],
-                promotes_outputs=[
-                    '*',
-                ],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
             self.add_subsystem(
@@ -295,34 +279,22 @@ class MassPremission(om.Group):
                 self.add_subsystem(
                     'fuselage',
                     BWBFuselageMass(),
-                    promotes_inputs=[
-                        '*',
-                    ],
-                    promotes_outputs=[
-                        '*',
-                    ],
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
                 )
             else:
                 self.add_subsystem(
                     'fuselage',
                     AltFuselageMass(),
-                    promotes_inputs=[
-                        '*',
-                    ],
-                    promotes_outputs=[
-                        '*',
-                    ],
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
                 )
 
             self.add_subsystem(
                 'htail',
                 AltHorizontalTailMass(),
-                promotes_inputs=[
-                    '*',
-                ],
-                promotes_outputs=[
-                    '*',
-                ],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
             self.add_subsystem(
@@ -338,34 +310,22 @@ class MassPremission(om.Group):
                 self.add_subsystem(
                     'fuselage',
                     BWBFuselageMass(),
-                    promotes_inputs=[
-                        '*',
-                    ],
-                    promotes_outputs=[
-                        '*',
-                    ],
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
                 )
             else:
                 self.add_subsystem(
                     'fuselage',
                     TransportFuselageMass(),
-                    promotes_inputs=[
-                        '*',
-                    ],
-                    promotes_outputs=[
-                        '*',
-                    ],
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
                 )
 
             self.add_subsystem(
                 'htail',
                 HorizontalTailMass(),
-                promotes_inputs=[
-                    '*',
-                ],
-                promotes_outputs=[
-                    '*',
-                ],
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
             )
 
             self.add_subsystem(
