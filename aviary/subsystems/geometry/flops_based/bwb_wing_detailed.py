@@ -45,7 +45,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=num_inp_stations - 1, units='deg')
 
     def setup_partials(self):
-        self.declare_partials('BWB_CHORD_PER_SEMISPAN_DIST', '*', method='fd', form='forward')
+        self.declare_partials('BWB_CHORD_PER_SEMISPAN_DIST', '*', method='cs')
 
         self.declare_partials(
             'BWB_THICKNESS_TO_CHORD_DIST',
@@ -323,6 +323,7 @@ class BWBWingPrelim(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
         add_aviary_output(self, Aircraft.Wing.LOAD_FRACTION, units='unitless')
 
         self.declare_partials('*', '*', method='fd', form='forward')
@@ -381,6 +382,7 @@ class BWBWingPrelim(om.ExplicitComponent):
         # Calculated wing area for aerodynamics
         outputs[Aircraft.Wing.AREA] = ssm
         outputs[Aircraft.Wing.ASPECT_RATIO] = ar
+        outputs[Aircraft.Wing.ASPECT_RATIO_REF] = ar
 
         # Estimate the percent load carried by the outboard wing
         pct_load = (1.0 - width / wingspan) ** 2
