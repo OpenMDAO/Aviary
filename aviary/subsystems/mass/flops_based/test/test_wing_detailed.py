@@ -23,7 +23,8 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-omit_cases = ['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']
+omit_cases = ['LargeSingleAisle2FLOPS']
+omit_cases.append('LargeSingleAisle2FLOPSalt')
 omit_cases.append('BWBsimpleFLOPS')
 omit_cases.append('BWBdetailedFLOPS')
 
@@ -437,14 +438,12 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [3], units='unitless')
         aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, [0], units='unitless')
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
-        aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST, [0.0, 32.29, 1.0], units='unitless'
-        )
+        aviary_options.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0], units='unitless')
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
 
         prob.model.add_subsystem(
-            'fuselage',
+            'bending',
             BWBDetailedWingBendingFact(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -463,8 +462,9 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         setup_model_options(self.prob, aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
 
-        prob.set_val(Aircraft.Engine.POD_MASS, np.array([0]), units='lbm')
+        prob.set_val(Aircraft.Engine.POD_MASS, np.array([19593.89025207]), units='lbm')
         prob.set_val(Aircraft.Wing.SPAN, val=238.080049)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, 'ft')
 
         wing_location = np.zeros(0)
         wing_location = np.append(wing_location, [0.0])
@@ -503,30 +503,14 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DIST,
-            [
-                0,
-                40.110378036763386,
-                0.58970640947549269,
-                0.62389754201920156,
-                0.65808867456291043,
-                0.6922798071066194,
-                0.72647093965032838,
-                0.76059368992894993,
-                0.79485320473774623,
-                0.82904433728145521,
-                0.86323546982516419,
-                0.89742660236887306,
-                0.93154935264749461,
-                0.96580886745629091,
-                0.99999999999999989,
-            ],
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 100, units='unitless')
 
         prob.model.add_subsystem(
-            'fuselage',
+            'bending',
             BWBDetailedWingBendingFact(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -547,6 +531,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
 
         prob.set_val(Aircraft.Engine.POD_MASS, np.array([0]), units='lbm')
         prob.set_val(Aircraft.Wing.SPAN, val=253.72075607352679)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 80.220756073526772, 'ft')
 
         wing_location = np.zeros(0)
         wing_location = np.append(wing_location, [0.0])
