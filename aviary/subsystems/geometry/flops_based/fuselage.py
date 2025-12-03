@@ -568,7 +568,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
-        self.declare_partials('*', '*', method='fd', form='forward')
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
@@ -701,6 +701,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
         # the algorithm will probably take many more iteratiions. I wonder if it would still
         # converge. One solution might be to rewrite this using an openmado solver, solve for
-        # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
+        # a real-valued num_bays, then use a smoothed int afterwards. FLOPS did something similar
         # with the skin friction calculation, except there were no ints. I rewrote the equations
         # in residual form and used a Newton solver on them. (Ken)
