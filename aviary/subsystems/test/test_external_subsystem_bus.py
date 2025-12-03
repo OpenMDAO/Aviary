@@ -208,11 +208,15 @@ class CustomBuilder(SubsystemBuilderBase):
             phase_d = {}
             if phase_data.get('do_the_zz_thing', False):
                 if self.mangle_names:
-                    phase_d[f'{name}_zz'] = f'{name}.{phase_name}_{name}_zz'
-                    phase_d[Dynamic.Mission.VELOCITY] = f'{name}.{phase_name}_{name}_velocity'
+                    phase_d[f'{name}_zz'] = {'post_mission_name': f'{name}.{phase_name}_{name}_zz'}
+                    phase_d[Dynamic.Mission.VELOCITY] = {
+                        'post_mission_name': f'{name}.{phase_name}_{name}_velocity'
+                    }
                 else:
-                    phase_d['zz'] = f'{name}.{phase_name}_zz'
-                    phase_d[Dynamic.Mission.VELOCITY] = f'{name}.{phase_name}_velocity'
+                    phase_d['zz'] = {'post_mission_name': f'{name}.{phase_name}_zz'}
+                    phase_d[Dynamic.Mission.VELOCITY] = {
+                        'post_mission_name': f'{name}.{phase_name}_velocity'
+                    }
             out[phase_name] = phase_d
         return out
 
@@ -355,4 +359,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestExternalSubsystemBus()
+    test.setUp()
+    test.test_external_subsystem_bus()
