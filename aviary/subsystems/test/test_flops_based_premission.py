@@ -194,13 +194,13 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
 
+@use_tempdirs
 class BWBPreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    def test_case_all(self):
-        case_name = 'BWBsimpleFLOPS'
-        # case_name = 'BWBdetailedFLOPS'
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case_all_subsystems(self, case_name):
         flops_inputs = get_flops_inputs(case_name)
         flops_outputs = get_flops_outputs(case_name)
 
@@ -271,6 +271,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # BWBWingPrelim
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.ASPECT_RATIO_REF,
                 Aircraft.Wing.LOAD_FRACTION,
                 # _BWBWing
                 Aircraft.Wing.WETTED_AREA,
@@ -337,14 +338,66 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Electrical.MASS,
                 # AntiIcingMass
                 Aircraft.AntiIcing.MASS,
-                #
+                # TransportAPUMass
+                Aircraft.APU.MASS,
+                # NonFlightCrewMass
+                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                # FlightCrewMass
+                Aircraft.CrewPayload.FLIGHT_CREW_MASS,
+                # TransportInstrumentMass
+                Aircraft.Instruments.MASS,
+                # EngineMiscMass
+                Aircraft.Propulsion.TOTAL_MISC_MASS,
+                # NacelleMass
+                Aircraft.Nacelle.MASS,
+                # PaintMass
+                Aircraft.Paint.MASS,
+                # ThrustReverserMass
+                Aircraft.Engine.THRUST_REVERSERS_MASS,
+                Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+                # LandingMassGroup
+                Aircraft.Design.TOUCHDOWN_MASS,
+                # SurfaceControlMass
+                Aircraft.Wing.SURFACE_CONTROL_MASS,
+                Aircraft.Wing.CONTROL_SURFACE_AREA,
+                # BWBFuselageMass
+                Aircraft.Fuselage.MASS,
+                # HorizontalTailMass
+                Aircraft.HorizontalTail.MASS,
+                # VerticalTailMass
+                Aircraft.VerticalTail.MASS,
+                # CanardMass
+                Aircraft.Canard.MASS,
+                # FinMass
+                Aircraft.Fins.MASS,
+                # WingMassGroup
+                # BWBDetailedWingBendingFact
+                Aircraft.Wing.BENDING_MATERIAL_FACTOR,
+                Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
+                # BWBWingMiscMass
+                Aircraft.Wing.MISC_MASS,
+                # WingShearControlMass
+                Aircraft.Wing.SHEAR_CONTROL_MASS,
+                # WingBendingMass
+                Aircraft.Wing.BENDING_MATERIAL_MASS,
+                # BWBAftBodyMass
+                Aircraft.Fuselage.AFTBODY_MASS,
+                Aircraft.Wing.BWB_AFTBODY_MASS,
+                # MassSummation
+                # StructureMass
                 Aircraft.Design.STRUCTURE_MASS,
+                # PropulsionMass
                 Aircraft.Propulsion.MASS,
+                # SystemsEquipMass
                 Aircraft.Design.SYSTEMS_EQUIP_MASS,
-                # Aircraft.Design.EMPTY_MASS,
-                # Aircraft.Design.OPERATING_MASS,
-                # Aircraft.Design.ZERO_FUEL_MASS,
-                # Mission.Design.FUEL_MASS,
+                # EmptyMass
+                Aircraft.Design.EMPTY_MASS,
+                # OperatingMass
+                Aircraft.Design.OPERATING_MASS,
+                # ZeroFuelMass
+                Aircraft.Design.ZERO_FUEL_MASS,
+                # FuelMass
+                Mission.Design.FUEL_MASS,
             ],
             version=Version.BWB,
             step=1.01e-40,
@@ -413,7 +466,4 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBPreMissionGroupTest()
-    test.setUp()
-    test.test_case_all()
+    unittest.main()
