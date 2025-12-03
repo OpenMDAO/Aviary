@@ -386,18 +386,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             desc=desc,
         )
 
-        name = f'{ctrl_name}_rate_constraint'
-        default = defaults.get(name, None)
-        desc = f'Can be (None, positive, negative.)  When not None, adds a constraint that keeps '
-        desc += 'the rate positive or negative as requested. For altitude in a flight phase, '
-        desc += 'negative means no climb, and positive means no descent.'
-        self.declare(
-            name=name,
-            default=default,
-            values=[None, 'positive', 'negative'],
-            desc=desc,
-        )
-
     def add_time_options(self, units: str = None, defaults=None):
         """
         Adds all options for controlling time initial and duration.

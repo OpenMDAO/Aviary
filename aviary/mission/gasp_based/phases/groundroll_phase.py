@@ -62,14 +62,6 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             desc='When set to True, this is an analytic phase.',
         )
 
-        self.declare(
-            name='t_init_gear', default=100.0, units='s', desc='Time where landing gear is lifted.'
-        )
-
-        self.declare(
-            name='t_init_flaps', default=100.0, units='s', desc='Time where flaps are retracted.'
-        )
-
 
 class GroundrollPhase(PhaseBuilderBase):
     """
