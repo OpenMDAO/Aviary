@@ -45,7 +45,18 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=num_inp_stations - 1, units='deg')
 
     def setup_partials(self):
-        self.declare_partials('BWB_CHORD_PER_SEMISPAN_DIST', '*', method='cs')
+        self.declare_partials(
+            'BWB_CHORD_PER_SEMISPAN_DIST',
+            [
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+                Aircraft.Wing.ROOT_CHORD,
+                'Rear_spar_percent_chord',
+            ],
+            method='cs',
+        )
 
         self.declare_partials(
             'BWB_THICKNESS_TO_CHORD_DIST',
@@ -326,6 +337,7 @@ class BWBWingPrelim(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
         add_aviary_output(self, Aircraft.Wing.LOAD_FRACTION, units='unitless')
 
+    def setup_partials(self):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):

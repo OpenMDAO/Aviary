@@ -428,7 +428,10 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def setup_partials(self):
         self.declare_partials(
             of=[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH],
-            wrt=[Aircraft.Fuselage.LENGTH, 'Rear_spar_percent_chord'],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                'Rear_spar_percent_chord',
+            ],
         )
         self.declare_partials(
             of=[Aircraft.Wing.ROOT_CHORD],
@@ -568,6 +571,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
+    def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
