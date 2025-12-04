@@ -441,6 +441,7 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0], units='unitless')
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
+        aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
 
         prob.model.add_subsystem(
             'bending',
@@ -508,6 +509,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 100, units='unitless')
+        aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
         prob.model.add_subsystem(
             'bending',
