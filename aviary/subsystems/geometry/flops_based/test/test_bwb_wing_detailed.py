@@ -1,3 +1,4 @@
+import numpy as np
 import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
@@ -80,32 +81,32 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
             Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
             val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
-        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
         prob.set_val(Aircraft.Wing.SPAN, val=253.72075607352679)
-        prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
+        prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
-        prob.set_val(Aircraft.Wing.ROOT_CHORD, 7.710195)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
         exp1 = [
-            137.5,
-            11.0145643,
-            0.327280116,
-            0.283045195,
-            0.241725260,
-            0.210316280,
-            0.184883023,
-            0.165352613,
-            0.154567162,
-            0.144510459,
-            0.134308006,
-            0.124178427,
-            0.114048849,
-            0.103919271,
-            0.0937896925,
+            112.300194,
+            55.0000000,
+            0.307104753,
+            0.265596718,
+            0.226823973,
+            0.197351217,
+            0.173485807,
+            0.155159359,
+            0.145038784,
+            0.135602032,
+            0.126028515,
+            0.116523380,
+            0.107018245,
+            0.0975131100,
+            0.0880079752,
         ]
-        assert_near_equal(out1, exp1, tolerance=1e-9)
+        assert_near_equal(out1, exp1, tolerance=1e-8)
 
         out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
         exp2 = [
