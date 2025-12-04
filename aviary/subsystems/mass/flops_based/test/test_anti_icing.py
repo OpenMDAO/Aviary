@@ -193,6 +193,7 @@ class AntiIcingMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBAntiIcingMassTest(unittest.TestCase):
     """Test anti-icing mass calculation for BWB data."""
 
