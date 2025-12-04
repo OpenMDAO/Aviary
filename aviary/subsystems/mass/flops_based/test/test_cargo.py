@@ -77,6 +77,7 @@ class CargoMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class BWBCargoMassTest(unittest.TestCase):
     """Test BWB cargo mass"""
 
