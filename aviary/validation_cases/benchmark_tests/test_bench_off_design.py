@@ -496,9 +496,7 @@ class PayloadRangeTest(unittest.TestCase):
             (25.0, 60.0),
             'min',
         )
-        prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info
-        )
+        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
         # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
 
         # Preprocess inputs
