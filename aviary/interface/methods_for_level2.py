@@ -1475,7 +1475,7 @@ class AviaryProblem(om.Problem):
         # setting design variable bounds too large
         if fill_cargo:
             # GASP cargo mass is an input, can directly use as control variable
-            if off_design_prob.get_val(Settings.MASS_METHOD) is GASP:
+            if mass_method is GASP:
                 control_var = Aircraft.CrewPayload.CARGO_MASS
                 val = cargo_mass
                 tol = 1.05

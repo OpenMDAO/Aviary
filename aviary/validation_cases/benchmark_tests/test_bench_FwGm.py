@@ -28,7 +28,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             max_iter=100,
-            verbosity=1,
+            verbosity=0,
             optimizer='IPOPT',
         )
 
