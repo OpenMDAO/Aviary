@@ -279,6 +279,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
         add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
+        add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
 
     def setup(self):
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
@@ -327,13 +328,10 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         rate_span = (wingspan - width) / wingspan
 
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
-        # inp_stations = np.array(input_station_dist)
         bwb_input_station_dist = np.array(
             self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
         )
-        chk = len(input_station_dist) == 3 and input_station_dist == [0.0, 0.5, 1.0]
-        if len(input_station_dist) == 3 and chk.all():
+        if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
             bwb_input_station_dist[1] = width / 2.0
         else:
             bwb_input_station_dist = np.where(
