@@ -487,15 +487,17 @@ class PayloadRangeTest(unittest.TestCase):
     def test_payload_range(self):
         # run design case
         prob = self.prob = AviaryProblem(verbosity=0)
-        energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
-        energy_phase_info['climb']['user_options']['time_duration_bounds'] = ((20.0, 90.0), 'min')
-        energy_phase_info['cruise']['user_options']['time_initial_bounds'] = ((20.0, 192.0), 'min')
-        energy_phase_info['descent']['user_options']['time_duration_bounds'] = (
+        phase_info = deepcopy(energy_phase_info)
+
+        phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
+        phase_info['climb']['user_options']['time_duration_bounds'] = ((20.0, 90.0), 'min')
+        phase_info['cruise']['user_options']['time_initial_bounds'] = ((20.0, 192.0), 'min')
+        phase_info['descent']['user_options']['time_duration_bounds'] = (
             (25.0, 60.0),
             'min',
         )
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', energy_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info
         )
         # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
 
