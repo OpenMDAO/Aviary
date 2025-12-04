@@ -765,6 +765,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
         options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
+        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -1008,6 +1009,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
         options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
+        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
