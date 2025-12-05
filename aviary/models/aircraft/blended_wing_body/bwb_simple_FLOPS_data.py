@@ -377,7 +377,7 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 # In FLOPS, DOWE = 455464.65969526308 because DOWE = WOWE.
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 434037.32820147, 'lbm')  # DOWE
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
-outputs.set_val(Aircraft.Design.OPERATING_MASS, 455464.65969526308, 'lbm')  # WOWE
+outputs.set_val(Mission.Summary.OPERATING_MASS, 455464.65969526308, 'lbm')  # WOWE
 outputs.set_val(Aircraft.Propulsion.MASS, 61597.102467771889, 'lbm')  # WPRO
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 273591.31917826, 'lbm')  # WSTRCT
 outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 98848.9061107412710, 'lbm')  # WSYS
