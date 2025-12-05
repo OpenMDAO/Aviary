@@ -146,4 +146,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_1_GwFm_IPOPT()
+    # test.bench_test_swap_1_GwFm_IPOPT()
+    test.bench_test_swap_1_GwFm_SNOPT()
