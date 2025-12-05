@@ -393,11 +393,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # EmptyMass
                 Aircraft.Design.EMPTY_MASS,
                 # OperatingMass
-                Aircraft.Design.OPERATING_MASS,
+                Mission.Summary.OPERATING_MASS,
                 # ZeroFuelMass
-                Aircraft.Design.ZERO_FUEL_MASS,
+                Mission.Summary.ZERO_FUEL_MASS,
                 # FuelMass
-                Mission.Design.FUEL_MASS,
+                Mission.Summary.FUEL_MASS,
             ],
             version=Version.BWB,
             step=1.01e-40,

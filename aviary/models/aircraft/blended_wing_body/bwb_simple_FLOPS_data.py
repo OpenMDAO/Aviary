@@ -382,8 +382,8 @@ outputs.set_val(Aircraft.Propulsion.MASS, 61597.102467771889, 'lbm')  # WPRO
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 273591.31917826, 'lbm')  # WSTRCT
 outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 98848.9061107412710, 'lbm')  # WSYS
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 35311.53118076, 'ft**2')  # TWET
-outputs.set_val(Aircraft.Design.ZERO_FUEL_MASS, 553276.65969526302, 'lbm')  # WZF
-outputs.set_val(Mission.Design.FUEL_MASS, 320822.34030473698, 'lbm')  # FUELM
+outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 553276.65969526302, 'lbm')  # WZF
+outputs.set_val(Mission.Summary.FUEL_MASS, 320822.34030473698, 'lbm')  # FUELM
 
 outputs.set_val(
     Aircraft.Design.TOUCHDOWN_MASS, 699279.2, 'lbm'
