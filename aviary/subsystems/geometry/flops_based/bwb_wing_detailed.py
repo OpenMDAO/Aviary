@@ -69,7 +69,6 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         self.declare_partials(
             'BWB_LOAD_PATH_SWEEP_DIST',
             Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            val=1.0,
         )
 
     def compute(self, inputs, outputs):
@@ -120,6 +119,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST] = diag2_matrix
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][0] = 0.0
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][1] = 0.0
+
+        diag2_matrix = np.identity(num_stations - 1)
+        J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.LOAD_PATH_SWEEP_DIST] = diag2_matrix
 
 
 class BWBComputeDetailedWingDist(om.ExplicitComponent):
