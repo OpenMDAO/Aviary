@@ -1075,11 +1075,10 @@ def create_payload_range_frame(title, results_tabs_list, documentation, csv_file
         Appends the chart pane to results_tabs_list.
     """
     if os.path.isfile(csv_filepath):
-        df = pd.read_csv(csv_filepath)
-
+        df = pd.read_csv(csv_filepath, skipinitialspace=True)
         # column data source for hover
         source = ColumnDataSource(
-            data=dict(x=df['Range (NM)'], y=df['Payload (lbs)'], point_name=df['Point'])
+            data=dict(x=df['Range (NM)'], y=df['Payload (lbm)'], point_name=df['Mission Name'])
         )
 
         # Create Bokeh figure with hover tool
