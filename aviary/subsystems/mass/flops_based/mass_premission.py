@@ -5,7 +5,7 @@ from aviary.subsystems.mass.flops_based.anti_icing import AntiIcingMass
 from aviary.subsystems.mass.flops_based.apu import TransportAPUMass
 from aviary.subsystems.mass.flops_based.avionics import TransportAvionicsMass
 from aviary.subsystems.mass.flops_based.canard import CanardMass
-from aviary.subsystems.mass.flops_based.cargo import CargoMass
+from aviary.subsystems.mass.flops_based.cargo import PayloadGroup
 from aviary.subsystems.mass.flops_based.cargo_containers import TransportCargoContainersMass
 from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, NonFlightCrewMass
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
@@ -61,7 +61,7 @@ from aviary.variable_info.variables import Aircraft
 class MassPremission(om.Group):
     """
     Pre-mission group of top-level mass estimation groups and components for FLOPS-based analysis:
-    CargoMass, TransportCargoContainersMass, TransportEngineCtrlsMass, TransportAvionicsMass,
+    PayloadGroup, TransportCargoContainersMass, TransportEngineCtrlsMass, TransportAvionicsMass,
     FuelCapacityGroup, EngineMass, etc.
     """
 
@@ -71,7 +71,7 @@ class MassPremission(om.Group):
     def setup(self):
         alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
 
-        self.add_subsystem('cargo', CargoMass(), promotes_inputs=['*'], promotes_outputs=['*'])
+        self.add_subsystem('cargo', PayloadGroup(), promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
             'cargo_containers',

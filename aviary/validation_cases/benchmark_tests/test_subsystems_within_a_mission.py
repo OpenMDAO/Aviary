@@ -72,7 +72,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob.build_model()
 
-        prob.phase_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
+        prob.model.mission_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
             [10.0, 100.0],
             'm',
         )
