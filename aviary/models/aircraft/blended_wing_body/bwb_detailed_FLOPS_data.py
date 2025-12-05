@@ -522,7 +522,7 @@ outputs.set_val(
     Aircraft.Nacelle.TOTAL_WETTED_AREA, 3 * nacelle_wetted_area, nacelle_wetted_area_units
 )
 
-outputs.set_val(Aircraft.Paint.MASS, 0.0, 'lbm')  # WPAINT
+outputs.set_val(Aircraft.Paint.MASS, 0.0, 'lbm')  # WPAINT, WTPNT
 
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 70000.0 * 3, 'lbf'
@@ -578,7 +578,7 @@ outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 11731.15573539, 'lbm')  # WS
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 5.36951675)  # AR in bwb.in, always computed for BWB
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 5.36951675)  # ARREF not in bwb.in, default to AR
 
-outputs.set_val(Aircraft.Wing.MASS, 68995.460470895763, 'lbm')  # WWING
+outputs.set_val(Aircraft.Wing.MASS, 68922.20579045, 'lbm')  # WWING 68995.460470895763
 outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 12109.879719468739, 'ft**2')  # SW, always computed for BWB
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.46761341784858923)  # PCTL, always computed for BWB
