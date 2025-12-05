@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.thrust_reverser import ThrustReverserMass
@@ -15,18 +16,22 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_inputs,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+omit_cases = ['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']
+omit_cases.append('BWBsimpleFLOPS')
+omit_cases.append('BWBdetailedFLOPS')
 
+
+@use_tempdirs
 class ThrustReverserMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(
-        get_flops_case_names(omit=['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']),
-        name_func=print_case,
-    )
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -114,6 +119,7 @@ class ThrustReverserMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class ThrustReverserMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
@@ -142,6 +148,42 @@ class ThrustReverserMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBThrustReverserMassTest(unittest.TestCase):
+    """Tests thrust reverser mass calculation for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        inputs = get_flops_inputs(case_name, preprocess=True)
+
+        options = {
+            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
+        }
+
+        prob.model.add_subsystem('thrust_rev', ThrustReverserMass(**options), promotes=['*'])
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER,
+                Aircraft.Engine.SCALED_SLS_THRUST,
+            ],
+            output_keys=[
+                Aircraft.Engine.THRUST_REVERSERS_MASS,
+                Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+            ],
+            version=Version.BWB,
+        )
 
 
 if __name__ == '__main__':
