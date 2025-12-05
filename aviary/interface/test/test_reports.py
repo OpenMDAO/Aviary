@@ -100,7 +100,7 @@ class TestReports(unittest.TestCase):
                     comp,
                     promotes_inputs=[
                         ('x', 'aircraft:custom_var'),
-                        ('q', 'aircraft:forgotten_input')
+                        ('q', 'aircraft:forgotten_input'),
                     ],
                     promotes_outputs=[('p', 'aircraft:forgotten_out')],
                 )
