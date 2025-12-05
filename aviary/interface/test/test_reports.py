@@ -89,15 +89,20 @@ class TestReports(unittest.TestCase):
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
     def test_check_input_report(self):
         # Make sure the input check works with custom metadata.
+        # Make sure it also works when a user forgets to create metadata.
 
         class ExtraBuilder(SubsystemBuilderBase):
             def build_pre_mission(self, aviary_inputs):
-                comp = om.ExecComp('z = 2*x')
+                comp = om.ExecComp(['z = 2*x', 'p = q'])
                 wing_group = om.Group()
                 wing_group.add_subsystem(
                     'aerostructures',
                     comp,
-                    promotes_inputs=[('x', 'aircraft:custom_var')],
+                    promotes_inputs=[
+                        ('x', 'aircraft:custom_var'),
+                        ('q', 'aircraft:forgotten_input'),
+                    ],
+                    promotes_outputs=[('p', 'aircraft:forgotten_out')],
                 )
                 return wing_group
 
