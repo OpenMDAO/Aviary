@@ -13,7 +13,7 @@ outputs = BWBdetailedFLOPS['outputs'] = AviaryValues()
 # ---------------------------
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')  # SBASE
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)  # EWMARG
-inputs.set_val(Mission.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW in bwb.in
+inputs.set_val(Mission.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
@@ -125,7 +125,7 @@ inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)  # SWETH
 # Hydraulics
 # ---------------------------
 inputs.set_val(Aircraft.Hydraulics.SYSTEM_PRESSURE, 3000.0, 'psi')  # HYDPR
-inputs.set_val(Aircraft.Hydraulics.MASS_SCALER, 1.0)  # WHYD in bwb.in
+inputs.set_val(Aircraft.Hydraulics.MASS_SCALER, 1.0)  # WHYD
 
 # Instruments
 # ---------------------------
@@ -363,7 +363,7 @@ outputs.set_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 78.61013558, 'ft
 outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(2)
 outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.11)  # FR(2)
 outputs.set_val(Aircraft.HorizontalTail.MASS, 0.0, 'lbm')  # WHT
-outputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.0, 'ft**2')  # SWTHT not in bwb.in
+outputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.0, 'ft**2')  # SWTHT
 
 outputs.set_val(Aircraft.Hydraulics.MASS, 6200.37391189, 'lbm')  # WHYD
 
@@ -402,7 +402,7 @@ outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')  # WPMISC
 outputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS, 0.0, 'lbm')  # WTHR
 outputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 1526.1294678475103, 'lbm')  # WSTART
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, engine_ctrls_mass, 'lbm')
-outputs.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 0.0, 'lbm')  # not in FLOPS
+outputs.set_val(Aircraft.Propulsion.TOTAL_MISC_MASS, 0.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, 0.0, 'lbm')  # sum of zeros
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_MASS, 53476.90008698, 'lbm')  # WENG
 
