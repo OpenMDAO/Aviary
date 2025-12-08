@@ -414,12 +414,12 @@ def input_check_report(prob: AviaryProblem, **kwargs):
 
                 try:
                     units = metadata['units']
-                except:
+                except (TypeError, KeyError):
                     metadata = aviary_metadata.get(var.split('.')[-1])
 
                     try:
                         units = metadata['units']
-                    except:
+                    except (TypeError, KeyError):
                         # This happens when the var is not defined in metadata.
                         metadata = prob.model.get_io_metadata('input')[abs_paths[0]]
                         units = metadata['units']
