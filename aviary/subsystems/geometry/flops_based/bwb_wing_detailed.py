@@ -168,7 +168,10 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
         if num_inp_stations != 3:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Wing.INPUT_STATION_DIST must be 3.')
+                raise ValueError(
+                    f'Aircraft.Wing.INPUT_STATION_DIST should be length 3, '
+                    'however {num_inp_stations} values were provided.'
+                )
 
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]

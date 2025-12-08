@@ -172,7 +172,7 @@ class BWBFuselageMass(om.ExplicitComponent):
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         if gross_weight <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Mission.Design.GROSS_MASS must be positive.')
+                raise om.AnalysisError('Mission.Design.GROSS_MASS must be positive.')
 
         outputs[Aircraft.Fuselage.MASS] = 1.8 * gross_weight**0.167 * cabin_area**1.06
 
