@@ -3,7 +3,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.geometry.flops_based.bwb_wing_detailed import (
+from aviary.subsystems.geometry.flops_based.wing_detailed_bwb import (
     BWBComputeDetailedWingDist,
     BWBUpdateDetailedWingDist,
     BWBWingPrelim,

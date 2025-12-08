@@ -34,7 +34,7 @@ from aviary.subsystems.geometry.flops_based.utils import (
 )
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
-from aviary.subsystems.geometry.flops_based.bwb_wing_detailed import (
+from aviary.subsystems.geometry.flops_based.wing_detailed_bwb import (
     BWBUpdateDetailedWingDist,
     BWBComputeDetailedWingDist,
     BWBWingPrelim,
