@@ -27,7 +27,7 @@ cargo_data_sets = [key for key in cargo_test_data]
 bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
 
-class CargoMassTest(unittest.TestCase):
+class PayloadGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
