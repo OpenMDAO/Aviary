@@ -4,17 +4,10 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.cargo import CargoMass
+from aviary.subsystems.mass.flops_based.cargo import PayloadGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import (
-    do_validation_test,
-    flops_validation_test,
-    get_flops_case_names,
-    get_flops_options,
-    print_case,
-    Version,
-)
+from aviary.validation_cases.validation_tests import do_validation_test, print_case
 from aviary.variable_info.variables import Aircraft
 
 cargo_test_data = {}
@@ -35,7 +28,7 @@ bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
 
 @use_tempdirs
-class CargoMassTest(unittest.TestCase):
+class PayloadGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
@@ -46,7 +39,7 @@ class CargoMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'cargo_passenger',
-            CargoMass(),
+            PayloadGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
