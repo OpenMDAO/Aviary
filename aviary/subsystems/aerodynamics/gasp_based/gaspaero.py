@@ -1181,12 +1181,6 @@ class AeroSetup(om.Group):
         )
 
         if not self.options['input_atmos']:
-            # self.add_subsystem(
-            #     "atmos",
-            #     USatm1976Comp(num_nodes=nn),
-            #     promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            #     promotes_outputs=["rho", Dynamic.Atmosphere.SPEED_OF_SOUND, "viscosity"],
-            # )
             self.add_subsystem(
                 'kin_visc',
                 om.ExecComp(
