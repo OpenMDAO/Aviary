@@ -646,7 +646,7 @@ class _BWBWing(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Wing.SPAN must be positive.')
+                raise ValueError('Aircraft.Wing.SPAN must be positive.')
         rate_span = (wingspan - width) / wingspan
 
         # This part is repeated in BWBWingPrelim()
@@ -895,12 +895,12 @@ class _Fuselage(om.ExplicitComponent):
         num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         if num_fuselages < 1:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.NUM_FUSELAGES must be positive.')
+                raise ValueError('Aircraft.Fuselage.NUM_FUSELAGES must be positive.')
 
         avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         if avg_diam <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.AVG_DIAMETER must be positive.')
+                raise ValueError('Aircraft.Fuselage.AVG_DIAMETER must be positive.')
 
         cross_section = pi * (avg_diam / 2.0) ** 2.0
         outputs[Aircraft.Fuselage.CROSS_SECTION] = cross_section
