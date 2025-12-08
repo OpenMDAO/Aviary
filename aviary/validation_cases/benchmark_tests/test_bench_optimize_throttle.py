@@ -28,6 +28,7 @@ phase_info = {
             'altitude_final': (32000.0, 'ft'),
             'altitude_bounds': ((0.0, 32000.0), 'ft'),
             'altitude_polynomial_order': 3,
+            'mass_ref': (2.0e5, 'lbm'),
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'time_initial': (0.0, 's'),
@@ -53,6 +54,8 @@ phase_info = {
             'altitude_final': (34000.0, 'ft'),
             'altitude_bounds': ((32000.0, 34000.0), 'ft'),
             'altitude_polynomial_order': 1,
+            'mass_ref': (2.0e5, 'lbm'),
+            'distance_ref': (1906, 'nmi'),
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'throttle_polynomial_order': 1,
@@ -77,6 +80,8 @@ phase_info = {
             'altitude_final': (500.0, 'ft'),
             'altitude_bounds': ((500.0, 34000.0), 'ft'),
             'altitude_polynomial_order': 3,
+            'distance_ref': (1906, 'nmi'),
+            'mass_ref': (2.0e5, 'lbm'),
             'throttle_enforcement': 'control',
             'throttle_optimize': True,
             'time_initial_bounds': ((90.0, 361.5), 'min'),
@@ -109,7 +114,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
-            verbosity=1,
+            verbosity=0,
         )
 
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
@@ -134,7 +139,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
         self.assertTrue(prob.result.success)
 
         gross_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
-        assert_near_equal(gross_mass, 160689.0, tolerance=1e-3)
+        assert_near_equal(gross_mass, 160506.0, tolerance=1e-3)
 
         cruise_throttle = prob.get_val('traj.cruise.timeseries.throttle')
         assert_near_equal(cruise_throttle[-1], 0.6925, tolerance=1e-2)

@@ -584,6 +584,17 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         except:
             pass
 
+    ## Cargo ##
+    if (
+        Aircraft.CrewPayload.CARGO_MASS in input_values
+        and Aircraft.CrewPayload.Design.MAX_CARGO_MASS not in input_values
+    ):
+        # user has set cargo only: assume intention to set max only for backwards compatibility.
+        cargo, units = input_values.get_item(Aircraft.CrewPayload.Design.CARGO_MASS)
+        input_values.set_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, cargo, units)
+        input_values.set_val(Aircraft.CrewPayload.CARGO_MASS, 0, units)
+        input_values.set_val(Aircraft.CrewPayload.Design.CARGO_MASS, 0, units)
+
     ## STRUT AND FOLD ##
     strut_loc = input_values.get_val(Aircraft.Strut.ATTACHMENT_LOCATION, 'ft')[0]
     folded_span = input_values.get_val(Aircraft.Wing.FOLDED_SPAN, 'ft')[0]

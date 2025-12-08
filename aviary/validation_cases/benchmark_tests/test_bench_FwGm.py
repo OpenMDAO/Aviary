@@ -38,13 +38,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176990.2, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 177536.28, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.OPERATING_MASS), 101262.9, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 37956.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 38417.3, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2613.4, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val('traj.desc2.timeseries.distance')[-1], 3675.0, tolerance=rtol
@@ -56,24 +56,23 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
             local_phase_info,
-            verbosity=0,
+            verbosity=1,
             optimizer='SNOPT',
             max_iter=60,
         )
 
-        # TODO: This problem does not always converge.
-        # self.assertTrue(prob.result.success)
+        self.assertTrue(prob.result.success)
 
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 176965.48, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 177536.28, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Aircraft.Design.OPERATING_MASS), 101556.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.OPERATING_MASS), 101262.9, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 37918.8, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 38417.3, tolerance=rtol)
 
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2595.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2613.4, tolerance=rtol)
 
         assert_near_equal(
             prob.get_val('traj.desc2.timeseries.distance')[-1], 3675.0, tolerance=rtol
@@ -83,5 +82,5 @@ class ProblemPhaseTestCase(unittest.TestCase):
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.bench_test_swap_3_FwGm_SNOPT()
-    # test.bench_test_swap_3_FwGm_IPOPT()
+    # test.bench_test_swap_3_FwGm_SNOPT()
+    test.bench_test_swap_3_FwGm_IPOPT()
