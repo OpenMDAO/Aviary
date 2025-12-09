@@ -27,6 +27,9 @@ class L3SubsystemsGroup(om.Group):
         self.code_origin_overrides = []
 
 
+# Toggle this boolean option to run with shooting vs collocation transcription:
+shooting = True
+
 prob = av.AviaryProblem()
 
 #####
@@ -187,7 +190,10 @@ for phase_idx, phase_name in enumerate(phase_list):
     num_segments = user_options['num_segments']
     order = user_options['order']
 
-    transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
+    if shooting:
+        transcription = dm.PicardShooting(num_segments=3, solve_segments='forward')
+    else:
+        transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
 
     kwargs = {
         'external_subsystems': external_subsystems,
