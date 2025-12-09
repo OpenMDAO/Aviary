@@ -29,7 +29,7 @@ class L3SubsystemsGroup(om.Group):
 
 
 # Toggle this boolean option to run with shooting vs collocation transcription:
-shooting = False
+shooting = True
 
 prob = av.AviaryProblem()
 
@@ -210,7 +210,7 @@ for phase_idx, phase_name in enumerate(phase_list):
     num_engine_type = len(
         aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
     )  # not used in this example
-    throttle_enforcement = user_options['throttle_enforcement']  # not used in this example
+    throttle_enforcement = user_options['throttle_enforcement']
     no_descent = user_options['no_descent']  # not used in this example
     no_climb = user_options['no_climb']  # not used in this example
     constraints = user_options['constraints']
@@ -244,93 +244,30 @@ for phase_idx, phase_name in enumerate(phase_list):
         solve_segments='forward' if user_options['distance_solve_segments'] else None,
     )
 
-    def add_l3_control(
-        phase, options, name, target, rate_targets=None, rate2_targets=None, add_constraints=True
-    ):
-        """
-        Add a control to this phase using the options in the phase-info - this is similar to the class method
-        """
-        initial, _ = options[f'{name}_initial']
-        final, _ = options[f'{name}_final']
-        bounds, units = options[f'{name}_bounds']
-        ref, _ = options[f'{name}_ref']
-        ref0, _ = options[f'{name}_ref0']
-        polynomial_order = options[f'{name}_polynomial_order']
-        opt = options[f'{name}_optimize']
-
-        if ref == 1.0:
-            # This has not been moved from default, so find a good value.
-            candidates = [x for x in (bounds[0], bounds[1], initial, final) if x is not None]
-            if len(candidates) > 0:
-                ref = np.max(np.abs(np.array(candidates)))
-
-        extra_options = {}
-        if polynomial_order is not None:
-            extra_options['control_type'] = 'polynomial'
-            extra_options['order'] = polynomial_order
-
-        if opt is True:
-            extra_options['lower'] = bounds[0]
-            extra_options['upper'] = bounds[1]
-            extra_options['ref'] = ref
-            extra_options['ref0'] = ref0
-
-        if units not in ['unitless', None]:
-            extra_options['units'] = units
-
-        if rate_targets is not None:
-            extra_options['rate_targets'] = rate_targets
-
-        if rate2_targets is not None:
-            extra_options['rate2_targets'] = rate2_targets
-
-        phase.add_control(target, targets=target, opt=opt, **extra_options)
-
-        # Add timeseries for any control.
-        phase.add_timeseries_output(target)
-
-        if not add_constraints:
-            return
-
-        # Add an initial constraint.
-        if opt and initial is not None:
-            phase.add_boundary_constraint(
-                target, loc='initial', equals=initial, units=units, ref=ref
-            )
-
-        # Add a final constraint.
-        if opt and final is not None:
-            phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
-
-    add_l3_control(
-        phase,
-        user_options,
-        'mach',
-        target=Dynamic.Atmosphere.MACH,
+    phase.add_control(
+        Dynamic.Atmosphere.MACH,
+        targets=Dynamic.Atmosphere.MACH,
+        opt=user_options[f'mach_optimize'],
+        control_type='polynomial',
+        order=user_options[f'mach_polynomial_order'],
         rate_targets=[Dynamic.Atmosphere.MACH_RATE],
-        rate2_targets=None,
-        add_constraints=Dynamic.Atmosphere.MACH not in constraints,
     )
+    phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
 
-    add_l3_control(
-        phase,
-        user_options,
-        'altitude',
-        target=Dynamic.Mission.ALTITUDE,
+    phase.add_control(
+        Dynamic.Mission.ALTITUDE,
+        targets=Dynamic.Mission.ALTITUDE,
+        opt=user_options[f'altitude_optimize'],
+        control_type='polynomial',
+        order=user_options[f'altitude_polynomial_order'],
+        units=user_options[f'altitude_bounds'][1],
         rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
-        rate2_targets=None,
-        add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
     )
-    if throttle_enforcement == 'control':
-        add_l3_control(
-            phase,
-            user_options,
-            'throttle',
-            Dynamic.Vehicle.Propulsion.THROTTLE,
-            rate_targets=None,
-            rate2_targets=None,
-            add_constraints=True,
-        )
+    phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
+
+    # if throttle_enforcement == 'control':
+    # add throttle as control
+    # not used in this example
 
     phase.add_timeseries_output(
         Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
