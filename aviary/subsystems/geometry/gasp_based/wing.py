@@ -1751,7 +1751,7 @@ def g2(x):
 
 
 def dg2(x):
-    """First derivative of g2(x)."""
+    """Second derivative of g2(x)."""
     delta = 1.0 - epsilon
     A2 = f(delta)
     B2 = df(delta)
