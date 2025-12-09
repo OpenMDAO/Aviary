@@ -103,7 +103,7 @@ class AtmosphereComp(om.ExplicitComponent):
                                   'it will be converted to geopotential based on Equation 19 in the original standard.')
         self.options.declare('data_source', values=('USatm1976', 'tropical', 'polar', 'hot', 'cold'), default='USatm1976',
                              desc='The atmospheric model to use as source data.')
-        self.options.declare('isa_delta_T_Kelvin', types=float, default=0.,
+        self.options.declare('isa_delta_T_Kelvin', types=float, default=0.0,
                              desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Kelvin)')
         
         if self.options['data_source'] == 'USatm1976':
@@ -139,14 +139,14 @@ class AtmosphereComp(om.ExplicitComponent):
         self._K = gamma * Rs / M_air #(J/(kg * K))
 
         self._S = 110.4 #(K) southerlands constant
-        self._beta = 1.458e-6 #(s*m*K^(1/2))
+        self._beta = 1.458e-6 #(s*m*K**(1/2))
 
         self.add_input('h', val=1. * np.ones(nn), units='m')
 
         self.add_output('temp', val=1. * np.ones(nn), units='degK', desc='temperature of air')
         self.add_output('pres', val=1. * np.ones(nn), units='Pa', desc='pressure of air')
-        self.add_output('rho', val=1. * np.ones(nn), units='kg/m^3', desc='density of air')
-        self.add_output('viscosity', val=1. * np.ones(nn), units='Pa*sec', desc='dynamic viscosity of air')
+        self.add_output('rho', val=1. * np.ones(nn), units='kg/m**3', desc='density of air')
+        self.add_output('viscosity', val=1. * np.ones(nn), units='Pa*s', desc='dynamic viscosity of air')
         self.add_output('sos', val=1 * np.ones(nn), units='m/s', desc='speed of sound')
 
         arange = np.arange(nn, dtype=int)
@@ -189,13 +189,13 @@ class AtmosphereComp(om.ExplicitComponent):
         # Assumes pressure does not change (which is a simplification)
         # We know (P * M)/(R * T) from the akima table lookups (raw data)
         # We must correct the density from the lookup table by dt = isa_delta_T_Kelvin
-        outputs['rho'] = corrected_density = (raw_density + self._R_air*self._dt * pressure^(-1) )^(-1)
+        outputs['rho'] = corrected_density = (raw_density + self._R_air*self._dt * pressure**(-1) )**(-1)
 
         # Equation 50
-        outputs['sos'] = (self._K * temp)^(0.5)
+        outputs['sos'] = (self._K * temp)**(0.5)
 
         # Equation 51
-        outputs['viscosity'] = self._beta * temp^(1.5) * (temp + self._S)^(-1)
+        outputs['viscosity'] = self._beta * temp**(1.5) * (temp + self._S)**(-1)
 
     def compute_partials(self, inputs, partials):
         """
@@ -233,16 +233,16 @@ class AtmosphereComp(om.ExplicitComponent):
         coeffs = self.source_data.akima_rho[idx]
         raw_density = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
         raw_drho_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) # needs correction
-        # corrected_density = (raw_density + self._R_air*self._dt * pressure^(-1) )^(-1) # This gets complex because pressure changes as a function of h!
-        corrected_drho_dh = -1 * (raw_density + self._R_air*self._dt * pressure^(-1))^(-2) * (raw_drho_dh + (-1 * self._R_air*self._dt * pressure^(-2) * dP_dh))
+        # corrected_density = (raw_density + self._R_air*self._dt * pressure**(-1) )**(-1) # This gets complex because pressure changes as a function of h!
+        corrected_drho_dh = -1 * (raw_density + self._R_air*self._dt * pressure**(-1))**(-2) * (raw_drho_dh + (-1 * self._R_air*self._dt * pressure**(-2) * dP_dh))
 
-        # outputs['viscosity'] = self._beta * temp^(1.5) * (temp + self._S)^(-1)
+        # outputs['viscosity'] = self._beta * temp**(1.5) * (temp + self._S)**(-1)
         # need the product rule here
-        dviscosity_dh = 1.5 * self._beta * temp^(0.5) * dT_dh * (temp + self._S)^(-1) + self._beta * temp^(1.5) * -1 * (temp + self._S)^(-2) * dT_dh
+        dviscosity_dh = 1.5 * self._beta * temp**(0.5) * dT_dh * (temp + self._S)**(-1) + self._beta * temp**(1.5) * -1 * (temp + self._S)**(-2) * dT_dh
 
-        # sos = (self._K * temp)^(0.5)
+        # sos = (self._K * temp)**(0.5)
         # chain rule
-        dsos_dh = 0.5 * (self._K * temp)^(-0.5) * self._K *dT_dh
+        dsos_dh = 0.5 * (self._K * temp)**(-0.5) * self._K *dT_dh
         # (0.5 / np.sqrt(self._K * temp) * dT_dh * self._K)
 
         partials['temp', 'h'][...] = dT_dh.ravel()
@@ -272,16 +272,16 @@ def _build_akima_coefs(out_stream, raw_data, units):
     units: Float ('SI', or 'English')
         Describes the input units in either SI or English. 
         If SI units are selected then the data should be input as:
-            (altitude: m, temp: degK, pressure: mb, density: kg/m^3)
+            (altitude: m, temp: degK, pressure: mb, density: kg/m**3)
         If English units are selected then the data should be input as:
-            (altitude: ft, temp: degF, pressure: inHg, density: lbm/ft^3)
+            (altitude: ft, temp: degF, pressure: inHg, density: lbm/ft**3)
 
     Returns
     -------
     dict
         A mapping of the variable name and Akima coeffcient values for each table in the atmosphere.
         Output units are always in SI.
-        (altitude: m, temp: degK, pressure: Pa, density: kg/ft^3)
+        (altitude: m, temp: degK, pressure: Pa, density: kg/ft**3)
     """
 
     raw_data = np.reshape(raw_data, (raw_data.size // 4, 4))
@@ -304,7 +304,7 @@ def _build_akima_coefs(out_stream, raw_data, units):
         atm_data.alt *= 0.3048 # ft -> m
         atm_data.T = (atm_data.T - 32) * 5/9 + 273.15 # degF -> degK
         atm_data.P *= 3386.38673 # inHg -> Pa
-        atm_data.rho *= 0.453592/(0.3048**3) # lbm/ft^3 -> kg/m^3
+        atm_data.rho *= 0.453592/(0.3048**3) # lbm/ft**3 -> kg/m**3
     else:
         print(f"units must be SI or English but '{units}' was supplied.")
         exit()
@@ -340,8 +340,19 @@ def _build_akima_coefs(out_stream, raw_data, units):
     coeff_arrays = [coeffs_T, coeffs_P, coeffs_rho]
 
     np.set_printoptions(precision=18)
+
+    with np.printoptions(linewidth=100, threshold=np.inf):
+        # Print altitude in correct units:
+        if out_stream is not None:
+            print(f'atm_data.alt = \\', file=out_stream)
+            print(textwrap.indent(repr(atm_data.alt).replace('array', 'np.array'), '    '),
+                      file=out_stream)
+            print('', file=out_stream)
+        input("Press Enter to continue: ")
+
     vars = ['T', 'P', 'rho']
     with np.printoptions(linewidth=1024, threshold=np.inf):
+        # Print akima splines in correct units
         for var, interp, coeff_array in zip(vars, interps, coeff_arrays):
             _ = interp.interpolate(hbin, compute_derivative=False)
             coeff_cache = interp.table.vec_coeff
@@ -369,22 +380,25 @@ def _build_akima_coefs(out_stream, raw_data, units):
 if __name__ == "__main__":
     # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
-          'Make sure your input units match the requirements shown in _build_akima_coefs()!')
-    input("Press Enter to continue: ")
+    # print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
+    #       'Make sure your input units match the requirements shown in _build_akima_coefs()!')
+    # input("Press Enter to continue: ")
 
-    from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
+    # from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
 
-    import sys
-    _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='SI')
+    # import sys
+    # _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='SI')
 
-    # prob = om.Problem()
+    prob = om.Problem()
 
-    # prob.model.add_subsystem('comp', AtmosphereComp())
+    atm_model = prob.model.add_subsystem('comp', AtmosphereComp(num_nodes=3), promotes=['*'])
 
-    # prob.set_solver_print(level=0)
+    prob.set_solver_print(level=0)
 
-    # prob.setup(mode='rev')
-    # prob.run_model()
+    prob.setup(force_alloc_complex=True)
+    prob.set_val('h', [400,0,1500])
+    
+    
+    prob.run_model()
 
-    # prob.check_partials(method='fd', form='central')
+    prob.check_partials(method='cs')
