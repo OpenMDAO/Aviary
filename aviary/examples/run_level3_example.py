@@ -2,6 +2,7 @@ import warnings
 
 import dymos as dm
 import openmdao.api as om
+import numpy as np
 
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
@@ -123,11 +124,276 @@ for phase_idx, phase_name in enumerate(phases):
     phase_options['user_options'] = {}
     for key, val in base_phase_options['user_options'].items():
         phase_options['user_options'][key] = val
-    phase_builder = EnergyPhase
-    phase_object = phase_builder.from_phase_info(
-        phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
+
+    # now need to create the dymos phase object and add it to the trajectory
+    # phase_builder = EnergyPhase
+    from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
+
+    default_ode_class = EnergyODE
+    # Unpack the phase info
+    # phase_object = phase_builder.from_phase_info(
+    #     phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
+    # )
+    # loop over user_options dict entries
+    # if the value is not a tuple, wrap it in a tuple with the second entry of 'unitless'
+    for key, value in phase_options['user_options'].items():
+        if not isinstance(value, tuple):
+            phase_options['user_options'][key] = (value, 'unitless')
+    subsystem_options = phase_options.get('subsystem_options', {})
+    user_options = phase_options.get('user_options', ())
+    initial_guesses = AviaryValues(
+        phase_options.get('initial_guesses', ())
+    )  # None of these not necessary for this example
+    external_subsystems = phase_options.get(
+        'external_subsystems', []
+    )  # None of these not necessary for this example
+
+    # instantiate the PhaseBuilderBaseClass:
+    # phase_builder = cls(
+    #     name,
+    #     subsystem_options=subsystem_options,
+    #     user_options=user_options,
+    #     initial_guesses=initial_guesses,
+    #     meta_data=meta_data,
+    #     core_subsystems=core_subsystems,
+    #     external_subsystems=external_subsystems,
+    #     transcription=transcription,
+    # )
+    # this basically just adds these objects to the class - we have them all available in the L3 script so have no need for the extra class!
+    # phase_name
+    # subsystem_options
+    # user_options
+    # initial_guesses
+    # prob.meta_data
+    # default_mission_subsystems
+    # external_subsystems
+    transcription = None
+    ode_class = None
+    is_analytic_phase = False
+    num_nodes = 5
+
+    # Now build the phase using the instantiated phase object:
+    # phase = phase_object.build_phase(aviary_options=aviary_inputs)
+    # phase: dm.Phase = super().build_phase(aviary_options)
+
+    # if ode_class is None:
+    ode_class = default_ode_class
+    # if transcription is None and not is_analytic_phase:
+    # transcription = self.make_default_transcription()
+    from aviary.mission.flight_phase_builder import FlightPhaseOptions
+
+    user_options = FlightPhaseOptions(user_options)
+    num_segments = user_options['num_segments']
+    order = user_options['order']
+
+    transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
+
+    kwargs = {
+        'external_subsystems': external_subsystems,
+        'meta_data': prob.meta_data,
+        'subsystem_options': subsystem_options,
+        'throttle_enforcement': user_options['throttle_enforcement'],
+        'throttle_allocation': user_options['throttle_allocation'],
+        'core_subsystems': default_mission_subsystems,
+        'external_subsystems': external_subsystems,
+    }
+    kwargs = {'aviary_options': aviary_inputs, **kwargs}
+    phase = dm.Phase(ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs)
+    tx_mission_bus = dm.GaussLobatto(
+        num_segments=transcription.options['num_segments'], order=3, compressed=True
     )
-    phase = phase_object.build_phase(aviary_options=aviary_inputs)
+    phase.add_timeseries(name='mission_bus_variables', transcription=tx_mission_bus, subset='all')
+    num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+    throttle_enforcement = user_options['throttle_enforcement']
+    no_descent = user_options['no_descent']
+    no_climb = user_options['no_climb']
+    constraints = user_options['constraints']
+    ground_roll = user_options['ground_roll']
+
+    def add_l3_state(phase, options, name, target, rate_source):
+        initial, _ = options[f'{name}_initial']
+        final, _ = options[f'{name}_final']
+        bounds, units = options[f'{name}_bounds']
+        ref, _ = options[f'{name}_ref']
+        ref0, _ = options[f'{name}_ref0']
+        defect_ref, _ = options[f'{name}_defect_ref']
+        solve_segments = options[f'{name}_solve_segments']
+        phase.add_state(
+            target,
+            fix_initial=initial is not None,
+            input_initial=False,
+            lower=bounds[0],
+            upper=bounds[1],
+            units=units,
+            rate_source=rate_source,
+            ref=ref,
+            ref0=ref0,
+            defect_ref=defect_ref,
+            solve_segments='forward' if solve_segments else None,
+        )
+
+        if final is not None:
+            constraint_ref, _ = options[f'{name}_constraint_ref']
+            if constraint_ref is None:
+                # If unspecified, final is a good value for it.
+                constraint_ref = final
+            phase.add_boundary_constraint(
+                target,
+                loc='final',
+                equals=final,
+                units=units,
+                ref=final,
+            )
+
+    add_l3_state(
+        phase,
+        user_options,
+        'mass',
+        Dynamic.Vehicle.MASS,
+        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+    )
+    add_l3_state(
+        phase, user_options, 'distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE
+    )
+
+    def add_l3_control(
+        phase, options, name, target, rate_targets=None, rate2_targets=None, add_constraints=True
+    ):
+        """
+        Add a control to this phase using the options in the phase-info - this is similar to the class method
+        """
+        initial, _ = options[f'{name}_initial']
+        final, _ = options[f'{name}_final']
+        bounds, units = options[f'{name}_bounds']
+        ref, _ = options[f'{name}_ref']
+        ref0, _ = options[f'{name}_ref0']
+        polynomial_order = options[f'{name}_polynomial_order']
+        opt = options[f'{name}_optimize']
+
+        if ref == 1.0:
+            # This has not been moved from default, so find a good value.
+            candidates = [x for x in (bounds[0], bounds[1], initial, final) if x is not None]
+            if len(candidates) > 0:
+                ref = np.max(np.abs(np.array(candidates)))
+
+        extra_options = {}
+        if polynomial_order is not None:
+            extra_options['control_type'] = 'polynomial'
+            extra_options['order'] = polynomial_order
+
+        if opt is True:
+            extra_options['lower'] = bounds[0]
+            extra_options['upper'] = bounds[1]
+            extra_options['ref'] = ref
+            extra_options['ref0'] = ref0
+
+        if units not in ['unitless', None]:
+            extra_options['units'] = units
+
+        if rate_targets is not None:
+            extra_options['rate_targets'] = rate_targets
+
+        if rate2_targets is not None:
+            extra_options['rate2_targets'] = rate2_targets
+
+        phase.add_control(target, targets=target, opt=opt, **extra_options)
+
+        # Add timeseries for any control.
+        phase.add_timeseries_output(target)
+
+        if not add_constraints:
+            return
+
+        # Add an initial constraint.
+        if opt and initial is not None:
+            phase.add_boundary_constraint(
+                target, loc='initial', equals=initial, units=units, ref=ref
+            )
+
+        # Add a final constraint.
+        if opt and final is not None:
+            phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
+
+    add_l3_control(
+        phase,
+        user_options,
+        'mach',
+        target=Dynamic.Atmosphere.MACH,
+        rate_targets=[Dynamic.Atmosphere.MACH_RATE],
+        rate2_targets=None,
+        add_constraints=Dynamic.Atmosphere.MACH not in constraints,
+    )
+
+    add_l3_control(
+        phase,
+        user_options,
+        'altitude',
+        target=Dynamic.Mission.ALTITUDE,
+        rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
+        rate2_targets=None,
+        add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
+    )
+    if throttle_enforcement == 'control':
+        add_l3_control(
+            phase,
+            user_options,
+            'throttle',
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            rate_targets=None,
+            rate2_targets=None,
+            add_constraints=True,
+        )
+
+    phase.add_timeseries_output(
+        Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+        output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+        units='lbf',
+    )
+
+    phase.add_timeseries_output(Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf')
+
+    phase.add_timeseries_output(
+        Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+        output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+        units='m/s',
+    )
+    phase.add_timeseries_output(
+        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        output_name=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        units='lbm/h',
+    )
+
+    phase.add_timeseries_output(
+        Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+        output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+        units='kW',
+    )
+
+    phase.add_timeseries_output(
+        Dynamic.Mission.ALTITUDE_RATE,
+        output_name=Dynamic.Mission.ALTITUDE_RATE,
+        units='ft/s',
+    )
+
+    if throttle_enforcement != 'control':
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
+            units='unitless',
+        )
+
+    phase.add_timeseries_output(
+        Dynamic.Mission.VELOCITY,
+        output_name=Dynamic.Mission.VELOCITY,
+        units='m/s',
+    )
+
+    phase.add_path_constraint(
+        Dynamic.Vehicle.Propulsion.THROTTLE,
+        lower=0.0,
+        upper=1.0,
+        units='unitless',
+    )
     prob.traj.add_phase(phase_name, phase)
 
 externs = {'climb': {}, 'cruise': {}, 'descent': {}}
