@@ -6,7 +6,8 @@ import numpy as np
 
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.flight_phase_builder import FlightPhaseOptions
+from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.models.missions.height_energy_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -28,7 +29,7 @@ class L3SubsystemsGroup(om.Group):
 
 
 # Toggle this boolean option to run with shooting vs collocation transcription:
-shooting = True
+shooting = False
 
 prob = av.AviaryProblem()
 
@@ -129,16 +130,15 @@ for phase_idx, phase_name in enumerate(phase_list):
     for key, val in base_phase_options['user_options'].items():
         phase_options['user_options'][key] = val
 
-    # now need to create the dymos phase object and add it to the trajectory
+    # Create the dymos phase object and add it to the trajectory
     # phase_builder = EnergyPhase
-    from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 
-    default_ode_class = EnergyODE
-    # Unpack the phase info
+    # Unpack the phase info without using the phase builder
     # phase_object = phase_builder.from_phase_info(
     #     phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
     # )
-    # loop over user_options dict entries
+
+    # user_options dict entries need reformatting
     # if the value is not a tuple, wrap it in a tuple with the second entry of 'unitless'
     for key, value in phase_options['user_options'].items():
         if not isinstance(value, tuple):
@@ -147,10 +147,8 @@ for phase_idx, phase_name in enumerate(phase_list):
     user_options = phase_options.get('user_options', ())
     initial_guesses = AviaryValues(
         phase_options.get('initial_guesses', ())
-    )  # None of these not necessary for this example
-    external_subsystems = phase_options.get(
-        'external_subsystems', []
-    )  # None of these not necessary for this example
+    )  # Not used in this example
+    external_subsystems = phase_options.get('external_subsystems', [])  # Not used in this example
 
     # instantiate the PhaseBuilderBaseClass:
     # phase_builder = cls(
@@ -163,7 +161,7 @@ for phase_idx, phase_name in enumerate(phase_list):
     #     external_subsystems=external_subsystems,
     #     transcription=transcription,
     # )
-    # this basically just adds these objects to the class - we have them all available in the L3 script so have no need for the extra class!
+    # This basically just adds these objects to the class - we have them all available in this L3 script so have no need for the extra class!
     # phase_name
     # subsystem_options
     # user_options
@@ -179,19 +177,18 @@ for phase_idx, phase_name in enumerate(phase_list):
     # Now build the phase using the instantiated phase object:
     # phase = phase_object.build_phase(aviary_options=aviary_inputs)
     # phase: dm.Phase = super().build_phase(aviary_options)
+    # For L3 we need to do this without the builder
 
-    # if ode_class is None:
-    ode_class = default_ode_class
+    ode_class = EnergyODE
     # if transcription is None and not is_analytic_phase:
     # transcription = self.make_default_transcription()
-    from aviary.mission.flight_phase_builder import FlightPhaseOptions
 
     user_options = FlightPhaseOptions(user_options)
     num_segments = user_options['num_segments']
     order = user_options['order']
 
     if shooting:
-        transcription = dm.PicardShooting(num_segments=3, solve_segments='forward')
+        transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward')
     else:
         transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
 
@@ -210,57 +207,41 @@ for phase_idx, phase_name in enumerate(phase_list):
         num_segments=transcription.options['num_segments'], order=3, compressed=True
     )
     phase.add_timeseries(name='mission_bus_variables', transcription=tx_mission_bus, subset='all')
-    num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
-    throttle_enforcement = user_options['throttle_enforcement']
-    no_descent = user_options['no_descent']
-    no_climb = user_options['no_climb']
+    num_engine_type = len(
+        aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
+    )  # not used in this example
+    throttle_enforcement = user_options['throttle_enforcement']  # not used in this example
+    no_descent = user_options['no_descent']  # not used in this example
+    no_climb = user_options['no_climb']  # not used in this example
     constraints = user_options['constraints']
-    ground_roll = user_options['ground_roll']
+    ground_roll = user_options['ground_roll']  # not used in this example
 
-    def add_l3_state(phase, options, name, target, rate_source):
-        initial, _ = options[f'{name}_initial']
-        final, _ = options[f'{name}_final']
-        bounds, units = options[f'{name}_bounds']
-        ref, _ = options[f'{name}_ref']
-        ref0, _ = options[f'{name}_ref0']
-        defect_ref, _ = options[f'{name}_defect_ref']
-        solve_segments = options[f'{name}_solve_segments']
-        phase.add_state(
-            target,
-            fix_initial=initial is not None,
-            input_initial=False,
-            lower=bounds[0],
-            upper=bounds[1],
-            units=units,
-            rate_source=rate_source,
-            ref=ref,
-            ref0=ref0,
-            defect_ref=defect_ref,
-            solve_segments='forward' if solve_segments else None,
-        )
-
-        if final is not None:
-            constraint_ref, _ = options[f'{name}_constraint_ref']
-            if constraint_ref is None:
-                # If unspecified, final is a good value for it.
-                constraint_ref = final
-            phase.add_boundary_constraint(
-                target,
-                loc='final',
-                equals=final,
-                units=units,
-                ref=final,
-            )
-
-    add_l3_state(
-        phase,
-        user_options,
-        'mass',
-        Dynamic.Vehicle.MASS,
-        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+    phase.add_state(
+        name=Dynamic.Vehicle.MASS,
+        fix_initial=False,
+        input_initial=False,
+        lower=user_options['mass_bounds'][0][0],
+        upper=user_options['mass_bounds'][0][1],
+        units=user_options['mass_bounds'][1],
+        rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        ref=user_options['mass_ref'][0],
+        ref0=user_options['mass_ref0'][0],
+        defect_ref=user_options['mass_defect_ref'][0],
+        solve_segments='forward' if user_options['mass_solve_segments'] else None,
     )
-    add_l3_state(
-        phase, user_options, 'distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE
+
+    phase.add_state(
+        name=Dynamic.Mission.DISTANCE,
+        fix_initial=False,
+        input_initial=False,
+        lower=user_options['distance_bounds'][0][0],
+        upper=user_options['distance_bounds'][0][1],
+        units=user_options['distance_bounds'][1],
+        rate_source=Dynamic.Mission.DISTANCE_RATE,
+        ref=user_options['distance_ref'][0],
+        ref0=user_options['distance_ref0'][0],
+        defect_ref=user_options['distance_defect_ref'][0],
+        solve_segments='forward' if user_options['distance_solve_segments'] else None,
     )
 
     def add_l3_control(
