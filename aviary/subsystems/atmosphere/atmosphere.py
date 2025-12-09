@@ -304,7 +304,7 @@ def _build_akima_coefs(out_stream, raw_data, units):
         atm_data.alt *= 0.3048 # ft -> m
         atm_data.T = (atm_data.T - 32) * 5/9 + 273.15 # degF -> degK
         atm_data.P *= 3386.38673 # inHg -> Pa
-        atm_data.rho *= 0.453592/(0.3048^3) # lbm/ft^3 -> kg/m^3
+        atm_data.rho *= 0.453592/(0.3048**3) # lbm/ft^3 -> kg/m^3
     else:
         print(f"units must be SI or English but '{units}' was supplied.")
         exit()
@@ -371,6 +371,7 @@ if __name__ == "__main__":
 
     print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
           'Make sure your input units match the requirements shown in _build_akima_coefs()!')
+    input("Press Enter to continue: ")
 
     from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
 
