@@ -355,7 +355,11 @@ prob.driver.options['disp'] = True
 prob.driver.options['tol'] = 1e-9
 prob.driver.options['maxiter'] = 50
 
+# prob.add_driver('IPOPT', max_iter=50)
 # IPOPT Optimizer Settings
+# prob.driver = om.pyOptSparseDriver()
+# prob.driver.options['optimizer'] = 'IPOPT'
+# prob.driver.declare_coloring(show_summary=False)
 # prob.driver.opt_settings['print_user_options'] = 'no'
 # prob.driver.opt_settings['print_frequency_iter'] = 10
 # prob.driver.opt_settings['print_level'] = 3
@@ -366,15 +370,18 @@ prob.driver.options['maxiter'] = 50
 # prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
 # prob.driver.opt_settings['mu_strategy'] = 'monotone'
 # prob.driver.options['print_results'] = 'minimal'
+
+# prob.add_driver('SNOPT', max_iter=50)
+# SNOPT Optimizer Settings #
+# prob.driver = om.pyOptSparseDriver()
+# prob.driver.options['optimizer'] = 'SNOPT'
+# prob.driver.declare_coloring(show_summary=False)
 # prob.driver.opt_settings['iSumm'] = 6
 # prob.driver.opt_settings['iPrint'] = 0
-
-# SNOPT Optimizer Settings #
 # prob.driver.opt_settings['Major iterations limit'] = 50
 # prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
 # prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
-# prob.driver.opt_settings['iSumm'] = 6
-# prob.driver.opt_settings['iPrint'] = 0
+# prob.driver.options['print_results'] = 'minimal'
 
 #####
 # prob.add_design_variables()
