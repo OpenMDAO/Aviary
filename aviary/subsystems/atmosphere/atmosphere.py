@@ -40,7 +40,7 @@ class Atmosphere(om.Group):
         )
 
         self.options.declare(
-            'isa_delta_T_Kelvin',
+            'delta_T_Kelvin',
             default=0.0,
             desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Kelvine)',
         )
@@ -103,7 +103,7 @@ class AtmosphereComp(om.ExplicitComponent):
                                   'it will be converted to geopotential based on Equation 19 in the original standard.')
         self.options.declare('data_source', values=('USatm1976', 'tropical', 'polar', 'hot', 'cold'), default='USatm1976',
                              desc='The atmospheric model to use as source data.')
-        self.options.declare('isa_delta_T_Kelvin', types=float, default=0.0,
+        self.options.declare('delta_T_Kelvin', types=(float,int), default=0.0,
                              desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Kelvin)')
         
         if self.options['data_source'] == 'USatm1976':
@@ -125,7 +125,7 @@ class AtmosphereComp(om.ExplicitComponent):
         """
         nn = self.options['num_nodes']
 
-        self._dt = self.options['isa_delta_T_Kelvin']
+        self._dt = self.options['delta_T_Kelvin']
 
         self._geodetic = self.options['h_def'] == 'geodetic'
         self._R0 = 6_356_766 # (meters) The effective Earth Radius
@@ -188,8 +188,8 @@ class AtmosphereComp(om.ExplicitComponent):
         # Equation 42, rho = (P * M)/(R * (T + dT))
         # Assumes pressure does not change (which is a simplification)
         # We know (P * M)/(R * T) from the akima table lookups (raw data)
-        # We must correct the density from the lookup table by dt = isa_delta_T_Kelvin
-        outputs['rho'] = corrected_density = (raw_density + self._R_air*self._dt * pressure**(-1) )**(-1)
+        # We must correct the density from the lookup table by dt = delta_T_Kelvin
+        outputs['rho'] = corrected_density = (raw_density**(-1) + self._R_air*self._dt * pressure**(-1) )**(-1)
 
         # Equation 50
         outputs['sos'] = (self._K * temp)**(0.5)
@@ -233,8 +233,8 @@ class AtmosphereComp(om.ExplicitComponent):
         coeffs = self.source_data.akima_rho[idx]
         raw_density = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
         raw_drho_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) # needs correction
-        # corrected_density = (raw_density + self._R_air*self._dt * pressure**(-1) )**(-1) # This gets complex because pressure changes as a function of h!
-        corrected_drho_dh = -1 * (raw_density + self._R_air*self._dt * pressure**(-1))**(-2) * (raw_drho_dh + (-1 * self._R_air*self._dt * pressure**(-2) * dP_dh))
+        # corrected_density = (raw_density**(-1) + self._R_air*self._dt * pressure**(-1) )**(-1) # This gets complex because pressure changes as a function of h!
+        corrected_drho_dh = -1 * (raw_density**(-1) + self._R_air*self._dt * pressure**(-1))**(-2) * (-1*raw_density**(-2)*raw_drho_dh + (-1 * self._R_air*self._dt * pressure**(-2) * dP_dh))
 
         # outputs['viscosity'] = self._beta * temp**(1.5) * (temp + self._S)**(-1)
         # need the product rule here
@@ -380,25 +380,32 @@ def _build_akima_coefs(out_stream, raw_data, units):
 if __name__ == "__main__":
     # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    # print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
-    #       'Make sure your input units match the requirements shown in _build_akima_coefs()!')
-    # input("Press Enter to continue: ")
+    print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
+          'Make sure your input units match the requirements shown in _build_akima_coefs()!')
+    input("Press Enter to continue: ")
 
-    # from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
+    from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
 
-    # import sys
-    # _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='SI')
+    import sys
+    _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='SI')
 
-    prob = om.Problem()
+    # Test problem below
+    # prob = om.Problem()
 
-    atm_model = prob.model.add_subsystem('comp', AtmosphereComp(num_nodes=3), promotes=['*'])
+    # atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=0, num_nodes=9), promotes=['*'])
 
-    prob.set_solver_print(level=0)
+    # prob.set_solver_print(level=0)
 
-    prob.setup(force_alloc_complex=True)
-    prob.set_val('h', [400,0,1500])
+    # prob.setup(force_alloc_complex=True)
+    # prob.set_val('h', [-1000, 0, 10950, 11000, 11100, 15000, 20000, 25000, 32000], units='m')
     
     
-    prob.run_model()
+    # prob.run_model()
 
-    prob.check_partials(method='cs')
+    # prob.check_partials(method='cs')
+
+    # print('Temperatures (K):', prob.get_val('temp', units='K'))
+    # print('Pressure (Pa)', prob.get_val('pres', units='Pa'))
+    # print('Density (kg/m**3)', prob.get_val('rho', units='kg/m**3'))
+    # print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
+    # print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
