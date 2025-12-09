@@ -140,6 +140,57 @@ class BWBWingCharacteristicLength(om.ExplicitComponent):
         J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.AREA] = 1.0 / wing_span
 
 
+epsilon = 0.05
+
+A = 63 / (8 * epsilon ** (2.5))
+B = -45 / (4 * epsilon ** (3.5))
+C = 35 / (8 * epsilon ** (4.5))
+
+
+def f(x):
+    """Valid for x in [0.0, infinity]."""
+    y = x**0.5
+    return y
+
+
+def df(x):
+    """First derivative of f(x), valid for x in (0.0, infinity)."""
+    dy = 0.5 / x**0.5
+    return dy
+
+
+def d2f(x):
+    """Second derivative of f(x), valid for x in (0.0, infinity)."""
+    d2y = -0.25 / x**1.5
+    return d2y
+
+
+def g(x):
+    """
+    Returns a quintic function g(x) such that:
+    g(0.0) = 0.0
+    g'(0.0) = 0.0
+    g"(0.0) = 0.0
+    g(ε) = f(ε)
+    g'(ε) = f'(ε)
+    g"(ε) = f"(ε).
+    """
+    y = A * x**3 + B * x**4 + C * x**5
+    return y
+
+
+def dg(x):
+    """First derivative of g(x)."""
+    dy = 3 * A * x**2 + 4 * B * x**3 + 5 * C * x**4
+    return dy
+
+
+def d2g(x):
+    """Second derivative of g(x)."""
+    d2y = 6 * A * x + 12 * B * x**2 + 20 * C * x**3
+    return d2y
+
+
 class OtherCharacteristicLengths(om.ExplicitComponent):
     """
     Calculate the characteristic length and fineness ratio of the
@@ -207,9 +258,9 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
         self._setup_partials_canard()
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        self._compute_horizontal_tail(inputs, outputs, discrete_inputs, discrete_outputs)
+        self._compute_horizontal_tail(inputs, outputs)
 
-        self._compute_vertical_tail(inputs, outputs, discrete_inputs, discrete_outputs)
+        self._compute_vertical_tail(inputs, outputs)
 
         self._compute_fuselage(inputs, outputs, discrete_inputs, discrete_outputs)
 
@@ -223,14 +274,14 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
         #     inputs, outputs, discrete_inputs, discrete_outputs
         # )
 
-        self._compute_canard(inputs, outputs, discrete_inputs, discrete_outputs)
+        self._compute_canard(inputs, outputs)
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        self._compute_partials_horizontal_tail(inputs, J, discrete_inputs)
-        self._compute_partials_vertical_tail(inputs, J, discrete_inputs)
+        self._compute_partials_horizontal_tail(inputs, J)
+        self._compute_partials_vertical_tail(inputs, J)
         self._compute_partials_fuselage(inputs, J, discrete_inputs)
         self._compute_partials_nacelles(inputs, J, discrete_inputs)
-        self._compute_partials_canard(inputs, J, discrete_inputs)
+        self._compute_partials_canard(inputs, J)
 
     def _setup_partials_horizontal_tail(self):
         self.declare_partials(
@@ -309,38 +360,48 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
             Aircraft.Canard.THICKNESS_TO_CHORD,
         )
 
-    def _compute_horizontal_tail(
-        self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
-    ):
+    def _compute_horizontal_tail(self, inputs, outputs):
         aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
-
-        length = 0.0
-
-        if 0.0 < aspect_ratio:
-            area = inputs[Aircraft.HorizontalTail.AREA]
-
-            length = (area / aspect_ratio) ** 0.5
+        area = inputs[Aircraft.HorizontalTail.AREA]
+        thickness_to_chord = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
+        if aspect_ratio.real > 0.0:
+            x = area / aspect_ratio
+            if x > epsilon:
+                length = f(x)
+            else:
+                length = g(x)
+        elif area.real > 0:
+            raise ValueError(
+                f'Aircraft.HorizontalTail.ASPECT_RATIO must be positive when '
+                'Aircraft.HorizontalTail.AREA is, but {aspect_ratio} is provided.'
+            )
+        else:
+            # now, area = 0 and aspect_ratio = 0
+            length = g(0)
 
         outputs[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH] = length
-
-        thickness_to_chord = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
-
         outputs[Aircraft.HorizontalTail.FINENESS] = thickness_to_chord
 
-    def _compute_vertical_tail(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def _compute_vertical_tail(self, inputs, outputs):
         aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
-
-        length = 0.0
-
-        if 0.0 < aspect_ratio:
-            area = inputs[Aircraft.VerticalTail.AREA]
-
-            length = (area / aspect_ratio) ** 0.5
+        area = inputs[Aircraft.VerticalTail.AREA]
+        thickness_to_chord = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
+        if aspect_ratio.real > 0.0:
+            x = area / aspect_ratio
+            if x > epsilon:
+                length = f(x)
+            else:
+                length = g(x)
+        elif area.real > 0:
+            raise ValueError(
+                f'Aircraft.VerticalTail.ASPECT_RATIO must be positive when '
+                'Aircraft.VerticalTail.AREA is, but {aspect_ratio} is provided.'
+            )
+        else:
+            # now, area = 0 and aspect_ratio = 0
+            length = g(0)
 
         outputs[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH] = length
-
-        thickness_to_chord = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
-
         outputs[Aircraft.VerticalTail.FINENESS] = thickness_to_chord
 
     def _compute_fuselage(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
@@ -439,54 +500,73 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
 
             idx += 1
 
-    def _compute_canard(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def _compute_canard(self, inputs, outputs):
         area = inputs[Aircraft.Canard.AREA]
-
-        if area <= 0.0:
-            return
-
-        thickness_to_chord = inputs[Aircraft.Canard.THICKNESS_TO_CHORD]
         aspect_ratio = inputs[Aircraft.Canard.ASPECT_RATIO]
+        thickness_to_chord = inputs[Aircraft.Canard.THICKNESS_TO_CHORD]
 
-        length = 0.0
-
-        if 0.0 < aspect_ratio:
-            length = (area / aspect_ratio) ** 0.5
+        if aspect_ratio.real > 0.0:
+            x = area / aspect_ratio
+            if x > epsilon:
+                length = f(x)
+            else:
+                length = g(x)
+        elif area.real > 0:
+            raise ValueError(
+                f'Aircraft.Canard.ASPECT_RATIO must be positive when '
+                'Aircraft.Canard.AREA is, but {aspect_ratio} is provided.'
+            )
+        else:
+            # now, area = 0 and aspect_ratio = 0
+            length = g(0)
 
         outputs[Aircraft.Canard.CHARACTERISTIC_LENGTH] = length
-
         outputs[Aircraft.Canard.FINENESS] = thickness_to_chord
 
-    def _compute_partials_horizontal_tail(self, inputs, J, discrete_inputs=None):
+    def _compute_partials_horizontal_tail(self, inputs, J):
+        area = inputs[Aircraft.HorizontalTail.AREA]
         aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
-
-        da = dr = 0.0
-
-        if 0.0 < aspect_ratio:
-            area = inputs[Aircraft.HorizontalTail.AREA]
-
-            f = 0.5 * (area / aspect_ratio) ** -0.5
-            da = f / aspect_ratio
-            dr = -f * area / aspect_ratio**2.0
+        if aspect_ratio.real > 0.0:
+            x = area / aspect_ratio
+            if x > epsilon:
+                da = df(x) / aspect_ratio
+                dr = -df(x) * area / aspect_ratio**2.0
+            else:
+                da = dg(x) / aspect_ratio
+                dr = -dg(x) * area / aspect_ratio**2.0
+        elif area.real > 0:
+            raise ValueError(
+                f'Aircraft.HorizontalTail.ASPECT_RATIO must be positive but '
+                '{aspect_ratio} is provided.'
+            )
+        else:
+            # now, area = 0 and aspect_ratio = 0
+            da = dr = 0.0
 
         J[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, Aircraft.HorizontalTail.AREA] = da
-
         J[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, Aircraft.HorizontalTail.ASPECT_RATIO] = dr
 
-    def _compute_partials_vertical_tail(self, inputs, J, discrete_inputs=None):
+    def _compute_partials_vertical_tail(self, inputs, J):
+        area = inputs[Aircraft.VerticalTail.AREA]
         aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
-
-        da = dr = 0.0
-
-        if 0.0 < aspect_ratio:
-            area = inputs[Aircraft.VerticalTail.AREA]
-
-            f = 0.5 * (area / aspect_ratio) ** -0.5
-            da = f / aspect_ratio
-            dr = -f * area / aspect_ratio**2.0
+        if aspect_ratio.real > 0.0:
+            x = area / aspect_ratio
+            if x > epsilon:
+                da = df(x) / aspect_ratio
+                dr = -df(x) * area / aspect_ratio**2.0
+            else:
+                da = dg(x) / aspect_ratio
+                dr = -dg(x) * area / aspect_ratio**2.0
+        elif area.real > 0:
+            raise ValueError(
+                f'Aircraft.VerticalTail.ASPECT_RATIO must be positive but '
+                '{aspect_ratio} is provided.'
+            )
+        else:
+            # now, area = 0 and aspect_ratio = 0
+            da = dr = 0.0
 
         J[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, Aircraft.VerticalTail.AREA] = da
-
         J[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, Aircraft.VerticalTail.ASPECT_RATIO] = dr
 
     def _compute_partials_fuselage(self, inputs, J, discrete_inputs=None):
@@ -521,29 +601,25 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
 
         J[Aircraft.Nacelle.FINENESS, Aircraft.Nacelle.AVG_DIAMETER] = deriv_fine_diam
 
-    def _compute_partials_canard(self, inputs, J, discrete_inputs=None):
+    def _compute_partials_canard(self, inputs, J):
         area = inputs[Aircraft.Canard.AREA]
-
-        if area <= 0.0:
-            J[Aircraft.Canard.CHARACTERISTIC_LENGTH, Aircraft.Canard.AREA] = J[
-                Aircraft.Canard.CHARACTERISTIC_LENGTH, Aircraft.Canard.ASPECT_RATIO
-            ] = J[Aircraft.Canard.FINENESS, Aircraft.Canard.THICKNESS_TO_CHORD] = 0.0
-
-            return
-
         aspect_ratio = inputs[Aircraft.Canard.ASPECT_RATIO]
-
-        da = dr = 0.0
-
-        if 0.0 < aspect_ratio:
-            area = inputs[Aircraft.Canard.AREA]
-
-            f = 0.5 * (area / aspect_ratio) ** -0.5
-            da = f / aspect_ratio
-            dr = -f * area / aspect_ratio**2.0
+        if aspect_ratio.real > 0.0:
+            x = area / aspect_ratio
+            if x > epsilon:
+                da = df(x) / aspect_ratio
+                dr = -df(x) * area / aspect_ratio**2.0
+            else:
+                da = dg(x) / aspect_ratio
+                dr = -dg(x) * area / aspect_ratio**2.0
+        elif area.real > 0:
+            raise ValueError(
+                f'Aircraft.Canard.ASPECT_RATIO must be positive but {{aspect_ratio}} is provided.'
+            )
+        else:
+            # now, area = 0 and aspect_ratio = 0
+            da = dr = 0.0
 
         J[Aircraft.Canard.CHARACTERISTIC_LENGTH, Aircraft.Canard.AREA] = da
-
         J[Aircraft.Canard.CHARACTERISTIC_LENGTH, Aircraft.Canard.ASPECT_RATIO] = dr
-
         J[Aircraft.Canard.FINENESS, Aircraft.Canard.THICKNESS_TO_CHORD] = 1.0
