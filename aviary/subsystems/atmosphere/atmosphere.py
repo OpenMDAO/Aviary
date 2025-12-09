@@ -232,12 +232,6 @@ class AtmosphereComp(om.ExplicitComponent):
         coeffs = self.source_data.akima_rho[idx]
         drho_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
 
-        coeffs = USatm1976Data.akima_viscosity[idx]
-        dvisc_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
-
-        coeffs = USatm1976Data.akima_drho[idx]
-        d2rho_dh2 = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
-
         partials['temp', 'h'][...] = dT_dh.ravel()
         partials['pres', 'h'][...] = dP_dh.ravel()
         partials['rho', 'h'][...] = drho_dh.ravel()
@@ -254,52 +248,71 @@ class AtmosphereComp(om.ExplicitComponent):
             partials['drhos_dh', 'h'][...] *= dz_dh ** 2
 
 
-def _build_akima_coefs(out_stream=sys.stdout):
+def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
     """
     Print out the Akima coefficients based on the raw atmospheric data.
 
     This is used to more rapidly interpolate the data and the rate of change of rho wrt altitude.
 
+    Inputs
+    -------
+    units: Float ('SI', or 'English')
+        Describes the input units in either SI or English. 
+        If SI units are selected then the data should be input as:
+            (altitude: m, temp: degK, pressure: mb, density: kg/m^3) # TODO: is mb an OM unit?
+        If English units are selected then the data should be input as:
+            (altitude: ft, temp: degF, pressure: inHg, density: lbm/ft^3)
+
     Returns
     -------
     dict
         A mapping of the variable name and Akima coeffcient values for each table in the atmosphere.
+        Output units are always in SI.
+        (altitude: m, temp: degK, pressure: Pa, density: kg/ft^3)
     """
+
+    if units == 'SI':
+        raw_data.P *= 100 # mb -> pascal 
+    elif units == 'English':
+        raw_data.alt *= 0.3048 # ft -> m
+        raw_data.T = (raw_data.T - 32) * 5/9 + 273.15 # degF -> degK
+        raw_data.P *= 3386.38673 # inHg -> Pa
+        raw_data.rho *= 0.453592/(0.3048^3) # lbm/ft^3 -> kg/m^3
+    else:
+        print(f"units must be SI or English but '{units}' was supplied.")
+        exit()
+
     import textwrap
     from openmdao.components.interp_util.interp import InterpND
 
     coeff_data = {}
 
-    T_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.T, extrapolate=True)
-    P_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.P, extrapolate=True)
-    rho_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.rho, extrapolate=True)
-    visc_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=USatm1976Data.viscosity,
-                           extrapolate=True)
+    T_interp = InterpND(method='1D-akima', points=raw_data.alt, values=raw_data.T, extrapolate=True)
+    P_interp = InterpND(method='1D-akima', points=raw_data.alt, values=raw_data.P, extrapolate=True)
+    rho_interp = InterpND(method='1D-akima', points=raw_data.alt, values=raw_data.rho, extrapolate=True)
 
-    _, _drho_dh = rho_interp.interpolate(USatm1976Data.alt, compute_derivative=True)
-    drho_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=_drho_dh.ravel(), extrapolate=True)
+    _, _drho_dh = rho_interp.interpolate(raw_data.alt, compute_derivative=True)
+    drho_interp = InterpND(method='1D-akima', points=raw_data.alt, values=_drho_dh.ravel(), extrapolate=True)
 
-    _, _dT_dh = T_interp.interpolate(USatm1976Data.alt, compute_derivative=True)
-    dT_interp = InterpND(method='1D-akima', points=USatm1976Data.alt, values=_dT_dh.ravel(), extrapolate=True)
+    _, _dT_dh = T_interp.interpolate(raw_data.alt, compute_derivative=True)
+    dT_interp = InterpND(method='1D-akima', points=raw_data.alt, values=_dT_dh.ravel(), extrapolate=True)
 
     # Find midpoints of all bins plus an extrapolation point on each end.
-    min_alt = np.min(USatm1976Data.alt)
-    max_alt = np.max(USatm1976Data.alt)
+    min_alt = np.min(raw_data.alt)
+    max_alt = np.max(raw_data.alt)
 
     # We need to compute coeffs in the "extrapolation bins" as well, so append these.
-    h = np.hstack((min_alt - 5000, USatm1976Data.alt, max_alt + 5000))
+    h = np.hstack((min_alt - 5000, raw_data.alt, max_alt + 5000))
     hbin = h[:-1] + 0.5 * np.diff(h)
     n = len(hbin)
 
     coeffs_T = np.empty((n, 4))
     coeffs_P = np.empty((n, 4))
     coeffs_rho = np.empty((n, 4))
-    coeffs_visc = np.empty((n, 4))
-    coeffs_drho = np.empty((n, 4))
     coeffs_dT = np.empty((n, 4))
 
-    interps = [T_interp, P_interp, rho_interp, visc_interp, drho_interp, dT_interp]
-    coeff_arrays = [coeffs_T, coeffs_P, coeffs_rho, coeffs_visc, coeffs_drho, coeffs_dT]
+    interps = [T_interp, P_interp, rho_interp, dT_interp]
+    coeff_arrays = [coeffs_T, coeffs_P, coeffs_rho, coeffs_dT]
 
     np.set_printoptions(precision=18)
     vars = ['T', 'P', 'rho', 'viscosity', 'drho', 'dT']
@@ -316,12 +329,12 @@ def _build_akima_coefs(out_stream=sys.stdout):
                 coeff_array[i, 3] = d
 
             if out_stream is not None:
-                print(f'USatm1976Data.akima_{var} = \\', file=out_stream)
+                print(f'raw_data.akima_{var} = \\', file=out_stream)
                 print(textwrap.indent(repr(coeff_array).replace('array', 'np.array'), '    '),
                       file=out_stream)
                 print('', file=out_stream)
 
-            coeff_data[f'USatm1976Data.akima_{var}'] = coeff_array
+            coeff_data[f'raw_data.akima_{var}'] = coeff_array
             input("Press Enter to continue: ")
     print("Program Complete")
 
@@ -331,7 +344,7 @@ def _build_akima_coefs(out_stream=sys.stdout):
 if __name__ == "__main__":
     # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    from Aviary.aviary.subsystems.atmosphere.atmosphereComp import _raw_data # replace this with your new raw data
+    from Aviary.aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
 
     import sys
-    _build_akima_coefs(raw_data=_raw_data, out_stream=sys.stdout)
+    _build_akima_coefs(raw_data=_raw_data, units='SI', out_stream=sys.stdout)
