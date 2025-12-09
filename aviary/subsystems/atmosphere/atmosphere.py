@@ -189,13 +189,13 @@ class AtmosphereComp(om.ExplicitComponent):
         # Assumes pressure does not change (which is a simplification)
         # We know (P * M)/(R * T) from the akima table lookups (raw data)
         # We must correct the density from the lookup table by dt = isa_delta_T_Kelvin
-        outputs['rho'] = corrected_density = 1 / (raw_density + self._R_air*self._dt / pressure )
+        outputs['rho'] = corrected_density = (raw_density + self._R_air*self._dt * pressure^(-1) )^(-1)
 
         # Equation 50
-        outputs['sos'] = np.sqrt(self._K * outputs['temp'])
+        outputs['sos'] = (self._K * temp)^(0.5)
 
         # Equation 51
-        outputs['viscosity'] = self._beta * temp^(1.5) / (temp + self._S)
+        outputs['viscosity'] = self._beta * temp^(1.5) * (temp + self._S)^(-1)
 
     def compute_partials(self, inputs, partials):
         """
@@ -223,32 +223,45 @@ class AtmosphereComp(om.ExplicitComponent):
         dx = h - h_index[idx]
 
         coeffs = self.source_data.akima_T[idx]
+        temp = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])) + self._dt
         dT_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
-        T = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
 
         coeffs = self.source_data.akima_P[idx]
+        pressure = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
         dP_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
 
         coeffs = self.source_data.akima_rho[idx]
-        drho_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
+        raw_density = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
+        raw_drho_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx) # needs correction
+        # corrected_density = (raw_density + self._R_air*self._dt * pressure^(-1) )^(-1) # This gets complex because pressure changes as a function of h!
+        corrected_drho_dh = -1 * (raw_density + self._R_air*self._dt * pressure^(-1))^(-2) * (raw_drho_dh + (-1 * self._R_air*self._dt * pressure^(-2) * dP_dh))
+
+        # outputs['viscosity'] = self._beta * temp^(1.5) * (temp + self._S)^(-1)
+        # need the product rule here
+        dviscosity_dh = 1.5 * self._beta * temp^(0.5) * dT_dh * (temp + self._S)^(-1) + self._beta * temp^(1.5) * -1 * (temp + self._S)^(-2) * dT_dh
+
+        # sos = (self._K * temp)^(0.5)
+        # chain rule
+        dsos_dh = 0.5 * (self._K * temp)^(-0.5) * self._K *dT_dh
+        # (0.5 / np.sqrt(self._K * temp) * dT_dh * self._K)
 
         partials['temp', 'h'][...] = dT_dh.ravel()
         partials['pres', 'h'][...] = dP_dh.ravel()
-        partials['rho', 'h'][...] = drho_dh.ravel()
-        partials['viscosity', 'h'][...] = dvisc_dh.ravel()
-        partials['drhos_dh', 'h'][...] = d2rho_dh2.ravel()
-        partials['sos', 'h'][...] = (0.5 / np.sqrt(self._K * T) * partials['temp', 'h'] * self._K)
+        partials['rho', 'h'][...] = corrected_drho_dh.ravel() 
+        partials['viscosity', 'h'][...] = dviscosity_dh.ravel()
+        partials['sos', 'h'][...] = dsos_dh.ravel()
 
         if self._geodetic:
-            partials['sos', 'h'][...] *= dz_dh
             partials['temp', 'h'][...] *= dz_dh
-            partials['viscosity', 'h'][...] *= dz_dh
-            partials['rho', 'h'][...] *= dz_dh
-            partials['pres', 'h'][...] *= dz_dh
-            partials['drhos_dh', 'h'][...] *= dz_dh ** 2
+            partials['pres', 'h'][...] *= dz_dh 
+            partials['rho', 'h'][...] *= dz_dh # does this still apply?
+            partials['viscosity', 'h'][...] *= dz_dh # does this still apply?
+            partials['sos', 'h'][...] *= dz_dh # does this still apply?
 
 
-def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
+
+
+def _build_akima_coefs(out_stream, raw_data, units):
     """
     Print out the Akima coefficients based on the raw atmospheric data.
 
@@ -259,7 +272,7 @@ def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
     units: Float ('SI', or 'English')
         Describes the input units in either SI or English. 
         If SI units are selected then the data should be input as:
-            (altitude: m, temp: degK, pressure: mb, density: kg/m^3) # TODO: is mb an OM unit?
+            (altitude: m, temp: degK, pressure: mb, density: kg/m^3)
         If English units are selected then the data should be input as:
             (altitude: ft, temp: degF, pressure: inHg, density: lbm/ft^3)
 
@@ -271,13 +284,27 @@ def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
         (altitude: m, temp: degK, pressure: Pa, density: kg/ft^3)
     """
 
+    raw_data = np.reshape(raw_data, (raw_data.size // 4, 4))
+
+    from collections import namedtuple
+    atm_data = namedtuple('atm_data', ['alt', 'temp', 'pres', 'rho'])
+
+    atm_data.alt = raw_data[:, 0]
+
+    atm_data.T = raw_data[:, 1]
+
+    atm_data.P = raw_data[:, 2]
+
+    atm_data.rho = raw_data[:, 3]
+
+    # Covert all data to SI units
     if units == 'SI':
-        raw_data.P *= 100 # mb -> pascal 
+        atm_data.P *= 100 # mb -> pascal 
     elif units == 'English':
-        raw_data.alt *= 0.3048 # ft -> m
-        raw_data.T = (raw_data.T - 32) * 5/9 + 273.15 # degF -> degK
-        raw_data.P *= 3386.38673 # inHg -> Pa
-        raw_data.rho *= 0.453592/(0.3048^3) # lbm/ft^3 -> kg/m^3
+        atm_data.alt *= 0.3048 # ft -> m
+        atm_data.T = (atm_data.T - 32) * 5/9 + 273.15 # degF -> degK
+        atm_data.P *= 3386.38673 # inHg -> Pa
+        atm_data.rho *= 0.453592/(0.3048^3) # lbm/ft^3 -> kg/m^3
     else:
         print(f"units must be SI or English but '{units}' was supplied.")
         exit()
@@ -287,22 +314,20 @@ def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
 
     coeff_data = {}
 
-    T_interp = InterpND(method='1D-akima', points=raw_data.alt, values=raw_data.T, extrapolate=True)
-    P_interp = InterpND(method='1D-akima', points=raw_data.alt, values=raw_data.P, extrapolate=True)
-    rho_interp = InterpND(method='1D-akima', points=raw_data.alt, values=raw_data.rho, extrapolate=True)
+    T_interp = InterpND(method='1D-akima', points=atm_data.alt, values=atm_data.T, extrapolate=True)
+    P_interp = InterpND(method='1D-akima', points=atm_data.alt, values=atm_data.P, extrapolate=True)
+    rho_interp = InterpND(method='1D-akima', points=atm_data.alt, values=atm_data.rho, extrapolate=True)
 
-    _, _drho_dh = rho_interp.interpolate(raw_data.alt, compute_derivative=True)
-    drho_interp = InterpND(method='1D-akima', points=raw_data.alt, values=_drho_dh.ravel(), extrapolate=True)
 
-    _, _dT_dh = T_interp.interpolate(raw_data.alt, compute_derivative=True)
-    dT_interp = InterpND(method='1D-akima', points=raw_data.alt, values=_dT_dh.ravel(), extrapolate=True)
+    _, _dT_dh = T_interp.interpolate(atm_data.alt, compute_derivative=True)
+    dT_interp = InterpND(method='1D-akima', points=atm_data.alt, values=_dT_dh.ravel(), extrapolate=True)
 
     # Find midpoints of all bins plus an extrapolation point on each end.
-    min_alt = np.min(raw_data.alt)
-    max_alt = np.max(raw_data.alt)
+    min_alt = np.min(atm_data.alt)
+    max_alt = np.max(atm_data.alt)
 
     # We need to compute coeffs in the "extrapolation bins" as well, so append these.
-    h = np.hstack((min_alt - 5000, raw_data.alt, max_alt + 5000))
+    h = np.hstack((min_alt - 5000, atm_data.alt, max_alt + 5000))
     hbin = h[:-1] + 0.5 * np.diff(h)
     n = len(hbin)
 
@@ -311,12 +336,12 @@ def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
     coeffs_rho = np.empty((n, 4))
     coeffs_dT = np.empty((n, 4))
 
-    interps = [T_interp, P_interp, rho_interp, dT_interp]
-    coeff_arrays = [coeffs_T, coeffs_P, coeffs_rho, coeffs_dT]
+    interps = [T_interp, P_interp, rho_interp]
+    coeff_arrays = [coeffs_T, coeffs_P, coeffs_rho]
 
     np.set_printoptions(precision=18)
-    vars = ['T', 'P', 'rho', 'viscosity', 'drho', 'dT']
-    with np.printoptions(linewidth=1024):
+    vars = ['T', 'P', 'rho']
+    with np.printoptions(linewidth=1024, threshold=np.inf):
         for var, interp, coeff_array in zip(vars, interps, coeff_arrays):
             _ = interp.interpolate(hbin, compute_derivative=False)
             coeff_cache = interp.table.vec_coeff
@@ -329,12 +354,12 @@ def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
                 coeff_array[i, 3] = d
 
             if out_stream is not None:
-                print(f'raw_data.akima_{var} = \\', file=out_stream)
+                print(f'atm_data.akima_{var} = \\', file=out_stream)
                 print(textwrap.indent(repr(coeff_array).replace('array', 'np.array'), '    '),
                       file=out_stream)
                 print('', file=out_stream)
 
-            coeff_data[f'raw_data.akima_{var}'] = coeff_array
+            coeff_data[f'atm_data.akima_{var}'] = coeff_array
             input("Press Enter to continue: ")
     print("Program Complete")
 
@@ -344,7 +369,21 @@ def _build_akima_coefs(raw_data, units='SI', out_stream=sys.stdout):
 if __name__ == "__main__":
     # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    from Aviary.aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
+    print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
+          'Make sure your input units match the requirements shown in _build_akima_coefs()!')
+
+    from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
 
     import sys
-    _build_akima_coefs(raw_data=_raw_data, units='SI', out_stream=sys.stdout)
+    _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='SI')
+
+    # prob = om.Problem()
+
+    # prob.model.add_subsystem('comp', AtmosphereComp())
+
+    # prob.set_solver_print(level=0)
+
+    # prob.setup(mode='rev')
+    # prob.run_model()
+
+    # prob.check_partials(method='fd', form='central')

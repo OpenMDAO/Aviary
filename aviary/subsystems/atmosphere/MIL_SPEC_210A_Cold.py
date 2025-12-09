@@ -242,13 +242,3 @@ _raw_data = np.array([
     99500,-103.7,0.33,0.001286962,
     100000,-103.9,0.32,0.001286962,
     ])
-
-_raw_data = np.reshape(_raw_data, (_raw_data.size // 6, 6))
-
-atm_data.alt = _raw_data[:, 0]
-
-atm_data.T = _raw_data[:, 1]
-
-atm_data.P = _raw_data[:, 2]
-
-atm_data.rho = _raw_data[:, 3]
