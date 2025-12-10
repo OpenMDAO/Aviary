@@ -13,7 +13,7 @@ atm_data.__doc__ = \
     Parameters
     ----------
     alt : float
-        Geopotential Altitude (feet)
+        Geopotential Altitude (feet) 
     temp : float
         Temperature (degF)
     pres : float
@@ -21,6 +21,7 @@ atm_data.__doc__ = \
     rho : float
         Density in (lb/ft**3)
     """
+# TODO: fix units above they differ from raw units below
 
 _raw_data = np.array([
     -5000,-127,34.9,0.134809263, #Extrapolated

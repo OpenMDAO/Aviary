@@ -105,19 +105,6 @@ class AtmosphereComp(om.ExplicitComponent):
                              desc='The atmospheric model to use as source data.')
         self.options.declare('delta_T_Kelvin', types=(float,int), default=0.0,
                              desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Kelvin)')
-        
-        if self.options['data_source'] == 'USatm1976':
-            self.source_data = USatm1976
-        elif self.options['data_source'] == 'tropical':
-            self.source_data = tropical_210A
-        elif self.options['data_source'] == 'polar':
-            self.source_data = polar_210A
-        elif self.options['data_source'] == 'hot':
-            self.source_data = hot_210A
-        elif self.options['data_source'] == 'cold':
-            self.source_data = cold_210A
-        else:
-            Warning('User has specified unknown atmosphere model. Please use one of: USatm1976, tropical, polar, hot, cold')
 
     def setup(self):
         """
@@ -140,6 +127,19 @@ class AtmosphereComp(om.ExplicitComponent):
 
         self._S = 110.4 #(K) southerlands constant
         self._beta = 1.458e-6 #(s*m*K**(1/2))
+
+        if self.options['data_source'] == 'USatm1976':
+            self.source_data = USatm1976
+        elif self.options['data_source'] == 'tropical':
+            self.source_data = tropical_210A
+        elif self.options['data_source'] == 'polar':
+            self.source_data = polar_210A
+        elif self.options['data_source'] == 'hot':
+            self.source_data = hot_210A
+        elif self.options['data_source'] == 'cold':
+            self.source_data = cold_210A
+        else:
+            Warning('User has specified unknown atmosphere model. Please use one of: USatm1976, tropical, polar, hot, cold')
 
         self.add_input('h', val=1. * np.ones(nn), units='m')
 
@@ -274,7 +274,7 @@ def _build_akima_coefs(out_stream, raw_data, units):
         If SI units are selected then the data should be input as:
             (altitude: m, temp: degK, pressure: mb, density: kg/m**3)
         If English units are selected then the data should be input as:
-            (altitude: ft, temp: degF, pressure: inHg, density: lbm/ft**3)
+            (altitude: ft, temp: degF, pressure: inHg60, density: lbm/ft**3)
 
     Returns
     -------
@@ -303,7 +303,7 @@ def _build_akima_coefs(out_stream, raw_data, units):
     elif units == 'English':
         atm_data.alt *= 0.3048 # ft -> m
         atm_data.T = (atm_data.T - 32) * 5/9 + 273.15 # degF -> degK
-        atm_data.P *= 3386.38673 # inHg -> Pa
+        atm_data.P *= 3376.85 # inHg -> Pa @ 60F
         atm_data.rho *= 0.453592/(0.3048**3) # lbm/ft**3 -> kg/m**3
     else:
         print(f"units must be SI or English but '{units}' was supplied.")
@@ -319,8 +319,8 @@ def _build_akima_coefs(out_stream, raw_data, units):
     rho_interp = InterpND(method='1D-akima', points=atm_data.alt, values=atm_data.rho, extrapolate=True)
 
 
-    _, _dT_dh = T_interp.interpolate(atm_data.alt, compute_derivative=True)
-    dT_interp = InterpND(method='1D-akima', points=atm_data.alt, values=_dT_dh.ravel(), extrapolate=True)
+    # _, _dT_dh = T_interp.interpolate(atm_data.alt, compute_derivative=True)
+    # dT_interp = InterpND(method='1D-akima', points=atm_data.alt, values=_dT_dh.ravel(), extrapolate=True)
 
     # Find midpoints of all bins plus an extrapolation point on each end.
     min_alt = np.min(atm_data.alt)
@@ -378,34 +378,38 @@ def _build_akima_coefs(out_stream, raw_data, units):
 
 
 if __name__ == "__main__":
-    # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
+    ################ Generate Akima Splines Below ################
+    ## Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
-          'Make sure your input units match the requirements shown in _build_akima_coefs()!')
-    input("Press Enter to continue: ")
+    # print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
+    #       'Make sure your input units match the requirements shown in _build_akima_coefs()!')
+    # input("Press Enter to continue: ")
 
-    from aviary.subsystems.atmosphere.StandardAtm1976 import _raw_data # replace this with your new raw data
+    # from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import _raw_data # replace this with your new raw data
 
-    import sys
-    _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='SI')
+    # import sys
+    # _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='English')
 
-    # Test problem below
-    # prob = om.Problem()
+    ################ Test problem below ################
 
-    # atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=0, num_nodes=9), promotes=['*'])
+    prob = om.Problem()
 
-    # prob.set_solver_print(level=0)
+    # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
+    atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=4), promotes=['*'])
 
-    # prob.setup(force_alloc_complex=True)
-    # prob.set_val('h', [-1000, 0, 10950, 11000, 11100, 15000, 20000, 25000, 32000], units='m')
+    prob.set_solver_print(level=0)
+
+    prob.setup(force_alloc_complex=True)
+
+    prob.set_val('h', [0, -5000, 25000, 100000], units='ft')
     
-    
-    # prob.run_model()
+    prob.run_model()
 
     # prob.check_partials(method='cs')
 
-    # print('Temperatures (K):', prob.get_val('temp', units='K'))
-    # print('Pressure (Pa)', prob.get_val('pres', units='Pa'))
-    # print('Density (kg/m**3)', prob.get_val('rho', units='kg/m**3'))
+
+    print('Temperatures (degF):', prob.get_val('temp', units='degF'))
+    print('Pressure (inHg60)', prob.get_val('pres', units='inHg60'))
+    print('Density (lbm/ft**3)', prob.get_val('rho', units='lbm/ft**3'))
     # print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
     # print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
