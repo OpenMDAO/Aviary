@@ -608,38 +608,38 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             if 'time' == guess_key:
                 # Set initial guess for time variables
                 # Seems to be an openmdao bug. Switch to this when fixed.
-                # phase.set_time_val(initial=val[0], duration=val[1], units=units)
+                phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
-                if val[0] is not None:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
-                    )
-                if val[1] is not None:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
-                    )
+                # if val[0] is not None:
+                #     target_prob.set_val(
+                #         parent_prefix + f'traj.{phase_name}.t_initial', val[0], units=units
+                #     )
+                # if val[1] is not None:
+                #     target_prob.set_val(
+                #         parent_prefix + f'traj.{phase_name}.t_duration', val[1], units=units
+                #     )
 
             elif guess_key in control_keys:
                 # Set initial guess for control variables
                 # Seems to be an openmdao bug. Switch to this when fixed.
-                # phase.set_control_val(guess_key, val, units=units)
+                phase.set_control_val(guess_key, val, units=units)
 
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                    process_guess_var(val, guess_key, phase),
-                    units=units,
-                )
+                # target_prob.set_val(
+                #     parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
+                #     process_guess_var(val, guess_key, phase),
+                #     units=units,
+                # )
 
             elif guess_key in state_keys:
                 # Set initial guess for state variables
                 # Seems to be an openmdao bug. Switch to this when fixed.
-                # phase.set_state_val(guess_key, val, units=units)
+                phase.set_state_val(guess_key, val, units=units)
 
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                    process_guess_var(val, guess_key, phase),
-                    units=units,
-                )
+                # target_prob.set_val(
+                #     parent_prefix + f'traj.{phase_name}.states:{guess_key}',
+                #     process_guess_var(val, guess_key, phase),
+                #     units=units,
+                # )
 
             elif guess_key in prob_keys:
                 target_prob.set_val(parent_prefix + guess_key, val, units=units)

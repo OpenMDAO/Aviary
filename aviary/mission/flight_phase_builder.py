@@ -157,6 +157,12 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'can be used to prevent unexpected descent during a climb phase.',
         )
 
+        self.declare(
+            name='transcription',
+            default='Collocation',
+            desc='Set the dymos transcription for the phase. Currently only Collocation and PicardShooting are supported',
+        )
+
 
 @register
 class FlightPhaseBase(PhaseBuilderBase):
@@ -410,14 +416,20 @@ class FlightPhaseBase(PhaseBuilderBase):
         num_segments = user_options['num_segments']
         order = user_options['order']
 
-        seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+        transcription_type = user_options['transcription']
 
-        transcription = dm.Radau(
-            num_segments=num_segments,
-            order=order,
-            compressed=True,
-            segment_ends=seg_ends,
-        )
+        if transcription_type == 'Collocation':
+            seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+
+            transcription = dm.Radau(
+                num_segments=num_segments,
+                order=order,
+                compressed=True,
+                segment_ends=seg_ends,
+            )
+
+        elif transcription_type == 'PicardShooting':
+            transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward')
 
         return transcription
 
