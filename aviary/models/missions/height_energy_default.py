@@ -64,7 +64,7 @@ phase_info = {
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((120.5, 361.5), 'min'),
             'time_duration_bounds': ((29.0, 87.0), 'min'),
-            'transcription': 'Collocation',  #'transcription': 'PicardShooting'
+            'transcription': 'collocation',  #'transcription': 'PicardShooting'
         },
     },
     'post_mission': {

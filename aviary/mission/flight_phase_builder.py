@@ -433,7 +433,8 @@ class FlightPhaseBase(PhaseBuilderBase):
 
         else:
             raise UserWarning(
-                f"Unable to add dymos transcription: '{transcription_type}' is not supported. Check phase info definition and choose 'Collocation' or 'PicardShooting'"
+                f"Unable to add dymos transcription for phase '{self.name}': transcription = '{transcription_type}' is not supported. "
+                f"Check phase_info definition for phase '{self.name}' and set transcription = 'Collocation' or 'PicardShooting'"
             )
 
         return transcription
