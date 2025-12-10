@@ -22,6 +22,7 @@ phase_info = {
             'throttle_enforcement': 'path_constraint',
             'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((64.0, 192.0), 'min'),
+            'transcription': 'Collocation',  #'transcription': 'PicardShooting'
         },
     },
     'cruise': {
@@ -42,6 +43,7 @@ phase_info = {
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((64.0, 192.0), 'min'),
             'time_duration_bounds': ((56.5, 300.0), 'min'),
+            'transcription': 'Collocation',  #'transcription': 'PicardShooting'
         },
     },
     'descent': {
@@ -62,6 +64,7 @@ phase_info = {
             'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((120.5, 361.5), 'min'),
             'time_duration_bounds': ((29.0, 87.0), 'min'),
+            'transcription': 'Collocation',  #'transcription': 'PicardShooting'
         },
     },
     'post_mission': {
