@@ -41,8 +41,9 @@ jobs:
       matrix:
         include:
           # latest versions of openmdao/dymos
+          # DYMOS is currently broken with py 3.14.1
           - NAME: latest
-            PY: 3
+            PY: '3.14.0'
 
     steps:
       - name: Display run details
@@ -67,7 +68,7 @@ jobs:
           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
       - name: Setup miniconda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
           python-version: ${{ matrix.PY }}

@@ -129,8 +129,8 @@ class DetailedTakeoffPhaseOptions(AviaryOptionsDictionary):
 
         self.declare(
             name='pitch_control',
-            values=['alpha_fixed', 'alpha_rate_fixed', 'gamma_fixed'],
-            default='alpha_fixed',
+            values=['ALPHA_FIXED', 'ALPHA_RATE_FIXED', 'GAMMA_FIXED'],
+            default='ALPHA_FIXED',
             desc='Specifies how alpha is controlled - Alpha can be a fixed parameter, specified via a fixed rate parameter, ' \
             'or whether the climb gradient is constant',
         )
@@ -310,9 +310,9 @@ class DetailedTakeoffPhaseBuilder(PhaseBuilderBase):
             opt=False,
         )
 
-        if user_options['pitch_control'] == 'alpha_fixed':
+        if user_options['pitch_control'] == 'ALPHA_FIXED':
             phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
-        elif user_options['pitch_control'] == 'alpha_rate_fixed':
+        elif user_options['pitch_control'] == 'ALPHA_RATE_FIXED':
             phase.add_parameter(
                 Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE, val=2.0, opt=False, units='deg/s'
             )

@@ -20,7 +20,7 @@ if __name__ == '__main__':
     # Load aircraft and options data from user
     # Allow for user overrides here
     input_file = get_aviary_resource_path(
-        'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'
     )
     prob.load_inputs(input_file, phase_info, meta_data=ExtendedMetaData)
 

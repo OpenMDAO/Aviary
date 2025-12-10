@@ -5,10 +5,10 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.two_dof_default import phase_info
+from aviary.models.aircraft.blended_wing_body.generic_BWB_2dof_phase_info import phase_info
 
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Mission
 
 
 @use_tempdirs
@@ -29,7 +29,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
             max_iter=60,
         )
 
@@ -41,25 +41,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            141345.01347269,
+            139803.667415,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Aircraft.Design.OPERATING_MASS, units='lbm'),
-            80199.17943303,
+            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+            79873.05255347,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            27395.83401138,
+            26180.61486153,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2203.95598924,
+            2216.0066613,
             tolerance=rtol,
         )
 
@@ -67,7 +67,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            116439.9117977,
+            116003.31044998,
             tolerance=rtol,
         )
 

@@ -140,7 +140,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         vr_to_liftoff_user_options.set_val('time_duration_ref', val=60.0, units='s')
         vr_to_liftoff_user_options.set_val('distance_max', val=15000.0, units='ft')
         vr_to_liftoff_user_options.set_val('max_velocity', val=167.85, units='kn')
-        vr_to_liftoff_user_options.set_val('pitch_control', val='alpha_rate_fixed', units='unitless')
+        vr_to_liftoff_user_options.set_val('pitch_control', val='ALPHA_RATE_FIXED', units='unitless')
         vr_to_liftoff_user_options.set_val('terminal_condition', val='LIFTOFF')
 
         nl_solver = om.NewtonSolver(solve_subsystems=True, maxiter=100, iprint=2, atol=1.0e-6, rtol=1.0e-6)
@@ -179,7 +179,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         liftoff_to_climb_gradient_user_options.set_val('time_duration_ref', val=60.0, units='s')
         liftoff_to_climb_gradient_user_options.set_val('distance_max', val=15000.0, units='ft')
         liftoff_to_climb_gradient_user_options.set_val('max_velocity', val=167.85, units='kn')
-        liftoff_to_climb_gradient_user_options.set_val('pitch_control', val='alpha_rate_fixed', units='unitless')
+        liftoff_to_climb_gradient_user_options.set_val('pitch_control', val='ALPHA_RATE_FIXED', units='unitless')
         liftoff_to_climb_gradient_user_options.set_val('climbing', val=True, units='unitless')
         liftoff_to_climb_gradient_user_options.set_val('terminal_condition', val='CLIMB_GRADIENT')
 
@@ -220,7 +220,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
         climb_gradient_to_obstacle_user_options.set_val('time_duration_ref', val=60.0, units='s')
         climb_gradient_to_obstacle_user_options.set_val('distance_max', val=15000.0, units='ft')
         climb_gradient_to_obstacle_user_options.set_val('max_velocity', val=200., units='kn')
-        climb_gradient_to_obstacle_user_options.set_val('pitch_control', val='gamma_fixed', units='unitless')
+        climb_gradient_to_obstacle_user_options.set_val('pitch_control', val='GAMMA_FIXED', units='unitless')
         climb_gradient_to_obstacle_user_options.set_val('climbing', val=True, units='unitless')
         climb_gradient_to_obstacle_user_options.set_val('terminal_condition', val='OBSTACLE')
 

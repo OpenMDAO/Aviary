@@ -110,7 +110,7 @@ class TakeoffODE(_BaseODE):
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
         self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')
 
-        if self.options['pitch_control'] == 'gamma_fixed':
+        if self.options['pitch_control'] == 'GAMMA_FIXED':
             self.nonlinear_solver = om.NewtonSolver(
                 solve_subsystems=True,
                 maxiter=100,
