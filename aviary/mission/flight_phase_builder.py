@@ -431,6 +431,11 @@ class FlightPhaseBase(PhaseBuilderBase):
         elif transcription_type == 'PicardShooting':
             transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward')
 
+        else:
+            raise UserWarning(
+                f"Unable to add dymos transcription: '{transcription_type}' is not supported. Check phase info definition and choose 'Collocation' or 'PicardShooting'"
+            )
+
         return transcription
 
     def _extra_ode_init_kwargs(self):
