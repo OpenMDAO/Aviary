@@ -17,10 +17,11 @@ from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProbl
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.core_postmission import CorePostMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
-from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
@@ -1032,6 +1033,23 @@ class AviaryGroup(om.Group):
                     'aircraft may not have enough space for fuel, so check the value of '
                     'Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
                 )
+
+        default_subsystems = [
+            self.core_subsystems['performance'],
+        ]
+
+        post_mission.add_subsystem(
+            'core_subsystems',
+            CorePostMission(
+                aviary_options=self.aviary_inputs,
+                subsystems=default_subsystems,
+                phase_info=self.mission_info,
+                phase_mission_bus_lengths=phase_mission_bus_lengths,
+                post_mission_info=self.post_mission_info,
+            ),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
 
     def link_phases(self, verbosity=None, comm=None):
         """

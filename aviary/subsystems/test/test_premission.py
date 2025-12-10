@@ -10,7 +10,7 @@ from aviary.models.aircraft.large_single_aisle_1.V3_bug_fixed_IO import (
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
-from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import get_items, get_keys

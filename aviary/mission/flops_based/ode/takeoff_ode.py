@@ -29,6 +29,13 @@ class TakeoffODE(_BaseODE):
             desc='mode of operation (ground roll or flight)',
         )
 
+        self.options.declare(
+            'pitch_control',
+            values=['ALPHA_FIXED', 'ALPHA_RATE_FIXED', 'GAMMA_FIXED'],
+            default='ALPHA_FIXED',
+            desc='How pitch is controlled.',
+        )
+
     def setup(self):
         options = self.options
 
@@ -64,12 +71,13 @@ class TakeoffODE(_BaseODE):
             'climbing': options['climbing'],
             'friction_key': options['friction_key'],
             'aviary_options': options['aviary_options'],
+            'pitch_control': options['pitch_control'],
         }
 
         self.add_subsystem(
             'takeoff_eom',
             TakeoffEOM(**kwargs),
-            promotes_inputs=[
+            promotes=[
                 Dynamic.Mission.FLIGHT_PATH_ANGLE,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.MASS,
@@ -77,8 +85,6 @@ class TakeoffODE(_BaseODE):
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            ],
-            promotes_outputs=[
                 Dynamic.Mission.DISTANCE_RATE,
                 Dynamic.Mission.ALTITUDE_RATE,
                 Dynamic.Mission.VELOCITY_RATE,
@@ -103,3 +109,15 @@ class TakeoffODE(_BaseODE):
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, np.zeros(nn), 'm/s')
         self.set_input_defaults(Aircraft.Wing.AREA, 1.0, 'm**2')
+
+        if self.options['pitch_control'] == 'GAMMA_FIXED':
+            self.nonlinear_solver = om.NewtonSolver(
+                solve_subsystems=True,
+                maxiter=100,
+                atol=1.0e-6,
+                rtol=1.0e-6,
+                iprint=0,
+                debug_print=False,
+            )
+            self.nonlinear_solver.linesearch = om.ArmijoGoldsteinLS()
+            self.linear_solver = om.DirectSolver(assemble_jac=True)
