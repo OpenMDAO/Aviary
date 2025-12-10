@@ -12,7 +12,11 @@ from numpy import pi
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
-    OtherCharacteristicLengths,
+    CanardCharacteristicLength,
+    FuselageCharacteristicLengths,
+    HorizontalTailCharacteristicLength,
+    NacelleCharacteristicLength,
+    VerticalTailCharacteristicLength,
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import (
@@ -183,13 +187,38 @@ class PrepGeom(om.Group):
                 promotes_outputs=['*'],
             )
         self.add_subsystem(
-            'other_characteristic_lengths',
-            OtherCharacteristicLengths(),
+            'nacelle_characteristic_lengths',
+            NacelleCharacteristicLength(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
         )
+        self.add_subsystem(
+            'canard_char_lengths',
+            CanardCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
 
-        self.connect(f'prelim.{Names.CROOT}', f'other_characteristic_lengths.{Names.CROOT}')
+        self.add_subsystem(
+            'fuselage_char_lengths',
+            FuselageCharacteristicLengths(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        self.add_subsystem(
+            'horizontal_tail_char_lengths',
+            HorizontalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        self.add_subsystem(
+            'vertical_tail_char_lengths',
+            VerticalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
