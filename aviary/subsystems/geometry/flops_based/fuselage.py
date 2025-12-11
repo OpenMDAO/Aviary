@@ -428,7 +428,10 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def setup_partials(self):
         self.declare_partials(
             of=[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH],
-            wrt=[Aircraft.Fuselage.LENGTH, 'Rear_spar_percent_chord'],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                'Rear_spar_percent_chord',
+            ],
         )
         self.declare_partials(
             of=[Aircraft.Wing.ROOT_CHORD],
@@ -461,7 +464,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         length = inputs[Aircraft.Fuselage.LENGTH]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
-        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
         bay_width_max = 12.0  # ft
 
@@ -568,7 +571,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
-        self.declare_partials('*', '*', method='fd', form='forward')
+    def setup_partials(self):
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
@@ -667,7 +671,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays = int(0.5 + max_width / bay_width_max)
+            z = 0.5 + max_width / bay_width_max
+            z = z[0]
+            num_bays = int(z.real)
             if num_bays > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
 
@@ -699,6 +705,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
         # the algorithm will probably take many more iteratiions. I wonder if it would still
         # converge. One solution might be to rewrite this using an openmado solver, solve for
-        # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
+        # a real-valued num_bays, then use a smoothed int afterwards. FLOPS did something similar
         # with the skin friction calculation, except there were no ints. I rewrote the equations
         # in residual form and used a Newton solver on them. (Ken)
