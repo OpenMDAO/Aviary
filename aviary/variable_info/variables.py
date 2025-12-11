@@ -378,6 +378,7 @@ class Aircraft:
         MASS_SCALER = 'aircraft:horizontal_tail:mass_scaler'
         MOMENT_ARM = 'aircraft:horizontal_tail:moment_arm'
         MOMENT_RATIO = 'aircraft:horizontal_tail:moment_ratio'
+        NUM_TAILS = 'aircraft:horizontal_tail:num_tails'
         ROOT_CHORD = 'aircraft:horizontal_tail:root_chord'
         SPAN = 'aircraft:horizontal_tail:span'
         SWEEP = 'aircraft:horizontal_tail:sweep'
