@@ -54,14 +54,14 @@ class PrepGeom(om.Group):
         add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
         add_aviary_option(self, Aircraft.Design.TYPE)
         add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
-        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILST)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
         is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
         design_type = self.options[Aircraft.Design.TYPE]
-        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
-        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             if is_simple_layout:
@@ -243,12 +243,12 @@ class _Prelim(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
-        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILST)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
-        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
-        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
@@ -371,8 +371,8 @@ class _Prelim(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
-        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         w_tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         outputs[Names.XMULT] = calc_lifting_surface_scaler(w_tc)
@@ -435,8 +435,8 @@ class _Prelim(om.ExplicitComponent):
             outputs[Names.CROTVT] = CROTVT
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
-        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         fuselage_var = self.fuselage_var
 
