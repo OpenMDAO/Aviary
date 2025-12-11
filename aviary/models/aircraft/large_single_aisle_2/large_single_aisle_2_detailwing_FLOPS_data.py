@@ -101,6 +101,7 @@ inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)
 
 # Horizontal Tail
 # ---------------------------
+inputs.set_val(Aircraft.HorizontalTail.NUM_TAILS, 1)
 inputs.set_val(Aircraft.HorizontalTail.AREA, 407.335370699457, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 5.444)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.3008)

@@ -348,8 +348,8 @@ class _TailTest(unittest.TestCase):
         for key in keys:
             options[key] = flops_inputs.get_item(key)[0]
 
-        prob.model.add_subsystem('tails', _HorizontalTail(**options), promotes=['*'])
-        prob.model.add_subsystem('tails', _VerticalTail(), promotes=['*'])
+        prob.model.add_subsystem('h_tails', _HorizontalTail(**options), promotes=['*'])
+        prob.model.add_subsystem('v_tails', _VerticalTail(), promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
 
