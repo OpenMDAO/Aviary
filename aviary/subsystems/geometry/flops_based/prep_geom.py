@@ -54,10 +54,14 @@ class PrepGeom(om.Group):
         add_aviary_option(self, Aircraft.Fuselage.SIMPLE_LAYOUT)
         add_aviary_option(self, Aircraft.Design.TYPE)
         add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILST)
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
         is_simple_layout = self.options[Aircraft.Fuselage.SIMPLE_LAYOUT]
         design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             if is_simple_layout:
@@ -144,10 +148,17 @@ class PrepGeom(om.Group):
             self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
             self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
 
-        self.add_subsystem('tail', _Tail(), promotes_inputs=['aircraft*'], promotes_outputs=['*'])
+        if num_horizontal_tails > 0:
+            self.add_subsystem(
+                'h_tail', _HorizontalTail(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
+            self.connect(f'prelim.{Names.XMULTH}', f'h_tail.{Names.XMULTH}')
 
-        self.connect(f'prelim.{Names.XMULTH}', f'tail.{Names.XMULTH}')
-        self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
+        if num_vertical_tails > 0:
+            self.add_subsystem(
+                'v_tail', _VerticalTail(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
+            self.connect(f'prelim.{Names.XMULTV}', f'v_tail.{Names.XMULTV}')
 
         self.add_subsystem(
             'fus_ratios', _FuselageRatios(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
@@ -206,19 +217,21 @@ class PrepGeom(om.Group):
             promotes_inputs=['*'],
         )
 
-        self.add_subsystem(
-            'horizontal_tail_char_lengths',
-            HorizontalTailCharacteristicLength(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
+        if num_horizontal_tails > 0:
+            self.add_subsystem(
+                'horizontal_tail_char_lengths',
+                HorizontalTailCharacteristicLength(),
+                promotes_outputs=['*'],
+                promotes_inputs=['*'],
+            )
 
-        self.add_subsystem(
-            'vertical_tail_char_lengths',
-            VerticalTailCharacteristicLength(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
+        if num_vertical_tails > 0:
+            self.add_subsystem(
+                'vertical_tail_char_lengths',
+                VerticalTailCharacteristicLength(),
+                promotes_outputs=['*'],
+                promotes_inputs=['*'],
+            )
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
@@ -230,20 +243,27 @@ class _Prelim(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILST)
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
+
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
+        if num_horizontal_tails > 0:
+            add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+            add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
+            add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
+            add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
 
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
+        if num_vertical_tails > 0:
+            add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+            add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
+            add_aviary_input(self, Aircraft.VerticalTail.TAPER_RATIO, units='unitless')
+            add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
@@ -255,14 +275,18 @@ class _Prelim(om.ExplicitComponent):
         self.add_output(Names.CROOT, 1.0, units='unitless')
         self.add_output(Names.CROOTB, 1.0, units='unitless')
         self.add_output(Names.CROTM, 1.0, units='unitless')
-        self.add_output(Names.CROTVT, 1.0, units='unitless')
-        self.add_output(Names.CRTHTB, 1.0, units='unitless')
-        self.add_output(Names.SPANHT, 1.0, units='unitless')
-        self.add_output(Names.SPANVT, 1.0, units='unitless')
+        if num_vertical_tails > 0:
+            self.add_output(Names.CROTVT, 1.0, units='unitless')
+            self.add_output(Names.SPANVT, 1.0, units='unitless')
+        if num_horizontal_tails > 0:
+            self.add_output(Names.CRTHTB, 1.0, units='unitless')
+            self.add_output(Names.SPANHT, 1.0, units='unitless')
         self.add_output(Names.XDX, 1.0, units='unitless')
         self.add_output(Names.XMULT, 1.0, units='unitless')
-        self.add_output(Names.XMULTH, 1.0, units='unitless')
-        self.add_output(Names.XMULTV, 1.0, units='unitless')
+        if num_horizontal_tails > 0:
+            self.add_output(Names.XMULTH, 1.0, units='unitless')
+        if num_vertical_tails > 0:
+            self.add_output(Names.XMULTV, 1.0, units='unitless')
 
     def setup_partials(self):
         fuselage_var = self.fuselage_var
@@ -347,34 +371,40 @@ class _Prelim(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        w_tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
-        h_tc = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
-        v_tc = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
 
+        w_tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         outputs[Names.XMULT] = calc_lifting_surface_scaler(w_tc)
-        outputs[Names.XMULTH] = calc_lifting_surface_scaler(h_tc)
-        outputs[Names.XMULTV] = calc_lifting_surface_scaler(v_tc)
+        if num_horizontal_tails > 0:
+            h_tc = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
+            outputs[Names.XMULTH] = calc_lifting_surface_scaler(h_tc)
+        if num_vertical_tails > 0:
+            v_tc = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
+            outputs[Names.XMULTV] = calc_lifting_surface_scaler(v_tc)
 
         fuselage_var = self.fuselage_var
 
         XDX = outputs[Names.XDX] = inputs[fuselage_var]
-        aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
-        area = inputs[Aircraft.HorizontalTail.AREA]
 
-        span = outputs[Names.SPANHT] = (aspect_ratio * area) ** 0.5
+        if num_horizontal_tails > 0:
+            aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
+            area = inputs[Aircraft.HorizontalTail.AREA]
 
-        CRTHTB = 0.0
+            span = outputs[Names.SPANHT] = (aspect_ratio * area) ** 0.5
 
-        if 0.0 < span:
-            taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
+            CRTHTB = 0.0
 
-            CRTHTB = (
-                2.0 * area / (span * (1.0 + taper_ratio))
-                + ((span / 2.0 - XDX / 4.0) / (span / 2.0)) * (1.0 - taper_ratio)
-                + taper_ratio
-            )
+            if 0.0 < span:
+                taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
 
-        outputs[Names.CRTHTB] = CRTHTB
+                CRTHTB = (
+                    2.0 * area / (span * (1.0 + taper_ratio))
+                    + ((span / 2.0 - XDX / 4.0) / (span / 2.0)) * (1.0 - taper_ratio)
+                    + taper_ratio
+                )
+
+            outputs[Names.CRTHTB] = CRTHTB
 
         area = inputs[Aircraft.Wing.AREA]
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
@@ -389,83 +419,89 @@ class _Prelim(om.ExplicitComponent):
 
         outputs[Names.CROOTB] = CROOT * CROTM
 
-        area = inputs[Aircraft.VerticalTail.AREA]
-        aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
+        if num_vertical_tails > 0:
+            area = inputs[Aircraft.VerticalTail.AREA]
+            aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
 
-        span = outputs[Names.SPANVT] = (area * aspect_ratio) ** 0.5
+            span = outputs[Names.SPANVT] = (area * aspect_ratio) ** 0.5
 
-        CROTVT = 0.0
+            CROTVT = 0.0
 
-        if 0.0 < span:
-            taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
+            if 0.0 < span:
+                taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
 
-            CROTVT = 2.0 * area / (span * (1.0 + taper_ratio))
+                CROTVT = 2.0 * area / (span * (1.0 + taper_ratio))
 
-        outputs[Names.CROTVT] = CROTVT
+            outputs[Names.CROTVT] = CROTVT
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILST]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILST]
+
         fuselage_var = self.fuselage_var
 
         XDX = inputs[fuselage_var]
-        area = inputs[Aircraft.HorizontalTail.AREA]
-        aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
-        span2 = area * aspect_ratio
-        span = span2**0.5
-        f = 0.5 / span
+        if num_horizontal_tails > 0:
+            area = inputs[Aircraft.HorizontalTail.AREA]
+            aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
-        J[Names.SPANHT, Aircraft.HorizontalTail.AREA] = f * aspect_ratio
-        J[Names.SPANHT, Aircraft.HorizontalTail.ASPECT_RATIO] = f * area
+            span2 = area * aspect_ratio
+            span = span2**0.5
+            f = 0.5 / span
 
-        da = dr = dt = dx = 0.0
+            J[Names.SPANHT, Aircraft.HorizontalTail.AREA] = f * aspect_ratio
+            J[Names.SPANHT, Aircraft.HorizontalTail.ASPECT_RATIO] = f * area
 
-        if 0.0 < span:
-            # b = (a * ar)**0.5
-            #
-            #        2 * a       b / 2 - x / 4
-            # c = ____________ + _____________ * (1 - tr) + tr
-            #     b * (1 + tr)       b / 2
-            #
-            #              2 * a               x * (1 - tr)
-            #   = ________________________ - _________________ + 1
-            #     (a * ar)**0.5 * (1 + tr)   2 * (a * ar)**0.5
-            taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
+            da = dr = dt = dx = 0.0
 
-            _1p_tr = 1.0 + taper_ratio
-            _1m_tr = 1.0 - taper_ratio
+            if 0.0 < span:
+                # b = (a * ar)**0.5
+                #
+                #        2 * a       b / 2 - x / 4
+                # c = ____________ + _____________ * (1 - tr) + tr
+                #     b * (1 + tr)       b / 2
+                #
+                #              2 * a               x * (1 - tr)
+                #   = ________________________ - _________________ + 1
+                #     (a * ar)**0.5 * (1 + tr)   2 * (a * ar)**0.5
+                taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
 
-            # da = d(f0 / g0) + d(f1 / g1) + 0
-            #      df0 * g0 - f0 * dg0   df1 * g1 - f1 * dg1
-            #    = ___________________ + ___________________
-            #             g0**2                 g1**2
-            dspan_darea = 0.5 * (aspect_ratio / area) ** 0.5
+                _1p_tr = 1.0 + taper_ratio
+                _1m_tr = 1.0 - taper_ratio
 
-            da = (
-                2.0 / _1p_tr * (1.0 - area * dspan_darea / span) / span
-                + _1m_tr * 0.5 * XDX * dspan_darea / span**2
-            )
+                # da = d(f0 / g0) + d(f1 / g1) + 0
+                #      df0 * g0 - f0 * dg0   df1 * g1 - f1 * dg1
+                #    = ___________________ + ___________________
+                #             g0**2                 g1**2
+                dspan_darea = 0.5 * (aspect_ratio / area) ** 0.5
 
-            # dr = d(k0 * a / (a * ar)**0.5) - d(k1 / (a * ar)**0.5) + 0
-            #    = d((k0 * a - k1) / (a * ar)**0.5)
-            #    = -0.5 * (k0 * a - k1) / (a * ar)**1.5 * a
-            k0 = 2.0 / _1p_tr
-            k1 = XDX * _1m_tr / 2.0
-            dr = -0.5 * area * (k0 * area - k1) / span**3.0
+                da = (
+                    2.0 / _1p_tr * (1.0 - area * dspan_darea / span) / span
+                    + _1m_tr * 0.5 * XDX * dspan_darea / span**2
+                )
 
-            # dt = d(k0 / (1 + tr)) - d(k1 * (1 - tr)) + 0
-            #    = -k0 / (1 + tr)**2 + k1
-            k0 = 2.0 * area / span
-            k1 = XDX / (2.0 * span)
-            dt = k1 - k0 / _1p_tr**2.0
+                # dr = d(k0 * a / (a * ar)**0.5) - d(k1 / (a * ar)**0.5) + 0
+                #    = d((k0 * a - k1) / (a * ar)**0.5)
+                #    = -0.5 * (k0 * a - k1) / (a * ar)**1.5 * a
+                k0 = 2.0 / _1p_tr
+                k1 = XDX * _1m_tr / 2.0
+                dr = -0.5 * area * (k0 * area - k1) / span**3.0
 
-            # dx = 0 - d(x * k) + 0
-            #    = -k
-            dx = -_1m_tr / (2.0 * span)
+                # dt = d(k0 / (1 + tr)) - d(k1 * (1 - tr)) + 0
+                #    = -k0 / (1 + tr)**2 + k1
+                k0 = 2.0 * area / span
+                k1 = XDX / (2.0 * span)
+                dt = k1 - k0 / _1p_tr**2.0
 
-        J[Names.CRTHTB, Aircraft.HorizontalTail.AREA] = da
-        J[Names.CRTHTB, Aircraft.HorizontalTail.ASPECT_RATIO] = dr
-        J[Names.CRTHTB, Aircraft.HorizontalTail.TAPER_RATIO] = dt
-        J[Names.CRTHTB, fuselage_var] = dx
+                # dx = 0 - d(x * k) + 0
+                #    = -k
+                dx = -_1m_tr / (2.0 * span)
+
+            J[Names.CRTHTB, Aircraft.HorizontalTail.AREA] = da
+            J[Names.CRTHTB, Aircraft.HorizontalTail.ASPECT_RATIO] = dr
+            J[Names.CRTHTB, Aircraft.HorizontalTail.TAPER_RATIO] = dt
+            J[Names.CRTHTB, fuselage_var] = dx
 
         area = inputs[Aircraft.Wing.AREA]
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
@@ -531,38 +567,39 @@ class _Prelim(om.ExplicitComponent):
         dg = J[Names.CROTM, fuselage_var]
         J[Names.CROOTB, fuselage_var] = f * dg
 
-        area = inputs[Aircraft.VerticalTail.AREA]
-        aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
+        if num_vertical_tails > 0:
+            area = inputs[Aircraft.VerticalTail.AREA]
+            aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
 
-        span = (area * aspect_ratio) ** 0.5
+            span = (area * aspect_ratio) ** 0.5
 
-        J[Names.SPANVT, Aircraft.VerticalTail.AREA] = 0.5 * aspect_ratio / span
+            J[Names.SPANVT, Aircraft.VerticalTail.AREA] = 0.5 * aspect_ratio / span
 
-        J[Names.SPANVT, Aircraft.VerticalTail.ASPECT_RATIO] = 0.5 * area / span
+            J[Names.SPANVT, Aircraft.VerticalTail.ASPECT_RATIO] = 0.5 * area / span
 
-        da = dr = dt = 0.0
+            da = dr = dt = 0.0
 
-        if 0.0 < span:
-            taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
+            if 0.0 < span:
+                taper_ratio = inputs[Aircraft.VerticalTail.TAPER_RATIO]
 
-            _1p_tr = 1.0 + taper_ratio
+                _1p_tr = 1.0 + taper_ratio
 
-            f = 2.0 * area / _1p_tr
-            g = span
-            df = 2.0 / _1p_tr
-            dg = J[Names.SPANVT, Aircraft.VerticalTail.AREA]
-            da = (df * g - f * dg) / g**2
+                f = 2.0 * area / _1p_tr
+                g = span
+                df = 2.0 / _1p_tr
+                dg = J[Names.SPANVT, Aircraft.VerticalTail.AREA]
+                da = (df * g - f * dg) / g**2
 
-            # dr = d(k / (a * ar)**0.5)
-            #    = -0.5 * k / (a * ar)**1.5 * a
-            dr = -(area**2.0) / (_1p_tr * span**3.0)
+                # dr = d(k / (a * ar)**0.5)
+                #    = -0.5 * k / (a * ar)**1.5 * a
+                dr = -(area**2.0) / (_1p_tr * span**3.0)
 
-            # dt = d(k / (1 + tr)) = -k / (1 + tr)**2
-            dt = -2.0 * area / (span * _1p_tr**2.0)
+                # dt = d(k / (1 + tr)) = -k / (1 + tr)**2
+                dt = -2.0 * area / (span * _1p_tr**2.0)
 
-        J[Names.CROTVT, Aircraft.VerticalTail.AREA] = da
-        J[Names.CROTVT, Aircraft.VerticalTail.ASPECT_RATIO] = dr
-        J[Names.CROTVT, Aircraft.VerticalTail.TAPER_RATIO] = dt
+            J[Names.CROTVT, Aircraft.VerticalTail.AREA] = da
+            J[Names.CROTVT, Aircraft.VerticalTail.ASPECT_RATIO] = dr
+            J[Names.CROTVT, Aircraft.VerticalTail.TAPER_RATIO] = dt
 
     @property
     def fuselage_var(self):
@@ -705,7 +742,7 @@ class _BWBWing(om.ExplicitComponent):
         outputs[Aircraft.Wing.WETTED_AREA] = ssmw
 
 
-class _Tail(om.ExplicitComponent):
+class _HorizontalTail(om.ExplicitComponent):
     """
     Calculate horizontal wing and vertical wing wetted areas of aircraft geometry
     for FLOPS-based aerodynamics analysis.
@@ -717,19 +754,12 @@ class _Tail(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(Names.XMULTH, 0.0, units='unitless')
-        self.add_input(Names.XMULTV, 0.0, units='unitless')
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
-
         add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
-
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA_SCALER, units='unitless')
 
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA_SCALER, units='unitless')
-
         add_aviary_output(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-        add_aviary_output(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
 
     def setup_partials(self):
         self.declare_partials(
@@ -741,11 +771,6 @@ class _Tail(om.ExplicitComponent):
             ],
         )
 
-        self.declare_partials(
-            Aircraft.VerticalTail.WETTED_AREA,
-            [Names.XMULTV, Aircraft.VerticalTail.AREA, Aircraft.VerticalTail.WETTED_AREA_SCALER],
-        )
-
         redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
 
         if not redux:
@@ -755,7 +780,6 @@ class _Tail(om.ExplicitComponent):
             )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        # horizontal tail
         XMULTH = inputs[Names.XMULTH]
         area = inputs[Aircraft.HorizontalTail.AREA]
         scaler = inputs[Aircraft.HorizontalTail.WETTED_AREA_SCALER]
@@ -774,15 +798,6 @@ class _Tail(om.ExplicitComponent):
             )
 
         outputs[Aircraft.HorizontalTail.WETTED_AREA] = wetted_area
-
-        # vertical tail
-        XMULTV = inputs[Names.XMULTV]
-        area = inputs[Aircraft.VerticalTail.AREA]
-        scaler = inputs[Aircraft.VerticalTail.WETTED_AREA_SCALER]
-
-        wetted_area = scaler * XMULTV * area
-
-        outputs[Aircraft.VerticalTail.WETTED_AREA] = wetted_area
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         redux = self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]
@@ -827,7 +842,37 @@ class _Tail(om.ExplicitComponent):
                 Aircraft.HorizontalTail.WETTED_AREA_SCALER,
             ] = XMULTH * area
 
-        # vertical tail
+
+class _VerticalTail(om.ExplicitComponent):
+    """
+    Calculate vertical wing wetted area of aircraft geometry
+    for FLOPS-based aerodynamics analysis.
+    """
+
+    def setup(self):
+        self.add_input(Names.XMULTV, 0.0, units='unitless')
+
+        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA_SCALER, units='unitless')
+
+        add_aviary_output(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
+
+    def setup_partials(self):
+        self.declare_partials(
+            Aircraft.VerticalTail.WETTED_AREA,
+            [Names.XMULTV, Aircraft.VerticalTail.AREA, Aircraft.VerticalTail.WETTED_AREA_SCALER],
+        )
+
+    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        XMULTV = inputs[Names.XMULTV]
+        area = inputs[Aircraft.VerticalTail.AREA]
+        scaler = inputs[Aircraft.VerticalTail.WETTED_AREA_SCALER]
+
+        wetted_area = scaler * XMULTV * area
+
+        outputs[Aircraft.VerticalTail.WETTED_AREA] = wetted_area
+
+    def compute_partials(self, inputs, J, discrete_inputs=None):
         XMULTV = inputs[Names.XMULTV]
         area = inputs[Aircraft.VerticalTail.AREA]
         scaler = inputs[Aircraft.VerticalTail.WETTED_AREA_SCALER]

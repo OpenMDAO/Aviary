@@ -24,7 +24,8 @@ from aviary.subsystems.geometry.flops_based.prep_geom import (
     _Fuselage,
     _FuselageRatios,
     _Prelim,
-    _Tail,
+    _HorizontalTail,
+    _VerticalTail,
     _Wing,
 )
 from aviary.subsystems.geometry.flops_based.utils import Names
@@ -93,6 +94,7 @@ class PrepGeomTest(unittest.TestCase):
         keys = [
             Aircraft.Fuselage.NUM_FUSELAGES,
             Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES,
+            Aircraft.HorizontalTail.NUM_TAILS,
             Aircraft.VerticalTail.NUM_TAILS,
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
             Aircraft.Engine.NUM_ENGINES,
@@ -346,7 +348,8 @@ class _TailTest(unittest.TestCase):
         for key in keys:
             options[key] = flops_inputs.get_item(key)[0]
 
-        prob.model.add_subsystem('tails', _Tail(**options), promotes=['*'])
+        prob.model.add_subsystem('tails', _HorizontalTail(**options), promotes=['*'])
+        prob.model.add_subsystem('tails', _VerticalTail(**options), promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -815,7 +818,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.TAPER_RATIO, val=0.311)
         # _BWBWing
         # skip
-        # _Tail
+        # _VerticalTail
         prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.311)
         # _BWBFuselage
         # skip
@@ -946,8 +949,9 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULTV'), 2.04257, tolerance=1e-8)
         # _BWBWing
         assert_near_equal(prob.get_val(Aircraft.Wing.WETTED_AREA), 33816.72651876, tolerance=1e-8)
-        # _Tail
+        # _HorizontalTail
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8)
+        # _VerticalTail
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8)
         # _BWBFuselage
         # _FuselageRatios
@@ -1105,10 +1109,11 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.TAPER_RATIO, val=0.311)
         # _BWBWing
         # skip
-        # _Tail
+        # _HorizontalTail
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
         prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.311)
         prob.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, val=1.0)
+        # _VerticalTail
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.WETTED_AREA_SCALER, val=1.0)
         # _BWBFuselage
@@ -1264,8 +1269,9 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(prob.get_val('prelim.prep_geom:_Names:XMULTV'), 2.04257, tolerance=1e-8)
         # _BWBWing
         assert_near_equal(prob.get_val(Aircraft.Wing.WETTED_AREA), 24713.66128988, tolerance=1e-8)
-        # _Tail
+        # _HorizontalTail
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8)
+        # _VerticalTail
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8)
         # _BWBFuselage
         # skip
