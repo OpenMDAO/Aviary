@@ -150,10 +150,6 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
-        self.add_input(Names.CROOT, 0.0, units='unitless')
-
         add_aviary_input(self, Aircraft.Canard.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Canard.ASPECT_RATIO, units='unitless')
         # add_aviary_input(self, Aircraft.Canard.LAMINAR_FLOW_LOWER, 0.0)

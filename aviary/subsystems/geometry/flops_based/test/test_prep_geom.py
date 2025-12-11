@@ -522,11 +522,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    # @parameterized.expand(unit_data_sets, name_func=print_case)
-    def test_case(
-        self,
-    ):
-        case_name = 'LargeSingleAisle1FLOPS'
+    @parameterized.expand(unit_data_sets, name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         keys = [
@@ -553,14 +550,25 @@ class CharacteristicLengthsTest(unittest.TestCase):
             'other_characteristic_lengths', OtherCharacteristicLengths(**options), promotes=['*']
         )
 
-        options[Aircraft.Engine.REFERENCE_SLS_THRUST] = (np.array([28928.1]), 'lbf')
+        # options[Aircraft.Engine.REFERENCE_SLS_THRUST] = (np.array([28928.1]), 'lbf')
+        keys = [
+            Aircraft.Engine.REFERENCE_SLS_THRUST,
+            Aircraft.Engine.NUM_ENGINES,
+        ]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = get_flops_data(case_name, preprocess=True, keys=keys)
+        model_options = {}
+        for key in keys:
+            model_options[key] = options.get_item(key)[0]
 
-        prob.model.add_subsystem(
-            'nacelle_characteristic_lengths', NacelleCharacteristicLength(**options), promotes=['*']
+        model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = options.get_item(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf'
         )
 
-        setup_model_options(
-            prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless')})
+        prob.model.add_subsystem(
+            'nacelle_characteristic_lengths',
+            NacelleCharacteristicLength(**model_options),
+            promotes=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
