@@ -29,7 +29,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             'models/aircraft/blended_wing_body/generic_BWB_GASP.csv',
             local_phase_info,
             optimizer='SNOPT',
-            verbosity=1,
+            verbosity=0,
             max_iter=60,
         )
 

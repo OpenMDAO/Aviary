@@ -114,7 +114,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
-            verbosity=1,
+            verbosity=0,
         )
 
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)

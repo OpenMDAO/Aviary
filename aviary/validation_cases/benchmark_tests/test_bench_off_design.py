@@ -16,7 +16,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
 
     def setUp(self):
         # run design case
-        prob = self.prob = AviaryProblem(verbosity=1)
+        prob = self.prob = AviaryProblem(verbosity=0)
         copy_energy_phase_info = deepcopy(energy_phase_info)
         copy_energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
 
@@ -270,7 +270,7 @@ class Test2DOFOffDesign(unittest.TestCase):
 
     def setUp(self):
         # run design case
-        prob = self.prob = AviaryProblem(verbosity=1)
+        prob = self.prob = AviaryProblem(verbosity=0)
 
         copy_twodof_phase_info = deepcopy(twodof_phase_info)
 
@@ -413,7 +413,7 @@ class Test2DOFOffDesign(unittest.TestCase):
     def test_alternate_mission_changed(self):
         # run an alternate mission with modified range and payload
         prob = self.prob
-        alternate_phase_info = deepcopy(twodof_phase_info.copy)
+        alternate_phase_info = deepcopy(twodof_phase_info)
         alternate_phase_info['desc1']['time_duration_bounds'] = ((200.0, 900.0), 's')
 
         prob_alternate = prob.run_off_design_mission(
@@ -486,17 +486,17 @@ class PayloadRangeTest(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_payload_range(self):
         # run design case
-        prob = self.prob = AviaryProblem(verbosity=1)
-        energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
-        energy_phase_info['climb']['user_options']['time_duration_bounds'] = ((20.0, 90.0), 'min')
-        energy_phase_info['cruise']['user_options']['time_initial_bounds'] = ((20.0, 192.0), 'min')
-        energy_phase_info['descent']['user_options']['time_duration_bounds'] = (
+        prob = self.prob = AviaryProblem(verbosity=0)
+        phase_info = deepcopy(energy_phase_info)
+
+        phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
+        phase_info['climb']['user_options']['time_duration_bounds'] = ((20.0, 90.0), 'min')
+        phase_info['cruise']['user_options']['time_initial_bounds'] = ((20.0, 192.0), 'min')
+        phase_info['descent']['user_options']['time_duration_bounds'] = (
             (25.0, 60.0),
             'min',
         )
-        prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', energy_phase_info
-        )
+        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
         # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
 
         # Preprocess inputs
@@ -554,9 +554,9 @@ class PayloadRangeTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    # test = Test2DOFOffDesign()
-    # test.setUp()
-    # test.test_fallout_mission_changed()
+    test = Test2DOFOffDesign()
+    test.setUp()
+    test.test_alternate_mission_changed()
 
-    test = PayloadRangeTest()
-    test.test_payload_range()
+    # test = PayloadRangeTest()
+    # test.test_payload_range()
