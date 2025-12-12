@@ -79,7 +79,6 @@ class AviaryProblem(om.Problem):
             self.model = om.Group()
         else:
             self.model = AviaryGroup()
-            self.meta_data = BaseMetaData.copy()
             self.aviary_inputs = None
 
         self.aviary_groups_dict = {}

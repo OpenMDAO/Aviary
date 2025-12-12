@@ -1,12 +1,11 @@
 import inspect
-import warnings
-from importlib.util import spec_from_file_location, module_from_spec
-from pathlib import Path
 import sys
+import warnings
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 
 import dymos as dm
 import openmdao.api as om
-from dymos.utils.misc import _unspecified
 from dymos.utils.misc import _unspecified
 from openmdao.utils.mpi import MPI
 
@@ -17,18 +16,16 @@ from aviary.mission.height_energy_problem_configurator import HeightEnergyProble
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
-from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
+from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
@@ -65,7 +62,6 @@ class AviaryGroup(om.Group):
         self.regular_phases = []
         self.reserve_phases = []
 
-        self.meta_data = BaseMetaData
         self.aviary_inputs = None
         self.meta_data = None
         self.phase_info = None
