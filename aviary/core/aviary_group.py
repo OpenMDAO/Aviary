@@ -22,13 +22,14 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
 from aviary.utils.functions import get_path
+from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
@@ -270,6 +271,37 @@ class AviaryGroup(om.Group):
         # Other specific self.*** are defined in here as well that are specific to each builder
 
         return self.aviary_inputs, self.verbosity
+
+    def load_external_subsystems(self, external_subsystems: list = [], verbosity=None):
+        """
+        Add external subsystems to the AviaryGroup.
+
+        Parameters
+        ----------
+        external_subsystems : list of SubsystemBuilders
+            List of all external subsystems to be added.
+
+        verbosity : int, Verbosity (optional)
+            Sets the printout level for the entire off-design problem that is ran.
+        """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        for subsystem in external_subsystems:
+            if not isinstance(subsystem, SubsystemBuilderBase) and verbosity >= verbosity.BRIEF:
+                warnings.warn(
+                    'Provided external subsystem is not a SubsystemBuilder object and will not be '
+                    'loaded.'
+                )
+            else:
+                self.external_subsystems.append(subsystem)
+                meta_data = subsystem.meta_data.copy()
+                self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
     def check_and_preprocess_inputs(self, verbosity=None):
         """

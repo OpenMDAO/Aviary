@@ -18,7 +18,8 @@ from packaging import version
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import convert_strings_to_data
+from aviary.utils.csv_data_file import write_data_file
+from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
@@ -149,8 +150,16 @@ class AviaryProblem(om.Problem):
 
     def load_external_subsystems(self, external_subsystems: list = [], verbosity=None):
         """
-        This method takes user-provided SubsystemBuilders and saves them for later use alongside
-        the core Aviary subsystems.
+        Add external subsystems to the AviaryProblem. For multi-mission problems, this adds the
+        provided external subsystems to every AviaryGroup.
+
+        Parameters
+        ----------
+        external_subsystems : list of SubsystemBuilders
+            List of all external subsystems to be added.
+
+        verbosity : int, Verbosity (optional)
+            Sets the printout level for the entire off-design problem that is ran.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -160,18 +169,17 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        for subsystem in external_subsystems:
-            if not isinstance(subsystem, SubsystemBuilderBase) and verbosity >= verbosity.BRIEF:
-                warnings.warn(
-                    'Provided external subsystem is not a SubsystemBuilder object and will not be '
-                    'loaded.'
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.load_external_subsystems(
+                    external_subsystems=external_subsystems, verbosity=verbosity
                 )
-            else:
-                self.model.external_subsystems.append(subsystem)
-                meta_data = subsystem.meta_data.copy()
-                self.meta_data = merge_meta_data([self.meta_data, meta_data])
-
-        self.model.meta_data = self.meta_data  # TODO: temporary fix
+            self.meta_data = merge_meta_data([self.meta_data, group.meta_data])
+        else:
+            self.model.load_external_subsystems(
+                external_subsystems=external_subsystems, verbosity=verbosity
+            )
+            self.meta_data = merge_meta_data([self.meta_data, self.model.meta_data])
 
     def add_aviary_group(
         self,
@@ -184,8 +192,8 @@ class AviaryProblem(om.Problem):
     ):
         """
         Used for creating a multi-mission problem. This method creates an AviaryGroup() for each
-        airraft and mission combination. It can also accept a specific engine_builder for each
-        group. The method loads and checks_and_preprocesses inputs, and then combines metadata.
+        aircraft and mission combination. The method loads and checks_and_preprocesses inputs, and
+        then combines metadata.
 
         Parameters
         ----------
@@ -195,7 +203,7 @@ class AviaryProblem(om.Problem):
             Defines the aircraft configuration
         mission : phase_info, dict
             Defines the mission the aircraft will fly
-        engine_builders : EngineBuilder object, optional
+        engine_builders : list of EngineBuilder, optional
             Defines a custom engine model
         problem_configurator ; ProblemConfigurator, optional
             Required when setting custom equations of motion. See two_dof_problem_configurator.py for an example.
@@ -236,8 +244,6 @@ class AviaryProblem(om.Problem):
         #      problems don't have a consistent variable path to check the inputs later on
         if Settings.PAYLOAD_RANGE in sub.aviary_inputs:
             self.generate_payload_range = sub.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
-
-        self._update_metadata_from_subsystems(sub)  # update meta data with new entries
 
         return sub
 
