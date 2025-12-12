@@ -1,10 +1,10 @@
 from aviary.subsystems.propulsion.gearbox.model.gearbox_mission import GearboxMission
 from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class GearboxBuilder(SubsystemBuilderBase):
+class GearboxBuilder(SubsystemBuilder):
     """
     Define the builder for a single gearbox subsystem that provides methods
     to define the gearbox subsystem's states, design variables, fixed values,

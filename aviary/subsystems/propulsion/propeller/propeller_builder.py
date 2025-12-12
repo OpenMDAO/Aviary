@@ -1,10 +1,10 @@
 from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class PropellerBuilder(SubsystemBuilderBase):
+class PropellerBuilder(SubsystemBuilder):
     """
     Define the builder for a propeller model using the Hamilton Standard methodology that provides
     methods to define the propeller subsystem's states, design variables, fixed values, initial

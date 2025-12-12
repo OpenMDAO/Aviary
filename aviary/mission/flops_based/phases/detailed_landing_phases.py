@@ -39,7 +39,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessPolynomialControl,
     InitialGuessState,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder_base import PhaseBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -109,7 +109,7 @@ class LandingApproachToMicP3Options(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class LandingApproachToMicP3(PhaseBuilderBase):
+class LandingApproachToMicP3(PhaseBuilder):
     """
     Define a phase builder for moving from descent to the mic location P3. This phase is
     required for acoustic calculations.
@@ -446,7 +446,7 @@ class LandingObstacleToFlareOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class LandingObstacleToFlare(PhaseBuilderBase):
+class LandingObstacleToFlare(PhaseBuilder):
     """
     Define a phase builder for moving from the start of the runway, just above the
     required clearance height, to the start of a maneuver to help soften the impact of
@@ -700,7 +700,7 @@ class LandingFlareToTouchdownOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class LandingFlareToTouchdown(PhaseBuilderBase):
+class LandingFlareToTouchdown(PhaseBuilder):
     """
     Define a phase builder for moving through a maneuver to help soften the impact of
     touchdown.
@@ -960,7 +960,7 @@ class LandingTouchdownToNoseDownOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class LandingTouchdownToNoseDown(PhaseBuilderBase):
+class LandingTouchdownToNoseDown(PhaseBuilder):
     """
     Define a phase builder for rotating the nose down after touchdown.
 
@@ -1170,7 +1170,7 @@ class LandingNoseDownToStopOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class LandingNoseDownToStop(PhaseBuilderBase):
+class LandingNoseDownToStop(PhaseBuilder):
     """
     Define a phase builder for the final phase of landing, from nose down to full stop.
 
@@ -1384,14 +1384,14 @@ class LandingTrajectory:
 
         return mapped_phase.phase
 
-    def set_approach_to_mic_p3(self, phase_builder: PhaseBuilderBase):
+    def set_approach_to_mic_p3(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for moving from descent to the mic location P3. This phase
         is required for acoustic calculations.
         """
         self._approach_to_mic_p3 = phase_builder
 
-    def set_mic_p3_to_obstacle(self, phase_builder: PhaseBuilderBase):
+    def set_mic_p3_to_obstacle(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for moving from the mic location P3 to the start of the
         runway, just above the required clearance height. This phase is required for
@@ -1399,7 +1399,7 @@ class LandingTrajectory:
         """
         self._mic_p3_to_obstacle = phase_builder
 
-    def set_obstacle_to_flare(self, phase_builder: PhaseBuilderBase):
+    def set_obstacle_to_flare(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for moving from the start of the runway, just above the
         required clearance height, to the start of a maneuver to help soften the impact
@@ -1407,18 +1407,18 @@ class LandingTrajectory:
         """
         self._obstacle_to_flare = phase_builder
 
-    def set_flare_to_touchdown(self, phase_builder: PhaseBuilderBase):
+    def set_flare_to_touchdown(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for moving through a maneuver to help soften the impact of
         touchdown.
         """
         self._flare_to_touchdown = phase_builder
 
-    def set_touchdown_to_nose_down(self, phase_builder: PhaseBuilderBase):
+    def set_touchdown_to_nose_down(self, phase_builder: PhaseBuilder):
         """Assign a phase builder for rotating the nose down after touchdown."""
         self._touchdown_to_nose_down = phase_builder
 
-    def set_nose_down_to_stop(self, phase_builder: PhaseBuilderBase):
+    def set_nose_down_to_stop(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the final phase of landing, from nose down to full
         stop.
@@ -1509,7 +1509,7 @@ class LandingTrajectory:
             guesses, the returned mapping will not contain the name of that phase
         """
         not_applied = {}
-        phase_builder: PhaseBuilderBase = None  # type hint
+        phase_builder: PhaseBuilder = None  # type hint
 
         for phase, phase_builder in self._phases.values():
             tmp = phase_builder.apply_initial_guesses(prob, traj_name, phase)
@@ -1566,7 +1566,7 @@ class LandingTrajectory:
 
         traj.link_phases([touchdown_name, nose_down_name], vars=basic_vars)
 
-    def _add_phase(self, phase_builder: PhaseBuilderBase, aviary_options: AviaryValues):
+    def _add_phase(self, phase_builder: PhaseBuilder, aviary_options: AviaryValues):
         name = phase_builder.name
         phase = phase_builder.build_phase(aviary_options)
 

@@ -14,7 +14,7 @@ from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 
 # NOTE These are currently needed to get around variable hierarchy being class-based.
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
@@ -25,7 +25,7 @@ from aviary.variable_info.variables import Aircraft
 _default_name = 'propulsion'
 
 
-class PropulsionBuilder(SubsystemBuilderBase):
+class PropulsionBuilder(SubsystemBuilder):
     """
     Base class for propulsion builder.
 

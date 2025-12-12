@@ -9,7 +9,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft
 
 energy_phase_info = deepcopy(energy_phase_info)
@@ -152,7 +152,7 @@ class ExternNoSolve(om.ExplicitComponent):
         pass
 
 
-class NoSolverBuilder(SubsystemBuilderBase):
+class NoSolverBuilder(SubsystemBuilder):
     """Mission only. No solver."""
 
     def needs_mission_solver(self, aviary_options):
@@ -162,7 +162,7 @@ class NoSolverBuilder(SubsystemBuilderBase):
         return ExternNoSolve()
 
 
-class SolverBuilder(SubsystemBuilderBase):
+class SolverBuilder(SubsystemBuilder):
     """Mission only. Solver."""
 
     def needs_mission_solver(self, aviary_options):

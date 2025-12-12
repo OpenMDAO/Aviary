@@ -3,7 +3,7 @@ from abc import ABC
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
-class SubsystemBuilderBase(ABC):
+class SubsystemBuilder(ABC):
     """
     Base class of subsystem builder.
 

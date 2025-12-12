@@ -12,7 +12,7 @@ from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.geometry.combined_geometry import CombinedGeometry
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
 
@@ -22,7 +22,7 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'geometry'
 
 
-class GeometryBuilder(SubsystemBuilderBase):
+class GeometryBuilder(SubsystemBuilder):
     """
     Base geometry builder.
 

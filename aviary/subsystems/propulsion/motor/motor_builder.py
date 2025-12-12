@@ -1,10 +1,10 @@
 from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class MotorBuilder(SubsystemBuilderBase):
+class MotorBuilder(SubsystemBuilder):
     """
     Define the builder for a single motor subsystem that provides methods to define the
     motor subsystem's states, design variables, fixed values, initial guesses, and mass

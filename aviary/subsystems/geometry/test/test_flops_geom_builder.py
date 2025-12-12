@@ -13,7 +13,7 @@ GASP = LegacyCode.GASP
 
 
 @use_tempdirs
-class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
+class TestFLOPSGeomBuilder(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
@@ -48,7 +48,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
         )
 
 
-class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
+class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run

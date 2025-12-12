@@ -6,7 +6,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessPolynomialControl,
     InitialGuessState,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder_base import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -67,7 +67,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class GroundrollPhase(PhaseBuilderBase):
+class GroundrollPhase(PhaseBuilder):
     """A phase builder for a two degree of freedom (2DOF) phase."""
 
     __slots__ = ('subsystems', 'meta_data')

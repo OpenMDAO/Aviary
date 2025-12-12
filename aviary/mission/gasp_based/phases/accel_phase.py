@@ -4,7 +4,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder_base import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -85,20 +85,20 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class AccelPhase(PhaseBuilderBase):
+class AccelPhase(PhaseBuilder):
     """
     A phase builder for an acceleration phase in a mission simulation.
 
-    This class extends the PhaseBuilderBase class, providing specific implementations for
+    This class extends the PhaseBuilder class, providing specific implementations for
     the acceleration phase of a flight mission.
 
     Attributes
     ----------
-    Inherits all attributes from PhaseBuilderBase.
+    Inherits all attributes from PhaseBuilder.
 
     Methods
     -------
-    Inherits all methods from PhaseBuilderBase.
+    Inherits all methods from PhaseBuilder.
     Additional method overrides and new methods specific to the acceleration phase are included.
     """
 

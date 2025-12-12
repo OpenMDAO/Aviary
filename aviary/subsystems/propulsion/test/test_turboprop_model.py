@@ -10,7 +10,7 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.variable_info.enums import SpeedType
@@ -326,7 +326,7 @@ class TurbopropMissionTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e10, rtol=1e-3)
 
 
-class ExamplePropModel(SubsystemBuilderBase):
+class ExamplePropModel(SubsystemBuilder):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         prop_group = om.Group()
 

@@ -10,7 +10,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessControl,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder_base import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
@@ -159,7 +159,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class FlightPhaseBase(PhaseBuilderBase):
+class FlightPhaseBase(PhaseBuilder):
     """
     The base class for flight phase.
 

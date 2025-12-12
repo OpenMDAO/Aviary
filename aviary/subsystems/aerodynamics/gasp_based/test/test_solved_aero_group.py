@@ -13,7 +13,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import LegacyCode
@@ -296,7 +296,7 @@ class FakeCalcDragPolar(om.ExplicitComponent):
         outputs['lift_table'] = CL
 
 
-class FakeDragPolarBuilder(SubsystemBuilderBase):
+class FakeDragPolarBuilder(SubsystemBuilder):
     """
     Prototype of a subsystem that overrides an aviary internally computed var.
 

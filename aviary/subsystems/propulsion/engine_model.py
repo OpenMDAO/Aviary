@@ -10,13 +10,13 @@ import warnings
 
 import numpy as np
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Settings
 
 
-class EngineModel(SubsystemBuilderBase):
+class EngineModel(SubsystemBuilder):
     """
     Define the interface for an engine model builder.
 

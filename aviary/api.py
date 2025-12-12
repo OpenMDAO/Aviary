@@ -78,7 +78,7 @@ from aviary.constants import (
     TSLS_DEGR,
 )
 from aviary.subsystems.test.subsystem_tester import (
-    TestSubsystemBuilderBase,
+    TestSubsystemBuilder,
     skipIfMissingDependencies,
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -89,7 +89,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 
 # Miscellaneous
 from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
 from aviary.utils.preprocessors import (
     preprocess_crewpayload,
     preprocess_options,
@@ -125,7 +125,7 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 
 
 # Phase builders
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder_base import PhaseBuilder
 
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.energy_phase import (

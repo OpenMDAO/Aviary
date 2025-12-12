@@ -223,7 +223,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'groundroll' in phase_name:

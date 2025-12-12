@@ -4,8 +4,8 @@ from copy import deepcopy
 import openmdao.api as om
 
 import aviary.api as av
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
-from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilderBase
+from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilder
 from aviary.variable_info.variables import Aircraft as av_Aircraft
 from aviary.variable_info.variables import Mission as av_Mission
 
@@ -226,7 +226,7 @@ class DummyMissionComp(om.ExplicitComponent):
         )
 
 
-class PreOnlyBuilder(SubsystemBuilderBase):
+class PreOnlyBuilder(SubsystemBuilder):
     def build_pre_mission(self, aviary_inputs):
         return DummyComp()
 
@@ -234,7 +234,7 @@ class PreOnlyBuilder(SubsystemBuilderBase):
         return [Aircraft.Dummy.VARIABLE_OUT]
 
 
-class PostOnlyBuilder(SubsystemBuilderBase):
+class PostOnlyBuilder(SubsystemBuilder):
     def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths):
         group = om.Group()
         group.add_subsystem(
@@ -246,7 +246,7 @@ class PostOnlyBuilder(SubsystemBuilderBase):
         return group
 
 
-class FailingSubsystemBuilder(SubsystemBuilderBase):
+class FailingSubsystemBuilder(SubsystemBuilder):
     def get_states(self):
         return {
             'State1': {
@@ -258,7 +258,7 @@ class FailingSubsystemBuilder(SubsystemBuilderBase):
         return om.ExecComp('y = x**2')
 
 
-class ArrayGuessSubsystemBuilder(SubsystemBuilderBase):
+class ArrayGuessSubsystemBuilder(SubsystemBuilder):
     def __init__(self, name='array_guess'):
         super().__init__(name, meta_data=ExtendedMetaData)
 
@@ -329,7 +329,7 @@ class DummyFlightDurationComp(om.ExplicitComponent):
         )
 
 
-class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilderBase):
+class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
     def __init__(self, name='additional_array_guess'):
         super().__init__(name, meta_data=AdditionalMetaData)
 
@@ -377,17 +377,17 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilderBase):
         return [MoreMission.Dummy.DUMMY_CONTROL, MoreMission.Dummy.TIMESERIES_VAR]
 
 
-class TestPreOnly(TestSubsystemBuilderBase):
+class TestPreOnly(TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = PreOnlyBuilder()
 
 
-class TestPostOnly(TestSubsystemBuilderBase):
+class TestPostOnly(TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = PostOnlyBuilder()
 
 
-class TestFailingBuilder(TestSubsystemBuilderBase):
+class TestFailingBuilder(TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = FailingSubsystemBuilder()
 
@@ -396,12 +396,12 @@ class TestFailingBuilder(TestSubsystemBuilderBase):
             super().test_check_state_variables()
 
 
-class TestArrayGuessBuilder(TestSubsystemBuilderBase):
+class TestArrayGuessBuilder(TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = ArrayGuessSubsystemBuilder()
 
 
-class TestAdditionalArrayGuessBuilder(TestSubsystemBuilderBase):
+class TestAdditionalArrayGuessBuilder(TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = AdditionalArrayGuessSubsystemBuilder()
 

@@ -3,7 +3,7 @@ Define utilities for building phases.
 
 Classes
 -------
-PhaseBuilderBase : the interface for a phase builder
+PhaseBuilder : the interface for a phase builder
 """
 
 from abc import ABC
@@ -23,7 +23,7 @@ _require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
 )
 
 
-class PhaseBuilderBase(ABC):
+class PhaseBuilder(ABC):
     """
     Define the interface for a phase builder.
 
@@ -551,7 +551,7 @@ def register(phase_builder_t=None, *, check_repeats=True):
     return phase_builder_t
 
 
-def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
+def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilder:
     """
     Return a new phase builder based on the specified phase info.
 
@@ -565,7 +565,7 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
     ValueError
         if a supported phase builder type cannot be determined
     """
-    phase_builder_t: PhaseBuilderBase = None
+    phase_builder_t: PhaseBuilder = None
 
     for phase_builder_t in _registered_phase_builder_types:
         builder = phase_builder_t.from_phase_info(name, phase_info)
@@ -577,4 +577,4 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
 
 
 if __name__ == '__main__':
-    help(PhaseBuilderBase)
+    help(PhaseBuilder)

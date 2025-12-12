@@ -54,7 +54,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessPolynomialControl,
     InitialGuessState,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder_base import PhaseBuilder
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -64,7 +64,7 @@ from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Dynamic, Mission
 
 
-def _init_initial_guess_meta_data(cls: PhaseBuilderBase):
+def _init_initial_guess_meta_data(cls: PhaseBuilder):
     """Create default initial guess meta data preset with common items."""
     cls._initial_guesses_meta_data_ = {}
 
@@ -111,7 +111,7 @@ class TakeoffBrakeReleaseToDecisionSpeedOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilderBase):
+class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilder):
     """
     Define a phase builder for the first phase of takeoff, from brake release to decision
     speed, the maximum speed at which takeoff can be safely brought to full stop using
@@ -307,7 +307,7 @@ class TakeoffDecisionSpeedToRotateOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffDecisionSpeedToRotate(PhaseBuilderBase):
+class TakeoffDecisionSpeedToRotate(PhaseBuilder):
     """
     Define a phase builder for the second phase of takeoff, from decision speed to
     rotation.
@@ -638,7 +638,7 @@ class TakeoffRotateToLiftoffOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffRotateToLiftoff(PhaseBuilderBase):
+class TakeoffRotateToLiftoff(PhaseBuilder):
     """
     Define a phase builder for the third phase of takeoff, from rotation to liftoff.
 
@@ -886,7 +886,7 @@ class TakeoffLiftoffToObstacleOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffLiftoffToObstacle(PhaseBuilderBase):
+class TakeoffLiftoffToObstacle(PhaseBuilder):
     """
     Define a phase builder for the fourth phase of takeoff, from liftoff to clearing the
     required obstacle.
@@ -1197,7 +1197,7 @@ class TakeoffObstacleToMicP2Options(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffObstacleToMicP2(PhaseBuilderBase):
+class TakeoffObstacleToMicP2(PhaseBuilder):
     """
     Define a phase builder for the fifth phase of takeoff, from clearing the required
     obstacle to the P2 mic location. This phase is required for acoustic calculations.
@@ -1501,7 +1501,7 @@ class TakeoffMicP2ToEngineCutbackOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffMicP2ToEngineCutback(PhaseBuilderBase):
+class TakeoffMicP2ToEngineCutback(PhaseBuilder):
     """
     Define a phase builder for the sixth phase of takeoff, from the P2 mic
     location to engine cutback. This phase is required for acoustic calculations.
@@ -1790,7 +1790,7 @@ class TakeoffEngineCutbackOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffEngineCutback(PhaseBuilderBase):
+class TakeoffEngineCutback(PhaseBuilder):
     """
     Define a phase builder for the seventh phase of takeoff, from start to
     finish of engine cutback. This phase is required for acoustic calculations.
@@ -2073,7 +2073,7 @@ class TakeoffEngineCutbackToMicP1Options(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffEngineCutbackToMicP1(PhaseBuilderBase):
+class TakeoffEngineCutbackToMicP1(PhaseBuilder):
     """
     Define a phase builder for the eighth phase of takeoff, from engine cutback
     to the P1 mic location. This phase is required for acoustic calculations.
@@ -2373,7 +2373,7 @@ class TakeoffMicP1ToClimbOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffMicP1ToClimb(PhaseBuilderBase):
+class TakeoffMicP1ToClimb(PhaseBuilder):
     """
     Define a phase builder for the ninth phase of takeoff, from P1 mic
     location to climb. This phase is required for acoustic calculations.
@@ -2636,7 +2636,7 @@ class TakeoffBrakeToAbortOptions(AviaryOptionsDictionary):
 
 
 @_init_initial_guess_meta_data
-class TakeoffBrakeToAbort(PhaseBuilderBase):
+class TakeoffBrakeToAbort(PhaseBuilder):
     """
     Define a phase builder for the last phase of aborted takeoff, from brake application
     to full stop.
@@ -2849,70 +2849,70 @@ class TakeoffTrajectory:
 
         return mapped_phase.phase
 
-    def set_brake_release_to_decision_speed(self, phase_builder: PhaseBuilderBase):
+    def set_brake_release_to_decision_speed(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the beginning of takeoff to the time when the pilot
         must choose either to liftoff or halt the aircraft.
         """
         self._brake_release_to_decision_speed = phase_builder
 
-    def set_decision_speed_to_rotate(self, phase_builder: PhaseBuilderBase):
+    def set_decision_speed_to_rotate(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the short distance between achieving decision speed
         and beginning the rotation phase.
         """
         self._decision_speed_to_rotate = phase_builder
 
-    def set_rotate_to_liftoff(self, phase_builder: PhaseBuilderBase):
+    def set_rotate_to_liftoff(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the short distance required to rotate the aircraft
         to achieve liftoff.
         """
         self._rotate_to_liftoff = phase_builder
 
-    def set_liftoff_to_obstacle(self, phase_builder: PhaseBuilderBase):
+    def set_liftoff_to_obstacle(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the short period between liftoff and clearing the
         required obstacle.
         """
         self._liftoff_to_obstacle = phase_builder
 
-    def set_obstacle_to_mic_p2(self, phase_builder: PhaseBuilderBase):
+    def set_obstacle_to_mic_p2(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the fifth phase of takeoff, from clearing the required
         obstacle to the p2 mic loation. This phase is required for acoustic calculations.
         """
         self._obstacle_to_mic_p2 = phase_builder
 
-    def set_mic_p2_to_engine_cutback(self, phase_builder: PhaseBuilderBase):
+    def set_mic_p2_to_engine_cutback(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the sixth phase of takeoff, from the p2 mic location
         to engine cutback. This phase is required for acoustic calculations.
         """
         self._mic_p2_to_engine_cutback = phase_builder
 
-    def set_engine_cutback(self, phase_builder: PhaseBuilderBase):
+    def set_engine_cutback(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the seventh phase of takeoff, from start to
         finish of engine cutback. This phase is required for acoustic calculations.
         """
         self._engine_cutback = phase_builder
 
-    def set_engine_cutback_to_mic_p1(self, phase_builder: PhaseBuilderBase):
+    def set_engine_cutback_to_mic_p1(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the eighth phase of takeoff, engine cutback
         to the P1 mic location. This phase is required for acoustic calculations.
         """
         self._engine_cutback_to_mic_p1 = phase_builder
 
-    def set_mic_p1_to_climb(self, phase_builder: PhaseBuilderBase):
+    def set_mic_p1_to_climb(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for the ninth phase of takeoff, from P1 mic
         location to climb. This phase is required for acoustic calculations.
         """
         self._mic_p1_to_climb = phase_builder
 
-    def set_decision_speed_to_brake(self, phase_builder: PhaseBuilderBase):
+    def set_decision_speed_to_brake(self, phase_builder: PhaseBuilder):
         """
         Assign a phase builder for delayed braking when the engine fails.
 
@@ -2921,7 +2921,7 @@ class TakeoffTrajectory:
         """
         self._decision_speed_to_brake = phase_builder
 
-    def set_brake_to_abort(self, phase_builder: PhaseBuilderBase, balanced_field_ref=8_000.0):
+    def set_brake_to_abort(self, phase_builder: PhaseBuilder, balanced_field_ref=8_000.0):
         """
         Assign a phase builder for braking to fullstop after engine failure.
 
@@ -2930,7 +2930,7 @@ class TakeoffTrajectory:
 
         Parameters
         ----------
-        phase_builder : PhaseBuilderBase
+        phase_builder : PhaseBuilder
 
         balanced_field_ref : float (8_000.0)
             the ref value to use for the linkage constraint for the final range
@@ -3031,7 +3031,7 @@ class TakeoffTrajectory:
             guesses, the returned mapping will not contain the name of that phase
         """
         not_applied = {}
-        phase_builder: PhaseBuilderBase = None  # type hint
+        phase_builder: PhaseBuilder = None  # type hint
 
         for phase, phase_builder in self._phases.values():
             tmp = phase_builder.apply_initial_guesses(prob, traj_name, phase)
@@ -3140,7 +3140,7 @@ class TakeoffTrajectory:
                 ref=self._balanced_field_ref,
             )
 
-    def _add_phase(self, phase_builder: PhaseBuilderBase, aviary_options: AviaryValues):
+    def _add_phase(self, phase_builder: PhaseBuilder, aviary_options: AviaryValues):
         name = phase_builder.name
         phase = phase_builder.build_phase(aviary_options)
 

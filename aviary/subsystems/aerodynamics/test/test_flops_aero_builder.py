@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft
 FLOPS = LegacyCode.FLOPS
 
 
-class TestAeroBuilder(av.TestSubsystemBuilderBase):
+class TestAeroBuilder(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run

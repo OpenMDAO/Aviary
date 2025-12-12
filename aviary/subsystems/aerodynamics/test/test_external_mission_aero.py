@@ -11,7 +11,7 @@ phase_info = deepcopy(av.default_height_energy_phase_info)
 
 
 @use_tempdirs
-class TestExternalAero(av.TestSubsystemBuilderBase):
+class TestExternalAero(av.TestSubsystemBuilder):
     """
     Test replacing internal drag calculation with an external subsystem.
 
