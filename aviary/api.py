@@ -53,7 +53,7 @@ from aviary.models.missions.height_energy_default import (
 )
 from aviary.interface.methods_for_level1 import run_level_1
 from aviary.interface.methods_for_level1 import run_aviary
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.interface.methods_for_level2 import AviaryProblem, reload_aviary_problem
 from aviary.utils.engine_deck_conversion import convert_engine_deck
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
 from aviary.utils.functions import (
