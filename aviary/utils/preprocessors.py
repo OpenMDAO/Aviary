@@ -405,7 +405,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         # calculate passenger mass with bags based on user inputs.
         try:
             pax_mass_with_bag = aviary_options.get_val(
-                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, 'lbm'
+                Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 'lbm'
             )
         except KeyError:
             pax_mass = aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm')
@@ -414,7 +414,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             )
             pax_mass_with_bag = pax_mass + bag_mass
             aviary_options.set_val(
-                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, pax_mass_with_bag, 'lbm'
+                Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, pax_mass_with_bag, 'lbm'
             )
 
         # calculate and check total payload

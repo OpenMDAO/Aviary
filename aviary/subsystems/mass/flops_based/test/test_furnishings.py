@@ -242,7 +242,7 @@ class AltFurnishingsGroupMassTest(unittest.TestCase):
                 Aircraft.Furnishings.MASS_BASE,
                 Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE,
             ],
             output_keys=Aircraft.Furnishings.MASS,
             version=Version.ALTERNATE,

@@ -150,7 +150,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:crew_and_payload:non_flight_crew_mass_scaler",
+        "aircraft:crew_and_payload:cabin_crew_mass_scaler",
         1.0,
         "unitless",
         "<class 'float'>"

@@ -15,7 +15,7 @@ aircraft:crew_and_payload:design:num_tourist_class,118,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
-aircraft:crew_and_payload:non_flight_crew_mass_scaler,1.0,unitless
+aircraft:crew_and_payload:cabin_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:num_flight_attendants,-1,unitless
 aircraft:crew_and_payload:num_flight_crew,-1,unitless
 aircraft:crew_and_payload:num_galley_crew,-1,unitless

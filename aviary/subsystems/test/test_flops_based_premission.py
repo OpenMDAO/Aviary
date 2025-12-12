@@ -84,7 +84,7 @@ class PreMissionGroupTest(unittest.TestCase):
             output_keys=[
                 Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPTY_MASS,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
@@ -174,7 +174,7 @@ class PreMissionGroupTest(unittest.TestCase):
             output_keys=[
                 Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPTY_MASS,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,

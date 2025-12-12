@@ -90,7 +90,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Controls.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
@@ -116,7 +116,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN]
 
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * GRAV_ENGLISH_LBM
-        control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
+        control_wt = inputs[Aircraft.Controls.MASS] * GRAV_ENGLISH_LBM
         wing_area = inputs[Aircraft.Wing.AREA]
         htail_area = inputs[Aircraft.HorizontalTail.AREA]
         vtail_area = inputs[Aircraft.VerticalTail.AREA]
@@ -248,7 +248,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN]
 
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS] * GRAV_ENGLISH_LBM
-        control_wt = inputs[Aircraft.Controls.TOTAL_MASS] * GRAV_ENGLISH_LBM
+        control_wt = inputs[Aircraft.Controls.MASS] * GRAV_ENGLISH_LBM
         wing_area = inputs[Aircraft.Wing.AREA]
         htail_area = inputs[Aircraft.HorizontalTail.AREA]
         vtail_area = inputs[Aircraft.VerticalTail.AREA]
@@ -411,7 +411,7 @@ class EquipMassPartialSum(om.ExplicitComponent):
         partials['equip_mass_part', Mission.Design.GROSS_MASS] = dfixed_equip_wt_dgross_wt_initial
         partials['equip_mass_part', Aircraft.Fuselage.LENGTH] = dfixed_equip_mass_dfus_len
         partials['equip_mass_part', Aircraft.Wing.SPAN] = dfixed_equip_mass_dwingspan
-        partials['equip_mass_part', Aircraft.Controls.TOTAL_MASS] = dfixed_equip_wt_dcontrol_wt
+        partials['equip_mass_part', Aircraft.Controls.MASS] = dfixed_equip_wt_dcontrol_wt
         partials['equip_mass_part', Aircraft.LandingGear.TOTAL_MASS] = (
             dfixed_equip_wt_dlanding_gear_weight
         )
@@ -762,10 +762,10 @@ class EquipMassSum(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.AirConditioning.MASS, units='lbm')
         self.add_input(Aircraft.Furnishings.MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
 
         self.declare_partials(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS,
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
             [
                 'equip_mass_part',
                 Aircraft.AirConditioning.MASS,
@@ -779,12 +779,12 @@ class EquipMassSum(om.ExplicitComponent):
         furnishing_mass = inputs[Aircraft.Furnishings.MASS]
 
         equip_mass_sum = equip_mass_part + air_conditioning_mass + furnishing_mass
-        outputs[Aircraft.Design.FIXED_EQUIPMENT_MASS] = equip_mass_sum
+        outputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = equip_mass_sum
 
     def compute_partials(self, inputs, J):
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, 'equip_mass_part'] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.AirConditioning.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Furnishings.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 'equip_mass_part'] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.AirConditioning.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Furnishings.MASS] = 1
 
 
 class EquipMassGroup(om.Group):
@@ -844,9 +844,9 @@ class UsefulLoadMass(om.ExplicitComponent):
         )
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
 
-        add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
+        add_aviary_output(self, Mission.Summary.USEFUL_LOAD, units='lbm')
 
-        self.declare_partials(Aircraft.Design.FIXED_USEFUL_LOAD, '*')
+        self.declare_partials(Mission.Summary.USEFUL_LOAD, '*')
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -973,7 +973,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             + cargo_handling_wt
         )
 
-        outputs[Aircraft.Design.FIXED_USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
+        outputs[Mission.Summary.USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -1048,29 +1048,29 @@ class UsefulLoadMass(om.ExplicitComponent):
         duseful_mass_dmass_coeff_12 = dtrapped_fuel_wt_dmass_coeff_12 / GRAV_ENGLISH_LBM
         duseful_mass_dwing_area = dtrapped_fuel_wt_dwing_area / GRAV_ENGLISH_LBM
         duseful_mass_dfuel_vol_frac = dtrapped_fuel_wt_dfuel_vol_frac / GRAV_ENGLISH_LBM
-        partials[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Engine.SCALED_SLS_THRUST] = (
+        partials[Mission.Summary.USEFUL_LOAD, Aircraft.Engine.SCALED_SLS_THRUST] = (
             duseful_mass_dFn_SLS
         )
         partials[
-            Aircraft.Design.FIXED_USEFUL_LOAD,
+            Mission.Summary.USEFUL_LOAD,
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER,
         ] = duseful_mass_dmass_coeff_8
-        partials[
-            Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT
-        ] = duseful_mass_dmass_coeff_9
-        partials[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = (
+        partials[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT] = (
+            duseful_mass_dmass_coeff_9
+        )
+        partials[Mission.Summary.USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = (
             duseful_mass_dmass_coeff_10
         )
         partials[
-            Aircraft.Design.FIXED_USEFUL_LOAD,
+            Mission.Summary.USEFUL_LOAD,
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER,
         ] = duseful_mass_dmass_coeff_11
-        partials[
-            Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT
-        ] = duseful_mass_dmass_coeff_12
+        partials[Mission.Summary.USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT] = (
+            duseful_mass_dmass_coeff_12
+        )
 
-        partials[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Wing.AREA] = duseful_mass_dwing_area
-        partials[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Fuel.WING_FUEL_FRACTION] = (
+        partials[Mission.Summary.USEFUL_LOAD, Aircraft.Wing.AREA] = duseful_mass_dwing_area
+        partials[Mission.Summary.USEFUL_LOAD, Aircraft.Fuel.WING_FUEL_FRACTION] = (
             duseful_mass_dfuel_vol_frac
         )
 

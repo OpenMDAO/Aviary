@@ -255,7 +255,7 @@ class AltFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Furnishings.MASS_BASE, units='lbm')
         add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE, units='lbm')
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE, units='lbm')
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -265,7 +265,7 @@ class AltFurnishingsGroupMass(om.ExplicitComponent):
             wrt=[
                 Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE,
             ],
             val=0.01,
         )
@@ -278,7 +278,7 @@ class AltFurnishingsGroupMass(om.ExplicitComponent):
         furn_mass_base = inputs[Aircraft.Furnishings.MASS_BASE]
         struct_mass = inputs[Aircraft.Design.STRUCTURE_MASS]
         prop_mass = inputs[Aircraft.Propulsion.MASS]
-        syseq_mass_base = inputs[Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE]
+        syseq_mass_base = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE]
 
         outputs[Aircraft.Furnishings.MASS] = furn_mass_base + 0.01 * (
             struct_mass + prop_mass + syseq_mass_base
