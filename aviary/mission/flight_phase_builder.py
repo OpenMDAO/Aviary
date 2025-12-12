@@ -358,10 +358,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
 
         if no_descent and Dynamic.Mission.ALTITUDE_RATE not in constraints:
-            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
+            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0, ref=20.0)
 
         if no_climb and Dynamic.Mission.ALTITUDE_RATE not in constraints:
-            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
+            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0, ref=20.0)
 
         required_available_climb_rate, units = user_options['required_available_climb_rate']
 

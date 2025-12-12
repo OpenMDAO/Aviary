@@ -58,7 +58,7 @@ runs:
         echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
     - name: Setup miniconda
-      uses: conda-incubator/setup-miniconda@v2
+      uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
         python-version: ${{ inputs.PY }}

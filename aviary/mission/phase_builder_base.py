@@ -404,6 +404,13 @@ class PhaseBuilderBase(ABC):
         defect_ref, _ = options[f'{name}_defect_ref']
         solve_segments = options[f'{name}_solve_segments']
 
+        # Try to only use arguments that aren't None because dymos' default is _undefined.
+        extra_options = {}
+        if ref0 is not None:
+            extra_options['ref0'] = ref0
+        if defect_ref is not None:
+            extra_options['defect_ref'] = defect_ref
+
         # If a value is specified for the starting node, then fix_initial is True.
         # Otherwise, input_initial is True.
         # The problem configurator may change input_initial to False requested or necessary, (e.g.,
@@ -418,9 +425,8 @@ class PhaseBuilderBase(ABC):
             units=units,
             rate_source=rate_source,
             ref=ref,
-            ref0=ref0,
-            defect_ref=defect_ref,
             solve_segments='forward' if solve_segments else None,
+            **extra_options,
         )
 
         if final is not None:
@@ -473,6 +479,7 @@ class PhaseBuilderBase(ABC):
             if len(candidates) > 0:
                 ref = np.max(np.abs(np.array(candidates)))
 
+        # Try to only use arguments that aren't None because dymos' default is _undefined.
         extra_options = {}
         if polynomial_order is not None:
             extra_options['control_type'] = 'polynomial'
@@ -483,6 +490,10 @@ class PhaseBuilderBase(ABC):
             extra_options['upper'] = bounds[1]
             extra_options['ref'] = ref
             extra_options['ref0'] = ref0
+            extra_options['continuity_ref'] = ref
+
+            # TODO: We may want to consider letting the user setting this.
+            # extra_options['rate_continuity_ref'] = ref
 
         if units not in ['unitless', None]:
             extra_options['units'] = units

@@ -293,13 +293,13 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # for the simple mission method, use the provided initial and final mach
         # and altitude values from phase_info
         initial_altitude = wrapped_convert_units(
-            aviary_group.phase_info[phase_name]['user_options']['altitude_initial'], 'ft'
+            aviary_group.mission_info[phase_name]['user_options']['altitude_initial'], 'ft'
         )
         final_altitude = wrapped_convert_units(
-            aviary_group.phase_info[phase_name]['user_options']['altitude_final'], 'ft'
+            aviary_group.mission_info[phase_name]['user_options']['altitude_final'], 'ft'
         )
-        initial_mach = aviary_group.phase_info[phase_name]['user_options']['mach_initial']
-        final_mach = aviary_group.phase_info[phase_name]['user_options']['mach_final']
+        initial_mach = aviary_group.mission_info[phase_name]['user_options']['mach_initial']
+        final_mach = aviary_group.mission_info[phase_name]['user_options']['mach_final']
 
         guesses['mach'] = ([initial_mach[0], final_mach[0]], 'unitless')
         guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')

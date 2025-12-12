@@ -130,6 +130,7 @@ def set_warning_format(verbosity):
             return f'Warning: {message}\n\n'
 
         warnings.formatwarning = simplified_warning
+        warnings.simplefilter('ignore', DeprecationWarning)
 
     elif verbosity == Verbosity.VERBOSE:
 

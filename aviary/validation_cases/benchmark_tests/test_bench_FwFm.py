@@ -122,6 +122,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
+                    'mass_ref': (200000, 'lbm'),
                     'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((20.0, 60.0), 'min'),
                     'no_descent': True,
@@ -146,7 +147,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'boundary_constraint',
-                    'time_initial_bounds': ((24.0, 60.0), 'min'),
+                    'mass_ref': (200000, 'lbm'),
+                    'time_initial_bounds': ((20.0, 60.0), 'min'),
                     'time_duration_bounds': ((60.0, 720.0), 'min'),
                 },
                 'initial_guesses': {
@@ -169,8 +171,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((90.0, 780.0), 'min'),
-                    'time_duration_bounds': ((5.0, 35.0), 'min'),
+                    'mass_ref': (200000, 'lbm'),
+                    'distance_ref': (3375, 'nmi'),
+                    'time_initial_bounds': ((80.0, 780.0), 'min'),
+                    'time_duration_bounds': ((5.0, 45.0), 'min'),
                     'no_climb': True,
                 },
                 'initial_guesses': {
@@ -248,4 +252,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = TestBenchFwFmSerial()
     test.setUp()
+    # test.test_bench_FwFm_IPOPT()
     test.test_bench_FwFm_SNOPT()
