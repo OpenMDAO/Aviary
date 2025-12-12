@@ -1467,11 +1467,13 @@ class AviaryProblem(om.Problem):
                 Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
             )
 
-        off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
-        off_design_prob.add_pre_mission_systems(verbosity=verbosity)
-        off_design_prob.add_phases(verbosity=verbosity)
-        off_design_prob.add_post_mission_systems(verbosity=verbosity)
-        off_design_prob.link_phases(verbosity=verbosity)
+        # off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
+        # off_design_prob.add_pre_mission_systems(verbosity=verbosity)
+        # off_design_prob.add_phases(verbosity=verbosity)
+        # off_design_prob.add_post_mission_systems(verbosity=verbosity)
+        # off_design_prob.link_phases(verbosity=verbosity)
+        off_design_prob.build_model(verbosity=verbosity)
+
         if optimizer is None:
             try:
                 optimizer = self.driver.options['optimizer']
