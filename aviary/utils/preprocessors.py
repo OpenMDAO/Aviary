@@ -215,7 +215,6 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     mission_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     if mission_pax > design_pax:
         if verbosity >= 1:
-            # TODO Should this be an error?
             UserWarning(
                 f'The aircraft is designed for {design_pax} passengers but the current '
                 f'mission is being flown with {mission_pax} passengers. The mission '
