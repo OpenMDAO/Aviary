@@ -1115,8 +1115,8 @@ class AviaryGroup(om.Group):
                 #      and configurators
                 for ii in range(len(phases) - 1):
                     phase1, phase2 = phases[ii : ii + 2]
-                    analytic1 = self.phase_info[phase1]['user_options'].get('analytic', False)
-                    analytic2 = self.phase_info[phase2]['user_options'].get('analytic', False)
+                    analytic1 = self.mission_info[phase1]['user_options'].get('analytic', False)
+                    analytic2 = self.mission_info[phase2]['user_options'].get('analytic', False)
 
                     if not (analytic1 or analytic2):
                         self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)

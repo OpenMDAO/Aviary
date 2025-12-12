@@ -268,7 +268,7 @@ two_dof_phase_info = {
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 1800.0), 's'),
             'time_duration_ref': (1000, 's'),
-            'altitude_initial': (21_000, 'ft'),
+            # 'altitude_initial': (21_000, 'ft'),
             'altitude_final': (10_000, 'ft'),
             'altitude_bounds': ((10000.0, 21_000.0), 'ft'),
             'altitude_ref': (20_000, 'ft'),
