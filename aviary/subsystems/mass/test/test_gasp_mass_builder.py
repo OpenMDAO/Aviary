@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft
 GASP = LegacyCode.GASP
 
 
-class TestGASPMassBuilderHybrid(av.TestSubsystemBuilderBase):
+class TestGASPMassBuilderHybrid(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
@@ -30,7 +30,7 @@ class TestGASPMassBuilderHybrid(av.TestSubsystemBuilderBase):
         self.aviary_values.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 1)
 
 
-class TestGASPMassBuilder(av.TestSubsystemBuilderBase):
+class TestGASPMassBuilder(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run

@@ -43,7 +43,7 @@ wing_mass_builder = OASWingMassBuilder()
 # Load the phase_info and other common setup tasks
 phase_info = {
     'climb_1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -65,7 +65,7 @@ phase_info = {
         'initial_guesses': {'time': ([0, 128], 'min')},
     },
     'climb_2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -86,7 +86,7 @@ phase_info = {
         'initial_guesses': {'time': ([128, 113], 'min')},
     },
     'descent_1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,

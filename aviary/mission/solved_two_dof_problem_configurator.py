@@ -98,7 +98,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if phase_options['user_options'].get('ground_roll') and not phase_options[

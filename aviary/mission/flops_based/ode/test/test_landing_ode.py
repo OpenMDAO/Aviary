@@ -38,7 +38,7 @@ class FlareODETest(unittest.TestCase):
             FlareODE(
                 num_nodes=nn,
                 subsystem_options=landing_subsystem_options,
-                core_subsystems=default_mission_subsystems,
+                subsystems=default_mission_subsystems,
                 aviary_options=aviary_options,
             ),
             promotes_inputs=['*'],

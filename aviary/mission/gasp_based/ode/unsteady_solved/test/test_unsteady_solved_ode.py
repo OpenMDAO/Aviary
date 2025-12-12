@@ -36,7 +36,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
             clean=clean,
             ground_roll=ground_roll,
             aviary_options=aviary_options,
-            core_subsystems=default_mission_subsystems,
+            subsystems=default_mission_subsystems,
         )
 
         p.model.add_subsystem('ode', ode, promotes=['*'])

@@ -34,7 +34,7 @@ class UnsteadyControlIterGroup(om.Group):
         )
 
         # TODO finish description
-        self.options.declare('core_subsystems', desc='list of core subsystems')
+        self.options.declare('subsystems', desc='list of core subsystems')
 
         self.options.declare(
             'subsystem_options',
@@ -48,7 +48,7 @@ class UnsteadyControlIterGroup(om.Group):
         ground_roll = self.options['ground_roll']
         clean = self.options['clean']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options}
 
@@ -57,7 +57,7 @@ class UnsteadyControlIterGroup(om.Group):
         else:
             kwargs['method'] = 'cruise'
 
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 self.add_subsystem(

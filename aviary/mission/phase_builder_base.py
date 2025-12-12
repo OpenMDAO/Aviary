@@ -3,7 +3,7 @@ Define utilities for building phases.
 
 Classes
 -------
-PhaseBuilderBase : the interface for a phase builder
+PhaseBuilder : the interface for a phase builder
 """
 
 from abc import ABC
@@ -17,14 +17,13 @@ from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic
 
 _require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
     '_require_new_initial_guesses_meta_data_class_attr_', ()
 )
 
 
-class PhaseBuilderBase(ABC):
+class PhaseBuilder(ABC):
     """
     Define the interface for a phase builder.
 
@@ -33,8 +32,8 @@ class PhaseBuilderBase(ABC):
     name : str ('_unknown phase_')
         object label
 
-    core_subsystems : (None)
-        list of SubsystemBuilderBase objects that will be added to the phase ODE
+    subsystems : (None)
+        list of SubsystemBuilder objects that will be added to the phase ODE
 
     user_options : OptionsDictionary (<empty>)
         state/path constraint values and flags
@@ -80,8 +79,7 @@ class PhaseBuilderBase(ABC):
 
     __slots__ = (
         'name',
-        'core_subsystems',
-        'external_subsystems',
+        'subsystems',
         'subsystem_options',
         'user_options',
         'initial_guesses',
@@ -105,8 +103,7 @@ class PhaseBuilderBase(ABC):
     def __init__(
         self,
         name=None,
-        core_subsystems=None,
-        external_subsystems=None,
+        subsystems=None,
         user_options=None,
         initial_guesses=None,
         ode_class=None,
@@ -121,13 +118,10 @@ class PhaseBuilderBase(ABC):
 
         self.name = name
 
-        if core_subsystems is None:
-            core_subsystems = []
-        if external_subsystems is None:
-            external_subsystems = []
+        if subsystems is None:
+            subsystems = []
 
-        self.core_subsystems = core_subsystems
-        self.external_subsystems = external_subsystems
+        self.subsystems = subsystems
 
         if subsystem_options is None:
             subsystem_options = {}
@@ -146,11 +140,6 @@ class PhaseBuilderBase(ABC):
         self.transcription = transcription
         self.is_analytic_phase = is_analytic_phase
         self.num_nodes = num_nodes
-
-        if external_subsystems is None:
-            external_subsystems = []
-
-        self.external_subsystems = external_subsystems
 
         if meta_data is None:
             meta_data = self.default_meta_data
@@ -197,8 +186,7 @@ class PhaseBuilderBase(ABC):
         if subsystem_options is not None:
             kwargs['subsystem_options'] = subsystem_options
 
-        kwargs['core_subsystems'] = self.core_subsystems
-        kwargs['external_subsystems'] = self.external_subsystems
+        kwargs['subsystems'] = self.subsystems
 
         if self.is_analytic_phase:
             phase = dm.AnalyticPhase(
@@ -300,7 +288,7 @@ class PhaseBuilderBase(ABC):
         # with phase info
         # - ode_class
         # - transcription
-        # - external_subsystems
+        # - subsystems
         # - meta_data
 
         phase_info = dict(
@@ -313,7 +301,7 @@ class PhaseBuilderBase(ABC):
 
     @classmethod
     def from_phase_info(
-        cls, name, phase_info: dict, core_subsystems=None, meta_data=None, transcription=None
+        cls, name, phase_info: dict, subsystems=None, meta_data=None, transcription=None
     ):
         """
         Return a new phase builder based on the specified phase info.
@@ -337,14 +325,11 @@ class PhaseBuilderBase(ABC):
         subsystem_options = phase_info.get('subsystem_options', {})  # TODO: aero info?
         user_options = phase_info.get('user_options', ())
         initial_guesses = AviaryValues(phase_info.get('initial_guesses', ()))
-        external_subsystems = phase_info.get('external_subsystems', [])
-        # TODO core subsystems in phase info?
 
         # TODO some of these may be purely programming API hooks, rather than for use
         # with phase info
         # - ode_class
         # - transcription
-        # - external_subsystems
         # - meta_data
 
         phase_builder = cls(
@@ -353,8 +338,7 @@ class PhaseBuilderBase(ABC):
             user_options=user_options,
             initial_guesses=initial_guesses,
             meta_data=meta_data,
-            core_subsystems=core_subsystems,
-            external_subsystems=external_subsystems,
+            subsystems=subsystems,
             transcription=transcription,
         )
 
@@ -567,7 +551,7 @@ def register(phase_builder_t=None, *, check_repeats=True):
     return phase_builder_t
 
 
-def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
+def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilder:
     """
     Return a new phase builder based on the specified phase info.
 
@@ -581,7 +565,7 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
     ValueError
         if a supported phase builder type cannot be determined
     """
-    phase_builder_t: PhaseBuilderBase = None
+    phase_builder_t: PhaseBuilder = None
 
     for phase_builder_t in _registered_phase_builder_types:
         builder = phase_builder_t.from_phase_info(name, phase_info)
@@ -593,4 +577,4 @@ def phase_info_to_builder(name: str, phase_info: dict) -> PhaseBuilderBase:
 
 
 if __name__ == '__main__':
-    help(PhaseBuilderBase)
+    help(PhaseBuilder)

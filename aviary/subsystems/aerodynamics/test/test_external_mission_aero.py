@@ -11,7 +11,7 @@ phase_info = deepcopy(av.default_height_energy_phase_info)
 
 
 @use_tempdirs
-class TestExternalAero(av.TestSubsystemBuilderBase):
+class TestExternalAero(av.TestSubsystemBuilder):
     """
     Test replacing internal drag calculation with an external subsystem.
 
@@ -25,13 +25,9 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
         phase_info.pop('climb')
         phase_info.pop('descent')
 
-        # Add custom aero.
-        # TODO: This API for replacing aero will be changed an upcoming release.
-        phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
-
         # Disable internal aero
         # TODO: This API for replacing aero will be changed an upcoming release.
-        phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+        phase_info['cruise']['subsystem_options']['aerodynamics'] = {
             'method': 'external',
         }
 
@@ -39,7 +35,7 @@ class TestExternalAero(av.TestSubsystemBuilderBase):
 
         # Load aircraft and options data from user
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-
+        prob.load_external_subsystems([CustomAeroBuilder()])
         prob.check_and_preprocess_inputs()
 
         prob.build_model()

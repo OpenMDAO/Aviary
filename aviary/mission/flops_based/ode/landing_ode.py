@@ -53,8 +53,7 @@ class FlareODE(_BaseODE):
             promotes_outputs=[('stall_speed', 'v_stall')],
         )
 
-        self.add_core_subsystems()
-        self.add_external_subsystems()
+        self.add_subsystems()
 
         kwargs = {'num_nodes': nn, 'aviary_options': options['aviary_options']}
 

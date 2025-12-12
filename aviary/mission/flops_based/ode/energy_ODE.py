@@ -15,8 +15,7 @@ class EnergyODE(_BaseODE):
     def initialize(self):
         super().initialize()
 
-        # TODO throttle enforcement & allocation should be moved to BaseODE for
-        # use in 2DOF
+        # TODO throttle enforcement & allocation should be moved to BaseODE for use in 2DOF
         self.options.declare(
             'throttle_enforcement',
             default='path_constraint',
@@ -61,16 +60,7 @@ class EnergyODE(_BaseODE):
 
         sub1 = self.add_subsystem('solver_sub', om.Group(), promotes=['*'])
 
-        if throttle_enforcement == 'control':
-            solver_group = None
-            core_needs_solver = False
-        else:
-            solver_group = sub1
-            core_needs_solver = True
-
-        self.add_core_subsystems(solver_group=solver_group)
-
-        ext_needs_solver = self.add_external_subsystems(solver_group=sub1)
+        use_mission_solver = self.add_subsystems(solver_group=sub1)
 
         sub1.add_subsystem(
             name='mission_EOM',
@@ -173,7 +163,7 @@ class EnergyODE(_BaseODE):
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='m/s')
 
-        if core_needs_solver or ext_needs_solver:
+        if use_mission_solver or throttle_enforcement != 'control':
             sub1.nonlinear_solver = om.NewtonSolver(
                 solve_subsystems=True,
                 atol=1.0e-10,

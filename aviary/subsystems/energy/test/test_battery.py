@@ -70,7 +70,7 @@ class TestBatteryDerivs(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
 
 
-class TestBattery(av.TestSubsystemBuilderBase):
+class TestBattery(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
