@@ -524,8 +524,8 @@ class PayloadRangeTest(unittest.TestCase):
                 38025.0,
                 38025.0,
                 24365.60919974074,
-                225.0,
-            ],  # due to bug ferry mission must carry 1 passenger
+                0,
+            ],
             tolerance=1e-10,
         )
         assert_near_equal(
