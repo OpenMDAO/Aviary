@@ -25,7 +25,7 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularLowSpeedAero,
 )
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData

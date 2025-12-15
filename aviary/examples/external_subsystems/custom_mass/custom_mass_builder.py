@@ -9,7 +9,7 @@ the variable "Tail" using the alias Aircraft.HorizontalTail.MASS
 import openmdao.api as om
 
 from aviary.examples.external_subsystems.custom_mass.custom_mass import CustomMass
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft
 
 

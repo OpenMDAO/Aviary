@@ -11,7 +11,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 import aviary.api as av
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.missions.height_energy_default import phase_info as ph_in
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
 ExtendedMetaData = av.CoreMetaData

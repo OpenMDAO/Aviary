@@ -5,7 +5,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.core.system import System
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 

@@ -22,7 +22,7 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options

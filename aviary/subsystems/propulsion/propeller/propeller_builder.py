@@ -1,5 +1,5 @@
 from aviary.subsystems.propulsion.propeller.propeller_performance import PropellerPerformance
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 

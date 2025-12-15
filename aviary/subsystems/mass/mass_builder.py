@@ -11,7 +11,7 @@ CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission
 

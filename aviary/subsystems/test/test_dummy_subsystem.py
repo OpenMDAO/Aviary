@@ -4,7 +4,7 @@ from copy import deepcopy
 import openmdao.api as om
 
 import aviary.api as av
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.subsystems.test.subsystem_tester import TestSubsystemBuilder
 from aviary.variable_info.variables import Aircraft as av_Aircraft
 from aviary.variable_info.variables import Mission as av_Mission

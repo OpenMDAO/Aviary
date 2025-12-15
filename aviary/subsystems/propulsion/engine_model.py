@@ -10,7 +10,7 @@ import warnings
 
 import numpy as np
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Settings

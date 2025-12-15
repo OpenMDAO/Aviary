@@ -8,7 +8,7 @@ from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
 from aviary.subsystems.propulsion.utils import EngineModelVariables, build_engine_deck
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings

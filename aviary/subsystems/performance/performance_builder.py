@@ -1,5 +1,5 @@
 from aviary.subsystems.performance.performance_premission import PerformancePremission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
 class CorePerformanceBuilder(SubsystemBuilder):

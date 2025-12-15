@@ -4,7 +4,7 @@ from aviary.examples.external_subsystems.battery.battery_variable_meta_data impo
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
 from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
 class BatteryBuilder(SubsystemBuilder):

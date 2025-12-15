@@ -89,7 +89,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 
 # Miscellaneous
 from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.preprocessors import (
     preprocess_crewpayload,
     preprocess_options,
