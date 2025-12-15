@@ -308,6 +308,7 @@ def _build_akima_coefs(out_stream, raw_data, units):
     else:
         print(f"units must be SI or English but '{units}' was supplied.")
         exit()
+    # Units have now been translated into (altitude (meters), temperature (degK), pressure(pascals), dynamic viscosity (kg/m**3))
 
     import textwrap
     from openmdao.components.interp_util.interp import InterpND
@@ -378,38 +379,42 @@ def _build_akima_coefs(out_stream, raw_data, units):
 
 
 if __name__ == "__main__":
-    ################ Generate Akima Splines Below ################
-    ## Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
+    build_akima = False
+    test_values = True
 
-    # print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
-    #       'Make sure your input units match the requirements shown in _build_akima_coefs()!')
-    # input("Press Enter to continue: ")
+    if build_akima:
+        ############### Generate Akima Splines Below ################
+        # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
-    # from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import _raw_data # replace this with your new raw data
+        print('WARNING: _build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
+              'Make sure your input units match the requirements shown in _build_akima_coefs()!')
+        input("Press Enter to continue: ")
 
-    # import sys
-    # _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='English')
+        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import _raw_data # replace this with your new raw data
 
-    ################ Test problem below ################
+        import sys
+        _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='English')
 
-    prob = om.Problem()
+    if test_values:
+        ################ Test problem below ################
 
-    # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
-    atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=4), promotes=['*'])
+        prob = om.Problem()
 
-    prob.set_solver_print(level=0)
+        # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
+        atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=4), promotes=['*'])
 
-    prob.setup(force_alloc_complex=True)
+        prob.set_solver_print(level=0)
 
-    prob.set_val('h', [0, -5000, 25000, 100000], units='ft')
-    
-    prob.run_model()
+        prob.setup(force_alloc_complex=True)
 
-    # prob.check_partials(method='cs')
+        prob.set_val('h', [0, -5000, 25000, 100000], units='ft')
+        
+        prob.run_model()
 
+        # prob.check_partials(method='cs')
 
-    print('Temperatures (degF):', prob.get_val('temp', units='degF'))
-    print('Pressure (inHg60)', prob.get_val('pres', units='inHg60'))
-    print('Density (lbm/ft**3)', prob.get_val('rho', units='lbm/ft**3'))
-    # print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
-    # print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
+        print('Temperatures (degF):', prob.get_val('temp', units='degF'))
+        print('Pressure (inHg60)', prob.get_val('pres', units='inHg60'))
+        print('Density (lbm/ft**3)', prob.get_val('rho', units='lbm/ft**3'))
+        print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
+        print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
