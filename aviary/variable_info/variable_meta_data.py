@@ -3,8 +3,6 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
-from pathlib import Path, PurePosixPath
-
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
