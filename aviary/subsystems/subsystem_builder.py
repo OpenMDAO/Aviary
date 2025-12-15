@@ -318,6 +318,13 @@ class SubsystemBuilder(ABC):
         """
         return aviary_inputs
 
+    def get_outputs(self):
+        DeprecationWarning(
+            '"get_outputs()" has been renamed to "get_timeseries()" for more clarity on the '
+            'function\'s purpose. "get_outputs()" will be removed in a future version of Aviary.'
+        )
+        return self.get_timeseries()
+
     def get_timeseries(self):
         """
         Return a list of outputs to add to the Dymos timeseries outputs for use when graphing or
