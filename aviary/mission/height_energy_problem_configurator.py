@@ -8,7 +8,7 @@ from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.phase_builder_base import PhaseBuilder
+from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing

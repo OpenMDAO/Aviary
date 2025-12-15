@@ -20,8 +20,8 @@ from aviary.models.missions.two_dof_default import (
     phase_info_parameterization as phase_info_parameterization_two_dof,
 )
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.mission.phase_builder_base import PhaseBuilder as PhaseBuilder
-from aviary.mission.phase_builder_base import phase_info_to_builder
+from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
+from aviary.mission.phase_builder import phase_info_to_builder
 from aviary.variable_info.variables import Mission
 
 

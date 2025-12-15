@@ -125,7 +125,7 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 
 
 # Phase builders
-from aviary.mission.phase_builder_base import PhaseBuilder
+from aviary.mission.phase_builder import PhaseBuilder
 
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.energy_phase import (
