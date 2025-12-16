@@ -71,8 +71,9 @@ def run_aviary(
     else:
         name = None
 
-    # Build problem
     from aviary.interface.methods_for_level2 import AviaryProblem
+
+    # Build problem
     prob = AviaryProblem(name=name, verbosity=verbosity)
 
     # Load aircraft and options data from user

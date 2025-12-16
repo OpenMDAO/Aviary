@@ -114,5 +114,3 @@ def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues
     )
 
     return Group
-
-
