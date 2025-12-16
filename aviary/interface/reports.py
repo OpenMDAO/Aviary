@@ -410,15 +410,22 @@ def input_check_report(prob: AviaryProblem, **kwargs):
 
             for var in sorted(bare_hierarchy_inputs):
                 metadata = aviary_metadata.get(var)
+                abs_paths = prom2abs(var)
+
                 try:
                     units = metadata['units']
-                except:
+                except (TypeError, KeyError):
                     metadata = aviary_metadata.get(var.split('.')[-1])
-                    units = metadata['units']
+
+                    try:
+                        units = metadata['units']
+                    except (TypeError, KeyError):
+                        # This happens when the var is not defined in metadata.
+                        metadata = prob.model.get_io_metadata('input')[abs_paths[0]]
+                        units = metadata['units']
 
                 val = prob.model.get_val(var, units=units)
                 desc = metadata['desc']
-                abs_paths = prom2abs(var)
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
 
