@@ -3,10 +3,9 @@ This file contains the command-line hooks for the dashboard. It is in a separate
 import Bokeh unless we need it. This greatly speeds up the command line.
 """
 import argparse
+from pathlib import Path
 import shutil
 import zipfile
-
-from aviary.visualization.dashboard import dashboard
 
 
 def _dashboard_setup_parser(parser):
@@ -84,6 +83,8 @@ def _dashboard_cmd(options, user_args):
 
     if isinstance(options.script_name, list):
         options.script_name = options.script_name[0]
+
+    from aviary.visualization.dashboard import dashboard
 
     # check to see if options.script_name is a zip file
     # if yes, then unzip into reports directory and run dashboard on it
