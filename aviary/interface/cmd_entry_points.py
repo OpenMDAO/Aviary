@@ -148,8 +148,8 @@ def aviary_cmd():
 
         # Check if --version was passed
         if options.version:
-            import aviary
-            print(f'Aviary version: {aviary.__version__}')
+            from aviary import __version__
+            print(f'Aviary version: {__version__}')
             return
 
         if unknown:
