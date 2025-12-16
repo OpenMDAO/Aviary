@@ -57,8 +57,8 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
                 Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-                Aircraft.Design.EMPTY_MASS_MARGIN,
-                # Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
+                # Aircraft.Design.EMPTY_MASS_MARGIN,
+                Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
                 Aircraft.Electrical.MASS,
                 Aircraft.Fins.MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
@@ -84,6 +84,7 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_MISC_MASS,
             ],
             output_keys=[
+                Aircraft.Design.EMPTY_MASS_MARGIN,
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
@@ -145,8 +146,8 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
                 Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-                Aircraft.Design.EMPTY_MASS_MARGIN,
-                # Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
+                # Aircraft.Design.EMPTY_MASS_MARGIN,
+                Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
                 Aircraft.Electrical.MASS,
                 Aircraft.Fins.MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
@@ -249,6 +250,7 @@ class StructureMassTest(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
     # test = AltTotalSummationTest()
+    # test = TotalSummationTest()
     # test.setUp()
     # test.test_case_multiengine()
-    # test.test_case('LargeSingleAisle2FLOPSalt')
+    # test.test_case('LargeSingleAisle2FLOPS')

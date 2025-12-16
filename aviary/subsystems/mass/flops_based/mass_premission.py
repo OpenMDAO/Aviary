@@ -8,7 +8,6 @@ from aviary.subsystems.mass.flops_based.canard import CanardMass
 from aviary.subsystems.mass.flops_based.cargo_containers import TransportCargoContainersMass
 from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, NonFlightCrewMass
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
-from aviary.subsystems.mass.flops_based.empty_margin import EmptyMassMargin
 from aviary.subsystems.mass.flops_based.engine import EngineMass
 from aviary.subsystems.mass.flops_based.engine_controls import TransportEngineCtrlsMass
 from aviary.subsystems.mass.flops_based.engine_oil import AltEngineOilMass, TransportEngineOilMass
@@ -331,10 +330,6 @@ class MassPremission(om.Group):
 
         self.add_subsystem(
             'wing_group', WingMassGroup(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
-
-        self.add_subsystem(
-            'empty_mass_margin', EmptyMassMargin(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(

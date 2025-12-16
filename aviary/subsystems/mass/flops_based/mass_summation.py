@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.subsystems.mass.flops_based.empty_margin import EmptyMassMargin
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -15,7 +16,7 @@ class MassSummation(om.Group):
         alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
 
         self.add_subsystem(
-            'empennage_mass', EmpennageGroupMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            'empennage_mass', EmpennageMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
@@ -51,16 +52,9 @@ class MassSummation(om.Group):
                 promotes_outputs=['*'],
             )
 
-        # TODO should these be combined into a single group with alt equation option?
-        if alt_mass:
-            self.add_subsystem(
-                'empty_mass', AltEmptyMass(), promotes_inputs=['*'], promotes_outputs=['*']
-            )
-
-        else:
-            self.add_subsystem(
-                'empty_mass', EmptyMass(), promotes_inputs=['*'], promotes_outputs=['*']
-            )
+        self.add_subsystem(
+            'empty_mass_group', EmptyMassGroup(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
         self.add_subsystem(
             'useful_load_mass', UsefulLoadMass(), promotes_inputs=['*'], promotes_outputs=['*']
@@ -77,7 +71,7 @@ class MassSummation(om.Group):
         self.add_subsystem('fuel_mass', FuelMass(), promotes_inputs=['*'], promotes_outputs=['*'])
 
 
-class EmpennageGroupMass(om.ExplicitComponent):
+class EmpennageMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Canard.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fins.MASS, units='lbm')
@@ -284,6 +278,28 @@ class AltSystemsEquipmentMass(om.ExplicitComponent):
         outputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = sys_equip_mass_base + 0.01 * (
             structure_mass + prop_mass + sys_equip_mass_base
         )
+
+
+class EmptyMassGroup(om.Group):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
+
+    def setup(self):
+        alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
+
+        self.add_subsystem(
+            'empty_mass_margin', EmptyMassMargin(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+        if alt_mass:
+            self.add_subsystem(
+                'empty_mass', AltEmptyMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+
+        else:
+            self.add_subsystem(
+                'empty_mass', EmptyMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
 
 
 class EmptyMass(om.ExplicitComponent):
