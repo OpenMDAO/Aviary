@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -10,6 +10,9 @@ class HorizontalTailMass(om.ExplicitComponent):
     Calculates the mass of the horizontal tail. The methodology is based on the FLOPS weight
     equations, modified to output mass instead of weight.
     """
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
 
     def setup(self):
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
@@ -23,16 +26,20 @@ class HorizontalTailMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
+        num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+
         area = inputs[Aircraft.HorizontalTail.AREA]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
 
         outputs[Aircraft.HorizontalTail.MASS] = (
-            scaler * 0.530 * area * gross_weight**0.20 * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
-        )
+            scaler * 0.530 * area * gross_weight**0.20 * (taper_ratio + 0.50) * num_tails
+        ) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
+        num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+
         area = inputs[Aircraft.HorizontalTail.AREA]
         gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
@@ -41,20 +48,20 @@ class HorizontalTailMass(om.ExplicitComponent):
         gross_weight_exp = gross_weight**0.20
 
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = (
-            scaler * 0.530 * gross_weight_exp * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
-        )
+            scaler * 0.530 * gross_weight_exp * (taper_ratio + 0.50) * num_tails
+        ) / GRAV_ENGLISH_LBM
 
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_SCALER] = (
-            0.530 * area * gross_weight_exp * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
-        )
+            0.530 * area * gross_weight_exp * (taper_ratio + 0.50) * num_tails
+        ) / GRAV_ENGLISH_LBM
 
         J[Aircraft.HorizontalTail.MASS, Mission.Design.GROSS_MASS] = (
-            scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50)
+            scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50) * num_tails
         )
 
         J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = (
-            scaler * 0.530 * area * gross_weight_exp / GRAV_ENGLISH_LBM
-        )
+            scaler * 0.530 * area * gross_weight_exp * num_tails
+        ) / GRAV_ENGLISH_LBM
 
 
 class AltHorizontalTailMass(om.ExplicitComponent):
