@@ -14,12 +14,7 @@ from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
-
-
-class CodeOrigin(Enum):
-    FLOPS = 'FLOPS'
-    GASP = 'GASP'
-    GASP_ALT = 'GASP_ALT'
+from aviary.variable_info.enums import CodeOrigin
 
 
 _gasp_keys = ['Altitude', 'Mach', 'Angle of Attack']
@@ -486,30 +481,9 @@ def _make_structured_grid(data, method='lagrange3', fields=['CL', 'CD']):
     return structured_data
 
 
-def _setup_ATC_parser(parser):
-    parser.add_argument('input_file', type=str, help='path to aero data file to be converted')
-    parser.add_argument(
-        'output_file',
-        type=str,
-        nargs='?',
-        help='path to file where new converted data will be written',
-    )
-    parser.add_argument(
-        '-f',
-        '--data_format',
-        type=str,
-        choices=[origin.value for origin in CodeOrigin],
-        help='data format used by input_file',
-    )
-
-
-def _exec_ATC(args, user_args):
-    convert_aero_table(
-        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
-    )
-
-
 if __name__ == '__main__':
+    from aviary.utils.aero_table_conversion_cmd import _setup_ATC_parser, _exec_ATC
+
     parser = argparse.ArgumentParser(
         description='Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.\n'
     )

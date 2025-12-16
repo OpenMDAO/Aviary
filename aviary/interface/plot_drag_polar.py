@@ -8,6 +8,7 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.functions import get_path
 
 
 def plot_drag_polar(input_file=None):
@@ -20,8 +21,6 @@ def plot_drag_polar(input_file=None):
         return
 
     try:
-        from aviary.utils.functions import get_path
-
         input_path = get_path(input_file)
         polar_data, _, _ = read_data_file(
             input_path,

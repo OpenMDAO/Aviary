@@ -7,11 +7,11 @@ from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight
 from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
 from aviary.interface.test_installation import _exec_installation_test, _setup_installation_test
-from aviary.utils.aero_table_conversion import _exec_ATC, _setup_ATC_parser
-from aviary.utils.engine_deck_conversion import _exec_EDC, _setup_EDC_parser
+from aviary.utils.aero_table_conversion_cmd import _exec_ATC, _setup_ATC_parser
+from aviary.utils.engine_deck_conversion_cmd import _exec_EDC, _setup_EDC_parser
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
 from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
-from aviary.visualization.dashboard_cmd_line import _dashboard_cmd, _dashboard_setup_parser
+from aviary.visualization.dashboard_cmd import _dashboard_cmd, _dashboard_setup_parser
 from aviary.visualization.realtime_plot import _rtplot_cmd, _rtplot_setup_parser
 
 
@@ -61,14 +61,14 @@ _command_map = {
         'Open the mission profile drawing GUI.',
     ),
     'dashboard': (
-       _dashboard_setup_parser,
-       _dashboard_cmd,
-       'Open the results dashboard for a provided Aviary run.',
+        _dashboard_setup_parser,
+        _dashboard_cmd,
+        'Open the results dashboard for a provided Aviary run.',
     ),
     'hangar': (
         _setup_hangar_parser,
         _exec_hangar,
-        'Copy aircraft and engine models included with Aviary to specified folder. Allows users'
+        'Copy aircraft and engine models included with Aviary to specified folder. Allows users '
         'who did not install Aviary locally to still access model files.',
     ),
     'convert_engine': (
@@ -148,8 +148,9 @@ def aviary_cmd():
 
         # Check if --version was passed
         if options.version:
-            from aviary import __version__
-            print(f'Aviary version: {__version__}')
+            from importlib.metadata import version
+            aviary_version : str= version('aviary')
+            print(f'Aviary version: {aviary_version}')
             return
 
         if unknown:

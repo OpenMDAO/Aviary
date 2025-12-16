@@ -3,6 +3,8 @@ import os
 import shutil
 from pathlib import Path
 
+from aviary.utils.functions import get_model
+
 
 def save_file(aviary_path: Path, outdir: Path, verbose=False) -> Path:
     """Saves the file or folder specified into the output directory, creating directories as needed."""
@@ -48,8 +50,6 @@ def _setup_hangar_parser(parser: argparse.ArgumentParser):
 
 def _exec_hangar(args, user_args):
     input_decks = []
-
-    from aviary.utils.functions import get_model
 
     for input_deck in args.input_decks:
         input_decks.append(get_model(input_deck))
