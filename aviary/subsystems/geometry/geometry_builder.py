@@ -163,7 +163,12 @@ class CoreGeometryBuilder(GeometryBuilderBase):
             Aircraft.Wing.SWEEP,
         ]
         htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
-        fuselage_outputs = [Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.AVG_DIAMETER]
+        fuselage_outputs = [Aircraft.Fuselage.LENGTH]
+
+        if self.code_origin is FLOPS or self.use_both_geometries:
+            fuselage_outputs.append(Aircraft.Fuselage.REF_DIAMETER)
+        if self.code_origin is GASP or self.use_both_geometries:
+            fuselage_outputs.append(Aircraft.Fuselage.AVG_DIAMETER)
 
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:

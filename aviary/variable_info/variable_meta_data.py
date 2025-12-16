@@ -3269,15 +3269,13 @@ add_meta_data(
     default_value=24,
 )
 
-# TODO FLOPS is not average diameter, but rather a reference diameter using max
-#      height and length. New variable??
 add_meta_data(
     Aircraft.Fuselage.AVG_DIAMETER,
     meta_data=_MetaData,
     historical_name={
         'GASP': ['INGASP.WC', 'INGASP.SWF'],
-        'FLOPS': None,  # 'EDETIN.XD',
-        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+        'FLOPS': None,
+        'LEAPS1': None,
     },
     units='ft',
     desc='average fuselage diameter',
@@ -3690,6 +3688,19 @@ add_meta_data(
     units='ft',
     default_value=0.0,
     desc='additional pressurized fuselage width for cargo bay',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.REF_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': ['EDETIN.XD'],
+        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+    },
+    units='ft',
+    desc='A course average diameter that is the mean of the width and depth.',
+    default_value=0.0,
 )
 
 add_meta_data(
