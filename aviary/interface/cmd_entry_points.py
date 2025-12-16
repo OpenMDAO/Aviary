@@ -149,6 +149,7 @@ def aviary_cmd():
         # Check if --version was passed
         if options.version:
             from importlib.metadata import version
+
             aviary_version : str= version('aviary')
             print(f'Aviary version: {aviary_version}')
             return

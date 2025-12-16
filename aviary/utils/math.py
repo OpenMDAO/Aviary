@@ -1,6 +1,7 @@
 """
 Smooth functions and their derivatives.
 """
+
 import numpy as np
 
 

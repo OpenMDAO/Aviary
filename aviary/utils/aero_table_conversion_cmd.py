@@ -2,6 +2,7 @@
 Command line api for the aero table converter.
 Kept in a separate file to speed up the command line imports.
 """
+
 from aviary.variable_info.enums import CodeOrigin
 
 

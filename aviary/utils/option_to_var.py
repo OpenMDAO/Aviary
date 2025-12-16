@@ -1,6 +1,7 @@
 """
 Utilities to create a component that converts an option into an output.
 """
+
 import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues
