@@ -1,4 +1,4 @@
-from MIL_SPEC_210A_Tropical import SOURCE_NOTE
+from MIL_SPEC_210A_Tropical import DATA_ORIGIN_NOTE
 '''
 See MIL_SPEC_210A_Tropical for source note
 '''

@@ -1,4 +1,4 @@
-SOURCE_NOTE = '''
+DATA_ORIGIN_NOTE = '''
 This information applies to MIL_SPEC_201A_tropical, MIL_SPEC_201A_polar, MIL_SPEC_201A_cold, 
 and MIL_SPEC_201A_hot
 
@@ -10,7 +10,6 @@ Approved for public release with unlimited distribution
 https://apps.dtic.mil/sti/tr/pdf/ADA264639.pdf
 
 Notes:
-0) The value of gravity is constant, i.e., 32.174 ft/sec2
 1) The composition of the atmosphere is constant throughout the altitude range.
 2) Polar data represents an Arctic Winter atmosphere rather than a true polar atmosphere
 3) Altitude was given in the raw data as Geopotential Altitude
@@ -20,8 +19,7 @@ interpolation for the purposes of padding the table only.
 i.e. for hot atmospher at 20,000 ft pressure increased so much as to be the same as pressure
 at 11,500 ft. Presumed errors like these were smoothed out to prevent kinks in the akima 
 splines.
-6) This data set appears to have measured values for: Temperature, Pressure, and Density
-as a function of altitude. Using the ideal gas equations to recalculate Density will yield
+6) Using the ideal gas equations to recalculate Density will yield
 different results than the table. 
 '''
 

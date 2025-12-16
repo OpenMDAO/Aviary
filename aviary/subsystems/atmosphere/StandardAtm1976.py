@@ -1,8 +1,8 @@
-"""
-United States standard atmosphere 1976 tables, data
-Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
-based on NASA-TM-X-74335.
-"""
+DATA_ORIGIN_NOTE = '''
+    United States standard atmosphere 1976 tables, data
+    Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
+    based on NASA-TM-X-74335.
+    '''
 from collections import namedtuple
 import sys
 
