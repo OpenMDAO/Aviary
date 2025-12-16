@@ -9,11 +9,11 @@ from scipy.interpolate import interp1d
 import numpy as np
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.api import NamedValues
 from aviary.interface.utils import round_it
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
+from aviary.utils.named_values import NamedValues
 
 
 class CodeOrigin(Enum):

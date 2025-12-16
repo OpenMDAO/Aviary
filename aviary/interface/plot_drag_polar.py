@@ -7,8 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
-import aviary.api as av
-from aviary.utils.functions import get_path
+from aviary.utils.csv_data_file import read_data_file
 
 
 def plot_drag_polar(input_file=None):
@@ -21,8 +20,10 @@ def plot_drag_polar(input_file=None):
         return
 
     try:
+        from aviary.utils.functions import get_path
+
         input_path = get_path(input_file)
-        polar_data, _, _ = av.read_data_file(
+        polar_data, _, _ = read_data_file(
             input_path,
             aliases={
                 'altitude': 'altitude',
@@ -32,6 +33,7 @@ def plot_drag_polar(input_file=None):
                 'CD': 'total_drag_coefficient',
             },
         )
+
     except Exception as e:
         messagebox.showerror('Error', f'Failed to read the file: {str(e)}')
         return

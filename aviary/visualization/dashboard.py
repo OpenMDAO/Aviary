@@ -39,6 +39,7 @@ except BaseException:
 from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
 from openmdao.utils.om_warnings import issue_warning
 
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
 # support getting this function from OpenMDAO post movement of the function to utils
@@ -50,7 +51,6 @@ except ImportError:
         _convert_ndarray_to_support_nans_in_json as convert_ndarray_to_support_nans_in_json,
     )
 
-import aviary.api as av
 
 # Enable Panel extensions
 pn.extension(sizing_mode='stretch_width')
@@ -363,7 +363,7 @@ def create_aviary_variables_table_data_nested(output_dir, recorder_file):
         if len(grouped[group_name]) == 1:  # a list of one var.
             var_info = grouped[group_name][0]
             prom_name = outputs[var_info]['prom_name']
-            aviary_metadata = av.CoreMetaData.get(prom_name)
+            aviary_metadata = CoreMetaData.get(prom_name)
             # the metadata has some object types, like "type", that don't serialize normally
             aviary_metadata = make_serializable(aviary_metadata)
             table_data_nested.append(
@@ -380,7 +380,7 @@ def create_aviary_variables_table_data_nested(output_dir, recorder_file):
             children_list = []
             for children_name in grouped[group_name]:
                 prom_name = outputs[children_name]['prom_name']
-                aviary_metadata = av.CoreMetaData.get(prom_name)
+                aviary_metadata = CoreMetaData.get(prom_name)
                 # the metadata has some object types, like "type", that don't serialize normally
                 aviary_metadata = make_serializable(aviary_metadata)
                 children_list.append(

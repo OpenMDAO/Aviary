@@ -4,8 +4,6 @@ from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 import sys
 
-from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.utils.functions import get_path
 from aviary.variable_info.enums import Verbosity
 
 
@@ -73,6 +71,7 @@ def run_aviary(
         name = None
 
     # Build problem
+    from aviary.interface.methods_for_level2 import AviaryProblem
     prob = AviaryProblem(name=name, verbosity=verbosity)
 
     # Load aircraft and options data from user
@@ -121,6 +120,8 @@ def run_level_1(
     kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity)}
 
     if isinstance(phase_info, str):
+        from aviary.utils.functions import get_path
+
         phase_info_path = get_path(phase_info)
         spec = spec_from_file_location('phase_info_file', str(phase_info_path))
         phase_info_file = module_from_spec(spec)
