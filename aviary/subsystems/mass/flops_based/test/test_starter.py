@@ -47,7 +47,7 @@ class TransportStarterMassTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALED_SLS_THRUST],
+            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR],
             output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
         )
 
@@ -59,7 +59,6 @@ class TransportStarterMassTest(unittest.TestCase):
             Aircraft.Engine.NUM_ENGINES: np.array([5]),
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
             Mission.Constraints.MAX_MACH: 0.785,
-            Aircraft.Engine.REFERENCE_SLS_THRUST: (np.array([22200.5]), 'lbf'),
         }
 
         prob.model.add_subsystem(
@@ -72,7 +71,7 @@ class TransportStarterMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5, 'lbf')
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, 'unitless')
 
         prob.run_model()
 
@@ -118,17 +117,13 @@ class TransportStarterMassTest2(unittest.TestCase):
         )
 
         prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
-        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([5])
+        prob.model_options[Aircraft.Engine.NUM_ENGINES] = np.array([5])
         prob.model_options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
         prob.model_options[Mission.Constraints.MAX_MACH] = 0.875
-        # prob.model_options['*'] = options
-        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([28928.1])
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5, 'lbf')
-
-        # prob.run_model()
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, 'unitless')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -160,14 +155,13 @@ class BWBTransportStarterMassTest(unittest.TestCase):
         )
 
         prob.model_options['*'] = options
-        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([86459.2])
 
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALED_SLS_THRUST],
+            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR],
             output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
             version=Version.BWB,
         )
