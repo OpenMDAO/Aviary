@@ -10,6 +10,7 @@ Approved for public release with unlimited distribution
 https://apps.dtic.mil/sti/tr/pdf/ADA264639.pdf
 
 Notes:
+0) The data table contains data from 0 feet to 100,000 ft =~ 30,000 meters altitude
 1) The composition of the atmosphere is constant throughout the altitude range.
 2) Polar data represents an Arctic Winter atmosphere rather than a true polar atmosphere
 3) Altitude was given in the raw data as Geopotential Altitude
@@ -23,43 +24,26 @@ splines.
 different results than the table. 
 '''
 
-# 6) Temperature in F was converted to Temp in R using the formula:
-# F + 459.67 = R
-# 7) Pressure in Hg was converted to pressure in psi using the formula:
-# in_Hg / 2.03602 = psi
-# 8) Denisty in lb/ft^3 was converted to slugs/ft^3 using the formula:
-# lb/ft^3 / 32.174 = slugs/ft^3
-# 9) Speed of Sound was calculated based on the formula:
-# (https://www.grc.nasa.gov/www/k-12/VirtualAero/BottleRocket/airplane/sound.html)
-# R0 (ft*lbf / (slug * R)) = 1716.46 # ideal gas constant
-# Gamma (unitless) = 1.4 # the ratio of specific heats for air at Standard Temp and Pressure
-# sqrt(R * R0 * Gamma) = speed_of_sound
-# 10) Dynamic Viscosity was calculated based on Southerland's formula 
-# (https://www.grc.nasa.gov/www/k-12/airplane/viscosity.html)
-# with temperatures converted to Kelvin:
-# mu0 (lbf * s / ft^2) = 3.62E-7 # reference dunamic viscosity coefficient
-# T0 (R) = 518.7 # reference temperature
-# mu0 * (R / T0)^1.5 * (T0 + 197.72)/(R + 198.72) = dynamic_viscosity
-
 from collections import namedtuple
 import numpy as np
 atm_data = namedtuple('MIL_SPEC_210A_Tropical', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = \
     """
-    A namedtuple to hold data for the atmosphere model.
+    A namedtuple to hold data for the 1976 standard atmosphere model.
 
     Parameters
     ----------
     alt : float
-        Geopotential Altitude (feet)
+        Geopotential Altitude in meters.
     temp : float
-        Temperature (degF)
+        Temperature in degK.
     pres : float
-        Pressure (inches of mercury) aka (inHG).
+        Pressure in pascal.
     rho : float
-        Density in (lb/ft**3)
+        Density in kg/m^3.
     """
 
+# _raw_data Units: (Geopotential Altitude in ft, Temp in degF, pressure in inHG60, density in lbm/ft^3)
 _raw_data = np.array([
     -5000,109.8,35.32,0.082880293, #Extrapolated
     -4500,107.8,34.78,0.081818555, #Extrapolated

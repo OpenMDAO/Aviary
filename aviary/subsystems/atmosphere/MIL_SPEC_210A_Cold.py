@@ -1,4 +1,4 @@
-from MIL_SPEC_210A_Tropical import DATA_ORIGIN_NOTE
+from aviary.subsystems.atmosphere.MIL_SPEC_210A_Tropical import DATA_ORIGIN_NOTE
 '''
 See MIL_SPEC_210A_Tropical for source note
 '''
@@ -8,21 +8,21 @@ import numpy as np
 atm_data = namedtuple('MIL_SPEC_210A_Cold', ['alt', 'temp', 'pres', 'rho'])
 atm_data.__doc__ = \
     """
-    A namedtuple to hold data for the atmosphere model.
+    A namedtuple to hold data for the 1976 standard atmosphere model.
 
     Parameters
     ----------
     alt : float
-        Geopotential Altitude (feet) 
+        Geopotential Altitude in meters.
     temp : float
-        Temperature (degF)
+        Temperature in degK.
     pres : float
-        Pressure (inHG).
+        Pressure in pascal.
     rho : float
-        Density in (lb/ft**3)
+        Density in kg/m^3.
     """
-# TODO: fix units above they differ from raw units below
 
+# _raw_data Units: (Geopotential Altitude in ft, Temp in degF, pressure in inHG60, density in lbm/ft^3)
 _raw_data = np.array([
     -5000,-127,34.9,0.134809263, #Extrapolated
     -4500,-120.3,34.4,0.131270118, #Extrapolated

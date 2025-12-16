@@ -6,11 +6,11 @@ from aviary.variable_info.variables import Dynamic
 
 import numpy as np
 
-from StandardAtm1976 import atm_data as USatm1976
-from MIL_SPEC_210A_Tropical import atm_data as tropical_210A
-from MIL_SPEC_210A_Polar import atm_data as polar_210A
-from MIL_SPEC_210A_Hot import atm_data as hot_210A
-from MIL_SPEC_210A_Cold import atm_data as cold_210A
+from aviary.subsystems.atmosphere.StandardAtm1976 import atm_data as USatm1976
+from aviary.subsystems.atmosphere.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
+from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import atm_data as polar_210A
+from aviary.subsystems.atmosphere.MIL_SPEC_210A_Hot import atm_data as hot_210A
+from aviary.subsystems.atmosphere.MIL_SPEC_210A_Cold import atm_data as cold_210A
 
 class Atmosphere(om.Group):
     """
@@ -303,7 +303,7 @@ def _build_akima_coefs(out_stream, raw_data, units):
     elif units == 'English':
         atm_data.alt *= 0.3048 # ft -> m
         atm_data.T = (atm_data.T - 32) * 5/9 + 273.15 # degF -> degK
-        atm_data.P *= 3376.85 # inHg -> Pa @ 60F
+        atm_data.P *= 3376.85 # inHg60 -> Pascal
         atm_data.rho *= 0.453592/(0.3048**3) # lbm/ft**3 -> kg/m**3
     else:
         print(f"units must be SI or English but '{units}' was supplied.")

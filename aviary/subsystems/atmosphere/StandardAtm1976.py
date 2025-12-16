@@ -2,6 +2,9 @@ DATA_ORIGIN_NOTE = '''
     United States standard atmosphere 1976 tables, data
     Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
     based on NASA-TM-X-74335.
+
+    Notes:
+    0) The data table contains data from -5,000 meters to 83,000 meters altitude
     '''
 from collections import namedtuple
 import sys
@@ -18,16 +21,16 @@ atm_data.__doc__ = \
     Parameters
     ----------
     alt : float
-        Geopotential Altitude in feet.
+        Geopotential Altitude in meters.
     temp : float
         Temperature in degK.
     pres : float
-        Pressure in mb.
+        Pressure in pascal.
     rho : float
         Density in kg/m^3.
     """
 
-# TODO: Replace all these values with the actual raw input
+# _raw_data Units: (Geopotential Altitude in meters, Temp in degK, pressure in mb, density in kg/m^3)
 _raw_data = np.array([
     -5000,320.650,1.776870E+03,1.930466E+00,
     -4950,320.325,1.767424E+03,1.922152E+00,
