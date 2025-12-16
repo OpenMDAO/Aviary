@@ -11,7 +11,7 @@ from aviary.utils.aero_table_conversion import _exec_ATC, _setup_ATC_parser
 from aviary.utils.engine_deck_conversion import _exec_EDC, _setup_EDC_parser
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser
 from aviary.utils.propeller_map_conversion import _exec_PMC, _setup_PMC_parser
-from aviary.visualization.dashboard import _dashboard_cmd, _dashboard_setup_parser
+from aviary.visualization.dashboard_cmd_line import _dashboard_cmd, _dashboard_setup_parser
 from aviary.visualization.realtime_plot import _rtplot_cmd, _rtplot_setup_parser
 
 
@@ -61,9 +61,9 @@ _command_map = {
         'Open the mission profile drawing GUI.',
     ),
     'dashboard': (
-        _dashboard_setup_parser,
-        _dashboard_cmd,
-        'Open the results dashboard for a provided Aviary run.',
+       _dashboard_setup_parser,
+       _dashboard_cmd,
+       'Open the results dashboard for a provided Aviary run.',
     ),
     'hangar': (
         _setup_hangar_parser,
@@ -148,6 +148,7 @@ def aviary_cmd():
 
         # Check if --version was passed
         if options.version:
+            import aviary
             print(f'Aviary version: {aviary.__version__}')
             return
 
