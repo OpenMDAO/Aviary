@@ -912,7 +912,6 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             case = cr.get_case('final')
             outputs = case.list_outputs(out_stream=None, units=True)
 
-            # data_by_varname_and_phase = defaultdict(dict)
             data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
             # Find the "largest" unit used for any timeseries output across all phases
@@ -920,7 +919,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.([a-zA-Z0-9_]+)'
+            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.(.+)'
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
@@ -1167,14 +1166,14 @@ def dashboard(script_name, port=0, run_in_background=False):
         'Debug Input List',
         model_tabs_list,
         """
-        A plain text display of the model inputs. Recommended for beginners. Only created if 
-        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
-        are listed in a tree structure. There are three columns. The left column is a list of 
-        variable names, the middle column is the value, and the right column is the promoted 
-        variable name. The hierarchy is phase, subgroups, components, and variables. An input 
-        variable can appear under different phases and within different components. Its values can 
-        be different because its value has been updated during the computation. On the top-left 
-        corner is the total number of inputs. That number counts the duplicates because one variable 
+        A plain text display of the model inputs. Recommended for beginners. Only created if
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables
+        are listed in a tree structure. There are three columns. The left column is a list of
+        variable names, the middle column is the value, and the right column is the promoted
+        variable name. The hierarchy is phase, subgroups, components, and variables. An input
+        variable can appear under different phases and within different components. Its values can
+        be different because its value has been updated during the computation. On the top-left
+        corner is the total number of inputs. That number counts the duplicates because one variable
         can appear in different phases.
         """,
         'text',
@@ -1186,14 +1185,14 @@ def dashboard(script_name, port=0, run_in_background=False):
         'Debug Output List',
         model_tabs_list,
         """
-        A plain text display of the model outputs. Recommended for beginners. Only created if 
-        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
-        are listed in a tree structure. There are three columns. The left column is a list of 
-        variable names, the middle column is the value, and the right column is the promoted 
-        variable name. The hierarchy is phase, subgroups, components, and variables. An output 
-        variable can appear under different phases and within different components. Its values can 
-        be different because its value has been updated during the computation. On the top-left 
-        corner is the total number of outputs. That number counts the duplicates because one 
+        A plain text display of the model outputs. Recommended for beginners. Only created if
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables
+        are listed in a tree structure. There are three columns. The left column is a list of
+        variable names, the middle column is the value, and the right column is the promoted
+        variable name. The hierarchy is phase, subgroups, components, and variables. An output
+        variable can appear under different phases and within different components. Its values can
+        be different because its value has been updated during the computation. On the top-left
+        corner is the total number of outputs. That number counts the duplicates because one
         variable can appear in different phases.
         """,
         'text',
