@@ -679,6 +679,39 @@ add_meta_data(
 
 add_meta_data(
     # Note user override
+    #    - see also: Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER
+    Aircraft.CrewPayload.CABIN_CREW_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['WTS.WSP(28,2)', '~WEIGHT.WSTUAB', '~WTSTAT.WSP(28, 2)', '~INERT.WSTUAB'],
+        'FLOPS': None,
+        'LEAPS1': [
+            '(WeightABC)self._cabin_crew_and_bag_weight',
+            'aircraft.outputs.L0_weights_summary.cabin_crew_and_bag_weight',
+        ],
+    },
+    units='lbm',
+    desc='total mass of the non-flight crew and their baggage',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.WTIN.WSTUAB', 'MISWT.WSTUAB', 'MISWT.OSTUAB'],
+        'FLOPS': 'WTIN.WSTUAB',
+        'LEAPS1': 'aircraft.inputs.L0_overrides.cabin_crew_and_bag_weight',
+    },
+    units='unitless',
+    desc='scaler for total mass of the non-flight crew and their baggage',
+    default_value=1.0,
+)
+
+add_meta_data(
+    # Note user override
     #    - see also: Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER
     Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
     meta_data=_MetaData,
@@ -724,6 +757,47 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.CW(12)', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='mass of catering items per passenger',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.WTIN.WFLCRB', 'MISWT.WFLCRB', 'MISWT.OFLCRB'],
+        'FLOPS': 'WTIN.WFLCRB',
+        'LEAPS1': 'aircraft.inputs.L0_overrides.flight_crew_and_bag_weight',
+    },
+    units='unitless',
+    desc='scaler for total mass of the flight crew and their baggage',
+    default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.WPPASS',  # ['&DEFINE.WTIN.WPPASS', 'WPAB.WPPASS'],
+        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.weight_per_passenger',
+    },
+    units='lbm',
+    desc='mass per passenger',
+    option=True,
+    default_value=165.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.MISC_CARGO,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.CARGOF',  # ['&DEFINE.WTIN.CARGOF', 'WTS.CARGOF'],
+        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.misc_cargo',
+    },
+    units='lbm',
+    desc='cargo (other than passenger baggage) carried in fuselage',
     default_value=0.0,
 )
 
@@ -899,80 +973,6 @@ add_meta_data(
     units='lbm',
     desc='total mass of the flight crew and their baggage',
     default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.WTIN.WFLCRB', 'MISWT.WFLCRB', 'MISWT.OFLCRB'],
-        'FLOPS': 'WTIN.WFLCRB',
-        'LEAPS1': 'aircraft.inputs.L0_overrides.flight_crew_and_bag_weight',
-    },
-    units='unitless',
-    desc='scaler for total mass of the flight crew and their baggage',
-    default_value=1.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.MASS_PER_PASSENGER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.WPPASS',  # ['&DEFINE.WTIN.WPPASS', 'WPAB.WPPASS'],
-        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.weight_per_passenger',
-    },
-    units='lbm',
-    desc='mass per passenger',
-    option=True,
-    default_value=165.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.MISC_CARGO,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.CARGOF',  # ['&DEFINE.WTIN.CARGOF', 'WTS.CARGOF'],
-        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.misc_cargo',
-    },
-    units='lbm',
-    desc='cargo (other than passenger baggage) carried in fuselage',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # Note user override
-    #    - see also: Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER
-    Aircraft.CrewPayload.CABIN_CREW_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['WTS.WSP(28,2)', '~WEIGHT.WSTUAB', '~WTSTAT.WSP(28, 2)', '~INERT.WSTUAB'],
-        'FLOPS': None,
-        'LEAPS1': [
-            '(WeightABC)self._cabin_crew_and_bag_weight',
-            'aircraft.outputs.L0_weights_summary.cabin_crew_and_bag_weight',
-        ],
-    },
-    units='lbm',
-    desc='total mass of the non-flight crew and their baggage',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.WTIN.WSTUAB', 'MISWT.WSTUAB', 'MISWT.OSTUAB'],
-        'FLOPS': 'WTIN.WSTUAB',
-        'LEAPS1': 'aircraft.inputs.L0_overrides.cabin_crew_and_bag_weight',
-    },
-    units='unitless',
-    desc='scaler for total mass of the non-flight crew and their baggage',
-    default_value=1.0,
 )
 
 add_meta_data(
@@ -1424,15 +1424,6 @@ add_meta_data(
     },
     units='unitless',
     desc='table of component fineness ratios',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.USEFUL_LOAD,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
     default_value=0.0,
 )
 
@@ -7203,16 +7194,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Summary.FUEL_MASS_REQUIRED,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
-    'mission',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Design.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={
@@ -7741,6 +7722,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.FUEL_MASS_REQUIRED,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
+    'mission',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.Summary.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -7797,6 +7788,15 @@ add_meta_data(
     # Note: In GASP, WFA does not include fuel margin.
     desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
     'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.Summary.USEFUL_LOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
 )
 
 add_meta_data(
