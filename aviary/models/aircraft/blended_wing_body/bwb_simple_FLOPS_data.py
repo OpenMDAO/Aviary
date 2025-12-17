@@ -109,7 +109,6 @@ inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 1.0)  # FRFU
 inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, 'ft')  # WF
 inputs.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, 'deg')  # SWPLE
 inputs.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11)  # TCF
-
 # inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 0.0, 'ft**2')  # see _BWBFuselage()
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 
@@ -366,12 +365,11 @@ outputs.set_val(Aircraft.Wing.FINENESS, 0.11)  # FR(1)
 outputs.set_val(Aircraft.Wing.MISC_MASS, 21498.83307778, 'lbm')  # W3
 outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 38779.21499739, 'lbm')  # W2
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 14152.3734702, 'lbm')  # WSC
-
+outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488813)  # AR
+outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 3.4488813)  # ARREF
 outputs.set_val(Aircraft.Wing.MASS, 86742.28126808, 'lbm')  # WWING
 outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW
-outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488813)  # AR
-outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 3.4488813)  # ARREF
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.53107166)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWET(1)
 
