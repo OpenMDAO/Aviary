@@ -22,6 +22,7 @@ inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
 inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
 inputs.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, False)
+inputs.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True)
 
 # Air Conditioning
 # ---------------------------
@@ -59,7 +60,7 @@ inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4)  # NBA
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)  # NFABR
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6)  # NTABR
 inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39, 'inch')  # BPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61, 'inch')  # FPITCH in
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61, 'inch')  # FPITCH
 inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32, 'inch')  # TPITCH
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
@@ -106,8 +107,6 @@ inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)  # CARGF
 inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 1.0)  # FRFU
 inputs.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, 'deg')  # SWPLE
 inputs.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11)  # TCF
-inputs.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True)
-
 # inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 0.0, 'ft**2')  # see _BWBFuselage()
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 
@@ -318,11 +317,11 @@ outputs.set_val(Aircraft.AntiIcing.MASS, 562.09100951165135, 'lbm')  # WAI
 outputs.set_val(Aircraft.APU.MASS, 2125.8280135763703, 'lbm')  # WAPU
 outputs.set_val(Aircraft.Avionics.MASS, 2778.5110590964073, 'lbm')  # WAVONC
 
+outputs.set_val(Aircraft.BWB.NUM_BAYS, 7.0, 'unitless')  # NBAY
 outputs.set_val(Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL[-1]
 outputs.set_val(Aircraft.Canard.FINENESS, 0.0)  # FR[-1]
 outputs.set_val(Aircraft.Canard.WETTED_AREA, 0.0, 'ft**2')  # SWTCN
 outputs.set_val(Aircraft.Canard.MASS, 0.0, 'lbm')  # WCAN
-outputs.set_val(Aircraft.BWB.NUM_BAYS, 7.0, 'unitless')  # NBAY
 
 outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 20592.0, 'lbm')  # WPBAG
 outputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0.0, 'lbm')  # WCARGO
