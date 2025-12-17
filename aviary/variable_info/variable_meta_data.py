@@ -3699,7 +3699,7 @@ add_meta_data(
         'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
     },
     units='ft',
-    desc='A course average diameter that is the mean of the width and depth.',
+    desc='A coarse average diameter calculated using the mean of max width and depth.',
     default_value=0.0,
 )
 
