@@ -4,7 +4,6 @@ from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 import sys
 
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import Verbosity
 
@@ -71,6 +70,8 @@ def run_aviary(
         name = Path(aircraft_data).stem
     else:
         name = None
+
+    from aviary.interface.methods_for_level2 import AviaryProblem
 
     # Build problem
     prob = AviaryProblem(name=name, verbosity=verbosity)
