@@ -87,6 +87,12 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     Verbosity, optional
         Sets level of printouts for this function.
     """
+    # Check and process cargo variables - confirm mass method
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise UserWarning('MASS_METHOD not specified. Cannot preprocess cargo inputs.')
+
     if verbosity is not None:
         # compatibility with being passed int for verbosity
         verbosity = Verbosity(verbosity)
@@ -95,19 +101,25 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     pax_provided = False
     design_pax_provided = False
 
-    pax_keys = [
-        Aircraft.CrewPayload.NUM_PASSENGERS,
-        Aircraft.CrewPayload.NUM_FIRST_CLASS,
-        Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
-        Aircraft.CrewPayload.NUM_TOURIST_CLASS,
-    ]
+    if mass_method == LegacyCode.FLOPS:
+        pax_keys = [
+            Aircraft.CrewPayload.NUM_PASSENGERS,
+            Aircraft.CrewPayload.NUM_FIRST_CLASS,
+            Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
+            Aircraft.CrewPayload.NUM_TOURIST_CLASS,
+        ]
 
-    design_pax_keys = [
-        Aircraft.CrewPayload.Design.NUM_PASSENGERS,
-        Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
-        Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
-        Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
-    ]
+        design_pax_keys = [
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS,
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+        ]
+    else:
+        pax_keys = [Aircraft.CrewPayload.NUM_PASSENGERS]
+
+        design_pax_keys = [Aircraft.CrewPayload.Design.NUM_PASSENGERS]
+
 
     for key in pax_keys:
         if key in aviary_options:
@@ -221,45 +233,41 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 'will be flown using the mass of these extra passengers and baggage, '
                 'but this mission may not be realistic due to lack of room.'
             )
-    # First Class
-    if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS) < aviary_options.get_val(
-        Aircraft.CrewPayload.NUM_FIRST_CLASS
-    ):
-        if verbosity >= 1:
-            UserWarning(
-                'More first class passengers are flying in this mission than there are '
-                'available first class seats on the aircraft. Assuming these passengers '
-                'have the same mass as other first class passengers, but are sitting in '
-                'different seats.'
-            )
-    # Business Class
-    if aviary_options.get_val(
-        Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
-    ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS):
-        if verbosity >= 1:
-            UserWarning(
-                'More business class passengers are flying in this mission than there are '
-                'available business class seats on the aircraft. Assuming these passengers '
-                'have the same mass as other business class passengers, but are sitting in '
-                'different seats.'
-            )
-    # Economy Class
-    if aviary_options.get_val(
-        Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
-    ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
-        if verbosity >= 1:
-            UserWarning(
-                'More tourist class passengers are flying in this mission than there are '
-                'available tourist class seats on the aircraft. Assuming these passengers '
-                'have the same mass as other tourist class passengers, but are sitting in '
-                'different seats.'
-            )
 
-    # Check and process cargo variables - confirm mass method
-    if Settings.MASS_METHOD in aviary_options:
-        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
-    else:
-        raise UserWarning('MASS_METHOD not specified. Cannot preprocess cargo inputs.')
+    if mass_method == LegacyCode.FLOPS:
+        # First Class
+        if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS) < aviary_options.get_val(
+            Aircraft.CrewPayload.NUM_FIRST_CLASS
+        ):
+            if verbosity >= 1:
+                UserWarning(
+                    'More first class passengers are flying in this mission than there are '
+                    'available first class seats on the aircraft. Assuming these passengers '
+                    'have the same mass as other first class passengers, but are sitting in '
+                    'different seats.'
+                )
+        # Business Class
+        if aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
+        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS):
+            if verbosity >= 1:
+                UserWarning(
+                    'More business class passengers are flying in this mission than there are '
+                    'available business class seats on the aircraft. Assuming these passengers '
+                    'have the same mass as other business class passengers, but are sitting in '
+                    'different seats.'
+                )
+        # Economy Class
+        if aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
+        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
+            if verbosity >= 1:
+                UserWarning(
+                    'More tourist class passengers are flying in this mission than there are '
+                    'available tourist class seats on the aircraft. Assuming these passengers '
+                    'have the same mass as other tourist class passengers, but are sitting in '
+                    'different seats.'
+                )
 
     # Process GASP based cargo variables
     if mass_method == LegacyCode.GASP:
