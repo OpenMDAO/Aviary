@@ -120,7 +120,6 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
         design_pax_keys = [Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
-
     for key in pax_keys:
         if key in aviary_options:
             # mark that the user provided any information on mission passenger count
@@ -236,9 +235,9 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
     if mass_method == LegacyCode.FLOPS:
         # First Class
-        if aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS) < aviary_options.get_val(
-            Aircraft.CrewPayload.NUM_FIRST_CLASS
-        ):
+        if aviary_options.get_val(
+            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
+        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
             if verbosity >= 1:
                 UserWarning(
                     'More first class passengers are flying in this mission than there are '
