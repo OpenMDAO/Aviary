@@ -4,6 +4,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
@@ -465,5 +466,41 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
 
+class BWBPreMissionGroupCSVTest(unittest.TestCase):
+    def setUp(self):
+        prob = self.prob = AviaryProblem()
+
+        csv_path = 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv'
+        self.flops_inputs = prob.load_inputs(csv_path)
+        prob.check_and_preprocess_inputs()
+
+    def test_case_geom(self):
+        """
+        premission: geometry
+        """
+        prob = self.prob
+
+        preprocess_options(self.flops_inputs)
+        geom_subsystem = get_geom_and_mass_subsystems('FLOPS')[0:1]
+
+        prob.model.add_subsystem(
+            'pre_mission',
+            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_subsystem),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(prob, self.flops_inputs)
+        prob.setup(check=False)
+        set_aviary_initial_values(prob, self.flops_inputs)
+
+        prob.run_model()
+
+        tol = 1e-5
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBPreMissionGroupCSVTest()
+    test.setUp()
+    test.test_case_geom()
