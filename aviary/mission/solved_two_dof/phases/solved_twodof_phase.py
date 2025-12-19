@@ -298,4 +298,6 @@ SolvedTwoDOFPhase._add_initial_guess_meta_data(
     desc='initial guess for angle of attack',
 )
 
-SolvedTwoDOFPhase._add_initial_guess_meta_data(InitialGuessState('time'), desc='initial guess for time')
+SolvedTwoDOFPhase._add_initial_guess_meta_data(
+    InitialGuessState('time'), desc='initial guess for time'
+)

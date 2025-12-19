@@ -32,7 +32,9 @@ from aviary.mission.height_energy.ode.landing_ode import FlareODE, LandingODE
 from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as _TakeoffTrajectory,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import _init_initial_guess_meta_data
+from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+    _init_initial_guess_meta_data
+)
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessParameter,
