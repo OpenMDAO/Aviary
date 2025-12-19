@@ -4,9 +4,9 @@ import openmdao.api as om
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import (
+from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
+from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
+from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder

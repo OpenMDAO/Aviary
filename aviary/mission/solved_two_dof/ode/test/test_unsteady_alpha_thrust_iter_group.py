@@ -6,10 +6,10 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.gasp_based.ode.params import set_params_for_unit_tests
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_control_iter_group import (
+from aviary.mission.solved_two_dof.ode.unsteady_control_iter_group import (
     UnsteadyControlIterGroup,
 )
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import (
+from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder

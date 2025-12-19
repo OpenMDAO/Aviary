@@ -4,8 +4,8 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.mission.gasp_based.ode.unsteady_solved.gamma_comp import GammaComp
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import UnsteadySolvedEOM
+from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
+from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 

@@ -1,12 +1,12 @@
 import dymos as dm
 
 from aviary.mission.flight_phase_builder import FlightPhaseBase, register
-from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_ode import UnsteadySolvedODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessIntegrationVariable,
     InitialGuessPolynomialControl,
     InitialGuessState,
 )
+from aviary.mission.solved_two_dof.ode.unsteady_solved_ode import UnsteadySolvedODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import wrapped_convert_units
@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Dynamic
 # - self.meta_data, with cls.default_meta_data customization point
 
 
-class TwoDOFPhaseOptions(AviaryOptionsDictionary):
+class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
             name='num_segments',
@@ -175,10 +175,10 @@ class TwoDOFPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class TwoDOFPhase(FlightPhaseBase):
+class SolvedTwoDOFPhase(FlightPhaseBase):
     """A phase builder for a two degree of freedom (2DOF) phase."""
 
-    default_options_class = TwoDOFPhaseOptions
+    default_options_class = SolvedTwoDOFPhaseOptions
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
@@ -288,14 +288,14 @@ class TwoDOFPhase(FlightPhaseBase):
         }
 
 
-TwoDOFPhase._add_initial_guess_meta_data(
+SolvedTwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(key='distance'),
     desc='initial guess for initial distance and duration specified as a tuple',
 )
 
-TwoDOFPhase._add_initial_guess_meta_data(
+SolvedTwoDOFPhase._add_initial_guess_meta_data(
     InitialGuessPolynomialControl('angle_of_attack'),
     desc='initial guess for angle of attack',
 )
 
-TwoDOFPhase._add_initial_guess_meta_data(InitialGuessState('time'), desc='initial guess for time')
+SolvedTwoDOFPhase._add_initial_guess_meta_data(InitialGuessState('time'), desc='initial guess for time')
