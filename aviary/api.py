@@ -96,7 +96,6 @@ from aviary.utils.preprocessors import (
     preprocess_propulsion,
 )
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.utils.functions import create_opts2vals, add_opts2vals, Null
 
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP

@@ -6,7 +6,7 @@ from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import add_opts2vals, create_opts2vals
+from aviary.utils.option_to_var import add_opts2vals, create_opts2vals
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 

@@ -1,5 +1,6 @@
 import csv
 import json
+import math
 import os
 import warnings
 from copy import deepcopy
@@ -1278,14 +1279,14 @@ class AviaryProblem(om.Problem):
         ----------
         problem_type : str, ProblemType
             The type of off-design mission to be flown. SIZING missions are not allowed.
-        phase_info : dict (optional)
+        phase_info : dict, optional
             The phase_info to use for the off-design mission. If not provided, the phase info used
             for the previous Aviary run (typically the design mission) is used.
-        equation_of_motion : str, EquationsOfMotion
+        equation_of_motion : (str, EquationsOfMotion), optional
             Which equations of motion to use for the off-design mission. If not provided, the
             equations of motion used for the previous Aviary run (typically the design mission) is
             used.
-        problem_configurator : ProblemConfigurator
+        problem_configurator : ProblemConfigurator, optional
             Problem configurator to use for the off-design mission. If not provided, the problem
             configurator used for the previous Aviary run (typically the design mission) is used.
         num_first_class : int, optional
@@ -1305,7 +1306,8 @@ class AviaryProblem(om.Problem):
         cargo_mass : float, optional
             Total cargo mass flying on off-design mission, in pounds-mass. Optional if using FLOPS-
             based mass, individual wing and/or misc cargo is defined, and no additional cargo is
-            being carried elsewhere.
+            being carried elsewhere. Note: if using FLOPS-based mass, this variable is an override
+            for total cargo mass.
         mission_gross_mass : float, optional
             Gross mass of aircraft flying off-design mission, in pounds-mass. Defaults to design
             gross mass. For missions where mass is solved for (such as ALTERNATE missions), this is
@@ -1330,7 +1332,7 @@ class AviaryProblem(om.Problem):
             Adds takeoff gross mass as a design variable. Useful for cases when operating mass can
             change between missions. Defaults to False. Cannot be used at the same time as
             fill_cargo.
-        verbosity : int, Verbosity
+        verbosity : (int, Verbosity), optional
             Sets the printout level for the entire off-design problem that is ran.
         """
         # For off-design missions, provided verbosity will be used for all L2 method calls
@@ -1377,6 +1379,15 @@ class AviaryProblem(om.Problem):
 
         # update passenger count and cargo masses
         mass_method = inputs.get_val(Settings.MASS_METHOD)
+
+        # Sanity check passenger counts - cover specific edge case that preprocessors won't catch
+        # Since we inherit mission pax count from sizing mission, we need to overwrite it
+        if (
+            mass_method is FLOPS
+            and num_pax is None
+            and not any((num_tourist, num_business, num_first_class))
+        ):
+            num_pax = sum(filter(None, [num_tourist, num_business, num_first_class]))
 
         # only FLOPS cares about seat class or specific cargo categories
         if mass_method == LegacyCode.FLOPS:
@@ -1453,10 +1464,12 @@ class AviaryProblem(om.Problem):
             )
 
         off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
-        off_design_prob.add_pre_mission_systems(verbosity=verbosity)
-        off_design_prob.add_phases(verbosity=verbosity)
-        off_design_prob.add_post_mission_systems(verbosity=verbosity)
-        off_design_prob.link_phases(verbosity=verbosity)
+        # off_design_prob.add_pre_mission_systems(verbosity=verbosity)
+        # off_design_prob.add_phases(verbosity=verbosity)
+        # off_design_prob.add_post_mission_systems(verbosity=verbosity)
+        # off_design_prob.link_phases(verbosity=verbosity)
+        off_design_prob.build_model(verbosity=verbosity)
+
         if optimizer is None:
             try:
                 optimizer = self.driver.options['optimizer']
@@ -1559,13 +1572,10 @@ class AviaryProblem(om.Problem):
             )
             return ()
 
-        # Off-design missions do not currently work for GASP masses or missions.
+        # Off-design missions are not tested with 2DOF missions.
         mass_method = self.model.aviary_inputs.get_val(Settings.MASS_METHOD)
         equations_of_motion = self.model.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
-        if (
-            mass_method == LegacyCode.FLOPS
-            and equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY
-        ):
+        if equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY:
             # make a copy of the phase_info to avoid modifying the original.
             phase_info = self.model.mission_info.copy()
             phase_info['pre_mission'] = self.model.pre_mission_info.copy()
@@ -1603,6 +1613,7 @@ class AviaryProblem(om.Problem):
 
             fuel_2 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
 
+            # Operating mass includes unusable fuel, don't double count
             max_usable_fuel = fuel_capacity - unusable_fuel
 
             # An aircraft may be designed with fuel tank capacity that, if fully filled, would
@@ -1610,8 +1621,10 @@ class AviaryProblem(om.Problem):
             # the point only needs to be run once.
             if operating_mass + max_usable_fuel < gross_mass:
                 # Point 3 (Max Economic Range): max fuel and remaining payload capacity
-                economic_mission_total_payload = gross_mass - operating_mass - max_usable_fuel
+                # Assume proportional decrease in all cargo types (including number of passengers)
+                # to make room for maximum fuel. Round pax count down to avoid loading over TOGW
 
+                economic_mission_total_payload = gross_mass - operating_mass - max_usable_fuel
                 payload_frac = economic_mission_total_payload / max_payload
 
                 # Calculates Different payload quantities
@@ -1624,23 +1637,15 @@ class AviaryProblem(om.Problem):
                     * payload_frac
                 )
                 economic_mission_num_first = int(
-                    (self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS))
+                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
                     * payload_frac
                 )
                 economic_mission_num_bus = int(
-                    (
-                        self.model.aviary_inputs.get_val(
-                            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
-                        )
-                    )
+                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
                     * payload_frac
                 )
                 economic_mission_num_tourist = int(
-                    (
-                        self.model.aviary_inputs.get_val(
-                            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
-                        )
-                    )
+                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
                     * payload_frac
                 )
 
@@ -1675,17 +1680,22 @@ class AviaryProblem(om.Problem):
                 max_usable_fuel = gross_mass - operating_mass
 
             # Point 4 (Ferry Range): maximum fuel and 0 payload
+            # Total cargo mass is an input in GASP, but an output in FLOPS. Avoid overriding cargo
+            # mass to 0 if not using GASP
+            if mass_method is GASP:
+                ferry_cargo_mass = 0
+            else:
+                ferry_cargo_mass = None
             ferry_range_gross_mass = operating_mass + max_usable_fuel
-            # BUG 0 passengers breaks the problem, so 1 must be used
             ferry_range_prob = self.run_off_design_mission(
                 problem_type=ProblemType.FALLOUT,
                 phase_info=phase_info,
                 num_first_class=0,
                 num_business=0,
-                num_tourist=1,
+                num_tourist=0,
                 wing_cargo=0,
                 misc_cargo=0,
-                cargo_mass=0,
+                cargo_mass=ferry_cargo_mass,
                 mission_gross_mass=ferry_range_gross_mass,
                 name=self._name + '_ferry_range',
                 fill_fuel=True,
