@@ -83,6 +83,113 @@ class VariableStructureTest(unittest.TestCase):
     def test_alphabetization(self):
         assert_structure_alphabetization('variable_info/variables.py')
 
+    # This test was written using AI
+    def test_variable_names_match_strings(self):
+        """
+        Test that the last section of variable names match their associated string values.
+        For example, Aircraft.APU.MASS should have 'mass' as the last section of 'aircraft:apu:mass'.
+        Only the last section (after the last colon) is checked, not the full path.
+        """
+
+        def check_hierarchy(hierarchy, path_prefix='', hierarchy_name='', display_name=''):
+            """
+            Recursively check that variable names match their string values.
+
+            Parameters
+            ----------
+            hierarchy : class
+                The class hierarchy to check
+            path_prefix : str
+                The prefix path for building expected strings (e.g., 'aircraft:apu')
+            hierarchy_name : str
+                The name of the hierarchy root (e.g., 'aircraft', 'mission', 'settings').
+                If empty, no prefix is used (for Dynamic variables).
+            display_name : str
+                The name to use in error messages (e.g., 'Dynamic', 'Aircraft')
+            """
+            mismatches = []
+
+            # Get all attributes that don't start with __
+            attrs = [attr for attr in dir(hierarchy) if not attr.startswith('__')]
+
+            for attr_name in attrs:
+                attr_value = getattr(hierarchy, attr_name)
+
+                # Skip if it's a method or other non-string, non-class attribute
+                if callable(attr_value) and not isinstance(attr_value, type):
+                    continue
+
+                # If it's a string, check if it matches the expected pattern
+                if isinstance(attr_value, str):
+                    # Only check the last section of the variable name
+                    # Extract the last part after the last colon (or the whole string if no colon)
+                    actual_last_section = attr_value.split(':')[-1]
+
+                    # Expected last section is the attribute name in lowercase
+                    expected_last_section = attr_name.lower()
+
+                    # Compare only the last sections
+                    if actual_last_section != expected_last_section:
+                        # Build the full path for error message
+                        if path_prefix:
+                            full_path = f'{path_prefix}.{attr_name}'
+                        else:
+                            full_path = f'{display_name}.{attr_name}'
+                        mismatches.append(
+                            f'{full_path} = {attr_value!r}, expected last section '
+                            f'{expected_last_section!r}'
+                        )
+
+                # If it's a class (nested class), recurse
+                elif isinstance(attr_value, type):
+                    # Build new path prefix
+                    class_name_lower = attr_name.lower()
+                    if hierarchy_name:
+                        # Use full path pattern
+                        if path_prefix:
+                            new_prefix = f'{path_prefix}:{class_name_lower}'
+                        else:
+                            new_prefix = f'{hierarchy_name}:{class_name_lower}'
+                    else:
+                        # No prefix pattern (for Dynamic variables)
+                        new_prefix = ''
+
+                    # Build display name for error messages
+                    if path_prefix:
+                        new_display_name = f'{path_prefix}.{attr_name}'
+                    else:
+                        new_display_name = f'{display_name}.{attr_name}'
+
+                    # Recursively check nested class
+                    nested_mismatches = check_hierarchy(
+                        attr_value, new_prefix, hierarchy_name, new_display_name
+                    )
+                    mismatches.extend(nested_mismatches)
+
+            return mismatches
+
+        all_mismatches = []
+
+        aircraft_mismatches = check_hierarchy(Aircraft, '', 'aircraft', 'Aircraft')
+        all_mismatches.extend(aircraft_mismatches)
+
+        mission_mismatches = check_hierarchy(Mission, '', 'mission', 'Mission')
+        all_mismatches.extend(mission_mismatches)
+
+        # Note: Dynamic variables don't have the full path prefix, they're just the variable name
+        # Pass empty hierarchy_name to indicate no prefix should be used
+
+        # TODO: Should dynamic variables be updated to match hierarchy names?
+        # dynamic_mismatches = check_hierarchy(Dynamic, '', '', 'Dynamic')
+        # all_mismatches.extend(dynamic_mismatches)
+
+        settings_mismatches = check_hierarchy(Settings, '', 'settings', 'Settings')
+        all_mismatches.extend(settings_mismatches)
+
+        if all_mismatches:
+            error_msg = 'Variable name mismatches found:\n' + '\n'.join(all_mismatches)
+            self.fail(error_msg)
+
 
 class TestTheTests(unittest.TestCase):
     def test_duplication_check(self):
@@ -96,4 +203,6 @@ class TestTheTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = VariableStructureTest()
+    test.test_variable_names_match_strings()

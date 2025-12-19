@@ -5376,7 +5376,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.ASPECT_RATIO_REF,
+    Aircraft.Wing.ASPECT_RATIO_REFERENCE,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -6433,7 +6433,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+    Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
