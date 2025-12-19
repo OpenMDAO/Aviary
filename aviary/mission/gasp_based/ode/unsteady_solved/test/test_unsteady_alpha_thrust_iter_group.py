@@ -37,7 +37,7 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
         p.model.add_subsystem('fc', subsys=fc, promotes_inputs=['*'], promotes_outputs=['*'])
 
         g = UnsteadyControlIterGroup(
-            num_nodes=nn, ground_roll=ground_roll, clean=True, core_subsystems=[aero]
+            num_nodes=nn, ground_roll=ground_roll, clean=True, subsystems=[aero]
         )
 
         ig = p.model.add_subsystem(

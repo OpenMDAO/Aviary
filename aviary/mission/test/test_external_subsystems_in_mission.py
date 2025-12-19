@@ -9,7 +9,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft
 
 energy_phase_info = deepcopy(energy_phase_info)
@@ -36,7 +36,6 @@ energy_phase_info.pop('descent')
 class TestExternalSubsystems(unittest.TestCase):
     def test_mission_solver_energy(self):
         local_phase_info = deepcopy(energy_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
@@ -44,7 +43,8 @@ class TestExternalSubsystems(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
-
+        prob.load_external_subsystems([SolverBuilder(name='solve_me')])
+        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
@@ -55,16 +55,13 @@ class TestExternalSubsystems(unittest.TestCase):
 
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs_all.solver_sub.external_subsystems,
+                prob.model.traj.phases.cruise.rhs_all.solver_sub,
                 'solve_me',
             )
         )
 
     def test_no_mission_solver_energy(self):
         local_phase_info = deepcopy(energy_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [
-            NoSolverBuilder(name='do_not_solve_me')
-        ]
 
         prob = AviaryProblem()
 
@@ -72,6 +69,8 @@ class TestExternalSubsystems(unittest.TestCase):
             'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
             local_phase_info,
         )
+
+        prob.load_external_subsystems([NoSolverBuilder(name='do_not_solve_me')])
 
         prob.check_and_preprocess_inputs()
 
@@ -83,14 +82,13 @@ class TestExternalSubsystems(unittest.TestCase):
 
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs_all.external_subsystems,
+                prob.model.traj.phases.cruise.rhs_all,
                 'do_not_solve_me',
             )
         )
 
     def test_mission_solver_2DOF(self):
         local_phase_info = deepcopy(two_dof_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [SolverBuilder(name='solve_me')]
 
         prob = AviaryProblem()
 
@@ -98,6 +96,7 @@ class TestExternalSubsystems(unittest.TestCase):
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
+        prob.load_external_subsystems([SolverBuilder(name='solve_me')])
 
         prob.check_and_preprocess_inputs()
 
@@ -110,16 +109,13 @@ class TestExternalSubsystems(unittest.TestCase):
         # NOTE currently 2DOF ODEs do not use the solver subsystem
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs.external_subsystems,
+                prob.model.traj.phases.cruise.rhs,
                 'solve_me',
             )
         )
 
     def test_no_mission_solver_2DOF(self):
         local_phase_info = deepcopy(two_dof_phase_info)
-        local_phase_info['cruise']['external_subsystems'] = [
-            NoSolverBuilder(name='do_not_solve_me')
-        ]
 
         prob = AviaryProblem()
 
@@ -127,6 +123,7 @@ class TestExternalSubsystems(unittest.TestCase):
             'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.csv',
             local_phase_info,
         )
+        prob.load_external_subsystems([NoSolverBuilder(name='do_not_solve_me')])
 
         prob.check_and_preprocess_inputs()
 
@@ -138,7 +135,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs.external_subsystems,
+                prob.model.traj.phases.cruise.rhs,
                 'do_not_solve_me',
             )
         )
@@ -155,23 +152,23 @@ class ExternNoSolve(om.ExplicitComponent):
         pass
 
 
-class NoSolverBuilder(SubsystemBuilderBase):
+class NoSolverBuilder(SubsystemBuilder):
     """Mission only. No solver."""
 
     def needs_mission_solver(self, aviary_options):
         return False
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return ExternNoSolve()
 
 
-class SolverBuilder(SubsystemBuilderBase):
+class SolverBuilder(SubsystemBuilder):
     """Mission only. Solver."""
 
     def needs_mission_solver(self, aviary_options):
         return True
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return ExternNoSolve()
 
 

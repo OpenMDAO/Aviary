@@ -162,10 +162,9 @@ def subsystem_report(prob: AviaryProblem, **kwargs):
     else:
         model = prob.model
 
-    # TODO external subsystems??
-    core_subsystems = model.core_subsystems  # TODO: redo for multimissions
+    subsystems = model.subsystems  # TODO: redo for multimissions
 
-    for subsystem in core_subsystems.values():
+    for subsystem in subsystems:
         subsystem.report(prob, reports_folder, **kwargs)
 
 

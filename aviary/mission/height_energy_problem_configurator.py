@@ -8,7 +8,7 @@ from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.flops_based.phases.build_landing import Landing
 from aviary.mission.flops_based.phases.build_takeoff import Takeoff
 from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing
@@ -157,15 +157,14 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'phase_builder' in phase_options:
             phase_builder = phase_options['phase_builder']
-            if not issubclass(phase_builder, PhaseBuilderBase):
+            if not issubclass(phase_builder, PhaseBuilder):
                 raise TypeError(
-                    'phase_builder for the phase called '
-                    '{phase_name} must be a PhaseBuilderBase object.'
+                    'phase_builder for the phase called {phase_name} must be a PhaseBuilder object.'
                 )
         else:
             phase_builder = EnergyPhase

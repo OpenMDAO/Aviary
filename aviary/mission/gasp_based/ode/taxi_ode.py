@@ -4,7 +4,7 @@ import openmdao.api as om
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.taxi_eom import TaxiFuelComponent
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.option_to_var import add_opts2vals, create_opts2vals
 from aviary.variable_info.enums import SpeedType
@@ -16,7 +16,7 @@ class TaxiSegment(TwoDOFODE):
 
     def setup(self):
         options: AviaryValues = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         self.add_subsystem('params', ParamPort(), promotes=['*'])
 
@@ -53,8 +53,8 @@ class TaxiSegment(TwoDOFODE):
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
-        for subsystem in core_subsystems:
-            if isinstance(subsystem, PropulsionBuilderBase):
+        for subsystem in subsystems:
+            if isinstance(subsystem, PropulsionBuilder):
                 system = subsystem.build_mission(num_nodes=1, aviary_inputs=options)
 
                 self.add_subsystem(
@@ -67,8 +67,6 @@ class TaxiSegment(TwoDOFODE):
                     ],
                     promotes_outputs=['*'],
                 )
-
-        self.add_external_subsystems()
 
         self.add_subsystem('taxifuel', TaxiFuelComponent(), promotes=['*'])
 

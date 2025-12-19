@@ -27,7 +27,7 @@ class AccelerationODETestCase(unittest.TestCase):
         )
 
         self.sys = self.prob.model = AccelODE(
-            num_nodes=2, aviary_options=aviary_options, core_subsystems=default_mission_subsystems
+            num_nodes=2, aviary_options=aviary_options, subsystems=default_mission_subsystems
         )
 
     def test_accel(self):

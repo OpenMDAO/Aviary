@@ -34,7 +34,7 @@ class ClimbODETestCase(unittest.TestCase):
             EAS_target=250,
             mach_cruise=0.8,
             aviary_options=aviary_options,
-            core_subsystems=default_mission_subsystems,
+            subsystems=default_mission_subsystems,
         )
 
         setup_model_options(self.prob, aviary_options)

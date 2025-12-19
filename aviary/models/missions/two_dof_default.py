@@ -6,7 +6,7 @@ mission_distance = 3675
 
 phase_info = {
     'groundroll': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -32,7 +32,7 @@ phase_info = {
         },
     },
     'rotation': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -61,7 +61,7 @@ phase_info = {
         },
     },
     'ascent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 4,
             'order': 3,
@@ -99,7 +99,7 @@ phase_info = {
         },
     },
     'accel': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -125,7 +125,7 @@ phase_info = {
         },
     },
     'climb1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -152,7 +152,7 @@ phase_info = {
         },
     },
     'climb2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -180,7 +180,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
@@ -195,7 +195,7 @@ phase_info = {
         },
     },
     'desc1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -224,7 +224,7 @@ phase_info = {
         },
     },
     'desc2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 7,
