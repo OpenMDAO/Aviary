@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
@@ -497,7 +498,11 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-5
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 000, tol)
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBPreMissionGroupCSVTest()
+    test.setUp()
+    test.test_case_geom()
