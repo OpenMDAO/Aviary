@@ -3,8 +3,6 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
-from pathlib import Path
-
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
@@ -1966,7 +1964,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'ENGDIN.EIFILE', 'LEAPS1': None},
     units='unitless',
-    types=(Path, str),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables',
@@ -2688,7 +2686,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    types=(str, Path),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing propeller data map',
