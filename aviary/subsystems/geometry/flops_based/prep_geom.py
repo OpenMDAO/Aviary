@@ -209,7 +209,7 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
@@ -544,7 +544,7 @@ class _Prelim(om.ExplicitComponent):
     @property
     def fuselage_var(self):
         """Define the variable name associated with XDX."""
-        value = Aircraft.Fuselage.AVG_DIAMETER
+        value = Aircraft.Fuselage.REF_DIAMETER
 
         if self.options[Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION]:
             value = Aircraft.Fuselage.MAX_WIDTH
@@ -864,7 +864,7 @@ class _Fuselage(om.ExplicitComponent):
         self.add_input(Names.CROTVT, 0.0, units='unitless')
         self.add_input(Names.CRTHTB, 0.0, units='unitless')
 
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER, units='unitless')
 
@@ -877,12 +877,12 @@ class _Fuselage(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Fuselage.CROSS_SECTION, Aircraft.Fuselage.AVG_DIAMETER)
+        self.declare_partials(Aircraft.Fuselage.CROSS_SECTION, Aircraft.Fuselage.REF_DIAMETER)
 
         self.declare_partials(
             Aircraft.Fuselage.WETTED_AREA,
             [
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.WETTED_AREA_SCALER,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
@@ -902,10 +902,10 @@ class _Fuselage(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 print('Aircraft.Fuselage.NUM_FUSELAGES must be positive.')
 
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
         if avg_diam <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.AVG_DIAMETER must be positive.')
+                print('Aircraft.Fuselage.REF_DIAMETER must be positive.')
 
         cross_section = pi * (avg_diam / 2.0) ** 2.0
         outputs[Aircraft.Fuselage.CROSS_SECTION] = cross_section
@@ -944,9 +944,9 @@ class _Fuselage(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
 
-        J[Aircraft.Fuselage.CROSS_SECTION, Aircraft.Fuselage.AVG_DIAMETER] = 0.5 * pi * avg_diam
+        J[Aircraft.Fuselage.CROSS_SECTION, Aircraft.Fuselage.REF_DIAMETER] = 0.5 * pi * avg_diam
 
         if (0 < num_fuselages) and (0.0 < avg_diam):
             CROOTB = inputs[Names.CROOTB]
@@ -972,7 +972,7 @@ class _Fuselage(om.ExplicitComponent):
             dcfah = d_calc_fuselage_adjustment(CRTHTB, ht_thickness_chord)
             dcfav = d_calc_fuselage_adjustment(CROTVT, vt_thickness_chord)
 
-            J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.AVG_DIAMETER] = (
+            J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.REF_DIAMETER] = (
                 scaler * pi * (length - 3.4 * avg_diam)
             )
 
@@ -1012,7 +1012,7 @@ class _Fuselage(om.ExplicitComponent):
             J[Aircraft.Fuselage.WETTED_AREA, Names.CROOTB] = J[
                 Aircraft.Fuselage.WETTED_AREA, Names.CRTHTB
             ] = J[Aircraft.Fuselage.WETTED_AREA, Names.CROTVT] = J[
-                Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.AVG_DIAMETER
+                Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.REF_DIAMETER
             ] = J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.LENGTH] = J[
                 Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.WETTED_AREA_SCALER
             ] = J[Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.THICKNESS_TO_CHORD] = J[
@@ -1029,7 +1029,7 @@ class _FuselageRatios(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
@@ -1045,7 +1045,7 @@ class _FuselageRatios(om.ExplicitComponent):
             [
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Wing.GLOVE_AND_BAT,
             ],
         )
@@ -1054,14 +1054,14 @@ class _FuselageRatios(om.ExplicitComponent):
             Aircraft.Fuselage.LENGTH_TO_DIAMETER,
             [
                 Aircraft.Fuselage.LENGTH,
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
             ],
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         area = inputs[Aircraft.Wing.AREA]
         aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
 
         diam_to_wing_span = avg_diam / (aspect_ratio * (area - glove_and_bat)) ** 0.5
@@ -1080,13 +1080,13 @@ class _FuselageRatios(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         area = inputs[Aircraft.Wing.AREA]
         aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
 
         fact = aspect_ratio * (area - glove_and_bat)
         fact2 = 1.0 / fact**1.5
 
-        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Fuselage.AVG_DIAMETER] = 1.0 / fact**0.5
+        J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Fuselage.REF_DIAMETER] = 1.0 / fact**0.5
 
         J[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, Aircraft.Wing.ASPECT_RATIO] = (
             -0.5 * avg_diam * (area - glove_and_bat) * fact2
@@ -1103,13 +1103,13 @@ class _FuselageRatios(om.ExplicitComponent):
         if 0.0 < avg_diam:
             length = inputs[Aircraft.Fuselage.LENGTH]
 
-            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.AVG_DIAMETER] = (
+            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.REF_DIAMETER] = (
                 -length / avg_diam**2
             )
 
             J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.LENGTH] = 1.0 / avg_diam
 
         else:
-            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.AVG_DIAMETER] = J[
+            J[Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.REF_DIAMETER] = J[
                 Aircraft.Fuselage.LENGTH_TO_DIAMETER, Aircraft.Fuselage.LENGTH
             ] = 0.0

@@ -51,7 +51,7 @@ class FuselageMassTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Fuselage.LENGTH,
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.MASS_SCALER,
             ],
             output_keys=Aircraft.Fuselage.MASS,
@@ -89,7 +89,7 @@ class FuselageMassTest2(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.LENGTH, 100.0, 'ft')
-        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 10.0, 'ft')
+        prob.set_val(Aircraft.Fuselage.REF_DIAMETER, 10.0, 'ft')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)

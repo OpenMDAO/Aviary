@@ -156,10 +156,10 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
         # add_aviary_input(self, Aircraft.Canard.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.Canard.THICKNESS_TO_CHORD, units='unitless')
 
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
@@ -248,7 +248,7 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Fuselage.FINENESS,
             [
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
             ],
         )
@@ -306,7 +306,7 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
 
         outputs[Aircraft.Fuselage.CHARACTERISTIC_LENGTH] = length
 
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
 
         fineness = length / avg_diam
 
@@ -427,11 +427,11 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
 
     def _compute_partials_fuselage(self, inputs, J, discrete_inputs=None):
         length = inputs[Aircraft.Fuselage.LENGTH]
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
 
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.LENGTH] = 1.0 / avg_diam
 
-        J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.AVG_DIAMETER] = -length / avg_diam**2.0
+        J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.REF_DIAMETER] = -length / avg_diam**2.0
 
     def _compute_partials_canard(self, inputs, J, discrete_inputs=None):
         area = inputs[Aircraft.Canard.AREA]
