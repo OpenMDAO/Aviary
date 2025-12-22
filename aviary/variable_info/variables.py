@@ -465,7 +465,7 @@ class Aircraft:
         AIRFOIL_TECHNOLOGY = 'aircraft:wing:airfoil_technology'
         AREA = 'aircraft:wing:area'
         ASPECT_RATIO = 'aircraft:wing:aspect_ratio'
-        ASPECT_RATIO_REFERENCE = 'aircraft:wing:ASPECT_RATIO_REFERENCE'
+        ASPECT_RATIO_REFERENCE = 'aircraft:wing:aspect_ratio_reference'
         AVERAGE_CHORD = 'aircraft:wing:average_chord'
         BENDING_MATERIAL_FACTOR = 'aircraft:wing:bending_material_factor'
         BENDING_MATERIAL_MASS = 'aircraft:wing:bending_material_mass'
