@@ -6,7 +6,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessPolynomialControl,
     InitialGuessState,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -67,10 +67,10 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class GroundrollPhase(PhaseBuilderBase):
+class GroundrollPhase(PhaseBuilder):
     """A phase builder for a two degree of freedom (2DOF) phase."""
 
-    __slots__ = ('external_subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data')
 
     _initial_guesses_meta_data_ = {}
 
@@ -185,9 +185,8 @@ class GroundrollPhase(PhaseBuilderBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'set_input_defaults': False,

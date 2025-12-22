@@ -32,7 +32,10 @@ html:
   use_issues_button: true
   use_repository_button: true
   favicon : "aviary_logo.png"
-  
+  extra_css:
+    - custom.css
+
+
 launch_buttons:
   colab_url: "https://colab.research.google.com"
 

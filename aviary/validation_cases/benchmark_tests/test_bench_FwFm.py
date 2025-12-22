@@ -113,7 +113,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         phase_info = {
             'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
             'climb': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 6,
                     'order': 3,
@@ -134,7 +134,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 },
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 1,
                     'order': 3,
@@ -158,7 +158,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 },
             },
             'descent': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -214,7 +214,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=0,
+            verbosity=1,
             max_iter=50,
             optimizer='SNOPT',
         )

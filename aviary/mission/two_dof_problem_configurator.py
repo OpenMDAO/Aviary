@@ -14,7 +14,6 @@ from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
 from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
@@ -223,7 +222,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'groundroll' in phase_name:
@@ -370,7 +369,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # safely add in default method in way that doesn't overwrite existing method
             # and create nested structure if it doesn't already exist
             aviary_group.mission_info[phase_name].setdefault('subsystem_options', {}).setdefault(
-                'core_aerodynamics', {}
+                'aerodynamics', {}
             ).setdefault('method', 'low_speed')
 
     def link_phases(self, aviary_group, phases, connect_directly=True):

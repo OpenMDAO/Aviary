@@ -524,8 +524,8 @@ class PayloadRangeTest(unittest.TestCase):
                 38025.0,
                 38025.0,
                 24365.60919974074,
-                225.0,
-            ],  # due to bug ferry mission must carry 1 passenger
+                0,
+            ],
             tolerance=1e-10,
         )
         assert_near_equal(
@@ -535,7 +535,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
-            [0, 2500, 3973.34, 4415.77],
+            [0, 2500, 3973.34, 4421.13575083],
             tolerance=1e-6,
         )
 
@@ -547,7 +547,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
         assert_near_equal(
             off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            140868.42657438,
+            140540.92087337,
             tolerance=1e-12,
         )
 

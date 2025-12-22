@@ -24,7 +24,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
             'climb': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -47,7 +47,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 },
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -70,7 +70,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 },
             },
             'descent': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
