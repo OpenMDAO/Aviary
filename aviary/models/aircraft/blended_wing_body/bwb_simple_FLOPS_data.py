@@ -95,6 +95,7 @@ inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
+inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6883, 'unitless')
 
 # Furnishings
 # ---------------------------
@@ -285,7 +286,7 @@ outputs.set_val(Aircraft.Electrical.MASS, 4514.28869169, 'lbm')  # WELEC
 outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 2385712.4988316689, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 8120.2023807944415, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 2163.999415070652, 'lbm')  # WUF
-# outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 0.0, 'lbm')  # FULWMX
+outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 2385712.4988316689, 'lbm')  # FULWMX
 
 outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
 outputs.set_val(Aircraft.Furnishings.MASS, 61482.097969438299, 'lbm')  # WFURN
