@@ -83,7 +83,7 @@ class ProblemConfiguratorBase:
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         msg = 'This pmethod must be defined in your problem configurator.'

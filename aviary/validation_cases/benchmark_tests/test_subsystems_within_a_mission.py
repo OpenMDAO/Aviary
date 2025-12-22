@@ -1,12 +1,13 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_almost_equal
+from numpy.testing import assert_almost_equal, assert_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.test.test_dummy_subsystem import (
     AdditionalArrayGuessSubsystemBuilder,
+    Aircraft,
     ArrayGuessSubsystemBuilder,
     Mission,
     MoreMission,
@@ -22,20 +23,10 @@ class TestSubsystemsMission(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {
-                    'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}
-                },
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
+                'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -57,7 +48,6 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [PostOnlyBuilder()],
             },
         }
 
@@ -67,6 +57,14 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+
+        prob.load_external_subsystems(
+            [
+                ArrayGuessSubsystemBuilder(),
+                AdditionalArrayGuessSubsystemBuilder(),
+                PostOnlyBuilder(),
+            ]
+        )
 
         prob.check_and_preprocess_inputs()
 
@@ -99,6 +97,9 @@ class TestSubsystemsMission(unittest.TestCase):
             np.array([[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T,
         )
 
+        # add an assert to see that the post-mission component correctly computed
+        assert_equal(prob.get_val('default_subsystem_name.y_postmission'), 0.25)
+
     def test_bad_initial_guess_key(self):
         phase_info = self.phase_info.copy()
         phase_info['cruise']['initial_guesses']['bad_guess_name'] = ([10.0, 100.0], 'm')
@@ -121,4 +122,7 @@ class TestSubsystemsMission(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestSubsystemsMission()
+    test.setUp()
+    test.test_subsystems_in_a_mission()

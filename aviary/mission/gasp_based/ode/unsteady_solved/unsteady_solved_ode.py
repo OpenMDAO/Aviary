@@ -9,9 +9,9 @@ from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_eom import Un
 from aviary.mission.gasp_based.ode.unsteady_solved.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import LegacyCode, SpeedType
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
@@ -88,7 +88,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         input_speed_type = self.options['input_speed_type']
         aviary_options = self.options['aviary_options']
         subsystem_options = self.options['subsystem_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
 
         if self.options['include_param_comp']:
@@ -173,13 +173,13 @@ class UnsteadySolvedODE(TwoDOFODE):
         }
         if self.options['clean']:
             kwargs['method'] = 'cruise'
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilderBase):
+                if isinstance(subsystem, AerodyanmicsBuilder):
                     mission_inputs = subsystem.mission_inputs(**kwargs)
                     if (
                         subsystem.code_origin is LegacyCode.FLOPS
@@ -193,7 +193,7 @@ class UnsteadySolvedODE(TwoDOFODE):
                         promotes_inputs=mission_inputs,
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-                elif isinstance(subsystem, PropulsionBuilderBase):
+                elif isinstance(subsystem, PropulsionBuilder):
                     throttle_balance_group.add_subsystem(
                         subsystem.name,
                         system,
@@ -207,8 +207,6 @@ class UnsteadySolvedODE(TwoDOFODE):
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-
-        self.add_external_subsystems()
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
