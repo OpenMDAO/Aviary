@@ -57,7 +57,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Canard.AREA, 'ft**2'),
             (Aircraft.Canard.ASPECT_RATIO, 'unitless'),
             (Aircraft.Canard.THICKNESS_TO_CHORD, 'unitless'),
-            # (Aircraft.Fuselage.AVG_DIAMETER, 'ft'),
+            # (Aircraft.Fuselage.REF_DIAMETER, 'ft'),
             (Aircraft.Fuselage.LENGTH, 'ft'),
             (Aircraft.HorizontalTail.AREA, 'ft**2'),
             (Aircraft.HorizontalTail.ASPECT_RATIO, 'unitless'),
@@ -75,7 +75,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             prob.set_val(var, aviary_inputs.get_val(var, units))
 
         # this is another component's output
-        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, val=12.75)
+        prob.set_val(Aircraft.Fuselage.REF_DIAMETER, val=12.75)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))

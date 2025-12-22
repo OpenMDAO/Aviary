@@ -108,7 +108,7 @@ class PrepGeomTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         output_keys = [
-            Aircraft.Fuselage.AVG_DIAMETER,
+            Aircraft.Fuselage.REF_DIAMETER,
             Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
             Aircraft.Fuselage.CROSS_SECTION,
             Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
@@ -242,7 +242,7 @@ class _PrelimTest(unittest.TestCase):
             input_validation_data=get_flops_data(case_name),
             output_validation_data=local_variables[case_name],
             input_keys=[
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.MAX_WIDTH,
                 Aircraft.HorizontalTail.AREA,
                 Aircraft.HorizontalTail.ASPECT_RATIO,
@@ -408,7 +408,7 @@ class _FuselageTest(unittest.TestCase):
                 Names.CROOTB,
                 Names.CROTVT,
                 Names.CRTHTB,
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.WETTED_AREA_SCALER,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
@@ -555,7 +555,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.Canard.AREA,
                 Aircraft.Canard.ASPECT_RATIO,
                 Aircraft.Canard.THICKNESS_TO_CHORD,
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.HorizontalTail.AREA,
                 Aircraft.HorizontalTail.ASPECT_RATIO,
@@ -829,7 +829,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         BWB_CHORD_PER_SEMISPAN_DIST -- CHD = [137.5, 91.371707406303713, 14.284802944808163]
         BWB_THICKNESS_TO_CHORD_DIST -- TOC = [0.11, 0.11, 0.11]
         BWB_LOAD_PATH_SWEEP_DIST -- SWL = [0, 15.337244816188816, 15.337244816188816]
-        Aircraft.Fuselage.AVG_DIAMETER -- XD = 39.8525
+        Aircraft.Fuselage.REF_DIAMETER -- XD = 39.8525
         Aircraft.Fuselage.PLANFORM_AREA -- FPAREA = 7390.267432149546
         Aircraft.Wing.AREA -- XW = 16555.972297926455
         Aircraft.Wing.ASPECT_RATIO -- AR = 3.4488821268812084
@@ -887,7 +887,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
-        assert_near_equal(prob.get_val(Aircraft.Fuselage.AVG_DIAMETER), 39.8525, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Fuselage.REF_DIAMETER), 39.8525, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.PLANFORM_AREA), 7390.26743215, tolerance=1e-8
         )
@@ -1207,7 +1207,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
-        assert_near_equal(prob.get_val(Aircraft.Fuselage.AVG_DIAMETER), 46.28688869, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Fuselage.REF_DIAMETER), 46.28688869, tolerance=1e-8)
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.PLANFORM_AREA), 6710.47401437, tolerance=1e-8
         )
