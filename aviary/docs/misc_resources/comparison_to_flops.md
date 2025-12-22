@@ -79,7 +79,7 @@ values may differ, even for the same tabular values.
 
 In addition to the two previous methods for defining the aero characteristics,
 Aviary also has the ability to dynamically link an external aerodynamics
-analysis using the AeroBuilderBase class. This external analysis can be
+analysis using the AeroBuilder class. This external analysis can be
 implemented as a metamodel, or even as an on-the-fly analysis. The interface
 between the mission analysis and aerodynamics is configurable, so in addition to
 the traditional relationship between the flight condition and lift and drag, the
