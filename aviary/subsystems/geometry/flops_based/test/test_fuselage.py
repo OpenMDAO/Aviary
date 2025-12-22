@@ -190,7 +190,7 @@ class BWBFuselagePrelimTest(unittest.TestCase):
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 
-        avg_diameter = prob.get_val(Aircraft.Fuselage.AVG_DIAMETER)
+        avg_diameter = prob.get_val(Aircraft.Fuselage.REF_DIAMETER)
         assert_near_equal(avg_diameter, 40.79, tolerance=1e-9)
         planform_area = prob.get_val(Aircraft.Fuselage.PLANFORM_AREA)
         assert_near_equal(planform_area, 4391.90128571, tolerance=1e-9)

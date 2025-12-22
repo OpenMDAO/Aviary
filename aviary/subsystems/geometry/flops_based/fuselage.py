@@ -12,7 +12,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 class FuselagePrelim(om.ExplicitComponent):
     """
     Calculate fuselage average diameter and planform area defined by:
-    Aircraft.Fuselage.AVG_DIAMETER = 0.5 * (max_height + max_width)
+    Aircraft.Fuselage.REF_DIAMETER = 0.5 * (max_height + max_width)
     Aircraft.Fuselage.PLANFORM_AREA = length * max_width.
     """
 
@@ -24,12 +24,12 @@ class FuselagePrelim(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
 
     def setup_partials(self):
         self.declare_partials(
-            of=[Aircraft.Fuselage.AVG_DIAMETER],
+            of=[Aircraft.Fuselage.REF_DIAMETER],
             wrt=[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH],
             val=0.5,
         )
@@ -50,7 +50,7 @@ class FuselagePrelim(om.ExplicitComponent):
                 )
 
         avg_diameter = 0.5 * (max_height + max_width)
-        outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
 
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = length * max_width
 
@@ -81,12 +81,12 @@ class BWBFuselagePrelim(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
 
     def setup_partials(self):
         self.declare_partials(
-            of=[Aircraft.Fuselage.AVG_DIAMETER],
+            of=[Aircraft.Fuselage.REF_DIAMETER],
             wrt=[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH],
             val=0.5,
         )
@@ -124,7 +124,7 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         avg_diameter = 0.5 * (max_height + max_width)
         planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
-        outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
 
     def compute_partials(self, inputs, partials):
