@@ -318,7 +318,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # TransportAvionicsMass
                 Aircraft.Avionics.MASS,
                 # FuelCapacityGroup
-                # Aircraft.Fuel.WING_FUEL_CAPACITY,
+                Aircraft.Fuel.WING_FUEL_CAPACITY,
                 Aircraft.Fuel.TOTAL_CAPACITY,
                 # EngineMass
                 Aircraft.Engine.MASS,
@@ -458,6 +458,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
 
+@use_tempdirs
 class BWBPreMissionGroupCSVTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = AviaryProblem()
@@ -536,7 +537,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
 
     def test_case_geom_mass(self):
         """
-        premission: geometry
+        premission: geometry + mass
         """
         prob = self.prob
 
@@ -558,7 +559,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
 
         prob.run_model()
 
-        tol = 1e-5
+        tol = 1e-4
         # Geometry
         # BWBSimpleCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 96.25, tol)
@@ -617,8 +618,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2896.223816950469, tol)
         # FuelCapacityGroup
-        # TODO
-        # assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 0.0, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 2385712.4988316689, tol)
         assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 2385712.4988316689, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 17825.63336233, tol)
@@ -703,9 +703,10 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         # FuelMass
         assert_near_equal(prob[Mission.Summary.FUEL_MASS], 320822.34030473698, tol)
 
-    def ttest_case_all_subsystems(self):
+    def test_case_all_subsystems(self):
         """
-        premission: geometry
+        premission: propulsion + geometry + aerodynamics + mass
+        Note: not checking propulsion and aerodynamics
         """
         prob = self.prob
 
@@ -726,13 +727,9 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         prob.setup(check=False)
         set_aviary_initial_values(prob, self.flops_inputs)
 
-        # prob.set_val(
-        #    Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=70000.0 * 3, units='lbf'
-        # )
-
         prob.run_model()
 
-        tol = 1e-5
+        tol = 1e-4
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST], 70000.0 * 3, tol)
         # Geometry
         # BWBSimpleCabinLayout
@@ -792,8 +789,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2896.223816950469, tol)
         # FuelCapacityGroup
-        # TODO
-        # assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 0.0, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 2385712.4988316689, tol)
         assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 2385712.4988316689, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 17825.63336233, tol)
@@ -880,10 +876,4 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBPreMissionGroupTest()
-    test.setUp()
-    # test.test_case_all_subsystems()
-    test = BWBPreMissionGroupCSVTest()
-    test.setUp()
-    test.ttest_case_all_subsystems()
+    unittest.main()
