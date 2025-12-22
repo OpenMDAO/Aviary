@@ -63,7 +63,7 @@ class PropulsionPreMissionTest(unittest.TestCase):
 
         model = self.prob.model
         prop = PropulsionPreMission(aviary_options=options, engine_models=engine_models)
-        model.add_subsystem('core_propulsion', prop, promotes=['*'])
+        model.add_subsystem('propulsion', prop, promotes=['*'])
 
         setup_model_options(self.prob, options, engine_models=engine_models)
 

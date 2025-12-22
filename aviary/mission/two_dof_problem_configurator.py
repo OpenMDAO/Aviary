@@ -222,7 +222,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'groundroll' in phase_name:
@@ -369,7 +369,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # safely add in default method in way that doesn't overwrite existing method
             # and create nested structure if it doesn't already exist
             aviary_group.mission_info[phase_name].setdefault('subsystem_options', {}).setdefault(
-                'core_aerodynamics', {}
+                'aerodynamics', {}
             ).setdefault('method', 'low_speed')
 
     def link_phases(self, aviary_group, phases, connect_directly=True):

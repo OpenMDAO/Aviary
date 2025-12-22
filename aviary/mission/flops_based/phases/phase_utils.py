@@ -1,7 +1,7 @@
 import inspect
 
 
-def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
+def add_subsystem_variables_to_phase(phase, phase_name, subsystems):
     """
     Add subsystem variables like states, controls, parameters, and constraints to a phase.
 
@@ -12,8 +12,8 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
     phase_name : str
         The name of the phase for which the variables are added. Useful for cases
         where the subsystem behavior varies based on phase name.
-    external_subsystems : list
-        List of external subsystem objects that contain variables to add to the phase.
+    subsystems : list
+        List of subsystem objects that contain variables to add to the phase.
 
     Returns
     -------
@@ -22,7 +22,7 @@ def add_subsystem_variables_to_phase(phase, phase_name, external_subsystems):
 
     """
     # Loop through each subsystem in the list of external_subsystems
-    for subsystem in external_subsystems:
+    for subsystem in subsystems:
         # Fetch the states from the current subsystem
         subsystem_states = subsystem.get_states()
 
