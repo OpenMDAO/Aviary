@@ -7,9 +7,9 @@ from aviary.mission.gasp_based.ode.landing_eom import (
 )
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilderBase
+from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -19,7 +19,7 @@ class LandingSegment(TwoDOFODE):
 
     def setup(self):
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -52,8 +52,8 @@ class LandingSegment(TwoDOFODE):
         )
 
         # collect the propulsion group names for later use with
-        for subsystem in core_subsystems:
-            if isinstance(subsystem, AerodynamicsBuilderBase):
+        for subsystem in subsystems:
+            if isinstance(subsystem, AerodyanmicsBuilder):
                 kwargs = {'method': 'low_speed'}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
@@ -90,7 +90,7 @@ class LandingSegment(TwoDOFODE):
                     promotes_outputs=['CL_max'],
                 )
 
-            if isinstance(subsystem, PropulsionBuilderBase):
+            if isinstance(subsystem, PropulsionBuilder):
                 propulsion_system = subsystem.build_mission(
                     num_nodes=1, aviary_inputs=aviary_options
                 )
@@ -104,8 +104,6 @@ class LandingSegment(TwoDOFODE):
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
                 )
                 propulsion_mission.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
-
-        self.add_external_subsystems()
 
         self.add_subsystem(
             'glide',

@@ -456,7 +456,7 @@ takeoff_trajectory_builder = TakeoffTrajectory('detailed_takeoff')
 # block auto-formatting of tables
 # fmt: off
 takeoff_subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='m'
         'angles_of_attack': [
@@ -477,8 +477,8 @@ takeoff_subsystem_options = {
 # fmt: on
 
 takeoff_subsystem_options_spoilers = {
-    'core_aerodynamics': {
-        **takeoff_subsystem_options['core_aerodynamics'],
+    'aerodynamics': {
+        **takeoff_subsystem_options['aerodynamics'],
         'use_spoilers': True,
         'spoiler_drag_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT),
         'spoiler_lift_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT),
@@ -510,7 +510,7 @@ takeoff_brake_release_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 0
 
 takeoff_brake_release_builder = TakeoffBrakeReleaseToDecisionSpeed(
     'takeoff_brake_release',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_brake_release_user_options,
     initial_guesses=takeoff_brake_release_initial_guesses,
@@ -539,7 +539,7 @@ takeoff_decision_speed_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 
 
 takeoff_decision_speed_builder = TakeoffDecisionSpeedToRotate(
     'takeoff_decision_speed',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_decision_speed_user_options,
     initial_guesses=takeoff_decision_speed_initial_guesses,
@@ -569,7 +569,7 @@ takeoff_rotate_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 takeoff_rotate_builder = TakeoffRotateToLiftoff(
     'takeoff_rotate',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_rotate_user_options,
     initial_guesses=takeoff_rotate_initial_guesses,
@@ -605,7 +605,7 @@ takeoff_liftoff_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 takeoff_liftoff_builder = TakeoffLiftoffToObstacle(
     'takeoff_liftoff',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_liftoff_user_options,
     initial_guesses=takeoff_liftoff_initial_guesses,
@@ -646,7 +646,7 @@ takeoff_mic_p2_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 takeoff_mic_p2_builder = TakeoffObstacleToMicP2(
     'takeoff_mic_p2',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_mic_p2_user_options,
     initial_guesses=takeoff_mic_p2_initial_guesses,
@@ -700,7 +700,7 @@ takeoff_mic_p2_to_engine_cutback_initial_guesses.set_val('mass', gross_mass, gro
 
 takeoff_mic_p2_to_engine_cutback_builder = TakeoffMicP2ToEngineCutback(
     'takeoff_mic_p2_to_engine_cutback',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_mic_p2_to_engine_cutback_user_options,
     initial_guesses=takeoff_mic_p2_to_engine_cutback_initial_guesses,
@@ -752,7 +752,7 @@ takeoff_engine_cutback_initial_guesses.set_val('mass', gross_mass, gross_mass_un
 
 takeoff_engine_cutback_builder = TakeoffEngineCutback(
     'takeoff_engine_cutback',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_engine_cutback_user_options,
     initial_guesses=takeoff_engine_cutback_initial_guesses,
@@ -808,7 +808,7 @@ takeoff_engine_cutback_to_mic_p1_initial_guesses.set_val('mass', gross_mass, gro
 
 takeoff_engine_cutback_to_mic_p1_builder = TakeoffEngineCutbackToMicP1(
     'takeoff_engine_cutback_to_mic_p1',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_engine_cutback_to_mic_p1_user_options,
     initial_guesses=takeoff_engine_cutback_to_mic_p1_initial_guesses,
@@ -849,7 +849,7 @@ takeoff_mic_p1_to_climb_initial_guesses.set_val('mass', gross_mass, gross_mass_u
 
 takeoff_mic_p1_to_climb_builder = TakeoffMicP1ToClimb(
     'takeoff_mic_p1_to_climb',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=takeoff_mic_p1_to_climb_user_options,
     initial_guesses=takeoff_mic_p1_to_climb_initial_guesses,
@@ -948,7 +948,7 @@ balanced_brake_release_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 
 
 balanced_brake_release_builder = TakeoffBrakeReleaseToDecisionSpeed(
     'balanced_brake_release',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=balanced_brake_release_user_options,
     initial_guesses=balanced_brake_release_initial_guesses,
@@ -978,7 +978,7 @@ balanced_decision_speed_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK,
 
 balanced_decision_speed_builder = TakeoffDecisionSpeedToRotate(
     'balanced_decision_speed',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=balanced_decision_speed_user_options,
     initial_guesses=balanced_decision_speed_initial_guesses,
@@ -1006,7 +1006,7 @@ balanced_rotate_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 balanced_rotate_builder = TakeoffRotateToLiftoff(
     'balanced_rotate',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=balanced_rotate_user_options,
     initial_guesses=balanced_rotate_initial_guesses,
@@ -1040,7 +1040,7 @@ balanced_liftoff_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 balanced_liftoff_builder = TakeoffLiftoffToObstacle(
     'balanced_liftoff',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=balanced_liftoff_user_options,
     initial_guesses=balanced_liftoff_initial_guesses,
@@ -1067,7 +1067,7 @@ balanced_delayed_brake_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 
 # NOTE: no special handling required; re-use existing phase builder type
 balanced_delayed_brake_builder = TakeoffDecisionSpeedBrakeDelay(
     'balanced_delayed_brake',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options,
     user_options=balanced_delayed_brake_user_options,
     initial_guesses=balanced_delayed_brake_initial_guesses,
@@ -1094,7 +1094,7 @@ balanced_abort_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 0.0, 'de
 
 balanced_abort_builder = TakeoffBrakeToAbort(
     'balanced_abort',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=takeoff_subsystem_options_spoilers,
     user_options=balanced_abort_user_options,
     initial_guesses=balanced_abort_initial_guesses,
@@ -1115,7 +1115,7 @@ landing_trajectory_builder = LandingTrajectory('detailed_landing')
 
 # region - landing aero
 landing_subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='m'
         'angles_of_attack': [
@@ -1138,8 +1138,8 @@ landing_subsystem_options = {
 # fmt: on
 
 landing_subsystem_options_spoilers = {
-    'core_aerodynamics': {
-        **landing_subsystem_options['core_aerodynamics'],
+    'aerodynamics': {
+        **landing_subsystem_options['aerodynamics'],
         'use_spoilers': True,
         'spoiler_lift_coefficient': -0.81,
         'spoiler_drag_coefficient': 0.085,
@@ -1373,7 +1373,7 @@ landing_approach_to_mic_p3_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTA
 
 landing_approach_to_mic_p3_builder = LandingApproachToMicP3(
     'landing_approach_to_mic_p3',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=landing_subsystem_options,
     user_options=landing_approach_to_mic_p3_user_options,
     initial_guesses=landing_approach_to_mic_p3_initial_guesses,
@@ -1422,7 +1422,7 @@ landing_mic_p3_to_obstacle_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTA
 
 landing_mic_p3_to_obstacle_builder = LandingMicP3ToObstacle(
     'landing_mic_p3_to_obstacle',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=landing_subsystem_options,
     user_options=landing_mic_p3_to_obstacle_user_options,
     initial_guesses=landing_mic_p3_to_obstacle_initial_guesses,
@@ -1461,7 +1461,7 @@ landing_obstacle_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 5.2, '
 
 landing_obstacle_builder = LandingObstacleToFlare(
     'landing_obstacle',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=landing_subsystem_options,
     user_options=landing_obstacle_user_options,
     initial_guesses=landing_obstacle_initial_guesses,
@@ -1501,7 +1501,7 @@ landing_flare_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [5.2, 7.5
 
 landing_flare_builder = LandingFlareToTouchdown(
     'landing_flare',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=landing_subsystem_options,
     user_options=landing_flare_user_options,
     initial_guesses=landing_flare_initial_guesses,
@@ -1535,7 +1535,7 @@ landing_touchdown_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, [7.5,
 
 landing_touchdown_builder = LandingTouchdownToNoseDown(
     'landing_touchdown',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=landing_subsystem_options,
     user_options=landing_touchdown_user_options,
     initial_guesses=landing_touchdown_initial_guesses,
@@ -1568,7 +1568,7 @@ landing_fullstop_initial_guesses.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 0.0, '
 
 landing_fullstop_builder = LandingNoseDownToStop(
     'landing_fullstop',
-    core_subsystems=default_mission_subsystems,
+    subsystems=default_mission_subsystems,
     subsystem_options=landing_subsystem_options_spoilers,
     user_options=landing_fullstop_user_options,
     initial_guesses=landing_fullstop_initial_guesses,

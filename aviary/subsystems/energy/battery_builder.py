@@ -2,11 +2,11 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.energy.battery_sizing import SizeBattery
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class BatteryBuilder(SubsystemBuilderBase):
+class BatteryBuilder(SubsystemBuilder):
     """
     Builder for the battery model. This simplified battery is sized with a simple energy density relation, and tracks state of charge over the mission (with an efficiency).
 
@@ -65,9 +65,6 @@ class BatteryBuilder(SubsystemBuilderBase):
         return battery_group
 
     def get_states(self):
-        # need to add subsystem name to target name ('battery.') for state due
-        # to issue where non aircraft or mission variables are not fully promoted
-        # TODO fix this by not promoting only 'aircraft:*' and 'mission:*'
         state_dict = {
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED: {
                 'fix_initial': True,
@@ -78,7 +75,7 @@ class BatteryBuilder(SubsystemBuilderBase):
                 'units': 'kJ',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
                 'input_initial': 0.0,
-                'targets': f'{self.name}.{Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED}',
+                'targets': Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             }
         }
 
@@ -88,7 +85,7 @@ class BatteryBuilder(SubsystemBuilderBase):
         constraint_dict = {
             # Can add constraints here; state of charge is a common one in many
             # battery applications
-            f'{self.name}.{Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}': {
+            Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE: {
                 'type': 'boundary',
                 'loc': 'final',
                 'lower': 0.2,

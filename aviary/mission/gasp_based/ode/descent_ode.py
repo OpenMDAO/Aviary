@@ -6,7 +6,7 @@ from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedCon
 from aviary.mission.gasp_based.ode.descent_eom import DescentRates
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -47,7 +47,7 @@ class DescentODE(TwoDOFODE):
         self.options['auto_order'] = True
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
         input_speed_type = self.options['input_speed_type']
 
@@ -178,13 +178,13 @@ class DescentODE(TwoDOFODE):
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'cruise'}
         # collect the propulsion group names for later use
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilderBase):
+                if isinstance(subsystem, AerodyanmicsBuilder):
                     lift_balance_group.add_subsystem(
                         subsystem.name,
                         system,
@@ -198,8 +198,6 @@ class DescentODE(TwoDOFODE):
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-
-        self.add_external_subsystems()
 
         self.add_alpha_control(
             alpha_group=lift_balance_group,

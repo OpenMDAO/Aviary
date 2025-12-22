@@ -6,7 +6,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.aircraft.test_aircraft.GwFm_phase_info import phase_info as ph_in
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_aviary_resource_path
 from aviary.variable_info.variables import Aircraft
 
@@ -25,7 +25,7 @@ class WingWeightSubsys(om.ExplicitComponent):
         outputs['Tail'] = 0.7 * inputs[Aircraft.Engine.MASS]
 
 
-class WingWeightBuilder(SubsystemBuilderBase):
+class WingWeightBuilder(SubsystemBuilder):
     """Prototype of a subsystem that overrides an aviary internally computed var."""
 
     def __init__(self, name='wing_weight'):

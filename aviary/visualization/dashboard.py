@@ -768,7 +768,6 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             case = cr.get_case('final')
             outputs = case.list_outputs(out_stream=None, units=True)
 
-            # data_by_varname_and_phase = defaultdict(dict)
             data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
             # Find the "largest" unit used for any timeseries output across all phases
@@ -776,7 +775,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.([a-zA-Z0-9_]+)'
+            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.(.+)'
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
