@@ -302,7 +302,7 @@ outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 497.7, 'lbm')
 
 outputs.set_val(Aircraft.Furnishings.MASS, 14690.0, 'lbm')
 
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, (13.0208 + 12.33) / 2, 'ft')
+outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, (13.0208 + 12.33) / 2, 'ft')
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 124.75, 'ft')
 outputs.set_val(Aircraft.Fuselage.CROSS_SECTION, pi * (12.6754 / 2.0) ** 2.0, 'ft**2')
 outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.112598)

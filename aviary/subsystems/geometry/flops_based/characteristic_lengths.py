@@ -147,10 +147,11 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.CHARACTERISTIC_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.FINENESS, units='unitless')
@@ -163,7 +164,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Fuselage.FINENESS,
             [
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
             ],
         )
@@ -173,7 +174,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
         outputs[Aircraft.Fuselage.CHARACTERISTIC_LENGTH] = length
 
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
 
         fineness = length / avg_diam
 
@@ -189,11 +190,11 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         length = inputs[Aircraft.Fuselage.LENGTH]
-        avg_diam = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diam = inputs[Aircraft.Fuselage.REF_DIAMETER]
 
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.LENGTH] = 1.0 / avg_diam
 
-        J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.AVG_DIAMETER] = -length / avg_diam**2.0
+        J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.REF_DIAMETER] = -length / avg_diam**2.0
 
     # NOTE this code is currently unused!!
     def _compute_additional_fuselages(
