@@ -268,7 +268,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Fuselage.MAX_HEIGHT,
                 Aircraft.BWB.NUM_BAYS,
                 # BWBFuselagePrelim
-                Aircraft.Fuselage.AVG_DIAMETER,
+                Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.PLANFORM_AREA,
                 # BWBWingPrelim
                 Aircraft.Wing.AREA,
@@ -498,7 +498,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
         # BWBFuselagePrelim
-        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 39.8525, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 16555.972297926455, tol)
@@ -568,7 +568,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
         # BWBFuselagePrelim
-        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 39.8525, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 16555.972297926455, tol)
@@ -739,7 +739,7 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
         # BWBFuselagePrelim
-        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 39.8525, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 16555.972297926455, tol)
