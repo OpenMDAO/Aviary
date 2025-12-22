@@ -78,7 +78,7 @@ from aviary.constants import (
     TSLS_DEGR,
 )
 from aviary.subsystems.test.subsystem_tester import (
-    TestSubsystemBuilderBase,
+    TestSubsystemBuilder,
     skipIfMissingDependencies,
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -89,14 +89,13 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 
 # Miscellaneous
 from aviary.subsystems.premission import CorePreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.preprocessors import (
     preprocess_crewpayload,
     preprocess_options,
     preprocess_propulsion,
 )
 from aviary.utils.process_input_decks import create_vehicle
-from aviary.utils.functions import create_opts2vals, add_opts2vals, Null
 
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP
@@ -125,7 +124,7 @@ from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 
 
 # Phase builders
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder import PhaseBuilder
 
 # note that this is only for simplified right now
 from aviary.mission.flops_based.phases.energy_phase import (
@@ -185,7 +184,7 @@ from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
 
 # Aerodynamics
 from aviary.subsystems.aerodynamics.aerodynamics_builder import (
-    AerodynamicsBuilderBase,
+    AerodynamicsBuilder,
     CoreAerodynamicsBuilder,
 )
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
@@ -194,17 +193,17 @@ from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import Tabula
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
 # Geometry
-from aviary.subsystems.geometry.geometry_builder import GeometryBuilderBase, CoreGeometryBuilder
+from aviary.subsystems.geometry.geometry_builder import GeometryBuilder, CoreGeometryBuilder
 
 # Mass
-from aviary.subsystems.mass.mass_builder import MassBuilderBase, CoreMassBuilder
+from aviary.subsystems.mass.mass_builder import MassBuilder, CoreMassBuilder
 
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.propulsion_builder import (
-    PropulsionBuilderBase,
+    PropulsionBuilder,
     CorePropulsionBuilder,
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel

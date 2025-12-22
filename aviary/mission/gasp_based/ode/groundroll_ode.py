@@ -4,7 +4,7 @@ import openmdao.api as om
 from aviary.mission.gasp_based.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -25,7 +25,7 @@ class GroundrollODE(TwoDOFODE):
     def setup(self):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
 
         # TODO: paramport
@@ -52,7 +52,7 @@ class GroundrollODE(TwoDOFODE):
             'aviary_inputs': aviary_options,
             'method': 'low_speed',
         }
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
@@ -64,14 +64,12 @@ class GroundrollODE(TwoDOFODE):
                     promotes_inputs=subsystem.mission_inputs(**kwargs),
                     promotes_outputs=subsystem.mission_outputs(**kwargs),
                 )
-            if isinstance(subsystem, AerodynamicsBuilderBase):
+            if isinstance(subsystem, AerodynamicsBuilder):
                 self.promotes(
                     subsystem.name,
                     inputs=[Dynamic.Vehicle.ANGLE_OF_ATTACK],
                     src_indices=np.zeros(nn, dtype=int),
                 )
-
-        self.add_external_subsystems()
 
         self.add_subsystem('groundroll_eom', GroundrollEOM(num_nodes=nn), promotes=['*'])
 

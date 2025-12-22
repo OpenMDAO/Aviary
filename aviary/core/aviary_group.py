@@ -1,8 +1,8 @@
 import inspect
-import warnings
-from importlib.util import spec_from_file_location, module_from_spec
-from pathlib import Path
 import sys
+import warnings
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 
 import dymos as dm
 import openmdao.api as om
@@ -22,7 +22,9 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_path
+from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
@@ -55,9 +57,9 @@ class AviaryGroup(om.Group):
     def __init__(self, verbosity=None, **kwargs):
         super().__init__(**kwargs)
 
-        self.pre_mission = PreMissionGroup()
         self.post_mission = PostMissionGroup()
         self.verbosity = verbosity
+        self.external_subsystems = []
         self.regular_phases = []
         self.reserve_phases = []
 
@@ -248,9 +250,6 @@ class AviaryGroup(om.Group):
         self.mission_info = {}
 
         for phase_name in phase_info:
-            if 'external_subsystems' not in phase_info[phase_name]:
-                phase_info[phase_name]['external_subsystems'] = []
-
             if phase_name not in ['pre_mission', 'post_mission']:
                 self.mission_info[phase_name] = phase_info[phase_name]
 
@@ -266,13 +265,43 @@ class AviaryGroup(om.Group):
             self.post_mission_info = {}
 
         self.configurator.initial_guesses(self)
-        # This function sets all the following defaults if they were not already set
-        # self.engine_builders, self.pre_mission_info, self_post_mission_info
+        # This function sets all the following defaults if they were not already set:
+        # self.engine_builders, self.pre_mission_info, self_post_mission_info,
         # self.require_range_residual, self.target_range
-        # Other specific self.*** are defined in here as well that are specific to
-        # each builder
+        # Other specific self.*** are defined in here as well that are specific to each builder
 
         return self.aviary_inputs, self.verbosity
+
+    def load_external_subsystems(self, external_subsystems: list = [], verbosity=None):
+        """
+        Add external subsystems to the AviaryGroup.
+
+        Parameters
+        ----------
+        external_subsystems : list of SubsystemBuilders
+            List of all external subsystems to be added.
+
+        verbosity : int, Verbosity (optional)
+            Sets the printout level for the entire off-design problem that is ran.
+        """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        for subsystem in external_subsystems:
+            if not isinstance(subsystem, SubsystemBuilder) and verbosity >= verbosity.BRIEF:
+                warnings.warn(
+                    'Provided external subsystem is not a SubsystemBuilder object and will not be '
+                    'loaded.'
+                )
+            else:
+                self.external_subsystems.append(subsystem)
+                meta_data = subsystem.meta_data.copy()
+                self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
     def check_and_preprocess_inputs(self, verbosity=None):
         """
@@ -351,26 +380,23 @@ class AviaryGroup(om.Group):
                     else:
                         guesses['time'] = ((None, time_duration), units)
 
-        for phase_name in self.mission_info:
-            for external_subsystem in self.mission_info[phase_name]['external_subsystems']:
-                aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
+        for external_subsystem in self.external_subsystems:
+            aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
 
         # PREPROCESSORS #
-        # BUG we can't provide updated metadata to preprocessors, because we need the
-        #     processed options to build our subsystems to begin with
         preprocess_options(
             aviary_inputs,
             engine_models=self.engine_builders,
             verbosity=verbosity,
-            # metadata=self.meta_data
+            metadata=self.meta_data,
         )
 
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
         # load_inputs?
         ## Set Up Core Subsystems ##
-        perf = CorePerformanceBuilder('core_performance')
-        prop = CorePropulsionBuilder('core_propulsion', engine_models=self.engine_builders)
-        mass = CoreMassBuilder('core_mass', code_origin=self.mass_method)
+        perf = CorePerformanceBuilder('performance')
+        prop = CorePropulsionBuilder('propulsion', engine_models=self.engine_builders)
+        mass = CoreMassBuilder('mass', code_origin=self.mass_method)
 
         # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
         tabular = False
@@ -379,16 +405,14 @@ class AviaryGroup(om.Group):
                 try:
                     if (
                         'tabular'
-                        in self.mission_info[phase]['subsystem_options']['core_aerodynamics'][
-                            'method'
-                        ]
+                        in self.mission_info[phase]['subsystem_options']['aerodynamics']['method']
                     ):
                         tabular = True
                 except KeyError:
                     tabular = False
 
         aero = CoreAerodynamicsBuilder(
-            'core_aerodynamics', code_origin=self.aero_method, tabular=tabular
+            'aerodynamics', code_origin=self.aero_method, tabular=tabular
         )
 
         # which geometry methods should be used?
@@ -405,27 +429,17 @@ class AviaryGroup(om.Group):
         code_origin_to_prioritize = self.configurator.get_code_origin(self)
 
         geom = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             code_origin=geom_code_origin,
             code_origin_to_prioritize=code_origin_to_prioritize,
         )
 
-        subsystems = self.core_subsystems = {
-            'propulsion': prop,
-            'geometry': geom,
-            'mass': mass,
-            'aerodynamics': aero,
-            'performance': perf,
-        }
+        subsystems = self.subsystems = [prop, geom, mass, aero, perf]
+        subsystems.extend(self.external_subsystems)
 
-        # TODO optionally accept which subsystems to load from phase_info
-        default_mission_subsystems = [
-            subsystems['aerodynamics'],
-            subsystems['propulsion'],
-        ]
         self.ode_args = {
             'aviary_options': aviary_inputs,
-            'core_subsystems': default_mission_subsystems,
+            'subsystems': subsystems,
         }
 
         # self._update_metadata_from_subsystems()
@@ -471,22 +485,20 @@ class AviaryGroup(om.Group):
 
     def add_pre_mission_systems(self, verbosity=None):
         """
-        Add pre-mission systems to the Aviary group. These systems are executed before
-        the mission.
+        Add pre-mission systems to the Aviary group. These systems are executed before the mission.
 
-        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds
-        various subsystems to the aircraft model. For the `FLOPS` mission model, a
-        takeoff phase is added using the Takeoff class with the number of engines and
-        airport altitude specified. For the `GASP` mission model, three subsystems are
-        added: a TaxiSegment subsystem, an ExecComp to calculate the time to initiate
-        gear and flaps, and an ExecComp to calculate the speed at which to initiate
-        rotation. All subsystems are promoted with aircraft and mission inputs and
+        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various
+        subsystems to the aircraft model. For the `FLOPS` mission model, a takeoff phase is added
+        using the Takeoff class with the number of engines and airport altitude specified. For the
+        `GASP` mission model, three subsystems are added: a TaxiSegment subsystem, an ExecComp to
+        calculate the time to initiate gear and flaps, and an ExecComp to calculate the speed at
+        which to initiate rotation. All subsystems are promoted with aircraft and mission inputs and
         outputs as appropriate.
 
         A user can override this method with their own pre-mission systems as desired.
         """
+        pre_mission = PreMissionGroup()
 
-        pre_mission = self.pre_mission
         self.add_subsystem(
             'pre_mission',
             pre_mission,
@@ -494,29 +506,17 @@ class AviaryGroup(om.Group):
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
 
-        if 'linear_solver' in self.pre_mission_info:
-            pre_mission.linear_solver = self.pre_mission_info['linear_solver']
-
-        if 'nonlinear_solver' in self.pre_mission_info:
-            pre_mission.nonlinear_solver = self.pre_mission_info['nonlinear_solver']
-
-        self._add_premission_external_subsystems()
-
-        subsystems = self.core_subsystems
+        # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
+        core_subsystems = self.subsystems[0:5]
 
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
         pre_mission.add_subsystem(
-            'core_propulsion',
-            subsystems['propulsion'].build_pre_mission(self.aviary_inputs),
+            'propulsion',
+            core_subsystems[0].build_pre_mission(self.aviary_inputs),
         )
 
-        default_subsystems = [
-            subsystems['geometry'],
-            subsystems['aerodynamics'],
-            subsystems['mass'],
-            subsystems['performance'],
-        ]
+        default_subsystems = core_subsystems[1:5]
 
         pre_mission.add_subsystem(
             'core_subsystems',
@@ -529,36 +529,39 @@ class AviaryGroup(om.Group):
             promotes_outputs=['*'],
         )
 
+        for subsystem in self.external_subsystems:
+            subsystem_premission = subsystem.build_pre_mission(self.aviary_inputs)
+
+            if subsystem_premission is not None:
+                self.pre_mission.add_subsystem(subsystem.name, subsystem_premission)
+
+        self._add_premission_external_subsystem_masses()
+
+        if 'linear_solver' in self.pre_mission_info:
+            pre_mission.linear_solver = self.pre_mission_info['linear_solver']
+
+        if 'nonlinear_solver' in self.pre_mission_info:
+            pre_mission.nonlinear_solver = self.pre_mission_info['nonlinear_solver']
+
         if self.pre_mission_info['include_takeoff']:
             self.configurator.add_takeoff_systems(self)
 
-    def _add_premission_external_subsystems(self):
+    def _add_premission_external_subsystem_masses(self):
         """
-        This private method adds each external subsystem to the pre-mission subsystem and
-        a mass component that captures external subsystem masses for use in mass buildups.
-
-        Firstly, the method iterates through all external subsystems in the pre-mission
-        information. For each subsystem, it builds the pre-mission instance of the
-        subsystem.
-
-        Secondly, the method collects the mass names of the added subsystems. This
-        expression is then used to define an ExecComp (a component that evaluates a
-        simple equation given input values).
+        This private method adds a mass component that captures external subsystem masses for use in
+        mass buildups. The method collects the mass names of the added subsystems. This expression
+        is then used to define an ExecComp (a component that evaluates a simple equation given input
+        values).
 
         The method promotes the input and output of this ExecComp to the top level of the
-        pre-mission object, allowing this calculated subsystem mass to be accessed
-        directly from the pre-mission object.
+        pre-mission object, allowing this calculated subsystem mass to be accessed directly from the
+        pre-mission object.
         """
         mass_names = []
         # Loop through all the phases in this subsystem.
-        for external_subsystem in self.pre_mission_info['external_subsystems']:
+        for external_subsystem in self.external_subsystems:
             # Get all the subsystem builders for this phase.
-            subsystem_premission = external_subsystem.build_pre_mission(self.aviary_inputs)
-
-            if subsystem_premission is not None:
-                self.pre_mission.add_subsystem(external_subsystem.name, subsystem_premission)
-
-                mass_names.extend(external_subsystem.get_mass_names())
+            mass_names.extend(external_subsystem.get_mass_names())
 
         if mass_names:
             formatted_names = []
@@ -585,19 +588,14 @@ class AviaryGroup(om.Group):
     def _get_phase(self, phase_name, phase_idx, comm):
         phase_options = self.mission_info[phase_name]
 
-        # TODO optionally accept which subsystems to load from phase_info
-        subsystems = self.core_subsystems
-        default_mission_subsystems = [
-            subsystems['aerodynamics'],
-            subsystems['propulsion'],
-        ]
+        subsystems = self.subsystems
 
         phase_builder = self.configurator.get_phase_builder(self, phase_name, phase_options)
 
         phase_object = phase_builder.from_phase_info(
             phase_name,
             phase_options,
-            default_mission_subsystems,
+            subsystems,
             meta_data=self.meta_data,
         )
 
@@ -609,7 +607,7 @@ class AviaryGroup(om.Group):
         # right now all phases get all controls added from every subsystem.
         # for example, we might only want ELECTRIC_SHAFT_POWER applied during the
         # climb phase.
-        all_subsystems = self.get_all_subsystems(phase_options['external_subsystems'])
+        all_subsystems = self.subsystems
 
         # loop through all_subsystems and call `get_controls` on each subsystem
         for subsystem in all_subsystems:
@@ -671,10 +669,9 @@ class AviaryGroup(om.Group):
         traj = self.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
 
         def add_subsystem_timeseries_outputs(phase, phase_name):
-            phase_options = self.mission_info[phase_name]
-            all_subsystems = self.get_all_subsystems(phase_options['external_subsystems'])
+            all_subsystems = self.subsystems
             for subsystem in all_subsystems:
-                timeseries_to_add = subsystem.get_outputs()
+                timeseries_to_add = subsystem.get_timeseries()
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
                 mbvars = subsystem.get_post_mission_bus_variables(
@@ -698,9 +695,7 @@ class AviaryGroup(om.Group):
         external_parameters = {}
         for phase_name in self.mission_info:
             external_parameters[phase_name] = {}
-            all_subsystems = self.get_all_subsystems(
-                self.mission_info[phase_name]['external_subsystems']
-            )
+            all_subsystems = self.subsystems
 
             subsystem_options = phase_info[phase_name].get('subsystem_options', {})
 
@@ -732,24 +727,21 @@ class AviaryGroup(om.Group):
 
     def add_post_mission_systems(self, verbosity=None):
         """
-        Add post-mission systems to the aircraft model. This is akin to the pre-mission
-        group or the "premission_systems", but occurs after the mission in the execution
-        order.
+        Add post-mission systems to the aircraft model. This is akin to the pre-mission group or the
+        "premission_systems", but occurs after the mission in the execution order.
 
-        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds
-        various subsystems to the aircraft model. For the `FLOPS` mission model, a
-        landing phase is added using the Landing class with the wing area and lift
-        coefficient specified, and a takeoff constraints ExecComp is added to enforce
-        mass, range, velocity, and altitude continuity between the takeoff and climb
-        phases. The landing subsystem is promoted with aircraft and mission inputs and
-        outputs as appropriate, while the takeoff constraints ExecComp is only promoted
-        with mission inputs and outputs.
+        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various
+        subsystems to the aircraft model. For the `FLOPS` mission model, a landing phase is added
+        using the Landing class with the wing area and lift coefficient specified, and a takeoff
+        constraints ExecComp is added to enforce mass, range, velocity, and altitude continuity
+        between the takeoff and climb phases. The landing subsystem is promoted with aircraft and
+        mission inputs and outputs as appropriate, while the takeoff constraints ExecComp is only
+        promoted with mission inputs and outputs.
 
-        For the `GASP` mission model, four subsystems are added: a LandingSegment
-        subsystem, an ExecComp to calculate the reserve fuel required, an ExecComp to
-        calculate the overall fuel burn, and three ExecComps to calculate various
-        mission objectives and constraints. All subsystems are promoted with aircraft
-        and mission inputs and outputs as appropriate.
+        For the `GASP` mission model, four subsystems are added: a LandingSegment subsystem, an
+        ExecComp to calculate the reserve fuel required, an ExecComp to calculate the overall fuel
+        burn, and three ExecComps to calculate various mission objectives and constraints. All
+        subsystems are promoted with aircraft and mission inputs and outputs as appropriate.
 
         A user can override this with their own postmission systems.
         """
@@ -790,17 +782,17 @@ class AviaryGroup(om.Group):
 
         self.configurator.add_post_mission_systems(self)
 
-        # Add all post-mission external subsystems.
+        # Add all post-mission subsystems.
         phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj)
-        for external_subsystem in self.post_mission_info['external_subsystems']:
-            subsystem_postmission = external_subsystem.build_post_mission(
+        for subsystem in self.subsystems:
+            subsystem_postmission = subsystem.build_post_mission(
                 aviary_inputs=self.aviary_inputs,
                 phase_info=self.mission_info,
                 phase_mission_bus_lengths=phase_mission_bus_lengths,
             )
 
             if subsystem_postmission is not None:
-                post_mission.add_subsystem(external_subsystem.name, subsystem_postmission)
+                post_mission.add_subsystem(subsystem.name, subsystem_postmission)
 
         # Check if regular_phases[] is accessible
         try:
@@ -898,9 +890,8 @@ class AviaryGroup(om.Group):
             promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
         )
 
-        # If a target distance (or time) has been specified for this phase
-        # distance (or time) is measured from the start of this phase to the end
-        # of this phase
+        # If a target distance (or time) has been specified for this phase distance (or time) is
+        # measured from the start of this phase to the end of this phase
         for phase_name in self.mission_info:
             user_options = self.mission_info[phase_name]['user_options']
 
@@ -1037,12 +1028,12 @@ class AviaryGroup(om.Group):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need
-        special logic to do the Dymos linkages correctly. Some of those
-        connections for the simple GASP and FLOPS mission are shown here.
+        Based on which phases the user has selected, we might need special logic to do the Dymos
+        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
+        shown here.
         """
-        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
-        # override for just this method
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity override for
+        # just this method
         if verbosity is not None:
             # compatibility with being passed int for verbosity
             verbosity = Verbosity(verbosity)
@@ -1076,27 +1067,25 @@ class AviaryGroup(om.Group):
         if len(phases) <= 1:
             return
 
-        # In summary, the following code loops over all phases in self.mission_info, gets
-        # the linked variables from each external subsystem in each phase, and stores
-        # the lists of linked variables in lists_to_link. It then gets a list of
-        # unique variable names from lists_to_link and loops over them, creating
-        # a list of phase names for each variable and linking the phases
-        # using self.traj.link_phases().
+        # In summary, the following code loops over all phases in self.mission_info, gets the linked
+        # variables from each external subsystem in each phase, and stores the lists of linked
+        # variables in lists_to_link. It then gets a list of unique variable names from
+        # lists_to_link and loops over them, creating a list of phase names for each variable and
+        # linking the phases using self.traj.link_phases().
 
         lists_to_link = []
         for idx, phase_name in enumerate(self.mission_info):
             lists_to_link.append([])
-            for external_subsystem in self.mission_info[phase_name]['external_subsystems']:
+            for external_subsystem in self.external_subsystems:
                 lists_to_link[idx].extend(external_subsystem.get_linked_variables())
 
         # get unique variable names from lists_to_link
         unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
 
         # Phase linking.
-        # If we are under mpi, and traj.phases is running in parallel, then let the
-        # optimizer handle the linkage constraints.  Note that we can technically
-        # parallelize connected phases, but it requires a solver that we would like
-        # to avoid.
+        # If we are under mpi, and traj.phases is running in parallel, then let the optimizer handle
+        # the linkage constraints.  Note that we can technically parallelize connected phases, but
+        # it requires a solver that we would like to avoid.
         true_unless_mpi = True
         if comm.size > 1 and self.traj.options['parallel_phases']:
             true_unless_mpi = False
@@ -1130,12 +1119,12 @@ class AviaryGroup(om.Group):
         self.configurator.check_trajectory(self)
 
     def _add_bus_variables_and_connect(self):
-        all_subsystems = self.get_all_subsystems(group='pre_mission')
+        all_subsystems = self.subsystems
 
         base_phases = list(self.mission_info.keys())
 
-        for external_subsystem in all_subsystems:
-            bus_variables = external_subsystem.get_pre_mission_bus_variables(self.aviary_inputs)
+        for subsystem in all_subsystems:
+            bus_variables = subsystem.get_pre_mission_bus_variables(self.aviary_inputs)
             if bus_variables is not None:
                 for bus_variable, variable_data in bus_variables.items():
                     mission_variable_name = variable_data['mission_name']
@@ -1210,11 +1199,11 @@ class AviaryGroup(om.Group):
                             )
 
     def _connect_mission_bus_variables(self):
-        all_subsystems = self.get_all_subsystems(group='post_mission')
+        all_subsystems = self.subsystems
 
         # Loop through all external subsystems.
-        for external_subsystem in all_subsystems:
-            for phase_name, var_mapping in external_subsystem.get_post_mission_bus_variables(
+        for subsystem in all_subsystems:
+            for phase_name, var_mapping in subsystem.get_post_mission_bus_variables(
                 aviary_inputs=self.aviary_inputs, phase_info=self.mission_info
             ).items():
                 for mission_variable_name, variable_data in var_mapping.items():
@@ -1233,14 +1222,14 @@ class AviaryGroup(om.Group):
         """
         Adds design variables to the Aviary problem.
 
-        Depending on the mission model and problem type, different design variables and
-        constraints are added.
+        Depending on the mission model and problem type, different design variables and constraints
+        are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the
-        aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft,
+        with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
-        If using the GASP model, the following design variables are added depending on
-        the mission type:
+        If using the GASP model, the following design variables are added depending on the mission
+        type:
         - the initial thrust-to-weight ratio of the aircraft during ascent
         - the duration of the ascent phase
         - the time constant for the landing gear actuation
@@ -1250,18 +1239,16 @@ class AviaryGroup(om.Group):
         - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
         - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
-        If solving a sizing problem, a design variable is added for the gross mass of
-        the aircraft, and another for the gross mass of the aircraft computed during the
-        mission. A constraint is also added to ensure that the residual range is zero.
+        If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
+        and another for the gross mass of the aircraft computed during the mission. A constraint is
+        also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of
-        the aircraft computed during the mission is added. A constraint is also added to
-        ensure that the residual range is zero.
+        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        computed during the mission is added. A constraint is also added to ensure that the residual
+        range is zero.
 
-        In all cases, a design variable is added for the final cruise mass of the
-        aircraft, with no upper bound, and a residual mass constraint is added to ensure
-        that the mass balances.
-
+        In all cases, a design variable is added for the final cruise mass of the aircraft, with no
+        upper bound, and a residual mass constraint is added to ensure that the mass balances.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1271,12 +1258,7 @@ class AviaryGroup(om.Group):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        # add the engine builder `get_design_vars` dict to a collected dict from
-        # the external subsystems
-
-        # TODO : maybe in the most general case we need to handle DVs in the mission and
-        # post-mission as well. For right now we just handle pre_mission
-        all_subsystems = self.get_all_subsystems()
+        all_subsystems = self.subsystems
 
         # loop through all_subsystems and call `get_design_vars` on each subsystem
         for subsystem in all_subsystems:
@@ -1369,11 +1351,10 @@ class AviaryGroup(om.Group):
                 # the range constriant should be added to make target rage = summary range
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
-                # We must ensure that design.gross_mass is greater than
-                # mission.summary.gross_mass and this must hold true for each of the
-                # different missions that is flown the result will be the
-                # design.gross_mass should be equal to the mission.summary.gross_mass
-                # of the heaviest mission
+                # We must ensure that design.gross_mass is greater than  mission.summary.gross_mass
+                # and this must hold true for each of the different missions that is flown the
+                # result will be the design.gross_mass should be equal to the
+                # mission.summary.gross_mass of the heaviest mission
                 self.add_subsystem(
                     'GROSS_MASS_constraint',
                     om.ExecComp(
@@ -1464,29 +1445,13 @@ class AviaryGroup(om.Group):
                 self, phase_name, phase, guesses, target_prob, parent_prefix
             )
 
-    def get_all_subsystems(self, external_subsystems=None, group='pre_mission'):
-        all_subsystems = []
-        if external_subsystems is None:
-            if group == 'pre_mission':
-                all_subsystems.extend(self.pre_mission_info['external_subsystems'])
-            elif group == 'post_mission':
-                all_subsystems.extend(self.post_mission_info['external_subsystems'])
-        else:
-            all_subsystems.extend(external_subsystems)
-
-        all_subsystems.append(self.core_subsystems['aerodynamics'])
-        all_subsystems.append(self.core_subsystems['propulsion'])
-
-        return all_subsystems
-
     def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix):
         """
-        Adds the initial guesses for each subsystem of a given phase to the problem.
-        This method first fetches all subsystems associated with the given phase.
-        It then loops over each subsystem and fetches its initial guesses. For each
-        guess, it identifies whether the guess corresponds to a state or a control
-        variable and then processes the guess variable. After this, the initial
-        guess is set in the problem using the `set_val` method.
+        Adds the initial guesses for each subsystem of a given phase to the problem. This method
+        first fetches all subsystems associated with the given phase. It then loops over each
+        subsystem and fetches its initial guesses. For each guess, it identifies whether the guess
+        corresponds to a state or a control variable and then processes the guess variable. After
+        this, the initial guess is set in the problem using the `set_val` method.
 
         Parameters
         ----------
@@ -1495,10 +1460,7 @@ class AviaryGroup(om.Group):
         phase : Phase
             The phase object for which the subsystem guesses are being added.
         """
-        # Get all subsystems associated with the phase
-        all_subsystems = self.get_all_subsystems(
-            self.mission_info[phase_name]['external_subsystems']
-        )
+        all_subsystems = self.subsystems
 
         # Loop over each subsystem
         for subsystem in all_subsystems:

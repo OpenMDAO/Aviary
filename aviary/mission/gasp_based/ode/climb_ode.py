@@ -6,7 +6,7 @@ from aviary.mission.gasp_based.ode.constraints.flight_constraints import FlightC
 from aviary.mission.gasp_based.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.gasp_based.ode.params import ParamPort
 from aviary.mission.gasp_based.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilderBase
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -51,7 +51,7 @@ class ClimbODE(TwoDOFODE):
         self.options['auto_order'] = True
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['core_subsystems']
+        subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
         input_speed_type = self.options['input_speed_type']
 
@@ -139,13 +139,13 @@ class ClimbODE(TwoDOFODE):
 
         kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'cruise'}
         # collect the propulsion group names for later use with
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodynamicsBuilderBase):
+                if isinstance(subsystem, AerodynamicsBuilder):
                     lift_balance_group.add_subsystem(
                         subsystem.name,
                         system,
@@ -159,8 +159,6 @@ class ClimbODE(TwoDOFODE):
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
-
-        self.add_external_subsystems()
 
         # maybe replace this with the solver in add_alpha_control?
         lift_balance_group.nonlinear_solver = om.NewtonSolver()

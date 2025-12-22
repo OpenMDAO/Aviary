@@ -29,7 +29,7 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.model = BreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
-            core_subsystems=default_mission_subsystems,
+            subsystems=default_mission_subsystems,
         )
 
         self.prob.model.set_input_defaults(
@@ -93,7 +93,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         self.prob.model = ElectricBreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
-            core_subsystems=default_mission_subsystems,
+            subsystems=default_mission_subsystems,
         )
 
         self.prob.model.set_input_defaults(

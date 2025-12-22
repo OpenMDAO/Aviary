@@ -3,7 +3,7 @@ from aviary.mission.gasp_based.ode.breguet_cruise_ode import (
     ElectricBreguetCruiseODE,
 )
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -67,20 +67,20 @@ class CruisePhaseOptions(AviaryOptionsDictionary):
         )
 
 
-class CruisePhase(PhaseBuilderBase):
+class CruisePhase(PhaseBuilder):
     """
     A phase builder for a climb phase in a mission simulation.
 
-    This class extends the PhaseBuilderBase class, providing specific implementations for
+    This class extends the PhaseBuilder class, providing specific implementations for
     the cruise phase of a flight mission.
 
     Attributes
     ----------
-    Inherits all attributes from PhaseBuilderBase.
+    Inherits all attributes from PhaseBuilder.
 
     Methods
     -------
-    Inherits all methods from PhaseBuilderBase.
+    Inherits all methods from PhaseBuilder.
     Additional method overrides and new methods specific to the cruise phase are included.
     """
 
@@ -98,8 +98,7 @@ class CruisePhase(PhaseBuilderBase):
         initial_guesses=None,
         ode_class=None,
         transcription=None,
-        core_subsystems=None,
-        external_subsystems=None,
+        subsystems=None,
         meta_data=None,
     ):
         super().__init__(
@@ -109,8 +108,7 @@ class CruisePhase(PhaseBuilderBase):
             initial_guesses=initial_guesses,
             ode_class=ode_class,
             transcription=transcription,
-            core_subsystems=core_subsystems,
-            external_subsystems=external_subsystems,
+            subsystems=subsystems,
             meta_data=meta_data,
             is_analytic_phase=True,
         )

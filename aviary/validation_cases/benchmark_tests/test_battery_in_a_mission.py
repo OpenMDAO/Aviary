@@ -16,12 +16,10 @@ class TestSubsystemsMission(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [BatteryBuilder()],
                 'optimize_mass': True,
             },
             'cruise1': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
-                'external_subsystems': [BatteryBuilder()],
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -40,8 +38,7 @@ class TestSubsystemsMission(unittest.TestCase):
                 },
             },
             'cruise2': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
-                'external_subsystems': [BatteryBuilder()],
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -62,7 +59,6 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [],
             },
         }
 
@@ -75,6 +71,7 @@ class TestSubsystemsMission(unittest.TestCase):
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv',
             phase_info,
         )
+        prob.load_external_subsystems([BatteryBuilder()])
 
         prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
 

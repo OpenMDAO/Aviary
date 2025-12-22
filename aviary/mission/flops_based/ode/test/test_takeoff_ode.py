@@ -104,7 +104,7 @@ class TakeoffODETest(unittest.TestCase):
                 num_nodes=nn,
                 aviary_options=aviary_options,
                 subsystem_options=takeoff_subsystem_options,
-                core_subsystems=default_mission_subsystems,
+                subsystems=default_mission_subsystems,
                 climbing=climbing,
                 friction_key=Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
             ),

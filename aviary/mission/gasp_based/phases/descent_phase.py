@@ -4,7 +4,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
@@ -94,20 +94,20 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
 
-class DescentPhase(PhaseBuilderBase):
+class DescentPhase(PhaseBuilder):
     """
     A phase builder for an descent phase in a mission simulation.
 
-    This class extends the PhaseBuilderBase class, providing specific implementations for
+    This class extends the PhaseBuilder class, providing specific implementations for
     the descent phase of a 2-degree of freedom flight mission.
 
     Attributes
     ----------
-    Inherits all attributes from PhaseBuilderBase.
+    Inherits all attributes from PhaseBuilder.
 
     Methods
     -------
-    Inherits all methods from PhaseBuilderBase.
+    Inherits all methods from PhaseBuilder.
     Additional method overrides and new methods specific to the descent phase are included.
     """
 
@@ -169,8 +169,8 @@ class DescentPhase(PhaseBuilderBase):
             units='lbf',
         )
         # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('core_aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('core_aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
+        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
 
         return phase
 
