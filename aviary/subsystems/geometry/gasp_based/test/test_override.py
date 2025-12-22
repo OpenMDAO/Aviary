@@ -26,12 +26,10 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         engines = [build_engine_deck(aviary_inputs)]
 
-        core_subsystems = get_default_premission_subsystems('GASP', engines)
+        subsystems = get_default_premission_subsystems('GASP', engines)
         preprocess_propulsion(aviary_inputs, engines)
 
         prob = om.Problem()
-
-        subsystems = core_subsystems
 
         prob.model = AviaryGroup()
         prob.model.aviary_inputs = aviary_inputs
