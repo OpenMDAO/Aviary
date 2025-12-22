@@ -122,13 +122,12 @@ aircraft:vertical_tail:aspect_ratio,0,unitless
 aircraft:vertical_tail:mass_scaler,1.0,unitless
 aircraft:vertical_tail:num_tails,0,unitless
 aircraft:vertical_tail:taper_ratio,0.0,unitless
-aircraft:vertical_tail:thickness_to_chord,0.0,unitless
+aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,2.0,unitless
 # aircraft:wing:area,7621.66,1,ft**2
 # aircraft:wing:aspect_ratio,7.557,0,unitless
-aircraft:wing:aspect_ratio_ref,7.557,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:composite_fraction,1,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
@@ -140,10 +139,9 @@ aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
 aircraft:wing:misc_mass_scaler,1.0,unitless
-aircraft:wing:num_input_station_dist,3,unitless
 aircraft:wing:num_integration_stations,50,unitless
 aircraft:wing:shear_control_mass_scaler,1.0,unitless
-aircraft:wing:span,253.720756,ft
+aircraft:wing:span,238.08,ft
 aircraft:wing:span_efficiency_factor,0.0,unitless
 aircraft:wing:span_efficiency_reduction,False,unitless
 aircraft:wing:strut_bracing_factor,0.0,unitless
@@ -151,7 +149,7 @@ aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
-aircraft:wing:thickness_to_chord_ref,0.11,unitless
+aircraft:wing:thickness_to_chord_reference,0.11,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
