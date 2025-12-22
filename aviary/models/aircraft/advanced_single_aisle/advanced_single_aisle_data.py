@@ -248,7 +248,7 @@ inputs.set_val(Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.33333)
 inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 1.6)
 inputs.set_val(Aircraft.Wing.AREA, 1220.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 11.5587605382765)
-inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 11.5587605382765)
+inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 11.5587605382765)
 inputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0)
 inputs.set_val(
     Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
