@@ -147,7 +147,6 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)
         # add_aviary_input(self, Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
