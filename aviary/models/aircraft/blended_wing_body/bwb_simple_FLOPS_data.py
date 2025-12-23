@@ -292,10 +292,10 @@ outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
 outputs.set_val(Aircraft.Furnishings.MASS, 61482.097969438299, 'lbm')  # WFURN
 
 outputs.set_val(Aircraft.Fuselage.CABIN_AREA, 5173.187202504683, 'ft**2')  # ACABIN
-avg_diameter = 39.8525
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, 'ft')  # XD
+ref_diameter = 39.8525
+outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, ref_diameter, 'ft')  # XD
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 137.5, 'ft')  # EL(4)
-outputs.set_val(Aircraft.Fuselage.CROSS_SECTION, np.pi * (avg_diameter / 2.0) ** 2.0, 'ft**2')
+outputs.set_val(Aircraft.Fuselage.CROSS_SECTION, np.pi * (ref_diameter / 2.0) ** 2.0, 'ft**2')
 outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.16739117852998228)  # DB
 outputs.set_val(Aircraft.Fuselage.FINENESS, 3.4502227)  # FR(4)
 outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 3.4502226961922089)  # BODYLD
