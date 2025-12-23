@@ -12,7 +12,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
