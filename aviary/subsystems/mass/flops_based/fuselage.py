@@ -21,7 +21,7 @@ class TransportFuselageMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
@@ -31,7 +31,7 @@ class TransportFuselageMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         length = inputs[Aircraft.Fuselage.LENGTH]
         scaler = inputs[Aircraft.Fuselage.MASS_SCALER]
-        avg_diameter = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diameter = inputs[Aircraft.Fuselage.REF_DIAMETER]
 
         num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         num_fuse_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
@@ -54,7 +54,7 @@ class TransportFuselageMass(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         length = inputs[Aircraft.Fuselage.LENGTH]
         scaler = inputs[Aircraft.Fuselage.MASS_SCALER]
-        avg_diameter = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+        avg_diameter = inputs[Aircraft.Fuselage.REF_DIAMETER]
         num_fuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         num_fuse_eng = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
         num_fuse_eng_fact = distributed_engine_count_factor(num_fuse_eng)
@@ -73,7 +73,7 @@ class TransportFuselageMass(om.ExplicitComponent):
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.LENGTH] = (
             scaler * 1.728 * avg_diameter_exp * length**0.28 * addtl_factor / GRAV_ENGLISH_LBM
         )
-        J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.AVG_DIAMETER] = (
+        J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.REF_DIAMETER] = (
             scaler * 1.728 * length_exp * height_width_exp * addtl_factor / GRAV_ENGLISH_LBM
         )
 

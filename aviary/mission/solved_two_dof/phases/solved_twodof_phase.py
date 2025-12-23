@@ -101,34 +101,6 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
             'All other phases of flight (climb, cruise, descent) this must be set to False.',
         )
 
-        # The options below have not yet been revamped.
-
-        self.declare(
-            name='required_available_climb_rate',
-            default=None,
-            units='ft/s',
-            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
-            'smaller than required_available_climb_rate. This helps to ensure that the '
-            'propulsion system is large enough to handle emergency maneuvers at all points '
-            'throughout the flight envelope. Default value is None for no constraint.',
-        )
-
-        self.declare(
-            name='no_climb',
-            types=bool,
-            default=False,
-            desc='Set to True to prevent the aircraft from climbing during the phase. This option '
-            'can be used to prevent unexpected climb during a descent phase.',
-        )
-
-        self.declare(
-            name='no_descent',
-            types=bool,
-            default=False,
-            desc='Set to True to prevent the aircraft from descending during the phase. This '
-            'can be used to prevent unexpected descent during a climb phase.',
-        )
-
         self.declare(
             name='throttle_enforcement',
             default='path_constraint',
@@ -151,6 +123,22 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
+            name='no_climb',
+            types=bool,
+            default=False,
+            desc='Set to True to prevent the aircraft from climbing during the phase. This option '
+            'can be used to prevent unexpected climb during a descent phase.',
+        )
+
+        self.declare(
+            name='no_descent',
+            types=bool,
+            default=False,
+            desc='Set to True to prevent the aircraft from descending during the phase. This '
+            'can be used to prevent unexpected descent during a climb phase.',
+        )
+
+        self.declare(
             name='constraints',
             types=dict,
             default={},
@@ -158,6 +146,18 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
             "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
             '_add_user_defined_constraints().',
         )
+
+        self.declare(
+            name='required_available_climb_rate',
+            default=None,
+            units='ft/s',
+            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
+            'smaller than required_available_climb_rate. This helps to ensure that the '
+            'propulsion system is large enough to handle emergency maneuvers at all points '
+            'throughout the flight envelope. Default value is None for no constraint.',
+        )
+
+        # The options below have not yet been revamped.
 
         self.declare(
             name='rotation',
