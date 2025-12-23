@@ -10,15 +10,7 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
-    BWBWingCharacteristicLength,
-    CanardCharacteristicLength,
-    FuselageCharacteristicLengths,
-    HorizontalTailCharacteristicLength,
-    NacelleCharacteristicLength,
-    VerticalTailCharacteristicLength,
-    WingCharacteristicLength,
-)
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
 from aviary.subsystems.geometry.flops_based.fuselage import (
     BWBDetailedCabinLayout,
     BWBFuselagePrelim,
@@ -183,55 +175,12 @@ class PrepGeom(om.Group):
             'canard', Canard(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'wing_characteristic_lengths',
-                BWBWingCharacteristicLength(),
-                promotes_inputs=['aircraft*'],
-                promotes_outputs=['*'],
-            )
-        elif design_type is AircraftTypes.TRANSPORT:
-            self.add_subsystem(
-                'wing_characteristic_lengths',
-                WingCharacteristicLength(),
-                promotes_inputs=['aircraft*'],
-                promotes_outputs=['*'],
-            )
         self.add_subsystem(
-            'nacelle_characteristic_lengths',
-            NacelleCharacteristicLength(),
+            'characteristicLengths',
+            CharacteristicLengths(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
         )
-        self.add_subsystem(
-            'canard_char_lengths',
-            CanardCharacteristicLength(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-        self.add_subsystem(
-            'fuselage_char_lengths',
-            FuselageCharacteristicLengths(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-        if num_horizontal_tails > 0:
-            self.add_subsystem(
-                'horizontal_tail_char_lengths',
-                HorizontalTailCharacteristicLength(),
-                promotes_outputs=['*'],
-                promotes_inputs=['*'],
-            )
-
-        if num_vertical_tails > 0:
-            self.add_subsystem(
-                'vertical_tail_char_lengths',
-                VerticalTailCharacteristicLength(),
-                promotes_outputs=['*'],
-                promotes_inputs=['*'],
-            )
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']

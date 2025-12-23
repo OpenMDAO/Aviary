@@ -3,8 +3,73 @@ import openmdao.api as om
 
 from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
+
+
+class CharacteristicLengths(om.Group):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
+        add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
+
+    def setup(self):
+        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem(
+                'wing_characteristic_lengths',
+                BWBWingCharacteristicLength(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
+            )
+        elif design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'wing_characteristic_lengths',
+                WingCharacteristicLength(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
+            )
+
+        self.add_subsystem(
+            'nacelle_characteristic_lengths',
+            NacelleCharacteristicLength(),
+            promotes_inputs=['aircraft*'],
+            promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'canard_char_lengths',
+            CanardCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        self.add_subsystem(
+            'fuselage_char_lengths',
+            FuselageCharacteristicLengths(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        if num_horizontal_tails > 0:
+            self.add_subsystem(
+                'horizontal_tail_char_lengths',
+                HorizontalTailCharacteristicLength(),
+                promotes_outputs=['*'],
+                promotes_inputs=['*'],
+            )
+
+        if num_vertical_tails > 0:
+            self.add_subsystem(
+                'vertical_tail_char_lengths',
+                VerticalTailCharacteristicLength(),
+                promotes_outputs=['*'],
+                promotes_inputs=['*'],
+            )
 
 
 class WingCharacteristicLength(om.ExplicitComponent):
