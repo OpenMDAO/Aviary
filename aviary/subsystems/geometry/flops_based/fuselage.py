@@ -47,8 +47,8 @@ class FuselagePrelim(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 print('Aircraft.Fuselage.LENGTH must be positive.')
 
-        avg_diameter = 0.5 * (max_height + max_width)
-        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
+        ref_diameter = 0.5 * (max_height + max_width)
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
 
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = length * max_width
 
@@ -114,10 +114,10 @@ class BWBFuselagePrelim(om.ExplicitComponent):
                 print('Rear_spar_percent_chord must be positive. It is default to 0.7')
 
         # not sure if this is right definition and not sure if it is used for BWB.
-        avg_diameter = 0.5 * (max_height + max_width)
+        ref_diameter = 0.5 * (max_height + max_width)
         planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
-        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
 
     def compute_partials(self, inputs, partials):
