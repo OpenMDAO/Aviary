@@ -145,6 +145,12 @@ class EngineDeck(EngineModel):
     update
     """
 
+    # EngineDecks using GLOBAL_THROTTLE = False will have unique maximum throttle levels per flight
+    # condition (not always 1) - max engine values must be handled manually inside this component
+    # TODO this can be updated so that if GLOBAL_THROTTLE = True, the max engine components in
+    # build_mission() are skipped, and this flag is set to False.
+    compute_max_values = True
+
     def __init__(
         self,
         name='engine_deck',
@@ -904,7 +910,7 @@ class EngineDeck(EngineModel):
         #      reduced data set?
         if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
-                # create IndepVarComp to pass maximum throttle is to max thrust interpolator
+                # create IndepVarComp to pass maximum throttle to max thrust interpolator
                 fixed_throttles = om.IndepVarComp()
                 if self.global_throttle:
                     fixed_throttles.add_output(
@@ -985,7 +991,7 @@ class EngineDeck(EngineModel):
             max_thrust_engine = om.MetaModelSemiStructuredComp(
                 method=interp_method, extrapolate=False, vec_size=num_nodes
             )
-
+            # TODO engine could have other inputs!! Don't hardcode these
             if interp_sort == 'altitude':
                 max_thrust_engine.add_input(
                     Dynamic.Mission.ALTITUDE,
@@ -1085,22 +1091,37 @@ class EngineDeck(EngineModel):
         if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
                 engine_group.add_subsystem(
-                    'fixed_max_throttles', fixed_throttles, promotes_outputs=['*']
+                    'fixed_max_throttles',
+                    fixed_throttles,  # , promotes_outputs=['*']
                 )
-
-            if not (
-                self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle)
-            ):
+            else:
                 engine_group.add_subsystem(
                     'interp_max_throttles',
                     interp_throttles,
                     promotes_inputs=['*'],
-                    promotes_outputs=['*'],
+                    # promotes_outputs=['*'],
                 )
 
             engine_group.add_subsystem(
-                'max_interpolation', max_thrust_engine, promotes_inputs=['*']
+                'max_interpolation',
+                max_thrust_engine,
+                promotes_inputs=[
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Mission.ALTITUDE,
+                ],  # , promotes_inputs=['*']
             )
+
+            # manually connect max throttles - do not promote them out of group
+            if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
+                engine_group.connect(
+                    'fixed_max_throttles.throttle_max',
+                    'max_interpolation.throttle_max',
+                )
+            else:
+                engine_group.connect(
+                    'interp_max_throttles.throttle_max',
+                    'max_interpolation.throttle_max',
+                )
 
             if uncorrect_shp:
                 engine_group.add_subsystem(
