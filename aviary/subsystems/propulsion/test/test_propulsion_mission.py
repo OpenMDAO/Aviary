@@ -62,6 +62,7 @@ class PropulsionMissionTest(unittest.TestCase):
         self.prob.model.add_subsystem(
             'propulsion',
             PropulsionMission(num_nodes=nn, aviary_options=options, engine_models=[engine]),
+            promotes=['*'],
         )
 
         setup_model_options(self.prob, options)
@@ -312,12 +313,12 @@ class PropulsionMissionTest(unittest.TestCase):
             om.IndepVarComp(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'),
             promotes=['*'],
         )
-        throttle = np.linspace(1.0, 0.6, nn)
+
         model.add_subsystem(
             Dynamic.Vehicle.Propulsion.THROTTLE,
             om.IndepVarComp(
                 Dynamic.Vehicle.Propulsion.THROTTLE,
-                np.vstack((throttle, throttle)).transpose(),
+                np.linspace(1.0, 0.6, nn),
                 units='unitless',
             ),
             promotes=['*'],
@@ -326,7 +327,7 @@ class PropulsionMissionTest(unittest.TestCase):
         prop = PropulsionMission(
             num_nodes=nn,
             aviary_options=options,
-            engine_models=engine_models,
+            engine_models=[engine],
         )
         model.add_subsystem('propulsion', prop, promotes=['*'])
 
@@ -418,7 +419,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = PropulsionMissionTest()
-    test.setUp()
-    test.test_case_no_max_thrust_multiengine()
+    unittest.main()
+    # test = PropulsionMissionTest()
+    # test.setUp()
+    # test.test_case_no_max_thrust()
