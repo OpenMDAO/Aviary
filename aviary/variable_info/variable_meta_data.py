@@ -70,7 +70,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='air conditioning system mass',
+    desc='Environmental control mass (air conditioning)',
     default_value=0.0,
 )
 
@@ -122,7 +122,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='mass of anti-icing system (auxiliary gear)',
+    desc='Anti-icing system mass',
     default_value=0.0,
 )
 
@@ -204,7 +204,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='avionics mass',
+    desc='Avionics group mass. Includes equipment and installation mass.',
     default_value=0.0,
 )
 
@@ -625,11 +625,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Controls.TOTAL_MASS,
+    Aircraft.Controls.MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFC', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='total mass of cockpit controls, fixed wing controls, and SAS',
+    desc='Flight controls group mass. Contains cockpit controls, automatic flight control system '
+    'and system controls.',
     default_value=0.0,
 )
 
@@ -672,6 +673,39 @@ add_meta_data(
     desc='baggage mass per passenger',
     option=True,
     default_value=0.0,
+)
+
+add_meta_data(
+    # Note user override
+    #    - see also: Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER
+    Aircraft.CrewPayload.CABIN_CREW_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['WTS.WSP(28,2)', '~WEIGHT.WSTUAB', '~WTSTAT.WSP(28, 2)', '~INERT.WSTUAB'],
+        'FLOPS': None,
+        'LEAPS1': [
+            '(WeightABC)self._cabin_crew_and_bag_weight',
+            'aircraft.outputs.L0_weights_summary.cabin_crew_and_bag_weight',
+        ],
+    },
+    units='lbm',
+    desc='total mass of the non-flight crew and their baggage',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.WTIN.WSTUAB', 'MISWT.WSTUAB', 'MISWT.OSTUAB'],
+        'FLOPS': 'WTIN.WSTUAB',
+        'LEAPS1': 'aircraft.inputs.L0_overrides.cabin_crew_and_bag_weight',
+    },
+    units='unitless',
+    desc='scaler for total mass of the non-flight crew and their baggage',
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -721,6 +755,47 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.CW(12)', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='mass of catering items per passenger',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['&DEFINE.WTIN.WFLCRB', 'MISWT.WFLCRB', 'MISWT.OFLCRB'],
+        'FLOPS': 'WTIN.WFLCRB',
+        'LEAPS1': 'aircraft.inputs.L0_overrides.flight_crew_and_bag_weight',
+    },
+    units='unitless',
+    desc='scaler for total mass of the flight crew and their baggage',
+    default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.MASS_PER_PASSENGER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.WPPASS',  # ['&DEFINE.WTIN.WPPASS', 'WPAB.WPPASS'],
+        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.weight_per_passenger',
+    },
+    units='lbm',
+    desc='mass per passenger',
+    option=True,
+    default_value=165.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.MISC_CARGO,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.CARGOF',  # ['&DEFINE.WTIN.CARGOF', 'WTS.CARGOF'],
+        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.misc_cargo',
+    },
+    units='lbm',
+    desc='cargo (other than passenger baggage) carried in fuselage',
     default_value=0.0,
 )
 
@@ -899,80 +974,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.WTIN.WFLCRB', 'MISWT.WFLCRB', 'MISWT.OFLCRB'],
-        'FLOPS': 'WTIN.WFLCRB',
-        'LEAPS1': 'aircraft.inputs.L0_overrides.flight_crew_and_bag_weight',
-    },
-    units='unitless',
-    desc='scaler for total mass of the flight crew and their baggage',
-    default_value=1.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.MASS_PER_PASSENGER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.WPPASS',  # ['&DEFINE.WTIN.WPPASS', 'WPAB.WPPASS'],
-        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.weight_per_passenger',
-    },
-    units='lbm',
-    desc='mass per passenger',
-    option=True,
-    default_value=165.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.MISC_CARGO,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.CARGOF',  # ['&DEFINE.WTIN.CARGOF', 'WTS.CARGOF'],
-        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.misc_cargo',
-    },
-    units='lbm',
-    desc='cargo (other than passenger baggage) carried in fuselage',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # Note user override
-    #    - see also: Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER
-    Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['WTS.WSP(28,2)', '~WEIGHT.WSTUAB', '~WTSTAT.WSP(28, 2)', '~INERT.WSTUAB'],
-        'FLOPS': None,
-        'LEAPS1': [
-            '(WeightABC)self._cabin_crew_and_bag_weight',
-            'aircraft.outputs.L0_weights_summary.cabin_crew_and_bag_weight',
-        ],
-    },
-    units='lbm',
-    desc='total mass of the non-flight crew and their baggage',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['&DEFINE.WTIN.WSTUAB', 'MISWT.WSTUAB', 'MISWT.OSTUAB'],
-        'FLOPS': 'WTIN.WSTUAB',
-        'LEAPS1': 'aircraft.inputs.L0_overrides.cabin_crew_and_bag_weight',
-    },
-    units='unitless',
-    desc='scaler for total mass of the non-flight crew and their baggage',
-    default_value=1.0,
-)
-
-add_meta_data(
     Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
     meta_data=_MetaData,
     historical_name={
@@ -1089,7 +1090,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.PASSENGER_MASS,
+    Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -1106,7 +1107,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS,
+    Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.UWPAX', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
@@ -1335,6 +1336,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.EMPENNAGE_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+        'LEAPS1': None,
+    },
+    units='lbm',
+    desc='Empennage group mass. Contains mass of canards, horizontal/vertical stabilizers '
+    'and fins, and ventral fins. In Aviary, this does NOT contain tail rotor mass, which is a '
+    'deviation from SAWE standards. Tail rotor mass is bookept under the propulsion group.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.EMPTY_MASS,
     meta_data=_MetaData,
     historical_name={
@@ -1344,7 +1360,8 @@ add_meta_data(
         'LEAPS1': None,
     },
     units='lbm',
-    desc='empty mass of the aircraft',
+    desc='Empty mass of the aircraft. Includes structure group, propulsion group, and total systems '
+    'and equipment mass.',
     default_value=0.0,
 )
 
@@ -1387,7 +1404,8 @@ add_meta_data(
     },
     meta_data=_MetaData,
     units='lbm',
-    desc='total mass of all user-defined external subsystems',
+    desc='Total mass of all user-defined external subsystems. These are bookkept as part of empty '
+    'mass.',
     default_value=0.0,
 )
 
@@ -1408,31 +1426,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.FIXED_EQUIPMENT_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFE', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='total mass of fixed equipment: APU, Instruments, Hydraulics, Electrical, '
-    'Avionics, AC, Anti-Icing, Auxiliary Equipment, and Furnishings',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.FIXED_USEFUL_LOAD,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='total mass of fixed useful load: crew, service items, trapped oil, etc',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.IJEFF', 'FLOPS': None, 'LEAPS1': None},
-    desc='A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the development of GASP. '
-    "This flag is planted here to thank him for his hard work and dedication, Aviary wouldn't be what it is today "
-    'without his help.',
+    desc='A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the '
+    'development of GASP. This flag is planted here to thank him for his hard work and dedication, '
+    "Aviary wouldn't be what it is today without his help.",
 )
 
 # TODO expected types and default value?
@@ -1622,7 +1621,8 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Total structural group mass',
+    desc='Total structure group mass. Includes the following groups: wing, epennage, fuselage, '
+    'landing gear, air induction.',
     default_value=0.0,
 )
 
@@ -1653,7 +1653,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.SYSTEMS_EQUIP_MASS,
+    Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -1665,7 +1665,9 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Total systems & equipment group mass',
+    desc='Systems and equipment group mass. Includes flight controls, auxilary power, instruments, '
+    'hydraulics, pneumatics, electrical, avionics, furnishings and equipment, environmental control, '
+    'and anti-icing mass.',
     default_value=0.0,
 )
 
@@ -1673,9 +1675,9 @@ add_meta_data(
 #      variable hierarchy
 add_meta_data(
     # Note in FLOPS/LEAPS1, this is the same variable as
-    # Aircraft.Design.SYSTEMS_EQUIP_MASS, because FLOPS/LEAPS1 overwrite the
+    # Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, because FLOPS/LEAPS1 overwrite the
     # value during calculations; in Aviary, these must be separate variables
-    Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE,
+    Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
@@ -2205,7 +2207,13 @@ add_meta_data(
         'LEAPS1': 'aircraft.outputs.L0_weights_summary.Engine.WEIGHT',
     },
     units='lbm',
-    desc='scaled mass of a single engine or bare engine if inlet and nozzle mass are supplied',
+    desc='Scaled mass of a single engine. Engine mass includes installation mass, accessory gear '
+    'boxes & drive, exhaust system, engine cooling, water injection, engien controls starting '
+    'system, propeller/fan installation, lubricating system, and the drive system. Drive '
+    'system mass contains gearboxes including lubrication and rotor brakes, transmission drive, '
+    'rotor shaft, and gas drive. Fuel system is bookept as a separate line item in the propulsion '
+    'group. For nonconventional engines, such as all-electric, engine mass should also contain '
+    'masses appropriate for per-engine mass bookeeping (such as motor mass).',
     default_value=0.0,
     multivalue=True,
 )
@@ -2356,7 +2364,8 @@ add_meta_data(
         'LEAPS1': '(WeightABC)self._Engine.WEIGHT',
     },
     units='lbm',
-    desc='unscaled mass of a single engine or bare engine if inlet and nozzle mass are supplied',
+    desc='Unscaled mass of a single engine. See Aircraft.Engine.MASS for breakdown of what is '
+    'included in engine mass.',
     default_value=0.0,
     option=True,
     multivalue=True,
@@ -2898,7 +2907,8 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='fuel system mass',
+    desc='Fuel system mass. Includes tanks (both protected and unprotected), plumbing, and '
+    'similar masses.',
     default_value=0.0,
 )
 
@@ -3189,7 +3199,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Total furnishings system mass',
+    desc='Total furnishings mass',
     default_value=0.0,
 )
 
@@ -3511,7 +3521,8 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='mass of the fuselage structure',
+    desc='Fuselage group mass. Contains basic structure and secondary structures such as '
+    'enclosures, flooring, doors, ramps, panels, etc.',
     default_value=0.0,
 )
 
@@ -4651,6 +4662,19 @@ add_meta_data(
 #                         |_|
 # =====================================================================
 # NOTE variables under propulsion are aircraft-level values
+add_meta_data(
+    Aircraft.Propulsion.ENERGY_SYSTEM_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,
+        'LEAPS1': None,
+    },
+    units='lbm',
+    desc='Energy system mass. Contains mass for energy storage and transmission, including the fuel '
+    'system, battery, and electric powertrain.',
+    default_value=0.0,
+)
 
 add_meta_data(
     Aircraft.Propulsion.ENGINE_OIL_MASS_SCALER,
@@ -4679,7 +4703,8 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Total propulsion group mass',
+    desc='Propulsion group mass. Total mass of all engines on the aircraft, as well as energy system '
+    'mass.',
     default_value=0.0,
 )
 
@@ -5360,7 +5385,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.ASPECT_RATIO_REF,
+    Aircraft.Wing.ASPECT_RATIO_REFERENCE,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -5973,7 +5998,8 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='wing total mass',
+    desc='Wing group mass. Contains basic & secondary structures, ailerons/elevons, spoilers, flaps, '
+    'and slats.',
     default_value=0.0,
 )
 
@@ -6416,7 +6442,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+    Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -7177,16 +7203,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Summary.FUEL_MASS_REQUIRED,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
-    'mission',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Design.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={
@@ -7204,7 +7220,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='design gross mass of the aircraft',
+    desc='Design gross mass of the aircraft. Includes zero fuel mass plus useable fuel.',
     default_value=0.0,
 )
 
@@ -7715,12 +7731,22 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.FUEL_MASS_REQUIRED,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
+    'mission',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.Summary.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='gross takeoff mass of aircraft for that specific mission, not '
-    'necessarily the value for the aircraft`s design mission',
+    desc='Gross takeoff mass of aircraft for the mission being flown. May differ from design gross '
+    'mass for off-design missions. Includes zero fuel mass plus useable fuel.',
 )
 
 add_meta_data(
@@ -7738,9 +7764,9 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or passengers.'
-    'Includes crew, unusable fuel, oil, and operational items like cargo containers and passenger '
-    'service mass.',
+    desc='Operating mass of the aircraft. Includes structure mass, crew, unusable fuel, oil, and '
+    'operational items like cargo containers and passenger service mass. Does not include baggage '
+    'mass (deviation from SAWE standard).',
     default_value=0.0,
 )
 
@@ -7774,6 +7800,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.USEFUL_LOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.Summary.ZERO_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={
@@ -7787,8 +7822,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Aircraft zero fuel mass, which includes structural mass (empty weight) and payload mass '
-    '(passengers, baggage, and cargo)',
+    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, and cargo.',
     default_value=0.0,
 )
 

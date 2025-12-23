@@ -3,7 +3,7 @@ import unittest
 import openmdao.api as om
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.cargo import PayloadGroup
+from aviary.subsystems.mass.flops_based.payload import PayloadGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test, print_case
@@ -15,7 +15,7 @@ cargo_test_data['1'] = AviaryValues(
         Aircraft.CrewPayload.MISC_CARGO: (2000.0, 'lbm'),  # custom
         Aircraft.CrewPayload.WING_CARGO: (1000.0, 'lbm'),  # custom
         Aircraft.CrewPayload.BAGGAGE_MASS: (9200.0, 'lbm'),  # custom
-        Aircraft.CrewPayload.PASSENGER_MASS: (33120.0, 'lbm'),  # custom
+        Aircraft.CrewPayload.PASSENGER_MASS_TOTAL: (33120.0, 'lbm'),  # custom
         Aircraft.CrewPayload.CARGO_MASS: (3000.0, 'lbm'),  # custom
         Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS: (45320.0, 'lbm'),  # custom
     }
@@ -56,7 +56,7 @@ class PayloadGroupTest(unittest.TestCase):
             input_keys=[Aircraft.CrewPayload.MISC_CARGO, Aircraft.CrewPayload.WING_CARGO],
             output_keys=[
                 Aircraft.CrewPayload.BAGGAGE_MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS,
+                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
                 Aircraft.CrewPayload.CARGO_MASS,
                 Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             ],

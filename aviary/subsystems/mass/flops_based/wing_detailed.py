@@ -43,7 +43,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REFERENCE, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
 
@@ -95,7 +95,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
-        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REF]
+        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
 
