@@ -95,7 +95,7 @@ inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
-inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6883, 'unitless')
+inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.68835495693, 'unitless')
 
 # Furnishings
 # ---------------------------
