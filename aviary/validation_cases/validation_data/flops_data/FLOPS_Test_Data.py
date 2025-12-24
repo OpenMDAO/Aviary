@@ -14,6 +14,8 @@ from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_
     MultiEngineSingleAisle,
 )
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import N3CC
+from aviary.models.aircraft.blended_wing_body.bwb_simple_FLOPS_data import BWBsimpleFLOPS
+from aviary.models.aircraft.blended_wing_body.bwb_detailed_FLOPS_data import BWBdetailedFLOPS
 
 FLOPS_Test_Data = {}
 
@@ -22,6 +24,8 @@ FLOPS_Test_Data['LargeSingleAisle2FLOPS'] = LargeSingleAisle2FLOPS
 FLOPS_Test_Data['LargeSingleAisle2FLOPSdw'] = LargeSingleAisle2FLOPSdw
 FLOPS_Test_Data['LargeSingleAisle2FLOPSalt'] = LargeSingleAisle2FLOPSalt
 FLOPS_Test_Data['AdvancedSingleAisle'] = N3CC
+FLOPS_Test_Data['BWBsimpleFLOPS'] = BWBsimpleFLOPS
+FLOPS_Test_Data['BWBdetailedFLOPS'] = BWBdetailedFLOPS
 
 # We don't have full date for this yet, but might still want to run one in a single unit test.
 FLOPS_Lacking_Test_Data = {}
