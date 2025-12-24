@@ -209,10 +209,10 @@ class OtherCharacteristicLengths(om.ExplicitComponent):
         self._compute_canard(inputs, outputs, discrete_inputs, discrete_outputs)
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        self._compute_partials_horizontal_tail(inputs, J, discrete_inputs)
-        self._compute_partials_vertical_tail(inputs, J, discrete_inputs)
+        self._compute_partials_horizontal_tail(inputs, J, discrete_inputs=None)
+        self._compute_partials_vertical_tail(inputs, J, discrete_inputs=None)
         self._compute_partials_fuselage(inputs, J, discrete_inputs)
-        self._compute_partials_canard(inputs, J, discrete_inputs)
+        self._compute_partials_canard(inputs, J, discrete_inputs=None)
 
     def _setup_partials_horizontal_tail(self):
         self.declare_partials(

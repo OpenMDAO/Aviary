@@ -22,14 +22,13 @@ class TransportStarterMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
         add_aviary_option(self, Mission.Constraints.MAX_MACH)
-        add_aviary_option(self, Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
         add_aviary_input(
-            self, Aircraft.Engine.SCALED_SLS_THRUST, shape=num_engine_type, units='lbf'
+            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
         )
 
         add_aviary_output(self, Aircraft.Propulsion.TOTAL_STARTER_MASS, units='lbm')
@@ -46,9 +45,7 @@ class TransportStarterMass(om.ExplicitComponent):
         num_engines_factor = distributed_engine_count_factor(total_engines)
 
         # scale avg_diam by thrust ratio
-        thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-        ref_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
-        thrust_rat = thrust / ref_sls_thrust
+        thrust_rat = inputs[Aircraft.Engine.SCALE_FACTOR]
         adjusted_d_nacelle = d_nacelle * np.sqrt(thrust_rat)
 
         f_nacelle = distributed_nacelle_diam_factor(adjusted_d_nacelle, num_engines)
@@ -66,13 +63,9 @@ class TransportStarterMass(om.ExplicitComponent):
         eng_count_factor = distributed_engine_count_factor(total_engines)
 
         # scale avg_diam by thrust ratio
-        thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
-        ref_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
-        thrust_rat = thrust / ref_sls_thrust
+        thrust_rat = inputs[Aircraft.Engine.SCALE_FACTOR]
         adjusted_d_nacelle = d_nacelle * np.sqrt(thrust_rat)
 
-        num_engines_factor = distributed_engine_count_factor(total_engines)
-        f_nacelle = distributed_nacelle_diam_factor(adjusted_d_nacelle, num_engines)
         diam_deriv_fact = distributed_nacelle_diam_factor_deriv(num_engines)
         max_mach_exp = max_mach**0.32
         d_avg = sum(adjusted_d_nacelle * num_engines) / total_engines
@@ -87,11 +80,11 @@ class TransportStarterMass(om.ExplicitComponent):
             * d_avg**0.6
         ) / GRAV_ENGLISH_LBM
 
-        J[Aircraft.Propulsion.TOTAL_STARTER_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
+        J[Aircraft.Propulsion.TOTAL_STARTER_MASS, Aircraft.Engine.SCALE_FACTOR] = (
             17.6
             * eng_count_factor
             * max_mach_exp
             * diam_deriv_fact**1.6
             * d_avg**0.6
-            * (d_nacelle * 0.5 / np.sqrt(thrust_rat) / ref_sls_thrust)
+            * (d_nacelle * 0.5 / np.sqrt(thrust_rat))
         ) / GRAV_ENGLISH_LBM

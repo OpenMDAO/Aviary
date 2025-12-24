@@ -45,7 +45,9 @@ class FuselagePrelim(om.ExplicitComponent):
         length = inputs[Aircraft.Fuselage.LENGTH]
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
+                )
 
         ref_diameter = 0.5 * (max_height + max_width)
         outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
@@ -108,10 +110,15 @@ class BWBFuselagePrelim(om.ExplicitComponent):
 
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
+                )
         if rear_spar_percent_chord <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be positive. It is default to 0.7')
+                raise ValueError(
+                    f'Rear_spar_percent_chord must be positive, '
+                    'however {rear_spar_percent_chord} is provided.'
+                )
 
         # not sure if this is right definition and not sure if it is used for BWB.
         ref_diameter = 0.5 * (max_height + max_width)
@@ -165,20 +172,24 @@ class SimpleCabinLayout(om.ExplicitComponent):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
+                )
         if max_height <= 0.0 or max_width <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
+                raise ValueError(
+                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
+                    'however {max_height} is provided.'
                 )
 
         pax_compart_length = 0.6085 * length * (np.arctan(length / 59.0)) ** 1.1
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Passenger compartiment lenght is longer than recommended maximum length. '
-                    'Suggest use detailed laylout algorithm.'
+                raise ValueError(
+                    'Passenger compartiment lenght is longer than recommended maximum'
+                    ' length. Suggest use detailed laylout algorithm.'
                 )
+
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
 
     def compute_partials(self, inputs, J):
@@ -222,7 +233,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_fuselage = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         if num_fuselage > 1:
             if verbosity > Verbosity.BRIEF:
-                print('Multiple fuselage configuration is not implemented yet.')
+                raise ValueError('Multiple fuselage configuration is not implemented yet.')
 
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
         num_seat_abreast_tourist = self.options[
@@ -470,11 +481,14 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
+                )
         if max_width <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
+                raise ValueError(
+                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
+                    'however {max_width} is provided.'
                 )
 
         pax_compart_length = rear_spar_percent_chord * length
