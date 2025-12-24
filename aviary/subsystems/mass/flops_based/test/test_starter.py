@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.starter import TransportStarterMass
@@ -11,42 +12,42 @@ from aviary.validation_cases.validation_tests import (
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
+    get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+omit_cases = ['AdvancedSingleAisle', 'BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
+
+@use_tempdirs
 class TransportStarterMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='AdvancedSingleAisle'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case_1(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
 
-        options = {
-            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-            Aircraft.Propulsion.TOTAL_NUM_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_ENGINES
-            ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
-        }
-
         prob.model.add_subsystem(
             'starter_test',
-            TransportStarterMass(**options),
+            TransportStarterMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
             prob,
             case_name,
-            input_keys=[Aircraft.Nacelle.AVG_DIAMETER],
+            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALED_SLS_THRUST],
             output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
         )
 
@@ -58,6 +59,7 @@ class TransportStarterMassTest(unittest.TestCase):
             Aircraft.Engine.NUM_ENGINES: np.array([5]),
             Aircraft.Propulsion.TOTAL_NUM_ENGINES: 5,
             Mission.Constraints.MAX_MACH: 0.785,
+            Aircraft.Engine.REFERENCE_SLS_THRUST: (np.array([22200.5]), 'lbf'),
         }
 
         prob.model.add_subsystem(
@@ -70,6 +72,7 @@ class TransportStarterMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5, 'lbf')
 
         prob.run_model()
 
@@ -109,15 +112,65 @@ class TransportStarterMassTest2(unittest.TestCase):
 
         prob.model.add_subsystem(
             'starter_test',
-            TransportStarterMass(**options),
+            TransportStarterMass(),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
+
+        prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
+        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([5])
+        prob.model_options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 5
+        prob.model_options[Mission.Constraints.MAX_MACH] = 0.875
+        # prob.model_options['*'] = options
+        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([28928.1])
+
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, np.array([7.94]), 'ft')
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5, 'lbf')
+
+        # prob.run_model()
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBTransportStarterMassTest(unittest.TestCase):
+    """
+    Tests starter mass calculation for BWB.
+    In FLOPS, WSTART is scaled after override. We ignore the difference for now.
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case_1(self, case_name):
+        prob = self.prob
+
+        options = get_flops_options(case_name)
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([3])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 3
+
+        prob.model.add_subsystem(
+            'starter_test',
+            TransportStarterMass(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model_options['*'] = options
+        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([86459.2])
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALED_SLS_THRUST],
+            output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
+            version=Version.BWB,
+        )
 
 
 if __name__ == '__main__':

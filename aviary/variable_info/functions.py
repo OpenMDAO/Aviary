@@ -573,7 +573,11 @@ def setup_model_options(
 
     # Multi-engines need to index into their options.
     try:
-        num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        num = aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
+        if isinstance(num, int):
+            num_engine_models = 1
+        else:
+            num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
     except KeyError:
         # No engine data.
         return

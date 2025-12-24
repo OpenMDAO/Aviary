@@ -1448,7 +1448,7 @@ class EquipAndUsefulLoadMassGroup(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'equip',
                 EquipMassGroup(),

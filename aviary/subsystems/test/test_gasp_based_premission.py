@@ -319,7 +319,55 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 82063.412, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 3877.719, tol)
 
-    def test_case2(self):
+    def test_case_geom(self):
+        """
+        premission: geometry
+        """
+        prob = self.prob
+
+        preprocess_options(self.gasp_inputs)
+        geom_subsystem = get_geom_and_mass_subsystems('GASP')[0:1]
+
+        prob.model.add_subsystem(
+            'pre_mission',
+            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_subsystem),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(prob, self.gasp_inputs)
+        prob.setup(check=False)
+        set_aviary_initial_values(prob, self.gasp_inputs)
+
+        prob.run_model()
+
+        tol = 1e-5
+        # geometry subsystem
+        assert_near_equal(prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.LENGTH], 71.52455, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.WETTED_AREA], 4573.882, tol)
+        assert_near_equal(prob[Aircraft.Wing.AREA], 2142.857, tol)
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 146.385, tol)
+        assert_near_equal(prob[Aircraft.Wing.CENTER_CHORD], 22.97244, tol)
+        assert_near_equal(prob[Aircraft.Wing.AVERAGE_CHORD], 16.22, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 20.3337, tol)
+        assert_near_equal(prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.135966, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.9078, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.0383645, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.0280845, tol)
+        assert_near_equal(prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.6907, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AREA], 169.1196, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.SPAN], 16.98084, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.ROOT_CHORD], 14.5819, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.6746, tol)
+        assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 27.8219, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 7.2476, tol)
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 121.4458, tol)
+
+    def test_case_geom_mass(self):
         """
         premission: geometry + mass
         """

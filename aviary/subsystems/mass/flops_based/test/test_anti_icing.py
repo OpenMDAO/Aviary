@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.anti_icing import AntiIcingMass
@@ -12,15 +13,19 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
+
+@use_tempdirs
 class AntiIcingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -186,6 +191,50 @@ class AntiIcingMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBAntiIcingMassTest(unittest.TestCase):
+    """Test anti-icing mass calculation for BWB data."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        """test AntiIcingMass component for BWB"""
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'anti_icing',
+            AntiIcingMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        options = get_flops_options(case_name)
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([3])
+        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 3
+
+        prob.model_options['*'] = options
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.AntiIcing.MASS_SCALER,
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Nacelle.AVG_DIAMETER,
+                Aircraft.Wing.SPAN,
+                Aircraft.Wing.SWEEP,
+                Aircraft.Engine.SCALED_SLS_THRUST,
+            ],
+            output_keys=Aircraft.AntiIcing.MASS,
+            version=Version.BWB,
+            tol=3.0e-3,
+        )
 
 
 if __name__ == '__main__':
