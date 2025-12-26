@@ -16,6 +16,7 @@ class TestMuxComponent(unittest.TestCase):
         aviary_options = {
             Aircraft.Engine.NUM_ENGINES: np.array([2]),
             Aircraft.Fuselage.NUM_FUSELAGES: 1,
+            Aircraft.HorizontalTail.NUM_TAILS: 1,
             Aircraft.VerticalTail.NUM_TAILS: 1,
         }
 
@@ -87,6 +88,7 @@ class TestMuxComponent(unittest.TestCase):
         aviary_options = {
             Aircraft.Engine.NUM_ENGINES: np.array([2, 3]),
             Aircraft.Fuselage.NUM_FUSELAGES: 1,
+            Aircraft.HorizontalTail.NUM_TAILS: 1,
             Aircraft.VerticalTail.NUM_TAILS: 1,
         }
 
