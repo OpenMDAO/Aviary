@@ -530,8 +530,6 @@ class BWBPreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.HorizontalTail.FINENESS], 0.11, tol)
         assert_near_equal(prob[Aircraft.Nacelle.CHARACTERISTIC_LENGTH], [15.68611614], tol)
         assert_near_equal(prob[Aircraft.Nacelle.FINENESS], [1.38269353], tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.FINENESS], 0.11, tol)
         # TotalWettedArea
         assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 35311.53118076, tol)
 

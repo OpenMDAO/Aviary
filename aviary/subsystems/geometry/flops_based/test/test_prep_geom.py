@@ -8,9 +8,12 @@ from parameterized import parameterized
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
-    WingCharacteristicLength,
+    CanardCharacteristicLength,
+    FuselageCharacteristicLengths,
+    HorizontalTailCharacteristicLength,
     NacelleCharacteristicLength,
-    OtherCharacteristicLengths,
+    VerticalTailCharacteristicLength,
+    WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
@@ -547,7 +550,19 @@ class CharacteristicLengthsTest(unittest.TestCase):
             options[key] = flops_inputs.get_item(key)[0]
 
         prob.model.add_subsystem(
-            'other_characteristic_lengths', OtherCharacteristicLengths(**options), promotes=['*']
+            'canard_char_lengths', CanardCharacteristicLength(), promotes=['*']
+        )
+
+        prob.model.add_subsystem(
+            'fuselage_char_lengths', FuselageCharacteristicLengths(), promotes=['*']
+        )
+
+        prob.model.add_subsystem(
+            'horizontal_tail_char_lengths', HorizontalTailCharacteristicLength(), promotes=['*']
+        )
+
+        prob.model.add_subsystem(
+            'vertical_tail_char_lengths', VerticalTailCharacteristicLength(), promotes=['*']
         )
 
         # options[Aircraft.Engine.REFERENCE_SLS_THRUST] = (np.array([28928.1]), 'lbf')

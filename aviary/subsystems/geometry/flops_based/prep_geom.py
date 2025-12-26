@@ -11,12 +11,7 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
-    BWBWingCharacteristicLength,
-    NacelleCharacteristicLength,
-    OtherCharacteristicLengths,
-    WingCharacteristicLength,
-)
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
 from aviary.subsystems.geometry.flops_based.fuselage import (
     BWBDetailedCabinLayout,
     BWBFuselagePrelim,
@@ -170,29 +165,9 @@ class PrepGeom(om.Group):
             'canard', Canard(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'wing_characteristic_lengths',
-                BWBWingCharacteristicLength(),
-                promotes_inputs=['aircraft*'],
-                promotes_outputs=['*'],
-            )
-        elif design_type is AircraftTypes.TRANSPORT:
-            self.add_subsystem(
-                'wing_characteristic_lengths',
-                WingCharacteristicLength(),
-                promotes_inputs=['aircraft*'],
-                promotes_outputs=['*'],
-            )
         self.add_subsystem(
-            'nacelle_characteristic_lengths',
-            NacelleCharacteristicLength(),
-            promotes_inputs=['aircraft*'],
-            promotes_outputs=['*'],
-        )
-        self.add_subsystem(
-            'other_characteristic_lengths',
-            OtherCharacteristicLengths(),
+            'characteristicLengths',
+            CharacteristicLengths(),
             promotes_inputs=['aircraft*'],
             promotes_outputs=['*'],
         )

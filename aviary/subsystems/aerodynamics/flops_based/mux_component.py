@@ -15,7 +15,8 @@ class MuxComponent(om.ExplicitComponent):
     """
 
     def __init__(self, **kwargs):
-        self.num_tails = 0
+        self.num_h_tails = 0
+        self.num_v_tails = 0
         self.num_fuselages = 0
         self.num_nacelles = 0
 
@@ -24,10 +25,11 @@ class MuxComponent(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
-        nc = 2
+        nc = 1
 
         # Wing (Always 1)
         add_aviary_input(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
@@ -36,16 +38,21 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, units='unitless')
 
-        # Horizontal Tail (Always 1)
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
+        num = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+
+        self.num_h_tails = num
+        # Horizontal Tail
+        if num > 0:
+            add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
+            add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
+            add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
+            add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
+            add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
+            nc += num
 
         num = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
-        self.num_tails = num
+        self.num_v_tails = num
         if num > 0:
             add_aviary_input(self, Aircraft.VerticalTail.WETTED_AREA, units='ft**2')
             add_aviary_input(self, Aircraft.VerticalTail.FINENESS, units='unitless')
@@ -141,42 +148,45 @@ class MuxComponent(om.ExplicitComponent):
             val=1.0,
         )
 
-        # Horizontal Tail
-        rows = np.ones(1)
-        self.declare_partials(
-            'wetted_areas', Aircraft.HorizontalTail.WETTED_AREA, rows=rows, cols=cols, val=1.0
-        )
-        self.declare_partials(
-            'fineness_ratios', Aircraft.HorizontalTail.FINENESS, rows=rows, cols=cols, val=1.0
-        )
-        self.declare_partials(
-            'characteristic_lengths',
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
-            rows=rows,
-            cols=cols,
-            val=1.0,
-        )
-        self.declare_partials(
-            'laminar_fractions_upper',
-            Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
-            rows=rows,
-            cols=cols,
-            val=1.0,
-        )
-        self.declare_partials(
-            'laminar_fractions_lower',
-            Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
-            rows=rows,
-            cols=cols,
-            val=1.0,
-        )
+        ic = 1
 
-        ic = 2
+        # Horizontal Tail
+        if self.num_h_tails > 0:
+            rows = ic + np.arange(self.num_h_tails)
+            cols = np.zeros(self.num_h_tails)
+            self.declare_partials(
+                'wetted_areas', Aircraft.HorizontalTail.WETTED_AREA, rows=rows, cols=cols, val=1.0
+            )
+            self.declare_partials(
+                'fineness_ratios', Aircraft.HorizontalTail.FINENESS, rows=rows, cols=cols, val=1.0
+            )
+            self.declare_partials(
+                'characteristic_lengths',
+                Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+                rows=rows,
+                cols=cols,
+                val=1.0,
+            )
+            self.declare_partials(
+                'laminar_fractions_upper',
+                Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+                rows=rows,
+                cols=cols,
+                val=1.0,
+            )
+            self.declare_partials(
+                'laminar_fractions_lower',
+                Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+                rows=rows,
+                cols=cols,
+                val=1.0,
+            )
+            ic += self.num_h_tails
 
         # Vertical Tail
-        if self.num_tails > 0:
-            rows = ic + np.arange(self.num_tails)
-            cols = np.zeros(self.num_tails)
+        if self.num_v_tails > 0:
+            rows = ic + np.arange(self.num_v_tails)
+            cols = np.zeros(self.num_v_tails)
             self.declare_partials(
                 'wetted_areas', Aircraft.VerticalTail.WETTED_AREA, rows=rows, cols=cols, val=1.0
             )
@@ -204,7 +214,7 @@ class MuxComponent(om.ExplicitComponent):
                 cols=cols,
                 val=1.0,
             )
-            ic += self.num_tails
+            ic += self.num_v_tails
 
         # Fuselage
         if self.num_fuselages > 0:
@@ -284,24 +294,27 @@ class MuxComponent(om.ExplicitComponent):
         outputs['laminar_fractions_upper'][0] = inputs[Aircraft.Wing.LAMINAR_FLOW_UPPER][0]
         outputs['laminar_fractions_lower'][0] = inputs[Aircraft.Wing.LAMINAR_FLOW_LOWER][0]
 
-        # Horizontal Tail
-        outputs['wetted_areas'][1] = inputs[Aircraft.HorizontalTail.WETTED_AREA][0]
-        outputs['fineness_ratios'][1] = inputs[Aircraft.HorizontalTail.FINENESS][0]
-        outputs['characteristic_lengths'][1] = inputs[
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH
-        ][0]
-        outputs['laminar_fractions_upper'][1] = inputs[Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER][
-            0
-        ]
-        outputs['laminar_fractions_lower'][1] = inputs[Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER][
-            0
-        ]
+        ic = 1
 
-        ic = 2
+        # Horizontal Tail
+        if self.num_h_tails > 0:
+            for j in range(self.num_h_tails):
+                outputs['wetted_areas'][ic + j] = inputs[Aircraft.HorizontalTail.WETTED_AREA][0]
+                outputs['fineness_ratios'][ic + j] = inputs[Aircraft.HorizontalTail.FINENESS][0]
+                outputs['characteristic_lengths'][ic + j] = inputs[
+                    Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH
+                ][0]
+                outputs['laminar_fractions_upper'][ic + j] = inputs[
+                    Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER
+                ][0]
+                outputs['laminar_fractions_lower'][ic + j] = inputs[
+                    Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER
+                ][0]
+            ic += self.num_h_tails
 
         # Vertical Tail
-        if self.num_tails > 0:
-            for j in range(self.num_tails):
+        if self.num_v_tails > 0:
+            for j in range(self.num_v_tails):
                 outputs['wetted_areas'][ic + j] = inputs[Aircraft.VerticalTail.WETTED_AREA][0]
                 outputs['fineness_ratios'][ic + j] = inputs[Aircraft.VerticalTail.FINENESS][0]
                 outputs['characteristic_lengths'][ic + j] = inputs[
@@ -313,7 +326,7 @@ class MuxComponent(om.ExplicitComponent):
                 outputs['laminar_fractions_lower'][ic + j] = inputs[
                     Aircraft.VerticalTail.LAMINAR_FLOW_LOWER
                 ][0]
-            ic += self.num_tails
+            ic += self.num_v_tails
 
         # Fuselage
         if self.num_fuselages > 0:
