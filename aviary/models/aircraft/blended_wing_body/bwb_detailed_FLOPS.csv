@@ -96,7 +96,8 @@ aircraft:fuselage:num_fuselages,1,unitless
 # aircraft:fuselage:passenger_compartment_length,0.0,ft
 aircraft:fuselage:simple_layout,False,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
-aircraft:horizontal_tail:area,1e-14,ft**2
+aircraft:horizontal_tail:num_tails,0,unitless
+aircraft:horizontal_tail:area,0.0,ft**2
 aircraft:horizontal_tail:aspect_ratio,0.1,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
 # aircraft:horizontal_tail:sweep,0.0,deg
