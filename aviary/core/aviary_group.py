@@ -121,7 +121,8 @@ class AviaryGroup(om.Group):
         mission_method = aviary_options.get_val(Settings.EQUATIONS_OF_MOTION)
 
         # Temporarily add extra stuff here, probably patched soon
-        if mission_method is HEIGHT_ENERGY:
+        # add a check for traj using hasattr for pre-mission tests.
+        if mission_method is HEIGHT_ENERGY and hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts

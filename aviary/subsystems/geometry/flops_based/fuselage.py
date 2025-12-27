@@ -45,10 +45,12 @@ class FuselagePrelim(om.ExplicitComponent):
         length = inputs[Aircraft.Fuselage.LENGTH]
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
+                )
 
-        avg_diameter = 0.5 * (max_height + max_width)
-        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
+        ref_diameter = 0.5 * (max_height + max_width)
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
 
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = length * max_width
 
@@ -108,16 +110,21 @@ class BWBFuselagePrelim(om.ExplicitComponent):
 
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
+                )
         if rear_spar_percent_chord <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be positive. It is default to 0.7')
+                raise ValueError(
+                    f'Rear_spar_percent_chord must be positive, '
+                    'however {rear_spar_percent_chord} is provided.'
+                )
 
         # not sure if this is right definition and not sure if it is used for BWB.
-        avg_diameter = 0.5 * (max_height + max_width)
+        ref_diameter = 0.5 * (max_height + max_width)
         planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
-        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
 
     def compute_partials(self, inputs, partials):
@@ -165,20 +172,24 @@ class SimpleCabinLayout(om.ExplicitComponent):
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
+                )
         if max_height <= 0.0 or max_width <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
+                raise ValueError(
+                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
+                    'however {max_height} is provided.'
                 )
 
         pax_compart_length = 0.6085 * length * (np.arctan(length / 59.0)) ** 1.1
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Passenger compartiment lenght is longer than recommended maximum length. '
-                    'Suggest use detailed laylout algorithm.'
+                raise ValueError(
+                    'Passenger compartiment lenght is longer than recommended maximum'
+                    ' length. Suggest use detailed laylout algorithm.'
                 )
+
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
 
     def compute_partials(self, inputs, J):
@@ -222,7 +233,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_fuselage = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         if num_fuselage > 1:
             if verbosity > Verbosity.BRIEF:
-                print('Multiple fuselage configuration is not implemented yet.')
+                raise ValueError('Multiple fuselage configuration is not implemented yet.')
 
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
         num_seat_abreast_tourist = self.options[
@@ -428,7 +439,10 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def setup_partials(self):
         self.declare_partials(
             of=[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH],
-            wrt=[Aircraft.Fuselage.LENGTH, 'Rear_spar_percent_chord'],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                'Rear_spar_percent_chord',
+            ],
         )
         self.declare_partials(
             of=[Aircraft.Wing.ROOT_CHORD],
@@ -461,17 +475,20 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         length = inputs[Aircraft.Fuselage.LENGTH]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
-        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
         bay_width_max = 12.0  # ft
 
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
+                raise ValueError(
+                    f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
+                )
         if max_width <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
+                raise ValueError(
+                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
+                    'however {max_width} is provided.'
                 )
 
         pax_compart_length = rear_spar_percent_chord * length
@@ -568,7 +585,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
-        self.declare_partials('*', '*', method='fd', form='forward')
+    def setup_partials(self):
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
@@ -667,7 +685,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays = int(0.5 + max_width / bay_width_max)
+            z = 0.5 + max_width / bay_width_max
+            z = z[0]
+            num_bays = int(z.real)
             if num_bays > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
 
@@ -699,6 +719,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
         # the algorithm will probably take many more iteratiions. I wonder if it would still
         # converge. One solution might be to rewrite this using an openmado solver, solve for
-        # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
+        # a real-valued num_bays, then use a smoothed int afterwards. FLOPS did something similar
         # with the skin friction calculation, except there were no ints. I rewrote the equations
         # in residual form and used a Newton solver on them. (Ken)
