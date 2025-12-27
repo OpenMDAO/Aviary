@@ -114,6 +114,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CW(7)',
+        # The following note is for FLOPS
         # ['WTS.WSP(24, 2)', '~WEIGHT.WAI', '~WTSTAT.WSP(24, 2)'],
         'FLOPS': None,
         'LEAPS1': [
@@ -2457,20 +2458,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.STARTER_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.WSTART',
-        'LEAPS1': '(WeightABC)self._starter_weight',
-    },
-    units='lbm',
-    desc='mass of engine starter subsystem',
-    default_value=0.0,
-    multivalue=True,
-)
-
-add_meta_data(
     Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
     meta_data=_MetaData,
     historical_name={
@@ -3942,6 +3929,16 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.COELTH', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     desc='Ratio of wing chord to horizontal tail moment arm',
+)
+
+add_meta_data(
+    Aircraft.HorizontalTail.NUM_TAILS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    desc='number of horizontal tails',
+    types=int,
+    option=True,
+    default_value=1,
 )
 
 add_meta_data(
@@ -7310,7 +7307,7 @@ add_meta_data(
         'GASP': None,
         # FLOPS may scale the input value as it resizes the engine if requested by
         # the user
-        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROF', 'LANDG.THROFF'],
+        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROFF'],
         'FLOPS': 'AERIN.THROFF',
         # LEAPS1 uses the average thrust_takeoff of all operational engines
         # actually on the airplane, possibly after resizing (as with FLOPS)

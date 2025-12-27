@@ -143,6 +143,7 @@ inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)
 
 # Horizontal Tail
 # ---------------------------
+inputs.set_val(Aircraft.HorizontalTail.NUM_TAILS, 1)
 inputs.set_val(Aircraft.HorizontalTail.AREA, 349.522730527158, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 5.22699386503068)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
@@ -204,12 +205,12 @@ filename = get_path('models/engines/turbofan_22k.csv')
 
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 inputs.set_val(Aircraft.Engine.MASS, 6293.8, 'lbm')
-inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 6293.8, 'lbm')
+inputs.set_val(Aircraft.Engine.REFERENCE_MASS, np.array([6293.8]), 'lbm')
 inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 0.99997747798473)
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
-inputs.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
-inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
+inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([2]))
 inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0.289682918)
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
@@ -401,7 +402,7 @@ outputs.set_val(Aircraft.Nacelle.MASS, 0.0, 'lbm')
 outputs.set_val(Aircraft.Paint.MASS, 0.0, 'lbm')
 
 inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 22200.5, 'lbf')
-inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 22200.5, 'lbf')
+inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([22200.5]), 'lbf')
 outputs.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 22200.5 * 2, 'lbf')
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 110.0, 'lbm')
