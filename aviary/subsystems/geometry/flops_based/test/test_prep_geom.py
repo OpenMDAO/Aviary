@@ -527,16 +527,8 @@ class CharacteristicLengthsTest(unittest.TestCase):
             'wing_characteristic_lengths', WingCharacteristicLength(**options), promotes=['*']
         )
 
-        keys = [
-            Aircraft.Engine.NUM_ENGINES,
-        ]
-        flops_inputs = get_flops_inputs(case_name, keys=keys)
-        options = {}
-        for key in keys:
-            options[key] = flops_inputs.get_item(key)[0]
-
         prob.model.add_subsystem(
-            'other_characteristic_lengths', OtherCharacteristicLengths(**options), promotes=['*']
+            'other_characteristic_lengths', OtherCharacteristicLengths(), promotes=['*']
         )
 
         setup_model_options(
@@ -785,11 +777,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         # _Prelim
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
         prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
-        prob.set_val(Aircraft.VerticalTail.ASPECT_RATIO, val=1.88925)
         prob.set_val(Aircraft.VerticalTail.TAPER_RATIO, val=0.0)
         prob.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.TAPER_RATIO, val=0.311)
@@ -1067,8 +1056,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         # _Prelim
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
+        # prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
         prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.ASPECT_RATIO, val=1.88925)
