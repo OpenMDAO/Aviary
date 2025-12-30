@@ -3,12 +3,14 @@ import sys
 import numpy as np
 import openmdao.api as om
 
+from aviary.subsystems.propulsion.utils import EngineModelVariables, max_variables
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.subsystems.propulsion.utils import max_variables, EngineModelVariables
 
 
+# TODO it should be possible to completely remove need for EngineModelVariables in this file if
+#      max_variables is modified in this file, where the keys are changed to their Enum values
 class PropulsionMission(om.Group):
     """
     Group that tracks all engine models used during mission analysis. Accounts for
@@ -120,8 +122,6 @@ class PropulsionMission(om.Group):
                     base_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
                     engine_model = om.Group()
 
-                    engine_model.add_subsystem('base', base_comp, promotes_inputs=['*'])
-
                     max_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
 
                     input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
@@ -131,16 +131,14 @@ class PropulsionMission(om.Group):
                         )
 
                     engine_model.add_subsystem(
-                        'max_thrust',
+                        'max',
                         max_comp,
-                        promotes_inputs=['*'] + input_aliases,
+                        promotes_inputs=input_aliases,
                     )
 
-                self.add_subsystem(
-                    engine.name,
-                    subsys=engine_model,
-                    promotes_inputs=['*'],
-                )
+                    engine_model.add_subsystem('base', base_comp)
+
+                self.add_subsystem(engine.name, subsys=engine_model, promotes_inputs=['*'])
 
                 # split vectorized throttles and connect to the correct engine model
                 self.promotes(
@@ -178,8 +176,6 @@ class PropulsionMission(om.Group):
                 base_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
                 engine_model = om.Group()
 
-                engine_model.add_subsystem('base', base_comp, promotes_inputs=['*'])
-
                 max_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
 
                 input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
@@ -189,16 +185,14 @@ class PropulsionMission(om.Group):
                     )
 
                 engine_model.add_subsystem(
-                    'max_thrust',
+                    'max',
                     max_comp,
-                    promotes_inputs=['*'] + input_aliases,
+                    promotes_inputs=input_aliases,
                 )
 
-            self.add_subsystem(
-                engine.name,
-                subsys=engine_model,
-                promotes_inputs=['*'],
-            )
+                engine_model.add_subsystem('base', base_comp)
+
+            self.add_subsystem(engine.name, subsys=engine_model, promotes_inputs=['*'])
 
             self.promotes(engine.name, inputs=[Dynamic.Vehicle.Propulsion.THROTTLE])
 
@@ -259,6 +253,16 @@ class PropulsionMission(om.Group):
             axis=1,
             units='hp',
         )
+        perf_mux.add_var(
+            Dynamic.Vehicle.Propulsion.RPM,
+            val=0,
+            shape=(nn,),
+            axis=1,
+            units='rpm',
+        )
+        perf_mux.add_var(
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED, val=0, shape=(nn,), axis=1, units='ft/s'
+        )
         # perf_mux.add_var(
         #     'exit_area_unscaled',
         #     shape=(nn,),
@@ -279,20 +283,25 @@ class PropulsionMission(om.Group):
         # Handle checking each EngineModel for compatible outputs with
         # vectorize_performance component and connecting those outputs
 
-        # TODO this function should probably get moved out of test_utils
-        from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
+        # Can't make this list dynamic this way because it must perfectly match the
+        # "vectorize_performance" comp, and we don't have enough info to dynamically filter inputs
+        # from the list. Can only have engine outputs sent to "vectorize_performance"
 
-        supported_outputs = get_names_from_hierarchy(Dynamic.Vehicle.Propulsion)
-        # supported_outputs = [
-        #     Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
-        #     Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
-        #     Dynamic.Vehicle.Propulsion.NOX_RATE,
-        #     Dynamic.Vehicle.Propulsion.SHAFT_POWER,
-        #     Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
-        #     Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
-        #     Dynamic.Vehicle.Propulsion.THRUST,
-        #     Dynamic.Vehicle.Propulsion.THRUST_MAX,
-        # ]
+        # from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
+        # supported_outputs = get_names_from_hierarchy(Dynamic.Vehicle.Propulsion)
+
+        supported_outputs = [
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.NOX_RATE,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+            Dynamic.Vehicle.Propulsion.TEMPERATURE_T4,
+            Dynamic.Vehicle.Propulsion.THRUST,
+            Dynamic.Vehicle.Propulsion.THRUST_MAX,
+            Dynamic.Vehicle.Propulsion.RPM,
+            Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
+        ]
 
         engine_models = self.options['engine_models']
         engine_names = [engine.name for engine in engine_models]
@@ -307,7 +316,8 @@ class PropulsionMission(om.Group):
 
         comp_list = [self._get_subsystem(engine) for engine in engine_names]
 
-        # dictionaries of outputs for each engine in prop mission
+        # dictionaries of outputs for each engine in mission
+        input_dict = {}
         output_dict = {}
 
         # TODO Use mission_inputs(), mission_outputs() to promote variables from engines. Use idx
@@ -317,63 +327,128 @@ class PropulsionMission(om.Group):
 
             if not engine.compute_max_values:
                 base_comp = comp._get_subsystem('base')
-                max_thrust_comp = comp._get_subsystem('max_thrust')
+                max_comp = comp._get_subsystem('max')
 
-                # identify outputs to connect to muxcomp
+                # Get all inputs and outputs from components #
+
+                # inputs are for later promotion
+                base_inputs = base_comp.list_inputs(
+                    return_format='dict', units=False, out_stream=out_stream, all_procs=True
+                )
+                max_inputs = max_comp.list_inputs(
+                    return_format='dict', units=False, out_stream=out_stream, all_procs=True
+                )
+
+                # outputs to connect to muxcomp
                 base_outputs = base_comp.list_outputs(
-                    return_format='dict', units=True, out_stream=out_stream, all_procs=True
+                    return_format='dict', units=False, out_stream=out_stream, all_procs=True
                 )
-                max_thrust_outputs = max_thrust_comp.list_outputs(
-                    return_format='dict', units=True, out_stream=out_stream, all_procs=True
+                max_outputs = max_comp.list_outputs(
+                    return_format='dict', units=False, out_stream=out_stream, all_procs=True
                 )
 
-                # Grab outputs that have been promoted to top of system for base component
+                # Build dictionaries of unique, top-level promoted inputs/outputs per component #
+
+                base_promoted_inputs = [
+                    key for key in base_inputs if '.' not in max_inputs[key]['prom_name']
+                ]
+                input_dict[comp.name] = dict(
+                    (base_inputs[key]['prom_name'], base_inputs[key])
+                    for key in base_promoted_inputs
+                )
+
+                max_promoted_inputs = [
+                    key for key in max_inputs if '.' not in max_inputs[key]['prom_name']
+                ]
+                input_dict[comp.name].update(
+                    dict(
+                        (max_inputs[key]['prom_name'], max_inputs[key])
+                        for key in max_promoted_inputs
+                    )
+                )
+
+                # don't grab "max" variables that might be floating around in the base component
                 base_promoted_outputs = [
-                    key for key in base_outputs if '.' not in base_outputs[key]['prom_name']
+                    key
+                    for key in base_outputs
+                    if '.' not in base_outputs[key]['prom_name']
+                    and max_outputs[key]['prom_name'] not in [var for var in max_variables.values()]
                 ]
                 output_dict[comp.name] = dict(
                     (base_outputs[key]['prom_name'], base_outputs[key])
                     for key in base_promoted_outputs
                 )
 
-                # Grab outputs that have been promoted to top of system for max thrust component -
-                # only variables that have "max" counterpart
+                # only grab variables from max component that have a "max" counterpart to alias
                 max_promoted_outputs = [
                     key
-                    for key in max_thrust_outputs
-                    if '.' not in max_thrust_outputs[key]['prom_name']
-                    and max_thrust_outputs[key]['prom_name']
-                    in [key.value for key in max_variables.keys()]
+                    for key in max_outputs
+                    if '.' not in max_outputs[key]['prom_name']
+                    and max_outputs[key]['prom_name'] in [var.value for var in max_variables.keys()]
                 ]
                 output_dict[comp.name].update(
                     dict(
                         (
-                            max_variables[
-                                EngineModelVariables(max_thrust_outputs[key]['prom_name'])
-                            ],
-                            max_thrust_outputs[key],
+                            max_variables[EngineModelVariables(max_outputs[key]['prom_name'])],
+                            max_outputs[key],
                         )
                         for key in max_promoted_outputs
                     )
                 )
 
-                # Promote the correct outputs for each component to top of group
+                # Promote the correct inputs and outputs from each component to top of group #
+
+                # first promote the correct outputs for each component to top of group, save list
                 if base_promoted_outputs:
-                    comp.promotes('base', outputs=base_promoted_outputs)
+                    promoted_outputs = list(
+                        set([max_outputs[key]['prom_name'] for key in base_promoted_outputs])
+                    )
+                    comp.promotes('base', outputs=promoted_outputs)
+                else:
+                    promoted_outputs = []
                 if max_promoted_outputs:
                     aliased_outputs = []
                     for key in max_promoted_outputs:
-                        # component, varname = key.split('.')
-                        aliased_outputs.append((key, max_variables[EngineModelVariables(key)]))
-                    comp.promotes('max_thrust', outputs=aliased_outputs)
+                        aliased_outputs.append(
+                            (
+                                max_outputs[key]['prom_name'],
+                                max_variables[EngineModelVariables(max_outputs[key]['prom_name'])],
+                            )
+                        )
+                    comp.promotes('max', outputs=aliased_outputs)
 
-                # Connect max throttles to max component
-                # self.connect('max_throttles.throttle_max', f'{engine.name}.throttle_max')
-                # if engine.use_hybrid_throttle:
-                #     self.connect(
-                #         'max_throttles.hybrid_throttle_max',
-                #         f'{engine.name}.hybrid_throttle_max',
-                #     )
+                # Promote all inputs that aren't also outputs of this component - this happens when
+                # a component is a group that promotes an output from an interior component to the
+                # top level so another component inside can receive it as an input
+                if base_promoted_inputs:
+                    promoted_inputs = list(
+                        set(
+                            [
+                                base_inputs[key]['prom_name']
+                                for key in base_promoted_inputs
+                                if base_inputs[key]['prom_name'] not in promoted_outputs
+                            ]
+                        )
+                    )
+                    comp.promotes('base', inputs=promoted_inputs)
+                if max_promoted_inputs:
+                    # Purposefully using promoted_outputs here, as internal input/output matches
+                    # won't appear in aliased_outputs and components are otherwise perfect matches
+                    # Throttles are already aliased, so do not promote it here
+                    promoted_inputs = list(
+                        set(
+                            [
+                                max_inputs[key]['prom_name']
+                                for key in max_promoted_inputs
+                                if max_inputs[key]['prom_name'] not in promoted_outputs
+                                and max_inputs[key]['prom_name']
+                                is not Dynamic.Vehicle.Propulsion.THROTTLE
+                                and max_inputs[key]['prom_name']
+                                is not Dynamic.Vehicle.Propulsion.HYBRID_THROTTLE
+                            ]
+                        )
+                    )
+                    comp.promotes('max', inputs=promoted_inputs)
 
             else:
                 # identify outputs to connect to muxcomp

@@ -341,12 +341,12 @@ class EngineDeck(EngineModel):
     def _setup(self, data):
         """
         Read in and process engine data.
-        - Check data consistency.
-        - Convert altitudes to geometric.
-        - Sort and pack data.
-        - Determine reference thrust.
-        - Normalize throttles & hybrid throttles.
-        - Fill flight idle points if requested.
+        - Check data consistency
+        - Convert altitudes to geometric (optional)
+        - Sort and pack data
+        - Determine reference thrust (optional)
+        - Normalize throttles & hybrid throttles
+        - Fill flight idle points (optional)
         """
         self._read_data(data)
 
@@ -1191,6 +1191,14 @@ class EngineDeck(EngineModel):
             )
 
         return engine_group
+
+    def mission_inputs(self, **kwargs):
+        inputs = [inp.value for inp in self.inputs]
+        return inputs
+
+    def mission_outputs(self, **kwargs):
+        outputs = [out.value for out in self.outputs]
+        return outputs
 
     def get_parameters(self):
         params = {

@@ -69,46 +69,46 @@ class GearboxMission(om.Group):
 
         # Determine the maximum power available at this flight condition
         # this is used for excess power constraints
-        self.add_subsystem(
-            'shaft_power_max_comp',
-            om.ExecComp(
-                'shaft_power_out = shaft_power_in * efficiency',
-                shaft_power_in={'val': np.ones(n), 'units': 'kW'},
-                shaft_power_out={'val': np.ones(n), 'units': 'kW'},
-                efficiency={'val': 1.0, 'units': 'unitless'},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[
-                ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in'),
-                ('efficiency', Aircraft.Engine.Gearbox.EFFICIENCY),
-            ],
-            promotes_outputs=[
-                ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out')
-            ],
-        )
+        # self.add_subsystem(
+        #     'shaft_power_max_comp',
+        #     om.ExecComp(
+        #         'shaft_power_out = shaft_power_in * efficiency',
+        #         shaft_power_in={'val': np.ones(n), 'units': 'kW'},
+        #         shaft_power_out={'val': np.ones(n), 'units': 'kW'},
+        #         efficiency={'val': 1.0, 'units': 'unitless'},
+        #         has_diag_partials=True,
+        #     ),
+        #     promotes_inputs=[
+        #         ('shaft_power_in', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in'),
+        #         ('efficiency', Aircraft.Engine.Gearbox.EFFICIENCY),
+        #     ],
+        #     promotes_outputs=[
+        #         ('shaft_power_out', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out')
+        #     ],
+        # )
 
-        # We must ensure the design shaft power that was provided to pre-mission is
-        #   larger than the maximum shaft power that could be drawn by the mission.
-        # Note this is a larger value than the actual maximum shaft power drawn during
-        #   the mission because the aircraft might need to climb to avoid obstacles at
-        #   anytime during the mission
-        self.add_subsystem(
-            'shaft_power_residual',
-            om.ExecComp(
-                'shaft_power_residual = shaft_power_design - shaft_power_max',
-                shaft_power_max={'val': np.ones(n), 'units': 'kW'},
-                shaft_power_design={'val': 1.0, 'units': 'kW'},
-                shaft_power_residual={'val': np.ones(n), 'units': 'kW'},
-                has_diag_partials=True,
-            ),
-            promotes_inputs=[
-                ('shaft_power_max', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in'),
-                ('shaft_power_design', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
-            ],
-            promotes_outputs=[
-                (
-                    'shaft_power_residual',
-                    Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
-                )
-            ],
-        )
+        # # We must ensure the design shaft power that was provided to pre-mission is
+        # #   larger than the maximum shaft power that could be drawn by the mission.
+        # # Note this is a larger value than the actual maximum shaft power drawn during
+        # #   the mission because the aircraft might need to climb to avoid obstacles at
+        # #   anytime during the mission
+        # self.add_subsystem(
+        #     'shaft_power_residual',
+        #     om.ExecComp(
+        #         'shaft_power_residual = shaft_power_design - shaft_power_max',
+        #         shaft_power_max={'val': np.ones(n), 'units': 'kW'},
+        #         shaft_power_design={'val': 1.0, 'units': 'kW'},
+        #         shaft_power_residual={'val': np.ones(n), 'units': 'kW'},
+        #         has_diag_partials=True,
+        #     ),
+        #     promotes_inputs=[
+        #         ('shaft_power_max', Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_in'),
+        #         ('shaft_power_design', Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN),
+        #     ],
+        #     promotes_outputs=[
+        #         (
+        #             'shaft_power_residual',
+        #             Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+        #         )
+        #     ],
+        # )
