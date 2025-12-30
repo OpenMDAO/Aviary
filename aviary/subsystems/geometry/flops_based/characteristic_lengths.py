@@ -8,64 +8,6 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 from aviary.variable_info.variables import Aircraft
 
 
-class CharacteristicLengths(om.Group):
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Design.TYPE)
-
-    def setup(self):
-        design_type = self.options[Aircraft.Design.TYPE]
-
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'wing_characteristic_lengths',
-                BWBWingCharacteristicLength(),
-                promotes_inputs=['aircraft*'],
-                promotes_outputs=['*'],
-            )
-        elif design_type is AircraftTypes.TRANSPORT:
-            self.add_subsystem(
-                'wing_characteristic_lengths',
-                WingCharacteristicLength(),
-                promotes_inputs=['aircraft*'],
-                promotes_outputs=['*'],
-            )
-
-        self.add_subsystem(
-            'nacelle_characteristic_lengths',
-            NacelleCharacteristicLength(),
-            promotes_inputs=['aircraft*'],
-            promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
-            'canard_char_lengths',
-            CanardCharacteristicLength(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-        self.add_subsystem(
-            'fuselage_char_lengths',
-            FuselageCharacteristicLengths(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-        self.add_subsystem(
-            'horizontal_tail_char_lengths',
-            HorizontalTailCharacteristicLength(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-        self.add_subsystem(
-            'vertical_tail_char_lengths',
-            VerticalTailCharacteristicLength(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-
 class WingCharacteristicLength(om.ExplicitComponent):
     """
     Calculate the characteristic length and fineness ratio of the wing.
@@ -197,6 +139,42 @@ class BWBWingCharacteristicLength(om.ExplicitComponent):
         wing_area = inputs[Aircraft.Wing.AREA]
         J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.SPAN] = -wing_area / wing_span**2
         J[Aircraft.Wing.CHARACTERISTIC_LENGTH, Aircraft.Wing.AREA] = 1.0 / wing_span
+
+
+class OtherCharacteristicLengths(om.Group):
+    """
+    Groupe the characteristic lengthes and fineness ratios of the
+    canard, fuselage, horizontal tail, and vertical tail.
+    """
+
+    def setup(self):
+        self.add_subsystem(
+            'canard_char_lengths',
+            CanardCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        self.add_subsystem(
+            'fuselage_char_lengths',
+            FuselageCharacteristicLengths(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        self.add_subsystem(
+            'horizontal_tail_char_lengths',
+            HorizontalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        self.add_subsystem(
+            'vertical_tail_char_lengths',
+            VerticalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
 
 
 class FuselageCharacteristicLengths(om.ExplicitComponent):
@@ -437,35 +415,44 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
-        # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
-        # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
+        design_type = self.options[Aircraft.Design.TYPE]
+
+        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+            add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
+            add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
+            # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
+            # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
 
         add_aviary_output(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
 
     def setup_partials(self):
-        self.declare_partials(
-            Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
-            [
-                Aircraft.HorizontalTail.AREA,
-                Aircraft.HorizontalTail.ASPECT_RATIO,
-            ],
-        )
+        design_type = self.options[Aircraft.Design.TYPE]
+
+        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+            self.declare_partials(
+                Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+                [
+                    Aircraft.HorizontalTail.AREA,
+                    Aircraft.HorizontalTail.ASPECT_RATIO,
+                ],
+            )
 
         self.declare_partials(
             Aircraft.HorizontalTail.FINENESS, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=1.0
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+        design_type = self.options[Aircraft.Design.TYPE]
+
         length = 0.0
 
-        if self.options[Aircraft.HorizontalTail.NUM_TAILS] > 0:
+        # If horizontal tail is needed for BWB, user must provide a new equation
+        if design_type is not AircraftTypes.BLENDED_WING_BODY:
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
             if 0.0 < aspect_ratio:
@@ -476,13 +463,14 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
         outputs[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH] = length
 
         thickness_to_chord = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
-
         outputs[Aircraft.HorizontalTail.FINENESS] = thickness_to_chord
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
+        design_type = self.options[Aircraft.Design.TYPE]
+
         da = dr = 0.0
 
-        if self.options[Aircraft.HorizontalTail.NUM_TAILS] > 0:
+        if design_type is not AircraftTypes.BLENDED_WING_BODY:
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
             if 0.0 < aspect_ratio:
@@ -492,9 +480,10 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
                 da = f / aspect_ratio
                 dr = -f * area / aspect_ratio**2.0
 
-        J[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, Aircraft.HorizontalTail.AREA] = da
-
-        J[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, Aircraft.HorizontalTail.ASPECT_RATIO] = dr
+            J[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, Aircraft.HorizontalTail.AREA] = da
+            J[
+                Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, Aircraft.HorizontalTail.ASPECT_RATIO
+            ] = dr
 
 
 class VerticalTailCharacteristicLength(om.ExplicitComponent):
@@ -506,23 +495,25 @@ class VerticalTailCharacteristicLength(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
-        # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER, 0.0)
-        # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, 0.0)
+        if self.options[Aircraft.VerticalTail.NUM_TAILS] > 0:
+            add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
+            add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
+            # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_LOWER, 0.0)
+            # add_aviary_input(self, Aircraft.VerticalTail.LAMINAR_FLOW_UPPER, 0.0)
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
 
         add_aviary_output(self, Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, units='ft')
         add_aviary_output(self, Aircraft.VerticalTail.FINENESS, units='unitless')
 
     def setup_partials(self):
-        self.declare_partials(
-            Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
-            [
-                Aircraft.VerticalTail.AREA,
-                Aircraft.VerticalTail.ASPECT_RATIO,
-            ],
-        )
+        if self.options[Aircraft.VerticalTail.NUM_TAILS] > 0:
+            self.declare_partials(
+                Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+                [
+                    Aircraft.VerticalTail.AREA,
+                    Aircraft.VerticalTail.ASPECT_RATIO,
+                ],
+            )
 
         self.declare_partials(
             Aircraft.VerticalTail.FINENESS, Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=1.0
@@ -536,13 +527,11 @@ class VerticalTailCharacteristicLength(om.ExplicitComponent):
 
             if 0.0 < aspect_ratio:
                 area = inputs[Aircraft.VerticalTail.AREA]
-
                 length = (area / aspect_ratio) ** 0.5
 
         outputs[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH] = length
 
         thickness_to_chord = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
-
         outputs[Aircraft.VerticalTail.FINENESS] = thickness_to_chord
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
@@ -558,9 +547,8 @@ class VerticalTailCharacteristicLength(om.ExplicitComponent):
                 da = f / aspect_ratio
                 dr = -f * area / aspect_ratio**2.0
 
-        J[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, Aircraft.VerticalTail.AREA] = da
-
-        J[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, Aircraft.VerticalTail.ASPECT_RATIO] = dr
+            J[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, Aircraft.VerticalTail.AREA] = da
+            J[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH, Aircraft.VerticalTail.ASPECT_RATIO] = dr
 
 
 class CanardCharacteristicLength(om.ExplicitComponent):

@@ -813,8 +813,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         # _Prelim
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
+        # prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
+        # prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
         prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.ASPECT_RATIO, val=1.88925)
@@ -1098,8 +1098,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         # _Prelim
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
+        # prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
+        # prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
         prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.ASPECT_RATIO, val=1.88925)
