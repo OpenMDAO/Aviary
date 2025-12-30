@@ -9,6 +9,7 @@ from parameterized import parameterized
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
+    NacelleCharacteristicLength,
     OtherCharacteristicLengths,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
@@ -525,6 +526,10 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'wing_characteristic_lengths', WingCharacteristicLength(**options), promotes=['*']
+        )
+
+        prob.model.add_subsystem(
+            'nacelle_characteristic_lengths', NacelleCharacteristicLength(), promotes=['*']
         )
 
         prob.model.add_subsystem(

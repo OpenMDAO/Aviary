@@ -13,6 +13,7 @@ from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
     OtherCharacteristicLengths,
+    NacelleCharacteristicLength,
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import (
@@ -182,6 +183,14 @@ class PrepGeom(om.Group):
                 promotes_inputs=['aircraft*'],
                 promotes_outputs=['*'],
             )
+
+        self.add_subsystem(
+            'nacelle_characteristic_lengths',
+            NacelleCharacteristicLength(),
+            promotes_inputs=['aircraft*'],
+            promotes_outputs=['*'],
+        )
+
         self.add_subsystem(
             'other_characteristic_lengths',
             OtherCharacteristicLengths(),

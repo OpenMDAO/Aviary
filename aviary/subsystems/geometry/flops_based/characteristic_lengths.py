@@ -142,14 +142,12 @@ class BWBWingCharacteristicLength(om.ExplicitComponent):
 
 
 class OtherCharacteristicLengths(om.Group):
-    def setup(self):
-        self.add_subsystem(
-            'nacelle_characteristic_lengths',
-            NacelleCharacteristicLength(),
-            promotes_inputs=['aircraft*'],
-            promotes_outputs=['*'],
-        )
+    """
+    Groupe the characteristic lengthes and fineness ratios of the
+    canard, fuselage, horizontal tail, and vertical tail.
+    """
 
+    def setup(self):
         self.add_subsystem(
             'canard_char_lengths',
             CanardCharacteristicLength(),
@@ -181,8 +179,7 @@ class OtherCharacteristicLengths(om.Group):
 
 class FuselageCharacteristicLengths(om.ExplicitComponent):
     """
-    Calculate the characteristic length and fineness ratio of the
-    canard, fuselage, horizontal tail, nacelle, and vertical tail.
+    Calculate the characteristic length and fineness ratio of the fuselage.
     """
 
     def setup(self):
