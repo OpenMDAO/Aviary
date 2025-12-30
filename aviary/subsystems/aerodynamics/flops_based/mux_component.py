@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, get_units
 from aviary.variable_info.variables import Aircraft
 
@@ -26,6 +27,7 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
         nc = 1
@@ -38,12 +40,19 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, units='unitless')
 
         # Horizontal Tail
-        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
-        nc += num
+        design_type = self.options[Aircraft.Design.TYPE]
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            num = 0
+        else:
+            num = 1
+        self.num_h_tails = num
+        if num > 0:
+            add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
+            add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
+            add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
+            add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
+            add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
+            nc += num
 
         num = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
