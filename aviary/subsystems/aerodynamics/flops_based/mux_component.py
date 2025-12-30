@@ -25,7 +25,6 @@ class MuxComponent(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
-        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
@@ -38,17 +37,13 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_UPPER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, units='unitless')
 
-        num = self.options[Aircraft.HorizontalTail.NUM_TAILS]
-
-        self.num_h_tails = num
         # Horizontal Tail
-        if num > 0:
-            add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
-            add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
-            add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
-            add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
-            add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
-            nc += num
+        add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
+        add_aviary_input(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, units='ft')
+        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, units='unitless')
+        nc += num
 
         num = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
