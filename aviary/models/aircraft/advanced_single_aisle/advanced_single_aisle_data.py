@@ -143,7 +143,6 @@ inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)
 
 # Horizontal Tail
 # ---------------------------
-inputs.set_val(Aircraft.HorizontalTail.NUM_TAILS, 1)
 inputs.set_val(Aircraft.HorizontalTail.AREA, 349.522730527158, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 5.22699386503068)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
