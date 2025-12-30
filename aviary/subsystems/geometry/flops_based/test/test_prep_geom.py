@@ -542,10 +542,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
         )
 
         prob.model.add_subsystem(
-            'nacelle_characteristic_lengths', NacelleCharacteristicLength(), promotes=['*']
-        )
-
-        prob.model.add_subsystem(
             'canard_char_lengths', CanardCharacteristicLength(), promotes=['*']
         )
 
