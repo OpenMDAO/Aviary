@@ -15,6 +15,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
     NacelleCharacteristicLength,
     OtherCharacteristicLengths,
+    NacelleCharacteristicLength,
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import (
