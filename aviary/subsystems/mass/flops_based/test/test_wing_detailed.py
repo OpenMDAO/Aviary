@@ -71,7 +71,7 @@ class DetailedWingBendingTest(unittest.TestCase):
                 Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
                 Aircraft.Engine.WING_LOCATIONS,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
             ],
             output_keys=[
                 Aircraft.Wing.BENDING_MATERIAL_FACTOR,
@@ -135,7 +135,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -225,7 +225,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -308,7 +308,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -386,7 +386,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:

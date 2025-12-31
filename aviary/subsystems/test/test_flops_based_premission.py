@@ -68,7 +68,9 @@ class PreMissionGroupTest(unittest.TestCase):
             # We set these so that their derivatives are defined.
             # The ref values are not set in our test models.
             prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE] = prob[Aircraft.Wing.ASPECT_RATIO]
-            prob[Aircraft.Wing.THICKNESS_TO_CHORD_REF] = prob[Aircraft.Wing.THICKNESS_TO_CHORD]
+            prob[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE] = prob[
+                Aircraft.Wing.THICKNESS_TO_CHORD
+            ]
 
         prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = flops_outputs.get_val(
             Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm'

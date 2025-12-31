@@ -4,10 +4,10 @@ aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_tourist,6,unitless
 aircraft:crew_and_payload:design:seat_pitch_tourist,29,inch
-aircraft:crew_and_payload:passenger_mass_with_bags,200,lbm
+aircraft:crew_and_payload:mass_per_passenger_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
-aircraft:design:drag_coeff_increment,0.00175,unitless
+aircraft:design:drag_coefficient_increment,0.00175,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
 aircraft:design:reserve_fuel_additional,3000.,lbm
@@ -218,7 +218,7 @@ aircraft:vertical_tail:num_tails,1,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.92669766647637,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
-aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
+aircraft:wing:chord_per_semispan_dist,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2
 aircraft:wing:control_surface_area_ratio,0.1,unitless

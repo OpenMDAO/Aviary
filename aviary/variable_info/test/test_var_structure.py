@@ -203,6 +203,6 @@ class TestTheTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = VariableStructureTest()
-    test.test_variable_names_match_strings()
+    unittest.main()
+    # test = VariableStructureTest()
+    # test.test_variable_names_match_strings()

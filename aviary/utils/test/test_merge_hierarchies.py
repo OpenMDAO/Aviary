@@ -179,7 +179,7 @@ class MergeHierarchiesTest(unittest.TestCase):
         self.assertEqual(merged.Canard.AREA, 'aircraft:canard:area')
         self.assertEqual(merged.CrewPayload.MISC_CARGO, 'aircraft:crew_and_payload:misc_cargo')
         self.assertEqual(merged.Design.EMPTY_MASS, 'aircraft:design:empty_mass')
-        self.assertEqual(merged.Wing.BWB_AFTBODY_MASS, 'aircraft:wing:bwb_aft_body_mass')
+        self.assertEqual(merged.Wing.BWB_AFTBODY_MASS, 'aircraft:wing:bwb_aftbody_mass')
         self.assertEqual(merged.Hydraulics.MASS, 'aircraft:hydraulics:mass')
 
     def test_merge2(self):
@@ -224,7 +224,7 @@ class MergeHierarchiesTest(unittest.TestCase):
         self.assertEqual(merged.Canard.AREA, 'aircraft:canard:area')
         self.assertEqual(merged.CrewPayload.MISC_CARGO, 'aircraft:crew_and_payload:misc_cargo')
         self.assertEqual(merged.Design.EMPTY_MASS, 'aircraft:design:empty_mass')
-        self.assertEqual(merged.Wing.BWB_AFTBODY_MASS, 'aircraft:wing:bwb_aft_body_mass')
+        self.assertEqual(merged.Wing.BWB_AFTBODY_MASS, 'aircraft:wing:bwb_aftbody_mass')
         self.assertEqual(merged.Hydraulics.MASS, 'aircraft:hydraulics:mass')
 
     def test_merge3(self):

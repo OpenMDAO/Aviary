@@ -60,11 +60,11 @@ class Aircraft:
     class Controls:
         COCKPIT_CONTROL_MASS_SCALER = 'aircraft:controls:cockpit_control_mass_scaler'
         CONTROL_MASS_INCREMENT = 'aircraft:controls:control_mass_increment'
+        MASS = 'aircraft:controls:mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS = 'aircraft:controls:stability_augmentation_system_mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = (
             'aircraft:controls:stability_augmentation_system_mass_scaler'
         )
-        MASS = 'aircraft:controls:mass'
 
     class CrewPayload:
         BAGGAGE_MASS = 'aircraft:crew_and_payload:baggage_mass'
@@ -80,6 +80,7 @@ class Aircraft:
         FLIGHT_CREW_MASS = 'aircraft:crew_and_payload:flight_crew_mass'
         FLIGHT_CREW_MASS_SCALER = 'aircraft:crew_and_payload:flight_crew_mass_scaler'
         MASS_PER_PASSENGER = 'aircraft:crew_and_payload:mass_per_passenger'
+        MASS_PER_PASSENGER_WITH_BAGS = 'aircraft:crew_and_payload:mass_per_passenger_with_bags'
         MISC_CARGO = 'aircraft:crew_and_payload:misc_cargo'
         NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:num_business_class'
         NUM_FIRST_CLASS = 'aircraft:crew_and_payload:num_first_class'
@@ -89,7 +90,6 @@ class Aircraft:
         NUM_PASSENGERS = 'aircraft:crew_and_payload:num_passengers'
         NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:num_tourist_class'
         PASSENGER_MASS_TOTAL = 'aircraft:crew_and_payload:passenger_mass_total'
-        MASS_PER_PASSENGER_WITH_BAGS = 'aircraft:crew_and_payload:mass_per_passenger_with_bags'
         PASSENGER_PAYLOAD_MASS = 'aircraft:crew_and_payload:passenger_payload_mass'
         PASSENGER_SERVICE_MASS = 'aircraft:crew_and_payload:passenger_service_mass'
         PASSENGER_SERVICE_MASS_PER_PASSENGER = (

@@ -54,7 +54,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:crew_and_payload:passenger_mass_with_bags",
+        "aircraft:crew_and_payload:mass_per_passenger_with_bags",
         0.0,
         "lbm",
         "<class 'float'>"
@@ -806,7 +806,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:chord_per_semispan",
+        "aircraft:wing:chord_per_semispan_dist",
         [
             0.31,
             0.23,

@@ -58,7 +58,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
@@ -97,7 +97,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
-        tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+        tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
