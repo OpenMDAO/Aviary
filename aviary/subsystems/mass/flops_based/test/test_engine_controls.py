@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine_controls import TransportEngineCtrlsMass
@@ -11,17 +12,22 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+omit_cases = ['AdvancedSingleAisle', 'BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
+
+@use_tempdirs
 class BasicTransportEngineCtrlsTest(unittest.TestCase):
     """Test the BasicTransportEngineCtrls component."""
 
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit='AdvancedSingleAisle'), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -78,6 +84,42 @@ class BasicTransportEngineCtrlsTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBBasicTransportEngineCtrlsTest(unittest.TestCase):
+    """
+    Test empty mass margin calculation for BWB data.
+    In FLOPS, WEC is scaled after override. We ignore the difference for now.
+    """
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'engine_ctrls',
+            TransportEngineCtrlsMass(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST],
+            output_keys=Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
+            version=Version.BWB,
+            atol=2e-12,
+            excludes=['size_prop.*'],
+        )
 
 
 if __name__ == '__main__':
