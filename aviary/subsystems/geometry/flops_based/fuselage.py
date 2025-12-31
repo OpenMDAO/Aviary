@@ -16,9 +16,6 @@ class FuselagePrelim(om.ExplicitComponent):
     Aircraft.Fuselage.PLANFORM_AREA = length * max_width.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
-
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
@@ -39,15 +36,13 @@ class FuselagePrelim(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
+            )
 
         avg_diameter = 0.5 * (max_height + max_width)
         outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
@@ -109,18 +104,15 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
 
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
+            )
         if rear_spar_percent_chord <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Rear_spar_percent_chord must be positive, '
-                    'however {rear_spar_percent_chord} is provided.'
-                )
+            raise ValueError(
+                f'Rear_spar_percent_chord must be positive, '
+                'however {rear_spar_percent_chord} is provided.'
+            )
 
-        # not sure if this is right definition and not sure if it is used for BWB.
         avg_diameter = 0.5 * (max_height + max_width)
         planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
@@ -146,15 +138,16 @@ class BWBFuselagePrelim(om.ExplicitComponent):
 
 
 class SimpleCabinLayout(om.ExplicitComponent):
-    """Given fuselage length, height and width, compute passenger compartment length."""
+    """
+    Given fuselage length, height and width, compute passenger compartment length.
+    This is for transporter aircraft, not BWB.
+    """
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
 
@@ -168,24 +161,15 @@ class SimpleCabinLayout(om.ExplicitComponent):
         verbosity = self.options[Settings.VERBOSITY]
 
         length = inputs[Aircraft.Fuselage.LENGTH]
-        max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
-        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.LENGTH must be positive, however {{length}} is provided.'
-                )
-        if max_height <= 0.0 or max_width <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
-                    'however {max_height} is provided.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
+            )
 
         pax_compart_length = 0.6085 * length * (np.arctan(length / 59.0)) ** 1.1
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                raise ValueError(
+                raise UserWarning(
                     'Passenger compartiment lenght is longer than recommended maximum'
                     ' length. Suggest use detailed laylout algorithm.'
                 )
@@ -202,11 +186,13 @@ class SimpleCabinLayout(om.ExplicitComponent):
 
 
 class DetailedCabinLayout(om.ExplicitComponent):
-    """Compute fuselage dimensions using cabin seat information."""
+    """
+    Compute fuselage dimensions using cabin seat information.
+    This is for transporter aircraft, not BWB.
+    """
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
@@ -230,10 +216,6 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         num_tourist_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
         fuselage_multiplier = 1.0
-        num_fuselage = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
-        if num_fuselage > 1:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError('Multiple fuselage configuration is not implemented yet.')
 
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
         num_seat_abreast_tourist = self.options[
@@ -491,7 +473,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         pax_compart_length = rear_spar_percent_chord * length
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                raise ValueError(
+                raise UserWarning(
                     'Passenger compartiment lenght is longer than recommended maximum'
                     ' length. Suggest use detailed laylout algorithm.'
                 )
@@ -555,7 +537,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)

@@ -339,7 +339,7 @@ class BWBWingPrelim(om.ExplicitComponent):
         if wingspan <= 0.0:
             if verbosity > Verbosity.BRIEF:
                 raise ValueError(
-                    f'Aircraft.Wing.SPAN must be positive, however {{wingspan}} is provided.'
+                    f'Aircraft.Wing.SPAN must be positive, however {wingspan} is provided.'
                 )
         rate_span = (wingspan - width) / wingspan
 
