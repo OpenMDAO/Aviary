@@ -20,7 +20,6 @@ inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUP
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
-inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
 inputs.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True)
 inputs.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False)
 

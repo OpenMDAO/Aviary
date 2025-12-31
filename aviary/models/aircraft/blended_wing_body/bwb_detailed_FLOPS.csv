@@ -6,7 +6,7 @@ aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
 aircraft:avionics:mass_scaler,1.0,unitless
-aircraft:blended_wing_body_design:detailed_wing_provided,False,unitless
+aircraft:blended_wing_body_design:detailed_wing_provided,True,unitless
 aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45,deg
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
@@ -160,7 +160,6 @@ aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
 mission:design:gross_mass,874099,lbm
-mission:design:lift_coefficient,-1.0,unitless
 mission:design:range,7750,NM
 mission:design:thrust_takeoff_per_eng,0.25,lbf
 mission:landing:initial_velocity,140,ft/s
