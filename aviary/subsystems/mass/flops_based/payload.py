@@ -51,7 +51,7 @@ class CargoMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO, units='lbm')
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
@@ -72,7 +72,7 @@ class CargoMass(om.ExplicitComponent):
             Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER
         ]
 
-        outputs[Aircraft.CrewPayload.PASSENGER_MASS] = mass_per_passenger * passenger_count
+        outputs[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL] = mass_per_passenger * passenger_count
 
         outputs[Aircraft.CrewPayload.BAGGAGE_MASS] = baggage_mass_per_passenger * passenger_count
 

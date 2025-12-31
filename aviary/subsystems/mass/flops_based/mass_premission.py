@@ -5,7 +5,6 @@ from aviary.subsystems.mass.flops_based.anti_icing import AntiIcingMass
 from aviary.subsystems.mass.flops_based.apu import TransportAPUMass
 from aviary.subsystems.mass.flops_based.avionics import TransportAvionicsMass
 from aviary.subsystems.mass.flops_based.canard import CanardMass
-from aviary.subsystems.mass.flops_based.cargo import PayloadGroup
 from aviary.subsystems.mass.flops_based.cargo_containers import TransportCargoContainersMass
 from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, NonFlightCrewMass
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
@@ -42,6 +41,7 @@ from aviary.subsystems.mass.flops_based.passenger_service import (
     AltPassengerServiceMass,
     PassengerServiceMass,
 )
+from aviary.subsystems.mass.flops_based.payload import PayloadGroup
 from aviary.subsystems.mass.flops_based.starter import TransportStarterMass
 from aviary.subsystems.mass.flops_based.surface_controls import (
     AltSurfaceControlMass,
@@ -333,5 +333,5 @@ class MassPremission(om.Group):
         )
 
         self.add_subsystem(
-            'total_mass', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*']
+            'mass_summation', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*']
         )

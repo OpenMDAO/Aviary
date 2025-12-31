@@ -23,7 +23,7 @@ class NonFlightCrewMassTest(unittest.TestCase):
         prob = self.prob
 
         prob.model.add_subsystem(
-            'non_flight_crew',
+            'cabin_crew',
             NonFlightCrewMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -36,8 +36,8 @@ class NonFlightCrewMassTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
-            output_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+            input_keys=Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
+            output_keys=Aircraft.CrewPayload.CABIN_CREW_MASS,
             atol=1e-11,
         )
 

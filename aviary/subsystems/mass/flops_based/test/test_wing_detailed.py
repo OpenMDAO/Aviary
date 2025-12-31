@@ -66,12 +66,12 @@ class DetailedWingBendingTest(unittest.TestCase):
                 Mission.Design.GROSS_MASS,
                 Aircraft.Engine.POD_MASS,
                 Aircraft.Wing.ASPECT_RATIO,
-                Aircraft.Wing.ASPECT_RATIO_REF,
+                Aircraft.Wing.ASPECT_RATIO_REFERENCE,
                 Aircraft.Wing.STRUT_BRACING_FACTOR,
                 Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
                 Aircraft.Engine.WING_LOCATIONS,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
             ],
             output_keys=[
                 Aircraft.Wing.BENDING_MATERIAL_FACTOR,
@@ -131,11 +131,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -221,11 +221,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -304,11 +304,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -382,11 +382,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
