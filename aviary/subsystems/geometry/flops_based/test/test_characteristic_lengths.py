@@ -7,14 +7,19 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
+    CanardCharacteristicLength,
+    FuselageCharacteristicLengths,
+    HorizontalTailCharacteristicLength,
+    NacelleCharacteristicLength,
+    VerticalTailCharacteristicLength,
     WingCharacteristicLength,
-    OtherCharacteristicLengths,
 )
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class CharacteristicLengthsTest(unittest.TestCase):
     """Test characteristic length and fineness ratio calculations."""
 
@@ -40,13 +45,41 @@ class CharacteristicLengthsTest(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
-        aviary_options_others = {
+        prob.model.add_subsystem(
+            'canard_char_lengths',
+            CanardCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'fuselage_char_lengths',
+            FuselageCharacteristicLengths(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'horizontal_tail_char_lengths',
+            HorizontalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'vertical_tail_char_lengths',
+            VerticalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        aviary_options_nacelle = {
             Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
         }
 
         prob.model.add_subsystem(
-            'other_char_lengths',
-            OtherCharacteristicLengths(**aviary_options_others),
+            'nac_char_lengths',
+            NacelleCharacteristicLength(**aviary_options_nacelle),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
