@@ -82,7 +82,10 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
         if rear_spar_percent_chord <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be positive.')
+                raise ValueError(
+                    f'Rear_spar_percent_chord must be positive, '
+                    'however {rear_spar_percent_chord} is provided.'
+                )
         xl_out = root_chord / rear_spar_percent_chord
 
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'] = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST]
@@ -193,7 +196,10 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
         if rear_spar_percent_chord <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be positive.')
+                raise ValueError(
+                    f'Rear_spar_percent_chord must be positive, '
+                    'however {rear_spar_percent_chord} is provided.'
+                )
         xl_out = root_chord / rear_spar_percent_chord
         wing_tip_chord = 0.06 * wingspan
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD][0]
