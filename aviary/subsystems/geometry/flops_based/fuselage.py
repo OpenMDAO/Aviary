@@ -44,8 +44,8 @@ class FuselagePrelim(om.ExplicitComponent):
                 f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
             )
 
-        avg_diameter = 0.5 * (max_height + max_width)
-        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
+        ref_diameter = 0.5 * (max_height + max_width)
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
 
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = length * max_width
 
@@ -60,9 +60,6 @@ class FuselagePrelim(om.ExplicitComponent):
 
 class BWBFuselagePrelim(om.ExplicitComponent):
     """Calculate fuselage average diameter and planform area for BWB"""
-
-    def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -96,7 +93,6 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
         max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
@@ -113,10 +109,10 @@ class BWBFuselagePrelim(om.ExplicitComponent):
                 'however {rear_spar_percent_chord} is provided.'
             )
 
-        avg_diameter = 0.5 * (max_height + max_width)
+        ref_diameter = 0.5 * (max_height + max_width)
         planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
-        outputs[Aircraft.Fuselage.REF_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
 
     def compute_partials(self, inputs, partials):
@@ -192,7 +188,6 @@ class DetailedCabinLayout(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
@@ -212,7 +207,6 @@ class DetailedCabinLayout(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         num_tourist_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
         fuselage_multiplier = 1.0
@@ -459,16 +453,13 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         bay_width_max = 12.0  # ft
 
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
+            )
         if max_width <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
-                    'however {max_width} is provided.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.MAX_HEIGHT must be positive, however {{max_width}} is provided.'
+            )
 
         pax_compart_length = rear_spar_percent_chord * length
         if pax_compart_length > 190.0:
@@ -536,7 +527,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
     """Compute BWB fuselage dimensions using cabin seat information."""
 
     def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
