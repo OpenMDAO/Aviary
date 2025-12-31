@@ -27,7 +27,7 @@ class SizeGroup(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'fuselage',
                 FuselageGroup(),
@@ -41,7 +41,7 @@ class SizeGroup(om.Group):
                 BWBWingGroup(),
                 promotes=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'wing',
                 WingGroup(),
@@ -61,7 +61,7 @@ class SizeGroup(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'engine',
                 EngineSize(),

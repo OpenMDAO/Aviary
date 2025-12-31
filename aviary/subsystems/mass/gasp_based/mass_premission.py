@@ -49,7 +49,7 @@ class MassPremission(om.Group):
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             fuel_mass_inputs = fuel_mass_fixed_mass_values
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             fuel_mass_inputs = fuel_mass_design_load_values + fuel_mass_fixed_mass_values
 
         # create the instances of the groups
@@ -61,7 +61,7 @@ class MassPremission(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'design_load',
                 DesignLoadGroup(),
@@ -90,7 +90,7 @@ class MassPremission(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'wing_mass',
                 WingMassGroup(),
