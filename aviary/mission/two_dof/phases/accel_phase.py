@@ -138,7 +138,7 @@ class AccelPhase(PhaseBuilder):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         # Boundary Constraints
         phase.add_boundary_constraint(

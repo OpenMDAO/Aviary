@@ -106,7 +106,7 @@ class GroundrollPhase(PhaseBuilder):
         duration_ref = user_options.get_val('time_duration_ref', units='kn')
         constraints = user_options.get_val('constraints')
 
-        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         phase.set_time_options(
             fix_initial=True,

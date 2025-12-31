@@ -164,7 +164,7 @@ class ClimbPhase(PhaseBuilder):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max

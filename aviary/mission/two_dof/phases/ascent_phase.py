@@ -164,7 +164,7 @@ class AscentPhase(PhaseBuilder):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         self.add_control(
             'angle_of_attack',

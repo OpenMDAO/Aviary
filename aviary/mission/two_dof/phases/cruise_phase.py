@@ -136,7 +136,7 @@ class CruisePhase(PhaseBuilder):
         mach_cruise = user_options.get_val('mach_cruise')
         alt_cruise, alt_units = user_options['alt_cruise']
 
-        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)

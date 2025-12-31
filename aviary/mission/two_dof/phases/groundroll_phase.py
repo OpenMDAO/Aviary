@@ -99,7 +99,7 @@ class GroundrollPhase(PhaseBuilder):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=100)
         phase.add_parameter('t_init_flaps', units='s', static_target=True, opt=False, val=100)
