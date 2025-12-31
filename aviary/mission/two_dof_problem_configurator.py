@@ -1,17 +1,17 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
-from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
-from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
-from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
-from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
-from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase, ElectricCruisePhase
-from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
-from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
-from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
+from aviary.mission.two_dof.ode.landing_ode import LandingSegment
+from aviary.mission.two_dof.ode.params import ParamPort
+from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
+from aviary.mission.two_dof.phases.accel_phase import AccelPhase
+from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
+from aviary.mission.two_dof.phases.climb_phase import ClimbPhase
+from aviary.mission.two_dof.phases.cruise_phase import CruisePhase, ElectricCruisePhase
+from aviary.mission.two_dof.phases.descent_phase import DescentPhase
+from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
+from aviary.mission.two_dof.polynomial_fit import PolynomialFit
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.utils import process_guess_var
 from aviary.subsystems.propulsion.utils import build_engine_deck

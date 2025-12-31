@@ -298,7 +298,7 @@ outputs.set_val(Aircraft.Furnishings.MASS, 15517.0, 'lbm')
 
 avg_diameter = 12.75
 avg_diameter_units = 'ft'
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
+outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, avg_diameter, avg_diameter_units)
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 128.0, 'ft')
 outputs.set_val(
     Aircraft.Fuselage.CROSS_SECTION, np.pi * (avg_diameter / 2.0) ** 2.0, f'{avg_diameter_units}**2'
