@@ -36,7 +36,9 @@ class BatteryBuilder(SubsystemBuilder):
     def get_mass_names(self):
         return [Aircraft.Battery.MASS]
 
-    def build_mission(self, num_nodes, aviary_inputs=None) -> om.Group:
+    def build_mission(self, **kwargs) -> om.Group:
+        num_nodes = kwargs['num_nodes']
+
         battery_group = om.Group()
         # Here, the efficiency variable is used as an overall efficiency for the battery
         soc = om.ExecComp(

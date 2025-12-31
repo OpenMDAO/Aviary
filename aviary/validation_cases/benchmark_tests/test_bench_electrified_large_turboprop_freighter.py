@@ -9,6 +9,7 @@ from aviary.models.aircraft.large_turboprop_freighter.electrified_phase_info imp
     energy_phase_info,
     two_dof_phase_info,
 )
+from aviary.subsystems.energy.battery_builder import BatteryBuilder
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
@@ -77,6 +78,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
         #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
         #     prob.aviary_inputs.set_val(Aircraft.Fuselage.REF_DIAMETER, 4.125, 'm')
+
+        prob.load_external_subsystems([BatteryBuilder()])
 
         prob.check_and_preprocess_inputs()
 
