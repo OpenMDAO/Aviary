@@ -66,9 +66,9 @@ class BatteryBuilder(SubsystemBuilder):
 
     def mission_inputs(self, **kwargs):
         return [
-            # Aircraft.Battery.ENERGY_CAPACITY,
+            Aircraft.Battery.ENERGY_CAPACITY,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
-            # Aircraft.Battery.EFFICIENCY,
+            Aircraft.Battery.EFFICIENCY,
         ]
 
     def mission_outputs(self, **kwargs):
