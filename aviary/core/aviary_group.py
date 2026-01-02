@@ -21,12 +21,18 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
+from aviary.utils.process_input_decks import (
+    create_vehicle,
+    initialization_guessing,
+    update_GASP_options,
+)
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
@@ -60,6 +66,7 @@ class AviaryGroup(om.Group):
         self.post_mission = PostMissionGroup()
         self.verbosity = verbosity
         self.external_subsystems = []
+        self.engine_models = []
         self.regular_phases = []
         self.reserve_phases = []
 
@@ -157,7 +164,6 @@ class AviaryGroup(om.Group):
         self,
         aircraft_data,
         phase_info=None,
-        engine_builders=None,
         problem_configurator=None,
         verbosity=None,
     ):
@@ -197,9 +203,6 @@ class AviaryGroup(om.Group):
         self.mission_method = mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
         self.aero_method = aero_method = aviary_inputs.get_val(Settings.AERODYNAMICS_METHOD)
-
-        # Create engine_builder
-        self.engine_builders = engine_builders
 
         # Determine which problem configurator to use based on mission_method
         if mission_method is HEIGHT_ENERGY:
@@ -264,9 +267,18 @@ class AviaryGroup(om.Group):
         else:
             self.post_mission_info = {}
 
+        # Defines how the problem should build it's initial guesses
+        # this modifies mass_method, initialization_guesses, and aviary_values
+        if self.engine_models == []:
+            self.engine_models = [build_engine_deck(self.aviary_inputs)]
+
+        self.initialization_guesses = initialization_guessing(
+            self.aviary_inputs, self.initialization_guesses, self.engine_models
+        )
+
         self.configurator.initial_guesses(self)
         # This function sets all the following defaults if they were not already set:
-        # self.engine_builders, self.pre_mission_info, self_post_mission_info,
+        # self.pre_mission_info, self_post_mission_info,
         # self.require_range_residual, self.target_range
         # Other specific self.*** are defined in here as well that are specific to each builder
 
@@ -299,7 +311,10 @@ class AviaryGroup(om.Group):
                     'loaded.'
                 )
             else:
-                self.external_subsystems.append(subsystem)
+                if isinstance(subsystem, EngineModel):
+                    self.engine_models.append(subsystem)
+                else:
+                    self.external_subsystems.append(subsystem)
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
@@ -386,7 +401,7 @@ class AviaryGroup(om.Group):
         # PREPROCESSORS #
         preprocess_options(
             aviary_inputs,
-            engine_models=self.engine_builders,
+            engine_models=self.engine_models,
             verbosity=verbosity,
             metadata=self.meta_data,
         )
@@ -395,7 +410,7 @@ class AviaryGroup(om.Group):
         # load_inputs?
         ## Set Up Core Subsystems ##
         perf = CorePerformanceBuilder('performance')
-        prop = CorePropulsionBuilder('propulsion', engine_models=self.engine_builders)
+        prop = CorePropulsionBuilder('propulsion', engine_models=self.engine_models)
         mass = CoreMassBuilder('mass', code_origin=self.mass_method)
 
         # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info

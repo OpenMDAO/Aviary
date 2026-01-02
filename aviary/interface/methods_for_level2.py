@@ -97,7 +97,6 @@ class AviaryProblem(om.Problem):
         self,
         aircraft_data,
         phase_info=None,
-        engine_builders=None,
         problem_configurator=None,
         meta_data=None,
         verbosity=None,
@@ -130,7 +129,6 @@ class AviaryProblem(om.Problem):
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,
-            engine_builders=engine_builders,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
         )
@@ -187,7 +185,6 @@ class AviaryProblem(om.Problem):
         name: str,
         aircraft: AviaryValues,
         mission: dict,
-        engine_builders=None,
         problem_configurator=None,
         verbosity: Verbosity = Verbosity.BRIEF,
     ):
@@ -204,8 +201,6 @@ class AviaryProblem(om.Problem):
             Defines the aircraft configuration
         mission : phase_info, dict
             Defines the mission the aircraft will fly
-        engine_builders : list of EngineBuilder, optional
-            Defines a custom engine model
         problem_configurator ; ProblemConfigurator, optional
             Required when setting custom equations of motion. See two_dof_problem_configurator.py for an example.
         verbosity : Verbosity or int, optional
@@ -227,7 +222,6 @@ class AviaryProblem(om.Problem):
         sub.load_inputs(
             aircraft_data=aircraft,
             phase_info=mission,
-            engine_builders=engine_builders,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
         )
