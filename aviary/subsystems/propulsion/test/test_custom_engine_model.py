@@ -189,8 +189,9 @@ class CustomEngineTest(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
-            engine_builders=[SimpleTestEngine()],
         )
+
+        prob.load_external_subsystems([SimpleTestEngine()])
 
         prob.check_and_preprocess_inputs()
 

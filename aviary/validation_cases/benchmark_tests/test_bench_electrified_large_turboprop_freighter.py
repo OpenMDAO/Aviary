@@ -51,8 +51,9 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.load_inputs(
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
-            engine_builders=[electroprop],
         )
+        prob.load_external_subsystems([electroprop])
+
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
         # FLOPS aero specific stuff? Best guesses for values here

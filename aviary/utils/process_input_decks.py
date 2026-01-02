@@ -305,7 +305,7 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     return aircraft_values
 
 
-def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_builders):
+def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_models):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
@@ -318,7 +318,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     initialization_guesses : dict
         Initial guesses.
 
-    engine_builders : list or None
+    engine_models : list or None
         List of engine builders. This is needed if there are multiple engine models.
 
     Returns
@@ -450,10 +450,10 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             )
 
     except KeyError:
-        if engine_builders is not None and len(engine_builders) > 1:
+        if engine_models is not None and len(engine_models) > 1:
             # heterogeneous engine-model case. Get thrust from the engine models instead.
             total_thrust = 0
-            for model in engine_builders:
+            for model in engine_models:
                 thrust = model.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * model.get_val(
                     Aircraft.Engine.SCALE_FACTOR
                 )

@@ -38,20 +38,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
-        # Defines how the problem should build it's initial guesses for load_inputs()
-        # this modifies mass_method, initialization_guesses, and aviary_values
-
         aviary_inputs = aviary_group.aviary_inputs
 
         aviary_inputs = update_GASP_options(aviary_inputs)
-
-        if aviary_group.engine_builders is None:
-            aviary_group.engine_builders = [build_engine_deck(aviary_inputs)]
-
-        aviary_group.initialization_guesses = initialization_guessing(
-            aviary_inputs, aviary_group.initialization_guesses, aviary_group.engine_builders
-        )
 
         aviary_inputs.set_val(
             Mission.Summary.CRUISE_MASS_FINAL,

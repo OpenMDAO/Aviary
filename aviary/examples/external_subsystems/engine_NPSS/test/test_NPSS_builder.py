@@ -32,9 +32,10 @@ class AviaryNPSSTestCase(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
-            engine_builders=[NPSSTabularEngineBuilder()],
             meta_data=ExtendedMetaData,
         )
+
+        prob.load_external_subsystems([NPSSTabularEngineBuilder()])
 
         prob.check_and_preprocess_inputs()
 
