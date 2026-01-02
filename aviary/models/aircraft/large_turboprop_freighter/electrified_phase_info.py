@@ -1,8 +1,11 @@
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 
 # Energy method
 energy_phase_info = {
-    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
+    'pre_mission': {
+        'include_takeoff': False,
+        'optimize_mass': True,
+    },
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
@@ -245,7 +248,7 @@ two_dof_phase_info = {
             'throttle': ([0.956, 0.956], 'unitless'),
         },
     },
-    'cruise': {
+    'electric_cruise': {
         'user_options': {
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
@@ -268,7 +271,7 @@ two_dof_phase_info = {
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 1800.0), 's'),
             'time_duration_ref': (1000, 's'),
-            # 'altitude_initial': (21_000, 'ft'),
+            'altitude_initial': (21_000, 'ft'),
             'altitude_final': (10_000, 'ft'),
             'altitude_bounds': ((10000.0, 21_000.0), 'ft'),
             'altitude_ref': (20_000, 'ft'),

@@ -1,19 +1,18 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.breguet_cruise_eom import E_RangeComp, RangeComp
+from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
-from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
 
-class BreguetCruiseODESolution(TwoDOFODE):
+class BreguetCruiseODE(TwoDOFODE):
     """The GASP based cruise ODE."""
 
     def setup(self):
@@ -154,8 +153,8 @@ class BreguetCruiseODESolution(TwoDOFODE):
         self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')
 
 
-class E_BreguetCruiseODESolution(TwoDOFODE):
-    """The GASP based cruise ODE by electrical aircraft."""
+class ElectricBreguetCruiseODE(TwoDOFODE):
+    """The GASP based cruise ODE for electric aircraft."""
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -165,11 +164,7 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
 
-        self.add_subsystem(
-            name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH),
-            promotes=['*'],
-        )
+        self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
         self.add_subsystem(
             'calc_weight',
@@ -241,8 +236,8 @@ class E_BreguetCruiseODESolution(TwoDOFODE):
         # collect initial/final outputs
         #
         self.add_subsystem(
-            'e_breguet_eom',
-            E_RangeComp(num_nodes=nn),
+            'electric_breguet_eom',
+            ElectricRangeComp(num_nodes=nn),
             promotes_inputs=[
                 ('cruise_distance_initial', 'initial_distance'),
                 ('cruise_time_initial', 'initial_time'),

@@ -1,5 +1,9 @@
 import inspect
 
+import dymos as dm
+
+analytic_args = ['name', 'state_name', 'units', 'shape']
+
 
 def add_subsystem_variables_to_phase(phase, phase_name, subsystems):
     """
@@ -29,6 +33,13 @@ def add_subsystem_variables_to_phase(phase, phase_name, subsystems):
         # Add each state and its corresponding arguments to the phase
         for state_name in subsystem_states:
             kwargs = subsystem_states[state_name]
+            # analytic phase states only accept a limit number of arguments
+            if isinstance(phase, dm.AnalyticPhase):
+                new_kwargs = {}
+                for arg in analytic_args:
+                    if arg in kwargs:
+                        new_kwargs[arg] = kwargs[arg]
+                kwargs = new_kwargs
             phase.add_state(state_name, **kwargs)
 
         # Check if 'get_controls' function in the subsystem accepts 'phase_name' as an argument
