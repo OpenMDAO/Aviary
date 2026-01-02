@@ -44,7 +44,11 @@ class PreMissionAero(om.Group):
         # to avoid multiple sources for computed Mach (gets calculated somewhere upstream)
         self.add_subsystem(
             name='atmosphere',
-            subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
+            subsys=Atmosphere(
+                num_nodes=1,
+                input_speed_type=SpeedType.MACH,
+                add_flight_conditions=False,
+            ),
             promotes=['*', (Dynamic.Mission.ALTITUDE, 'alt_flaps')],
         )
 
