@@ -25,10 +25,11 @@ different results than the table.
 7) Hot/Cold vs. Tropical/Polar have different sea level pressures (29.9 vs. 29.92 respectively), 
 dispite the description by the paper that Hot/Cold are at 29.9. This can be verified by
 looking directly at the tabular data presented in the paper.
-8) The inHG measurement shown in the tables is assumed to be taken at 60 degF = 15C, (as opposed to 32F = 0C). Supporting documentation
-for this is based on NIST and the US1976 atmosphere standard which lists sea-level pressure of 101,325 Pa, 
-based on the NIST conversion factors to translate Pa to inHG at 60F, these match up. 
-inHg has a dependence on temperature which makes it a very tempermental unit and should be avoided.
+8) The inHG measurement shown in the tables is assumed to be taken at 60 degF = 15C, 
+(as opposed to 32F = 0C). Supporting documentation for this is based on NIST and the US1976 
+atmosphere standard which lists sea-level pressure of 101,325 Pa, based on the NIST conversion 
+factors to translate Pa to inHG at 60F, these match up. inHg has a dependence on temperature 
+which makes it a very tempermental unit and should be avoided.
 https://physics.nist.gov/cgi-bin/cuu/Value?stdatm
 https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
 9) "The cold and hot atmosphere tables cannot be used for determining
