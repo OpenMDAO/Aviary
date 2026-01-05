@@ -13,7 +13,7 @@ GASP = LegacyCode.GASP
 
 
 @use_tempdirs
-class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
+class TestFLOPSGeomBuilder(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
@@ -22,7 +22,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=FLOPS,
             code_origin_to_prioritize=FLOPS,
@@ -48,7 +48,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilderBase):
         )
 
 
-class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
+class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilder):
     """
     That class inherits from TestSubsystemBuilder. So all the test functions are
     within that inherited class. The setUp() method prepares the class and is run
@@ -57,7 +57,7 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilderBase):
 
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
