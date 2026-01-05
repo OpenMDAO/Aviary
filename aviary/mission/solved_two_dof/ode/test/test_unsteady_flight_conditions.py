@@ -31,7 +31,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
                 'viscosity',
-                'dsos_dh'
+                'dsos_dh',
             ],
         )
 
