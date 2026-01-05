@@ -27,13 +27,9 @@ aircraft:crew_and_payload:design:seat_pitch_tourist,32,inch
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
-aircraft:crew_and_payload:num_business_class,100,unitless
-aircraft:crew_and_payload:num_first_class,28,unitless
 aircraft:crew_and_payload:num_flight_attendants,22,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,2,unitless
-aircraft:crew_and_payload:num_passengers,468,unitless
-aircraft:crew_and_payload:num_tourist_class,340,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
@@ -104,8 +100,8 @@ aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
-aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:hydraulics:mass_scaler,1.0,unitless
+aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:instruments:mass_scaler,1.0,unitless
 aircraft:landing_gear:main_gear_oleo_length,85.0,inch
 aircraft:landing_gear:main_gear_mass_scaler,1.0,unitless
@@ -153,7 +149,6 @@ aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
-aircraft:wing:thickness_to_chord_reference,0.11,unitless
 aircraft:wing:thickness_to_chord_dist,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
