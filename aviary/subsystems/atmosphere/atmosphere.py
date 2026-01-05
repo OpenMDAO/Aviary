@@ -162,7 +162,12 @@ class AtmosphereComp(om.ExplicitComponent):
             'viscosity', val=1.0 * np.ones(nn), units='Pa*s', desc='dynamic viscosity of air'
         )
         self.add_output('sos', val=1 * np.ones(nn), units='m/s', desc='speed of sound')
-        self.add_output('dsos_dh', val=1 * np.ones(nn), units='1/s', desc='the change in the speed of sound with respect to height')
+        self.add_output(
+            'dsos_dh',
+            val=1 * np.ones(nn),
+            units='1/s',
+            desc='the change in the speed of sound with respect to height',
+        )
 
         arange = np.arange(nn, dtype=int)
         self.declare_partials(
@@ -220,8 +225,8 @@ class AtmosphereComp(om.ExplicitComponent):
 
         # dsos_dh is only used for unsteady_solved_flight_conditions
         coeffs = self.source_data.akima_dT[idx]
-        dT_dh = (coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])))
-        outputs['dsos_dh'] = (0.5 * (self._K * temp) ** (-0.5) * dT_dh * self._K)
+        dT_dh = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
+        outputs['dsos_dh'] = 0.5 * (self._K * temp) ** (-0.5) * dT_dh * self._K
 
         # Equation 51
         outputs['viscosity'] = self._beta * temp ** (1.5) * (temp + self._S) ** (-1)
@@ -288,8 +293,8 @@ class AtmosphereComp(om.ExplicitComponent):
         dsos_dh = 0.5 * (self._K * temp) ** (-0.5) * self._K * dT_dh
 
         # similar to method in dymos
-        coeffs2 = self.source_data.akima_dT[idx]
-        d2T_dh2 = (coeffs2[:, 1] + dx * (2.0 * coeffs2[:, 2] + 3.0 * coeffs2[:, 3] * dx))
+        coeffs = self.source_data.akima_dT[idx]
+        d2T_dh2 = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
         partials['dsos_dh', 'h'] = 0.5 * np.sqrt(self._K / temp) * (d2T_dh2 - 0.5 * dT_dh**2 / temp)
 
         partials['temp', 'h'][...] = dT_dh.ravel()
@@ -304,7 +309,7 @@ class AtmosphereComp(om.ExplicitComponent):
             partials['rho', 'h'][...] *= dz_dh  # does this still apply?
             partials['viscosity', 'h'][...] *= dz_dh  # does this still apply?
             partials['sos', 'h'][...] *= dz_dh  # does this still apply?
-            partials['dsos_dh', 'h'] *= dz_dh ** 2 # does this still apply?
+            partials['dsos_dh', 'h'] *= dz_dh**2  # does this still apply?
 
 
 def _build_akima_coefs(out_stream, raw_data, units):
@@ -369,7 +374,9 @@ def _build_akima_coefs(out_stream, raw_data, units):
     )
 
     _, _dT_dh = T_interp.interpolate(atm_data.alt, compute_derivative=True)
-    dT_interp = InterpND(method='1D-akima', points=atm_data.alt, values=_dT_dh.ravel(), extrapolate=True)
+    dT_interp = InterpND(
+        method='1D-akima', points=atm_data.alt, values=_dT_dh.ravel(), extrapolate=True
+    )
 
     # Find midpoints of all bins plus an extrapolation point on each end.
     min_alt = np.min(atm_data.alt)
@@ -472,7 +479,7 @@ if __name__ == '__main__':
 
         prob.run_model()
 
-        #prob.check_partials(method='cs')
+        # prob.check_partials(method='cs')
 
         # print('Temperatures (K):', prob.get_val('temp', units='K'))
         # print('Pressure (Pa)', prob.get_val('pres', units='Pa'))
