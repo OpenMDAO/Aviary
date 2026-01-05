@@ -1,11 +1,11 @@
-DATA_ORIGIN_NOTE = '''
+DATA_ORIGIN_NOTE = """
     United States standard atmosphere 1976 tables, data
     Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
     based on NASA-TM-X-74335.
 
     Notes:
     The data table contains data from -5,000 meters to 83,000 meters altitude
-    '''
+    """
 from collections import namedtuple
 import sys
 
@@ -14,8 +14,7 @@ import numpy as np
 import openmdao.api as om
 
 atm_data = namedtuple('USatm1976Data', ['alt', 'temp', 'pres', 'rho'])
-atm_data.__doc__ = \
-    """
+atm_data.__doc__ = """
     A namedtuple to hold data for the 1976 standard atmosphere model.
 
     Parameters
@@ -29,6 +28,9 @@ atm_data.__doc__ = \
     rho : float
         Density in kg/m^3.
     """
+
+# turn off ruff linting
+# fmt: off
 
 # _raw_data Units: (Geopotential Altitude in meters, Temp in degK, pressure in mb, density in kg/m^3)
 _raw_data = np.array([
@@ -2904,3 +2906,6 @@ atm_data.akima_rho = \
            [ 8.7654150000000002e-06, -1.4836249572330948e-09,  1.0512364552918109e-13,  8.7405378740213761e-18],
            [ 8.0509760000000007e-06, -1.3719459082983981e-09,  1.0161163319358640e-13,  8.1683668064098834e-18],
            [ 7.3914269999999998e-06, -1.2642080000000034e-09,  0.0000000000000000e+00,  0.0000000000000000e+00]])
+
+# turn on ruff linting
+# fmt: on
