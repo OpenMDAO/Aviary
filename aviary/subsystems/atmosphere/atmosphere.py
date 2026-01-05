@@ -385,7 +385,7 @@ if __name__ == "__main__":
               'Make sure your input units match the requirements shown in _build_akima_coefs()!')
         input("Press Enter to continue: ")
 
-        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Cold import _raw_data # replace this with your new raw data
+        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Tropical import _raw_data # replace this with your new raw data
 
         import sys
         _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='English')
@@ -396,7 +396,7 @@ if __name__ == "__main__":
         prob = om.Problem()
 
         # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
-        atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='cold', delta_T_Kelvin=0, num_nodes=6), promotes=['*'])
+        atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='tropical', delta_T_Kelvin=0, num_nodes=6), promotes=['*'])
 
         prob.set_solver_print(level=0)
 
