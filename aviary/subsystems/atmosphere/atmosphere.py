@@ -385,7 +385,7 @@ if __name__ == "__main__":
               'Make sure your input units match the requirements shown in _build_akima_coefs()!')
         input("Press Enter to continue: ")
 
-        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import _raw_data # replace this with your new raw data
+        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Cold import _raw_data # replace this with your new raw data
 
         import sys
         _build_akima_coefs(out_stream=sys.stdout, raw_data=_raw_data, units='English')
@@ -396,17 +396,23 @@ if __name__ == "__main__":
         prob = om.Problem()
 
         # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
-        atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=4), promotes=['*'])
+        atm_model = prob.model.add_subsystem('comp', AtmosphereComp(data_source='cold', delta_T_Kelvin=0, num_nodes=6), promotes=['*'])
 
         prob.set_solver_print(level=0)
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val('h', [0, -5000, 25000, 100000], units='ft')
+        prob.set_val('h', [0, 10000, 35000, 55000, 70000, 100000], units='ft')
         
         prob.run_model()
 
         # prob.check_partials(method='cs')
+
+        # print('Temperatures (K):', prob.get_val('temp', units='K'))
+        # print('Pressure (Pa)', prob.get_val('pres', units='Pa'))
+        # print('Density (kg/m**3)', prob.get_val('rho', units='kg/m**3'))
+        # print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
+        # print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
 
         print('Temperatures (degF):', prob.get_val('temp', units='degF'))
         print('Pressure (inHg60)', prob.get_val('pres', units='inHg60'))
