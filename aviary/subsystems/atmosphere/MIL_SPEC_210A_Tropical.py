@@ -31,6 +31,14 @@ based on the NIST conversion factors to translate Pa to inHG at 60F, these match
 inHg has a dependence on temperature which makes it a very tempermental unit and should be avoided.
 https://physics.nist.gov/cgi-bin/cuu/Value?stdatm
 https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
+9) "The cold and hot atmosphere tables cannot be used for determining
+engine and aircraft performance, aerodynamic characteristics, skin, compartment
+and equipment temperatures under transient climb conditions" - Mil_Std_210A
+10) "The polar and tropical atmospheres provide criteria for consideration in problems
+dependent upon a hydrodynamically consistent homogeneous polar or tropical atmosphere.
+These problems include determination of engine and aircraft performance,
+aerodynamic characteristics, skin, compartment and equipment temperatures
+under transient climb conditions," - Mil_Std_210A
 '''
 
 from collections import namedtuple
