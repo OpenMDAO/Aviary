@@ -93,11 +93,6 @@ class AtmosphereComp(om.ExplicitComponent):
         """
         self.options.declare('num_nodes', types=int,
                              desc='Number of nodes to be evaluated in the RHS')
-
-        gamma = 1.4  # Ratio of specific heads
-        gas_c = 1716.49  # Gas constant (ft lbf)/(slug R)
-        self._K = gamma * gas_c
-
         self.options.declare('h_def', values=('geopotential', 'geodetic'), default='geopotential',
                              desc='The definition of altitude provided as input to the component.  If "geodetic",'
                                   'it will be converted to geopotential based on Equation 19 in the original standard.')

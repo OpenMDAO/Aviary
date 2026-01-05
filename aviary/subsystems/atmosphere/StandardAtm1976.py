@@ -4,7 +4,7 @@ DATA_ORIGIN_NOTE = '''
     based on NASA-TM-X-74335.
 
     Notes:
-    0) The data table contains data from -5,000 meters to 83,000 meters altitude
+    The data table contains data from -5,000 meters to 83,000 meters altitude
     '''
 from collections import namedtuple
 import sys
