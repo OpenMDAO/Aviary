@@ -429,42 +429,31 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             60 * 60
         )
 
-    # TODO this does not work at all for mixed-type engines (some propeller and some not)
-    try:
-        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
-
-        # This happens before preprocessing, and we end up with the default when unspecified.
-        # num_engines = np.array(num_engines)
-
-        if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
-            # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
-        else:
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')
-                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
-
-    except KeyError:
-        if engine_models is not None and len(engine_models) > 1:
-            # heterogeneous engine-model case. Get thrust from the engine models instead.
-            total_thrust = 0
-            for model in engine_models:
-                thrust = model.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * model.get_val(
-                    Aircraft.Engine.SCALE_FACTOR
+    total_thrust = 0
+    for i, model in enumerate(engine_models):
+        if Aircraft.Engine.HAS_PROPELLERS in aircraft_values:
+            if (
+                aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS)[i]
+                and aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[i] == 0.0
+            ):
+                # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+                # TODO scale factor?
+                thrust = np.dot(
+                    aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp')[i],
+                    aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],
                 )
-                num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
-                total_thrust += thrust * num_engines
-
+            else:
+                thrust = (
+                    aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
+                    * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
+                )
         else:
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
+            thrust = (
+                aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
+                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
             )
+        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
+        total_thrust += thrust * num_engines
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts

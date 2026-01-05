@@ -35,10 +35,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         """
         # Deal with missing defaults in phase info:
         aviary_group.pre_mission_info.setdefault('include_takeoff', True)
-        aviary_group.pre_mission_info.setdefault('external_subsystems', [])
 
         aviary_group.post_mission_info.setdefault('include_landing', True)
-        aviary_group.post_mission_info.setdefault('external_subsystems', [])
 
         aviary_inputs = aviary_group.aviary_inputs
 

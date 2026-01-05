@@ -177,6 +177,14 @@ class AviaryGroup(om.Group):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
@@ -266,21 +274,6 @@ class AviaryGroup(om.Group):
             self.post_mission_info = phase_info['post_mission']
         else:
             self.post_mission_info = {}
-
-        # Defines how the problem should build it's initial guesses
-        # this modifies mass_method, initialization_guesses, and aviary_values
-        if self.engine_models == []:
-            self.engine_models = [build_engine_deck(self.aviary_inputs)]
-
-        self.initialization_guesses = initialization_guessing(
-            self.aviary_inputs, self.initialization_guesses, self.engine_models
-        )
-
-        self.configurator.initial_guesses(self)
-        # This function sets all the following defaults if they were not already set:
-        # self.pre_mission_info, self_post_mission_info,
-        # self.require_range_residual, self.target_range
-        # Other specific self.*** are defined in here as well that are specific to each builder
 
         return self.aviary_inputs, self.verbosity
 
@@ -395,6 +388,9 @@ class AviaryGroup(om.Group):
                     else:
                         guesses['time'] = ((None, time_duration), units)
 
+        if self.engine_models == []:
+            self.engine_models = [build_engine_deck(aviary_inputs)]
+
         for external_subsystem in self.external_subsystems:
             aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
 
@@ -405,6 +401,16 @@ class AviaryGroup(om.Group):
             verbosity=verbosity,
             metadata=self.meta_data,
         )
+
+        self.initialization_guesses = initialization_guessing(
+            self.aviary_inputs, self.initialization_guesses, self.engine_models
+        )
+
+        # This function sets all the following defaults if they were not already set:
+        # self.pre_mission_info, self_post_mission_info,
+        # self.require_range_residual, self.target_range
+        # Other specific self.*** are defined in here as well that are specific to each builder
+        self.configurator.initial_guesses(self)
 
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
         # load_inputs?
