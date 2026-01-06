@@ -6134,6 +6134,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.OUTBOARD_SEMISPAN,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.OSSPAN', 'LEAPS1': None},
+    units='ft',
+    desc='Outboard semispan (used if a detailed wing outboard is being added to a BWB fuselage)',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Wing.ROOT_CHORD,
     meta_data=_MetaData,
     historical_name={

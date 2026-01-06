@@ -105,8 +105,8 @@ class BWBFuselagePrelim(om.ExplicitComponent):
             )
         if rear_spar_percent_chord <= 0.0:
             raise ValueError(
-                f'Rear_spar_percent_chord must be positive, '
-                'however {rear_spar_percent_chord} is provided.'
+                'Rear_spar_percent_chord must be positive, '
+                f'however {rear_spar_percent_chord} is provided.'
             )
 
         ref_diameter = 0.5 * (max_height + max_width)
@@ -166,8 +166,8 @@ class SimpleCabinLayout(om.ExplicitComponent):
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
-                    'Passenger compartiment lenght is longer than recommended maximum'
-                    ' length. Suggest use detailed laylout algorithm.'
+                    'Passenger compartment lenght is longer than recommended maximum'
+                    ' length. Suggest using detailed laylout algorithm.'
                 )
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
@@ -463,16 +463,16 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         if max_width <= 0.0:
             if verbosity > Verbosity.BRIEF:
                 raise ValueError(
-                    f'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
-                    'however {max_width} is provided.'
+                    'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
+                    f'however {max_width} is provided.'
                 )
 
         pax_compart_length = rear_spar_percent_chord * length
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
-                    'Passenger compartiment lenght is longer than recommended maximum'
-                    ' length. Suggest use detailed laylout algorithm.'
+                    'Passenger compartment lenght is longer than recommended maximum'
+                    ' length. Suggest using detailed laylout algorithm.'
                 )
 
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
