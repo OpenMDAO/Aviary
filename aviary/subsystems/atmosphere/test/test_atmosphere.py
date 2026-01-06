@@ -3,6 +3,8 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from packaging.version import Version
+import openmdao
 
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 
@@ -79,43 +81,38 @@ class USatm1976TestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    # def test_atmos_comp_geopotential(self):
-    #     n = USatm1976Data.alt.size
+    def test_atmos_comp_geopotential(self):
+        from aviary.subsystems.atmosphere.StandardAtm1976 import atm_data
+        n = atm_data.alt.size
 
-    #     p = om.Problem(model=om.Group())
+        p = om.Problem(model=om.Group())
 
-    #     ivc = p.model.add_subsystem('ivc', subsys=om.IndepVarComp(), promotes_outputs=['*'])
-    #     ivc.add_output(name='alt', val=USatm1976Data.alt, units='ft')
+        ivc = p.model.add_subsystem('ivc', subsys=om.IndepVarComp(), promotes_outputs=['*'])
+        ivc.add_output(name='alt', val=atm_data.alt, units='ft')
 
-    #     p.model.add_subsystem('atmos', subsys=USatm1976Comp(num_nodes=n))
-    #     p.model.connect('alt', 'atmos.h')
+        p.model.add_subsystem('atmos', subsys=AtmosphereComp(data_source='USatm1976', num_nodes=n))
+        p.model.connect('alt', 'atmos.h')
 
-    #     p.setup(force_alloc_complex=True)
-    #     p.run_model()
+        p.setup(force_alloc_complex=True)
+        p.run_model()
 
-    #     T = p.get_val('atmos.temp', units='degR')
-    #     P = p.get_val('atmos.pres', units='psi')
-    #     rho = p.get_val('atmos.rho', units='slug/ft**3')
-    #     sos = p.get_val('atmos.sos', units='ft/s')
+        T = p.get_val('atmos.temp', units='K')
+        P = p.get_val('atmos.pres', units='Pa')
+        rho = p.get_val('atmos.rho', units='kg/m**3')
+        sos = p.get_val('atmos.sos', units='m/s')
 
-    #     drho_dh = p.get_val('atmos.drhos_dh', units='slug/ft**4')
-    #     dsos_dh = p.get_val('atmos.dsos_dh', units='1/s')
+        sos_interp = Akima1DInterpolator(atm_data.alt, sos)
+        dsos_interp = sos_interp.derivative()(atm_data.alt)
 
-    #     rho_interp = Akima1DInterpolator(USatm1976Data.alt, rho)
-    #     drho_interp = rho_interp.derivative()(USatm1976Data.alt)
-    #     sos_interp = Akima1DInterpolator(USatm1976Data.alt, sos)
-    #     dsos_interp = sos_interp.derivative()(USatm1976Data.alt)
+        assert_near_equal(T, atm_data.T, tolerance=1.0E-4)
+        assert_near_equal(P, atm_data.P, tolerance=1.0E-4)
+        assert_near_equal(rho, atm_data.rho, tolerance=1.0E-4)
+        assert_near_equal(sos, atm_data.a, tolerance=1.0E-4)
 
-    #     assert_near_equal(T, USatm1976Data.T, tolerance=1.0E-4)
-    #     assert_near_equal(P, USatm1976Data.P, tolerance=1.0E-4)
-    #     assert_near_equal(rho, USatm1976Data.rho, tolerance=1.0E-4)
-    #     assert_near_equal(sos, USatm1976Data.a, tolerance=1.0E-4)
+        assert_near_equal(dsos_interp, dsos_dh, tolerance=1.0E-2)
 
-    #     assert_near_equal(drho_interp, drho_dh, tolerance=1.0E-4)
-    #     assert_near_equal(dsos_interp, dsos_dh, tolerance=1.0E-2)
-
-    #     cpd = p.check_partials(method='cs', out_stream=None)
-    #     assert_check_partials(cpd)
+        cpd = p.check_partials(method='cs', out_stream=None)
+        assert_check_partials(cpd)
 
     # def test_atmos_comp_geodetic(self):
     #     n = USatm1976Data.alt.size
@@ -287,10 +284,13 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
         ]  # (Pa*s)
 
         assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        # assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol) #TODO: Enable after inHg60 is added to OM library
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+
+        # inHg60 is a newer unit in OpenMDAO so we'll do this check only of that newer version is installed
+        if Version(openmdao.__version__) >= Version("3.42.0"):
+            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -349,10 +349,11 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
         ]  # (Pa*s)
 
         assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        # assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol) #TODO: Enable after inHg60 is added to OM library
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        if Version(openmdao.__version__) >= Version("3.42.0"):
+            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -409,10 +410,11 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
         ]  # (Pa*s)
 
         assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        # assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol) #TODO: Enable after inHg60 is added to OM library
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        if Version(openmdao.__version__) >= Version("3.42.0"):
+            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -471,10 +473,11 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
         ]  # (Pa*s)
 
         assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        # assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol) #TODO: Enable after inHg60 is added to OM library
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        if Version(openmdao.__version__) >= Version("3.42.0"):
+            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
