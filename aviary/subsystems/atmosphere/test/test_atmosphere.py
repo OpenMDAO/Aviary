@@ -81,83 +81,78 @@ class USatm1976TestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    def test_atmos_comp_geopotential(self):
-        from aviary.subsystems.atmosphere.StandardAtm1976 import atm_data
-        n = atm_data.alt.size
+class USatm1976TestCase2(unittest.TestCase):    
+    def setUp(self):
+        self.prob = om.Problem()
 
-        p = om.Problem(model=om.Group())
+        self.prob.model.add_subsystem(
+            'atmo',
+            AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=0, num_nodes=7, h_def='geodetic'),
+            promotes=['*'],
+        )
 
-        ivc = p.model.add_subsystem('ivc', subsys=om.IndepVarComp(), promotes_outputs=['*'])
-        ivc.add_output(name='alt', val=atm_data.alt, units='ft')
+        self.prob.set_solver_print(level=0)
 
-        p.model.add_subsystem('atmos', subsys=AtmosphereComp(data_source='USatm1976', num_nodes=n))
-        p.model.connect('alt', 'atmos.h')
+        self.prob.setup(
+            force_alloc_complex=True,
+            check=False,
+        )
+        self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
 
-        p.setup(force_alloc_complex=True)
-        p.run_model()
+    def test_geodetic(self):
 
-        T = p.get_val('atmos.temp', units='K')
-        P = p.get_val('atmos.pres', units='Pa')
-        rho = p.get_val('atmos.rho', units='kg/m**3')
-        sos = p.get_val('atmos.sos', units='m/s')
+        tol = 1e-4
+        self.prob.run_model()
 
-        sos_interp = Akima1DInterpolator(atm_data.alt, sos)
-        dsos_interp = sos_interp.derivative()(atm_data.alt)
+        # USATM1976 test values
+        # Reference values based on altitudes of [-1000, 0, 10950, 11000, 11100, 20000, 32000] #meters
+        expected_temp = [294.65, 288.15, 216.975, 216.65, 216.65, 216.65, 228.65]  # (deg K)
+        expected_pressure = [
+            113929.1,
+            101325,
+            22811.08,
+            22632.06,
+            22277.98,
+            5474.889,
+            868.0187,
+        ]  # (Pa)
+        expected_density = [
+            1.346995,
+            1.224999,
+            0.3662468,
+            0.3639178,
+            0.3582242,
+            0.0880348,
+            0.013225,
+        ]  # (kg/m**3)
+        expected_sos = [
+            344.07756866,
+            340.26121619,
+            295.26229189,
+            295.04107699,
+            295.04107699,
+            295.04107699,
+            303.1019573,
+        ]  # (m/s)
+        expected_viscosity = [
+            1.82057492e-05,
+            1.78938028e-05,
+            1.42339868e-05,
+            1.42161308e-05,
+            1.42161308e-05,
+            1.42161308e-05,
+            1.48679326e-05,
+        ]  # (Pa*s)
 
-        assert_near_equal(T, atm_data.T, tolerance=1.0E-4)
-        assert_near_equal(P, atm_data.P, tolerance=1.0E-4)
-        assert_near_equal(rho, atm_data.rho, tolerance=1.0E-4)
-        assert_near_equal(sos, atm_data.a, tolerance=1.0E-4)
+        assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
+        assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
+        assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
+        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
+        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
 
-        assert_near_equal(dsos_interp, dsos_dh, tolerance=1.0E-2)
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        cpd = p.check_partials(method='cs', out_stream=None)
-        assert_check_partials(cpd)
-
-    # def test_atmos_comp_geodetic(self):
-    #     n = USatm1976Data.alt.size
-
-    #     p = om.Problem(model=om.Group())
-
-    #     ivc = p.model.add_subsystem('ivc', subsys=om.IndepVarComp(), promotes_outputs=['*'])
-    #     ivc.add_output(name='alt', val=USatm1976Data.alt, units='ft')
-
-    #     p.model.add_subsystem('atmos', subsys=USatm1976Comp(num_nodes=n, h_def='geodetic'))
-    #     p.model.connect('alt', 'atmos.h')
-
-    #     p.setup(force_alloc_complex=True)
-
-    #     h = USatm1976Data.alt * 0.3048  # altitude data in meters
-    #     R0 = 6_356_766  # US 1976 std atm R0 in m
-    #     p.set_val('alt', R0 / (R0 - h) * h, units='m')  # US 1976 std atm geopotential altitude to geodetic (m)
-
-    #     p.run_model()
-
-    #     T = p.get_val('atmos.temp', units='degR')
-    #     P = p.get_val('atmos.pres', units='psi')
-    #     rho = p.get_val('atmos.rho', units='slug/ft**3')
-    #     sos = p.get_val('atmos.sos', units='ft/s')
-
-    #     drho_dh = p.get_val('atmos.drhos_dh', units='slug/ft**4')
-    #     dsos_dh = p.get_val('atmos.dsos_dh', units='1/s')
-
-    #     rho_interp = Akima1DInterpolator(USatm1976Data.alt, rho)
-    #     drho_interp = rho_interp.derivative()(USatm1976Data.alt)
-    #     sos_interp = Akima1DInterpolator(USatm1976Data.alt, sos)
-    #     dsos_interp = sos_interp.derivative()(USatm1976Data.alt)
-
-    #     assert_near_equal(T, USatm1976Data.T, tolerance=1.0E-4)
-    #     assert_near_equal(P, USatm1976Data.P, tolerance=1.0E-4)
-    #     assert_near_equal(rho, USatm1976Data.rho, tolerance=1.0E-4)
-    #     assert_near_equal(sos, USatm1976Data.a, tolerance=1.0E-4)
-
-    #     assert_near_equal(drho_interp, drho_dh, tolerance=1.0E-4)
-    #     assert_near_equal(dsos_interp, dsos_dh, tolerance=1.0E-2)
-
-    #     with np.printoptions(linewidth=100000):
-    #         cpd = p.check_partials(method='cs')
-    #     assert_check_partials(cpd)
-
+        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 class AtmDeltaTKelvinTestCase1(unittest.TestCase):
     def setUp(self):
