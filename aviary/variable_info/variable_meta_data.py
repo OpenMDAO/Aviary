@@ -1348,8 +1348,7 @@ add_meta_data(
     },
     units='lbm',
     desc='Empennage group mass. Contains mass of canards, horizontal/vertical stabilizers '
-    'and fins, and ventral fins. In Aviary, this does NOT contain tail rotor mass, which is a '
-    'deviation from SAWE standards. Tail rotor mass is bookept under the propulsion group.',
+    'and fins, and ventral fins, and any supporting structure for mounted engines on those surfaces.',
     default_value=0.0,
 )
 
@@ -1949,20 +1948,6 @@ add_meta_data(
     multivalue=True,
 )
 
-add_meta_data(
-    Aircraft.Engine.CONTROLS_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.WEC',
-        'LEAPS1': '(WeightABC)self._engine_ctrl_weight',
-    },
-    units='lbm',
-    desc='estimated mass of the engine controls',
-    default_value=0.0,
-    multivalue=True,
-)
-
 # TODO there should be a GASP name that pairs here
 add_meta_data(
     Aircraft.Engine.DATA_FILE,
@@ -2464,20 +2449,6 @@ add_meta_data(
     desc='Maximum sea-level static thrust of an engine after scaling. Optional for '
     'EngineDecks if Aircraft.Engine.SCALE_FACTOR is provided, in which case this '
     'variable is computed.',
-    default_value=0.0,
-    multivalue=True,
-)
-
-add_meta_data(
-    Aircraft.Engine.STARTER_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.WSTART',
-        'LEAPS1': '(WeightABC)self._starter_weight',
-    },
-    units='lbm',
-    desc='mass of engine starter subsystem',
     default_value=0.0,
     multivalue=True,
 )

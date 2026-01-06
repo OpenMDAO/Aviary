@@ -339,7 +339,6 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
 ctrls_mass = 0.26 * 2 * 27301.0**0.5  # 85.92
 ctrls_mass_units = 'lbm'
 
-outputs.set_val(Aircraft.Engine.CONTROLS_MASS, ctrls_mass, ctrls_mass_units)
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, ctrls_mass, ctrls_mass_units)
 
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 125.42, 'lbm')

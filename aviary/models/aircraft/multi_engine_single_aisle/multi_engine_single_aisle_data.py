@@ -381,7 +381,6 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 4)
 
 engine_ctrls_mass = 88.44
 engine_ctrls_mass_units = 'lbm'
-outputs.set_val(Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units)
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
     engine_ctrls_mass,
