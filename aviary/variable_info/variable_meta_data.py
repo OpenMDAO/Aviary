@@ -1740,7 +1740,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.TYPE,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.IHWB'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': ['INGASP.IHWB'], 'FLOPS': ['OPTION.IFITE'], 'LEAPS1': None},
     units='unitless',
     types=AircraftTypes,
     option=True,
