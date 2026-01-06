@@ -94,7 +94,8 @@ class CoreMassBuilder(MassBuilder):
         num_engines = prob.model.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
         engine_models = prob.model.engine_builders
 
-        tab = '&nbsp;&nbsp;&nbsp;&nbsp;'
+        # "double-size" (8-character) tabs were found to greatly improve readability
+        tab = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
 
         with open(filepath, mode='w') as f:
             method = self.code_origin.value + '-derived relations'
@@ -159,7 +160,7 @@ class CoreMassBuilder(MassBuilder):
             val, units = find_variable_in_problem(
                 Aircraft.Design.STRUCTURE_MASS, prob, self.meta_data
             )
-            f.write(f'|Structure Mass|{val}|{units}|\n')
+            f.write(f'|**Structure Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(Aircraft.Propulsion.MASS, prob, self.meta_data)
@@ -244,7 +245,7 @@ class CoreMassBuilder(MassBuilder):
             f.write('||||\n')
 
             val, units = find_variable_in_problem(Aircraft.Design.EMPTY_MASS, prob, self.meta_data)
-            f.write(f'|Empty Mass|{val}|{units}|\n')
+            f.write(f'|**Empty Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(Mission.Summary.USEFUL_LOAD, prob, self.meta_data)
@@ -277,7 +278,7 @@ class CoreMassBuilder(MassBuilder):
             val, units = find_variable_in_problem(
                 Mission.Summary.OPERATING_MASS, prob, self.meta_data
             )
-            f.write(f'|Operating Mass|{val}|{units}|\n')
+            f.write(f'|**Operating Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(
@@ -299,7 +300,7 @@ class CoreMassBuilder(MassBuilder):
             val, units = find_variable_in_problem(
                 Mission.Summary.ZERO_FUEL_MASS, prob, self.meta_data
             )
-            f.write(f'|Zero Fuel Mass|{val}|{units}|\n')
+            f.write(f'|**Zero Fuel Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(Mission.Summary.FUEL_MASS, prob, self.meta_data)
@@ -307,4 +308,4 @@ class CoreMassBuilder(MassBuilder):
             f.write('||||\n')
 
             val, units = find_variable_in_problem(Mission.Design.GROSS_MASS, prob, self.meta_data)
-            f.write(f'|Gross Mass|{val}|{units}|\n')
+            f.write(f'|**Gross Mass**|**{val}**|**{units}**|\n')
