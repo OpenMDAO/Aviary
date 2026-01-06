@@ -148,10 +148,6 @@ class AtmosphereComp(om.ExplicitComponent):
             self.source_data = hot_210A
         elif self.options['data_source'] == 'cold':
             self.source_data = cold_210A
-        else:
-            Warning(
-                'User has specified unknown atmosphere model. Please use one of: USatm1976, tropical, polar, hot, cold'
-            )
 
         self.add_input('h', val=1.0 * np.ones(nn), units='m')
 
