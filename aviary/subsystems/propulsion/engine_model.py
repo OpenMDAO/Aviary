@@ -10,13 +10,13 @@ import warnings
 
 import numpy as np
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Settings
 
 
-class EngineModel(SubsystemBuilderBase):
+class EngineModel(SubsystemBuilder):
     """
     Define the interface for an engine model builder.
 
@@ -104,7 +104,9 @@ class EngineModel(SubsystemBuilderBase):
             f'been implemented in EngineModel <{self.name}>'
         )
 
-    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
+    def build_post_mission(
+        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+    ):
         """
         Build an OpenMDAO system for the post-mission computations of the engine model.
 

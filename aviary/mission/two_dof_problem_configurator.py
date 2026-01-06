@@ -1,20 +1,19 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.mission.gasp_based.ode.landing_ode import LandingSegment
-from aviary.mission.gasp_based.ode.params import ParamPort
-from aviary.mission.gasp_based.ode.taxi_ode import TaxiSegment
-from aviary.mission.gasp_based.phases.accel_phase import AccelPhase
-from aviary.mission.gasp_based.phases.ascent_phase import AscentPhase
-from aviary.mission.gasp_based.phases.climb_phase import ClimbPhase
-from aviary.mission.gasp_based.phases.cruise_phase import CruisePhase
-from aviary.mission.gasp_based.phases.descent_phase import DescentPhase
-from aviary.mission.gasp_based.phases.groundroll_phase import GroundrollPhase
-from aviary.mission.gasp_based.phases.rotation_phase import RotationPhase
-from aviary.mission.gasp_based.polynomial_fit import PolynomialFit
+from aviary.mission.two_dof.ode.landing_ode import LandingSegment
+from aviary.mission.two_dof.ode.params import ParamPort
+from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
+from aviary.mission.two_dof.phases.accel_phase import AccelPhase
+from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
+from aviary.mission.two_dof.phases.climb_phase import ClimbPhase
+from aviary.mission.two_dof.phases.cruise_phase import CruisePhase
+from aviary.mission.two_dof.phases.descent_phase import DescentPhase
+from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
+from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
+from aviary.mission.two_dof.polynomial_fit import PolynomialFit
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import add_opts2vals, create_opts2vals
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
@@ -223,7 +222,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'groundroll' in phase_name:
@@ -370,7 +369,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # safely add in default method in way that doesn't overwrite existing method
             # and create nested structure if it doesn't already exist
             aviary_group.mission_info[phase_name].setdefault('subsystem_options', {}).setdefault(
-                'core_aerodynamics', {}
+                'aerodynamics', {}
             ).setdefault('method', 'low_speed')
 
     def link_phases(self, aviary_group, phases, connect_directly=True):

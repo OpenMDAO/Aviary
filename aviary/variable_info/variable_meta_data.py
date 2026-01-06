@@ -3,8 +3,6 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
-from pathlib import Path
-
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
@@ -1954,7 +1952,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'ENGDIN.EIFILE', 'LEAPS1': None},
     units='unitless',
-    types=(Path, str),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables',
@@ -2669,7 +2667,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    types=(str, Path),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing propeller data map',
@@ -3251,15 +3249,13 @@ add_meta_data(
     default_value=24,
 )
 
-# TODO FLOPS is not average diameter, but rather a reference diameter using max
-#      height and length. New variable??
 add_meta_data(
     Aircraft.Fuselage.AVG_DIAMETER,
     meta_data=_MetaData,
     historical_name={
         'GASP': ['INGASP.WC', 'INGASP.SWF'],
-        'FLOPS': None,  # 'EDETIN.XD',
-        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+        'FLOPS': None,
+        'LEAPS1': None,
     },
     units='ft',
     desc='average fuselage diameter',
@@ -3673,6 +3669,19 @@ add_meta_data(
     units='ft',
     default_value=0.0,
     desc='additional pressurized fuselage width for cargo bay',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.REF_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': ['EDETIN.XD'],
+        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+    },
+    units='ft',
+    desc='A coarse average diameter calculated using the mean of max width and depth.',
+    default_value=0.0,
 )
 
 add_meta_data(
