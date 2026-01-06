@@ -73,7 +73,6 @@ aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
 aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
@@ -123,9 +122,6 @@ aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,2.0,unitless
-aircraft:wing:area,7621.66,1,ft**2
-aircraft:wing:aspect_ratio,7.557,0,unitless
-# aircraft:wing:aspect_ratio_ref,7.557,0,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan_dist,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
 aircraft:wing:composite_fraction,1,unitless
@@ -158,7 +154,7 @@ mission:design:gross_mass,874099,lbm
 mission:design:range,7750,NM
 mission:design:thrust_takeoff_per_eng,0.25,lbf
 mission:landing:initial_velocity,140,ft/s
-mission:landing:lift_coefficient_max,3.0,unitless
+#mission:landing:lift_coefficient_max,3.0,unitless
 mission:landing:rolling_friction_coefficient,0.025,unitless
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:summary:cruise_mach,0.85,unitless
