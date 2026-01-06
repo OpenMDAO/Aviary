@@ -135,7 +135,7 @@ class BWBFuselagePrelim(om.ExplicitComponent):
 
 class SimpleCabinLayout(om.ExplicitComponent):
     """
-    Given fuselage length, height and width, compute passenger compartment length.
+    Given fuselage length, compute passenger compartment length.
     This is for transporter aircraft, not BWB.
     """
 
