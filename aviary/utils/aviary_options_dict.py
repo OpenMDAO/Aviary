@@ -281,7 +281,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
         Adds all options needed for a control variable.
 
         For a control named mach, these are mach_initial, mach_final, mach_bounds, mach_ref,
-        mach_ref0, mach_polynomial_order, mach_optimize, mach_rate_constraint.
+        mach_ref0, mach_polynomial_order, mach_optimize.
 
         Parameters
         ----------
@@ -383,18 +383,6 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
             default=default,
             types=int,
             allow_none=True,
-            desc=desc,
-        )
-
-        name = f'{ctrl_name}_rate_constraint'
-        default = defaults.get(name, None)
-        desc = f'Can be (None, positive, negative.)  When not None, adds a constraint that keeps '
-        desc += 'the rate positive or negative as requested. For altitude in a flight phase, '
-        desc += 'negative means no climb, and positive means no descent.'
-        self.declare(
-            name=name,
-            default=default,
-            values=[None, 'positive', 'negative'],
             desc=desc,
         )
 

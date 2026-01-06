@@ -1,7 +1,7 @@
-from aviary.mission.flops_based.phases.groundroll_phase import (
+from aviary.mission.height_energy.phases.groundroll_phase import (
     GroundrollPhase as GroundrollPhaseVelocityIntegrated,
 )
-from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
+from aviary.mission.solved_two_dof.phases.solved_twodof_phase import SolvedTwoDOFPhase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.utils import wrapped_convert_units
@@ -98,7 +98,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if phase_options['user_options'].get('ground_roll') and not phase_options[
@@ -106,7 +106,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         ].get('rotation'):
             phase_builder = GroundrollPhaseVelocityIntegrated
         else:
-            phase_builder = TwoDOFPhase
+            phase_builder = SolvedTwoDOFPhase
 
         return phase_builder
 
