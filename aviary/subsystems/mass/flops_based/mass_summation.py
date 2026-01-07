@@ -175,7 +175,6 @@ class SystemsEquipmentMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Hydraulics.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Instruments.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
@@ -193,7 +192,6 @@ class SystemsEquipmentMass(om.ExplicitComponent):
         hydraulics_mass = inputs[Aircraft.Hydraulics.MASS]
         instrument_mass = inputs[Aircraft.Instruments.MASS]
         cargo_container_mass = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
-        subsystems_mass = inputs[Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS]
 
         outputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = (
             +APU_mass
@@ -205,7 +203,6 @@ class SystemsEquipmentMass(om.ExplicitComponent):
             + AC_mass
             + anti_icing_mass
             + cargo_container_mass
-            + subsystems_mass
         )
 
 

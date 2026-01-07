@@ -181,14 +181,15 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Thrust Reversers|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
-                Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, prob, self.meta_data
+                Aircraft.Fuel.FUEL_SYSTEM_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Engine Controls|{val}|{units}|\n')
+            f.write(f'|{tab}Fuel System|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
-                Aircraft.Propulsion.TOTAL_STARTER_MASS, prob, self.meta_data
+                Aircraft.Propulsion.TOTAL_MISC_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Starting System|{val}|{units}|\n')
+            f.write(f'|{tab}Miscellaneous|{val}|{units}|\n')
+            f.write('||||\n')
 
             val, units = find_variable_in_problem(Aircraft.Battery.MASS, prob, self.meta_data)
             if val != 0.0 and val != 'Not Found in Model':
@@ -235,6 +236,12 @@ class CoreMassBuilder(MassBuilder):
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS, prob, self.meta_data
             )
             f.write(f'|{tab}Load & Handling|{val}|{units}|\n')
+            f.write('||||\n')
+
+            val, units = find_variable_in_problem(
+                Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, prob, self.meta_data
+            )
+            f.write(f'|External Subsystems|{val}|{units}|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(
