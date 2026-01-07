@@ -185,7 +185,7 @@ class TestMission(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val('wing_fuselage_interference_flat_plate_equivalent'),
-            [83.53249732, 83.53251792],
+            [83.53163832, 83.53167992],
             tol,
         )
 

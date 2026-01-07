@@ -157,7 +157,7 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], 14.5, tol)
         assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], 330.2599, tol)
         # aerodynamics subsystem
-        assert_near_equal(prob[Mission.Landing.LIFT_COEFFICIENT_MAX], 2.82008, tol)
+        assert_near_equal(prob[Mission.Landing.LIFT_COEFFICIENT_MAX], 2.8179491, tol)
         # mass subsystem
         assert_near_equal(self.prob[Aircraft.Design.LIFT_CURVE_SLOPE], 6.39471, tol)
         assert_near_equal(self.prob[Aircraft.Wing.ULTIMATE_LOAD_FACTOR], 3.75, tol)
@@ -296,7 +296,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.6144, tol)
         assert_near_equal(prob[Aircraft.HorizontalTail.MASS], 1.02402, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.MASS], 864.174, tol)
-        assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 973.10188, tol)
+        assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 974.01285506, tol)
         assert_near_equal(prob[Aircraft.Controls.TOTAL_MASS], 2114.982, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.251, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)

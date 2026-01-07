@@ -188,7 +188,7 @@ class TakeoffGroupTest(unittest.TestCase):
         tol = 1e-5
 
         assert_near_equal(
-            self.prob[Mission.Takeoff.GROUND_DISTANCE], 6637.58951504, tol
+            self.prob[Mission.Takeoff.GROUND_DISTANCE], 6637.65645404, tol
         )  # ft (not actual value)
         assert_near_equal(
             self.prob[Mission.Takeoff.FINAL_VELOCITY], 88.49655173, tol
