@@ -8,9 +8,48 @@ import openmdao
 
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 
+# USATM1976 test values
+# Reference values based on altitudes of [-1000, 0, 10950, 11000, 11100, 20000, 32000] #meters
+expected_temp = [294.65, 288.15, 216.975, 216.65, 216.65, 216.65, 228.65]  # (deg K)
+expected_pressure = [
+    113929.1,
+    101325,
+    22811.08,
+    22632.06,
+    22277.98,
+    5474.889,
+    868.0187,
+]  # (Pa)
+expected_density = [
+    1.346995,
+    1.224999,
+    0.3662468,
+    0.3639178,
+    0.3582242,
+    0.0880348,
+    0.013225,
+]  # (kg/m**3)
+expected_sos = [
+    344.07756866,
+    340.26121619,
+    295.26229189,
+    295.04107699,
+    295.04107699,
+    295.04107699,
+    303.1019573,
+]  # (m/s)
+expected_viscosity = [
+    1.82057492e-05,
+    1.78938028e-05,
+    1.42339868e-05,
+    1.42161308e-05,
+    1.42161308e-05,
+    1.42161308e-05,
+    1.48679326e-05,
+]  # (Pa*s)
 
 class USatm1976TestCase1(unittest.TestCase):
-    def test_case1(self):
+    def test_geocentric(self):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
@@ -30,46 +69,6 @@ class USatm1976TestCase1(unittest.TestCase):
         tol = 1e-4
         self.prob.run_model()
 
-        # USATM1976 test values
-        # Reference values based on altitudes of [-1000, 0, 10950, 11000, 11100, 20000, 32000] #meters
-        expected_temp = [294.65, 288.15, 216.975, 216.65, 216.65, 216.65, 228.65]  # (deg K)
-        expected_pressure = [
-            113929.1,
-            101325,
-            22811.08,
-            22632.06,
-            22277.98,
-            5474.889,
-            868.0187,
-        ]  # (Pa)
-        expected_density = [
-            1.346995,
-            1.224999,
-            0.3662468,
-            0.3639178,
-            0.3582242,
-            0.0880348,
-            0.013225,
-        ]  # (kg/m**3)
-        expected_sos = [
-            344.07756866,
-            340.26121619,
-            295.26229189,
-            295.04107699,
-            295.04107699,
-            295.04107699,
-            303.1019573,
-        ]  # (m/s)
-        expected_viscosity = [
-            1.82057492e-05,
-            1.78938028e-05,
-            1.42339868e-05,
-            1.42161308e-05,
-            1.42161308e-05,
-            1.42161308e-05,
-            1.48679326e-05,
-        ]  # (Pa*s)
-
         assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
         assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
         assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
@@ -80,109 +79,8 @@ class USatm1976TestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
-    def test_geodetic(self):
-        self.prob = om.Problem()
+    def test_geocentric_delta_T(self):
 
-        self.prob.model.add_subsystem(
-            'atmo',
-            AtmosphereComp(
-                data_source='USatm1976', delta_T_Kelvin=0, num_nodes=7, h_def='geodetic'
-            ),
-            promotes=['*'],
-        )
-
-        self.prob.set_solver_print(level=0)
-
-        self.prob.setup(
-            force_alloc_complex=True,
-            check=False,
-        )
-        self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
-
-        tol = 1e-4
-        self.prob.run_model()
-
-        # USATM1976 test values
-        # Reference values based on altitudes of [-1000, 0, 10950, 11000, 11100, 20000, 32000] #meters
-        expected_temp = [294.65, 288.15, 216.975, 216.65, 216.65, 216.65, 228.65]  # (deg K)
-        expected_pressure = [
-            113929.1,
-            101325,
-            22811.08,
-            22632.06,
-            22277.98,
-            5474.889,
-            868.0187,
-        ]  # (Pa)
-        expected_density = [
-            1.346995,
-            1.224999,
-            0.3662468,
-            0.3639178,
-            0.3582242,
-            0.0880348,
-            0.013225,
-        ]  # (kg/m**3)
-        expected_sos = [
-            344.07756866,
-            340.26121619,
-            295.26229189,
-            295.04107699,
-            295.04107699,
-            295.04107699,
-            303.1019573,
-        ]  # (m/s)
-        expected_viscosity = [
-            1.82057492e-05,
-            1.78938028e-05,
-            1.42339868e-05,
-            1.42161308e-05,
-            1.42161308e-05,
-            1.42161308e-05,
-            1.48679326e-05,
-        ]  # (Pa*s)
-
-        assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
-        assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-
-        assert_check_partials(partial_data)
-
-
-# class USatm1976TestCase3(unittest.TestCase):
-#     def setUp(self):
-#         self.prob = om.Problem()
-
-#         self.prob.model.add_subsystem(
-#             'atmo',
-#             AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=15, num_nodes=7, h_def='geodetic'),
-#             promotes=['*'],
-#         )
-
-#         self.prob.set_solver_print(level=0)
-
-#         self.prob.setup(
-#             force_alloc_complex=True,
-#             check=False,
-#         )
-#         self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
-
-#     def test_geodetic2(self):
-
-#         tol = 1e-4
-#         self.prob.run_model()
-
-#         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-
-#         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
-
-
-class AtmDeltaTKelvinTestCase1(unittest.TestCase):
-    def setUp(self):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
@@ -199,7 +97,6 @@ class AtmDeltaTKelvinTestCase1(unittest.TestCase):
         )
         self.prob.set_val('h', [-1000, 0, 10950, 11000, 11100, 20000, 32000], units='m')
 
-    def test_case1(self):
         tol = 1e-4
         self.prob.run_model()
 
@@ -252,6 +149,61 @@ class AtmDeltaTKelvinTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+
+    def test_geodetic(self):
+
+        self.prob = om.Problem()
+
+        self.prob.model.add_subsystem(
+            'atmo',
+            AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=0, num_nodes=7, h_def='geodetic'),
+            promotes=['*'],
+        )
+
+        self.prob.set_solver_print(level=0)
+
+        self.prob.setup(
+            force_alloc_complex=True,
+            check=False,
+        )
+        self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
+
+        tol = 1e-4
+        self.prob.run_model()
+
+        assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
+        assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
+        assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
+        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
+        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+
+        assert_check_partials(partial_data)
+ 
+    def test_geodetic_delta_T(self):
+
+        self.prob = om.Problem()
+
+        self.prob.model.add_subsystem(
+            'atmo',
+            AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=15, num_nodes=7, h_def='geodetic'),
+            promotes=['*'],
+        )
+
+        self.prob.set_solver_print(level=0)
+
+        self.prob.setup(
+            force_alloc_complex=True,
+            check=False,
+        )
+        self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
+
+        self.prob.run_model()
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+
+        assert_check_partials(partial_data)
 
 
 class MILSPEC210AColdTestCase1(unittest.TestCase):
@@ -311,7 +263,7 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
 
         # inHg60 is a newer unit in OpenMDAO so we'll do this check only of that newer version is installed
-        if Version(openmdao.__version__) >= Version('3.42.0'):
+        if Version(openmdao.__version__) >= Version("3.42.0"):
             assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -374,7 +326,7 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
-        if Version(openmdao.__version__) >= Version('3.42.0'):
+        if Version(openmdao.__version__) >= Version("3.42.0"):
             assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -435,7 +387,7 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
-        if Version(openmdao.__version__) >= Version('3.42.0'):
+        if Version(openmdao.__version__) >= Version("3.42.0"):
             assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -498,7 +450,7 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
         assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
         assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
         assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
-        if Version(openmdao.__version__) >= Version('3.42.0'):
+        if Version(openmdao.__version__) >= Version("3.42.0"):
             assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
