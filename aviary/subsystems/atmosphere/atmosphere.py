@@ -438,8 +438,8 @@ def _build_akima_coefs(out_stream, raw_data, units):
 
 
 if __name__ == '__main__':
-    build_akima = True
-    test_values = False
+    build_akima = False
+    test_values = True
 
     if build_akima:
         ############### Generate Akima Splines Below ################
