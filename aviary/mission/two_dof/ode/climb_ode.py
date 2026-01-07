@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.climb_eom import ClimbRates
 from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstraints
+from aviary.mission.two_dof.ode.flight_eom import EOMRates
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
@@ -37,12 +37,6 @@ class ClimbODE(TwoDOFODE):
             'speed_trigger_units',
             default='kn',
             desc='The units that the speed trigger is provided in.',
-        )
-        self.options.declare(
-            'input_speed_type',
-            default=SpeedType.EAS,
-            types=SpeedType,
-            desc='Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number',
         )
         self.options.declare('EAS_target', desc='target climbing EAS in knots')
         self.options.declare('mach_cruise', default=0, desc='targeted cruise Mach number')
@@ -170,13 +164,14 @@ class ClimbODE(TwoDOFODE):
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         lift_balance_group.add_subsystem(
-            'climb_eom',
-            ClimbRates(num_nodes=nn),
+            'descent_eom',
+            EOMRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.VELOCITY,
                 Dynamic.Vehicle.DRAG,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+                Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ],
             promotes_outputs=[
                 Dynamic.Mission.ALTITUDE_RATE,

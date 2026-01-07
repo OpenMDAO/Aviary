@@ -349,20 +349,20 @@ class Test2DOFOffDesign(unittest.TestCase):
             prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 3988.58, tolerance=1e-4)
+        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 3989.24, tolerance=1e-4)
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40546.40,
+            40538.46,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            39899.924,
+            39902.455,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            95100.08,
+            95097.55,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -430,17 +430,17 @@ class Test2DOFOffDesign(unittest.TestCase):
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40546.40,
+            40538.47,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            21499.71,
+            21495.37,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            95100.08,
+            95097.55,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -471,7 +471,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            148699.79,
+            148692.91,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -556,7 +556,7 @@ if __name__ == '__main__':
     # unittest.main()
     test = Test2DOFOffDesign()
     test.setUp()
-    test.test_alternate_mission_changed()
+    test.test_fallout_mission_changed()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()

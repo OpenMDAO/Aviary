@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstraints
-from aviary.mission.two_dof.ode.descent_eom import DescentRates
+from aviary.mission.two_dof.ode.flight_eom import EOMRates
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
@@ -145,7 +145,7 @@ class DescentODE(TwoDOFODE):
 
         lift_balance_group.add_subsystem(
             'descent_eom',
-            DescentRates(num_nodes=nn),
+            EOMRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Mission.VELOCITY,

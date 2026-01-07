@@ -63,13 +63,13 @@ class DescentODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.22110553, 1.20422538]),
-            'CL': np.array([0.51699989, 0.25916886]),
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.22110167, 1.20422022]),
+            'CL': np.array([0.51699944, 0.2591683]),
             'CD': np.array([0.02635475, 0.01730991]),
             # ft/s
-            Dynamic.Mission.ALTITUDE_RATE: np.array([-37.02561983, -44.211356]),
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-37.03972007, -44.23777602]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
-            Dynamic.Mission.DISTANCE_RATE: [773.25678423, 737.1789493],  # ft/s
+            Dynamic.Mission.DISTANCE_RATE: [773.25610895, 737.17736431],  # ft/s
             # lbm/h
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29466667, -997.41373745]
@@ -77,7 +77,7 @@ class DescentODETestCase(unittest.TestCase):
             'EAS': [418.50757579, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
             Dynamic.Atmosphere.MACH: [0.8, 0.697125],
             # gamma, rad ([-2.908332, -3.723388] deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.04784615, -0.05990196],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [-0.04786439, -0.0599378],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -111,12 +111,12 @@ class DescentODETestCase(unittest.TestCase):
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.20023671,
             'CL': 0.50764164,
             'CD': 0.02534414,
-            Dynamic.Mission.ALTITUDE_RATE: -17.70801923,
+            Dynamic.Mission.ALTITUDE_RATE: -17.71298925,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 430.97461539,
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.11818529,
             # rad (-2.52149 deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04106521,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04107674,
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
