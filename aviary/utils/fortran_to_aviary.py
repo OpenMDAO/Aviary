@@ -969,7 +969,7 @@ def update_flops_options(vehicle_data):
             num_galley_crew = 0
         else:
             num_galley_crew = int(num_passengers / 250) + 1
-    input_values.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, [num_galley_crew])
+        input_values.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, [num_galley_crew])
 
     if not Aircraft.Engine.NUM_ENGINES in input_values:
         if Aircraft.Engine.NUM_FUSELAGE_ENGINES in input_values:
@@ -1011,17 +1011,16 @@ def update_flops_options(vehicle_data):
         else:
             input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [False], 'unitless')
 
-    if design_type[0] == 3:
         if Aircraft.Engine.SCALED_SLS_THRUST in input_values:
             # not sure why THRUST=70000,1,0,0,0,0, just grab the first entry
             # does it apply to transporters?
             thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
             input_values.set_val(Aircraft.Engine.SCALED_SLS_THRUST, [thrust], 'lbf')
 
-    if not Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO in input_values:
-        if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
-            wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
-            input_values.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, [wing_tc], 'unitless')
+        if not Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO in input_values:
+            if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
+                wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
+                input_values.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, [wing_tc], 'unitless')
 
     if (
         not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values
@@ -1046,6 +1045,7 @@ def update_flops_options(vehicle_data):
                 FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
             else:
                 FULDEN = 50.1194909  # lbm/ft**3 or 6.7 lbm/galUS
+                input_values.set_val(Aircraft.Fuel.DENSITY, [6.7], 'lbm/galUS')
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
@@ -1056,20 +1056,22 @@ def update_flops_options(vehicle_data):
         if Aircraft.Wing.ASPECT_RATIO in input_values:
             input_values.delete(Aircraft.Wing.ASPECT_RATIO)
 
-    if (
-        Aircraft.Engine.SCALED_SLS_THRUST in input_values
-        and Aircraft.Engine.REFERENCE_SLS_THRUST in input_values
-    ):
-        ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
-        scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
-        if scaled_thrust <= 0:
-            print(
-                'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
-                f'but you have {scaled_thrust}'
-            )
-        else:
-            engine_scale_factor = scaled_thrust / ref_thrust
-            input_values.set_val(Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless')
+        if (
+            Aircraft.Engine.SCALED_SLS_THRUST in input_values
+            and Aircraft.Engine.REFERENCE_SLS_THRUST in input_values
+        ):
+            ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
+            scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
+            if scaled_thrust <= 0:
+                print(
+                    'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
+                    f'but you have {scaled_thrust}'
+                )
+            else:
+                engine_scale_factor = scaled_thrust / ref_thrust
+                input_values.set_val(
+                    Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
+                )
 
     # These variables should be removed if they are zero.
     rem_list = [
@@ -1078,9 +1080,15 @@ def update_flops_options(vehicle_data):
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
     ]
     for var in rem_list:
-        val = input_values.get_val(var[0], var[1])[0]
-        if val == 0.0:
-            input_values.delete(var[0])
+        try:
+            val = input_values.get_val(var[0], var[1])[0]
+            if val == 0.0:
+                input_values.delete(var[0])
+        except:
+            pass
+
+    if design_type[0] != 3:
+        input_values.delete(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP)
 
     vehicle_data['input_values'] = input_values
     return vehicle_data
