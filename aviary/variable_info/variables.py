@@ -577,7 +577,7 @@ class Aircraft:
         NUM_INTEGRATION_STATIONS = 'aircraft:wing:num_integration_stations'
         OPTIMUM_FLAP_DEFLECTION = 'aircraft:wing:optimum_flap_deflection'
         OPTIMUM_SLAT_DEFLECTION = 'aircraft:wing:optimum_slat_deflection'
-        OUTBOARD_SEMISPAN = 'aircraft:wing:Outboard_semispan'
+        OUTBOARD_SEMISPAN = 'aircraft:wing:outboard_semispan'
         ROOT_CHORD = 'aircraft:wing:root_chord'
         SHEAR_CONTROL_MASS = 'aircraft:wing:shear_control_mass'
 
