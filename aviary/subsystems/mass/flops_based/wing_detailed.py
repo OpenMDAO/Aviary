@@ -387,7 +387,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
         thickness_to_chord_mod = []
         for x in thickness_to_chord:
-            thickness_to_chord_mod.append(x * tcref[0] / tc[0])
+            thickness_to_chord_mod.append(x * tc[0] / tcref[0])
         thickness_to_chord_mod = np.array(thickness_to_chord_mod)
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
