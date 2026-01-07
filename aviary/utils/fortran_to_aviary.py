@@ -931,6 +931,8 @@ def update_flops_options(vehicle_data):
 
         if not input_values.get_val(Aircraft.BWB.DETAILED_WING_PROVIDED)[0]:
             try:
+                # FLOPS uses AR and SW to compute wing span. Later, AR and SW are updated.
+                # So, they will be removed from inputs.
                 ar = input_values.get_val(Aircraft.Wing.ASPECT_RATIO, 'unitless')[0]
                 sw = input_values.get_val(Aircraft.Wing.AREA, 'ft**2')[0]
                 glov = input_values.get_val(Aircraft.Wing.GLOVE_AND_BAT, 'ft**2')[0]
