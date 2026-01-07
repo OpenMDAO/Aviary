@@ -30,7 +30,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         )
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
-        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Wing.OUTBOARD_SEMISPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         self.add_input(
@@ -40,17 +40,26 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
+        self.add_output(Aircraft.Wing.SPAN, units='ft')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
         self.add_output('BWB_THICKNESS_TO_CHORD_DIST', shape=num_inp_stations, units='unitless')
         self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=num_inp_stations - 1, units='deg')
 
     def setup_partials(self):
         self.declare_partials(
+            Aircraft.Wing.SPAN,
+            [
+                Aircraft.Fuselage.MAX_WIDTH,
+                Aircraft.Wing.OUTBOARD_SEMISPAN,
+            ],
+            method='cs',
+        )
+        self.declare_partials(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             [
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.MAX_WIDTH,
-                Aircraft.Wing.SPAN,
+                Aircraft.Wing.OUTBOARD_SEMISPAN,
                 Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
                 Aircraft.Wing.ROOT_CHORD,
                 'Rear_spar_percent_chord',
@@ -74,7 +83,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
-        wingspan = inputs[Aircraft.Wing.SPAN][0]
+        osspan = inputs[Aircraft.Wing.OUTBOARD_SEMISPAN][0]
+        wingspan = width + osspan * 2
+        outputs[Aircraft.Wing.SPAN] = wingspan
         rate_span = (wingspan - width) / wingspan
         length = inputs[Aircraft.Fuselage.LENGTH][0]
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD][0]
@@ -111,6 +122,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         # root_chord = inputs[Aircraft.Wing.ROOT_CHORD][0]
         # rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
         # xl_out = root_chord / rear_spar_percent_chord
+
+        J[Aircraft.Wing.SPAN, Aircraft.Fuselage.MAX_WIDTH] = 1.0
+        J[Aircraft.Wing.SPAN, Aircraft.Wing.OUTBOARD_SEMISPAN] = 2.0
 
         num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
 

@@ -1081,7 +1081,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
             val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
-        prob.set_val(Aircraft.Wing.SPAN, val=253.720756)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         # BWBFuselagePrelim
         # skip
