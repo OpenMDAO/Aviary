@@ -485,10 +485,23 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             inputs=[
                 ('ascent.parameters:t_init_gear', 't_init_gear'),
                 ('ascent.parameters:t_init_flaps', 't_init_flaps'),
-                ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
+                #('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
                 ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
             ],
         )
+
+        # Ascent t_iniitial is connected, so we need a slack constraint for the desvar that feeds
+        # into the event xform.
+        comp = om.ExecComp(['con_val = initial_time - initial_time_slack'])
+        aviary_group.add_subsystem(
+            'ascent_initial_time_slack_constraint',
+            comp,
+            promotes_inputs=[
+                ('initial_time', 'ascent.t_initial'),
+                ('initial_time_slack', Mission.Takeoff.ASCENT_T_INITIAL),
+            ]
+        )
+        aviary_group.add_constraint('ascent_initial_time_slack_constraint.con_val', ref=30.0)
 
         # imitate input_initial for taxi -> groundroll
         eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
