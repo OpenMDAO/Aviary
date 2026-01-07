@@ -429,6 +429,7 @@ outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 12109.879719468739, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.46761341784858923)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 24713.661297561481, 'ft**2')  # SWET(1)
+outputs.set_val(Aircraft.Wing.SPAN, 253.720756, 'ft')  # SPAN
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 outputs.set_val(Mission.Summary.OPERATING_MASS, 411479.0724484, 'lbm')  # WOWE
