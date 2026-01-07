@@ -929,6 +929,20 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
             input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
 
+        if not input_values.get_val(Aircraft.BWB.DETAILED_WING_PROVIDED)[0]:
+            try:
+                ar = input_values.get_val(Aircraft.Wing.ASPECT_RATIO, 'unitless')[0]
+                sw = input_values.get_val(Aircraft.Wing.AREA, 'ft**2')[0]
+                glov = input_values.get_val(Aircraft.Wing.GLOVE_AND_BAT, 'ft**2')[0]
+                span = (ar * (sw - glov)) ** 0.5
+                input_values.set_val(Aircraft.Wing.SPAN, [span], 'ft')
+            except KeyError:
+                pass
+            try:  # needed only if detailed wing is provided
+                input_values.delete(Aircraft.Wing.OUTBOARD_SEMISPAN)
+            except KeyError:
+                pass
+
     if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values:
         num_business_class = input_values.get_val(
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 'unitless'
