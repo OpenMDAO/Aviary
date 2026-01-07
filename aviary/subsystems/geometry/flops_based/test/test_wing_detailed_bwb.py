@@ -86,6 +86,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
