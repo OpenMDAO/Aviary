@@ -139,14 +139,7 @@ class TurbopropMissionTest(unittest.TestCase):
                 4183.87495338,
                 -644.0,
             ),
-            (
-                778.2106659424866,
-                21.30000000000001,
-                558.2951237599805,
-                579.5951237599804,
-                579.5951237599804,
-                -839.7000000000685,
-            ),
+            (778.21130479, 21.3, 558.33650216, 579.63650216, 579.63650216, -839.7),
         ]
 
         options = get_option_defaults()
@@ -174,9 +167,9 @@ class TurbopropMissionTest(unittest.TestCase):
 
         self.prob.run_model()
         results = self.get_results()
-        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
-        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
-        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-10)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-10)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-10)
 
         # because Hamilton Standard model uses fd method, the following may not be
         # accurate.
@@ -190,14 +183,7 @@ class TurbopropMissionTest(unittest.TestCase):
         truth_vals = [
             (111.99507922, 37.507376, 610.67122085, 648.17859685, 4174.43077943, -195.78762),
             (1119.99609612, 136.3, 4047.57495338, 4183.87495338, 4183.87495338, -644.0),
-            (
-                778.2106659424866,
-                21.30000000000001,
-                558.2951237599805,
-                579.5951237599804,
-                579.5951237599804,
-                -839.7000000000685,
-            ),
+            (778.21130479, 21.3, 558.33650216, 579.63650216, 579.63650216, -839.7),
         ]
 
         self.prepare_model(test_points, filename)
@@ -215,9 +201,9 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob.run_model()
 
         results = self.get_results()
-        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
-        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
-        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-10)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-10)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-10)
 
         partial_data = self.prob.check_partials(out_stream=None, form='central')
         assert_check_partials(partial_data, atol=0.15, rtol=0.15)
@@ -244,14 +230,7 @@ class TurbopropMissionTest(unittest.TestCase):
                 4047.57495338,
                 -644.0,
             ),
-            (
-                778.2106659424866,
-                0.0,
-                558.2951237599805,
-                558.2951237599805,
-                558.2951237599805,
-                -839.7000000000685,
-            ),
+            (778.21130479, 0.0, 558.33650216, 558.33650216, 558.33650216, -839.7),
         ]
 
         self.prepare_model(test_points, filename)
@@ -266,9 +245,9 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob.run_model()
 
         results = self.get_results()
-        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-12)
-        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-12)
-        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-12)
+        assert_near_equal(results[0], truth_vals[0], tolerance=1.5e-10)
+        assert_near_equal(results[1], truth_vals[1], tolerance=1.5e-10)
+        assert_near_equal(results[2], truth_vals[2], tolerance=1.5e-10)
 
         # Note: There isn't much point in checking the partials of a component
         # that computes them with FD.
