@@ -10,12 +10,10 @@ Approved for public release with unlimited distribution
 https://apps.dtic.mil/sti/tr/pdf/ADA264639.pdf
 
 Notes:
-0) The data table contains data from 0 feet to 100,000 ft =~ 30,000 meters altitude
-1) The composition of the atmosphere is constant throughout the altitude range.
-2) Polar data represents an Arctic Winter atmosphere rather than a true polar atmosphere
-3) Altitude was given in the raw data as Geopotential Altitude
-4) Raw data was not available for altitudes below 0ft and was extrapolated based on linear 
-interpolation for the purposes of padding the table only.
+1) The data table contains data from 0 feet to 100,000 ft =~ 30,000 meters altitude
+2) The composition of the atmosphere is constant throughout the altitude range.
+3) Polar data represents an Arctic Winter atmosphere rather than a true polar atmosphere
+4) Altitude was given in the raw data as Geopotential Altitude
 5) Some data points in the original tables appeared to be in error. 
 i.e. for hot atmosphere at 20,000 ft pressure increased so much as to be the same as pressure
 at 11,500 ft. Presumed errors like these were smoothed out to prevent kinks in the akima 
@@ -29,7 +27,7 @@ looking directly at the tabular data presented in the paper.
 (as opposed to 32F = 0C). Supporting documentation for this is based on NIST and the US1976 
 atmosphere standard which lists sea-level pressure of 101,325 Pa, based on the NIST conversion 
 factors to translate Pa to inHG at 60F, these match up. inHg has a dependence on temperature 
-which makes it a very temperamental unit and should be avoided.
+which makes it a very temperamental unit and should be avoided in the future.
 https://physics.nist.gov/cgi-bin/cuu/Value?stdatm
 https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
 9) "The cold and hot atmosphere tables cannot be used for determining
