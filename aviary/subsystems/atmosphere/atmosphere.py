@@ -212,6 +212,7 @@ class AtmosphereComp(om.ExplicitComponent):
         # Assumes pressure does not change (which is a simplification)
         # We know (P * M)/(R * T) from the akima table lookups (raw data)
         # We must correct the density from the lookup table by dt = delta_T_Kelvin
+        # Note : _R_air is R/M
         outputs['rho'] = corrected_density = (
             raw_density ** (-1) + self._R_air * self._dt * pressure ** (-1)
         ) ** (-1)
@@ -437,8 +438,8 @@ def _build_akima_coefs(out_stream, raw_data, units):
 
 
 if __name__ == '__main__':
-    build_akima = False
-    test_values = True
+    build_akima = True
+    test_values = False
 
     if build_akima:
         ############### Generate Akima Splines Below ################
@@ -450,7 +451,7 @@ if __name__ == '__main__':
         )
         input('Press Enter to continue: ')
 
-        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import (
+        from aviary.subsystems.atmosphere.MIL_SPEC_210A_Tropical import (
             _raw_data,
         )  # replace this with your new raw data
 
@@ -466,7 +467,7 @@ if __name__ == '__main__':
         # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
         atm_model = prob.model.add_subsystem(
             'comp',
-            AtmosphereComp(data_source='tropical', delta_T_Kelvin=0, num_nodes=6),
+            AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=6),
             promotes=['*'],
         )
 
@@ -474,7 +475,7 @@ if __name__ == '__main__':
 
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val('h', [0, 10000, 35000, 55000, 70000, 100000], units='ft')
+        prob.set_val('h', [-1000, 0, 10000, 35000, 55000, 70000, 100000], units='ft')
 
         prob.run_model()
 

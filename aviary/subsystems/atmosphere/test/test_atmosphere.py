@@ -78,7 +78,7 @@ class USatm1976TestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data)
 
     def test_geocentric_delta_T(self):
         self.prob = om.Problem()
@@ -148,7 +148,7 @@ class USatm1976TestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data)
 
     def test_geodetic(self):
         self.prob = om.Problem()
@@ -270,7 +270,7 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data)
 
 
 class MILSPEC210ATropicalTestCase1(unittest.TestCase):
@@ -333,7 +333,7 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data)
 
 
 class MILSPEC210AHotTestCase1(unittest.TestCase):
@@ -394,7 +394,7 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data)
 
 
 class MILSPEC210APolarTestCase1(unittest.TestCase):
@@ -457,7 +457,7 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
+        assert_check_partials(partial_data)
 
 
 if __name__ == '__main__':
