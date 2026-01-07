@@ -28,16 +28,6 @@ atm_data.__doc__ = """
 
 # _raw_data Units: (Geopotential Altitude in ft, Temp in degF, pressure in inHG60, density in lbm/ft^3)
 _raw_data = np.array([
-    -5000,122,34.9,0.080113399, #Extrapolated
-    -4500,120.1,34.4,0.079148176, #Extrapolated
-    -4000,118.2,33.9,0.078182953, #Extrapolated
-    -3500,116.3,33.4,0.07721773, #Extrapolated
-    -3000,114.4,32.9,0.076252507, #Extrapolated
-    -2500,112.5,32.4,0.075287284, #Extrapolated
-    -2000,110.6,31.9,0.074322061, #Extrapolated
-    -1500,108.7,31.4,0.073356838, #Extrapolated
-    -1000,106.8,30.9,0.072391615, #Extrapolated
-    -500,104.9,30.4,0.071426392, #Extrapolated
     0,103,29.9,7.0461169E-02,
     500,101.1,29.4,6.9495946E-02,
     1000,99.2,28.9,6.8530723E-02,
