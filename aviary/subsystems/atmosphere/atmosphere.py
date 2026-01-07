@@ -196,7 +196,7 @@ class AtmosphereComp(om.ExplicitComponent):
         dx = h - h_bin_left[idx]
 
         coeffs = self.source_data.akima_T[idx]
-        outputs['temp'] = temp = (
+        outputs['temp'] = T = (
             coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])) + self._dt
         )
 
@@ -217,15 +217,15 @@ class AtmosphereComp(om.ExplicitComponent):
         ) ** (-1)
 
         # Equation 50
-        outputs['sos'] = (self._K * temp) ** (0.5)
+        outputs['sos'] = (self._K * T) ** (0.5)
 
         # dsos_dh is only used for unsteady_solved_flight_conditions
         coeffs = self.source_data.akima_dT[idx]
         dT_dh = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
-        outputs['dsos_dh'] = 0.5 * (self._K * temp) ** (-0.5) * dT_dh * self._K
+        outputs['dsos_dh'] = 0.5 * (self._K * T) ** (-0.5) * dT_dh * self._K
 
         # Equation 51
-        outputs['viscosity'] = self._beta * temp ** (1.5) * (temp + self._S) ** (-1)
+        outputs['viscosity'] = self._beta * T ** (1.5) * (T + self._S) ** (-1)
 
     def compute_partials(self, inputs, partials):
         """
@@ -253,10 +253,8 @@ class AtmosphereComp(om.ExplicitComponent):
         dx = h - h_index[idx]
 
         coeffs = self.source_data.akima_T[idx]
-        temp = (
-            coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])) + self._dt
-        )
         dT_dh = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
+        T = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])) + self._dt
 
         coeffs = self.source_data.akima_P[idx]
         pressure = coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3]))
@@ -277,21 +275,26 @@ class AtmosphereComp(om.ExplicitComponent):
             )
         )
 
-        # outputs['viscosity'] = self._beta * temp**(1.5) * (temp + self._S)**(-1)
+        # outputs['viscosity'] = self._beta * T**(1.5) * (T + self._S)**(-1)
         # need the product rule here
         dviscosity_dh = (
-            1.5 * self._beta * temp ** (0.5) * dT_dh * (temp + self._S) ** (-1)
-            + self._beta * temp ** (1.5) * -1 * (temp + self._S) ** (-2) * dT_dh
+            1.5 * self._beta * T ** (0.5) * dT_dh * (T + self._S) ** (-1)
+            + self._beta * T ** (1.5) * -1 * (T + self._S) ** (-2) * dT_dh
         )
 
-        # sos = (self._K * temp)**(0.5)
+        # sos = (self._K * T)**(0.5)
         # chain rule
-        dsos_dh = 0.5 * (self._K * temp) ** (-0.5) * self._K * dT_dh
+        dsos_dh = 0.5 * (self._K * T) ** (-0.5) * self._K * dT_dh
 
         # similar to method in dymos
         coeffs = self.source_data.akima_dT[idx]
         d2T_dh2 = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
-        partials['dsos_dh', 'h'] = 0.5 * np.sqrt(self._K / temp) * (d2T_dh2 - 0.5 * dT_dh**2 / temp)
+        # dsos_dh = 0.5 * (self._K * T)**(-0.5) * dT_dh * self._K
+        # product rule & chain rule
+        partials['dsos_dh', 'h'] = (
+            -(0.5 * 0.5 * (self._K * T) ** (-1.5) * (self._K * dT_dh)) * (dT_dh * self._K)
+            + 0.5 * (self._K * T) ** (-0.5) * d2T_dh2 * self._K
+        )
 
         partials['temp', 'h'][...] = dT_dh.ravel()
         partials['pres', 'h'][...] = dP_dh.ravel()
@@ -302,10 +305,10 @@ class AtmosphereComp(om.ExplicitComponent):
         if self._geodetic:
             partials['temp', 'h'][...] *= dz_dh
             partials['pres', 'h'][...] *= dz_dh
-            partials['rho', 'h'][...] *= dz_dh  # does this still apply?
-            partials['viscosity', 'h'][...] *= dz_dh  # does this still apply?
-            partials['sos', 'h'][...] *= dz_dh  # does this still apply?
-            partials['dsos_dh', 'h'] *= dz_dh**2  # does this still apply?
+            partials['rho', 'h'][...] *= dz_dh
+            partials['viscosity', 'h'][...] *= dz_dh
+            partials['sos', 'h'][...] *= dz_dh
+            partials['dsos_dh', 'h'] *= dz_dh**2
 
 
 def _build_akima_coefs(out_stream, raw_data, units):
