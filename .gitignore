@@ -161,3 +161,6 @@ output_list.txt
 
 # Windows downloads
 *:Zone.Identifier
+
+# NFS temp files
+.nfs*

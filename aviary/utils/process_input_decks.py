@@ -431,27 +431,18 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     total_thrust = 0
     for i, model in enumerate(engine_models):
-        if Aircraft.Engine.HAS_PROPELLERS in aircraft_values:
-            if (
-                aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS)[i]
-                and aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[i] == 0.0
-            ):
-                # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
-                # TODO scale factor?
-                thrust = np.dot(
-                    aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp')[i],
-                    aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],
-                )
-            else:
-                thrust = (
-                    aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
-                    * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
-                )
-        else:
-            thrust = (
-                aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
-                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
-            )
+        # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+        # TODO scale factor?
+        # thrust = np.dot(
+        #     aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp')[i],
+        #     aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],
+        # )
+
+        thrust = (
+            aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
+            * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
+        )
+
         num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
         total_thrust += thrust * num_engines
 
@@ -559,16 +550,6 @@ dependent_options = [
             'val': 0,
             'relation': '<',
             'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
-        Aircraft.Engine.TYPE,
-        {
-            'val': [1, 2, 3, 4, 6, 11, 12, 13, 14],
-            'relation': 'in',
-            'target': Aircraft.Engine.HAS_PROPELLERS,
             'result': True,
             'alternate': False,
         },
