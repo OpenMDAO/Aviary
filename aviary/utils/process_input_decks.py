@@ -305,7 +305,7 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     return aircraft_values
 
 
-def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_builders):
+def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_models):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
@@ -318,7 +318,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     initialization_guesses : dict
         Initial guesses.
 
-    engine_builders : list or None
+    engine_models : list or None
         List of engine builders. This is needed if there are multiple engine models.
 
     Returns
@@ -429,42 +429,22 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             60 * 60
         )
 
-    # TODO this does not work at all for mixed-type engines (some propeller and some not)
-    try:
-        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+    total_thrust = 0
+    for i, model in enumerate(engine_models):
+        # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+        # TODO scale factor?
+        # thrust = np.dot(
+        #     aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp')[i],
+        #     aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],
+        # )
 
-        # This happens before preprocessing, and we end up with the default when unspecified.
-        # num_engines = np.array(num_engines)
+        thrust = (
+            aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
+            * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
+        )
 
-        if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
-            # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
-        else:
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')
-                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
-
-    except KeyError:
-        if engine_builders is not None and len(engine_builders) > 1:
-            # heterogeneous engine-model case. Get thrust from the engine models instead.
-            total_thrust = 0
-            for model in engine_builders:
-                thrust = model.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * model.get_val(
-                    Aircraft.Engine.SCALE_FACTOR
-                )
-                num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
-                total_thrust += thrust * num_engines
-
-        else:
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
+        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
+        total_thrust += thrust * num_engines
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
@@ -570,16 +550,6 @@ dependent_options = [
             'val': 0,
             'relation': '<',
             'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
-        Aircraft.Engine.TYPE,
-        {
-            'val': [1, 2, 3, 4, 6, 11, 12, 13, 14],
-            'relation': 'in',
-            'target': Aircraft.Engine.HAS_PROPELLERS,
             'result': True,
             'alternate': False,
         },

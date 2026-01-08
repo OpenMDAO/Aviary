@@ -588,9 +588,9 @@ def setup_model_options(
         if engine_models is None:
             # Required in multi-mission cases
             if group is None:
-                engine_models = prob.model.engine_builders
+                engine_models = prob.model.engine_models
             else:
-                engine_models = group.engine_builders
+                engine_models = group.engine_models
 
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
