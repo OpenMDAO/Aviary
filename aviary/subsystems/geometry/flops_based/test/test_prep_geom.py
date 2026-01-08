@@ -796,7 +796,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', 0.7, units='unitless')
         # BWBComputeDetailedWingDist
-        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.SWEEP, val=35.7)
         # BWBFuselagePrelim
