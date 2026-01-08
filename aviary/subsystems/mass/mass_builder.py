@@ -231,11 +231,6 @@ class CoreMassBuilder(MassBuilder):
 
             val, units = find_variable_in_problem(Aircraft.AntiIcing.MASS, prob, self.meta_data)
             f.write(f'|{tab}Anti-Icing|{val}|{units}|\n')
-
-            val, units = find_variable_in_problem(
-                Aircraft.CrewPayload.CARGO_CONTAINER_MASS, prob, self.meta_data
-            )
-            f.write(f'|{tab}Load & Handling|{val}|{units}|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(
@@ -270,6 +265,11 @@ class CoreMassBuilder(MassBuilder):
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, prob, self.meta_data
             )
             f.write(f'|{tab}Passenger Service|{val}|{units}|\n')
+
+            val, units = find_variable_in_problem(
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS, prob, self.meta_data
+            )
+            f.write(f'|{tab}Cargo Containers|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS, prob, self.meta_data

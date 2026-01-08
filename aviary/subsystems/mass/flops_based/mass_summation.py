@@ -175,7 +175,6 @@ class SystemsEquipmentMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Hydraulics.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Instruments.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
 
@@ -191,10 +190,10 @@ class SystemsEquipmentMass(om.ExplicitComponent):
         furnish_mass = inputs[Aircraft.Furnishings.MASS]
         hydraulics_mass = inputs[Aircraft.Hydraulics.MASS]
         instrument_mass = inputs[Aircraft.Instruments.MASS]
-        cargo_container_mass = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
+        surface_controls_mass = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
 
         outputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = (
-            +APU_mass
+            APU_mass
             + instrument_mass
             + hydraulics_mass
             + elec_mass
@@ -202,7 +201,7 @@ class SystemsEquipmentMass(om.ExplicitComponent):
             + furnish_mass
             + AC_mass
             + anti_icing_mass
-            + cargo_container_mass
+            + surface_controls_mass
         )
 
 
@@ -380,6 +379,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         self.declare_partials(Mission.Summary.USEFUL_LOAD, '*', val=1)
 
     def compute(self, inputs, outputs):
+        cargo_container_mass = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
         cabin_crew_mass = inputs[Aircraft.CrewPayload.CABIN_CREW_MASS]
         flight_crew_mass = inputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS]
         oil_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS]
@@ -387,7 +387,12 @@ class UsefulLoadMass(om.ExplicitComponent):
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
 
         outputs[Mission.Summary.USEFUL_LOAD] = (
-            cabin_crew_mass + flight_crew_mass + unusable_fuel_mass + oil_mass + pass_service_mass
+            cabin_crew_mass
+            + flight_crew_mass
+            + unusable_fuel_mass
+            + oil_mass
+            + pass_service_mass
+            + cargo_container_mass
         )
 
 
