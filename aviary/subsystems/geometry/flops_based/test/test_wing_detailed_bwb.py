@@ -82,7 +82,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
             val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
-        prob.set_val(Aircraft.Wing.SPAN, val=253.72075607352679)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
@@ -165,7 +165,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         setup_model_options(self.prob, self.aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58)
-        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 63.96)
