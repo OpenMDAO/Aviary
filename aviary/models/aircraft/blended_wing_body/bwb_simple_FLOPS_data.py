@@ -206,7 +206,8 @@ inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3
 inputs.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50)  # NSTD
 inputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0)  # FRWI2
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR
-inputs.set_val(Aircraft.Wing.SPAN, 238.08, 'ft')  # SPAN = WF+OSSPAN*2
+# inputs.set_val(Aircraft.Wing.SPAN, 238.08, 'ft')  # SPAN = WF+OSSPAN*2
+inputs.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75, 'ft')  # OSSPAN
 inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, False)  # MIKE
 inputs.set_val(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0)  # FSTRT
 inputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.0)  # FRSC
@@ -368,6 +369,7 @@ outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.53107166)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWET(1)
+outputs.set_val(Aircraft.Wing.SPAN, 238.08, 'ft')  # SPAN = WF+OSSPAN*2
 
 outputs.set_val(Mission.Design.MACH, 0.800)
 outputs.set_val(Mission.Summary.OPERATING_MASS, 455464.65969526308, 'lbm')  # WOWE
