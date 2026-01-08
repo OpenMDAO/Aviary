@@ -73,6 +73,7 @@ class PrepGeom(om.Group):
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
+
             if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
                 self.add_subsystem(
                     'detailed_wing',
