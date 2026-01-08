@@ -1289,7 +1289,4 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBPreMissionGroupCSVTest2()
-    test.setUp()
-    test.test_case_geom_mass()
+    unittest.main()
