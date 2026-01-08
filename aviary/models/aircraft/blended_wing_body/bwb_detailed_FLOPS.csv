@@ -6,7 +6,7 @@ aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
 aircraft:avionics:mass_scaler,1.0,unitless
-aircraft:blended_wing_body_design:detailed_wing_provided,False,unitless
+aircraft:blended_wing_body_design:detailed_wing_provided,True,unitless
 aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45,deg
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
@@ -59,9 +59,9 @@ aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1,unitless
-aircraft:engine:num_engines,np.array([3]),unitless
+aircraft:engine:num_engines,3,unitless
 aircraft:engine:num_fuselage_engines,3,unitless
-aircraft:engine:num_wing_engines,np.array([0]),unitless
+aircraft:engine:num_wing_engines,0,unitless
 aircraft:engine:reference_mass,22017.0,lbm
 aircraft:engine:reference_sls_thrust,86459.2,lbf
 aircraft:engine:scale_factor,0.8096304384,unitless
@@ -71,7 +71,7 @@ aircraft:engine:scaled_sls_thrust,70000,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:thrust_reversers_mass_scaler,0.0,unitless
-aircraft:engine:wing_locations,0,unitless
+aircraft:engine:wing_locations,0.0,unitless
 aircraft:fins:area,184.89,ft**2
 aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
@@ -81,7 +81,7 @@ aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
-aircraft:fuel:fuselage_fuel_capacity,0.0,unitless
+aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
@@ -127,23 +127,23 @@ aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,2.0,unitless
-aircraft:wing:area,7621.66,1,ft**2
-aircraft:wing:aspect_ratio,7.557,0,unitless
-# aircraft:wing:aspect_ratio_ref,7.557,0,unitless
+# aircraft:wing:area,7621.66,1,ft**2
+# aircraft:wing:aspect_ratio,7.557,0,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
-aircraft:wing:chord_per_semispan_dist,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
+aircraft:wing:chord_per_semispan_dist,-1.0,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
 aircraft:wing:composite_fraction,1,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3.0,deg
 aircraft:wing:glove_and_bat,121.05,ft**2
-aircraft:wing:input_station_dist,0.35,0.4,0.45,0.5,0.55,0.6,0.6499,0.7,0.75,0.8,0.85,0.8999,0.95,1,unitless
-aircraft:wing:load_path_sweep_dist,0,0,0,0,0,0,0,42.9,42.9,42.9,42.9,42.9,42.9,42.9,0,0,0,0,0,0,deg
+aircraft:wing:input_station_dist,0.0,0.35,0.4,0.45,0.5,0.55,0.6,0.6499,0.7,0.75,0.8,0.85,0.8999,0.95,1,unitless
+aircraft:wing:load_path_sweep_dist,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,42.9,42.9,42.9,42.9,42.9,42.9,deg
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
 aircraft:wing:misc_mass_scaler,1.0,unitless
 aircraft:wing:num_integration_stations,50,unitless
+aircraft:wing:Outboard_semispan,86.75,ft
 aircraft:wing:shear_control_mass_scaler,1.0,unitless
 aircraft:wing:span,253.720756,ft
 aircraft:wing:span_efficiency_factor,0.0,unitless
@@ -154,7 +154,7 @@ aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
 aircraft:wing:thickness_to_chord_reference,0.11,unitless
-aircraft:wing:thickness_to_chord_dist,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
+aircraft:wing:thickness_to_chord_dist,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
