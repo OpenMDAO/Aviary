@@ -12,39 +12,64 @@ from aviary.variable_info.variables import Aircraft, Mission
 DEG2RAD = np.pi / 180.0
 
 
-class LandingGearMass(om.ExplicitComponent):
+class LandingGearMass(om.Group):
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
+
+    def setup(self):
+        if self.options[Aircraft.Design.USE_ALT_MASS]:
+            self.add_subsystem(
+                'alternate_mass',
+                AltLandingGearMass(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+        else:
+            self.add_subsystem(
+                'main_gear', MainGearMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+            self.add_subsystem(
+                'nose_gear', NoseGearMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
+
+        self.add_subsystem(
+            'total_mass', LandingGearTotalMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+
+class LandingGearTotalMass(om.ExplicitComponent):
+    """Sum the total mass of the landing gear."""
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
+
+        add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
+
+    def setup_partials(self):
+        self.declare_partials(Aircraft.LandingGear.TOTAL_MASS, '*', val=1)
+
+    def compute(self, inputs, outputs):
+        main_gear_mass = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS]
+        nose_gear_mass = inputs[Aircraft.LandingGear.NOSE_GEAR_MASS]
+
+        outputs[Aircraft.LandingGear.TOTAL_MASS] = main_gear_mass + nose_gear_mass
+
+
+class MainGearMass(om.ExplicitComponent):
     """
-    Calculate the mass of the landing gear. The methodology is based on the
-    FLOPS weight equations, modified to output mass instead of weight.
+    Calculate the mass of the main landing gear. The methodology is based on the FLOPS weight
+    equations, modified to output mass instead of weight.
     """
 
-    # TODO: add in aircraft type and carrier factors as options and modify
-    # equations
+    # TODO: add in aircraft type and carrier factors as options and modify equations
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
-        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
-
-        # TODO landing weight is not a landing_gear component level variable
-        # self.add_input('aircraft:landing_gear:weights:landing_weight', val=0.0, desc='design landing weight', units='lbf')
-        # self.add_input('aircraft:landing_gear:dimensions:extend_main_gear_oleo_len', val=0.0, desc='length of extended \
-        #     main landing gear oleo', units='inch')
-        # self.add_input('aircraft:landing_gear:dimensions:extend_nose_gear_oleo_len', val=0.0, desc='length of extended \
-        #     nose landing gear oleo', units='inch')
-        # self.add_input('TBD:aircraft:landing_gear:main_landing_gear_weight_multipler', val=1.0, desc='weight multiplier for \
-        #     main landing gear weight', units='unitless')
-        # self.add_input('TBD:aircraft:landing_gear:nose_landing_gear_weight_multipler', val=1.0, desc='weight multiplier for \
-        #     nose landing gear weight', units='unitless')
-
-        # self.add_output('TBD:landing_gear:weights:main_landing_gear_weight', val=0.0, desc='main landing gear weight', units='lbf')
-        # self.add_output('TBD:landing_gear:weights:nose_landing_gear_weight', val=0.0, desc='nose landing gear weight', units='lbf')
 
     def setup_partials(self):
         self.declare_partials(
@@ -55,30 +80,10 @@ class LandingGearMass(om.ExplicitComponent):
                 Aircraft.Design.TOUCHDOWN_MASS,
             ],
         )
-        self.declare_partials(
-            Aircraft.LandingGear.NOSE_GEAR_MASS,
-            [
-                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Aircraft.Design.TOUCHDOWN_MASS,
-            ],
-        )
-        self.declare_partials(
-            Aircraft.LandingGear.TOTAL_MASS,
-            [
-                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
-                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Aircraft.Design.TOUCHDOWN_MASS,
-            ],
-        )
 
     def compute(self, inputs, outputs):
         main_gear_length = inputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
         main_gear_scaler = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER]
-        nose_gear_length = inputs[Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH]
-        nose_gear_scaler = inputs[Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER]
         landing_weight = inputs[Aircraft.Design.TOUCHDOWN_MASS] * GRAV_ENGLISH_LBM
 
         main_gear_mass = (
@@ -89,6 +94,61 @@ class LandingGearMass(om.ExplicitComponent):
             / GRAV_ENGLISH_LBM
         )
 
+        outputs[Aircraft.LandingGear.MAIN_GEAR_MASS] = main_gear_mass
+
+    def compute_partials(self, inputs, J):
+        main_gear_length = inputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
+        main_gear_scaler = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER]
+        landing_weight = inputs[Aircraft.Design.TOUCHDOWN_MASS] * GRAV_ENGLISH_LBM
+
+        landing_weight_exp = landing_weight**0.95
+        main_gear_length_exp = main_gear_length**0.43
+
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = (
+            0.005031
+            * landing_weight_exp
+            * main_gear_length**-0.57
+            * main_gear_scaler
+            / GRAV_ENGLISH_LBM
+        )
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER] = (
+            0.0117 * landing_weight_exp * main_gear_length_exp / GRAV_ENGLISH_LBM
+        )
+        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.Design.TOUCHDOWN_MASS] = (
+            0.011115 * landing_weight**-0.05 * main_gear_length_exp * main_gear_scaler
+        )
+
+
+class NoseGearMass(om.ExplicitComponent):
+    """
+    Calculate the mass of the nose landing gear. The methodology is based on the FLOPS weight
+    equations, modified to output mass instead of weight.
+    """
+
+    # TODO: add in aircraft type and carrier factors as options and modify equations
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
+        add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS, units='lbm')
+
+        add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
+
+    def setup_partials(self):
+        self.declare_partials(
+            Aircraft.LandingGear.NOSE_GEAR_MASS,
+            [
+                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
+                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
+                Aircraft.Design.TOUCHDOWN_MASS,
+            ],
+        )
+
+    def compute(self, inputs, outputs):
+        nose_gear_length = inputs[Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH]
+        nose_gear_scaler = inputs[Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER]
+        landing_weight = inputs[Aircraft.Design.TOUCHDOWN_MASS] * GRAV_ENGLISH_LBM
+
         nose_gear_mass = (
             0.048
             * landing_weight**0.67
@@ -97,85 +157,36 @@ class LandingGearMass(om.ExplicitComponent):
             / GRAV_ENGLISH_LBM
         )
 
-        outputs[Aircraft.LandingGear.MAIN_GEAR_MASS] = main_gear_mass
         outputs[Aircraft.LandingGear.NOSE_GEAR_MASS] = nose_gear_mass
-        outputs[Aircraft.LandingGear.TOTAL_MASS] = main_gear_mass + nose_gear_mass
-
-        # main_gear_weight = (0.0117 - 0.0012 * type_factor) * landing_weight**0.95 * main_gear_length**0.43
-        # outputs['TBD:landing_gear:weights:main_landing_gear_weight'] = main_gear_weight * inputs['TBD:aircraft:landing_gear:main_landing_gear_weight_multipler']
-        # nose_gear_weight = (0.048 - 0.008 * type_factor) * landing_weight**0.67 * nose_gear_length**0.43 * (1 + 0.8*carrier_factor)
-        # outputs['TBD:landing_gear:weights:nose_landing_gear_weight'] = nose_gear_weight * inputs['TBD:aircraft:landing_gear:nose_landing_gear_weight_multipler']
 
     def compute_partials(self, inputs, J):
-        main_gear_length = inputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
-        main_gear_scaler = inputs[Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER]
         nose_gear_length = inputs[Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH]
         nose_gear_scaler = inputs[Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER]
         landing_weight = inputs[Aircraft.Design.TOUCHDOWN_MASS] * GRAV_ENGLISH_LBM
 
-        landing_weight_exp1 = landing_weight**0.95
-        landing_weight_exp2 = landing_weight**0.67
-        main_gear_length_exp = main_gear_length**0.43
+        landing_weight_exp = landing_weight**0.67
         nose_gear_length_exp = nose_gear_length**0.43
-
-        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = (
-            0.005031
-            * landing_weight_exp1
-            * main_gear_length**-0.57
-            * main_gear_scaler
-            / GRAV_ENGLISH_LBM
-        )
-        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER] = (
-            0.0117 * landing_weight_exp1 * main_gear_length_exp / GRAV_ENGLISH_LBM
-        )
-        J[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.Design.TOUCHDOWN_MASS] = (
-            0.011115 * landing_weight**-0.05 * main_gear_length_exp * main_gear_scaler
-        )
 
         J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH] = (
             0.02064
-            * landing_weight_exp2
+            * landing_weight_exp
             * nose_gear_length**-0.57
             * nose_gear_scaler
             / GRAV_ENGLISH_LBM
         )
         J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER] = (
-            0.048 * landing_weight_exp2 * nose_gear_length_exp / GRAV_ENGLISH_LBM
+            0.048 * landing_weight_exp * nose_gear_length_exp / GRAV_ENGLISH_LBM
         )
         J[Aircraft.LandingGear.NOSE_GEAR_MASS, Aircraft.Design.TOUCHDOWN_MASS] = (
             0.03216 * landing_weight**-0.33 * nose_gear_length_exp * nose_gear_scaler
         )
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = (
-            0.005031
-            * landing_weight_exp1
-            * main_gear_length**-0.57
-            * main_gear_scaler
-            / GRAV_ENGLISH_LBM
-        )
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER] = (
-            0.0117 * landing_weight_exp1 * main_gear_length_exp / GRAV_ENGLISH_LBM
-        )
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH] = (
-            0.02064
-            * landing_weight_exp2
-            * nose_gear_length**-0.57
-            * nose_gear_scaler
-            / GRAV_ENGLISH_LBM
-        )
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER] = (
-            0.048 * landing_weight_exp2 * nose_gear_length_exp / GRAV_ENGLISH_LBM
-        )
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Design.TOUCHDOWN_MASS] = (
-            0.011115 * landing_weight**-0.05 * main_gear_length_exp * main_gear_scaler
-        ) + (0.03216 * landing_weight**-0.33 * nose_gear_length_exp * nose_gear_scaler)
-
 
 class AltLandingGearMass(om.ExplicitComponent):
     """
-    Calculate the mass of the landing gear using the alternate method.
-    The methodology is based on the FLOPS weight equations, modified
-    to output mass instead of weight.
+    Calculate the mass of the main and nose landing gears using the alternate method. The
+    methodology is based on the alternate FLOPS weight equations, modified to output mass instead of
+    weight.
     """
 
     def setup(self):
@@ -187,7 +198,6 @@ class AltLandingGearMass(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.LandingGear.MAIN_GEAR_MASS, units='lbm')
         add_aviary_output(self, Aircraft.LandingGear.NOSE_GEAR_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
@@ -204,16 +214,6 @@ class AltLandingGearMass(om.ExplicitComponent):
             [
                 Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
                 Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Mission.Design.GROSS_MASS,
-            ],
-        )
-        self.declare_partials(
-            Aircraft.LandingGear.TOTAL_MASS,
-            [
-                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
                 Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
                 Mission.Design.GROSS_MASS,
             ],
@@ -240,7 +240,6 @@ class AltLandingGearMass(om.ExplicitComponent):
 
         outputs[Aircraft.LandingGear.MAIN_GEAR_MASS] = main_gear_mass
         outputs[Aircraft.LandingGear.NOSE_GEAR_MASS] = nose_gear_mass
-        outputs[Aircraft.LandingGear.TOTAL_MASS] = main_gear_mass + nose_gear_mass
 
     def compute_partials(self, inputs, J):
         main_gear_length = inputs[Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH]
@@ -290,29 +289,8 @@ class AltLandingGearMass(om.ExplicitComponent):
             0.15 * total_gear_fact * nose_gear_scaler
         )
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH] = (
-            0.85 * total_gear_weight_dmain * main_gear_scaler
-            + 0.15 * total_gear_weight_dmain * nose_gear_scaler
-        ) / GRAV_ENGLISH_LBM
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH] = (
-            0.85 * total_gear_weight_dnose * main_gear_scaler
-            + 0.15 * total_gear_weight_dnose * nose_gear_scaler
-        ) / GRAV_ENGLISH_LBM
-
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER] = (
-            0.85 * total_gear_weight / GRAV_ENGLISH_LBM
-        )
-
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER] = (
-            0.15 * total_gear_weight / GRAV_ENGLISH_LBM
-        )
-
-        J[Aircraft.LandingGear.TOTAL_MASS, Mission.Design.GROSS_MASS] = (
-            0.85 * total_gear_fact * main_gear_scaler + 0.15 * total_gear_fact * nose_gear_scaler
-        )
-
-
+# TODO move gear lengths to geometry? Would be different than FLOPS but makes sense otherwise
 class NoseGearLength(om.ExplicitComponent):
     """
     Computation of nose gear oleo strut length from main gear oleo strut length:
