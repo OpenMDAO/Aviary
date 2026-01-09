@@ -21,13 +21,13 @@ aircraft:crew_and_payload:design:num_tourist_class,139,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_tourist,18,unitless
 aircraft:crew_and_payload:design:seat_pitch_first,36,inch
 aircraft:crew_and_payload:design:seat_pitch_tourist,32,inch
-aircraft:crew_and_payload:passenger_mass_with_bags,225,lbm
+aircraft:crew_and_payload:mass_per_passenger_with_bags,225,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6,lbm
 aircraft:crew_and_payload:uld_mass_per_passenger,0.0667,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
-aircraft:design:drag_coeff_increment,0.00025,unitless
+aircraft:design:drag_coefficient_increment,0.00025,unitless
 aircraft:design:emergency_equipment_mass,100,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless

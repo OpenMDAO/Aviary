@@ -833,7 +833,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('TCVT')
     if not Aircraft.Nacelle.MASS_SPECIFIC in input_values:
         missing_vars.append('UWNAC')
-    if not Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS in input_values:
+    if not Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS in input_values:
         missing_vars.append('UWPAX')
     if not Aircraft.Design.MAX_STRUCTURAL_SPEED in input_values:
         missing_vars.append('VMLFSL')
@@ -999,7 +999,7 @@ flops_scaler_variables = [
     Aircraft.Canard.WETTED_AREA,
     Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
     Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-    Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+    Aircraft.CrewPayload.CABIN_CREW_MASS,
     Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
     Aircraft.Design.EMPTY_MASS_MARGIN,
     Aircraft.Electrical.MASS,
