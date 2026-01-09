@@ -113,7 +113,7 @@ from aviary.mission.height_energy.phases.simplified_landing import (
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.two_dof.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
 from aviary.mission.two_dof.ode.ascent_ode import AscentODE as TwoDOFAscentODE
-from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODESolution
+from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE
 from aviary.mission.two_dof.ode.climb_ode import ClimbODE as TwoDOFClimbODE
 from aviary.mission.two_dof.ode.descent_ode import DescentODE as TwoDOFDescentODE
 from aviary.mission.two_dof.ode.flight_path_ode import FlightPathODE as TwoDOFFlightPathODE
@@ -184,7 +184,7 @@ from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
 
 # Aerodynamics
 from aviary.subsystems.aerodynamics.aerodynamics_builder import (
-    AerodyanmicsBuilder,
+    AerodynamicsBuilder,
     CoreAerodynamicsBuilder,
 )
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup

@@ -7,18 +7,18 @@ from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
 from aviary.mission.two_dof.phases.climb_phase import ClimbPhase
-from aviary.mission.two_dof.phases.cruise_phase import CruisePhase
+from aviary.mission.two_dof.phases.cruise_phase import CruisePhase, ElectricCruisePhase
 from aviary.mission.two_dof.phases.descent_phase import DescentPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
 from aviary.mission.two_dof.polynomial_fit import PolynomialFit
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
+from aviary.mission.utils import process_guess_var
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
@@ -222,6 +222,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             phase_builder = AscentPhase
         elif 'climb' in phase_name:
             phase_builder = ClimbPhase
+        elif 'electric_cruise' in phase_name:
+            phase_builder = ElectricCruisePhase
         elif 'cruise' in phase_name:
             phase_builder = CruisePhase
         elif 'desc' in phase_name:

@@ -1,6 +1,10 @@
-from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODESolution
+from aviary.mission.two_dof.ode.breguet_cruise_ode import (
+    BreguetCruiseODE,
+    ElectricBreguetCruiseODE,
+)
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -81,7 +85,7 @@ class CruisePhase(PhaseBuilder):
     """
 
     default_name = 'cruise_phase'
-    default_ode_class = BreguetCruiseODESolution
+    default_ode_class = BreguetCruiseODE
     default_options_class = CruisePhaseOptions
 
     _initial_guesses_meta_data_ = {}
@@ -113,7 +117,7 @@ class CruisePhase(PhaseBuilder):
         """
         Return a new cruise phase for analysis using these constraints.
 
-        If ode_class is None, BreguetCruiseODESolution is used as the default.
+        If ode_class is None, BreguetCruiseODE is used as the default.
 
         Parameters
         ----------
@@ -131,6 +135,8 @@ class CruisePhase(PhaseBuilder):
 
         mach_cruise = user_options.get_val('mach_cruise')
         alt_cruise, alt_units = user_options['alt_cruise']
+
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
@@ -164,3 +170,8 @@ CruisePhase._add_initial_guess_meta_data(
 )
 
 CruisePhase._add_initial_guess_meta_data(InitialGuessState('mach'), desc='initial guess for mach')
+
+
+class ElectricCruisePhase(CruisePhase):
+    default_name = 'electric_cruise_phase'
+    default_ode_class = ElectricBreguetCruiseODE
