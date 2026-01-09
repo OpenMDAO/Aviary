@@ -92,7 +92,7 @@ class CoreMassBuilder(MassBuilder):
         filepath = reports_folder / filename
 
         num_engines = prob.model.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
-        engine_models = prob.model.engine_builders
+        engine_models = prob.model.engine_models
 
         # "double-size" (8-character) tabs were found to greatly improve readability
         tab = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
