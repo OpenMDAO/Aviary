@@ -3,7 +3,7 @@ import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.functions import dSigmoidXdx, sigmoidX
+from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
@@ -220,7 +220,7 @@ class MassParameters(om.ExplicitComponent):
             ) + 1 * (100) * dSigmoidXdx(loc_main_gear, 0.005, 0.01 / 320.0)
 
 
-class PayloadMass(om.ExplicitComponent):
+class PayloadGroup(om.ExplicitComponent):
     """Computation of maximum payload that the aircraft is being asked to carry."""
 
     def initialize(self):
@@ -767,9 +767,6 @@ class EngineMass(om.ExplicitComponent):
                 sum(CK5 * dry_wt_eng * num_engines) + CK7 * eng_instl_wt_all + aug_wt
             ) / GRAV_ENGLISH_LBM
 
-        # prop_wt = np.zeros(num_engine_type)
-        # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
-        # prop_wt[prop_idx] = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         outputs['prop_mass_all'] = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
@@ -890,7 +887,6 @@ class EngineMass(om.ExplicitComponent):
         pod_wt = nacelle_wt + pylon_wt
         eng_instl_wt = c_instl * dry_wt_eng
 
-        # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
@@ -1629,7 +1625,7 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SLAT_SPAN_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.FLAP_SPAN_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.LOADING, units='lbf/ft**2')
+        add_aviary_input(self, Aircraft.Design.WING_LOADING, units='lbf/ft**2')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
@@ -1675,7 +1671,7 @@ class HighLiftMass(om.ExplicitComponent):
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.FLAP_SPAN_RATIO,
-                Aircraft.Wing.LOADING,
+                Aircraft.Design.WING_LOADING,
                 'density',
                 Mission.Landing.LIFT_COEFFICIENT_MAX,
             ],
@@ -1695,7 +1691,7 @@ class HighLiftMass(om.ExplicitComponent):
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.FLAP_SPAN_RATIO,
                 Aircraft.Wing.SLAT_SPAN_RATIO,
-                Aircraft.Wing.LOADING,
+                Aircraft.Design.WING_LOADING,
                 'density',
                 Mission.Landing.LIFT_COEFFICIENT_MAX,
             ],
@@ -1711,7 +1707,7 @@ class HighLiftMass(om.ExplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         flap_span_ratio = inputs[Aircraft.Wing.FLAP_SPAN_RATIO]
         slat_span_ratio = inputs[Aircraft.Wing.SLAT_SPAN_RATIO]
-        wing_loading = inputs[Aircraft.Wing.LOADING]
+        wing_loading = inputs[Aircraft.Design.WING_LOADING]
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -1801,7 +1797,7 @@ class HighLiftMass(om.ExplicitComponent):
         taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
         flap_span_ratio = inputs[Aircraft.Wing.FLAP_SPAN_RATIO]
         slat_span_ratio = inputs[Aircraft.Wing.SLAT_SPAN_RATIO]
-        wing_loading = inputs[Aircraft.Wing.LOADING]
+        wing_loading = inputs[Aircraft.Design.WING_LOADING]
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         wingspan = inputs[Aircraft.Wing.SPAN]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -1946,7 +1942,7 @@ class HighLiftMass(om.ExplicitComponent):
             J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                 (VFLAP / 100) ** 2 * SFLAP * num_flaps ** (-0.5) / GRAV_ENGLISH_LBM
             )
-            J['flap_mass', Aircraft.Wing.LOADING] = (
+            J['flap_mass', Aircraft.Design.WING_LOADING] = (
                 c_mass_trend_high_lift
                 * (2 * VFLAP / 100**2)
                 * dVFLAP_dWL
@@ -2038,7 +2034,7 @@ class HighLiftMass(om.ExplicitComponent):
                 J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                     SFLAP * (VFLAP**2.195) / 45180.0 / GRAV_ENGLISH_LBM
                 )
-                J['flap_mass', Aircraft.Wing.LOADING] = (
+                J['flap_mass', Aircraft.Design.WING_LOADING] = (
                     c_mass_trend_high_lift
                     * SFLAP
                     * (2.195 * VFLAP**1.195 * dVFLAP_dWL)
@@ -2132,7 +2128,7 @@ class HighLiftMass(om.ExplicitComponent):
                 J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                     SFLAP * 0.369 * VFLAP**0.2733 / GRAV_ENGLISH_LBM
                 )
-                J['flap_mass', Aircraft.Wing.LOADING] = (
+                J['flap_mass', Aircraft.Design.WING_LOADING] = (
                     c_mass_trend_high_lift
                     * SFLAP
                     * 0.369
@@ -2215,7 +2211,7 @@ class HighLiftMass(om.ExplicitComponent):
             J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                 (VFLAP / 100.0) ** 2 * SFLAP * num_flaps**0.5 / GRAV_ENGLISH_LBM
             )
-            J['flap_mass', Aircraft.Wing.LOADING] = (
+            J['flap_mass', Aircraft.Design.WING_LOADING] = (
                 c_mass_trend_high_lift
                 * (2 * VFLAP / 100**2)
                 * dVFLAP_dWL
@@ -2306,7 +2302,7 @@ class HighLiftMass(om.ExplicitComponent):
             J['flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT] = (
                 (VFLAP / 100.0) ** 2.38 * SFLAP**1.19 / (num_flaps**0.595) / GRAV_ENGLISH_LBM
             )
-            J['flap_mass', Aircraft.Wing.LOADING] = (
+            J['flap_mass', Aircraft.Design.WING_LOADING] = (
                 c_mass_trend_high_lift
                 * (2.38 * VFLAP**1.38 / 100.0**2.38)
                 * dVFLAP_dWL
@@ -2405,8 +2401,8 @@ class HighLiftMass(om.ExplicitComponent):
             'flap_mass', Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT
         ]
 
-        J[Aircraft.Wing.HIGH_LIFT_MASS, Aircraft.Wing.LOADING] = J[
-            'flap_mass', Aircraft.Wing.LOADING
+        J[Aircraft.Wing.HIGH_LIFT_MASS, Aircraft.Design.WING_LOADING] = J[
+            'flap_mass', Aircraft.Design.WING_LOADING
         ]
         J[Aircraft.Wing.HIGH_LIFT_MASS, 'density'] = J['flap_mass', 'density']
 
@@ -2835,63 +2831,42 @@ class FixedMassGroup(om.Group):
         self.add_subsystem(
             'params',
             MassParameters(),
-            promotes_inputs=[
-                'max_mach',
-            ]
-            + ['aircraft:*'],
-            promotes_outputs=[
-                'c_strut_braced',
-                'c_gear_loc',
-                'half_sweep',
-            ]
-            + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'payload',
-            PayloadMass(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=[
-                'payload_mass_des',
-                'payload_mass_max',
-            ]
-            + ['aircraft:*'],
+            PayloadGroup(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'tail',
             TailMass(),
-            promotes_inputs=[
-                'min_dive_vel',
-            ]
-            + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
         self.add_subsystem(
             'HL',
             HighLiftMass(),
-            promotes_inputs=['density'] + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'controls',
             ControlMass(),
-            promotes_inputs=[
-                'min_dive_vel',
-            ]
-            + ['aircraft:*', 'mission:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'gear',
             GearMass(),
-            promotes_inputs=['mission:*', 'aircraft:*'],
-            promotes_outputs=[
-                Aircraft.LandingGear.MAIN_GEAR_MASS,
-            ]
-            + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
@@ -2900,28 +2875,21 @@ class FixedMassGroup(om.Group):
             self.add_subsystem(
                 'augmentation',
                 ElectricAugmentationMass(),
-                promotes_inputs=['aircraft:*'],
-                promotes_outputs=[
-                    'aug_mass',
-                ],
+                promotes_inputs=['*'],
+                promotes_outputs=['aug_mass'],
             )
 
         self.add_subsystem(
             'engine',
             EngineMass(),
-            promotes_inputs=['aircraft:*']
-            + [
-                Aircraft.LandingGear.MAIN_GEAR_MASS,
-            ],
-            promotes_outputs=['pylon_mass', 'wing_mounted_mass', 'eng_comb_mass'] + ['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         if has_hybrid_system:
             self.promotes(
                 'engine',
-                inputs=[
-                    'aug_mass',
-                ],
+                inputs=['aug_mass'],
             )
 
         self.set_input_defaults('min_dive_vel', val=420, units='kn')

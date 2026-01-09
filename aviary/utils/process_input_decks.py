@@ -1,11 +1,12 @@
 """
-This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing options,
-and setting initial guesses for aircraft design parameters. It works primarily with .csv files,
-allowing for the specification of units, comments, and lists within these files.
+This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing
+options, and setting initial guesses for aircraft design parameters. It works primarily with .csv
+files, allowing for the specification of units, comments, and lists within these files.
 
-The module supports various functions like creating a vehicle, parsing input files, updating options based
-on inputs, and handling initial guesses for different aircraft design aspects. It heavily relies on the
-aviary and openMDAO libraries for processing and interpreting the aircraft design parameters.
+The module supports various functions like creating a vehicle, parsing input files, updating options
+based on inputs, and handling initial guesses for different aircraft design aspects. It heavily
+relies on the aviary and openMDAO libraries for processing and interpreting the aircraft design
+parameters.
 
 Functions:
     create_vehicle(vehicle_deck=''): Create and initialize a vehicle with default or specified parameters.
@@ -23,9 +24,7 @@ from openmdao.utils.units import valid_units
 
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.utils.functions import convert_strings_to_data, get_path
-from aviary.utils.preprocessors import remove_preprocessed_options
 from aviary.variable_info.enums import ProblemType, Verbosity
-from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -71,17 +70,23 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     if verbosity is None:
         verbosity = Verbosity.BRIEF
 
-    aircraft_values = get_option_defaults(engine=False)
-    remove_preprocessed_options(aircraft_values)
+    aircraft_values = AviaryValues()
 
     # TODO remove all hardcoded GASP values here, find appropriate place for them
+    # We should only set FLOPS- or GASP-specific variables for those aircraft models
     aircraft_values.set_val('INGASP.JENGSZ', val=4)
     aircraft_values.set_val('test_mode', val=False)
     aircraft_values.set_val('use_surrogates', val=True)
     aircraft_values.set_val('mass_defect', val=10000, units='lbm')
-    # TODO problem_type should get set by get_option_defaults??
+
+    # TODO setting defaults for variables needed outside OM problem during load_inputs()
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
-    aircraft_values.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False)
+    aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
+    # these are used in initialization_guessing()
+    aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
+    aircraft_values.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=0, units='lbm')
 
     initialization_guesses = {
         # initialization_guesses is a dictionary that contains values used to initialize the trajectory
@@ -212,9 +217,6 @@ def parse_inputs(
                 )
                 continue
 
-            if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
-                print('Unused:', var_name, var_value, comment)
-
     return aircraft_values, initialization_guesses
 
 
@@ -301,7 +303,7 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     return aircraft_values
 
 
-def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_builders):
+def initialization_guessing(aircraft_values: AviaryValues, initialization_guesses, engine_models):
     """
     Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,
     and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.
@@ -314,7 +316,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     initialization_guesses : dict
         Initial guesses.
 
-    engine_builders : list or None
+    engine_models : list or None
         List of engine builders. This is needed if there are multiple engine models.
 
     Returns
@@ -425,42 +427,22 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             60 * 60
         )
 
-    # TODO this does not work at all for mixed-type engines (some propeller and some not)
-    try:
-        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)
+    total_thrust = 0
+    for i, model in enumerate(engine_models):
+        # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
+        # TODO scale factor?
+        # thrust = np.dot(
+        #     aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp')[i],
+        #     aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],
+        # )
 
-        # This happens before preprocessing, and we end up with the default when unspecified.
-        # num_engines = np.array(num_engines)
+        thrust = (
+            aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[i]
+            * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR)[i]
+        )
 
-        if aircraft_values.get_val(Aircraft.Engine.HAS_PROPELLERS):
-            # For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, 'hp'),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
-        else:
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')
-                * aircraft_values.get_val(Aircraft.Engine.SCALE_FACTOR),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
-
-    except KeyError:
-        if engine_builders is not None and len(engine_builders) > 1:
-            # heterogeneous engine-model case. Get thrust from the engine models instead.
-            total_thrust = 0
-            for model in engine_builders:
-                thrust = model.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * model.get_val(
-                    Aircraft.Engine.SCALE_FACTOR
-                )
-                num_engines = model.get_val(Aircraft.Engine.NUM_ENGINES)
-                total_thrust += thrust * num_engines
-
-        else:
-            total_thrust = np.dot(
-                aircraft_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf'),
-                aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES),
-            )
+        num_engines = aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i]
+        total_thrust += thrust * num_engines
 
     gamma_guess = np.arcsin(0.5 * total_thrust / mission_mass)
     avg_speed_guess = 0.5 * 667 * cruise_mach  # kts
@@ -511,7 +493,7 @@ dependent_options = [
     # [Aircraft.Engine.WING_LOCATIONS, {
     #     'val': 0, 'relation': '==', 'target': Aircraft.Engine.FUSELAGE_MOUNTED, 'result': True, 'alternate': False}],
     [
-        Aircraft.Wing.LOADING,
+        Aircraft.Design.WING_LOADING,
         {
             'val': 20,
             'relation': '>',
@@ -566,16 +548,6 @@ dependent_options = [
             'val': 0,
             'relation': '<',
             'target': Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
-        Aircraft.Engine.TYPE,
-        {
-            'val': [1, 2, 3, 4, 6, 11, 12, 13, 14],
-            'relation': 'in',
-            'target': Aircraft.Engine.HAS_PROPELLERS,
             'result': True,
             'alternate': False,
         },

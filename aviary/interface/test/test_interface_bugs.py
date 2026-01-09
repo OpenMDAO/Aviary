@@ -5,8 +5,8 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.test_aircraft.GwFm_phase_info import phase_info as ph_in
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.models.aircraft.test_aircraft.GwFm_phase_info import phase_info as ph_in
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_aviary_resource_path
 from aviary.variable_info.variables import Aircraft
 
@@ -25,7 +25,7 @@ class WingWeightSubsys(om.ExplicitComponent):
         outputs['Tail'] = 0.7 * inputs[Aircraft.Engine.MASS]
 
 
-class WingWeightBuilder(SubsystemBuilderBase):
+class WingWeightBuilder(SubsystemBuilder):
     """Prototype of a subsystem that overrides an aviary internally computed var."""
 
     def __init__(self, name='wing_weight'):
@@ -67,20 +67,14 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_GwFm.csv')
+        csv_path = get_aviary_resource_path(
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
+        )
         prob.load_inputs(csv_path, phase_info)
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP', verbosity=0)
 
@@ -100,19 +94,16 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = get_aviary_resource_path('models/test_aircraft/aircraft_for_bench_GwFm.csv')
+        csv_path = get_aviary_resource_path(
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
+        )
         prob.load_inputs(csv_path, phase_info)
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
-
         prob.add_phases(parallel_phases=False)
-
         prob.add_post_mission_systems()
-
-        # Link phases and variables
         prob.link_phases()
 
         prob.add_driver('SLSQP', verbosity=0)
@@ -123,7 +114,9 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.setup()
 
-        assert not isinstance(prob.traj.phases, om.ParallelGroup)
+        assert not isinstance(
+            prob.model.traj.phases, om.ParallelGroup
+        )  # TODO: redo for multimissions
 
 
 if __name__ == '__main__':

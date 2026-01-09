@@ -145,40 +145,40 @@ class TestUnits(unittest.TestCase):
         vals = AviaryValues()
 
         try:
-            vals.set_val(Aircraft.Wing.LOADING, val=20, units='N/cm**2')
+            vals.set_val(Aircraft.Design.WING_LOADING, val=20, units='N/cm**2')
         except:
             self.fail('Expecting correct units and type to pass.')
 
         try:
-            vals.set_val(Aircraft.Wing.LOADING, val=20, units='kgf/cm**2')
+            vals.set_val(Aircraft.Design.WING_LOADING, val=20, units='kgf/cm**2')
         except ValueError as err:
             self.assertEqual(
                 str(err),
                 'The units kgf/cm**2 which you have provided for'
-                f' {Aircraft.Wing.LOADING} are invalid.',
+                f' {Aircraft.Design.WING_LOADING} are invalid.',
             )
         else:
             self.fail('Expecting ValueError.')
 
         try:
-            vals.set_val(Aircraft.Wing.LOADING, val=20, units='inch**2/NM')
+            vals.set_val(Aircraft.Design.WING_LOADING, val=20, units='inch**2/NM')
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f'The base units of {Aircraft.Wing.LOADING} are lbf/ft**2, and you have'
-                f' tried to set {Aircraft.Wing.LOADING} with units of inch**2/NM, which'
+                f'The base units of {Aircraft.Design.WING_LOADING} are lbf/ft**2, and you have'
+                f' tried to set {Aircraft.Design.WING_LOADING} with units of inch**2/NM, which'
                 ' are not compatible.',
             )
         else:
             self.fail('Expecting TypeError.')
 
         try:
-            vals.set_val(Aircraft.Wing.LOADING, val=20, units='unitless')
+            vals.set_val(Aircraft.Design.WING_LOADING, val=20, units='unitless')
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f'The base units of {Aircraft.Wing.LOADING} are lbf/ft**2, and you have'
-                f' tried to set {Aircraft.Wing.LOADING} with units of unitless, which'
+                f'The base units of {Aircraft.Design.WING_LOADING} are lbf/ft**2, and you have'
+                f' tried to set {Aircraft.Design.WING_LOADING} with units of unitless, which'
                 ' are not compatible.',
             )
         else:
@@ -223,7 +223,7 @@ class TestVariableExtension(unittest.TestCase):
     def test_set_val_metadata_extension(self):
         option_defaults = AviaryValues()
 
-        filename = get_path('models/engines/turbofan_23k_1.deck')
+        filename = get_path('models/engines/turbofan_23k_1.csv')
         option_defaults.set_val(ExtendedAircraft.Engine.DATA_FILE, filename)
         option_defaults.set_val(
             ExtendedAircraft.Wing.AERO_CENTER, val=5.0, units='ft', meta_data=ExtendedMetaData

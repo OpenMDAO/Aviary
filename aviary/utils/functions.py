@@ -1,30 +1,16 @@
 import atexit
-import os
 from contextlib import ExitStack
 from pathlib import Path
 from typing import Union
 
 import importlib_resources
-import numpy as np
-import openmdao.api as om
 
 from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variable_meta_data import _MetaData
 
 
-class Null:
-    """This can be used to divert outputs, such as stdout, to improve performance."""
-
-    def write(self, *args, **kwargs):
-        pass
-
-    def flush(self, *args, **kwargs):
-        pass
-
-
-def get_aviary_resource_path(resource_name: str) -> str:
+def get_aviary_resource_path(resource_name: str) -> Path:
     """
     Get the file path of a resource in the Aviary package.
 
@@ -35,7 +21,7 @@ def get_aviary_resource_path(resource_name: str) -> str:
 
     Returns
     -------
-        Path
+        path : Path
             The file path of the resource.
 
     """
@@ -141,166 +127,6 @@ def convert_strings_to_data(input_string):
     if not islist:
         value_list = value_list[0]
     return value_list
-
-
-def create_opts2vals(all_options: list, output_units: dict = {}):
-    """
-    create_opts2vals creates a component that converts options to outputs.
-
-    Parameters
-    ----------
-    all_options : list of strings
-        Each string is the name of an option in aviary_options.
-    output_units : dict of units, optional
-        This optional input allows the user to specify the units that will be used while
-        adding the outputs. Only the outputs that shouldn't use their default units need
-        to be specified. Each key should match one of the names in all_options, and each
-        value must be a string representing a valid unit in openMDAO.
-
-    Returns
-    -------
-    OptionsToValues : ExplicitComponent
-        An explicit component that takes in an AviaryValues object that contains any
-        options that need to be converted to outputs. There are no inputs to this
-        component, only outputs. If the resulting component is added directly to a
-        Group, the output variables will have the same name as the options they
-        represent. If you need to rename them to prevent conflicting names in the
-        group, running add_opts2vals will add the prefix "option:" to the name.
-    """
-
-    def configure_output(option_name: str, aviary_options: AviaryValues):
-        option_data = aviary_options.get_item(option_name)
-        out_units = (
-            output_units[option_name] if option_name in output_units.keys() else option_data[1]
-        )
-        return {'val': option_data[0], 'units': out_units}
-
-    class OptionsToValues(om.ExplicitComponent):
-        def initialize(self):
-            self.options.declare(
-                'aviary_options',
-                types=AviaryValues,
-                desc='collection of Aircraft/Mission specific options',
-            )
-
-        def setup(self):
-            for option_name in all_options:
-                output_data = configure_output(option_name, self.options['aviary_options'])
-                add_aviary_output(
-                    self,
-                    option_name,
-                    val=output_data['val'],
-                    units=output_data['units'],
-                )
-
-        def compute(self, inputs, outputs):
-            aviary_options: AviaryValues = self.options['aviary_options']
-            for option_name in all_options:
-                output_data = configure_output(option_name, aviary_options)
-                outputs[option_name] = aviary_options.get_val(
-                    option_name, units=output_data['units']
-                )
-
-    return OptionsToValues
-
-
-def add_opts2vals(Group: om.Group, OptionsToValues, aviary_options: AviaryValues):
-    """
-    Add the OptionsToValues component to the specified Group.
-
-    Parameters
-    ----------
-    Group : Group
-        The group or model the component should be added to.
-    OptionsToValues : ExplicitComponent
-        This is the explicit component that was created by create_opts2vals.
-    aviary_options : AviaryValues
-        aviary_options is an AviaryValues object that contains all of the options
-        that need to be converted to outputs.
-
-    Returns
-    -------
-    Opts2Vals : Group
-        A group that wraps the OptionsToValues component in order to rename its
-        variables with a prefix to keep them separate from any similarly named
-        variables in the original group the component is being added to.
-    """
-
-    class Opts2Vals(om.Group):
-        def initialize(self):
-            self.options.declare(
-                'aviary_options',
-                types=AviaryValues,
-                desc='collection of Aircraft/Mission specific options',
-            )
-
-        def setup(self):
-            self.add_subsystem('options_to_values', OptionsToValues(aviary_options=aviary_options))
-
-        def configure(self):
-            all_output_data = self.options_to_values.list_outputs(out_stream=None)
-            list_of_outputs = [(name, 'option:' + name) for name, data in all_output_data]
-            self.promotes('options_to_values', list_of_outputs)
-
-    Group.add_subsystem(
-        'opts2vals', Opts2Vals(aviary_options=aviary_options), promotes_outputs=['*']
-    )
-
-    return Group
-
-
-def create_printcomp(all_inputs: list, input_units: dict = {}, meta_data=_MetaData, num_nodes=1):
-    """
-    Creates a component that prints the value of all inputs.
-
-    Parameters
-    ----------
-    all_inputs : list of strings
-        Each string is the name of a variable in the system
-    input_units : dict of units, optional
-        This optional input allows the user to specify the units that will be used while
-        adding the inputs. Only the variables that shouldn't use their default units need
-        to be specified. Each key should match one of the names in all_inputs, and each
-        value must be a string representing a valid unit in openMDAO.
-
-    Returns
-    -------
-    PrintComp : ExplicitComponent
-        An explicit component that can be added to a group to print the current values
-        of connected variables. There are no outputs from this component, only inputs.
-    """
-
-    def get_units(variable_name):
-        if variable_name in input_units.keys():
-            return input_units[variable_name]
-        elif variable_name in meta_data:
-            return meta_data[variable_name]['units']
-        else:
-            return None
-
-    class PrintComp(om.ExplicitComponent):
-        def setup(self):
-            for variable_name in all_inputs:
-                units = get_units(variable_name)
-                if ':' in variable_name:
-                    try:
-                        add_aviary_input(self, variable_name, units=units, shape=num_nodes)
-                    except TypeError:
-                        self.add_input(variable_name, units=units, shape=num_nodes, val=1.23456)
-                else:
-                    # using an arbitrary number that will stand out for unconnected
-                    # variables
-                    self.add_input(variable_name, units=units, shape=num_nodes, val=1.23456)
-
-        def compute(self, inputs, outputs):
-            print_string = ['v' * 20]
-            for variable_name in all_inputs:
-                units = get_units(variable_name)
-                print_string.append('{} {} {}'.format(variable_name, inputs[variable_name], units))
-            print_string.append('^' * 20)
-            print('\n'.join(print_string))
-
-    return PrintComp
 
 
 def promote_aircraft_and_mission_vars(group):
@@ -449,187 +275,28 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
         If the path is not found.
     """
     # Get the path to Aviary's models
-    path = Path('models', file_name)
-    aviary_path = Path(get_aviary_resource_path(str(path)))
-
-    # If the file name was provided without a path, check in the subfolders
-    if not aviary_path.exists():
-        sub_dirs = [x[0] for x in os.walk(get_aviary_resource_path('models'))]
-        for sub_dir in sub_dirs:
-            temp_path = Path(sub_dir, file_name)
-            if temp_path.exists():
-                # only return the first matching file
-                aviary_path = temp_path
-                continue
-
-    # If the path still doesn't exist, raise an error.
-    if not aviary_path.exists():
-        raise FileNotFoundError("File or Folder not found in Aviary's hangar")
-
-    return aviary_path
-
-
-def sigmoidX(x, x0, mu=1.0):
-    """
-    Sigmoid used to smoothly transition between piecewise functions.
-
-    Parameters
-    ----------
-    x: float or array
-        independent variable
-    x0: float
-        the center of symmetry. When x = x0, sigmoidX = 1/2.
-    mu: float
-        steepness parameter.
-
-    Returns
-    -------
-    float or array
-        smoothed value from input parameter x.
-    """
-    if mu == 0:
-        raise ValueError('mu must be non-zero')
-
-    if isinstance(x, np.ndarray):
-        if np.isrealobj(x):
-            dtype = float
-        else:
-            dtype = complex
-        n_size = x.size
-        y = np.zeros(n_size, dtype=dtype)
-        # avoid overflow in squared term, underflow seems to be ok
-        calc_idx = np.where((x.real - x0) / mu > -320)
-        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
+    aviary_path = Path(get_aviary_resource_path(str(Path('models', file_name))))
+    # Check if provided path is valid
+    if aviary_path.exists():
+        return aviary_path
+    # otherwise check models folder contents
     else:
-        if isinstance(x, float):
-            dtype = float
-        else:
-            dtype = complex
-        y = 0
-        if (x - x0) * mu > -320:
-            y = 1 / (1 + np.exp(-(x - x0) / mu))
-    if dtype == float:
-        y = y.real
-    return y
+        from glob import glob
 
+        contents = glob(str(get_aviary_resource_path('models') / '**'), recursive=True)
+        close_match = None
+        for item in contents:
+            item = Path(item)
+            # check if full filepath, file name with extension, or just file (or folder) name
+            # matches target
+            if aviary_path == item or aviary_path.name == item.name:
+                return item
+            elif aviary_path.stem == item.stem:
+                close_match = item
 
-def dSigmoidXdx(x, x0, mu=1.0):
-    """
-    Derivative of sigmoid function.
+    if close_match is not None:
+        # Probably requested the wrong file extension.
+        return close_match
 
-    Parameters
-    ----------
-    x: float or array
-        independent variable
-    x0: float
-        the center of symmetry. When x = x0, sigmoidX = 1/2.
-    mu: float
-        steepness parameter.
-
-    Returns
-    -------
-    float or array
-        smoothed derivative value from input parameter x.
-    """
-    if mu == 0:
-        raise ValueError('mu must be non-zero')
-
-    if isinstance(x, np.ndarray):
-        if np.isrealobj(x):
-            dtype = float
-        else:
-            dtype = complex
-        n_size = x.size
-        y = np.zeros(n_size, dtype=dtype)
-        term = np.zeros(n_size, dtype=dtype)
-        term2 = np.zeros(n_size, dtype=dtype)
-        # avoid overflow in squared term, underflow seems to be ok
-        calc_idx = np.where((x.real - x0) / mu > -320)
-        term[calc_idx] = np.exp(-(x[calc_idx] - x0) / mu)
-        term2[calc_idx] = (1 + term[calc_idx]) * (1 + term[calc_idx])
-        y[calc_idx] = term[calc_idx] / mu / term2[calc_idx]
-    else:
-        y = 0
-        if (x - x0) * mu > -320:
-            term = np.exp(-(x - x0) / mu)
-            term2 = (1 + term) * (1 + term)
-            y = term / mu / term2
-    if dtype == float:
-        y = y.real
-    return y
-
-
-def smooth_min(x, b, mu=100.0):
-    """
-    Smooth approximation of the min function using the log-sum-exp trick.
-
-    Parameters:
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns:
-    float or array-like: The smooth approximation of min(x, b).
-    """
-    sum_log_exp = np.log(np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b)))
-    rv = -(1 / mu) * sum_log_exp
-    return rv
-
-
-def d_smooth_min(x, b, mu=100.0):
-    """
-    Derivative of function smooth_min(x)
-
-    Parameters:
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns:
-    float or array-like: The smooth approximation of derivative of min(x, b).
-    """
-    d_sum_log_exp = np.exp(np.multiply(-mu, x)) / (
-        np.exp(np.multiply(-mu, x)) + np.exp(np.multiply(-mu, b))
-    )
-    return d_sum_log_exp
-
-
-def smooth_max(x, b, mu=10.0):
-    """
-    Smooth approximation of the min function using the log-sum-exp trick.
-
-    Parameters:
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    mu (float): The smoothing factor. Higher values make it closer to the true maximum. Try between 75 and 275.
-
-    Returns:
-    float or array-like: The smooth approximation of max(x, b).
-    """
-    mu_x = mu * x
-    mu_b = mu * b
-    m = np.maximum(mu_x, mu_b)
-    sum_log_exp = (m + np.log(np.exp(mu_x - m) + np.exp(mu_b - m))) / mu
-
-    return sum_log_exp
-
-
-def d_smooth_max(x, b, mu=10.0):
-    """
-    Derivative of function smooth_min(x)
-
-    Parameters:
-    x (float or array-like): First value.
-    b (float or array-like): Second value.
-    mu (float): The smoothing factor. Higher values make it closer to the true minimum. Try between 75 and 275.
-
-    Returns:
-    float or array-like: The smooth approximation of derivative of min(x, b).
-    """
-    mu_x = mu * x
-    mu_b = mu * b
-    m = np.maximum(mu_x, mu_b)
-    numerator = np.exp(mu_x - m)
-    denominator = np.exp(mu_x - m) + np.exp(mu_b - m)
-    d_sum_log_exp = mu * numerator / denominator
-    return d_sum_log_exp
+    # If the path doesn't exist, raise an error.
+    raise FileNotFoundError("File or Folder not found in Aviary's hangar")

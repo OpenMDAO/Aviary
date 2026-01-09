@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.functions import sigmoidX
+from aviary.utils.math import sigmoidX
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Settings
@@ -14,8 +14,8 @@ class FuselageParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST)
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH, units='inch')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -43,12 +43,12 @@ class FuselageParameters(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
-        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
-        seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH]
+        seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST]
 
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 
@@ -81,7 +81,7 @@ class FuselageParameters(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         options = self.options
-        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
 
         J['nose_height', Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(seats_abreast, 1.5, 0.01)
         J['cabin_height', Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(seats_abreast, 1.5, -0.01)
@@ -242,15 +242,15 @@ class FuselageGroup(om.Group):
         self.add_subsystem(
             'parameters',
             FuselageParameters(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'] + connected_input_outputs,
+            promotes_inputs=['*'],
+            promotes_outputs=['*'] + connected_input_outputs,
         )
 
         self.add_subsystem(
             'size',
             FuselageSize(),
-            promotes_inputs=connected_input_outputs + ['aircraft:*'],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=connected_input_outputs + ['*'],
+            promotes_outputs=['*'],
         )
 
 
@@ -261,7 +261,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_SEATS_ABREAST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -317,7 +317,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
 
-        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
@@ -346,7 +346,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         options = self.options
 
-        seats_abreast = options[Aircraft.Fuselage.NUM_SEATS_ABREAST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
@@ -387,7 +387,12 @@ class BWBCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch', desc='INGASP.WS')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES, units='unitless', desc='INGASP.AS')
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch', desc='INGASP.WAS')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_PITCH, units='inch', desc='INGASP.PS')
+        add_aviary_option(
+            self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='inch', desc='PS_FC'
+        )
+        add_aviary_option(
+            self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, units='inch', desc='INGASP.PS'
+        )
         add_aviary_option(
             self, Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless', desc='INGASP.PAX'
         )
@@ -422,16 +427,16 @@ class BWBCabinLayout(om.ExplicitComponent):
         # Hard code variables in GASP:
         FC_lav_galley_length = 8.0  # EL_FLGC: length of first class lav, galley & closet, ft
         FC_seat_width = 28.0  # WS_FC: first class seat width, inch
-        FC_seat_pitch = 36.0  # PS_FC: first class seat pitch, inch
+        FC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST]
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
         length_FC_to_TC = 5.0  # Length of first class/tourist class aisle, ft
         TC_num_pax_per_lav = 78  # NLAVTC: tourist class passengers per lav
-        TC_lav_width = 42.0  # WIDLAV: Lav width, inches
+        TC_lav_width = 42.0  # WIDLAV: Lav width, inches, in FLOPS, WIDTHL
         TC_galley_area_per_pax = 0.15  # AGAL_TC: tourist class galley area per passenger, ft**2
         # If there is no first class cabin, please set NUM_FIRST_CLASS = 0.
 
-        TC_seat_pitch, _ = options[Aircraft.Fuselage.SEAT_PITCH]
+        TC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         if seat_width <= 0.0:
             raise ValueError('fuselage seat width must be positive.')
@@ -975,38 +980,27 @@ class BWBFuselageGroup(om.Group):
         self.add_subsystem(
             'parameters1',
             BWBFuselageParameters1(),
-            promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*'] + ['nose_length', 'cabin_height'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'layout',
             BWBCabinLayout(),
-            promotes_inputs=['aircraft:*'] + ['nose_length'],
+            promotes_inputs=['*'],
             promotes_outputs=['fuselage_station_aft'],
         )
 
         self.add_subsystem(
             'parameters2',
             BWBFuselageParameters2(),
-            promotes_inputs=['aircraft:*']
-            + ['nose_length', 'cabin_height', 'fuselage_station_aft'],
-            promotes_outputs=['aircraft:*']
-            + ['forebody_len', 'nose_area', 'aftbody_len', 'cabin_len'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
             'size',
             BWBFuselageSize(),
-            promotes_inputs=['aircraft:*']
-            + [
-                'nose_length',
-                'cabin_height',
-                'fuselage_station_aft',
-                'forebody_len',
-                'nose_area',
-                'aftbody_len',
-                'cabin_len',
-            ],
-            promotes_outputs=['aircraft:*'],
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )

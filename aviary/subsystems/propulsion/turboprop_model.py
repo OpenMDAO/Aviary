@@ -8,7 +8,7 @@ from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
 from aviary.subsystems.propulsion.utils import EngineModelVariables, build_engine_deck
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -25,13 +25,13 @@ class TurbopropModel(EngineModel):
         Object label.
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
-    shaft_power_model : SubsystemBuilderBase (<empty>)
+    shaft_power_model : SubsystemBuilder (<empty>)
         Subsystem builder for the shaft power generating component. If None, an
         EngineDeck built using provided options is used.
-    propeller_model : SubsystemBuilderBase (<empty>)
+    propeller_model : SubsystemBuilder (<empty>)
         Subsystem builder for the propeller. If None, the Hamilton Standard methodology
         is used to model the propeller.
-    gearbox_model : SubsystemBuilderBase (<empty>)
+    gearbox_model : SubsystemBuilder (<empty>)
         Subsystem builder used for the gearbox. If None, the simple gearbox model is
         used.
 
@@ -49,9 +49,9 @@ class TurbopropModel(EngineModel):
         self,
         name='turboprop_model',
         options: AviaryValues = None,
-        shaft_power_model: SubsystemBuilderBase = None,
-        propeller_model: SubsystemBuilderBase = None,
-        gearbox_model: SubsystemBuilderBase = None,
+        shaft_power_model: SubsystemBuilder = None,
+        propeller_model: SubsystemBuilder = None,
+        gearbox_model: SubsystemBuilder = None,
     ):
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options)
@@ -518,7 +518,7 @@ class TurbopropMission(om.Group):
                 shp_outputs.append(
                     (
                         Dynamic.Vehicle.Propulsion.RPM,
-                        'AUTO_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM,
+                        'AIRCRAFT_DATA_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM,
                     )
                 )
                 shp_output_list.remove(Dynamic.Vehicle.Propulsion.RPM)
@@ -536,7 +536,9 @@ class TurbopropMission(om.Group):
             if Dynamic.Vehicle.Propulsion.RPM in shp_input_list:
                 shp_inputs.append((Dynamic.Vehicle.Propulsion.RPM, 'fixed_rpm'))
         else:
-            rpm_ivc.add_output('AUTO_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm')
+            rpm_ivc.add_output(
+                'AIRCRAFT_DATA_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm'
+            )
             if has_gearbox:
                 if Dynamic.Vehicle.Propulsion.RPM in shp_output_list:
                     shp_outputs.append(

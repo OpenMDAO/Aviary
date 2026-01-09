@@ -11,7 +11,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 class AircraftMissionTestSuite(unittest.TestCase):
     def setUp(self):
         cruise_dict = {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'num_segments': 5,
                 'order': 3,
@@ -48,7 +48,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
             'climb': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -63,7 +63,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                     'altitude_final': (32000.0, 'ft'),
                     'altitude_bounds': ((0.0, 34000.0), 'ft'),
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((64.0, 192.0), 'min'),
                 },
             },
@@ -73,7 +73,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'cruise3': cruise_dicts[3],
             'cruise4': cruise_dicts[4],
             'descent': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -99,7 +99,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        self.aircraft_definition_file = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
         self.make_plots = False
         self.max_iter = 0
 
@@ -112,17 +112,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
         # Allow for user overrides here
         prob.load_inputs(self.aircraft_definition_file, self.phase_info)
 
-        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP', verbosity=0)
 
@@ -133,8 +125,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
         prob.add_objective()
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.run_aviary_problem(run_driver=False, make_plots=False)
 

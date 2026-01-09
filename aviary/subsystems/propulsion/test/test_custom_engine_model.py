@@ -154,11 +154,10 @@ class CustomEngineTest(unittest.TestCase):
         phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [],
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -173,14 +172,13 @@ class CustomEngineTest(unittest.TestCase):
                     'altitude_final': (35000.0, 'ft'),
                     'altitude_bounds': ((23000.0, 38000.0), 'ft'),
                     'throttle_enforcement': 'boundary_constraint',
-                    'time_initial_bounds': ((0.0, 0.0), 'min'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((10.0, 30.0), 'min'),
                 },
                 'initial_guesses': {'time': ([0, 30], 'min')},
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [],
             },
         }
 
@@ -189,22 +187,15 @@ class CustomEngineTest(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
-            engine_builders=[SimpleTestEngine()],
         )
 
-        # Preprocess inputs
+        prob.load_external_subsystems([SimpleTestEngine()])
+
         prob.check_and_preprocess_inputs()
 
-        prob.add_pre_mission_systems()
-
-        prob.add_phases()
-
-        prob.add_post_mission_systems()
-
-        # Link phases and variables
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_driver('SLSQP', verbosity=0)
 
@@ -213,8 +204,6 @@ class CustomEngineTest(unittest.TestCase):
         prob.add_objective('fuel_burned')
 
         prob.setup()
-
-        prob.set_initial_guesses()
 
         prob.final_setup()
 

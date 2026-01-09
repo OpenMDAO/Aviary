@@ -4,9 +4,9 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.default_phase_info.two_dof import phase_info as ph_in_gasp
+from aviary.models.missions.two_dof_default import phase_info as ph_in_gasp
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.test_aircraft.GwFm_phase_info import phase_info as ph_in_flops
+from aviary.models.aircraft.test_aircraft.GwFm_phase_info import phase_info as ph_in_flops
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -22,24 +22,20 @@ class ReserveTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_GwFm.csv'
+        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
+        prob.check_and_preprocess_inputs()
 
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_design_variables()
         prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
-        prob.set_initial_guesses()
 
         prob.run_model()
 
@@ -53,24 +49,20 @@ class ReserveTest(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/small_single_aisle/small_single_aisle_GASP.csv'
+        csv_path = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.csv'
 
         prob.load_inputs(csv_path, phase_info)
-        prob.check_and_preprocess_inputs()
 
         prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
+        prob.check_and_preprocess_inputs()
 
-        prob.link_phases()
+        prob.build_model()
 
         prob.add_design_variables()
         prob.add_objective(objective_type='mass', ref=-1e5)
 
         prob.setup()
-        prob.set_initial_guesses()
 
         prob.run_model()
 

@@ -17,7 +17,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.N3CC.phase_info import phase_info
+from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 from aviary.variable_info.variables import Mission
@@ -28,7 +28,10 @@ def run_trajectory(sim=True):
     prob = AviaryProblem()
     local_phase_info = deepcopy(phase_info)
 
-    prob.load_inputs('models/N3CC/N3CC_FLOPS.csv', local_phase_info)
+    prob.load_inputs(
+        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+        local_phase_info,
+    )
 
     ##########################################
     # Aircraft Input Variables and Options   #
@@ -45,10 +48,8 @@ def run_trajectory(sim=True):
     )
 
     prob.check_and_preprocess_inputs()
-    prob.add_pre_mission_systems()
-    prob.add_phases()
-    prob.add_post_mission_systems()
-    prob.link_phases()
+
+    prob.build_model()
     prob.add_driver('SNOPT', max_iter=50, verbosity=1)
 
     ##########################
@@ -68,8 +69,7 @@ def run_trajectory(sim=True):
     # Initial Settings for States and Controls #
     ############################################
     prob.setup()
-    prob.set_initial_guesses()
-    prob.run_aviary_problem('dymos_solution.db')
+    prob.run_aviary_problem()
 
     return prob
 
@@ -81,6 +81,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_sizing_N3CC(self):
         prob = run_trajectory(sim=False)
+
+        # self.assertTrue(prob.result.success)
 
         times_climb = prob.get_val('traj.climb.timeseries.time', units='s')
         thrusts_climb = prob.get_val('traj.climb.timeseries.thrust_net_total', units='N')

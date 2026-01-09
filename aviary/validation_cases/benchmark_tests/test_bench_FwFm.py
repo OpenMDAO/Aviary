@@ -20,7 +20,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
     FLOPS mass and aero method and HEIGHT_ENERGY mission method. Expected outputs based
-    on 'models/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -113,7 +113,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         phase_info = {
             'pre_mission': {'include_takeoff': True, 'optimize_mass': True},
             'climb': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 6,
                     'order': 3,
@@ -122,7 +122,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((0.0, 2.0), 'min'),
+                    'mass_ref': (200000, 'lbm'),
+                    'time_initial': (0.0, 'min'),
                     'time_duration_bounds': ((20.0, 60.0), 'min'),
                     'no_descent': True,
                 },
@@ -133,7 +134,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 },
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 1,
                     'order': 3,
@@ -146,7 +147,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_optimize': True,
                     'altitude_polynomial_order': 1,
                     'throttle_enforcement': 'boundary_constraint',
-                    'time_initial_bounds': ((24.0, 60.0), 'min'),
+                    'mass_ref': (200000, 'lbm'),
+                    'time_initial_bounds': ((20.0, 60.0), 'min'),
                     'time_duration_bounds': ((60.0, 720.0), 'min'),
                 },
                 'initial_guesses': {
@@ -156,7 +158,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 },
             },
             'descent': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -169,8 +171,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     'altitude_bounds': ((0.0, 35000.0), 'ft'),
                     'altitude_optimize': True,
                     'throttle_enforcement': 'path_constraint',
-                    'time_initial_bounds': ((90.0, 780.0), 'min'),
-                    'time_duration_bounds': ((5.0, 35.0), 'min'),
+                    'mass_ref': (200000, 'lbm'),
+                    'distance_ref': (3375, 'nmi'),
+                    'time_initial_bounds': ((80.0, 780.0), 'min'),
+                    'time_duration_bounds': ((5.0, 45.0), 'min'),
                     'no_climb': True,
                 },
                 'initial_guesses': {
@@ -195,25 +199,27 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_FwFm_IPOPT(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
             optimizer='IPOPT',
         )
 
+        # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_FwFm_SNOPT(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
-            verbosity=0,
+            verbosity=1,
             max_iter=50,
             optimizer='SNOPT',
         )
 
+        # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
         # This is one of the few places we test Height Energy + simple takeoff.
@@ -232,13 +238,13 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_FwFm_SNOPT_MPI(self):
         prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
             optimizer='SNOPT',
         )
-
+        # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
 
@@ -246,4 +252,5 @@ if __name__ == '__main__':
     # unittest.main()
     test = TestBenchFwFmSerial()
     test.setUp()
+    # test.test_bench_FwFm_IPOPT()
     test.test_bench_FwFm_SNOPT()

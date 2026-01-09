@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.large_turboprop_freighter.phase_info import energy_phase_info
+from aviary.models.aircraft.large_turboprop_freighter.phase_info import energy_phase_info
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
@@ -20,7 +20,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load inputs from .csv to build engine
         options, guesses = create_vehicle(
-            'models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
+            'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
 
         options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
@@ -49,10 +49,11 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
-            options,  # "models/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
+            options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
-            engine_builders=[electroprop],
         )
+        prob.load_external_subsystems([electroprop])
+
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
         # FLOPS aero specific stuff? Best guesses for values here
@@ -64,13 +65,11 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )  # average between root and chord T/C
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-        prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
+        prob.aviary_inputs.set_val(Aircraft.Fuselage.REF_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-        prob.link_phases()
+
+        prob.build_model()
         prob.add_driver('IPOPT', max_iter=0, verbosity=0)
         prob.add_design_variables()
         prob.add_objective()
@@ -79,8 +78,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # prob.model.list_vars(units=True, print_arrays=True)
         om.n2(prob)
 
-        prob.set_initial_guesses()
-        prob.run_aviary_problem('dymos_solution.db')
+        prob.run_aviary_problem()
+        self.assertTrue(prob.result.success)
 
         om.n2(prob)
 

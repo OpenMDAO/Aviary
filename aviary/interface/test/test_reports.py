@@ -7,10 +7,10 @@ import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
-from aviary.interface.default_phase_info.height_energy import phase_info
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
@@ -25,7 +25,7 @@ class TestReports(unittest.TestCase):
     def test_timeseries_report(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
             optimizer='SLSQP',
             max_iter=0,
@@ -89,15 +89,20 @@ class TestReports(unittest.TestCase):
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
     def test_check_input_report(self):
         # Make sure the input check works with custom metadata.
+        # Make sure it also works when a user forgets to create metadata.
 
-        class ExtraBuilder(SubsystemBuilderBase):
+        class ExtraBuilder(SubsystemBuilder):
             def build_pre_mission(self, aviary_inputs):
-                comp = om.ExecComp('z = 2*x')
+                comp = om.ExecComp(['z = 2*x', 'p = q'])
                 wing_group = om.Group()
                 wing_group.add_subsystem(
                     'aerostructures',
                     comp,
-                    promotes_inputs=[('x', 'aircraft:custom_var')],
+                    promotes_inputs=[
+                        ('x', 'aircraft:custom_var'),
+                        ('q', 'aircraft:forgotten_input'),
+                    ],
+                    promotes_outputs=[('p', 'aircraft:forgotten_out')],
                 )
                 return wing_group
 
@@ -115,17 +120,15 @@ class TestReports(unittest.TestCase):
 
         prob = AviaryProblem()
         prob.load_inputs(
-            'models/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             local_phase_info,
         )
+
         prob.check_and_preprocess_inputs()
+
         prob.meta_data = metadata
 
-        prob.add_pre_mission_systems()
-        prob.add_phases()
-        prob.add_post_mission_systems()
-
-        prob.link_phases()
+        prob.build_model()
 
         prob.setup()
 

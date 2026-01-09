@@ -3,13 +3,23 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.geometry.flops_based.characteristic_lengths import CharacteristicLengths
+from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
+    BWBWingCharacteristicLength,
+    CanardCharacteristicLength,
+    FuselageCharacteristicLengths,
+    HorizontalTailCharacteristicLength,
+    NacelleCharacteristicLength,
+    VerticalTailCharacteristicLength,
+    WingCharacteristicLength,
+)
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class CharacteristicLengthsTest(unittest.TestCase):
     """Test characteristic length and fineness ratio calculations."""
 
@@ -22,16 +32,54 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         aviary_inputs = get_flops_inputs('LargeSingleAisle1FLOPS')
 
-        aviary_options = {
-            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        aviary_options_wing = {
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION: aviary_inputs.get_val(
                 Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION
             ),
         }
 
         prob.model.add_subsystem(
-            'char_lengths',
-            CharacteristicLengths(**aviary_options),
+            'wing_char_length',
+            WingCharacteristicLength(**aviary_options_wing),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'canard_char_lengths',
+            CanardCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'fuselage_char_lengths',
+            FuselageCharacteristicLengths(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'horizontal_tail_char_lengths',
+            HorizontalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'vertical_tail_char_lengths',
+            VerticalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        aviary_options_nacelle = {
+            Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
+        }
+
+        prob.model.add_subsystem(
+            'nac_char_lengths',
+            NacelleCharacteristicLength(**aviary_options_nacelle),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
@@ -42,7 +90,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Canard.AREA, 'ft**2'),
             (Aircraft.Canard.ASPECT_RATIO, 'unitless'),
             (Aircraft.Canard.THICKNESS_TO_CHORD, 'unitless'),
-            # (Aircraft.Fuselage.AVG_DIAMETER, 'ft'),
+            # (Aircraft.Fuselage.REF_DIAMETER, 'ft'),
             (Aircraft.Fuselage.LENGTH, 'ft'),
             (Aircraft.HorizontalTail.AREA, 'ft**2'),
             (Aircraft.HorizontalTail.ASPECT_RATIO, 'unitless'),
@@ -60,7 +108,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             prob.set_val(var, aviary_inputs.get_val(var, units))
 
         # this is another component's output
-        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, val=12.75)
+        prob.set_val(Aircraft.Fuselage.REF_DIAMETER, val=12.75)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
@@ -85,8 +133,30 @@ class CharacteristicLengthsTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
+class BWBWingCharacteristicLengthsTest(unittest.TestCase):
+    """Test characteristic length and fineness ratio calculations for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    def test_case1(self):
+        prob = self.prob
+        prob.model.add_subsystem(
+            'cl', BWBWingCharacteristicLength(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Wing.AREA, val=8668.64638424)
+        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.run_model()
+
+        out1 = prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH)
+        exp1 = 36.410645095113139
+        assert_near_equal(out1, exp1, tolerance=1e-9)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
 if __name__ == '__main__':
     unittest.main()
-    # test = CharacteristicLengthsTest()
-    # test.setUp()
-    # test.test_case_multiengine()

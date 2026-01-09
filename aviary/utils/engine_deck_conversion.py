@@ -1,15 +1,12 @@
 #!/usr/bin/python
 import argparse
-import getpass
 from copy import deepcopy
-from datetime import datetime
-from enum import Enum
 
 import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.interface.utils.markdown_utils import round_it
+from aviary.interface.utils import round_it
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
@@ -17,16 +14,8 @@ from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
+from aviary.variable_info.enums import EngineDeckType
 from aviary.variable_info.variables import Dynamic
-
-
-class EngineDeckType(Enum):
-    FLOPS = 'FLOPS'
-    GASP = 'GASP'
-    GASP_TS = 'GASP_TS'
-
-    def __str__(self):
-        return self.value
 
 
 MACH = EngineModelVariables.MACH
@@ -193,9 +182,6 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
             structured_data = _make_structured_grid(
                 tables, method='lagrange3', fields=fields, throttle_step=throttle_step
             )
-            structured_data = _make_structured_grid(
-                tables, method='lagrange3', fields=fields, throttle_step=throttle_step
-            )
 
             data[MACH] = structured_data['fuelflow']['machs']
             data[ALTITUDE] = structured_data['fuelflow']['alts']
@@ -346,10 +332,10 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
 
     if output_file is None:
         sfx = data_file.suffix
-        if sfx == '.deck':
-            ext = '_aviary.deck'
+        if sfx == '.csv':
+            ext = '_aviary.csv'
         else:
-            ext = '.deck'
+            ext = '.csv'
         output_file = data_file.stem + ext
     write_data_file(output_file, write_data, outputs, comments, include_timestamp=True)
 
@@ -427,7 +413,7 @@ def _read_tp_header(f):
     iread, iprint, t4max, t4mcl, t4mc, t4idle, xsfc, cexp = _parse(
         f, [*_rep(2, (int, 5)), (None, 10), *_rep(6, (float, 10))]
     )
-    # file header: FORMAT(7F10.4)
+    # file header: FORMAT(6F10.4)
     sls_hp, xncref, prop_rpm, gbx_rat, torque_lim, waslrf = _parse(f, [*_rep(6, (float, 10))])
 
     return {
@@ -738,45 +724,10 @@ class AtmosCalc(om.ExplicitComponent):
         outputs['p2'] = p2
 
 
-def _setup_EDC_parser(parser):
-    parser.add_argument('input_file', type=str, help='path to engine deck file to be converted')
-    parser.add_argument(
-        'output_file',
-        type=str,
-        nargs='?',
-        help='path to file where new converted data will be written',
-    )
-    parser.add_argument(
-        '-f',
-        '--data_format',
-        type=EngineDeckType,
-        choices=list(EngineDeckType),
-        help='data format used by input_file',
-    )
-    parser.add_argument('--round', action='store_true', help='round data to improve readability')
-
-
-def _exec_EDC(args, user_args):
-    convert_engine_deck(
-        input_file=args.input_file,
-        output_file=args.output_file,
-        data_format=args.data_format,
-        round_data=args.round,
-    )
-
-
-EDC_description = (
-    'Converts FLOPS- or GASP-formatted '
-    'engine decks into Aviary csv format.\nFLOPS decks '
-    'are changed from column-delimited to csv format '
-    'with added headers.\nGASP decks are reorganized '
-    'into column based csv. T4 is recovered through '
-    'calculation. Data points whose T4 exceeds T4max '
-    'are removed.'
-)
-
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(EDC_description)
+    from aviary.utils.engine_deck_conversion_cmd import setup_EDC, _setup_EDC_parser
+
+    parser = argparse.ArgumentParser()
     _setup_EDC_parser(parser)
     args = parser.parse_args()
     _exec_EDC(args, None)

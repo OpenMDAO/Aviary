@@ -7,23 +7,21 @@ name = "aviary"
 dynamic = ["version"]
 readme = "README.md"
 license = "Apache-2.0"
-requires_python = ">=3.9"
+requires_python = ">=3.10"
 dependencies = [
     "dymos>=1.14.0",
     "hvplot",
     "importlib_resources",
     "matplotlib",
-    "numpy<2",
-    "openmdao>=3.37.0",
+    "openmdao>=3.42.0",
     "pandas",
     "panel>=1.0.0",
     "parameterized",
-    "simupy",
 ]
 
 [project.optional-dependencies]
 docs = [
-    "jupyter-book",
+    "jupyter-book<2",
     "itables"
 ]
 dev = [

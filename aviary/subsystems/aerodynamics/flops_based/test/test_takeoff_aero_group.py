@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.models.N3CC.N3CC_data import (
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     N3CC,
     takeoff_subsystem_options,
     takeoff_subsystem_options_spoilers,
@@ -13,7 +13,9 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamics
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.preprocessors import preprocess_options
 
 
 class TestTakeoffAeroGroup(unittest.TestCase):
@@ -77,7 +79,14 @@ def make_problem(subsystem_options={}):
         Aircraft.Wing.AREA,
     )
 
-    aviary_inputs = AviaryValues(N3CC['inputs'])
+    # aviary_inputs = AviaryValues(N3CC['inputs'])
+    aviary_inputs = AviaryValues()
+    aviary_inputs.set_val(Aircraft.LandingGear.DRAG_COEFFICIENT, 0.024)
+    aviary_inputs.set_val(Mission.Takeoff.DRAG_COEFFICIENT_MIN, 0.05)
+    aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 11.5587605382765)
+    aviary_inputs.set_val(Aircraft.Wing.HEIGHT, 8.6, 'ft')
+    aviary_inputs.set_val(Aircraft.Wing.SPAN, 118.7505278165, 'ft')
+    aviary_inputs.set_val(Aircraft.Wing.AREA, 1220.0, 'ft**2')
 
     dynamic_inputs = AviaryValues(
         {
@@ -99,16 +108,18 @@ def make_problem(subsystem_options={}):
     aero_builder = CoreAerodynamicsBuilder(code_origin=LegacyCode.FLOPS)
 
     prob.model.add_subsystem(
-        name='core_aerodynamics',
+        name='aerodynamics',
         subsys=aero_builder.build_mission(
-            num_nodes=nn, aviary_inputs=aviary_inputs, **subsystem_options['core_aerodynamics']
+            num_nodes=nn, aviary_inputs=aviary_inputs, **subsystem_options['aerodynamics']
         ),
-        promotes_inputs=aero_builder.mission_inputs(**subsystem_options['core_aerodynamics']),
-        promotes_outputs=aero_builder.mission_outputs(**subsystem_options['core_aerodynamics']),
+        promotes_inputs=aero_builder.mission_inputs(**subsystem_options['aerodynamics']),
+        promotes_outputs=aero_builder.mission_outputs(**subsystem_options['aerodynamics']),
     )
 
     prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
     prob.model.set_input_defaults(Dynamic.Atmosphere.DYNAMIC_PRESSURE, np.ones(nn), 'psf')
+
+    setup_model_options(prob, aviary_inputs)
 
     prob.setup(force_alloc_complex=True)
 
@@ -232,4 +243,6 @@ def _generate_regression_data(subsystem_options={}):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestTakeoffAeroGroup()
+    test.test_takeoff_aero_group()

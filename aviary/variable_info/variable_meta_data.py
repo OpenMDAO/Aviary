@@ -3,8 +3,6 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
-from pathlib import Path
-
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
@@ -343,6 +341,32 @@ add_meta_data(
 # ========================================================================================================================
 
 add_meta_data(
+    Aircraft.BWB.DETAILED_WING_PROVIDED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Flag if the detailed wing model is provided',
+    option=True,
+    types=bool,
+    default_value=True,
+)
+
+add_meta_data(
+    Aircraft.BWB.MAX_NUM_BAYS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.NBAYMX',  # ['&DEFINE.FUSEIN.NBAYMX', 'FUSDTA.NBAYMX'],
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='fixed number of bays',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -354,10 +378,11 @@ add_meta_data(
         ],
     },
     units='unitless',
-    desc='fixed number of bays',
+    desc='fixed number of passenger bays',
     types=int,
-    option=True,
-    default_value=0,
+    multivalue=True,
+    option=False,
+    default_value=[0],
 )
 
 add_meta_data(
@@ -775,6 +800,38 @@ add_meta_data(
     types=int,
 )
 
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of business class passengers abreast',
+    types=int,
+    option=True,
+    default_value=5,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of first class passengers abreast',
+    types=int,
+    option=True,
+    default_value=4,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
+    units='unitless',
+    desc='Number of tourist class passengers abreast',
+    types=int,
+    option=True,
+    default_value=6,
+)
 
 # TODO rename to economy?
 add_meta_data(
@@ -790,6 +847,36 @@ add_meta_data(
     types=int,
     option=True,
     default_value=0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the business class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the first class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the tourist class seats',
+    option=True,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1220,6 +1307,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SCFAC', 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='shift in drag divergence Mach number due to supercritical design',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.DRAG_POLAR,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -1450,27 +1546,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.OPERATING_MASS,
-    meta_data=_MetaData,
-    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
-    # defined the same way
-    historical_name={
-        'GASP': 'INGASP.OWE',
-        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
-        'FLOPS': 'MISSIN.DOWE',
-        'LEAPS1': [
-            '(WeightABC)self._operating_weight_empty',
-            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
-        ],
-    },
-    units='lbm',
-    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or '
-    'passengers. Includes crew, unusable fuel, oil, and operational items like '
-    'cargo containers and passenger service mass.',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.PART25_STRUCTURAL_CATEGORY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CATD', 'FLOPS': None, 'LEAPS1': None},
@@ -1565,15 +1640,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.SUPERCRITICAL_DIVERGENCE_SHIFT,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SCFAC', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='shift in drag divergence Mach number due to supercritical design',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
     meta_data=_MetaData,
     historical_name={
@@ -1622,11 +1688,17 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'CONFIN.TWR',
-        'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
+        'FLOPS': None,
+        'LEAPS1': None,
+        # NOTE TWR != THRUST_TO_WEIGHT_RATIO because Aviary\'s value is the actual T/W, while TWR is
+        #      the desired T/W ratio
+        # 'FLOPS': 'CONFIN.TWR',
+        # 'LEAPS1': 'ipropulsion.req_thrust_weight_ratio',
     },
     units='unitless',
-    desc='required thrust-to-weight ratio of aircraft',
+    default_value=0.0,
+    types=float,
+    desc='ratio of total sea-level-static thrust to aircraft takeoff gross weight',
 )
 
 add_meta_data(
@@ -1719,21 +1791,17 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.ZERO_FUEL_MASS,
+    Aircraft.Design.WING_LOADING,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
-        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
-        'FLOPS': None,
-        'LEAPS1': [
-            '(WeightABC)self._zero_fuel_weight',
-            'aircraft.outputs.L0_weights.zero_fuel_weight',
-            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
-        ],
+        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
+        'FLOPS': None,  # 'MISSA.SWET',
+        'LEAPS1': None,
     },
-    units='lbm',
-    desc='zero fuel mass',
-    default_value=0.0,
+    default_value=0,
+    types=float,
+    units='lbf/ft**2',
+    desc='ratio of aircraft gross takeoff weight to projected wing area',
 )
 
 add_meta_data(
@@ -1764,7 +1832,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     option=True,
-    default_value=True,
+    default_value=False,
     types=bool,
     desc='if true there is an augmented electrical system',
 )
@@ -1896,7 +1964,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'ENGDIN.EIFILE', 'LEAPS1': None},
     units='unitless',
-    types=(Path, str),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables',
@@ -2070,20 +2138,6 @@ add_meta_data(
     multivalue=True,
 )
 
-# TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
-add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    default_value=False,
-    types=bool,
-    desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-    'propellers. In GASP this depended on NTYE',
-    multivalue=True,
-)
-
 add_meta_data(
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
     meta_data=_MetaData,
@@ -2111,6 +2165,20 @@ add_meta_data(
     types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.INTERPOLATION_SORT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value='mach',
+    types=str,
+    desc='Specify the first interpolation variable in the semi-structured metamodel. '
+    'Choose from mach or altitude. Mach is usually the first column in the deck, but '
+    'altitude is more robust for semi-structured data.',
     multivalue=True,
 )
 
@@ -2251,7 +2319,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.REFERENCE_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.DIAM_REF', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={
+        'GASP': 'INGASP.DIAM_REF',
+        'FLOPS': None,
+        'LEAPS1': None,
+    },  # no DIAM_REF in GASP
     units='ft',
     desc='engine reference diameter',
     default_value=0.0,
@@ -2280,7 +2352,7 @@ add_meta_data(
     Aircraft.Engine.REFERENCE_SLS_THRUST,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.FN_REF',
+        'GASP': 'INGASP.FN_REF',  # no FN_REF in GASP
         'FLOPS': 'WTIN.THRSO',
         'LEAPS1': 'aircraft.inputs.L0_engine*.thrust',
     },
@@ -2600,7 +2672,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    types=(str, Path),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing propeller data map',
@@ -2778,42 +2850,13 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.CAPACITY_FACTOR,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # 'MISWT.FWMAX',
-        'LEAPS1': '(WeightABC)self._wing_fuel_capacity_factor',
-    },
-    units='unitless',
-    desc='fuel capacity factor',
-    default_value=1.0,
-)
-
-add_meta_data(
     Aircraft.Fuel.DENSITY,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FUELD', 'FLOPS': 'WTIN.FULDEN', 'LEAPS1': None},
     units='lbm/galUS',
-    desc='fuel density',
-    default_value=0.0,
-)
-
-# TODO replace with actual fuel density
-add_meta_data(
-    Aircraft.Fuel.DENSITY_RATIO,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FULDEN',  # ['&DEFINE.WTIN.FULDEN', 'UPFUEL.FULDEN'],
-        'LEAPS1': 'aircraft.inputs.L0_fuel.density_ratio',
-    },
-    units='unitless',
-    desc='Fuel density ratio for alternate fuels compared to jet fuel (typical '
-    'density of 6.7 lbm/gal), used in the calculation of wing_capacity (if '
-    'wing_capacity is not input) and in the calculation of fuel system '
-    'weight.',
-    default_value=1.0,
+    desc='fuel density (jet fuel typical density of 6.7 lbm/galUS used in the calculation of wing_capacity'
+    '(if wing_capacity is not input) and in the calculation of fuel system weight.',
+    default_value=6.7,
 )
 
 add_meta_data(
@@ -2883,6 +2926,18 @@ add_meta_data(
     units='lbm',
     desc='fuel capacity of the fuselage',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU', 'LEAPS1': None},
+    units='unitless',
+    desc='Flag to control enforcement of fuel_capacity constraint. '
+    'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
+    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use carefully!',
+    default_value=False,
+    types=bool,
 )
 
 add_meta_data(
@@ -3198,15 +3253,13 @@ add_meta_data(
     default_value=24,
 )
 
-# TODO FLOPS is not average diameter, but rather a reference diameter using max
-#      height and length. New variable??
 add_meta_data(
     Aircraft.Fuselage.AVG_DIAMETER,
     meta_data=_MetaData,
     historical_name={
         'GASP': ['INGASP.WC', 'INGASP.SWF'],
-        'FLOPS': None,  # 'EDETIN.XD',
-        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+        'FLOPS': None,
+        'LEAPS1': None,
     },
     units='ft',
     desc='average fuselage diameter',
@@ -3328,7 +3381,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.HGTqWID', 'FLOPS': 'WTIN.TCF', 'LEAPS1': None},
     units='unitless',
     types=float,
     default_value=1.0,
@@ -3338,7 +3391,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.HYDRAULIC_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'DHYDRAUL', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'DHYDRAL', 'FLOPS': None, 'LEAPS1': None},
     units='ft',
     types=float,
     default_value=0.0,
@@ -3411,7 +3464,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.LIFT_COEFFICENT_RATIO_BODY_TO_WING,
+    Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CLBqCLW', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
@@ -3566,17 +3619,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.NUM_SEATS_ABREAST,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SAB', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='seats abreast in fuselage',
-    types=int,
-    option=True,
-    default_value=6,
-)
-
-add_meta_data(
     Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
     meta_data=_MetaData,
     historical_name={
@@ -3605,7 +3647,7 @@ add_meta_data(
     Aircraft.Fuselage.PLANFORM_AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'SPF_BODY',
         'FLOPS': None,  # '~WEIGHT.FPAREA',
         'LEAPS1': '(WeightABC)self._fuselage_planform_area',
     },
@@ -3633,12 +3675,15 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SEAT_PITCH,
+    Aircraft.Fuselage.REF_DIAMETER,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.PS', 'FLOPS': None, 'LEAPS1': None},
-    units='inch',
-    desc='pitch of the economy class seats',
-    option=True,
+    historical_name={
+        'GASP': None,
+        'FLOPS': ['EDETIN.XD'],
+        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+    },
+    units='ft',
+    desc='A coarse average diameter calculated using the mean of max width and depth.',
     default_value=0.0,
 )
 
@@ -3650,6 +3695,16 @@ add_meta_data(
     desc='width of the economy class seats',
     option=True,
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.SIMPLE_LAYOUT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='carry out simple or detailed layout of fuselage.',
+    option=True,
+    default_value=True,
 )
 
 add_meta_data(
@@ -3715,7 +3770,7 @@ add_meta_data(
     Aircraft.HorizontalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SHT',
+        'GASP': 'INGASP.SHT',  # not an input in GASP
         'FLOPS': 'WTIN.SHT',  # ['&DEFINE.WTIN.SHT', 'EDETIN.SHT'],
         'LEAPS1': [
             'aircraft.inputs.L0_horizontal_tail.area',
@@ -4905,7 +4960,7 @@ add_meta_data(
     Aircraft.VerticalTail.AREA,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.SVT',
+        'GASP': 'INGASP.SVT',  # not an input in GASP
         'FLOPS': 'WTIN.SVT',  # ['&DEFINE.WTIN.SVT', 'EDETIN.SVT'],
         'LEAPS1': [
             'aircraft.inputs.L0_vertical_tails.area',
@@ -5499,7 +5554,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='use a detailed wing model',
+    desc='Flag that sets if FLOPS mass should use the detailed wing model',
     option=True,
     types=bool,
     default_value=False,
@@ -5877,19 +5932,7 @@ add_meta_data(
     multivalue=True,
 )
 
-add_meta_data(
-    Aircraft.Wing.LOADING,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': ['INGASP.WGS', 'INGASP.WOS'],
-        'FLOPS': None,
-        'LEAPS1': None,
-    },
-    units='lbf/ft**2',
-    desc='wing loading',
-    default_value=0.0,
-)
-
+# TODO this variable may be uneccessary since we can just check wing loading's value where needed
 add_meta_data(
     Aircraft.Wing.LOADING_ABOVE_20,
     meta_data=_MetaData,
@@ -6094,7 +6137,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': None,
+        'FLOPS': 'WTIN.XLW',
         'LEAPS1': None,
     },
     units='ft',
@@ -6806,9 +6849,9 @@ add_meta_data(
 # add_meta_data(
 #     Dynamic.Vehicle.Propulsion.EXIT_AREA,
 #     meta_data=_MetaData,
-#     historical_name={"GASP": None,
-#                     "FLOPS": None,
-#                     "LEAPS1": None
+#     historical_name={'GASP': None,
+#                     'FLOPS': None,
+#                     'LEAPS1': None
 #                     },
 #     units='kW',
 #     desc='Current nozzle exit area of engines, per single instance of each '
@@ -7021,6 +7064,15 @@ add_meta_data(
 # ===========================================================================
 
 add_meta_data(
+    Mission.Constraints.EXCESS_FUEL_CAPACITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. '
+    'Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
+)
+
+add_meta_data(
     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -7111,29 +7163,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Design.FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.WFADES',
-        'FLOPS': None,  # ['WSP(38, 2)', '~WEIGHT.FUELM', '~INERT.FUELM'],
-        'LEAPS1': [
-            '(WeightABC)self._fuel_weight',
-            'aircraft.outputs.L0_weights_summary.fuel_weight',
-        ],
-    },
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the '
-    'beginning of the design mission',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.FUEL_MASS_REQUIRED,
+    Mission.Summary.FUEL_MASS_REQUIRED,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the '
-    'beginning of the design mission',
+    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
+    'mission',
     default_value=0.0,
 )
 
@@ -7607,6 +7642,23 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.FINAL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='lbm',
+    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
+)
+
+add_meta_data(
+    Mission.Summary.FINAL_TIME,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='min',
+    desc='Total mission time from the start of the first regular_phase'
+    'to the end of the last regular_phase (does not include reserve phases).',
+)
+
+add_meta_data(
     Mission.Summary.FUEL_BURNED,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -7633,12 +7685,49 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.Summary.FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.WFADES',
+        'FLOPS': None,  # ['WSP(38, 2)', '~WEIGHT.FUELM', '~INERT.FUELM'],
+        'LEAPS1': [
+            '(WeightABC)self._fuel_weight',
+            'aircraft.outputs.L0_weights_summary.fuel_weight',
+        ],
+    },
+    units='lbm',
+    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the mission',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.Summary.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='gross takeoff mass of aircraft for that specific mission, not '
     'necessarily the value for the aircraft`s design mission',
+)
+
+add_meta_data(
+    Mission.Summary.OPERATING_MASS,
+    meta_data=_MetaData,
+    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
+    # defined the same way
+    historical_name={
+        'GASP': 'INGASP.OWE',
+        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
+        'FLOPS': 'MISSIN.DOWE',
+        'LEAPS1': [
+            '(WeightABC)self._operating_weight_empty',
+            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
+        ],
+    },
+    units='lbm',
+    desc='operating mass of the aircraft, or aircraft mass without mission fuel, or passengers.'
+    'Includes crew, unusable fuel, oil, and operational items like cargo containers and passenger '
+    'service mass.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7666,9 +7755,27 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     # Note: In GASP, WFA does not include fuel margin.
-    desc='total fuel carried at the beginnning of a mission '
-    'includes fuel burned in the mission, reserve fuel '
-    'and fuel margin',
+    desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
+    'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.Summary.ZERO_FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
+        'FLOPS': None,
+        'LEAPS1': [
+            '(WeightABC)self._zero_fuel_weight',
+            'aircraft.outputs.L0_weights.zero_fuel_weight',
+            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
+        ],
+    },
+    units='lbm',
+    desc='Aircraft zero fuel mass, which includes structural mass (empty weight) and payload mass '
+    '(passengers, baggage, and cargo)',
+    default_value=0.0,
 )
 
 
@@ -8051,6 +8158,17 @@ add_meta_data(
     option=True,
     types=LegacyCode,
     default_value=None,
+)
+
+add_meta_data(
+    Settings.PAYLOAD_RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=False,
+    types=bool,
+    desc='if True, run a set of off-design missions to create a payload range diagram.',
 )
 
 add_meta_data(

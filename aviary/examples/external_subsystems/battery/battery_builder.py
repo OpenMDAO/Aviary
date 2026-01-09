@@ -1,11 +1,13 @@
-from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.battery.battery_variable_meta_data import (
+    ExtendedMetaData,
+)
 from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
 from aviary.examples.external_subsystems.battery.model.battery_mission import BatteryMission
 from aviary.examples.external_subsystems.battery.model.battery_premission import BatteryPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
-class BatteryBuilder(SubsystemBuilderBase):
+class BatteryBuilder(SubsystemBuilder):
     """
     Define the builder for a battery subsystem that provides methods to define the battery subsystem's states, design variables, fixed values, initial guesses, and mass names.
     It also provides methods to build OpenMDAO systems for the pre-mission and mission computations of the subsystem, to get the constraints for the subsystem, and to preprocess the inputs for the subsystem.
@@ -263,7 +265,7 @@ class BatteryBuilder(SubsystemBuilderBase):
 
         return aviary_inputs
 
-    def get_outputs(self):
+    def get_timeseries(self):
         """
         Return a list of output names for the battery subsystem.
 

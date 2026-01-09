@@ -36,6 +36,8 @@ class Aircraft:
         VOLUME = 'aircraft:battery:volume'
 
     class BWB:
+        DETAILED_WING_PROVIDED = 'aircraft:blended_wing_body_design:detailed_wing_provided'
+        MAX_NUM_BAYS = 'aircraft:blended_wing_body_design:max_num_bays'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
@@ -126,6 +128,14 @@ class Aircraft:
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
             NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
             NUM_PASSENGERS = 'aircraft:crew_and_payload:design:num_passengers'
+            NUM_SEATS_ABREAST_BUSINESS = (
+                'aircraft:crew_and_payload:design:num_seats_abreast_business'
+            )
+            NUM_SEATS_ABREAST_FIRST = 'aircraft:crew_and_payload:design:num_seats_abreast_first'
+            NUM_SEATS_ABREAST_TOURIST = 'aircraft:crew_and_payload:design:num_seats_abreast_tourist'
+            SEAT_PITCH_BUSINESS = 'aircraft:crew_and_payload:design:seat_pitch_business'
+            SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
+            SEAT_PITCH_TOURIST = 'aircraft:crew_and_payload:design:seat_pitch_tourist'
 
     class Design:
         # These variables are values that do not fall into a particular aircraft
@@ -137,7 +147,8 @@ class Aircraft:
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
-        DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_increment'
+        DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_coeff_increment'
+        DRAG_DIVERGENCE_SHIFT = 'aircraft:design:drag_divergence_shift'
         DRAG_POLAR = 'aircraft:design:drag_polar'
 
         EMERGENCY_EQUIPMENT_MASS = 'aircraft:design:emergency_equipment_mass'
@@ -166,7 +177,6 @@ class Aircraft:
 
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
-        OPERATING_MASS = 'aircraft:design:operating_mass'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
         RESERVE_FUEL_ADDITIONAL = 'aircraft:design:reserve_fuel_additional'
         RESERVE_FUEL_FRACTION = 'aircraft:design:reserve_fuel_fraction'
@@ -176,8 +186,6 @@ class Aircraft:
         STRUCTURE_MASS = 'aircraft:design:structure_mass'
 
         SUBSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:subsonic_drag_coeff_factor'
-
-        SUPERCRITICAL_DIVERGENCE_SHIFT = 'aircraft:design:supercritical_drag_shift'
 
         SUPERSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:supersonic_drag_coeff_factor'
 
@@ -190,7 +198,7 @@ class Aircraft:
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
-        ZERO_FUEL_MASS = 'aircraft:design:zero_fuel_mass'
+        WING_LOADING = 'aircraft:design:wing_loading'
         ZERO_LIFT_DRAG_COEFF_FACTOR = 'aircraft:design:zero_lift_drag_coeff_factor'
 
     class Electrical:
@@ -216,9 +224,9 @@ class Aircraft:
         GEOPOTENTIAL_ALT = 'aircraft:engine:geopotential_alt'
         GLOBAL_HYBRID_THROTTLE = 'aircraft:engine:global_hybrid_throttle'
         GLOBAL_THROTTLE = 'aircraft:engine:global_throttle'
-        HAS_PROPELLERS = 'aircraft:engine:has_propellers'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
         INTERPOLATION_METHOD = 'aircraft:engine:interpolation_method'
+        INTERPOLATION_SORT = 'aircraft:engine:interpolation_sort'
         MASS = 'aircraft:engine:mass'
         MASS_SCALER = 'aircraft:engine:mass_scaler'
         MASS_SPECIFIC = 'aircraft:engine:mass_specific'
@@ -276,14 +284,13 @@ class Aircraft:
     class Fuel:
         AUXILIARY_FUEL_CAPACITY = 'aircraft:fuel:auxiliary_fuel_capacity'
         BURN_PER_PASSENGER_MILE = 'aircraft:fuel:burn_per_passenger_mile'
-        CAPACITY_FACTOR = 'aircraft:fuel:capacity_factor'
         DENSITY = 'aircraft:fuel:density'
-        DENSITY_RATIO = 'aircraft:fuel:density_ratio'
         FUEL_MARGIN = 'aircraft:fuel:fuel_margin'
         FUEL_SYSTEM_MASS = 'aircraft:fuel:fuel_system_mass'
         FUEL_SYSTEM_MASS_COEFFICIENT = 'aircraft:fuel:fuel_system_mass_coefficient'
         FUEL_SYSTEM_MASS_SCALER = 'aircraft:fuel:fuel_system_mass_scaler'
         FUSELAGE_FUEL_CAPACITY = 'aircraft:fuel:fuselage_fuel_capacity'
+        IGNORE_FUEL_CAPACITY_CONSTRAINT = 'aircraft:fuel:ignore_fuel_capacity_constraint'
         NUM_TANKS = 'aircraft:fuel:num_tanks'
         TOTAL_CAPACITY = 'aircraft:fuel:total_capacity'
         TOTAL_VOLUME = 'aircraft:fuel:total_volume'
@@ -327,7 +334,9 @@ class Aircraft:
         LAMINAR_FLOW_UPPER = 'aircraft:fuselage:laminar_flow_upper'
         LENGTH = 'aircraft:fuselage:length'
         LENGTH_TO_DIAMETER = 'aircraft:fuselage:length_to_diameter'
-        LIFT_COEFFICENT_RATIO_BODY_TO_WING = 'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
+        LIFT_COEFFICIENT_RATIO_BODY_TO_WING = (
+            'aircraft:fuselage:lift_coefficient_ratio_body_to_wing'
+        )
         LIFT_CURVE_SLOPE_MACH0 = 'aircraft:fuselage:lift_curve_slope_mach0'
         MASS = 'aircraft:fuselage:mass'
         MASS_COEFFICIENT = 'aircraft:fuselage:mass_coefficient'
@@ -338,7 +347,6 @@ class Aircraft:
         NOSE_FINENESS = 'aircraft:fuselage:nose_fineness'
         NUM_AISLES = 'aircraft:fuselage:num_aisles'
         NUM_FUSELAGES = 'aircraft:fuselage:num_fuselages'
-        NUM_SEATS_ABREAST = 'aircraft:fuselage:num_seats_abreast'
 
         PASSENGER_COMPARTMENT_LENGTH = 'aircraft:fuselage:passenger_compartment_length'
 
@@ -346,8 +354,9 @@ class Aircraft:
         PLANFORM_AREA = 'aircraft:fuselage:planform_area'
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
         PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
-        SEAT_PITCH = 'aircraft:fuselage:seat_pitch'
+        REF_DIAMETER = 'aircraft:fuselage:ref_diameter'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
+        SIMPLE_LAYOUT = 'aircraft:fuselage:simple_layout'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
         WETTED_AREA_RATIO_AFTBODY_TO_TOTAL = 'aircraft:fuselage:wetted_area_ratio_aftbody_to_total'
@@ -551,7 +560,6 @@ class Aircraft:
         LOAD_DISTRIBUTION_CONTROL = 'aircraft:wing:load_distribution_control'
         LOAD_FRACTION = 'aircraft:wing:load_fraction'
         LOAD_PATH_SWEEP_DIST = 'aircraft:wing:load_path_sweep_dist'
-        LOADING = 'aircraft:wing:loading'
         LOADING_ABOVE_20 = 'aircraft:wing:loading_above_20'
         MASS = 'aircraft:wing:mass'
         MASS_COEFFICIENT = 'aircraft:wing:mass_coefficient'
@@ -581,10 +589,10 @@ class Aircraft:
         SPAN_EFFICIENCY_FACTOR = 'aircraft:wing:span_efficiency_factor'
         SPAN_EFFICIENCY_REDUCTION = 'aircraft:wing:span_efficiency_reduction'
         STRUT_BRACING_FACTOR = 'aircraft:wing:strut_bracing_factor'
-        SURFACE_CONTROL_MASS = 'aircraft:wing:surface_ctrl_mass'
-        SURFACE_CONTROL_MASS_COEFFICIENT = 'aircraft:wing:surface_ctrl_mass_coefficient'
+        SURFACE_CONTROL_MASS = 'aircraft:wing:surface_control_mass'
+        SURFACE_CONTROL_MASS_COEFFICIENT = 'aircraft:wing:surface_control_mass_coefficient'
 
-        SURFACE_CONTROL_MASS_SCALER = 'aircraft:wing:surface_ctrl_mass_scaler'
+        SURFACE_CONTROL_MASS_SCALER = 'aircraft:wing:surface_control_mass_scaler'
 
         SWEEP = 'aircraft:wing:sweep'
         TAPER_RATIO = 'aircraft:wing:taper_ratio'
@@ -682,6 +690,7 @@ class Mission:
     class Constraints:
         # these can be residuals (for equality constraints),
         # upper bounds, or lower bounds
+        EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
@@ -689,14 +698,11 @@ class Mission:
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
 
     class Design:
-        # These values MAY change in design mission, but in off-design
-        # they cannot change. In a design mission these are either user inputs
-        # or calculated outputs, in off-design they are strictly inputs
-        # and do not change.
+        # These values may change in a design mission, but not during off-design. In a design
+        # mission these are either user inputs or calculated outputs, in off-design they are
+        # strictly inputs and therefore do not change.
         CRUISE_ALTITUDE = 'mission:design:cruise_altitude'
         CRUISE_RANGE = 'mission:design:cruise_range'
-        FUEL_MASS = 'mission:design:fuel_mass'
-        FUEL_MASS_REQUIRED = 'mission:design:fuel_mass_required'
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
         LIFT_COEFFICIENT_MAX_FLAPS_UP = 'mission:design:lift_coefficient_max_flaps_up'
@@ -743,19 +749,24 @@ class Mission:
         RANGE = 'mission:objectives:range'
 
     class Summary:
-        # These values are inputs and outputs to/from mission analysis
-        # for the given mission (whether it is design or off-design).
-        # In on-design these may be constrained to design values, but
-        # in off-design they independently represent the final analysis
-        # based on the user-selection.
+        # These values are inputs and outputs to/from mission analysis for the given mission
+        # (whether it is design or off-design). In design these may be constrained to design values,
+        # but in off-design they independently represent the final analysis based on the
+        # user selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
+        FINAL_MASS = 'mission:summary:final_mass'
+        FINAL_TIME = 'mission:summary:final_time'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
+        FUEL_MASS = 'mission:summary:fuel_mass'
+        FUEL_MASS_REQUIRED = 'mission:design:fuel_mass_required'
         GROSS_MASS = 'mission:summary:gross_mass'
+        OPERATING_MASS = 'mission:summary:operating_mass'
         RANGE = 'mission:summary:range'
         RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
         TOTAL_FUEL_MASS = 'mission:summary:total_fuel_mass'
+        ZERO_FUEL_MASS = 'mission:summary:zero_fuel_mass'
 
     class Takeoff:
         # These are values which have to do with takeoff
@@ -800,5 +811,6 @@ class Settings:
     AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
+    PAYLOAD_RANGE = 'settings:payload_range'
     PROBLEM_TYPE = 'settings:problem_type'
     VERBOSITY = 'settings:verbosity'

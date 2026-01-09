@@ -87,9 +87,9 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.SYSTEMS_EQUIP_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Aircraft.Design.OPERATING_MASS,
-                Aircraft.Design.ZERO_FUEL_MASS,
-                Mission.Design.FUEL_MASS,
+                Mission.Summary.OPERATING_MASS,
+                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.Summary.FUEL_MASS,
             ],
             version=Version.TRANSPORT,
             atol=1e-10,
@@ -171,9 +171,9 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.SYSTEMS_EQUIP_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Aircraft.Design.OPERATING_MASS,
-                Aircraft.Design.ZERO_FUEL_MASS,
-                Mission.Design.FUEL_MASS,
+                Mission.Summary.OPERATING_MASS,
+                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.Summary.FUEL_MASS,
             ],
             version=Version.ALTERNATE,
             atol=1e-10,
@@ -193,7 +193,7 @@ class StructureMassTest(unittest.TestCase):
         options = AviaryValues()
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, 4)
-        options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.deck')
+        options.set_val(Aircraft.Engine.DATA_FILE, 'models/engines/turbofan_28k.csv')
         # suppress some warning messages about required option for EngineDecks
         options.set_val(Settings.VERBOSITY, 0)
         engineModel1 = EngineDeck(options=options)

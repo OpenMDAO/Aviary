@@ -1,8 +1,8 @@
 import dymos as dm
 import numpy as np
 
-from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
-from aviary.mission.flops_based.phases.phase_utils import (
+from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
+from aviary.mission.height_energy.phases.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
@@ -10,7 +10,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessControl,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
@@ -47,7 +47,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mass_ref': 1e4,
-            'mass_defect_ref': 1e6,
             'mass_bounds': (0.0, None),
         }
         self.add_state_options('mass', units='kg', defaults=defaults)
@@ -55,9 +54,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'distance_ref': 1e6,
-            'distance_defect_ref': 1e8,
             'distance_bounds': (0.0, None),
-            'mass_bounds': (0.0, None),
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 
@@ -74,10 +71,17 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='throttle_enforcement',
             default='path_constraint',
-            values=['path_constraint', 'boundary_constraint', 'bounded', None],
-            desc='Flag to enforce engine throttle constraints on the path or at the segment '
-            'boundaries or using solver bounds.',
+            values=['path_constraint', 'boundary_constraint', 'bounded', 'control', None],
+            desc='Flag to enforce engine throttle bounds as path constraints, boundary '
+            'constraints, solver bounds. You can also select "control" to turn throttle into a '
+            'control, which allows you to assign a value or let the optimizer choose it.',
         )
+
+        # Throttle is a solver variable, unless you set throttle_enforcement to control.
+        defaults = {
+            'throttle_bounds': (0.0, 1.0),
+        }
+        self.add_control_options('throttle', units='unitless', defaults=defaults)
 
         self.declare(
             name='throttle_allocation',
@@ -155,14 +159,15 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class FlightPhaseBase(PhaseBuilderBase):
+class FlightPhaseBase(PhaseBuilder):
     """
     The base class for flight phase.
 
-    This houses parts of the build_phase process that are commmon to EnergyPhase and TwoDOFPhase.
+    This houses parts of the build_phase process that are common to EnergyPhase and
+    SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('external_subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -219,7 +224,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        phase = add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         ################
         # Add Controls #
@@ -243,17 +248,6 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate_targets = ['dh_dr']
             rate2_targets = ['d2h_dr2']
 
-        # TODO: How do we handle hard-coding all of this stuff? Should be in phase-info.
-        # ground_roll uses some hardcoded settings that overwrite user-provided ones
-        # if ground_roll:
-        #    control_dict['control_type'] = 'polynomial'
-        #    control_dict['order'] = 1
-        #    control_dict['val'] = 0
-        #    control_dict['opt'] = False
-        #    control_dict['fix_initial'] = fix_initial
-        #    control_dict['rate_targets'] = ['dh_dr']
-        #    control_dict['rate2_targets'] = ['d2h_dr2']
-
         self.add_control(
             'altitude',
             Dynamic.Mission.ALTITUDE,
@@ -261,6 +255,14 @@ class FlightPhaseBase(PhaseBuilderBase):
             rate2_targets=rate2_targets,
             add_constraints=Dynamic.Mission.ALTITUDE not in constraints,
         )
+
+        if throttle_enforcement == 'control':
+            self.add_control(
+                'throttle',
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                rate_targets=None,
+                add_constraints=True,
+            )
 
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
@@ -331,11 +333,12 @@ class FlightPhaseBase(PhaseBuilderBase):
             units='ft/s',
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THROTTLE,
-            output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
-            units='unitless',
-        )
+        if throttle_enforcement != 'control':
+            phase.add_timeseries_output(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
+                units='unitless',
+            )
 
         phase.add_timeseries_output(
             Dynamic.Mission.VELOCITY,
@@ -356,10 +359,10 @@ class FlightPhaseBase(PhaseBuilderBase):
         ###################
 
         if no_descent and Dynamic.Mission.ALTITUDE_RATE not in constraints:
-            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0)
+            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, lower=0.0, ref=20.0)
 
         if no_climb and Dynamic.Mission.ALTITUDE_RATE not in constraints:
-            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0)
+            phase.add_path_constraint(Dynamic.Mission.ALTITUDE_RATE, upper=0.0, ref=20.0)
 
         required_available_climb_rate, units = user_options['required_available_climb_rate']
 
@@ -421,9 +424,9 @@ class FlightPhaseBase(PhaseBuilderBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
+        # TODO: support subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],
@@ -440,6 +443,10 @@ FlightPhaseBase._add_initial_guess_meta_data(
 
 FlightPhaseBase._add_initial_guess_meta_data(
     InitialGuessControl('mach'), desc='initial guess for speed'
+)
+
+FlightPhaseBase._add_initial_guess_meta_data(
+    InitialGuessControl('throttle'), desc='initial guess for throttle'
 )
 
 FlightPhaseBase._add_initial_guess_meta_data(

@@ -1,18 +1,19 @@
-from aviary.mission.flops_based.phases.groundroll_phase import (
+from aviary.mission.height_energy.phases.groundroll_phase import (
     GroundrollPhase as GroundrollPhaseVelocityIntegrated,
 )
-from aviary.mission.gasp_based.phases.twodof_phase import TwoDOFPhase
+from aviary.mission.solved_two_dof.phases.solved_twodof_phase import SolvedTwoDOFPhase
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Dynamic, Mission
+from aviary.mission.utils import process_guess_var
 
 
 class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """The Solved 2DOF builder is used for detailed take-off and landing."""
 
-    def initial_guesses(self, prob):
+    def initial_guesses(self, aviary_group):
         """
         Set any initial guesses for variables in the aviary problem.
 
@@ -20,17 +21,16 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         """
-        if prob.engine_builders is None:
-            prob.engine_builders = [build_engine_deck(prob.aviary_inputs)]
-
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
-        prob.target_range = prob.aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+        aviary_group.target_range = aviary_group.aviary_inputs.get_val(
+            Mission.Design.RANGE, units='NM'
+        )
 
-    def get_default_phase_info(self, prob):
+    def get_default_phase_info(self, aviary_group):
         """
         Return a default phase_info for this type or problem.
 
@@ -41,8 +41,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -51,14 +51,14 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         raise RuntimeError('Solved 2DOF requires that a phase_info is specified.')
 
-    def get_code_origin(self, prob):
+    def get_code_origin(self, aviary_group):
         """
         Return the legacy of this problem configurator.
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -67,18 +67,18 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         return LegacyCode.FLOPS
 
-    def add_takeoff_systems(self, prob):
+    def add_takeoff_systems(self, aviary_group):
         """
-        Adds takeoff systems to the model in prob.
+        Adds takeoff systems to the model in aviary_group.
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         """
         pass
 
-    def get_phase_builder(self, prob, phase_name, phase_options):
+    def get_phase_builder(self, aviary_group, phase_name, phase_options):
         """
         Return a phase_builder for the requested phase.
 
@@ -86,8 +86,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_options : dict
@@ -95,20 +95,19 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
-        if (
-            phase_options['user_options']['ground_roll']
-            and phase_options['user_options']['fix_initial']
-        ):
+        if phase_options['user_options'].get('ground_roll') and not phase_options[
+            'user_options'
+        ].get('rotation'):
             phase_builder = GroundrollPhaseVelocityIntegrated
         else:
-            phase_builder = TwoDOFPhase
+            phase_builder = SolvedTwoDOFPhase
 
         return phase_builder
 
-    def set_phase_options(self, prob, phase_name, phase_idx, phase, user_options):
+    def set_phase_options(self, aviary_group, phase_name, phase_idx, phase, user_options, comm):
         """
         Set any necessary problem-related options on the phase.
 
@@ -116,74 +115,61 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         phase_name : str
             Name of the requested phase.
         phase_idx : int
-            Phase position in prob.phases. Can be used to identify first phase.
+            Phase position in aviary_group.phases. Can be used to identify first phase.
         phase : Phase
             Instantiated phase object.
         user_options : dict
             Subdictionary "user_options" from the phase_info.
+        comm : MPI.Comm or <FakeComm>
+            MPI Communicator from OpenMDAO problem.
         """
-        try:
-            fix_initial = user_options['fix_initial']
-        except KeyError:
-            fix_initial = False
-
-        try:
-            fix_duration = user_options['fix_duration']
-        except KeyError:
-            fix_duration = False
-
-        input_initial = False
         time_units = phase.time_options['units']
-
-        # Make a good guess for a reasonable initial time scaler.
-        try:
-            initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
-        except KeyError:
-            initial_bounds = (None, None)
-
-        if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
-            # Upper bound is good for a ref.
-            initial_ref = initial_bounds[1]
-        else:
-            initial_ref = 600.0
-
+        initial = wrapped_convert_units(user_options['time_initial'], time_units)
+        duration = wrapped_convert_units(user_options['time_duration'], time_units)
+        initial_bounds = wrapped_convert_units(user_options['time_initial_bounds'], time_units)
         duration_bounds = wrapped_convert_units(user_options['time_duration_bounds'], time_units)
+        initial_ref = wrapped_convert_units(user_options['time_initial_ref'], time_units)
+        duration_ref = wrapped_convert_units(user_options['time_duration_ref'], time_units)
 
-        duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
+        fix_duration = duration is not None
+        fix_initial = initial is not None
 
-        if phase_idx > 0:
-            input_initial = True
+        if initial_ref is None:
+            # Make a good guess for a reasonable initial time scaler.
+            if initial_bounds[0] is not None and initial_bounds[1] != 0.0:
+                # Upper bound is good for a ref.
+                initial_ref = initial_bounds[1]
+            else:
+                initial_ref = 600.0
 
-        if fix_initial or input_initial:
-            if prob.comm.size == 1:
-                # Redundant on a fixed input; raises a warning if specified.
-                initial_ref = None
+        if duration_ref is None:
+            duration_ref = (duration_bounds[0] + duration_bounds[1]) / 2.0
 
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=duration_bounds,
-                duration_ref=duration_ref,
-                initial_ref=initial_ref,
-            )
-        else:  # TODO: figure out how to handle this now that fix_initial is dict
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=duration_bounds,
-                duration_ref=duration_ref,
-                initial_bounds=initial_bounds,
-                initial_ref=initial_ref,
-            )
+        extra_options = {}
+        if not fix_initial:
+            extra_options['initial_bounds'] = initial_bounds
 
-    def link_phases(self, prob, phases, connect_directly=True):
+        if comm.size == 1 or fix_initial:
+            # Redundant on a fixed input; raises a warning if specified.
+            extra_options['initial_ref'] = None
+        else:
+            extra_options['initial_ref'] = initial_ref
+
+        phase.set_time_options(
+            fix_initial=fix_initial,
+            fix_duration=fix_duration,
+            units=time_units,
+            duration_bounds=duration_bounds,
+            duration_ref=duration_ref,
+            **extra_options,
+        )
+
+    def link_phases(self, aviary_group, phases, connect_directly=True):
         """
         Apply any additional phase linking.
 
@@ -194,8 +180,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         phases : Phase
             Phases to be linked.
         connect_directly : bool
@@ -203,53 +189,61 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
             handled by constraints if `phases` is a parallel group under MPI.
         """
         # connect regular_phases with each other if you are optimizing alt or mach
-        prob._link_phases_helper_with_options(
-            prob.regular_phases,
+        self.link_phases_helper_with_options(
+            aviary_group,
+            aviary_group.regular_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        prob._link_phases_helper_with_options(
-            prob.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+        self.link_phases_helper_with_options(
+            aviary_group,
+            aviary_group.regular_phases,
+            'mach_optimize',
+            Dynamic.Atmosphere.MACH,
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
-        prob._link_phases_helper_with_options(
-            prob.reserve_phases,
+        self.link_phases_helper_with_options(
+            aviary_group,
+            aviary_group.reserve_phases,
             'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
-        prob._link_phases_helper_with_options(
-            prob.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+        self.link_phases_helper_with_options(
+            aviary_group,
+            aviary_group.reserve_phases,
+            'mach_optimize',
+            Dynamic.Atmosphere.MACH,
         )
 
-        prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
-        prob.traj.link_phases(
+        aviary_group.traj.link_phases(phases, [Dynamic.Vehicle.MASS], connected=True)
+        aviary_group.traj.link_phases(
             phases, [Dynamic.Mission.DISTANCE], units='ft', ref=1.0e3, connected=False
         )
-        prob.traj.link_phases(phases, ['time'], connected=False)
+        aviary_group.traj.link_phases(phases, ['time'], connected=False)
 
         if len(phases) > 2:
-            prob.traj.link_phases(
+            aviary_group.traj.link_phases(
                 phases[1:],
                 [Dynamic.Vehicle.ANGLE_OF_ATTACK],
                 units='rad',
                 connected=False,
             )
 
-    def check_trajectory(self, prob):
+    def check_trajectory(self, aviary_group):
         """
         Checks the phase_info user options for any inconsistency.
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         """
         pass
 
-    def add_post_mission_systems(self, prob):
+    def add_post_mission_systems(self, model):
         """
         Add any post mission systems.
 
@@ -259,24 +253,13 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
-        """
-        pass
-
-    def add_objective(self, prob):
-        """
-        Add any additional components related to objectives.
-
-        Parameters
-        ----------
-        prob : AviaryProblem
-            Problem that owns this builder.
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         """
         pass
 
     def set_phase_initial_guesses(
-        self, prob, phase_name, phase, guesses, target_prob, parent_prefix
+        self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
     ):
         """
         Adds the initial guesses for each variable of a given phase to the problem.
@@ -289,6 +272,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         Parameters
         ----------
+        aviary_group : AviaryGroup
+            Aviary model that owns this configurator.
         phase_name : str
             The name of the phase for which the guesses are being added.
         phase : Phase
@@ -305,13 +290,13 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # for the simple mission method, use the provided initial and final mach
         # and altitude values from phase_info
         initial_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['altitude_initial'], 'ft'
+            aviary_group.mission_info[phase_name]['user_options']['altitude_initial'], 'ft'
         )
         final_altitude = wrapped_convert_units(
-            prob.phase_info[phase_name]['user_options']['altitude_final'], 'ft'
+            aviary_group.mission_info[phase_name]['user_options']['altitude_final'], 'ft'
         )
-        initial_mach = prob.phase_info[phase_name]['user_options']['mach_initial']
-        final_mach = prob.phase_info[phase_name]['user_options']['mach_final']
+        initial_mach = aviary_group.mission_info[phase_name]['user_options']['mach_initial']
+        final_mach = aviary_group.mission_info[phase_name]['user_options']['mach_final']
 
         guesses['mach'] = ([initial_mach[0], final_mach[0]], 'unitless')
         guesses['altitude'] = ([initial_altitude, final_altitude], 'ft')
@@ -327,7 +312,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 try:
                     target_prob.set_val(
                         parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                        prob._process_guess_var(val, guess_key, phase),
+                        process_guess_var(val, guess_key, phase),
                         units=units,
                     )
 
@@ -335,7 +320,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     try:
                         target_prob.set_val(
                             parent_prefix + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                            prob._process_guess_var(val, guess_key, phase),
+                            process_guess_var(val, guess_key, phase),
                             units=units,
                         )
 
@@ -343,6 +328,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         target_prob.set_val(
                             parent_prefix + f'traj.{phase_name}.bspline_controls:',
                             {guess_key},
-                            prob._process_guess_var(val, guess_key, phase),
+                            process_guess_var(val, guess_key, phase),
                             units=units,
                         )

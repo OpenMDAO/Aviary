@@ -1,26 +1,24 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
-from importlib.machinery import SourceFileLoader
+from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
+import sys
 
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
-from aviary.variable_info.enums import AnalysisScheme, Verbosity
+from aviary.variable_info.enums import Verbosity
 
 
 def run_aviary(
     aircraft_data,
     phase_info,
     optimizer=None,
-    analysis_scheme=AnalysisScheme.COLLOCATION,
     objective_type=None,
-    record_filename='problem_history.db',
+    subsystems=[],
     restart_filename=None,
     max_iter=50,
     run_driver=True,
     make_plots=True,
     phase_info_parameterization=None,
-    optimization_history_filename=None,
     verbosity=None,
 ):
     """
@@ -40,12 +38,10 @@ def run_aviary(
         Information about the phases of the mission.
     optimizer : str
         The optimizer to use.
-    analysis_scheme : AnalysisScheme, optional
-        The analysis scheme to use, defaults to AnalysisScheme.COLLOCATION.
     objective_type : str, optional
         Type of the optimization objective.
-    record_filename : str, optional
-        Filename for recording the solution, defaults to 'dymos_solution.db'.
+    subsystems : list of SubsystemBuilders, optional
+        List of all non-default subsystems to be added to the problem
     restart_filename : str, optional
         Filename to use for restarting the optimization, if applicable.
     max_iter : int, optional
@@ -55,11 +51,8 @@ def run_aviary(
     make_plots : bool, optional
         If True, generate plots during the optimization, defaults to True.
     phase_info_parameterization : function, optional
-        Additional information to parameterize the phase_info object based on
-        desired cruise altitude and Mach.
-    optimization_history_filename : str or Path
-        The name of the database file where the driver iterations are to be recorded. The
-        default is None.
+        Additional information to parameterize the phase_info object based on desired cruise
+        altitude and Mach.
     verbosity : Verbosity or int, optional
         Sets level of information outputted to the terminal during model execution.
         If provided, overrides verbosity specified in aircraft_data.
@@ -81,16 +74,20 @@ def run_aviary(
     else:
         name = None
 
+    from aviary.interface.methods_for_level2 import AviaryProblem
+
     # Build problem
-    prob = AviaryProblem(analysis_scheme, name=name, verbosity=verbosity)
+    prob = AviaryProblem(name=name, verbosity=verbosity)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
     prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
 
-    # Preprocess inputs
+    prob.load_external_subsystems(subsystems, verbosity=verbosity)
+
     prob.check_and_preprocess_inputs(verbosity=verbosity)
 
+    # Add Systems
     prob.add_pre_mission_systems(verbosity=verbosity)
 
     prob.add_phases(phase_info_parameterization=phase_info_parameterization, verbosity=verbosity)
@@ -108,16 +105,12 @@ def run_aviary(
     # Detail which variables the optimizer can control
     prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
-    prob.setup()
-
-    prob.set_initial_guesses(verbosity=verbosity)
+    prob.setup(verbosity=verbosity)
 
     prob.run_aviary_problem(
-        record_filename,
         restart_filename=restart_filename,
         run_driver=run_driver,
         make_plots=make_plots,
-        optimization_history_filename=optimization_history_filename,
         verbosity=verbosity,
     )
 
@@ -125,32 +118,21 @@ def run_aviary(
 
 
 def run_level_1(
-    input_deck,
-    optimizer='IPOPT',
-    phase_info=None,
-    max_iter=50,
-    verbosity=Verbosity.BRIEF,
-    analysis_scheme=AnalysisScheme.COLLOCATION,
+    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
     usage: aviary run_mission [input_deck] [opt_args].
     """
-    kwargs = {
-        'max_iter': max_iter,
-    }
-
-    if analysis_scheme is AnalysisScheme.SHOOTING:
-        kwargs['analysis_scheme'] = AnalysisScheme.SHOOTING
-        kwargs['run_driver'] = False
-    #     kwargs['optimizer'] = 'IPOPT'
-    # else:
-    kwargs['optimizer'] = optimizer
-    kwargs['verbosity'] = Verbosity(verbosity)
+    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity)}
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
-        phase_info_file = SourceFileLoader('phase_info_file', str(phase_info_path)).load_module()
+        spec = spec_from_file_location('phase_info_file', str(phase_info_path))
+        phase_info_file = module_from_spec(spec)
+        sys.modules['phase_info_file'] = phase_info_file
+        spec.loader.exec_module(phase_info_file)
+
         phase_info = getattr(phase_info_file, 'phase_info')
         kwargs['phase_info_parameterization'] = getattr(
             phase_info_file, 'phase_info_parameterization', None
@@ -179,11 +161,6 @@ def _setup_level1_parser(parser):
     parser.add_argument('--phase_info', type=str, default=None, help='Path to phase info file')
     parser.add_argument('--max_iter', type=int, default=50, help='maximum number of iterations')
     parser.add_argument(
-        '--shooting',
-        action='store_true',
-        help='Use shooting instead of collocation',
-    )
-    parser.add_argument(
         '--verbosity',
         type=int,
         default=1,
@@ -193,11 +170,6 @@ def _setup_level1_parser(parser):
 
 
 def _exec_level1(args, user_args):
-    if args.shooting:
-        analysis_scheme = AnalysisScheme.SHOOTING
-    else:
-        analysis_scheme = AnalysisScheme.COLLOCATION
-
     if args.optimizer == 'None':
         args.optimizer = None
 
@@ -211,5 +183,4 @@ def _exec_level1(args, user_args):
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
-        analysis_scheme=analysis_scheme,
     )

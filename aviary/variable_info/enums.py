@@ -6,6 +6,7 @@ class AircraftTypes(Enum):
 
     TRANSPORT = 'transport'
     BLENDED_WING_BODY = 'BWB'
+    # GENERAL_AVIATION = 'GA'  # incomplete in FLOPS, unavailable in GASP
 
 
 class AlphaModes(Enum):
@@ -45,22 +46,10 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
-class AnalysisScheme(Enum):
-    """
-    AnalysisScheme is used to select from Collocation and shooting.
-
-    COLLOCATION uses the collocation method to optimize all points simultaneously
-    and can be run in parallel. However, it requires reasonable initial guesses
-    for the trajectory and is fairly sensitive to those initial guesses.
-
-    SHOOTING is a forward in time integration method that simulates the trajectory.
-    This does not require initial guesses and will always produce physically valid
-    trajectories, even during optimizer failures. The shooting method cannot be run
-    in parallel.
-    """
-
-    COLLOCATION = auto()
-    SHOOTING = auto()
+class CodeOrigin(Enum):
+    FLOPS = 'FLOPS'
+    GASP = 'GASP'
+    GASP_ALT = 'GASP_ALT'
 
 
 class EquationsOfMotion(Enum):
@@ -70,6 +59,15 @@ class EquationsOfMotion(Enum):
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
     CUSTOM = 'custom'
+
+
+class EngineDeckType(Enum):
+    FLOPS = 'FLOPS'
+    GASP = 'GASP'
+    GASP_TS = 'GASP_TS'
+
+    def __str__(self):
+        return self.value
 
 
 @unique
