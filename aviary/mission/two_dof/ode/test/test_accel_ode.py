@@ -54,8 +54,8 @@ class AccelerationODETestCase(unittest.TestCase):
         testvals = {
             Dynamic.Vehicle.LIFT: [174974, 174878],
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
-                -13264.82336817,
-                -13567.23449581,
+                -13264.88347472,
+                -13567.32077887,
             ],  # lbm/h
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)

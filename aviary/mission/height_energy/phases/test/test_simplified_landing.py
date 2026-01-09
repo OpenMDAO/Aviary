@@ -109,7 +109,7 @@ class LandingGroupTest(unittest.TestCase):
         tol = 1e-5
 
         assert_near_equal(
-            self.prob[Mission.Landing.GROUND_DISTANCE], 6407.19354429, tol
+            self.prob[Mission.Landing.GROUND_DISTANCE], 6407.65299289, tol
         )  # not actual value
         # not actual value
         assert_near_equal(self.prob[Mission.Landing.INITIAL_VELOCITY], 136.22914933, tol)

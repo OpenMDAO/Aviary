@@ -55,16 +55,16 @@ class CruiseODETestCase(unittest.TestCase):
 
         tol = tol = 1e-6
         assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 923.16791306]), tol)
-        assert_near_equal(self.prob['time'], np.array([0, 8277.67602647]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 923.39168758]), tol)
+        assert_near_equal(self.prob['time'], np.array([0, 8280.30660691]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.8817684, 4.899673]),
+            np.array([3.88465429, 4.90288541]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.17989089, -16.16198629]),
+            np.array([-17.17541759, -16.15718646]),
             tol,
         )
 
@@ -119,21 +119,21 @@ class ElectricCruiseODETestCase(unittest.TestCase):
 
         tol = tol = 1e-6
         assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.31948625]), tol)
-        assert_near_equal(self.prob['time'], np.array([0, 594.66020611]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.37436515]), tol)
+        assert_near_equal(self.prob['time'], np.array([0, 595.19714299]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.88939674, 4.90776872]),
+            np.array([3.89228205, 4.91098053]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.17226255, -16.15389057]),
+            np.array([-17.16778983, -16.14909135]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL],
-            np.array([4.46078513, 4.15465068]),
+            np.array([4.45946124, 4.15324496]),
             tol,
         )
 

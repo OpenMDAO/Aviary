@@ -38,6 +38,7 @@ parts:
       sections:
       - file: user_guide/aerodynamics
       - file: user_guide/external_aero
+      - file: user_guide/atmosphere
       - file: user_guide/propulsion
         sections:
           - file: user_guide/creating_a_turboprop_engine.ipynb

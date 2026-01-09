@@ -54,7 +54,7 @@ class RotationODETestCase(unittest.TestCase):
         tol = 1e-6
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([13.68842392, 13.68842392]),
+            np.array([13.68875852, 13.68875852]),
             tol,
         )
         assert_near_equal(
@@ -64,7 +64,9 @@ class RotationODETestCase(unittest.TestCase):
         assert_near_equal(
             self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([168.781, 168.781]), tol
         )
-        assert_near_equal(self.prob['normal_force'], np.array([66932.7, 66932.7]), tol)
+        assert_near_equal(
+            self.prob['normal_force'], np.array([66936.59676831, 66936.59676831]), tol
+        )
         assert_near_equal(self.prob['fuselage_pitch'], np.array([0.0, 0.0]), tol)
 
         partial_data = self.prob.check_partials(
