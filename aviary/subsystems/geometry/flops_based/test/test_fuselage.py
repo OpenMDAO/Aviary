@@ -63,7 +63,6 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuselage.LENGTH, val=125.0, units='ft')
         prob.run_model()
 
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
