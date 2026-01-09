@@ -24,9 +24,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        if aviary_group.engine_builders is None:
-            aviary_group.engine_builders = [build_engine_deck(aviary_group.aviary_inputs)]
-
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
         aviary_group.target_range = aviary_group.aviary_inputs.get_val(
