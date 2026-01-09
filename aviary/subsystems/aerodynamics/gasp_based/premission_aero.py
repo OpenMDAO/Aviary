@@ -7,6 +7,9 @@ the dynamic aero.
 import openmdao.api as om
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
+    BasicFlapsGeometry,
+)
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
     WingFuselageInterferencePremission,
@@ -65,6 +68,15 @@ class PreMissionAero(om.Group):
                 ('kinematic_viscosity', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
                 ('rho', Dynamic.Atmosphere.DENSITY),
             ],
+        )
+
+        # Flaps geometry
+        # TODO: maybe this should move to geometry.
+        self.add_subsystem(
+            'BasicFlapsGeometry',
+            BasicFlapsGeometry(),
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(

@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
-    BasicFlapsCalculations,
+    FlapsDeflectionRatios,
 )
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import CLmaxCalculation
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments import (
@@ -36,8 +36,8 @@ class FlapsGroup(om.Group):
 
     def setup(self):
         self.add_subsystem(
-            'BasicFlapsCalculations',
-            BasicFlapsCalculations(),
+            'FlapsDeflectionRatios',
+            FlapsDeflectionRatios(),
             promotes_inputs=[
                 'slat_defl',
                 'flap_defl',
