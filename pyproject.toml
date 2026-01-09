@@ -13,7 +13,7 @@ dependencies = [
     "hvplot",
     "importlib_resources",
     "matplotlib",
-    "openmdao>=3.37.0",
+    "openmdao>=3.42.0",
     "pandas",
     "panel>=1.0.0",
     "parameterized",
