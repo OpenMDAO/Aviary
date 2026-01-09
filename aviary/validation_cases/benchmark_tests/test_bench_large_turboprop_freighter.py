@@ -42,8 +42,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.load_inputs(
             options,
             phase_info,
-            engine_builders=[turboprop],
         )
+        prob.load_external_subsystems([turboprop])
         # if mission_method == 'energy':
         #     # energy method needs flight idle to converge in descent?
         #     prob.aviary_inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
