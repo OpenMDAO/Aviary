@@ -2168,6 +2168,7 @@ add_meta_data(
     multivalue=True,
 )
 
+# TODO if altitude is more robust, then we can modify how EngineDeck sorts things
 add_meta_data(
     Aircraft.Engine.INTERPOLATION_SORT,
     meta_data=_MetaData,
