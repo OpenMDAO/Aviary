@@ -36,20 +36,20 @@ jobs:
           # oldest supported versions of openmdao/dymos
           # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
           - NAME: oldest
-            PY: '3.9'
-            NUMPY: '1.20'
-            SCIPY: '1.6'
-            PYOPTSPARSE: 'v2.9.1'
+            PY: '3.11'
+            NUMPY: '2.2'
+            SCIPY: '1.15'
+            PYOPTSPARSE: 'v2.13.1'
             SNOPT: '7.7'
             OPENMDAO: '3.37.0'
             DYMOS: '1.13.1'
 
           # latest versions of openmdao/dymos
           - NAME: latest
-            PY: '3.12'
-            NUMPY: 1
-            SCIPY: 1
-            PYOPTSPARSE: 'v2.12.0'
+            PY: '3.13'
+            NUMPY: 2.2
+            SCIPY: 1.16
+            PYOPTSPARSE: 'v2.14.4'
             SNOPT: '7.7'
             OPENMDAO: 'latest'
             DYMOS: 'latest'
