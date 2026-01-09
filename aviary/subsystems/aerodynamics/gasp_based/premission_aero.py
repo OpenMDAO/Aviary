@@ -135,3 +135,13 @@ class PreMissionAero(om.Group):
         self.set_input_defaults('flap_defl_up', 0)
         self.set_input_defaults('slat_defl_up', 0)
         self.set_input_defaults(Aircraft.Wing.SWEEP, units='deg')
+
+    def configure(self):
+        # set default trailing edge deflection angle per GASP
+        # TODO: This hidden default behavior needs to be moved to the pre-processor.
+        flap = self.flaps_up
+        self.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            flap.optimum_flap_defls[flap.options[Aircraft.Wing.FLAP_TYPE]],
+            units='deg',
+        )

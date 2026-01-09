@@ -138,6 +138,7 @@ class FlapsGroup(om.Group):
         self.nonlinear_solver.options['rtol'] = 1e-8
 
         # set default trailing edge deflection angle per GASP
+        # TODO: This hidden default behavior needs to be moved to the pre-processor.
         self.set_input_defaults(
             Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
             self.optimum_flap_defls[self.options[Aircraft.Wing.FLAP_TYPE]],
