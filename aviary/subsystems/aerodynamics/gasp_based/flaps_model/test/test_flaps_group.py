@@ -4,6 +4,9 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.flaps_model import FlapsGroup
+from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
+    BasicFlapsGeometry
+)
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
@@ -21,9 +24,16 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.TRIPLE_SLOTTED, units='unitless')
 
-        self.prob.model = FlapsGroup()
+        self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
+        fg = self.prob.model.add_subsystem('fg', FlapsGroup(), promotes=['*'])
 
         setup_model_options(self.prob, options)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            fg.optimum_flap_defls[FlapType.TRIPLE_SLOTTED],
+            units='deg',
+        )
 
         self.prob.setup()
 
@@ -122,9 +132,16 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SPLIT, units='unitless')
 
-        self.prob.model = FlapsGroup()
+        self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
+        fg = self.prob.model.add_subsystem('fg', FlapsGroup(), promotes=['*'])
 
         setup_model_options(self.prob, options)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            fg.optimum_flap_defls[FlapType.SPLIT],
+            units='deg',
+        )
 
         self.prob.setup()
 
@@ -223,9 +240,16 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.SINGLE_SLOTTED, units='unitless')
 
-        self.prob.model = FlapsGroup()
+        self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
+        fg = self.prob.model.add_subsystem('fg', FlapsGroup(), promotes=['*'])
 
         setup_model_options(self.prob, options)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            fg.optimum_flap_defls[FlapType.SINGLE_SLOTTED],
+            units='deg',
+        )
 
         self.prob.setup()
 
@@ -325,9 +349,16 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.PLAIN, units='unitless')
 
-        self.prob.model = FlapsGroup()
+        self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
+        fg = self.prob.model.add_subsystem('fg', FlapsGroup(), promotes=['*'])
 
         setup_model_options(self.prob, options)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            fg.optimum_flap_defls[FlapType.PLAIN],
+            units='deg',
+        )
 
         self.prob.setup()
 
@@ -426,9 +457,16 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.FLAP_TYPE, val=FlapType.FOWLER, units='unitless')
 
-        self.prob.model = FlapsGroup()
+        self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
+        fg = self.prob.model.add_subsystem('fg', FlapsGroup(), promotes=['*'])
 
         setup_model_options(self.prob, options)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            fg.optimum_flap_defls[FlapType.FOWLER],
+            units='deg',
+        )
 
         self.prob.setup()
 
@@ -529,9 +567,16 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
             Aircraft.Wing.FLAP_TYPE, val=FlapType.DOUBLE_SLOTTED_FOWLER, units='unitless'
         )
 
-        self.prob.model = FlapsGroup()
+        self.prob.model.add_subsystem('geo', BasicFlapsGeometry(), promotes=['*'])
+        fg = self.prob.model.add_subsystem('fg', FlapsGroup(), promotes=['*'])
 
         setup_model_options(self.prob, options)
+
+        self.prob.model.set_input_defaults(
+            Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
+            fg.optimum_flap_defls[FlapType.DOUBLE_SLOTTED_FOWLER],
+            units='deg',
+        )
 
         self.prob.setup()
 
