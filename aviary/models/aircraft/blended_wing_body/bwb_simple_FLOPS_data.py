@@ -211,7 +211,6 @@ inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3
 inputs.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50)  # NSTD
 inputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0)  # FRWI2
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR
-# inputs.set_val(Aircraft.Wing.SPAN, 238.08, 'ft')  # SPAN = WF+OSSPAN*2
 inputs.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75, 'ft')  # OSSPAN
 inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, False)  # MIKE
 inputs.set_val(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0)  # FSTRT

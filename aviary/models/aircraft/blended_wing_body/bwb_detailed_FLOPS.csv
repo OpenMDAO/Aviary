@@ -85,21 +85,15 @@ aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
-# aircraft:fuselage:cabin_area,0.0,ft**2
 aircraft:fuselage:height_to_width_ratio,0.11,unitless
-# aircraft:fuselage:length,0.0,ft
 aircraft:fuselage:mass_scaler,1.0,unitless
-# aircraft:fuselage:max_height,0.0,ft
-# aircraft:fuselage:max_width,0.0,ft
 aircraft:fuselage:military_cargo_floor,False,unitless
 aircraft:fuselage:num_fuselages,1,unitless
-# aircraft:fuselage:passenger_compartment_length,0.0,ft
 aircraft:fuselage:simple_layout,False,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,0.0,ft**2
 aircraft:horizontal_tail:aspect_ratio,0.1,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
-# aircraft:horizontal_tail:sweep,0.0,deg
 aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
@@ -127,8 +121,6 @@ aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,2.0,unitless
-# aircraft:wing:area,7621.66,1,ft**2
-# aircraft:wing:aspect_ratio,7.557,0,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan_dist,-1.0,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
 aircraft:wing:composite_fraction,1,unitless
