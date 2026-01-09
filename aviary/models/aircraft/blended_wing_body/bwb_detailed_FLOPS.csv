@@ -81,21 +81,15 @@ aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
-# aircraft:fuselage:cabin_area,0.0,ft**2
 aircraft:fuselage:height_to_width_ratio,0.11,unitless
-# aircraft:fuselage:length,0.0,ft
 aircraft:fuselage:mass_scaler,1.0,unitless
-# aircraft:fuselage:max_height,0.0,ft
-# aircraft:fuselage:max_width,0.0,ft
 aircraft:fuselage:military_cargo_floor,False,unitless
 aircraft:fuselage:num_fuselages,1,unitless
-# aircraft:fuselage:passenger_compartment_length,0.0,ft
 aircraft:fuselage:simple_layout,False,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,0.0,ft**2
 aircraft:horizontal_tail:aspect_ratio,0.1,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
-# aircraft:horizontal_tail:sweep,0.0,deg
 aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
