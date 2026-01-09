@@ -923,27 +923,24 @@ def update_flops_options(vehicle_data):
         # BWB always have detailed wing.
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
         if Aircraft.Wing.INPUT_STATION_DIST in input_values:
+            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+            input_station_dist = [0.0] + input_station_dist
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, input_station_dist)
+            n_dist = len(input_station_dist)
+            chord_per_semispan_dist = input_values.get_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST)
+            chord_per_semispan_dist = [-1.0] + chord_per_semispan_dist[0 : n_dist - 1]
+            input_values.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, chord_per_semispan_dist)
+            load_path_sweep_dist = input_values.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, 'deg')
+            load_path_sweep_dist = [0.0] + load_path_sweep_dist[0 : n_dist - 2]
+            input_values.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, load_path_sweep_dist, 'deg')
+            thickness_to_chord_dist = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST)
+            thickness_to_chord_dist = [-1.0] + thickness_to_chord_dist[0 : n_dist - 1]
+            input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
         else:
             # If detail wing is not provided, initialize it to [0, 0.5, 1]
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
             input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
-
-        if not input_values.get_val(Aircraft.BWB.DETAILED_WING_PROVIDED)[0]:
-            try:
-                # FLOPS uses AR and SW to compute wing span. Later, AR and SW are updated.
-                # So, they will be removed from inputs.
-                ar = input_values.get_val(Aircraft.Wing.ASPECT_RATIO, 'unitless')[0]
-                sw = input_values.get_val(Aircraft.Wing.AREA, 'ft**2')[0]
-                glov = input_values.get_val(Aircraft.Wing.GLOVE_AND_BAT, 'ft**2')[0]
-                span = (ar * (sw - glov)) ** 0.5
-                input_values.set_val(Aircraft.Wing.SPAN, [span], 'ft')
-            except KeyError:
-                pass
-            try:  # needed only if detailed wing is provided
-                input_values.delete(Aircraft.Wing.OUTBOARD_SEMISPAN)
-            except KeyError:
-                pass
 
     if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values:
         num_business_class = input_values.get_val(
@@ -1080,6 +1077,9 @@ def update_flops_options(vehicle_data):
         (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
         (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
+        (Aircraft.Fuselage.LENGTH, 'ft'),
+        (Aircraft.Fuselage.MAX_WIDTH, 'ft'),
+        (Aircraft.HorizontalTail.SWEEP, 'deg'),
     ]
     for var in rem_list:
         try:
