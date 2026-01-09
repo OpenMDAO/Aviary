@@ -161,13 +161,11 @@ def parse_inputs(
             tmp = [*line.split('#', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first # is a comment
 
-            data = ''.join(line.rstrip(',').split())  # remove all white space
-
-            if len(data) == 0:
-                continue  # skip line it contained only commas
-
             # remove any elements that are empty (caused by trailing commas or extra commas)
-            data_list = [dat for dat in data.split(',') if dat != '']
+            data_list = [dat.strip() for dat in line.split(',') if dat.strip() != '']
+
+            if len(data_list) == 0:
+                continue  # skip line it contained only commas
 
             # continue if there's no data in the line but there are commas
             # this might occur if someone edits a .csv file in Excel
