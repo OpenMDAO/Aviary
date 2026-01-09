@@ -34,7 +34,7 @@ jobs:
       matrix:
         include:
           # oldest supported versions of openmdao/dymos
-          # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos
+          # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
           - NAME: oldest
             PY: '3.11'
             NUMPY: '2.2'
