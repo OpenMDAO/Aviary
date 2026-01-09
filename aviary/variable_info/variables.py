@@ -190,7 +190,6 @@ class Aircraft:
         GEOPOTENTIAL_ALT = 'aircraft:engine:geopotential_alt'
         GLOBAL_HYBRID_THROTTLE = 'aircraft:engine:global_hybrid_throttle'
         GLOBAL_THROTTLE = 'aircraft:engine:global_throttle'
-        HAS_PROPELLERS = 'aircraft:engine:has_propellers'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
         INTERPOLATION_METHOD = 'aircraft:engine:interpolation_method'
         INTERPOLATION_SORT = 'aircraft:engine:interpolation_sort'

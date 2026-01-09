@@ -2126,20 +2126,6 @@ add_meta_data(
     multivalue=True,
 )
 
-# TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
-add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    default_value=False,
-    types=bool,
-    desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-    'propellers. In GASP this depended on NTYE',
-    multivalue=True,
-)
-
 add_meta_data(
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
     meta_data=_MetaData,
