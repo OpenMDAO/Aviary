@@ -491,6 +491,8 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
 
         tol = 1e-5
         # Geometry
+        # BWBComputeDetailedWingDist
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 238.08, tol)
         # BWBSimpleCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 96.25, tol)
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
@@ -558,50 +560,6 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-4
-        # Geometry
-        # BWBSimpleCabinLayout
-        assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 96.25, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
-        # BWBFuselagePrelim
-        assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
-        # BWBWingPrelim
-        assert_near_equal(prob[Aircraft.Wing.AREA], 16555.972297926455, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REF], 3.4488813, tol)
-        assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
-        # _BWBWing
-        assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
-        # _Tail
-        assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
-        # _FuselageRatios
-        assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.16739117852998228, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 3.4502226961922089, tol)
-        # Nacelles
-        assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
-        # Canard
-        assert_near_equal(prob[Aircraft.Canard.WETTED_AREA], 0.0, tol)
-        # BWBWingCharacteristicLength
-        assert_near_equal(prob[Aircraft.Wing.CHARACTERISTIC_LENGTH], 69.53953418, tol)
-        assert_near_equal(prob[Aircraft.Wing.FINENESS], 0.11, tol)
-        # OtherCharacteristicLengths
-        assert_near_equal(prob[Aircraft.Canard.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.Canard.FINENESS], 0.0, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.CHARACTERISTIC_LENGTH], 137.5, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.FINENESS], 3.4502227, tol)
-        assert_near_equal(prob[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.HorizontalTail.FINENESS], 0.11, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.CHARACTERISTIC_LENGTH], [15.68611614], tol)
-        assert_near_equal(prob[Aircraft.Nacelle.FINENESS], [1.38269353], tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.FINENESS], 0.11, tol)
-        # TotalWettedArea
-        assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 35311.53118076, tol)
         # Mass
         # CargoMass
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
@@ -906,6 +864,8 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
         tol = 1e-5
         # Geometry
+        # BWBComputeDetailedWingDist
+        assert_near_equal(prob[Aircraft.Wing.SPAN], 253.720756, tol)
         # BWBSimpleCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 78.61013558, tol)
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
@@ -973,50 +933,6 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         prob.run_model()
 
         tol = 1e-4
-        # Geometry
-        # BWBSimpleCabinLayout
-        assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 78.61013558, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 4697.33181006, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 12.35302131, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 7.0, tol)
-        # BWBFuselagePrelim
-        assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 46.2868886894979, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 6710.4740143724875, tol)
-        # BWBWingPrelim
-        assert_near_equal(prob[Aircraft.Wing.AREA], 12109.879719468739, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REF], 5.36951675, tol)
-        assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
-        # _BWBWing
-        assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
-        # _Tail
-        assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
-        # _FuselageRatios
-        assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.18243240878599712, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 2.4261771932742167, tol)
-        # Nacelles
-        assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
-        # Canard
-        assert_near_equal(prob[Aircraft.Canard.WETTED_AREA], 0.0, tol)
-        # BWBWingCharacteristicLength
-        assert_near_equal(prob[Aircraft.Wing.CHARACTERISTIC_LENGTH], 47.72916456, tol)
-        assert_near_equal(prob[Aircraft.Wing.FINENESS], 0.11, tol)
-        # OtherCharacteristicLengths
-        assert_near_equal(prob[Aircraft.Canard.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.Canard.FINENESS], 0.0, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.CHARACTERISTIC_LENGTH], 112.3001936860821, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.FINENESS], 2.4261771932742167, tol)
-        assert_near_equal(prob[Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.HorizontalTail.FINENESS], 0.11, tol)
-        assert_near_equal(prob[Aircraft.Nacelle.CHARACTERISTIC_LENGTH], [15.68611614], tol)
-        assert_near_equal(prob[Aircraft.Nacelle.FINENESS], [1.38269353], tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.CHARACTERISTIC_LENGTH], 0.0, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.FINENESS], 0.11, tol)
-        # TotalWettedArea
-        assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 26208.46595187, tol)
         # Mass
         # CargoMass
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
