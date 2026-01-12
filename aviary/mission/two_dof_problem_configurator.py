@@ -472,7 +472,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             inputs=[
                 ('ascent.parameters:t_init_gear', 't_init_gear'),
                 ('ascent.parameters:t_init_flaps', 't_init_flaps'),
-                #('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
                 ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
             ],
         )
