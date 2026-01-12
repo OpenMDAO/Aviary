@@ -6,11 +6,11 @@ from aviary.variable_info.variables import Dynamic
 
 import numpy as np
 
-from aviary.subsystems.atmosphere.StandardAtm1976 import atm_data as USatm1976
-from aviary.subsystems.atmosphere.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
-from aviary.subsystems.atmosphere.MIL_SPEC_210A_Polar import atm_data as polar_210A
-from aviary.subsystems.atmosphere.MIL_SPEC_210A_Hot import atm_data as hot_210A
-from aviary.subsystems.atmosphere.MIL_SPEC_210A_Cold import atm_data as cold_210A
+from aviary.subsystems.atmosphere.data.StandardAtm1976 import atm_data as USatm1976
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Polar import atm_data as polar_210A
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Cold import atm_data as cold_210A
 
 
 class Atmosphere(om.Group):
@@ -41,15 +41,15 @@ class Atmosphere(om.Group):
         )
 
         self.options.declare(
-            'delta_T_Kelvin',
+            'delta_T_Celcius',
             default=0.0,
-            desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Kelvine)',
+            desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Celsius)',
         )
 
         self.options.declare(
             'data_source',
-            default='USatm1976',
-            desc='The atmospheric model used. Chose one of USatm1976, tropical, polar, hot, cold.',
+            default='standard',
+            desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
         )
 
     def setup(self):
@@ -105,15 +105,15 @@ class AtmosphereComp(om.ExplicitComponent):
         )
         self.options.declare(
             'data_source',
-            values=('USatm1976', 'tropical', 'polar', 'hot', 'cold'),
-            default='USatm1976',
+            values=('standard', 'tropical', 'polar', 'hot', 'cold'),
+            default='standard',
             desc='The atmospheric model to use as source data.',
         )
         self.options.declare(
-            'delta_T_Kelvin',
+            'delta_T_Celcius',
             types=(float, int),
             default=0.0,
-            desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Kelvin)',
+            desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Celcius)',
         )
 
     def setup(self):
@@ -122,7 +122,7 @@ class AtmosphereComp(om.ExplicitComponent):
         """
         nn = self.options['num_nodes']
 
-        self._dt = self.options['delta_T_Kelvin']
+        self._dt = self.options['delta_T_Celcius']
 
         self._geodetic = self.options['h_def'] == 'geodetic'
         self._R0 = 6_356_766  # (meters) The effective Earth Radius
@@ -138,7 +138,7 @@ class AtmosphereComp(om.ExplicitComponent):
         self._S = 110.4  # (K) southerlands constant
         self._beta = 1.458e-6  # (s*m*K**(1/2))
 
-        if self.options['data_source'] == 'USatm1976':
+        if self.options['data_source'] == 'standard':
             self.source_data = USatm1976
         elif self.options['data_source'] == 'tropical':
             self.source_data = tropical_210A
@@ -211,7 +211,7 @@ class AtmosphereComp(om.ExplicitComponent):
         # Equation 42, rho = (P * M)/(R * (T + dT))
         # Assumes pressure does not change (which is a simplification)
         # We know (P * M)/(R * T) from the akima table lookups (raw data)
-        # We must correct the density from the lookup table by dt = delta_T_Kelvin
+        # We must correct the density from the lookup table by dt = delta_T_Celcius
         # Note : _R_air is R/M
         outputs['rho'] = corrected_density = (
             raw_density ** (-1) + self._R_air * self._dt * pressure ** (-1)
@@ -464,10 +464,10 @@ if __name__ == '__main__':
 
         prob = om.Problem()
 
-        # 'USatm1976', 'tropical', 'polar', 'hot', 'cold'
+        # 'standard', 'tropical', 'polar', 'hot', 'cold'
         atm_model = prob.model.add_subsystem(
             'comp',
-            AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=6),
+            AtmosphereComp(data_source='polar', delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
 

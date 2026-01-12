@@ -1,4 +1,4 @@
-from aviary.subsystems.atmosphere.MIL_SPEC_210A_Tropical import DATA_ORIGIN_NOTE
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import DATA_ORIGIN_NOTE
 
 """
 See MIL_SPEC_210A_Tropical for source note

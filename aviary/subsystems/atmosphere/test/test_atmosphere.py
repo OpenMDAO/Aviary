@@ -55,7 +55,7 @@ class USatm1976TestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=0, num_nodes=7),
+            AtmosphereComp(data_source='standard', delta_T_Celcius=0, num_nodes=7),
             promotes=['*'],
         )
 
@@ -85,7 +85,7 @@ class USatm1976TestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='USatm1976', delta_T_Kelvin=18, num_nodes=7),
+            AtmosphereComp(data_source='standard', delta_T_Celcius=18, num_nodes=7),
             promotes=['*'],
         )
 
@@ -156,7 +156,7 @@ class USatm1976TestCase1(unittest.TestCase):
         self.prob.model.add_subsystem(
             'atmo',
             AtmosphereComp(
-                data_source='USatm1976', delta_T_Kelvin=0, num_nodes=7, h_def='geodetic'
+                data_source='standard', delta_T_Celcius=0, num_nodes=7, h_def='geodetic'
             ),
             promotes=['*'],
         )
@@ -188,7 +188,7 @@ class USatm1976TestCase1(unittest.TestCase):
         self.prob.model.add_subsystem(
             'atmo',
             AtmosphereComp(
-                data_source='USatm1976', delta_T_Kelvin=15, num_nodes=7, h_def='geodetic'
+                data_source='standard', delta_T_Celcius=15, num_nodes=7, h_def='geodetic'
             ),
             promotes=['*'],
         )
@@ -214,7 +214,7 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='cold', delta_T_Kelvin=0, num_nodes=6),
+            AtmosphereComp(data_source='cold', delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
 
@@ -279,7 +279,7 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='tropical', delta_T_Kelvin=0, num_nodes=6),
+            AtmosphereComp(data_source='tropical', delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
 
@@ -341,7 +341,7 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
-            'atmo', AtmosphereComp(data_source='hot', delta_T_Kelvin=0, num_nodes=6), promotes=['*']
+            'atmo', AtmosphereComp(data_source='hot', delta_T_Celcius=0, num_nodes=6), promotes=['*']
         )
 
         self.prob.set_solver_print(level=0)
@@ -403,7 +403,7 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='polar', delta_T_Kelvin=0, num_nodes=6),
+            AtmosphereComp(data_source='polar', delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
 
