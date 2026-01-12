@@ -400,6 +400,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Mission.Summary.ZERO_FUEL_MASS,
                 # FuelMass
                 Mission.Summary.FUEL_MASS,
+                # TODO: test some aero variables
             ],
             version=Version.BWB,
             step=1.01e-40,
@@ -460,6 +461,10 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBPreMissionGroupCSVTest1(unittest.TestCase):
+    """
+    testing using bwb_simple_FLOPS.csv
+    """
+
     def setUp(self):
         prob = self.prob = AviaryProblem()
 
@@ -829,10 +834,15 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 553276.65969526302, tol)
         # FuelMass
         assert_near_equal(prob[Mission.Summary.FUEL_MASS], 320822.34030473698, tol)
+        # TODO: test some aero variables
 
 
 @use_tempdirs
 class BWBPreMissionGroupCSVTest2(unittest.TestCase):
+    """
+    testing using bwb_detailed_FLOPS.csv
+    """
+
     def setUp(self):
         prob = self.prob = AviaryProblem()
 
@@ -1202,6 +1212,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 509291.0724484, tol)
         # FuelMass
         assert_near_equal(prob[Mission.Summary.FUEL_MASS], 364807.9275516, tol)
+        # TODO: test some aero variables
 
 
 if __name__ == '__main__':
