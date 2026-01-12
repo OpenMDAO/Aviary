@@ -259,7 +259,7 @@ def create_report_frame(documentation, format, text_filepath):
     if os.path.isfile(text_filepath):
         if format == 'html':
             # Use CSS that allows the iframe to stretch
-            iframe_html = f'''
+            iframe_html = f"""
             <div style="width: 100%; height: 100%; min-height: 600px;">
                 <iframe
                     src="/home/{text_filepath}"
@@ -267,7 +267,7 @@ def create_report_frame(documentation, format, text_filepath):
                     scrolling="yes">
                 </iframe>
             </div>
-            '''
+            """
             report_pane = pn.Column(
                 pn.pane.HTML(
                     f'<p class="pane_doc">{documentation}</p>',
