@@ -45,6 +45,22 @@ class AlphaModes(Enum):
     CONSTANT_ALTITUDE = auto()
     FLIGHT_PATH_ANGLE = auto()
 
+class Atmosphere(Enum):
+    """
+    Specifies which atmosphere model to select.
+
+    STANDARD use the 1976 US atmosphere model.
+    HOT use the MIL-SPEC-210A Hottest Day in Northern Hemesphere atmosphere model
+    COLD use the MIL-SPEC-210A Coldest Day in Northern Hemesphere atmosphere model
+    TROPICAL use the MIL-SPEC-210A Tropical atmosphere model
+    POLAR use the MIL-SPEC-210A Arctic Winter atmosphere model
+    """
+
+    STANDARD = 'standard'
+    COLD = 'cold'
+    HOT = 'hot'
+    TROPICAL = 'tropical'
+    POLAR = 'polar'
 
 class CodeOrigin(Enum):
     FLOPS = 'FLOPS'

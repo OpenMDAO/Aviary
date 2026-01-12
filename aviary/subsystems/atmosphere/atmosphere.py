@@ -2,6 +2,7 @@ import openmdao.api as om
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import Atmosphere as AtmoEnums
 from aviary.variable_info.variables import Dynamic
 
 import numpy as np
@@ -48,7 +49,8 @@ class Atmosphere(om.Group):
 
         self.options.declare(
             'data_source',
-            default='standard',
+            default=AtmoEnums.STANDARD,
+            types=AtmoEnums,
             desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
         )
 
