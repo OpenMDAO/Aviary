@@ -252,9 +252,10 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         xl_out = root_chord / rear_spar_percent_chord
         wing_tip_chord = 0.06 * (width + 2 * osspan)
         sweep = inputs[Aircraft.Wing.SWEEP][0]
-        tr_out = wing_tip_chord / xl_out
-        ar_out = 2.0 * (2 * osspan) / (wing_tip_chord + xl_out)
+        tr_out = 0.06 * (width + 2 * osspan) / xl_out
+        ar_out = 2.0 * (2 * osspan) / (0.06 * (width + 2 * osspan) + xl_out)
         angle = np.tan(sweep / 57.2958) - 2.0 * (1 - tr_out) / (1 + tr_out) / ar_out
+        swp_ld_path = 57.2958 * np.arctan(angle)
 
         J[Aircraft.Wing.SPAN, Aircraft.Fuselage.MAX_WIDTH] = 1.0
         J[Aircraft.Wing.SPAN, Aircraft.Wing.OUTBOARD_SEMISPAN] = 2.0
@@ -319,19 +320,25 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
 
         dtr_out_dwidth = 0.0
         dar_out_dwidth = -4 * osspan * 0.06 / (wing_tip_chord + xl_out) ** 2
+
+        dtr_out_dwidth = 0.06 / xl_out
+        dar_out_dwidth = -4.0 * 0.06 * osspan / (0.06 * (width + 2 * osspan) + xl_out) ** 2
         dswp_ld_path_dwidth = (
-            57.2958
+            -2
+            * 57.2958
             / (1 + angle**2)
             * (
-                4 * dtr_out_dwidth / (1 + tr_out) ** 2 / ar_out
-                + 2 * (2 / (1 + tr_out) - 1) * dar_out_dwidth / ar_out**2
+                -2
+                * (dtr_out_dwidth * ar_out + (1 + tr_out) * dar_out_dwidth)
+                / ((1 + tr_out) * ar_out) ** 2
+                + dar_out_dwidth / ar_out**2
             )
         )
-        # error
-        # J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Fuselage.MAX_WIDTH] = [
-        #     0.0,
-        #     dswp_ld_path_dwidth,
-        # ]
+
+        J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Fuselage.MAX_WIDTH] = [
+            0.0,
+            dswp_ld_path_dwidth,
+        ]
 
         dtr_out_drear_chord = 0.06 * wingspan / root_chord
         dar_out_drear_chord = (
