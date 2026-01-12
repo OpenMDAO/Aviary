@@ -4,7 +4,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
-    BasicFlapsGeometry, FlapsDeflectionRatios
+    BasicFlapsGeometry,
+    FlapsDeflectionRatios,
 )
 from aviary.variable_info.variables import Aircraft
 

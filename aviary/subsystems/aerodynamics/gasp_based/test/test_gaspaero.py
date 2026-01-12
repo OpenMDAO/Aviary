@@ -165,7 +165,7 @@ class GASPAeroTest(unittest.TestCase):
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                 Dynamic.Atmosphere.MACH,
                 Dynamic.Mission.ALTITUDE,
-                (Dynamic.Vehicle.ANGLE_OF_ATTACK, 'alpha_in')
+                (Dynamic.Vehicle.ANGLE_OF_ATTACK, 'alpha_in'),
             ],
             promotes_outputs=[(Dynamic.Vehicle.LIFT, 'lift_req')],
         )

@@ -485,7 +485,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             promotes_inputs=[
                 ('initial_time', 'ascent.t_initial'),
                 ('initial_time_slack', Mission.Takeoff.ASCENT_T_INITIAL),
-            ]
+            ],
         )
         aviary_group.add_constraint('ascent_initial_time_slack_constraint.con_val', ref=30.0)
 
