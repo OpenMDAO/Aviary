@@ -44,7 +44,7 @@ class Atmosphere(om.Group):
             'add_flight_conditions',
             types=bool,
             default=True,
-            desc="When True, add FlightConditions component.",
+            desc='When True, add FlightConditions component.',
         )
 
     def setup(self):
