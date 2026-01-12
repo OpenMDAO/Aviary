@@ -90,11 +90,10 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD][0]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
         if rear_spar_percent_chord <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    'Rear_spar_percent_chord must be positive, '
-                    f'however {rear_spar_percent_chord} is provided.'
-                )
+            raise ValueError(
+                'Rear_spar_percent_chord must be positive, '
+                f'however {rear_spar_percent_chord} is provided.'
+            )
         xl_out = root_chord / rear_spar_percent_chord
 
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'] = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST]
@@ -205,11 +204,10 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
 
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
         if num_inp_stations != 3:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    'Aircraft.Wing.INPUT_STATION_DIST should be length 3, '
-                    f'however {num_inp_stations} values were provided.'
-                )
+            raise ValueError(
+                'Aircraft.Wing.INPUT_STATION_DIST should be length 3, '
+                f'however {num_inp_stations} values were provided.'
+            )
 
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         osspan = inputs[Aircraft.Wing.OUTBOARD_SEMISPAN][0]
@@ -219,11 +217,10 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD][0]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
         if rear_spar_percent_chord <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    'Rear_spar_percent_chord must be positive, '
-                    f'however {rear_spar_percent_chord} is provided.'
-                )
+            raise ValueError(
+                'Rear_spar_percent_chord must be positive, '
+                f'however {rear_spar_percent_chord} is provided.'
+            )
         xl_out = root_chord / rear_spar_percent_chord
         wing_tip_chord = 0.06 * wingspan
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD][0]
