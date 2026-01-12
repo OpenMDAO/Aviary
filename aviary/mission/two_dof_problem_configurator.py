@@ -478,7 +478,12 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         # Ascent t_iniitial is connected, so we need a slack constraint for the desvar that feeds
         # into the event xform.
-        comp = om.ExecComp(['con_val = initial_time - initial_time_slack'])
+        comp = om.ExecComp(
+            ['con_val = initial_time - initial_time_slack'],
+            con_val={'units': 's'},
+            initial_time={'units': 's'},
+            initial_time_slack={'units': 's'},
+        )
         aviary_group.add_subsystem(
             'ascent_initial_time_slack_constraint',
             comp,
