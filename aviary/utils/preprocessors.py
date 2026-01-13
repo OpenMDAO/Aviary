@@ -595,7 +595,7 @@ def preprocess_propulsion(
 
             # If dtype has multiple options, prefer type of default value
             # Otherwise, use the first type in the tuple
-            if isinstance(dtype, (tuple)):
+            if isinstance(dtype, tuple):
                 if default_value is not None:
                     if isinstance(default_value, (tuple, list)):
                         dtype = type(default_value[0])
