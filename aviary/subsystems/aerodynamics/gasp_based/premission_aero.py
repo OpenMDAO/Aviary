@@ -89,6 +89,8 @@ class PreMissionAero(om.Group):
             'VLAM8',
             'VLAM9',
             'VLAM12',
+            'chord_to_body_ratio',
+            'body_to_span_ratio',
         ]
 
         self.add_subsystem(
