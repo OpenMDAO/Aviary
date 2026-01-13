@@ -96,7 +96,8 @@ class PreMissionAero(om.Group):
         self.add_subsystem(
             'flaps_up',
             FlapsGroup(),
-            promotes_inputs=flaps_promotes + [
+            promotes_inputs=flaps_promotes
+            + [
                 ('flap_defl', 'flap_defl_up'),
                 ('slat_defl', 'slat_defl_up'),
             ],
@@ -106,7 +107,8 @@ class PreMissionAero(om.Group):
             'flaps_takeoff',
             FlapsGroup(),
             # slat deflection same for takeoff and landing
-            promotes_inputs=flaps_promotes + [
+            promotes_inputs=flaps_promotes
+            + [
                 ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF),
                 ('slat_defl', Aircraft.Wing.MAX_SLAT_DEFLECTION_TAKEOFF),
             ],
@@ -125,7 +127,8 @@ class PreMissionAero(om.Group):
         self.add_subsystem(
             'flaps_landing',
             FlapsGroup(),
-            promotes_inputs=flaps_promotes + [
+            promotes_inputs=flaps_promotes
+            + [
                 ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
                 ('slat_defl', Aircraft.Wing.MAX_SLAT_DEFLECTION_LANDING),
             ],
