@@ -736,7 +736,7 @@ class Engines(object):
         self._engine_diameter = None
         self._engine_length = None
         self._engine_locations_on_wing = None
-        self._has_propellers = None
+        # self._has_propellers = None
 
     def read_variables(self):
         """Read the variables from the final case that are needed to define the engines."""
@@ -753,12 +753,12 @@ class Engines(object):
             self._engine_locations_on_wing = self._reader.get_variable_from_aviary_options(
                 av.Aircraft.Engine.WING_LOCATIONS
             )
-            try:
-                self._has_propellers = self._reader.get_variable_from_case(
-                    av.Aircraft.Engine.HAS_PROPELLERS
-                )
-            except AircraftModelReaderError:
-                self._has_propellers = False
+            # try:
+            #     self._has_propellers = self._reader.get_variable_from_case(
+            #         av.Aircraft.Engine.HAS_PROPELLERS
+            #     )
+            # except AircraftModelReaderError:
+            #     self._has_propellers = False
         except AircraftModelReaderError as e:
             print(f'Warning: Unable to read engine variables due to the error: {e} ')
             raise
@@ -792,23 +792,23 @@ class Engines(object):
                         <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage} {-distance_from_fuselage}" radius="{self._engine_diameter / 2}" height="{self._engine_length}" 
                             rotation="0 90 0" color="white"></a-cylinder>
                 """
-                if self._has_propellers:
-                    propeller_blade_radius = (
-                        self._engine_diameter / 10.0
-                    )  # arbitrary fraction of engine diameter
-                    propeller_blade_length = self._engine_diameter * 2.0
-                    entities += f"""
-                            <!-- engine -->
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
-                                rotation="90 135 0" color="grey"></a-cylinder>
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
-                                rotation="90 45 0" color="grey"></a-cylinder>
-                            <!-- engine -->
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
-                                rotation="90 135 0" color="grey"></a-cylinder>
-                            <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}" 
-                                rotation="90 45 0" color="grey"></a-cylinder>
-                    """
+                # if self._has_propellers:
+                #     propeller_blade_radius = (
+                #         self._engine_diameter / 10.0
+                #     )  # arbitrary fraction of engine diameter
+                #     propeller_blade_length = self._engine_diameter * 2.0
+                #     entities += f"""
+                #             <!-- engine -->
+                #             <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}"
+                #                 rotation="90 135 0" color="grey"></a-cylinder>
+                #             <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}"
+                #                 rotation="90 45 0" color="grey"></a-cylinder>
+                #             <!-- engine -->
+                #             <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}"
+                #                 rotation="90 135 0" color="grey"></a-cylinder>
+                #             <a-cylinder id="cylinder" position="{distance_above_fuselage} {distance_along_fuselage + self._engine_length / 2 + propeller_blade_radius} {-distance_from_fuselage}" radius="{propeller_blade_radius}" height="{propeller_blade_length}"
+                #                 rotation="90 45 0" color="grey"></a-cylinder>
+                #     """
 
         return entities
 
