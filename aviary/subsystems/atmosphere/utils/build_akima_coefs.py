@@ -153,6 +153,10 @@ if __name__ == '__main__':
         ################ Test problem below ################
         import openmdao.api as om
         from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
+        from aviary.variable_info.enums import AtmosphereModel
+        from aviary.variable_info.functions import setup_model_options
+        from aviary.utils.aviary_values import AviaryValues
+        from aviary.variable_info.variables import Settings
 
         prob = om.Problem()
 
@@ -161,9 +165,13 @@ if __name__ == '__main__':
         # 'standard', 'tropical', 'polar', 'hot', 'cold'
         atm_model = prob.model.add_subsystem(
             'comp',
-            AtmosphereComp(data_source='polar', delta_T_Celcius=0, num_nodes=len(test_values)),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=len(test_values)),
             promotes=['*'],
         )
+
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.COLD)
+        setup_model_options(prob, options)
 
         prob.set_solver_print(level=0)
 
