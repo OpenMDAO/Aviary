@@ -40,13 +40,6 @@ class Atmosphere(om.Group):
             desc='defines input airspeed as equivalent airspeed, true airspeed, or mach number',
         )
 
-        self.options.declare(
-            'add_flight_conditions',
-            types=bool,
-            default=True,
-            desc='When True, add FlightConditions component.',
-        )
-
     def setup(self):
         nn = self.options['num_nodes']
         speed_type = self.options['input_speed_type']
@@ -66,9 +59,8 @@ class Atmosphere(om.Group):
             ],
         )
 
-        if self.options['add_flight_conditions']:
-            self.add_subsystem(
-                name='flight_conditions',
-                subsys=FlightConditions(num_nodes=nn, input_speed_type=speed_type),
-                promotes=['*'],
-            )
+        self.add_subsystem(
+            name='flight_conditions',
+            subsys=FlightConditions(num_nodes=nn, input_speed_type=speed_type),
+            promotes=['*'],
+        )
