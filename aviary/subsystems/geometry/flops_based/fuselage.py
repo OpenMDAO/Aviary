@@ -167,7 +167,7 @@ class SimpleCabinLayout(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
                     'Passenger compartment lenght is longer than recommended maximum'
-                    ' length. Suggest using detailed laylout algorithm.'
+                    ' length. Suggest using detailed layout algorithm.'
                 )
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
@@ -456,23 +456,20 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         bay_width_max = 12.0  # ft
 
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
+            )
         if max_width <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise ValueError(
-                    'Aircraft.Fuselage.MAX_HEIGHT must be positive, '
-                    f'however {max_width} is provided.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.MAX_HEIGHT must be positive, however {max_width} is provided.'
+            )
 
         pax_compart_length = rear_spar_percent_chord * length
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
                     'Passenger compartment lenght is longer than recommended maximum'
-                    ' length. Suggest using detailed laylout algorithm.'
+                    ' length. Suggest using detailed layout algorithm.'
                 )
 
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
