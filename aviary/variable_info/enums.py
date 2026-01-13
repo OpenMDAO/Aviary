@@ -45,7 +45,8 @@ class AlphaModes(Enum):
     CONSTANT_ALTITUDE = auto()
     FLIGHT_PATH_ANGLE = auto()
 
-class Atmosphere(Enum):
+
+class AtmosphereModel(Enum):
     """
     Specifies which atmosphere model to select.
 
@@ -61,6 +62,7 @@ class Atmosphere(Enum):
     HOT = 'hot'
     TROPICAL = 'tropical'
     POLAR = 'polar'
+
 
 class CodeOrigin(Enum):
     FLOPS = 'FLOPS'

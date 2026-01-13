@@ -59,7 +59,7 @@ atm_data.__doc__ = """
         Density in kg/m^3.
     """
 
-# turn off ruff linting
+# turn off ruff formatting
 # fmt: off
 
 # _raw_data Units: (Geopotential Altitude in ft, Temp in degF, pressure in inHG60, density in lbm/ft^3)
@@ -1145,6 +1145,3 @@ atm_data.akima_dT = \
            [ 2.5517643627879583e-03, -9.2453166131739591e-20,  9.3699253560000343e-22,  1.2630115665323363e-24],
            [ 2.5517643627879704e-03,  2.8114536928365806e-19,  4.0902180107646294e-22,  1.9967993438378094e-24],
            [ 2.5517643627880299e-03,  5.4494676123616128e-19,  0.0000000000000000e+00,  0.0000000000000000e+00]])
-
-# turn on ruff linting
-# fmt: on

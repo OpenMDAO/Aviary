@@ -5,6 +5,10 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging.version import Version
 import openmdao
+from aviary.variable_info.enums import AtmosphereModel
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.variables import Settings
 
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 
@@ -55,9 +59,14 @@ class USatm1976TestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='standard', delta_T_Celcius=0, num_nodes=7),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=7),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -85,9 +94,14 @@ class USatm1976TestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='standard', delta_T_Celcius=18, num_nodes=7),
+            AtmosphereComp(delta_T_Celcius=18, num_nodes=7),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -155,11 +169,14 @@ class USatm1976TestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(
-                data_source='standard', delta_T_Celcius=0, num_nodes=7, h_def='geodetic'
-            ),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=7, h_def='geodetic'),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -187,11 +204,14 @@ class USatm1976TestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(
-                data_source='standard', delta_T_Celcius=15, num_nodes=7, h_def='geodetic'
-            ),
+            AtmosphereComp(delta_T_Celcius=15, num_nodes=7, h_def='geodetic'),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -214,9 +234,14 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='cold', delta_T_Celcius=0, num_nodes=6),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.COLD)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -279,9 +304,14 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='tropical', delta_T_Celcius=0, num_nodes=6),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.TROPICAL)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -341,8 +371,15 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
-            'atmo', AtmosphereComp(data_source='hot', delta_T_Celcius=0, num_nodes=6), promotes=['*']
+            'atmo',
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=6),
+            promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.HOT)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 
@@ -403,9 +440,14 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(data_source='polar', delta_T_Celcius=0, num_nodes=6),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=6),
             promotes=['*'],
         )
+
+        # creating an empty aviary value and setting the atmosphere model option
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.POLAR)
+        setup_model_options(self.prob, options)
 
         self.prob.set_solver_print(level=0)
 

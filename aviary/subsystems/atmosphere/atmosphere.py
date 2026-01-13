@@ -2,8 +2,9 @@ import openmdao.api as om
 
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.enums import Atmosphere as AtmoEnums
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import AtmosphereModel
+from aviary.variable_info.variables import Dynamic, Settings
+from aviary.variable_info.functions import add_aviary_option
 
 import numpy as np
 
@@ -45,13 +46,6 @@ class Atmosphere(om.Group):
             'delta_T_Celcius',
             default=0.0,
             desc='Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Celsius)',
-        )
-
-        self.options.declare(
-            'data_source',
-            default=AtmoEnums.STANDARD,
-            types=AtmoEnums,
-            desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
         )
 
     def setup(self):
@@ -105,12 +99,7 @@ class AtmosphereComp(om.ExplicitComponent):
             desc='The definition of altitude provided as input to the component.  If "geodetic",'
             'it will be converted to geopotential based on Equation 19 in the original standard.',
         )
-        self.options.declare(
-            'data_source',
-            values=('standard', 'tropical', 'polar', 'hot', 'cold'),
-            default='standard',
-            desc='The atmospheric model to use as source data.',
-        )
+        add_aviary_option(self, Settings.ATMOSPHERE_MODEL)
         self.options.declare(
             'delta_T_Celcius',
             types=(float, int),
@@ -140,15 +129,15 @@ class AtmosphereComp(om.ExplicitComponent):
         self._S = 110.4  # (K) southerlands constant
         self._beta = 1.458e-6  # (s*m*K**(1/2))
 
-        if self.options['data_source'] == 'standard':
+        if self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.STANDARD:
             self.source_data = USatm1976
-        elif self.options['data_source'] == 'tropical':
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.TROPICAL:
             self.source_data = tropical_210A
-        elif self.options['data_source'] == 'polar':
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.POLAR:
             self.source_data = polar_210A
-        elif self.options['data_source'] == 'hot':
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.HOT:
             self.source_data = hot_210A
-        elif self.options['data_source'] == 'cold':
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.COLD:
             self.source_data = cold_210A
 
         self.add_input('h', val=1.0 * np.ones(nn), units='m')

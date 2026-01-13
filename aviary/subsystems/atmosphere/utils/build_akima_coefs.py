@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def build_akima_coefs(out_stream, raw_data, units):
     """
     Print out the Akima coefficients based on the raw atmospheric data.
@@ -141,7 +142,8 @@ if __name__ == '__main__':
         from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import (
             _raw_data,
         )  # replace this with your new raw data
-        _raw_data_units = 'English' # replace this with your units ('SI' or 'English')
+
+        _raw_data_units = 'English'  # replace this with your units ('SI' or 'English')
 
         import sys
 
@@ -150,7 +152,8 @@ if __name__ == '__main__':
     else:
         ################ Test problem below ################
         import openmdao.api as om
-        from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp 
+        from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
+
         prob = om.Problem()
 
         test_values = [-1000, 0, 10000, 35000, 55000, 70000, 100000]  # ft
