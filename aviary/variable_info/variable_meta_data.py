@@ -844,6 +844,24 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.NUM_CABIN_CREW,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.NGALC',  # ['&DEFINE.WTIN.NGALC', 'WTS.NGALC'],
+        'LEAPS1': [
+            'aircraft.inputs.L0_crew_and_payload.galley_crew_count',
+            'aircraft.cached.L0_crew_and_payload.galley_crew_count',
+        ],
+    },
+    units='unitless',
+    desc='number of cabin crew',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={
@@ -890,24 +908,6 @@ add_meta_data(
     },
     units='unitless',
     desc='number of flight crew',
-    types=int,
-    option=True,
-    default_value=0,
-)
-
-add_meta_data(
-    Aircraft.CrewPayload.NUM_GALLEY_CREW,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.NGALC',  # ['&DEFINE.WTIN.NGALC', 'WTS.NGALC'],
-        'LEAPS1': [
-            'aircraft.inputs.L0_crew_and_payload.galley_crew_count',
-            'aircraft.cached.L0_crew_and_payload.galley_crew_count',
-        ],
-    },
-    units='unitless',
-    desc='number of galley crew',
     types=int,
     option=True,
     default_value=0,

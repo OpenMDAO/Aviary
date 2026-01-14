@@ -62,7 +62,7 @@ def remove_preprocessed_options(aviary_options):
     pre_opt = [
         Aircraft.CrewPayload.NUM_FLIGHT_CREW,
         Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS,
-        Aircraft.CrewPayload.NUM_GALLEY_CREW,
+        Aircraft.CrewPayload.NUM_CABIN_CREW,
         Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
     ]
 
@@ -411,13 +411,13 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
         aviary_options.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count)
 
-    if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
+    if Aircraft.CrewPayload.NUM_CABIN_CREW not in aviary_options:
         galley_crew_count = 0  # assume no passengers
 
         if 150 < design_pax:
             galley_crew_count = design_pax // 250 + 1
 
-        aviary_options.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, galley_crew_count)
+        aviary_options.set_val(Aircraft.CrewPayload.NUM_CABIN_CREW, galley_crew_count)
 
     if Aircraft.CrewPayload.NUM_FLIGHT_CREW not in aviary_options:
         flight_crew_count = 3

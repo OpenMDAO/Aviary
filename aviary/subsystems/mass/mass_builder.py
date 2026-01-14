@@ -10,11 +10,11 @@ CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 
 import numpy as np
 
-from aviary.interface.utils import find_variable_in_problem, write_markdown_variable_table
+from aviary.interface.utils import find_variable_in_problem
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
-from aviary.variable_info.enums import LegacyCode
+from aviary.variable_info.enums import LegacyCode, ProblemType
 from aviary.variable_info.variables import Aircraft, Mission
 
 GASP = LegacyCode.GASP
@@ -91,8 +91,14 @@ class CoreMassBuilder(MassBuilder):
         filename = self.name + '.md'
         filepath = reports_folder / filename
 
-        num_engines = prob.model.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
-        engine_models = prob.model.engine_models
+        # NOTE currently only taking engine information from the first mission
+        if prob.problem_type is ProblemType.MULTI_MISSION:
+            model = next(iter(prob.aviary_groups_dict.values()))
+        else:
+            model = prob.model
+
+        num_engines = model.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
+        engine_models = model.engine_models
 
         # "double-size" (8-character) tabs were found to greatly improve readability
         tab = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'

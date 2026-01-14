@@ -140,27 +140,22 @@ class PropulsionMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_MISC_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Battery.MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')
 
     def setup_partials(self):
-        prop_wrt = [
-            Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
-            Aircraft.Propulsion.TOTAL_MISC_MASS,
-            Aircraft.Fuel.FUEL_SYSTEM_MASS,
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-        ]
-
-        self.declare_partials(Aircraft.Propulsion.MASS, prop_wrt, val=1)
+        self.declare_partials(Aircraft.Propulsion.MASS, ['*'], val=1)
 
     def compute(self, inputs, outputs):
         fuel_sys_mass = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
         misc_prop_mass = inputs[Aircraft.Propulsion.TOTAL_MISC_MASS]
         thrust_rev_mass = inputs[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS]
         total_eng_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_MASS]
+        battery_mass = inputs[Aircraft.Battery.MASS]
 
         outputs[Aircraft.Propulsion.MASS] = (
-            thrust_rev_mass + misc_prop_mass + fuel_sys_mass + total_eng_mass
+            thrust_rev_mass + misc_prop_mass + fuel_sys_mass + total_eng_mass + battery_mass
         )
 
 
