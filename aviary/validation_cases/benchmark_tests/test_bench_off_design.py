@@ -350,21 +350,21 @@ class Test2DOFOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.RANGE), 3990.50333708, tolerance=1e-4
+            prob_fallout.get_val(Mission.Summary.RANGE), 3991.32364531, tolerance=1e-4
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40530.30547651,
+            40522.37757121,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            39901.96542487,
+            39904.49334072,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            95098.03457513,
+            95095.50665928,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -558,7 +558,7 @@ if __name__ == '__main__':
     # unittest.main()
     test = Test2DOFOffDesign()
     test.setUp()
-    test.test_fallout_mission_changed()
+    test.test_alternate_mission_changed()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()

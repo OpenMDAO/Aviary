@@ -63,17 +63,17 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.16161628,
-            'CL': 0.59745331,
-            'CD': 0.02912458,
-            Dynamic.Mission.ALTITUDE_RATE: 58.03220578,  # ft/s
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.0569239,
+            'CL': 0.58762109,
+            'CD': 0.02867741,
+            Dynamic.Mission.ALTITUDE_RATE: 58.3497354,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
-            Dynamic.Mission.DISTANCE_RATE: 424.2427746,  # ft/s
+            Dynamic.Mission.DISTANCE_RATE: 424.19921863,  # ft/s
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13447.98081484,  # lbm/h
-            'theta': 0.22603355,  # rad (12.8021 deg)
+            'theta': 0.22495483,  # rad (12.8021 deg)
             # rad (7.638135 deg)
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13594635,
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13669486,
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -109,20 +109,20 @@ class ClimbODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         testvals = {
-            Dynamic.Vehicle.ANGLE_OF_ATTACK: [4.05408612, 4.06711835],
-            'CL': [0.51248365, 0.61593183],
-            'CD': [0.02541064, 0.03141002],
-            Dynamic.Mission.ALTITUDE_RATE: [52.46659475, 9.13239046],  # ft/s
+            Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99983993, 4.04378041],
+            'CL': [0.50719248, 0.61320271],
+            'CD': [0.02520388, 0.0312557],
+            Dynamic.Mission.ALTITUDE_RATE: [52.68288688, 9.32639661],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
-            Dynamic.Mission.DISTANCE_RATE: [536.11483677, 774.33217751],
+            Dynamic.Mission.DISTANCE_RATE: [536.0936254, 774.32986512],
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
                 -11418.00064615,
                 -6042.88107957,
             ],
-            'theta': [0.16831097, 0.08277795],  # rad ([9.47740, 4.59730] deg),
+            'theta': [0.16776765, 0.08262117],  # rad ([9.47740, 4.59730] deg),
             # rad, gamma
-            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09755382, 0.01179335],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: [0.09795727, 0.01204389],
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL: [25555.79617743, 10773.48189764],
         }
         check_prob_outputs(self.prob, testvals, 1e-6)
