@@ -618,6 +618,7 @@ class Dynamic:
 
         DENSITY = 'density'
         DYNAMIC_PRESSURE = 'dynamic_pressure'
+        DYNAMIC_VISCOSITY = 'dynamic_viscosity'
         KINEMATIC_VISCOSITY = 'kinematic_viscosity'
         MACH = 'mach'
         MACH_RATE = 'mach_rate'
@@ -627,9 +628,8 @@ class Dynamic:
 
     class Mission:
         """
-        Kinematic description of vehicle states in a ground-fixed axis.
-        These values are typically used by the Equations of Motion to determine
-        vehicle states at other timesteps.
+        Kinematic description of vehicle states in a ground-fixed reference frame. These values are
+        typically used by the Equations of Motion to determine vehicle states at each timestep.
         """
 
         # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
@@ -688,8 +688,7 @@ class Mission:
     """Mission data hierarchy."""
 
     class Constraints:
-        # these can be residuals (for equality constraints),
-        # upper bounds, or lower bounds
+        # these can be residuals (for equality constraints), upper bounds, or lower bounds
         EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'

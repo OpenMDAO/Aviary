@@ -61,6 +61,7 @@ class ClimbODETestCase(unittest.TestCase):
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
+        om.n2(self.prob, show_browser=False)
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.16161628,
