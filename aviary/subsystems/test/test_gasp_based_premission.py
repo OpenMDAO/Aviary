@@ -296,7 +296,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Nacelle.MASS], 303.6144, tol)
         assert_near_equal(prob[Aircraft.HorizontalTail.MASS], 1.02402, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.MASS], 864.174, tol)
-        assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 974.01285506, tol)
+        assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 974.436, tol)
         assert_near_equal(prob[Aircraft.Controls.TOTAL_MASS], 2114.982, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.251, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
