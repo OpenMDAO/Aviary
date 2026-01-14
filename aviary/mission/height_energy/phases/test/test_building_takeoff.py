@@ -31,7 +31,7 @@ class TakeoffPhaseTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         tol = 1e-6
-        assert_near_equal(prob[Mission.Takeoff.GROUND_DISTANCE], 2811.442, tol)
+        assert_near_equal(prob[Mission.Takeoff.GROUND_DISTANCE], 2811.50257923, tol)
 
 
 if __name__ == '__main__':

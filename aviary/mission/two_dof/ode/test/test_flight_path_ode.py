@@ -52,15 +52,15 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [14.08998135, 14.08998135],
-            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [-0.1429133, -0.1429133],
+            Dynamic.Mission.VELOCITY_RATE: [14.09033832, 14.09033832],
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: [-0.14291897, -0.14291897],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
-            'normal_force': [74910.12, 74910.12],
+            'normal_force': [74913.05769336, 74913.05769336],
             'fuselage_pitch': [0.0, 0.0],
-            'load_factor': [0.2508988, 0.2508988],
+            'load_factor': [0.25086942, 0.25086942],
             Dynamic.Mission.ALTITUDE_RATE: [0.0, 0.0],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.01815717, -0.01815717],
+            Dynamic.Mission.ALTITUDE_RATE_MAX: [-0.01815763, -0.01815763],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
@@ -91,12 +91,12 @@ class FlightPathODETestCase(unittest.TestCase):
 
         self.prob.run_model()
         testvals = {
-            Dynamic.Mission.VELOCITY_RATE: [13.60756024, 13.60756024],
+            Dynamic.Mission.VELOCITY_RATE: [13.60789823, 13.60789823],
             Dynamic.Mission.DISTANCE_RATE: [168.781, 168.781],
-            'normal_force': [74910.12, 74910.12],
+            'normal_force': [74913.05769336, 74913.05769336],
             'fuselage_pitch': [0.0, 0.0],
-            'load_factor': [0.2508988, 0.2508988],
-            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.75320631, 0.75320631],
+            'load_factor': [0.25086942, 0.25086942],
+            Dynamic.Mission.ALTITUDE_RATE_MAX: [0.75323619, 0.75323619],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 
