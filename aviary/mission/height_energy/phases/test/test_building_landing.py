@@ -29,7 +29,7 @@ class LandingPhaseTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         tol = 1e-6
-        assert_near_equal(prob[Mission.Landing.GROUND_DISTANCE], 6331.781, tol)
+        assert_near_equal(prob[Mission.Landing.GROUND_DISTANCE], 6332.4878059, tol)
         assert_near_equal(prob[Mission.Landing.INITIAL_VELOCITY], 134.9752, tol)
 
 

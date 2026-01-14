@@ -149,7 +149,6 @@ class ClimbPhase(PhaseBuilder):
 
         mach_cruise = user_options.get_val('mach_cruise')
         target_mach = user_options.get_val('target_mach')
-        altitude_final = user_options.get_val('altitude_final', units='ft')
         required_available_climb_rate = user_options.get_val(
             'required_available_climb_rate', units='ft/min'
         )

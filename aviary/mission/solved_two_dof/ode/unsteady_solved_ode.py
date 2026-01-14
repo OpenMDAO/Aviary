@@ -97,7 +97,7 @@ class UnsteadySolvedODE(TwoDOFODE):
 
         self.add_subsystem(
             name='atmosphere',
-            subsys=Atmosphere(num_nodes=nn, output_dsos_dh=True),
+            subsys=Atmosphere(num_nodes=nn),
             promotes_inputs=[Dynamic.Mission.ALTITUDE],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
@@ -105,7 +105,6 @@ class UnsteadySolvedODE(TwoDOFODE):
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
                 'viscosity',
-                'drhos_dh',
                 'dsos_dh',
             ],
         )

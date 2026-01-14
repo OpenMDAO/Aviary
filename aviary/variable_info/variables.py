@@ -809,6 +809,7 @@ class Settings:
     """Setting data hierarchy."""
 
     AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
+    ATMOSPHERE_MODEL = 'settings:atmosphere_model'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
     PAYLOAD_RANGE = 'settings:payload_range'
