@@ -28,6 +28,7 @@ class DLandTestCase(unittest.TestCase):
         self.prob.model = LandingSegment(aviary_options=options, subsystems=subsystems)
 
         setup_model_options(self.prob, options)
+        self.prob.model.set_input_defaults(Mission.Landing.AIRPORT_ALTITUDE, 0, units='ft')
 
     @unittest.skipIf(
         version.parse(openmdao.__version__) < version.parse('3.26'),

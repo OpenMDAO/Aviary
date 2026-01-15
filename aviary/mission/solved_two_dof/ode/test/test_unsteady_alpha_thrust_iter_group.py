@@ -49,6 +49,18 @@ class TestUnsteadyAlphaThrustIterGroup(unittest.TestCase):
 
         setup_model_options(p, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
+        p.model.set_input_defaults(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, 968.076 * np.ones(nn), units='ft/s'
+        )
+        p.model.set_input_defaults(
+            Dynamic.Atmosphere.DENSITY, 0.000659904 * np.ones(nn), units='slug/ft**3'
+        )
+        p.model.set_input_defaults(Dynamic.Mission.VELOCITY, 487 * np.ones(nn), units='kn')
+        if not ground_roll:
+            p.model.set_input_defaults(
+                Dynamic.Mission.FLIGHT_PATH_ANGLE, 0.0 * np.ones(nn), units='rad'
+            )
+
         p.setup(force_alloc_complex=True)
 
         set_params_for_unit_tests(p)

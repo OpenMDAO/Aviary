@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
-    BasicFlapsCalculations,
+    FlapsDeflectionRatios,
 )
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.Cl_max import CLmaxCalculation
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.L_and_D_increments import (
@@ -36,8 +36,8 @@ class FlapsGroup(om.Group):
 
     def setup(self):
         self.add_subsystem(
-            'BasicFlapsCalculations',
-            BasicFlapsCalculations(),
+            'FlapsDeflectionRatios',
+            FlapsDeflectionRatios(),
             promotes_inputs=[
                 'slat_defl',
                 'flap_defl',
@@ -138,6 +138,7 @@ class FlapsGroup(om.Group):
         self.nonlinear_solver.options['rtol'] = 1e-8
 
         # set default trailing edge deflection angle per GASP
+        # TODO: This hidden default behavior needs to be moved to the pre-processor.
         self.set_input_defaults(
             Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
             self.optimum_flap_defls[self.options[Aircraft.Wing.FLAP_TYPE]],

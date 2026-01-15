@@ -4,7 +4,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
-    BasicFlapsCalculations,
+    BasicFlapsGeometry,
+    FlapsDeflectionRatios,
 )
 from aviary.variable_info.variables import Aircraft
 
@@ -15,9 +16,10 @@ All data is from validation files using standalone flaps model
 
 class BasicFlapsCalculationsTestCase(unittest.TestCase):
     def setUp(self):
-        self.prob = om.Problem(model=om.Group())
+        self.prob = om.Problem()
 
-        self.prob.model.add_subsystem('BC', BasicFlapsCalculations(), promotes=['*'])
+        self.prob.model.add_subsystem('BFG', BasicFlapsGeometry(), promotes=['*'])
+        self.prob.model.add_subsystem('FDR', FlapsDeflectionRatios(), promotes=['*'])
 
         self.prob.setup()
 
