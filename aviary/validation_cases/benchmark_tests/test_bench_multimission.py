@@ -42,11 +42,17 @@ class MultiMissionTestcase(unittest.TestCase):
 
         self.assertTrue(prob.result.success)
 
-        assert_near_equal(objective_expected_value, objective, tolerance=1e-3)
-        assert_near_equal(mission1_fuel_expected_value, mission1_fuel, tolerance=1e-3)
-        assert_near_equal(mission2_fuel_expected_value, mission2_fuel, tolerance=1e-3)
-        assert_near_equal(mission1_cargo_expected_value, mission1_cargo, tolerance=1e-3)
-        assert_near_equal(mission2_cargo_expected_value, mission2_cargo, tolerance=1e-3)
+        expected_values = {
+            'objective': (objective_expected_value, objective),
+            'mission1_fuel': (mission1_fuel_expected_value, mission1_fuel),
+            'mission2_fuel': (mission2_fuel_expected_value, mission2_fuel),
+            'mission1_cargo': (mission1_cargo_expected_value, mission1_cargo),
+            'mission2_cargo': (mission2_cargo_expected_value, mission2_cargo),
+        }
+
+        for var_name, (expected, actual) in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(expected, actual, tolerance=1e-3)
 
 
 if __name__ == '__main__':

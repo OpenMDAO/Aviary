@@ -41,15 +41,16 @@ class LiftAndDragIncrementsTestCase(unittest.TestCase):
     def test_case(self):
         self.prob.run_model()
         tol = 5e-4
-        print()
 
-        reg_data = 0.0650
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'delta_CD': 0.0650,
+            'delta_CL': 1.0293,
+        }
 
-        reg_data = 1.0293
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(out_stream=None, method='fd')
         assert_check_partials(data, atol=1e-4, rtol=1e-4)

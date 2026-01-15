@@ -64,14 +64,17 @@ class MassParametersTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.2203729275531838, tol
-        )  # bug fixed value
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)  # bug fixed value
-        assert_near_equal(self.prob['c_gear_loc'], 1, tol)  # bug fixed value
-        # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 0.95, tol)
-        assert_near_equal(self.prob['half_sweep'], 0.3947081519145335, tol)  # bug fixed value
+        expected_values = {
+            Aircraft.Wing.MATERIAL_FACTOR: 1.2203729275531838,  # bug fixed value
+            'c_strut_braced': 1,  # bug fixed value
+            'c_gear_loc': 1,  # bug fixed value
+            Aircraft.Engine.POSITION_FACTOR: 0.95,  # bug fixed value
+            'half_sweep': 0.3947081519145335,  # bug fixed value
+        }
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -109,14 +112,17 @@ class MassParametersTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.2213063198183813, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)
-        assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)  # not actual bug fixed value
-        # not actual bug fixed value
-        assert_near_equal(self.prob[Aircraft.Engine.POSITION_FACTOR], 1, tol)
-        assert_near_equal(self.prob['half_sweep'], 0.3947081519145335, tol)
+        expected_values = {
+            Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
+            'c_strut_braced': 1,
+            'c_gear_loc': 0.95,  # not actual bug fixed value
+            Aircraft.Engine.POSITION_FACTOR: 1,  # not actual bug fixed value
+            'half_sweep': 0.3947081519145335,
+        }
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -155,15 +161,17 @@ class MassParametersTestCase3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.2213063198183813, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)
-        assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)  # not actual bug fixed value
-        assert_near_equal(
-            self.prob[Aircraft.Engine.POSITION_FACTOR], 0.98, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['half_sweep'], 0.3947081519145335, tol)
+        expected_values = {
+            Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
+            'c_strut_braced': 1,
+            'c_gear_loc': 0.95,  # not actual bug fixed value
+            Aircraft.Engine.POSITION_FACTOR: 0.98,  # not actual bug fixed value
+            'half_sweep': 0.3947081519145335,
+        }
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -202,15 +210,17 @@ class MassParametersTestCase4(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.2213063198183813, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)
-        assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)  # not actual bug fixed value
-        assert_near_equal(
-            self.prob[Aircraft.Engine.POSITION_FACTOR], 0.95, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['half_sweep'], 0.3947081519145335, tol)
+        expected_values = {
+            Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
+            'c_strut_braced': 1,
+            'c_gear_loc': 0.95,  # not actual bug fixed value
+            Aircraft.Engine.POSITION_FACTOR: 0.95,  # not actual bug fixed value
+            'half_sweep': 0.3947081519145335,
+        }
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -249,15 +259,17 @@ class MassParametersTestCase5(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Wing.MATERIAL_FACTOR], 1.2213063198183813, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['c_strut_braced'], 1, tol)
-        assert_near_equal(self.prob['c_gear_loc'], 0.95, tol)  # not actual bug fixed value
-        assert_near_equal(
-            self.prob[Aircraft.Engine.POSITION_FACTOR], 0.9, tol
-        )  # not actual bug fixed value
-        assert_near_equal(self.prob['half_sweep'], 0.3947081519145335, tol)
+        expected_values = {
+            Aircraft.Wing.MATERIAL_FACTOR: 1.2213063198183813,  # not actual bug fixed value
+            'c_strut_braced': 1,
+            'c_gear_loc': 0.95,  # not actual bug fixed value
+            Aircraft.Engine.POSITION_FACTOR: 0.9,  # not actual bug fixed value
+            'half_sweep': 0.3947081519145335,
+        }
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -289,15 +301,15 @@ class PayloadGroupTestCase(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 36000, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['payload_mass_des'], 36000, tol
-        )  # bug fixed value and original value
-        assert_near_equal(
-            self.prob['payload_mass_max'], 46040, tol
-        )  # bug fixed value and original value
+        expected_values = {
+            Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS: 36000,  # bug fixed value and original value
+            'payload_mass_des': 36000,  # bug fixed value and original value
+            'payload_mass_max': 46040,  # bug fixed value and original value
+        }
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

@@ -74,11 +74,23 @@ class TestMuxComponent(unittest.TestCase):
         laminar_fractions_lower_output = prob['mux.laminar_fractions_lower']
 
         # Assert that the outputs are near the expected values
-        assert_near_equal(wetted_areas_output, wetted_areas_truth, 1e-7)
-        assert_near_equal(fineness_ratios_output, fineness_ratios_truth, 1e-7)
-        assert_near_equal(characteristic_lengths_output, characteristic_lengths_truth, 1e-7)
-        assert_near_equal(laminar_fractions_upper_output, laminar_fractions_upper_truth, 1e-7)
-        assert_near_equal(laminar_fractions_lower_output, laminar_fractions_lower_truth, 1e-7)
+        expected_values = {
+            'wetted_areas': (wetted_areas_output, wetted_areas_truth),
+            'fineness_ratios': (fineness_ratios_output, fineness_ratios_truth),
+            'characteristic_lengths': (characteristic_lengths_output, characteristic_lengths_truth),
+            'laminar_fractions_upper': (
+                laminar_fractions_upper_output,
+                laminar_fractions_upper_truth,
+            ),
+            'laminar_fractions_lower': (
+                laminar_fractions_lower_output,
+                laminar_fractions_lower_truth,
+            ),
+        }
+
+        for var_name, (output, truth) in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(output, truth, 1e-7)
 
     def test_mux_multiengine(self):
         prob = om.Problem()
@@ -151,11 +163,23 @@ class TestMuxComponent(unittest.TestCase):
         laminar_fractions_lower_output = prob['mux.laminar_fractions_lower']
 
         # Assert that the outputs are near the expected values
-        assert_near_equal(wetted_areas_output, wetted_areas_truth, 1e-7)
-        assert_near_equal(fineness_ratios_output, fineness_ratios_truth, 1e-7)
-        assert_near_equal(characteristic_lengths_output, characteristic_lengths_truth, 1e-7)
-        assert_near_equal(laminar_fractions_upper_output, laminar_fractions_upper_truth, 1e-7)
-        assert_near_equal(laminar_fractions_lower_output, laminar_fractions_lower_truth, 1e-7)
+        expected_values = {
+            'wetted_areas': (wetted_areas_output, wetted_areas_truth),
+            'fineness_ratios': (fineness_ratios_output, fineness_ratios_truth),
+            'characteristic_lengths': (characteristic_lengths_output, characteristic_lengths_truth),
+            'laminar_fractions_upper': (
+                laminar_fractions_upper_output,
+                laminar_fractions_upper_truth,
+            ),
+            'laminar_fractions_lower': (
+                laminar_fractions_lower_output,
+                laminar_fractions_lower_truth,
+            ),
+        }
+
+        for var_name, (output, truth) in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(output, truth, 1e-7)
 
 
 if __name__ == '__main__':

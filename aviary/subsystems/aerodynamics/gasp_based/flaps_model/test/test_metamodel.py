@@ -40,65 +40,28 @@ class MetaModelTestCasePlain(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-4
 
-        reg_data = 1
-        ans = self.prob['VDEL1']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'VDEL1': 1,
+            'VDEL2': 0.55667,
+            'VDEL3': 0.76500,
+            'fus_lift': 0.05498,
+            'VLAM1': 0.97217,
+            'VLAM2': 1.09948,
+            'VLAM3': 0.97217,
+            'VLAM4': 1.19742,
+            'VLAM5': 1,
+            'VLAM6': 0.80000,
+            'VLAM7': 0.73500,
+            'VLAM10': 0.74000,
+            'VLAM11': 0.84232,
+            'VLAM13': 1.03209,
+            'VLAM14': 0.99082,
+        }
 
-        reg_data = 0.55667
-        ans = self.prob['VDEL2']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.76500
-        ans = self.prob['VDEL3']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.05498
-        ans = self.prob['fus_lift']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.97217
-        ans = self.prob['VLAM1']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.09948
-        ans = self.prob['VLAM2']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.97217
-        ans = self.prob['VLAM3']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.19742
-        ans = self.prob['VLAM4']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1
-        ans = self.prob['VLAM5']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.80000
-        ans = self.prob['VLAM6']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.73500
-        ans = self.prob['VLAM7']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.74000
-        ans = self.prob['VLAM10']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.84232
-        ans = self.prob['VLAM11']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.03209
-        ans = self.prob['VLAM13']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.99082
-        ans = self.prob['VLAM14']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(out_stream=None, method='fd')
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
@@ -121,21 +84,17 @@ class MetaModelTestCaseSingleSlotted(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-4
 
-        reg_data = 1
-        ans = self.prob['VDEL1']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'VDEL1': 1,
+            'VLAM4': 1.25725,
+            'VLAM5': 1,
+            'VLAM6': 1.0,
+        }
 
-        reg_data = 1.25725
-        ans = self.prob['VLAM4']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1
-        ans = self.prob['VLAM5']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.0
-        ans = self.prob['VLAM6']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(out_stream=None, method='fd')
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
@@ -157,13 +116,15 @@ class MetaModelTestCaseFowler(unittest.TestCase):
         self.prob.run_model()
         tol = 1e-4
 
-        reg_data = 1.0
-        ans = self.prob['VLAM5']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'VLAM5': 1.0,
+            'VLAM6': 1.11,
+        }
 
-        reg_data = 1.11
-        ans = self.prob['VLAM6']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(out_stream=None, method='fd')
         assert_check_partials(data, atol=1e-4, rtol=1e-4)
