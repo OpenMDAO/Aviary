@@ -5471,7 +5471,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    # see also: station_chord_lengths
+    # see also: station_chord_lengths (of LEAPS1)
     Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
     meta_data=_MetaData,
     historical_name={
