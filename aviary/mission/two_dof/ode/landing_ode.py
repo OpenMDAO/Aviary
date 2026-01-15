@@ -223,6 +223,7 @@ class LandingSegment(TwoDOFODE):
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, units='ft')
 
         # Throttle Idle
         num_engine_types = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))

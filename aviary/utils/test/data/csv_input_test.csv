@@ -1,0 +1,4 @@
+  aircraft:wing:mass,     1
+aircraft:instruments:mass     , 5    
+   aircraft:engine:data_file   ,   folder/folder with space/filename.txt     
+, ,      ,  , ,,,   

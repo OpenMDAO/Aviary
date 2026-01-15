@@ -14,6 +14,7 @@ from aviary.variable_info.enums import (
     LegacyCode,
     ProblemType,
     Verbosity,
+    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -8144,6 +8145,16 @@ add_meta_data(
     option=True,
     types=LegacyCode,
     default_value=None,
+)
+
+add_meta_data(
+    Settings.ATMOSPHERE_MODEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
+    option=True,
+    types=AtmosphereModel,
+    default_value=AtmosphereModel.STANDARD,
 )
 
 add_meta_data(
