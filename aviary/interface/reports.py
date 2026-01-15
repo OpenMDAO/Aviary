@@ -600,15 +600,6 @@ def overridden_variables_report(prob: AviaryProblem, **kwargs):
     prob : AviaryProblem
         The AviaryProblem used to generate this report
     """
-    reports_folder = Path(prob.get_reports_dir())
-    report_file = reports_folder / 'overridden_variables.md'
-
-    # overridden_variables = []
-    resolver = prob.model._resolver
-
-    def prom2abs(prom_name):
-        return resolver.absnames(prom_name, 'output')
-
     if MPI and prob.comm.rank != 0:
         # All collective calls are completed. We only output on rank 0.
         return
@@ -616,73 +607,76 @@ def overridden_variables_report(prob: AviaryProblem, **kwargs):
     reports_folder = Path(prob.get_reports_dir())
     report_file = reports_folder / 'overridden_variables.md'
     with open(report_file, mode='w') as f:
-        aviary_metadata = prob.meta_data
-        _prom2abs = resolver.prom_iter(iotype='output')
 
-        non_external_overridden_variables = []
-        external_variables = {}
+        # check to see if this is a multi-mission problem
+        #   and make a list of all the aviary groups
+        if prob.aviary_groups_dict:
+            for mission_name, aviary_group in prob.aviary_groups_dict.items():
+                overridden_variables_report_helper(
+                    aviary_group, mission_name, f
+                )
+        else:
+            overridden_variables_report_helper(prob.model, None, f)
 
-        if _prom2abs:
-            for prom_name in _prom2abs:
-                if 'EXTERNAL_SUBSYSTEM_OVERRIDE' in prom_name:
-                    abs_name = prom2abs(prom_name)
-                    good_variable_name = abs_name[0].split('.')[-1]
-                    absname = resolver.absnames(good_variable_name, "output")[0]
-                    if good_variable_name not in external_variables:
-                        external_variables[good_variable_name] = absname
-                    else:
-                        print(f"Already have {good_variable_name} in external_variables")
+def overridden_variables_report_helper(model, mission_name, f):
+    resolver = model._resolver
 
-                    continue
-                # the phrase "_OVERRIDE" in a variable indicates it is a calculated value that we are discarding
-                if 'AIRCRAFT_DATA_OVERRIDE' in prom_name:
-                    # overridden_variables.append(prom_name)
-                    # metadata = aviary_metadata.get(prom_name)
-                    abs_name = prom2abs(prom_name)
-                    good_variable_name = abs_name[0].split('.')[-1]
-                    metadata = aviary_metadata.get(good_variable_name)
-                    try:
-                        units = metadata['units']
-                    except (TypeError, KeyError):
-                        metadata = aviary_metadata.get(prom_name.split('.')[-1])
-                        try:
-                            units = metadata['units']
-                        except (TypeError, KeyError):
-                            # This happens when the var is not defined in metadata.
-                            abs_paths = prom2abs(prom_name)
-                            metadata = prob.model.get_io_metadata('output')[abs_paths[0]]
-                            units = metadata['units']
+    non_external_overridden_variables = []
+    external_variables = {}
 
-                    if hasattr(prob, 'aviary_inputs'):
-                       val = prob.aviary_inputs.get_val(good_variable_name, units=units)
-                    else:
-                        val = "unknown"
-                        #   val = prob.model.get_val(good_variable_name, units=units)
-                    non_external_overridden_variables.append((good_variable_name, val, units))
+    for prom_name in resolver.prom_iter(iotype='output'):
 
-            # Now that we have collected all overridden variables, write the report
-            f.write('## Internal Overrides\n')
-            if non_external_overridden_variables:
-                f.write('| Name   | Value | Units |\n')
-                f.write('| ------ |-------| ----- |\n')
-                non_external_overridden_variables.sort(key=lambda x: x[0])
-                for good_variable_name, val, units in non_external_overridden_variables:
-                        f.write(f'| {good_variable_name} | {val} | {units} |\n')
-                f.write('\n')
-            else:
-                f.write('No internal overrides found.\n')
+        if 'EXTERNAL_SUBSYSTEM_OVERRIDE' in prom_name:
+            abs_name = resolver.absnames(prom_name, 'output')[0]
+            aircraft_variable_name = abs_name.split('.')[-1]
+            if aircraft_variable_name not in external_variables:
+                external_variables[aircraft_variable_name] = abs_name
+            continue
+        # the phrase "_OVERRIDE" in a variable indicates it is a calculated value that we are discarding
+        if 'AIRCRAFT_DATA_OVERRIDE' in prom_name:
+            abs_name = resolver.absnames(prom_name, 'output')[0]
+            aircraft_variable_name = abs_name.split('.')[-1]
+            aviary_metadata = model.meta_data
+            metadata = aviary_metadata.get(prom_name)
+            try:
+                units = metadata['units']
+            except (TypeError, KeyError):
+                metadata = aviary_metadata.get(aircraft_variable_name)
+                try:
+                    units = metadata['units']
+                except (TypeError, KeyError):
+                    # This happens when the var is not defined in metadata.
+                    metadata = model.get_io_metadata('output')[abs_name]
+                    units = metadata['units']
+            val = model.aviary_inputs.get_val(aircraft_variable_name, units=units)
+            non_external_overridden_variables.append((aircraft_variable_name, val, units))
 
-            f.write('<br>\n\n')
+    # Now that we have collected all overridden variables, write the report
+    if mission_name:
+        f.write(f'# MULTIMISSION: {mission_name}\n\n')
 
-            f.write('## External Subsystem Overrides\n')
-            if external_variables:
-                f.write('| Name | Overriding OpenMDAO path|\n')
-                f.write('| - |  - |\n')
-                for good_variable_name in sorted(external_variables.keys()):
-                    absname = external_variables[good_variable_name]
-                    f.write(f'| {good_variable_name} | {absname} |\n')
+    f.write('## Internal Overrides\n')
+    if non_external_overridden_variables:
+        f.write('| Name   | Value | Units |\n')
+        f.write('| ------ |-------| ----- |\n')
+        non_external_overridden_variables.sort(key=lambda x: x[0])
+        for aircraft_variable_name, val, units in non_external_overridden_variables:
+                f.write(f'| {aircraft_variable_name} | {val} | {units} |\n')
+        f.write('\n')
+    else:
+        f.write('No internal overrides found.\n')
 
-                f.write('\n')
-            else:
-                f.write("No external subsystem overrides found.\n")
+    f.write('<br>\n\n')
+
+    f.write('## External Subsystem Overrides\n')
+    if external_variables:
+        f.write('| Name | Overriding OpenMDAO path|\n')
+        f.write('| - |  - |\n')
+        for aircraft_variable_name in sorted(external_variables.keys()):
+            absname = external_variables[aircraft_variable_name]
+            f.write(f'| {aircraft_variable_name} | {absname} |\n')
+
+        f.write('\n')
+    else:
+        f.write("No external subsystem overrides found.\n")
 
