@@ -2,7 +2,7 @@ import unittest
 from copy import deepcopy
 
 from numpy.testing import assert_almost_equal
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.models.aircraft.large_turboprop_freighter.phase_info import (
@@ -15,6 +15,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
+@require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values, only verifying no errors here
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
     def build_and_run_problem(self, mission_method):
