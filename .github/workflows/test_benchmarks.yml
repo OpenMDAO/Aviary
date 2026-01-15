@@ -35,8 +35,8 @@ jobs:
             NAME: 'latest'
             PY: 3.12
             NUMPY: 2.2
-            SCIPY: 1.5
-            PYOPTSPARSE: 'v2.13.1'
+            SCIPY: 1.16
+            PYOPTSPARSE: 'v2.14.4'
             SNOPT: '7.7'
             OPENMDAO: 'latest'
             DYMOS: 'latest'
