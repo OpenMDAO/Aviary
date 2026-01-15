@@ -1064,6 +1064,15 @@ def dashboard(script_name, port=0, run_in_background=False):
         reports_dir / 'inputs.html',
     )
 
+    # Overridden output variables
+    create_report_frame(
+        'Overridden Variables',
+        model_tabs_list,
+        'Report on overridden output variables.',
+        'markdown',
+        reports_dir / 'overridden_variables.md',
+    )
+
     # N2
     create_report_frame(
         'N2',
