@@ -53,7 +53,7 @@ class LandingSegment(TwoDOFODE):
 
         # collect the propulsion group names for later use with
         for subsystem in subsystems:
-            if isinstance(subsystem, AerodyanmicsBuilder):
+            if isinstance(subsystem, AerodynamicsBuilder):
                 kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
