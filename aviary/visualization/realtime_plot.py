@@ -6,6 +6,7 @@ from openmdao.utils.file_utils import _load_and_exec
 import openmdao.utils.hooks as hooks
 from openmdao.utils.file_utils import is_python_file
 
+
 def _rtplot_setup_parser(parser):
     """
     Set up the aviary subparser for the 'aviary rtplot' command.
