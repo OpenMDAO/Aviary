@@ -53,8 +53,8 @@ class LandingSegment(TwoDOFODE):
 
         # collect the propulsion group names for later use with
         for subsystem in subsystems:
-            if isinstance(subsystem, AerodynamicsBuilder):
-                kwargs = {'method': 'low_speed'}
+            if isinstance(subsystem, AerodyanmicsBuilder):
+                kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
                     num_nodes=1, aviary_inputs=aviary_options, **kwargs
@@ -99,6 +99,7 @@ class LandingSegment(TwoDOFODE):
                     propulsion_system,
                     promotes_inputs=[
                         '*',
+                        (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                     ],
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
@@ -138,7 +139,7 @@ class LandingSegment(TwoDOFODE):
             name='atmosphere_td',
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
-                Dynamic.Mission.ALTITUDE,
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Mission.VELOCITY, 'TAS_touchdown'),
             ],
             promotes_outputs=[
@@ -158,7 +159,7 @@ class LandingSegment(TwoDOFODE):
             aero_builder.build_mission(num_nodes=1, aviary_inputs=aviary_options, **kwargs),
             promotes_inputs=[
                 '*',
-                Dynamic.Mission.ALTITUDE,
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.DENSITY, 'rho_td'),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, 'sos_td'),
                 ('viscosity', 'viscosity_td'),
