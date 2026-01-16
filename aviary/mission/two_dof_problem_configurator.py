@@ -38,20 +38,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
-        # Defines how the problem should build it's initial guesses for load_inputs()
-        # this modifies mass_method, initialization_guesses, and aviary_values
-
         aviary_inputs = aviary_group.aviary_inputs
 
         aviary_inputs = update_GASP_options(aviary_inputs)
-
-        if aviary_group.engine_builders is None:
-            aviary_group.engine_builders = [build_engine_deck(aviary_inputs)]
-
-        aviary_group.initialization_guesses = initialization_guessing(
-            aviary_inputs, aviary_group.initialization_guesses, aviary_group.engine_builders
-        )
 
         aviary_inputs.set_val(
             Mission.Summary.CRUISE_MASS_FINAL,
@@ -66,10 +55,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         # Deal with missing defaults in phase info:
         aviary_group.pre_mission_info.setdefault('include_takeoff', True)
-        aviary_group.pre_mission_info.setdefault('external_subsystems', [])
 
         aviary_group.post_mission_info.setdefault('include_landing', True)
-        aviary_group.post_mission_info.setdefault('external_subsystems', [])
 
         # Commonly referenced values
         aviary_group.cruise_alt = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
@@ -485,10 +472,27 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             inputs=[
                 ('ascent.parameters:t_init_gear', 't_init_gear'),
                 ('ascent.parameters:t_init_flaps', 't_init_flaps'),
-                ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
                 ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
             ],
         )
+
+        # Ascent t_iniitial is connected, so we need a slack constraint for the desvar that feeds
+        # into the event xform.
+        comp = om.ExecComp(
+            ['con_val = initial_time - initial_time_slack'],
+            con_val={'units': 's'},
+            initial_time={'units': 's'},
+            initial_time_slack={'units': 's'},
+        )
+        aviary_group.add_subsystem(
+            'ascent_initial_time_slack_constraint',
+            comp,
+            promotes_inputs=[
+                ('initial_time', 'ascent.t_initial'),
+                ('initial_time_slack', Mission.Takeoff.ASCENT_T_INITIAL),
+            ],
+        )
+        aviary_group.add_constraint('ascent_initial_time_slack_constraint.con_val', ref=30.0)
 
         # imitate input_initial for taxi -> groundroll
         eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())

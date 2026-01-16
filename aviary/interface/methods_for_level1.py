@@ -13,6 +13,7 @@ def run_aviary(
     phase_info,
     optimizer=None,
     objective_type=None,
+    subsystems=[],
     restart_filename=None,
     max_iter=50,
     run_driver=True,
@@ -39,6 +40,8 @@ def run_aviary(
         The optimizer to use.
     objective_type : str, optional
         Type of the optimization objective.
+    subsystems : list of SubsystemBuilders, optional
+        List of all non-default subsystems to be added to the problem
     restart_filename : str, optional
         Filename to use for restarting the optimization, if applicable.
     max_iter : int, optional
@@ -79,6 +82,8 @@ def run_aviary(
     # Load aircraft and options data from user
     # Allow for user overrides here
     prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
+
+    prob.load_external_subsystems(subsystems, verbosity=verbosity)
 
     prob.check_and_preprocess_inputs(verbosity=verbosity)
 

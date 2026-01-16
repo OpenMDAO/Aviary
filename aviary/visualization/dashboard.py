@@ -258,14 +258,28 @@ def create_report_frame(documentation, format, text_filepath):
     """
     if os.path.isfile(text_filepath):
         if format == 'html':
-            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
+            # Use CSS that allows the iframe to stretch
+            iframe_html = f"""
+            <div style="width: 100%; height: 100%; min-height: 600px;">
+                <iframe
+                    src="/home/{text_filepath}"
+                    style="width: 100%; height: 100%; border: none; min-height: 600px;"
+                    scrolling="yes">
+                </iframe>
+            </div>
+            """
             report_pane = pn.Column(
                 pn.pane.HTML(
                     f'<p class="pane_doc">{documentation}</p>',
                     stylesheets=['assets/aviary_styles.css'],
                     styles={'text-align': 'left'},
                 ),
-                pn.pane.HTML(f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>'),
+                pn.pane.HTML(
+                    iframe_html,
+                    sizing_mode='stretch_both',  # Key: tells Panel to stretch this pane
+                    min_height=600,
+                ),
+                sizing_mode='stretch_both',  # Also stretch the parent Column
             )
         elif format in ['markdown', 'text']:
             with open(text_filepath, 'rb') as f:

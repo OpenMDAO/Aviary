@@ -245,13 +245,13 @@ def mission_report(prob: AviaryProblem, **kwargs):
             # TODO for traj in trajectories, currently assuming single one named "traj"
             # TODO delta mass and fuel consumption need to be tracked separately
             fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
-            time = _get_phase_diff(model, 'traj', phase, 't', 'min')
+            time = _get_phase_diff(model, 'traj', phase, 'time', 'min')
             range = _get_phase_diff(model, 'traj', phase, 'distance', 'nmi')
 
             # get initial values, first in traj
             if idx == 0:
                 initial_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', 0)[0]
-                initial_time = _get_phase_value(model, 'traj', phase, 't', 'min', 0)
+                initial_time = _get_phase_value(model, 'traj', phase, 'time', 'min', 0)
                 initial_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', 0)[0]
 
             outputs = NamedValues()
@@ -263,7 +263,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             # get final values, last in traj
             final_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', -1)[0]
-            final_time = _get_phase_value(model, 'traj', phase, 't', 'min', -1)
+            final_time = _get_phase_value(model, 'traj', phase, 'time', 'min', -1)
             final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
             totals = NamedValues()

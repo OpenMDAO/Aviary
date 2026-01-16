@@ -14,6 +14,7 @@ from aviary.variable_info.enums import (
     LegacyCode,
     ProblemType,
     Verbosity,
+    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -2135,20 +2136,6 @@ add_meta_data(
     default_value=False,
     types=bool,
     option=True,
-    multivalue=True,
-)
-
-# TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
-add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    default_value=False,
-    types=bool,
-    desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-    'propellers. In GASP this depended on NTYE',
     multivalue=True,
 )
 
@@ -8152,6 +8139,16 @@ add_meta_data(
     option=True,
     types=LegacyCode,
     default_value=None,
+)
+
+add_meta_data(
+    Settings.ATMOSPHERE_MODEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
+    option=True,
+    types=AtmosphereModel,
+    default_value=AtmosphereModel.STANDARD,
 )
 
 add_meta_data(
