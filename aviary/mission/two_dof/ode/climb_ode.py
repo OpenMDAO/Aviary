@@ -28,16 +28,6 @@ class ClimbODE(TwoDOFODE):
             types=SpeedType,
             desc='Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number',
         )
-        self.options.declare(
-            'alt_trigger_units',
-            default='ft',
-            desc='The units that the altitude trigger is provided in',
-        )
-        self.options.declare(
-            'speed_trigger_units',
-            default='kn',
-            desc='The units that the speed trigger is provided in.',
-        )
         self.options.declare('EAS_target', desc='target climbing EAS in knots')
         self.options.declare('mach_cruise', default=0, desc='targeted cruise Mach number')
 
