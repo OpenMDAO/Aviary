@@ -69,6 +69,7 @@ class AviaryGroup(om.Group):
         self.engine_models = []
         self.regular_phases = []
         self.reserve_phases = []
+        self.subsystems = []
 
         self.aviary_inputs = None
         self.meta_data = None
