@@ -5,20 +5,27 @@ from aviary.variable_info.variables import Dynamic
 
 
 class SpeedConstraints(om.ExplicitComponent):
-    """Compute speed constraint to be driven to zero in order to control speed."""
+    """Compute value of speed constraints for both mach and EAS.
+
+    Values above 0 exceed the target maximums. This is generally used with a KS comp during
+    climb and descent phases. Depending on the choices for the values, one or the other
+    may be the active constraint at a given trajectory point.
+
+    TODO: The mach constraint is scaled by the target EAS max. It might be better scaling
+    to normalize the EAS constraint by EAS_target instead.
+    """
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.options.declare(
             'EAS_target',
             default=0,
-            desc='targeted equivalent airspeed in knots assuming mach constraint is satisfied',
+            desc='Target equivalent airspeed in knots assuming mach constraint is satisfied',
         )
         self.options.declare('mach_cruise', default=0, desc='targeted cruise Mach number')
 
     def setup(self):
         nn = self.options['num_nodes']
-        arange = np.arange(nn)
 
         self.add_input(
             'EAS',
@@ -39,6 +46,10 @@ class SpeedConstraints(om.ExplicitComponent):
             units='unitless',
             desc='constraint to be driven to zero in order to control speed',
         )
+
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        arange = np.arange(nn)
 
         self.declare_partials('speed_constraint', 'EAS', rows=arange * 2, cols=arange, val=1.0)
         self.declare_partials(
