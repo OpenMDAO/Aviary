@@ -357,9 +357,9 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         ref_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
-        thrust_rat = thrust / ref_sls_thrust
-        adjusted_avg_diam = avg_diam * np.sqrt(thrust_rat)
-        adjusted_avg_length = avg_length * np.sqrt(thrust_rat)
+        thrust_ratio = thrust / ref_sls_thrust
+        adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
+        adjusted_avg_length = avg_length * np.sqrt(thrust_ratio)
 
         char_len = np.zeros(len(num_eng), dtype=avg_diam.dtype)
         fineness = np.zeros(len(num_eng), dtype=avg_diam.dtype)
@@ -383,8 +383,8 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
 
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
         ref_sls_thrust, _ = self.options[Aircraft.Engine.REFERENCE_SLS_THRUST]
-        thrust_rat = thrust / ref_sls_thrust
-        adjusted_avg_diam = avg_diam * np.sqrt(thrust_rat)
+        thrust_ratio = thrust / ref_sls_thrust
+        adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
 
         deriv_char_len = np.zeros(len(num_eng), dtype=avg_diam.dtype)
         deriv_char_thrust = np.zeros(len(num_eng), dtype=avg_diam.dtype)
@@ -392,10 +392,10 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         deriv_fine_diam = np.zeros(len(num_eng), dtype=avg_diam.dtype)
 
         calc_idx = np.where(num_eng >= 1)
-        deriv_char_len[calc_idx] = 1.0 * np.sqrt(thrust_rat)
-        deriv_char_thrust[calc_idx] = 0.5 * avg_length / np.sqrt(thrust_rat) / ref_sls_thrust
+        deriv_char_len[calc_idx] = 1.0 * np.sqrt(thrust_ratio)
+        deriv_char_thrust[calc_idx] = 0.5 * avg_length / np.sqrt(thrust_ratio) / ref_sls_thrust
 
-        deriv_fine_len[calc_idx] = 1.0 / adjusted_avg_diam[calc_idx] * np.sqrt(thrust_rat)
+        deriv_fine_len[calc_idx] = 1.0 / adjusted_avg_diam[calc_idx] * np.sqrt(thrust_ratio)
         deriv_fine_diam[calc_idx] = -avg_length[calc_idx] / avg_diam[calc_idx] ** 2.0
 
         J[Aircraft.Nacelle.CHARACTERISTIC_LENGTH, Aircraft.Nacelle.AVG_LENGTH] = deriv_char_len
