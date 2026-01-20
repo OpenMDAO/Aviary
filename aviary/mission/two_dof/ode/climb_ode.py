@@ -74,7 +74,7 @@ class ClimbODE(TwoDOFODE):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
-                'viscosity',
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
             ],
         )
 
