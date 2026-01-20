@@ -7,14 +7,19 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
+    CanardCharacteristicLength,
+    FuselageCharacteristicLengths,
+    HorizontalTailCharacteristicLength,
+    NacelleCharacteristicLength,
+    VerticalTailCharacteristicLength,
     WingCharacteristicLength,
-    OtherCharacteristicLengths,
 )
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class CharacteristicLengthsTest(unittest.TestCase):
     """Test characteristic length and fineness ratio calculations."""
 
@@ -40,13 +45,41 @@ class CharacteristicLengthsTest(unittest.TestCase):
             promotes_inputs=['*'],
         )
 
-        aviary_options_others = {
+        prob.model.add_subsystem(
+            'canard_char_lengths',
+            CanardCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'fuselage_char_lengths',
+            FuselageCharacteristicLengths(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'horizontal_tail_char_lengths',
+            HorizontalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        prob.model.add_subsystem(
+            'vertical_tail_char_lengths',
+            VerticalTailCharacteristicLength(),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
+
+        aviary_options_nacelle = {
             Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
         }
 
         prob.model.add_subsystem(
-            'other_char_lengths',
-            OtherCharacteristicLengths(**aviary_options_others),
+            'nac_char_lengths',
+            NacelleCharacteristicLength(**aviary_options_nacelle),
             promotes_outputs=['*'],
             promotes_inputs=['*'],
         )
@@ -57,7 +90,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             (Aircraft.Canard.AREA, 'ft**2'),
             (Aircraft.Canard.ASPECT_RATIO, 'unitless'),
             (Aircraft.Canard.THICKNESS_TO_CHORD, 'unitless'),
-            # (Aircraft.Fuselage.AVG_DIAMETER, 'ft'),
+            # (Aircraft.Fuselage.REF_DIAMETER, 'ft'),
             (Aircraft.Fuselage.LENGTH, 'ft'),
             (Aircraft.HorizontalTail.AREA, 'ft**2'),
             (Aircraft.HorizontalTail.ASPECT_RATIO, 'unitless'),
@@ -75,7 +108,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             prob.set_val(var, aviary_inputs.get_val(var, units))
 
         # this is another component's output
-        prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, val=12.75)
+        prob.set_val(Aircraft.Fuselage.REF_DIAMETER, val=12.75)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))

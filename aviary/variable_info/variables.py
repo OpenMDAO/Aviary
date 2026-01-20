@@ -224,7 +224,6 @@ class Aircraft:
         GEOPOTENTIAL_ALT = 'aircraft:engine:geopotential_alt'
         GLOBAL_HYBRID_THROTTLE = 'aircraft:engine:global_hybrid_throttle'
         GLOBAL_THROTTLE = 'aircraft:engine:global_throttle'
-        HAS_PROPELLERS = 'aircraft:engine:has_propellers'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
         INTERPOLATION_METHOD = 'aircraft:engine:interpolation_method'
         INTERPOLATION_SORT = 'aircraft:engine:interpolation_sort'
@@ -355,6 +354,7 @@ class Aircraft:
         PLANFORM_AREA = 'aircraft:fuselage:planform_area'
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
         PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
+        REF_DIAMETER = 'aircraft:fuselage:ref_diameter'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
         SIMPLE_LAYOUT = 'aircraft:fuselage:simple_layout'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
@@ -618,6 +618,7 @@ class Dynamic:
 
         DENSITY = 'density'
         DYNAMIC_PRESSURE = 'dynamic_pressure'
+        DYNAMIC_VISCOSITY = 'dynamic_viscosity'
         KINEMATIC_VISCOSITY = 'kinematic_viscosity'
         MACH = 'mach'
         MACH_RATE = 'mach_rate'
@@ -627,9 +628,8 @@ class Dynamic:
 
     class Mission:
         """
-        Kinematic description of vehicle states in a ground-fixed axis.
-        These values are typically used by the Equations of Motion to determine
-        vehicle states at other timesteps.
+        Kinematic description of vehicle states in a ground-fixed reference frame. These values are
+        typically used by the Equations of Motion to determine vehicle states at each timestep.
         """
 
         # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
@@ -688,8 +688,7 @@ class Mission:
     """Mission data hierarchy."""
 
     class Constraints:
-        # these can be residuals (for equality constraints),
-        # upper bounds, or lower bounds
+        # these can be residuals (for equality constraints), upper bounds, or lower bounds
         EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
@@ -809,6 +808,7 @@ class Settings:
     """Setting data hierarchy."""
 
     AERODYNAMICS_METHOD = 'settings:aerodynamics_method'
+    ATMOSPHERE_MODEL = 'settings:atmosphere_model'
     EQUATIONS_OF_MOTION = 'settings:equations_of_motion'
     MASS_METHOD = 'settings:mass_method'
     PAYLOAD_RANGE = 'settings:payload_range'

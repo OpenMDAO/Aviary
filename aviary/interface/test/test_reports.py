@@ -10,7 +10,7 @@ from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
@@ -54,16 +54,16 @@ class TestReports(unittest.TestCase):
                 '0.0',
                 '8.333333333333337',
                 '1.0',
-                '21108.418300418845',
+                '21108.341035874902',
                 '0.0',
-                '-10492.593707324704',
+                '-10492.721631142893',
                 '0.2',
                 '0.0001354166666666668',
                 '79560.101698',
-                '12.350271989430475',
-                '0.565484286063171',
-                '28478.788920867584',
-                '68.05737270077049',
+                '12.349371130670201',
+                '0.5654905755095957',
+                '28479.14295846102',
+                '68.0522432380756',
             ]
         ]
 
@@ -89,15 +89,20 @@ class TestReports(unittest.TestCase):
     @set_env_vars(TESTFLO_RUNNING='0', OPENMDAO_REPORTS='check_input_report')
     def test_check_input_report(self):
         # Make sure the input check works with custom metadata.
+        # Make sure it also works when a user forgets to create metadata.
 
-        class ExtraBuilder(SubsystemBuilderBase):
+        class ExtraBuilder(SubsystemBuilder):
             def build_pre_mission(self, aviary_inputs):
-                comp = om.ExecComp('z = 2*x')
+                comp = om.ExecComp(['z = 2*x', 'p = q'])
                 wing_group = om.Group()
                 wing_group.add_subsystem(
                     'aerostructures',
                     comp,
-                    promotes_inputs=[('x', 'aircraft:custom_var')],
+                    promotes_inputs=[
+                        ('x', 'aircraft:custom_var'),
+                        ('q', 'aircraft:forgotten_input'),
+                    ],
+                    promotes_outputs=[('p', 'aircraft:forgotten_out')],
                 )
                 return wing_group
 

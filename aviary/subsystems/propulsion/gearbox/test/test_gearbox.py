@@ -81,7 +81,7 @@ class TestGearbox(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-9)
 
 
-class TestGearboxBuilder(av.TestSubsystemBuilderBase):
+class TestGearboxBuilder(av.TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = GearboxBuilder()
         self.aviary_values = av.AviaryValues()

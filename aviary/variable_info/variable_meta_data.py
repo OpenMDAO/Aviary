@@ -3,8 +3,6 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
-from pathlib import Path
-
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
@@ -16,6 +14,7 @@ from aviary.variable_info.enums import (
     LegacyCode,
     ProblemType,
     Verbosity,
+    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -1966,7 +1965,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'ENGDIN.EIFILE', 'LEAPS1': None},
     units='unitless',
-    types=(Path, str),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing engine performance tables',
@@ -2137,20 +2136,6 @@ add_meta_data(
     default_value=False,
     types=bool,
     option=True,
-    multivalue=True,
-)
-
-# TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
-add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    default_value=False,
-    types=bool,
-    desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-    'propellers. In GASP this depended on NTYE',
     multivalue=True,
 )
 
@@ -2688,7 +2673,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    types=(str, Path),
+    types=str,
     default_value=None,
     option=True,
     desc='filepath to data file containing propeller data map',
@@ -3269,15 +3254,13 @@ add_meta_data(
     default_value=24,
 )
 
-# TODO FLOPS is not average diameter, but rather a reference diameter using max
-#      height and length. New variable??
 add_meta_data(
     Aircraft.Fuselage.AVG_DIAMETER,
     meta_data=_MetaData,
     historical_name={
         'GASP': ['INGASP.WC', 'INGASP.SWF'],
-        'FLOPS': None,  # 'EDETIN.XD',
-        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+        'FLOPS': None,
+        'LEAPS1': None,
     },
     units='ft',
     desc='average fuselage diameter',
@@ -3690,6 +3673,19 @@ add_meta_data(
     units='ft',
     default_value=0.0,
     desc='additional pressurized fuselage width for cargo bay',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.REF_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': ['EDETIN.XD'],
+        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+    },
+    units='ft',
+    desc='A coarse average diameter calculated using the mean of max width and depth.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6570,6 +6566,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},
+    units='ft**2/s',
+    desc="Atmospheric dynamic viscosity at the vehicle's current flight condition",
+    default_value=0.0,
+    multivalue=True,
+)
+
+
+add_meta_data(
     Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
     meta_data=_MetaData,
     historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},
@@ -8143,6 +8150,16 @@ add_meta_data(
     option=True,
     types=LegacyCode,
     default_value=None,
+)
+
+add_meta_data(
+    Settings.ATMOSPHERE_MODEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
+    option=True,
+    types=AtmosphereModel,
+    default_value=AtmosphereModel.STANDARD,
 )
 
 add_meta_data(
