@@ -1156,7 +1156,7 @@ class AeroSetup(om.Group):
                     has_diag_partials=True,
                 ),
                 promotes=[
-                    '*',
+                    ('viscosity', Dynamic.Atmosphere.DYNAMIC_VISCOSITY),
                     ('rho', Dynamic.Atmosphere.DENSITY),
                     ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
                 ],
@@ -1215,7 +1215,7 @@ class BWBAeroSetup(om.Group):
                     has_diag_partials=True,
                 ),
                 promotes=[
-                    '*',
+                    ('viscosity', Dynamic.Atmosphere.DYNAMIC_VISCOSITY),
                     ('rho', Dynamic.Atmosphere.DENSITY),
                     ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
                 ],

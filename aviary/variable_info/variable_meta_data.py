@@ -6562,6 +6562,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},
+    units='ft**2/s',
+    desc="Atmospheric dynamic viscosity at the vehicle's current flight condition",
+    default_value=0.0,
+    multivalue=True,
+)
+
+
+add_meta_data(
     Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
     meta_data=_MetaData,
     historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},

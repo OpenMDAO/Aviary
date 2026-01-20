@@ -25,7 +25,6 @@ class NacelleTest(unittest.TestCase):
         options = {
             Aircraft.Engine.NUM_ENGINES: np.array([2, 2, 3]),
         }
-        options[Aircraft.Engine.REFERENCE_SLS_THRUST] = ((100000.0, 100000.0, 100000.0), 'lbf')
 
         prob.model.add_subsystem(
             'nacelles', Nacelles(**options), promotes_outputs=['*'], promotes_inputs=['*']
@@ -38,14 +37,14 @@ class NacelleTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([6, 4.25, 9.6]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([8.4, 5.75, 10]))
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=np.array([1.0, 0.92, 1.4]))
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([100000.0]))
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=np.array([1.0, 0.5, 2.0]))
 
         prob.run_model()
 
         wetted_area = prob.get_val(Aircraft.Nacelle.WETTED_AREA)
         total_wetted_area = prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA)
 
-        expected_wetted_area = np.array([141.12, 62.951, 376.32])
+        expected_wetted_area = np.array([141.12, 62.951, 376.32]) * np.array([1, 0.5, 2.0])
         expected_total_wetted_area = sum(expected_wetted_area * np.array([2, 2, 3]))
 
         assert_near_equal(wetted_area, expected_wetted_area, tolerance=1e-10)
@@ -70,21 +69,20 @@ class NacelleTest(unittest.TestCase):
         )
 
         prob.model_options['*'] = options
-        prob.model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = np.array([86459.2])
 
         prob.setup(check=False, force_alloc_complex=True)
 
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=np.array([12.608]))
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=np.array([17.433]))
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=np.array([1.0]))
-        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, val=np.array([0.8]))
 
         prob.run_model()
 
         wetted_area = prob.get_val(Aircraft.Nacelle.WETTED_AREA)
         total_wetted_area = prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA)
 
-        expected_wetted_area = np.array([498.26822066])
+        expected_wetted_area = np.array([492.34139136])
         expected_total_wetted_area = sum(expected_wetted_area * np.array([3]))
 
         assert_near_equal(wetted_area, expected_wetted_area, tolerance=1e-10)
