@@ -7,7 +7,7 @@ from aviary.mission.two_dof.ode.landing_eom import (
 )
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
@@ -53,7 +53,7 @@ class LandingSegment(TwoDOFODE):
 
         # collect the propulsion group names for later use with
         for subsystem in subsystems:
-            if isinstance(subsystem, AerodyanmicsBuilder):
+            if isinstance(subsystem, AerodynamicsBuilder):
                 kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
