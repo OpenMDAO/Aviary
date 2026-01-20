@@ -10,6 +10,7 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class RotationPhaseOptions(AviaryOptionsDictionary):
@@ -141,6 +142,8 @@ class RotationPhase(PhaseBuilder):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         # Add parameters
         phase.add_parameter('t_init_gear', units='s', static_target=True, opt=False, val=100)
