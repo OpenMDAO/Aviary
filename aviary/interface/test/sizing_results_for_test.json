@@ -168,7 +168,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:crew_and_payload:num_cabin_crew",
+        "aircraft:crew_and_payload:num_galley_crew",
         0,
         "unitless",
         "<class 'int'>"

@@ -87,6 +87,7 @@ class Aircraft:
         NUM_FIRST_CLASS = 'aircraft:crew_and_payload:num_first_class'
         NUM_FLIGHT_ATTENDANTS = 'aircraft:crew_and_payload:num_flight_attendants'
         NUM_FLIGHT_CREW = 'aircraft:crew_and_payload:num_flight_crew'
+        NUM_GALLEY_CREW = 'aircraft:crew_and_payload:num_galley_crew'
         NUM_PASSENGERS = 'aircraft:crew_and_payload:num_passengers'
         NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:num_tourist_class'
         PASSENGER_MASS_TOTAL = 'aircraft:crew_and_payload:passenger_mass_total'

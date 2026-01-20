@@ -33,8 +33,8 @@ class TestLevel2Preprocessing(unittest.TestCase):
         num_flight_attendants = aviary_inputs.get_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
         self.assertEqual(num_flight_attendants, 4)
 
-        num_cabin_crew = aviary_inputs.get_val(Aircraft.CrewPayload.NUM_CABIN_CREW)
-        self.assertEqual(num_cabin_crew, 1)
+        num_galley_crew = aviary_inputs.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW)
+        self.assertEqual(num_galley_crew, 1)
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ class NonFlightCrewMass(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_CABIN_CREW)
+        add_aviary_option(self, Aircraft.CrewPayload.NUM_GALLEY_CREW)
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, units='unitless')
@@ -29,7 +29,7 @@ class NonFlightCrewMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         flight_attendants_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS]
-        galley_crew_count = self.options[Aircraft.CrewPayload.NUM_CABIN_CREW]
+        galley_crew_count = self.options[Aircraft.CrewPayload.NUM_GALLEY_CREW]
 
         mass_per_flight_attendant = self._mass_per_flight_attendant
         mass_per_galley_crew = self._mass_per_galley_crew
@@ -43,7 +43,7 @@ class NonFlightCrewMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
         flight_attendants_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS]
-        galley_crew_count = self.options[Aircraft.CrewPayload.NUM_CABIN_CREW]
+        galley_crew_count = self.options[Aircraft.CrewPayload.NUM_GALLEY_CREW]
 
         mass_per_flight_attendant = self._mass_per_flight_attendant
         mass_per_galley_crew = self._mass_per_galley_crew
