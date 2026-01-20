@@ -69,6 +69,7 @@ class AviaryGroup(om.Group):
         self.engine_models = []
         self.regular_phases = []
         self.reserve_phases = []
+        self.subsystems = []
 
         self.aviary_inputs = None
         self.meta_data = None
@@ -1120,7 +1121,21 @@ class AviaryGroup(om.Group):
                     phases_to_link.append(phase_name)
 
             if len(phases_to_link) > 1:  # TODO: hack
-                self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
+                # go phase by phase and either directly link if two standard phases, or use linkage
+                # constraint if either are analytic
+                # TODO need more unified way to handle this instead of splitting between AviaryGroup
+                #      and configurators
+                for ii in range(len(phases) - 1):
+                    phase1, phase2 = phases[ii : ii + 2]
+                    analytic1 = self.mission_info[phase1]['user_options'].get('analytic', False)
+                    analytic2 = self.mission_info[phase2]['user_options'].get('analytic', False)
+
+                    if not (analytic1 or analytic2):
+                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
+
+                    else:
+                        # TODO need ref value for these linkage constraints
+                        self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
 
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
 

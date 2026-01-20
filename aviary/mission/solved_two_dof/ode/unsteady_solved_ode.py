@@ -9,7 +9,7 @@ from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolved
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import LegacyCode, SpeedType
@@ -178,7 +178,7 @@ class UnsteadySolvedODE(TwoDOFODE):
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodyanmicsBuilder):
+                if isinstance(subsystem, AerodynamicsBuilder):
                     mission_inputs = subsystem.mission_inputs(**kwargs)
                     if (
                         subsystem.code_origin is LegacyCode.FLOPS
