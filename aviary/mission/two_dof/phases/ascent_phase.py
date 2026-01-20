@@ -10,6 +10,7 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class AscentPhaseOptions(AviaryOptionsDictionary):
@@ -162,6 +163,8 @@ class AscentPhase(PhaseBuilder):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         self.add_control(
             'angle_of_attack',
