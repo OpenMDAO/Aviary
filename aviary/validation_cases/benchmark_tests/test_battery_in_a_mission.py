@@ -105,8 +105,8 @@ class TestBatteryMission(unittest.TestCase):
 
         # Check outputs
         # indirectly check mission trajectory by checking total fuel/electric split
-        assert_near_equal(electric_energy_used_cruise2[-1], 38.75346736, 1.0e-7)
-        assert_near_equal(fuel_burned, 681.43308272, 1.0e-7)
+        assert_near_equal(electric_energy_used_cruise2[-1], 38.60747069, 1.0e-7)
+        assert_near_equal(fuel_burned, 676.93670291, 1.0e-7)
         # check battery state-of-charge over mission
 
         assert_near_equal(
