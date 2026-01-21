@@ -73,7 +73,7 @@ class MotorMap(om.Group):
                 0.0, 0.040, 0.104, 0.168, 0.232, 0.296, 0.360, 0.424, 0.488,
                 0.552, 0.616, 0.680,  0.744, 0.808, 0.872, 0.936, 1.000
             ]
-        ) * 1800
+        ) * 1800 # N*m
         # fmt: on
         # Create a structured metamodel to compute motor efficiency from rpm
         motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=True)
