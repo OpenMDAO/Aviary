@@ -101,7 +101,7 @@ class MotorMap(om.Group):
             om.ExecComp(
                 'torque_unscaled = torque_max * throttle',
                 torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                torque_max={'val': torque_vals[-1], 'units': 'N*m'},
+                torque_max={'val': torque_vals[-1], 'units': 'N*m'}, # only used as input because we need to dynamically assign the last value of torque as the max torque
                 throttle={'val': np.ones(n), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
