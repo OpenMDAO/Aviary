@@ -2,14 +2,12 @@ import openmdao.api as om
 
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import add_aviary_option
 
 class MotorPreMission(om.Group):
     """Calculate electric motor mass for a single motor."""
 
     def initialize(self):
         self.name = 'motor_premission'
-        add_aviary_option(self, Aircraft.Engine.RPM_DESIGN)
 
     def setup(self):
         # Determine max torque of scaled motor
