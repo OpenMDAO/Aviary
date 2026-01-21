@@ -169,7 +169,7 @@ class SimpleCabinLayout(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
                     'Passenger compartment lenght is longer than recommended maximum'
-                    ' length. Suggest using detailed layout algorithm.'
+                    ' length (of 190 ft). Suggest using detailed layout algorithm.'
                 )
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
