@@ -48,8 +48,8 @@ class AntiIcingMass(om.ExplicitComponent):
         span = inputs[Aircraft.Wing.SPAN]
         sweep = inputs[Aircraft.Wing.SWEEP]
 
-        thrust_rat = inputs[Aircraft.Engine.SCALE_FACTOR]
-        adjusted_avg_diam = avg_diam * np.sqrt(thrust_rat)
+        thrust_ratio = inputs[Aircraft.Engine.SCALE_FACTOR]
+        adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
 
         count_factor = distributed_engine_count_factor(total_engines)
         f_nacelle = distributed_nacelle_diam_factor(adjusted_avg_diam, num_engines)
@@ -75,8 +75,8 @@ class AntiIcingMass(om.ExplicitComponent):
         sweep = inputs[Aircraft.Wing.SWEEP]
 
         # scale avg_diam by thrust ratio
-        thrust_rat = inputs[Aircraft.Engine.SCALE_FACTOR]
-        adjusted_avg_diam = avg_diam * np.sqrt(thrust_rat)
+        thrust_ratio = inputs[Aircraft.Engine.SCALE_FACTOR]
+        adjusted_avg_diam = avg_diam * np.sqrt(thrust_ratio)
 
         count_factor = distributed_engine_count_factor(total_engines)
         f_nacelle = distributed_nacelle_diam_factor(adjusted_avg_diam, num_engines)
@@ -93,8 +93,8 @@ class AntiIcingMass(om.ExplicitComponent):
         J[Aircraft.AntiIcing.MASS, Aircraft.Fuselage.MAX_WIDTH] = 1.5 * scaler / GRAV_ENGLISH_LBM
 
         J[Aircraft.AntiIcing.MASS, Aircraft.Nacelle.AVG_DIAMETER] = (
-            3.8 * diam_deriv_fact * np.sqrt(thrust_rat) * count_factor * scaler / GRAV_ENGLISH_LBM
-        )
+            3.8 * diam_deriv_fact * np.sqrt(thrust_ratio) * count_factor * scaler
+        ) / GRAV_ENGLISH_LBM
 
         J[Aircraft.AntiIcing.MASS, Aircraft.Wing.SPAN] = 1 / cos_sweep * scaler / GRAV_ENGLISH_LBM
 
@@ -107,8 +107,8 @@ class AntiIcingMass(om.ExplicitComponent):
             * diam_deriv_fact
             * avg_diam
             * 0.5
-            * np.sqrt(thrust_rat)
-            / thrust_rat
+            * np.sqrt(thrust_ratio)
+            / thrust_ratio
             * count_factor
             * scaler
             / GRAV_ENGLISH_LBM

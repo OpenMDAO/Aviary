@@ -451,16 +451,12 @@ class NacellesTest(unittest.TestCase):
     def test_case(self, case_name):
         prob = self.prob
 
-        keys = [Aircraft.Engine.NUM_ENGINES, Aircraft.Engine.REFERENCE_SLS_THRUST]
+        keys = [Aircraft.Engine.NUM_ENGINES]
         flops_inputs = get_flops_inputs(case_name, keys=keys)
         options = {}
         for key in keys:
             options[key] = flops_inputs.get_item(key)[0]
         options[Aircraft.Engine.NUM_ENGINES] = np.array([2])
-        options[Aircraft.Engine.REFERENCE_SLS_THRUST] = (
-            options[Aircraft.Engine.REFERENCE_SLS_THRUST],
-            'lbf',
-        )
 
         prob.model.add_subsystem('nacelles', Nacelles(**options), promotes=['*'])
 
@@ -473,7 +469,6 @@ class NacellesTest(unittest.TestCase):
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.Nacelle.WETTED_AREA_SCALER,
-                Aircraft.Engine.SCALED_SLS_THRUST,
             ],
             output_keys=[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.WETTED_AREA],
             aviary_option_keys=[Aircraft.Engine.NUM_ENGINES],
@@ -828,6 +823,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
         # Canard
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
@@ -1117,6 +1113,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]), units='lbf')
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
+
         # Canard
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
