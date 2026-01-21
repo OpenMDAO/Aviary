@@ -336,7 +336,7 @@ outputs.set_val(Aircraft.Instruments.MASS, 484.0, 'lbm')
 
 outputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, 0.85 * 5778.0, 'lbm')
 outputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, 0.15 * 5778.0, 'lbm')
-outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 4911.3 + 866.7, 'lbm')
+outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 578, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, 11.65, 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, 1.6643)
