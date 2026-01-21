@@ -423,6 +423,18 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         elif state in initial_guesses2:
                             kwargs = {'units': initial_guesses2[state][-1]}
 
+                        # Some better scaling of the linkage constraint.
+                        if state in initial_guesses1:
+                            val = initial_guesses1[state][0]
+                            if isinstance(val, (tuple, list)):
+                                val = val[-1]
+                            kwargs['ref'] = abs(val)
+                        elif state in initial_guesses2:
+                            val = initial_guesses2[state][0]
+                            if isinstance(val, (tuple, list)):
+                                val = val[0]
+                            kwargs['ref'] = abs(val)
+
                     aviary_group.traj.link_phases(
                         [phase1, phase2], [state], connected=connected, **kwargs
                     )
