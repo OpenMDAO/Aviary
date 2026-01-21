@@ -162,8 +162,7 @@ from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
 # Phase builders
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase as TwoDOFAccelerationPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase as TwoDOFAscentPhase
-from aviary.mission.two_dof.phases.climb_phase import ClimbPhase as TwoDOFClimbPhase
-from aviary.mission.two_dof.phases.descent_phase import DescentPhase as TwoDOFDescentPhase
+from aviary.mission.two_dof.phases.flight_phase import FlightPhase as TwoDOFFlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import (
     GroundrollPhase as TwoDOFGroundrollPhase,
 )

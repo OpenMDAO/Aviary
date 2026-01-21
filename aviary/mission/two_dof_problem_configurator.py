@@ -6,9 +6,8 @@ from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
-from aviary.mission.two_dof.phases.climb_phase import ClimbPhase
 from aviary.mission.two_dof.phases.cruise_phase import CruisePhase, ElectricCruisePhase
-from aviary.mission.two_dof.phases.descent_phase import DescentPhase
+from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
 from aviary.mission.two_dof.polynomial_fit import PolynomialFit
@@ -220,19 +219,13 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             phase_builder = AccelPhase
         elif 'ascent' in phase_name:
             phase_builder = AscentPhase
-        elif 'climb' in phase_name:
-            phase_builder = ClimbPhase
         elif 'electric_cruise' in phase_name:
             phase_builder = ElectricCruisePhase
         elif 'cruise' in phase_name:
             phase_builder = CruisePhase
-        elif 'desc' in phase_name:
-            phase_builder = DescentPhase
         else:
-            raise ValueError(
-                f'{phase_name} does not have an associated phase_builder \n phase_name must '
-                'include one of: groundroll, rotation, accel, ascent, climb, cruise, or desc'
-            )
+            # All other phases are flight phases.
+            phase_builder = FlightPhase
 
         return phase_builder
 

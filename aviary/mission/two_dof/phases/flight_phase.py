@@ -170,10 +170,14 @@ class FlightPhase(PhaseBuilder):
         )
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+        )
+        phase.add_timeseries_output(
             Dynamic.Mission.VELOCITY,
             output_name=Dynamic.Mission.VELOCITY,
             units='kn',
         )
+        phase.add_timeseries_output('TAS_violation', output_name='TAS_violation', units='kn')
         phase.add_timeseries_output(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
             output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -201,7 +205,7 @@ class FlightPhase(PhaseBuilder):
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'input_speed_type': self.user_options.get_val('input_speed_type'),
-            'mach_target': self.user_options.get_val('mach_cruise'),
+            'mach_target': self.user_options.get_val('mach_target'),
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
 
