@@ -1,4 +1,4 @@
-from aviary.mission.two_dof.ode.climb_ode import ClimbODE
+from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
@@ -123,7 +123,7 @@ class ClimbPhase(PhaseBuilder):
     """
 
     default_name = 'climb_phase'
-    default_ode_class = ClimbODE
+    default_ode_class = FlightODE
     default_options_class = ClimbPhaseOptions
 
     _initial_guesses_meta_data_ = {}
@@ -224,8 +224,12 @@ class ClimbPhase(PhaseBuilder):
         """Return extra kwargs required for initializing the ODE."""
         # TODO: support external_subsystems and meta_data in the base class
         return {
-            'EAS_target': self.user_options.get_val('EAS_target', units='kn'),
-            'mach_cruise': self.user_options.get_val('mach_cruise'),
+            #'EAS_target': self.user_options.get_val('EAS_target', units='kn'),
+            #'mach_cruise': self.user_options.get_val('mach_cruise'),
+
+            #'input_speed_type': self.user_options.get_val('input_speed_type'),
+            'mach_target': self.user_options.get_val('mach_cruise'),
+            'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
 
 

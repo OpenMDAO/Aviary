@@ -13,25 +13,25 @@ from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class DescentODE(TwoDOFODE):
-    """ODE for quasi-steady descent.
+class FlightODE(TwoDOFODE):
+    """ODE for quasi-steady flight in GASP 2-dof. This replaces ClimbODE and DescentODE.
 
-    This ODE has a ``KSComp`` which allows for the switching of obeying an EAS
-    constraint cruise Mach constraint, whichever is being violated. It is only included
-    if the option to target the cruise speed is set to true, otherwise it is assumed
-    that the equivalent airspeed is an input to this ODE and is set further up in the
-    model.
+    This ODE has a ``KSComp`` which aggregates the maximum EAS and mach number constraints.
+    This allows a single constraint to whichever of the two constraints would be active at
+    each trajectory point. The KSComp is only included if the input_speed_type is set to
+    SpeedType.EAS for this phase.
     """
 
     def initialize(self):
         super().initialize()
         self.options.declare(
             'input_speed_type',
+            default=SpeedType.MACH,
             types=SpeedType,
             desc='Whether the speed is given as a equivalent airspeed, true airspeed, or Mach number',
         )
-        self.options.declare('mach_cruise', default=0, desc='targeted cruise Mach number')
-        self.options.declare('EAS_limit', default=0, desc='maximum descending EAS in knots')
+        self.options.declare('mach_target', default=0, desc='Targeted cruise Mach number')
+        self.options.declare('EAS_target', desc='Targeted EAS in knots')
 
     def setup(self):
         self.options['auto_order'] = True
@@ -41,7 +41,14 @@ class DescentODE(TwoDOFODE):
         subsystem_options = self.options['subsystem_options']
         input_speed_type = self.options['input_speed_type']
 
-        # TODO: paramport
+        if input_speed_type is SpeedType.EAS:
+            speed_inputs = ['EAS']
+            speed_outputs = ['mach', Dynamic.Mission.VELOCITY]
+        elif input_speed_type is SpeedType.MACH:
+            speed_inputs = ['mach']
+            speed_outputs = ['EAS', Dynamic.Mission.VELOCITY]
+
+        # TODO: Let's get rid of this paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_subsystem(
@@ -57,10 +64,10 @@ class DescentODE(TwoDOFODE):
             ],
         )
 
-        EAS_limit = self.options['EAS_limit']
-        mach_cruise = self.options['mach_cruise']
+        EAS_target = self.options['EAS_target']
+        mach_target = self.options['mach_target']
 
-        # Add a group to contain the balance
+        # Either set a target or a limit.
 
         if input_speed_type is SpeedType.MACH:
             mach_balance_group = self.add_subsystem(
@@ -78,7 +85,7 @@ class DescentODE(TwoDOFODE):
 
             speed_bal = om.BalanceComp(
                 name=Dynamic.Atmosphere.MACH,
-                val=mach_cruise * np.ones(nn),
+                val=mach_target * np.ones(nn),
                 units='unitless',
                 lhs_name='KS',
                 rhs_val=0.0,
@@ -97,12 +104,13 @@ class DescentODE(TwoDOFODE):
                 'speeds',
                 SpeedConstraints(
                     num_nodes=nn,
-                    mach_cruise=mach_cruise,
-                    EAS_target=EAS_limit,
+                    mach_target=mach_target,
+                    EAS_target=EAS_target,
                 ),
                 promotes_inputs=['EAS', Dynamic.Atmosphere.MACH],
                 promotes_outputs=['speed_constraint'],
             )
+
             mach_balance_group.add_subsystem(
                 'ks',
                 om.KSComp(width=2, vec_size=nn, units='unitless'),
@@ -110,6 +118,7 @@ class DescentODE(TwoDOFODE):
                 promotes_outputs=['KS'],
             )
             flight_condition_group = mach_balance_group
+
         else:
             flight_condition_group = self
 
@@ -134,7 +143,7 @@ class DescentODE(TwoDOFODE):
         lift_balance_group.linear_solver = om.DirectSolver(assemble_jac=True)
 
         lift_balance_group.add_subsystem(
-            'descent_eom',
+            'flight_eom',
             EOMRates(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
@@ -200,8 +209,8 @@ class DescentODE(TwoDOFODE):
         self.add_excess_rate_comps(nn)
 
         ParamPort.set_default_vals(self)
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
-        self.set_input_defaults(Dynamic.Vehicle.MASS, val=147000 * np.ones(nn), units='lbm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
+        self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units='unitless')
         self.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THROTTLE, val=0 * np.ones(nn), units='unitless'

@@ -1,4 +1,4 @@
-from aviary.mission.two_dof.ode.descent_ode import DescentODE
+from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
@@ -112,7 +112,7 @@ class DescentPhase(PhaseBuilder):
     """
 
     default_name = 'descent_phase'
-    default_ode_class = DescentODE
+    default_ode_class = FlightODE
     default_options_class = DescentPhaseOptions
 
     _initial_guesses_meta_data_ = {}
@@ -179,8 +179,8 @@ class DescentPhase(PhaseBuilder):
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'input_speed_type': self.user_options.get_val('input_speed_type'),
-            'mach_cruise': self.user_options.get_val('mach_cruise'),
-            'EAS_limit': self.user_options.get_val('EAS_limit', 'kn'),
+            'mach_target': self.user_options.get_val('mach_cruise'),
+            'EAS_target': self.user_options.get_val('EAS_limit', 'kn'),
         }
 
 

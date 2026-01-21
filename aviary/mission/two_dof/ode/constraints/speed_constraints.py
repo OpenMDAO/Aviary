@@ -22,7 +22,7 @@ class SpeedConstraints(om.ExplicitComponent):
             default=0,
             desc='Target equivalent airspeed in knots assuming mach constraint is satisfied',
         )
-        self.options.declare('mach_cruise', default=0, desc='targeted cruise Mach number')
+        self.options.declare('mach_target', default=0, desc='targeted cruise Mach number')
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -64,10 +64,10 @@ class SpeedConstraints(om.ExplicitComponent):
         EAS = inputs['EAS']
         EAS_target = self.options['EAS_target']
         mach = inputs[Dynamic.Atmosphere.MACH]
-        mach_cruise = self.options['mach_cruise']
+        mach_target = self.options['mach_target']
 
         EAS_constraint = EAS - EAS_target
         EAS_constraint = EAS_constraint[:, np.newaxis]
-        mach_constraint = EAS_target * (mach - mach_cruise)
+        mach_constraint = EAS_target * (mach - mach_target)
         mach_constraint = mach_constraint[:, np.newaxis]
         outputs['speed_constraint'] = np.hstack((EAS_constraint, mach_constraint))
