@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core aerodynamics.
 
 Classes
 -------
-AerodyanmicsBuilder : the interface for an aerodynamics subsystem builder.
+AerodynamicsBuilder : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
@@ -38,14 +38,14 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'aerodynamics'
 
 
-class AerodyanmicsBuilder(SubsystemBuilder):
+class AerodynamicsBuilder(SubsystemBuilder):
     """
     Base class of aerodynamics builder.
 
     Methods
     -------
     __init__(self, name=None, meta_data=None):
-        Initializes the AerodyanmicsBuilder object with a given name.
+        Initializes the AerodynamicsBuilder object with a given name.
     mission_inputs(self, **kwargs) -> list:
         Return mission inputs.
     mission_outputs(self, **kwargs) -> list:
@@ -65,7 +65,7 @@ class AerodyanmicsBuilder(SubsystemBuilder):
         return ['*']
 
 
-class CoreAerodynamicsBuilder(AerodyanmicsBuilder):
+class CoreAerodynamicsBuilder(AerodynamicsBuilder):
     """
     Core aerodynamics builder.
 

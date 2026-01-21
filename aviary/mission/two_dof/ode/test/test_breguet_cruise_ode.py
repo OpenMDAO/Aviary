@@ -5,8 +5,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.two_dof.ode.breguet_cruise_ode import (
-    BreguetCruiseODESolution,
-    E_BreguetCruiseODESolution,
+    BreguetCruiseODE,
+    ElectricBreguetCruiseODE,
 )
 from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -26,7 +26,7 @@ class CruiseODETestCase(unittest.TestCase):
             'GASP', [build_engine_deck(aviary_options)]
         )
 
-        self.prob.model = BreguetCruiseODESolution(
+        self.prob.model = BreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
@@ -90,7 +90,7 @@ class ElectricCruiseODETestCase(unittest.TestCase):
             'GASP', build_engine_deck(aviary_options)
         )
 
-        self.prob.model = E_BreguetCruiseODESolution(
+        self.prob.model = ElectricBreguetCruiseODE(
             num_nodes=2,
             aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
