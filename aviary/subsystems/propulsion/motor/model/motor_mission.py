@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -11,12 +10,6 @@ class MotorMission(om.Group):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.options.declare(
-            'aviary_inputs',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-            default=None,
-        )
         self.name = 'motor_mission'
 
     def setup(self):
