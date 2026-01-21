@@ -3,7 +3,7 @@ import openmdao.api as om
 from openmdao.components.ks_comp import KSfunction
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.functions import dSigmoidXdx, sigmoidX
+from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import FlapType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
@@ -220,7 +220,7 @@ class MassParameters(om.ExplicitComponent):
             ) + 1 * (100) * dSigmoidXdx(loc_main_gear, 0.005, 0.01 / 320.0)
 
 
-class PayloadMass(om.ExplicitComponent):
+class PayloadGroup(om.ExplicitComponent):
     """Computation of maximum payload that the aircraft is being asked to carry."""
 
     def initialize(self):
@@ -767,9 +767,6 @@ class EngineMass(om.ExplicitComponent):
                 sum(CK5 * dry_wt_eng * num_engines) + CK7 * eng_instl_wt_all + aug_wt
             ) / GRAV_ENGLISH_LBM
 
-        # prop_wt = np.zeros(num_engine_type)
-        # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
-        # prop_wt[prop_idx] = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         outputs['prop_mass_all'] = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
@@ -890,7 +887,6 @@ class EngineMass(om.ExplicitComponent):
         pod_wt = nacelle_wt + pylon_wt
         eng_instl_wt = c_instl * dry_wt_eng
 
-        # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
@@ -2841,7 +2837,7 @@ class FixedMassGroup(om.Group):
 
         self.add_subsystem(
             'payload',
-            PayloadMass(),
+            PayloadGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

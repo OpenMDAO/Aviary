@@ -34,9 +34,9 @@ jobs:
         with:
             NAME: 'latest'
             PY: 3.12
-            NUMPY: 1
-            SCIPY: 1
-            PYOPTSPARSE: 'v2.9.1'
+            NUMPY: 2.2
+            SCIPY: 1.16
+            PYOPTSPARSE: 'v2.14.4'
             SNOPT: '7.7'
             OPENMDAO: 'latest'
             DYMOS: 'latest'
@@ -56,7 +56,7 @@ jobs:
         id: build_docs
         shell: bash -l {0}
         run: |
-          pip install -U jupyter-book
+          pip install -U "jupyter-book<2"
           cd aviary/docs
           echo "============================================================="
           echo "Build the docs"

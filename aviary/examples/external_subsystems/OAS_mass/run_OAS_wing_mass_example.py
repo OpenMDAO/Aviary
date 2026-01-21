@@ -43,7 +43,7 @@ wing_mass_builder = OASWingMassBuilder()
 # Load the phase_info and other common setup tasks
 phase_info = {
     'climb_1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -65,7 +65,7 @@ phase_info = {
         'initial_guesses': {'time': ([0, 128], 'min')},
     },
     'climb_2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -86,7 +86,7 @@ phase_info = {
         'initial_guesses': {'time': ([128, 113], 'min')},
     },
     'descent_1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -116,7 +116,7 @@ phase_info = {
 phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
 phase_info['pre_mission']['external_subsystems'] = [wing_mass_builder]
 
-aircraft_definition_file = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+aircraft_definition_file = 'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'
 make_plots = False
 
 # create and begin setting up Aviary problem

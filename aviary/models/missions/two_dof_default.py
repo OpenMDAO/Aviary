@@ -6,7 +6,7 @@ mission_distance = 3675
 
 phase_info = {
     'groundroll': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -32,25 +32,24 @@ phase_info = {
         },
     },
     'rotation': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 100), 's'),
             'time_duration_ref': (50.0, 's'),
             'velocity_bounds': ((0, 1000), 'kn'),
-            'velocity_ref': (100, 'kn'),
-            'velocity_ref0': (0, 'kn'),
+            'velocity_ref': (150, 'kn'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
             'distance_bounds': ((0, 10.0e3), 'ft'),
             'distance_ref': (5000, 'ft'),
             'distance_defect_ref': (5000, 'ft'),
-            'angle_of_attack_initial': (0.0, 'rad'),
-            'angle_of_attack_bounds': ((0.0, 5.0), 'rad'),
-            'angle_of_attack_ref': (5.0, 'rad'),
-            'angle_of_attack_defect_ref': (5.0, 'rad'),
+            'angle_of_attack_initial': (0.0, 'deg'),
+            'angle_of_attack_bounds': ((0.0, 12.0), 'deg'),
+            'angle_of_attack_ref': (12.0, 'deg'),
+            'angle_of_attack_defect_ref': (12.0, 'deg'),
             'normal_ref': (10000, 'lbf'),
         },
         'initial_guesses': {
@@ -62,13 +61,12 @@ phase_info = {
         },
     },
     'ascent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
             'velocity_ref': (200, 'kn'),
-            'velocity_ref0': (0, 'kn'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -78,9 +76,10 @@ phase_info = {
             'altitude_bounds': ((0.0, 700.0), 'ft'),
             'altitude_ref': (1000, 'ft'),
             'altitude_defect_ref': (1000, 'ft'),
+            'altitude_initial': (0, 'ft'),
             'altitude_final': (500, 'ft'),
             'altitude_constraint_ref': (500, 'ft'),
-            'flight_path_angle_bounds': ((-10.0, 20.0), 'rad'),
+            'flight_path_angle_bounds': ((-10.0, 20.0), 'deg'),
             'flight_path_angle_ref': (57.2958, 'deg'),
             'flight_path_angle_defect_ref': (57.2958, 'deg'),
             'flight_path_angle_initial': (0.0, 'deg'),
@@ -100,7 +99,7 @@ phase_info = {
         },
     },
     'accel': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -126,7 +125,7 @@ phase_info = {
         },
     },
     'climb1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -135,6 +134,7 @@ phase_info = {
             'target_mach': False,
             'time_duration_bounds': ((30, 300), 's'),
             'time_duration_ref': (1000, 's'),
+            'altitude_initial': (500.0, 'ft'),
             'altitude_final': (10.0e3, 'ft'),
             'altitude_bounds': ((400.0, 11_000.0), 'ft'),
             'altitude_ref': (10.0e3, 'ft'),
@@ -143,7 +143,6 @@ phase_info = {
             'mass_defect_ref': (150_000, 'lbm'),
             'distance_bounds': ((0, 500.0), 'NM'),
             'distance_ref': (10, 'NM'),
-            'distance_ref0': (0, 'NM'),
         },
         'initial_guesses': {
             'time': ([1.0, 2.0], 'min'),
@@ -153,7 +152,7 @@ phase_info = {
         },
     },
     'climb2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -166,13 +165,11 @@ phase_info = {
             'altitude_final': (37.5e3, 'ft'),
             'altitude_bounds': ((9000.0, 40000.0), 'ft'),
             'altitude_ref': (30000, 'ft'),
-            'altitude_ref0': (0, 'ft'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
             'distance_bounds': ((10.0, 1000.0), 'NM'),
             'distance_ref': (500, 'NM'),
-            'distance_ref0': (0, 'NM'),
             'distance_defect_ref': (500, 'NM'),
         },
         'initial_guesses': {
@@ -183,7 +180,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
@@ -198,7 +195,7 @@ phase_info = {
         },
     },
     'desc1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
@@ -210,15 +207,12 @@ phase_info = {
             'altitude_final': (10.0e3, 'ft'),
             'altitude_bounds': ((1000.0, 40_000.0), 'ft'),
             'altitude_ref': (30_000, 'ft'),
-            'altitude_ref0': (0, 'ft'),
             'altitude_constraint_ref': (10000, 'ft'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (140_000, 'lbm'),
-            'mass_ref0': (0, 'lbm'),
             'mass_defect_ref': (140_000, 'lbm'),
-            'distance_bounds': ((3000.0, 5000.0), 'NM'),
+            'distance_bounds': ((0.0, 5000.0), 'NM'),
             'distance_ref': (mission_distance, 'NM'),
-            'distance_ref0': (0, 'NM'),
             'distance_defect_ref': (100, 'NM'),
         },
         'initial_guesses': {
@@ -230,7 +224,7 @@ phase_info = {
         },
     },
     'desc2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 7,

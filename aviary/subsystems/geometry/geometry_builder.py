@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core geometry.
 
 Classes
 -------
-GeometryBuilderBase: the interface for a geometry subsystem builder.
+GeometryBuilder: the interface for a geometry subsystem builder.
 
 CoreGeometryBuilder : the interface for Aviary's core geometry subsystem builder
 """
@@ -12,7 +12,7 @@ from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.geometry.combined_geometry import CombinedGeometry
 from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
 
@@ -22,14 +22,14 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'geometry'
 
 
-class GeometryBuilderBase(SubsystemBuilderBase):
+class GeometryBuilder(SubsystemBuilder):
     """
     Base geometry builder.
 
     Methods
     -------
     __init__(self, name=None, meta_data=None):
-        Initializes the GeometryBuilderBase object with a given name.
+        Initializes the GeometryBuilder object with a given name.
     mission_inputs(self, **kwargs) -> list:
         Return mission inputs.
     mission_outputs(self, **kwargs) -> list:
@@ -42,14 +42,8 @@ class GeometryBuilderBase(SubsystemBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def mission_inputs(self, **kwargs):
-        return ['*']
 
-    def mission_outputs(self, **kwargs):
-        return ['*']
-
-
-class CoreGeometryBuilder(GeometryBuilderBase):
+class CoreGeometryBuilder(GeometryBuilder):
     """
     Core geometry builder.
 
@@ -75,7 +69,7 @@ class CoreGeometryBuilder(GeometryBuilderBase):
         code_origin_to_prioritize=None,
     ):
         if name is None:
-            name = 'core_geometry'
+            name = 'geometry'
 
         if code_origin not in (FLOPS, GASP) and set(code_origin) != set((FLOPS, GASP)):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
@@ -124,22 +118,6 @@ class CoreGeometryBuilder(GeometryBuilderBase):
 
         return geom_group
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
-        num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
-        params = {}
-
-        for entry in Aircraft.Nacelle.__dict__:
-            if entry != '__dict__':  # cannot get attribute from mappingproxy
-                var = getattr(Aircraft.Nacelle, entry)
-                if var in aviary_inputs:
-                    if 'total' not in var:
-                        params[var] = {
-                            'shape': (num_engine_type),
-                            'static_target': True,
-                        }
-
-        return params
-
     def report(self, prob, reports_folder, **kwargs):
         """
         Generate the report for Aviary core geometry analysis.
@@ -163,7 +141,12 @@ class CoreGeometryBuilder(GeometryBuilderBase):
             Aircraft.Wing.SWEEP,
         ]
         htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
-        fuselage_outputs = [Aircraft.Fuselage.LENGTH, Aircraft.Fuselage.AVG_DIAMETER]
+        fuselage_outputs = [Aircraft.Fuselage.LENGTH]
+
+        if self.code_origin is FLOPS or self.use_both_geometries:
+            fuselage_outputs.append(Aircraft.Fuselage.REF_DIAMETER)
+        if self.code_origin is GASP or self.use_both_geometries:
+            fuselage_outputs.append(Aircraft.Fuselage.AVG_DIAMETER)
 
         with open(filepath, mode='w') as f:
             if self.use_both_geometries:

@@ -27,8 +27,8 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv',
             two_dof_phase_info,
-            engine_builders=[turboprop],
         )
+        prob.load_external_subsystems([turboprop])
         # FLOPS aero specific stuff? Best guesses for values here
         prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
         prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
@@ -40,7 +40,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
-        prob.run_aviary_problem('dymos_solution.db')
+        prob.run_aviary_problem()
 
         self.assertTrue(prob.result.success)
         # om.n2(prob)

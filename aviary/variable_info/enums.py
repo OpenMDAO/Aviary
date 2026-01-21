@@ -6,6 +6,7 @@ class AircraftTypes(Enum):
 
     TRANSPORT = 'transport'
     BLENDED_WING_BODY = 'BWB'
+    # GENERAL_AVIATION = 'GA'  # incomplete in FLOPS, unavailable in GASP
 
 
 class AlphaModes(Enum):
@@ -45,6 +46,12 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
+class CodeOrigin(Enum):
+    FLOPS = 'FLOPS'
+    GASP = 'GASP'
+    GASP_ALT = 'GASP_ALT'
+
+
 class EquationsOfMotion(Enum):
     """Available equations of motion for use during mission analysis."""
 
@@ -52,6 +59,15 @@ class EquationsOfMotion(Enum):
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
     CUSTOM = 'custom'
+
+
+class EngineDeckType(Enum):
+    FLOPS = 'FLOPS'
+    GASP = 'GASP'
+    GASP_TS = 'GASP_TS'
+
+    def __str__(self):
+        return self.value
 
 
 @unique

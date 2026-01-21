@@ -12,7 +12,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.methods_for_level1 import run_aviary
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
@@ -24,7 +24,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
             'climb': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -47,7 +47,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 },
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -70,7 +70,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
                 },
             },
             'descent': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -122,7 +122,6 @@ class AircraftMissionTestSuite(unittest.TestCase):
             make_plots=self.make_plots,
             max_iter=self.max_iter,
             optimizer=optimizer,
-            optimization_history_filename='driver_test.db',
             verbosity=0,
         )
 
@@ -141,10 +140,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertIsNotNone(prob)
         self.assertTrue(prob.result.success)
 
-        cmd = (
-            'aviary dashboard --problem_recorder dymos_solution.db --driver_recorder '
-            f'driver_test.db {prob.driver._problem()._name}'
-        )
+        cmd = f'aviary dashboard {prob.driver._problem()._name}'
         # this only tests that a given command line tool returns a 0 return code. It doesn't
         # check the expected output at all.  The underlying functions that implement the
         # commands should be tested separately.

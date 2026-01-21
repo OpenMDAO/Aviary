@@ -84,7 +84,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
     def test_parameters(self):
         local_phase_info = deepcopy(phase_info)
-        core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
+        core_aero = local_phase_info['cruise']['subsystem_options']['aerodynamics']
 
         core_aero['method'] = 'tabular'
         core_aero['CDI_data'] = CDI_table
@@ -204,7 +204,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
     def test_parameters(self):
         local_phase_info = deepcopy(phase_info)
-        core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
+        core_aero = local_phase_info['cruise']['subsystem_options']['aerodynamics']
 
         core_aero['method'] = 'tabular'
         core_aero['connect_training_data'] = True
@@ -241,6 +241,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 data_sets = ['LargeSingleAisle1FLOPS', 'LargeSingleAisle2FLOPS', 'AdvancedSingleAisle']
 
 
+@use_tempdirs
 class ComputedVsTabularTest(unittest.TestCase):
     @parameterized.expand(data_sets, name_func=print_case)
     def test_case(self, case_name):

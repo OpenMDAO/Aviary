@@ -25,7 +25,16 @@ from aviary.utils.doctape import (
     get_all_non_aviary_names,
 )
 
+try:
+    import myst_nb
+except ImportError:
+    myst_nb = False
 
+
+@unittest.skipIf(
+    myst_nb is False,
+    'Skipping because myst_nb is not installed for doc testing.',
+)
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
@@ -104,7 +113,7 @@ class DocTAPETests(unittest.TestCase):
         glue_class_options(AviaryGroup, curr_glued)
 
         self.assertTrue('auto_order' in curr_glued)
-        self.assertTrue('phase_info' in curr_glued)
+        self.assertTrue('mission_info' in curr_glued)
 
     def test_get_all_non_aviary_names(self):
         from aviary.subsystems.aerodynamics.gasp_based.gaspaero import UFac
@@ -115,6 +124,6 @@ class DocTAPETests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = DocTAPETests()
-    test.test_get_all_non_aviary_names()
+    unittest.main()
+    # test = DocTAPETests()
+    # test.test_get_all_non_aviary_names()

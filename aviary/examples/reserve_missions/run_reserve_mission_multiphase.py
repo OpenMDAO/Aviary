@@ -22,7 +22,7 @@ from aviary.models.missions.height_energy_default import phase_info
 phase_info.update(
     {
         'reserve_climb': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 'num_segments': 5,
@@ -44,7 +44,7 @@ phase_info.update(
             },
         },
         'reserve_cruise_fixed_range': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 # Distance traveled in this phase
@@ -68,7 +68,7 @@ phase_info.update(
             },
         },
         'reserve_cruise_fixed_time': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 # Time length of this phase
@@ -89,7 +89,7 @@ phase_info.update(
             },
         },
         'reserve_descent': {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'reserve': True,
                 'num_segments': 5,
@@ -118,7 +118,9 @@ prob = av.AviaryProblem()
 
 # Load aircraft and options data from user
 # Allow for user overrides here
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+prob.load_inputs(
+    'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+)
 
 prob.check_and_preprocess_inputs()
 

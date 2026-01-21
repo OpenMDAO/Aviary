@@ -5,17 +5,15 @@ import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.flops_based.phases.build_landing import Landing
-from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.height_energy.phases.build_landing import Landing
+from aviary.mission.height_energy.phases.build_takeoff import Takeoff
+from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
+from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.process_input_decks import initialization_guessing
+from aviary.mission.utils import process_guess_var
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
@@ -35,25 +33,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
-        # Defines how the problem should build it's initial guesses for load_inputs()
-        # this modifies mass_method, initialization_guesses, and aviary_values
-
-        aviary_inputs = aviary_group.aviary_inputs
-
-        if aviary_group.engine_builders is None:
-            aviary_group.engine_builders = [build_engine_deck(aviary_inputs)]
-
-        aviary_group.initialization_guesses = initialization_guessing(
-            aviary_inputs, aviary_group.initialization_guesses, aviary_group.engine_builders
-        )
-
         # Deal with missing defaults in phase info:
         aviary_group.pre_mission_info.setdefault('include_takeoff', True)
-        aviary_group.pre_mission_info.setdefault('external_subsystems', [])
 
         aviary_group.post_mission_info.setdefault('include_landing', True)
-        aviary_group.post_mission_info.setdefault('external_subsystems', [])
+
+        aviary_inputs = aviary_group.aviary_inputs
 
         # Commonly referenced values
         aviary_inputs.set_val(
@@ -157,15 +142,14 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'phase_builder' in phase_options:
             phase_builder = phase_options['phase_builder']
-            if not issubclass(phase_builder, PhaseBuilderBase):
+            if not issubclass(phase_builder, PhaseBuilder):
                 raise TypeError(
-                    'phase_builder for the phase called '
-                    '{phase_name} must be a PhaseBuilderBase object.'
+                    'phase_builder for the phase called {phase_name} must be a PhaseBuilder object.'
                 )
         else:
             phase_builder = EnergyPhase
@@ -331,7 +315,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        phase_info = aviary_group.phase_info
+        phase_info = aviary_group.mission_info
         all_phases = [name for name in phase_info]
 
         stems = [
@@ -380,7 +364,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(aviary_group)
         else:
-            first_flight_phase_name = list(aviary_group.phase_info.keys())[0]
+            first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
 
             # Since we don't have the takeoff subsystem, we need to use the gross mass as the
             # source for the mass at the beginning of the first flight phase. It turns out to be
@@ -437,8 +421,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         Adds residual and constraint components for the mach and alpha connections from takeoff
         to the first flight phase.
         """
-        first_flight_phase_name = list(aviary_group.phase_info.keys())[0]
-        phase_options = aviary_group.phase_info[first_flight_phase_name]['user_options']
+        first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
+        phase_options = aviary_group.mission_info[first_flight_phase_name]['user_options']
 
         aviary_group.connect(
             Mission.Takeoff.FINAL_MASS, f'traj.{first_flight_phase_name}.initial_states:mass'
@@ -546,7 +530,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         state_keys = ['mass', Dynamic.Mission.DISTANCE]
         prob_keys = ['tau_gear', 'tau_flaps']
 
-        options = aviary_group.phase_info[phase_name]['user_options']
+        options = aviary_group.mission_info[phase_name]['user_options']
 
         if options['throttle_enforcement'] == 'control':
             control_keys.append('throttle')

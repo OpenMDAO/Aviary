@@ -4,7 +4,7 @@ import aviary.api as av
 
 # fmt: off
 subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='ft'
         'angles_of_attack': [
@@ -26,7 +26,7 @@ subsystem_options = {
 # fmt: on
 
 subsystem_options_landing = subsystem_options.copy()
-subsystem_options_landing['core_aerodynamics']['drag_coefficient_factor'] = 3.0
+subsystem_options_landing['aerodynamics']['drag_coefficient_factor'] = 3.0
 
 mach_optimize = False
 altitude_optimize = False
@@ -167,13 +167,13 @@ prob.add_objective('mass')
 
 prob.setup()
 
-prob.run_aviary_problem(record_filename='detailed_landing.db')
+prob.run_aviary_problem()
 
 try:
     loc = prob.get_outputs_dir()
-    cr = om.CaseReader(f'{loc}/detailed_landing.db')
+    cr = om.CaseReader(f'{loc}/problem_history.db')
 except:
-    cr = om.CaseReader('detailed_landing.db')
+    cr = om.CaseReader('problem_history.db')
 
 cases = cr.get_cases('problem')
 case = cases[0]

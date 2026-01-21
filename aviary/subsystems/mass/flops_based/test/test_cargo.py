@@ -3,7 +3,7 @@ import unittest
 import openmdao.api as om
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.cargo import CargoMass
+from aviary.subsystems.mass.flops_based.cargo import PayloadGroup
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test, print_case
@@ -24,7 +24,7 @@ cargo_test_data['1'] = AviaryValues(
 cargo_data_sets = [key for key in cargo_test_data]
 
 
-class CargoMassTest(unittest.TestCase):
+class PayloadGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
@@ -35,7 +35,7 @@ class CargoMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'cargo_passenger',
-            CargoMass(),
+            PayloadGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

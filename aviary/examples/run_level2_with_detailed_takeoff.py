@@ -4,7 +4,7 @@ import aviary.api as av
 
 # fmt: off
 subsystem_options = {
-    'core_aerodynamics': {
+    'aerodynamics': {
         'method': 'low_speed',
         'ground_altitude': 0.0,  # units='ft'
         'angles_of_attack': [
@@ -327,13 +327,13 @@ if __name__ == '__main__':
 
     prob.setup()
 
-    prob.run_aviary_problem(record_filename='detailed_takeoff.db', suppress_solver_print=True)
+    prob.run_aviary_problem(suppress_solver_print=True)
 
     try:
         loc = prob.get_outputs_dir()
-        cr = om.CaseReader(f'{loc}/detailed_takeoff.db')
+        cr = om.CaseReader(f'{loc}/problem_history.db')
     except:
-        cr = om.CaseReader('detailed_takeoff.db')
+        cr = om.CaseReader('problem_history.db')
 
     cases = cr.get_cases('problem')
     case = cases[0]

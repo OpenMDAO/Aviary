@@ -1,16 +1,17 @@
+import warnings
+
+import dymos as dm
+import openmdao.api as om
+
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
-import openmdao.api as om
+from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
 from aviary.models.missions.height_energy_default import phase_info
-from aviary.variable_info.variables import Aircraft, Mission, Dynamic
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.utils.aviary_values import AviaryValues
-import dymos as dm
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import setup_trajectory_params
-import warnings
-from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
+from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class L3SubsystemsGroup(om.Group):
@@ -35,10 +36,10 @@ aviary_inputs, _ = av.create_vehicle(csv_path)
 
 engine = av.build_engine_deck(aviary_inputs)
 
-prob.model.phase_info = {}
+prob.model.mission_info = {}
 for phase_name in phase_info:
     if phase_name not in ['pre_mission', 'post_mission']:
-        prob.model.phase_info[phase_name] = phase_info[phase_name]
+        prob.model.mission_info[phase_name] = phase_info[phase_name]
 aviary_inputs.set_val(Mission.Summary.RANGE, 1906.0, units='NM')
 prob.require_range_residual = True
 prob.target_range = 1906.0
@@ -115,7 +116,7 @@ default_mission_subsystems = [
     prob.model.core_subsystems['propulsion'],
 ]
 for phase_idx, phase_name in enumerate(phases):
-    base_phase_options = prob.model.phase_info[phase_name]
+    base_phase_options = prob.model.mission_info[phase_name]
     phase_options = {}
     for key, val in base_phase_options.items():
         phase_options[key] = val
@@ -296,7 +297,7 @@ prob.model.post_mission.add_subsystem(
     'mass_constraint',
     ecomp,
     promotes_inputs=[
-        ('operating_empty_mass', Aircraft.Design.OPERATING_MASS),
+        ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
         ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
         ('payload_mass', payload_mass_src),
         ('initial_mass', Mission.Summary.GROSS_MASS),
@@ -331,7 +332,7 @@ prob.model.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, uni
 all_subsystems = []
 all_subsystems.append(prob.model.core_subsystems['propulsion'])
 
-phases = list(prob.model.phase_info.keys())
+phases = list(prob.model.mission_info.keys())
 prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
 prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
 prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
@@ -513,40 +514,10 @@ prob.set_val('traj.descent.states:mass', 125000, units='lbm')
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
-prob.verbosity = Verbosity.VERBOSE
+prob.verbosity = Verbosity.BRIEF
 
 prob.run_aviary_problem()
-prob.model.list_vars(units=True, print_arrays=True)
-prob.list_driver_vars(
-    print_arrays=True,
-    desvar_opts=[
-        'lower',
-        'upper',
-        'ref',
-        'ref0',
-        'indices',
-        'adder',
-        'scaler',
-        'parallel_deriv_color',
-        'cache_linear_solution',
-        'units',
-        'min',
-        'max',
-    ],
-    cons_opts=[
-        'lower',
-        'upper',
-        'equals',
-        'ref',
-        'ref0',
-        'indices',
-        'adder',
-        'scaler',
-        'linear',
-        'parallel_deriv_color',
-        'cache_linear_solution',
-        'units',
-        'min',
-        'max',
-    ],
-)
+
+# Uncomment these lines to get printouts of every variable in the openmdao model
+# prob.model.list_vars(units=True, print_arrays=True)
+# prob.list_driver_vars(print_arrays=True)

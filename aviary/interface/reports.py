@@ -9,6 +9,7 @@ import pandas as pd
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
 
+from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
@@ -62,6 +63,15 @@ def register_custom_reports():
     )
 
     register_report(
+        name='sizing_results',
+        func=sizing_results,
+        desc='Generates an output file containing all variables in a completed sizing problem',
+        class_name='AviaryProblem',
+        method='run_driver',
+        pre_or_post='post',
+    )
+
+    register_report(
         name='input_checks',
         func=input_check_report,
         desc='Generates a report on the aviary inputs',
@@ -71,7 +81,7 @@ def register_custom_reports():
     )
 
 
-def run_status(prob):
+def run_status(prob: AviaryProblem):
     """
     Creates a JSON file that contains high level overview of the run.
 
@@ -112,7 +122,24 @@ def run_status(prob):
         print(file=f)  # avoid 'no newline at end of file' message
 
 
-def subsystem_report(prob, **kwargs):
+def sizing_results(prob: AviaryProblem):
+    """
+    Creates a JSON file that contains the variable set from a sizing problem. If the ProblemType run
+    was not sizing, no file is generated.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    """
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'sizing_results.json'
+
+    if prob.problem_type is ProblemType.SIZING:
+        prob.save_results(report_file)
+
+
+def subsystem_report(prob: AviaryProblem, **kwargs):
     """
     Loops through all subsystem builders in the AviaryProblem calls their write_report
     method. All generated report files are placed in the "reports/subsystem_reports" folder.
@@ -135,14 +162,13 @@ def subsystem_report(prob, **kwargs):
     else:
         model = prob.model
 
-    # TODO external subsystems??
-    core_subsystems = model.core_subsystems  # TODO: redo for multimissions
+    subsystems = model.subsystems  # TODO: redo for multimissions
 
-    for subsystem in core_subsystems.values():
+    for subsystem in subsystems:
         subsystem.report(prob, reports_folder, **kwargs)
 
 
-def mission_report(prob, **kwargs):
+def mission_report(prob: AviaryProblem, **kwargs):
     """
     Creates a basic mission summary report that is placed in the "reports" folder.
 
@@ -206,7 +232,7 @@ def mission_report(prob, **kwargs):
     for name, model in models.items():
         # read per-phase data from trajectory
         data = {}
-        for idx, phase in enumerate(model.phase_info):  # TODO: redo for multimissions
+        for idx, phase in enumerate(model.mission_info):  # TODO: redo for multimissions
             # TODO for traj in trajectories, currently assuming single one named "traj"
             # TODO delta mass and fuel consumption need to be tracked separately
             fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
@@ -302,7 +328,7 @@ def mission_report(prob, **kwargs):
                 )
 
 
-def input_check_report(prob, **kwargs):
+def input_check_report(prob: AviaryProblem, **kwargs):
     """
     Creates a basic input checking report.
 
@@ -383,15 +409,22 @@ def input_check_report(prob, **kwargs):
 
             for var in sorted(bare_hierarchy_inputs):
                 metadata = aviary_metadata.get(var)
+                abs_paths = prom2abs(var)
+
                 try:
                     units = metadata['units']
-                except:
+                except (TypeError, KeyError):
                     metadata = aviary_metadata.get(var.split('.')[-1])
-                    units = metadata['units']
+
+                    try:
+                        units = metadata['units']
+                    except (TypeError, KeyError):
+                        # This happens when the var is not defined in metadata.
+                        metadata = prob.model.get_io_metadata('input')[abs_paths[0]]
+                        units = metadata['units']
 
                 val = prob.model.get_val(var, units=units)
                 desc = metadata['desc']
-                abs_paths = prom2abs(var)
 
                 f.write(f'| **{var}** | {val} | {units} | {desc} | {abs_paths}|\n')
 
@@ -428,7 +461,7 @@ def input_check_report(prob, **kwargs):
             f.write('None')
 
 
-def timeseries_csv(prob, **kwargs):
+def timeseries_csv(prob: AviaryProblem, **kwargs):
     """
     Generates a CSV file containing timeseries data for variables from an Aviary mission.
 

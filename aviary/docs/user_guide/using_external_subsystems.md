@@ -31,7 +31,7 @@ These could be disciplinary models to do with batteries, structural models, acou
 The user can provide builder objects for these new subsystems and Aviary will loop through them to add to the model.
 Aviary handles the integration for these systems across the aircraft's trajectory so we can track state variables and aircraft performance.
 
-Core subsystems and external subsystems are created using the same code infrastructure: the [`SubsystemBuilderBase` object](../user_guide/subsystems). This makes swapping out a core Aviary subsystem with an external one relatively straightforward, as they share the same interface.
+Core subsystems and external subsystems are created using the same code infrastructure: the [`SubsystemBuilder` object](../user_guide/subsystems). This makes swapping out a core Aviary subsystem with an external one relatively straightforward, as they share the same interface.
 
 Some examples of disciplines that would fall under the "external subsystem" category include:
 

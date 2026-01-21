@@ -255,13 +255,13 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 88507.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 452.6, 'lbm')
 outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 146328.0, 'lbm')
-outputs.set_val(Aircraft.Design.OPERATING_MASS, 95267.0, 'lbm')
+outputs.set_val(Mission.Summary.OPERATING_MASS, 95267.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 19232.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 44648.0, 'lbm')
 outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 24174.0, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
-outputs.set_val(Aircraft.Design.ZERO_FUEL_MASS, 131744.0, 'lbm')
-outputs.set_val(Mission.Design.FUEL_MASS, 42456.0, 'lbm')
+outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 131744.0, 'lbm')
+outputs.set_val(Mission.Summary.FUEL_MASS, 42456.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 1603.75, 'lbm')
 
@@ -294,7 +294,7 @@ outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 
 avg_diameter = (13.0208 + 12.33) / 2
 avg_diameter_units = 'ft'
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
+outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, avg_diameter, avg_diameter_units)
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 124.75, 'ft')
 outputs.set_val(
     Aircraft.Fuselage.CROSS_SECTION, np.pi * (avg_diameter / 2.0) ** 2.0, f'{avg_diameter_units}**2'

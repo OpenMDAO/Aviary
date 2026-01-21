@@ -51,8 +51,9 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.load_inputs(
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             energy_phase_info,
-            engine_builders=[electroprop],
         )
+        prob.load_external_subsystems([electroprop])
+
         prob.aviary_inputs.set_val(Settings.VERBOSITY, 2)
 
         # FLOPS aero specific stuff? Best guesses for values here
@@ -64,7 +65,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )  # average between root and chord T/C
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
         prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-        prob.aviary_inputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 4.125, 'm')
+        prob.aviary_inputs.set_val(Aircraft.Fuselage.REF_DIAMETER, 4.125, 'm')
 
         prob.check_and_preprocess_inputs()
 
@@ -77,7 +78,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # prob.model.list_vars(units=True, print_arrays=True)
         om.n2(prob)
 
-        prob.run_aviary_problem('dymos_solution.db')
+        prob.run_aviary_problem()
         self.assertTrue(prob.result.success)
 
         om.n2(prob)

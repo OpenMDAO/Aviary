@@ -4,7 +4,6 @@ from importlib.util import spec_from_file_location, module_from_spec
 from pathlib import Path
 import sys
 
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import Verbosity
 
@@ -14,13 +13,12 @@ def run_aviary(
     phase_info,
     optimizer=None,
     objective_type=None,
-    record_filename='problem_history.db',
+    subsystems=[],
     restart_filename=None,
     max_iter=50,
     run_driver=True,
     make_plots=True,
     phase_info_parameterization=None,
-    optimization_history_filename=None,
     verbosity=None,
 ):
     """
@@ -42,8 +40,8 @@ def run_aviary(
         The optimizer to use.
     objective_type : str, optional
         Type of the optimization objective.
-    record_filename : str, optional
-        Filename for recording the solution, defaults to 'dymos_solution.db'.
+    subsystems : list of SubsystemBuilders, optional
+        List of all non-default subsystems to be added to the problem
     restart_filename : str, optional
         Filename to use for restarting the optimization, if applicable.
     max_iter : int, optional
@@ -55,9 +53,6 @@ def run_aviary(
     phase_info_parameterization : function, optional
         Additional information to parameterize the phase_info object based on desired cruise
         altitude and Mach.
-    optimization_history_filename : str or Path
-        The name of the database file where the driver iterations are to be recorded. The default is
-        None.
     verbosity : Verbosity or int, optional
         Sets level of information outputted to the terminal during model execution.
         If provided, overrides verbosity specified in aircraft_data.
@@ -79,12 +74,16 @@ def run_aviary(
     else:
         name = None
 
+    from aviary.interface.methods_for_level2 import AviaryProblem
+
     # Build problem
     prob = AviaryProblem(name=name, verbosity=verbosity)
 
     # Load aircraft and options data from user
     # Allow for user overrides here
     prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
+
+    prob.load_external_subsystems(subsystems, verbosity=verbosity)
 
     prob.check_and_preprocess_inputs(verbosity=verbosity)
 
@@ -109,11 +108,9 @@ def run_aviary(
     prob.setup(verbosity=verbosity)
 
     prob.run_aviary_problem(
-        record_filename,
         restart_filename=restart_filename,
         run_driver=run_driver,
         make_plots=make_plots,
-        optimization_history_filename=optimization_history_filename,
         verbosity=verbosity,
     )
 

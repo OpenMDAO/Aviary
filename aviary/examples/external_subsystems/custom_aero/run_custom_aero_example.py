@@ -11,13 +11,9 @@ phase_info = deepcopy(av.default_height_energy_phase_info)
 phase_info.pop('climb')
 phase_info.pop('descent')
 
-# Add custom aero.
-# TODO: This API for replacing aero will be changed an upcoming release.
-phase_info['cruise']['external_subsystems'] = [CustomAeroBuilder()]
-
 # Disable internal aero
 # TODO: This API for replacing aero will be changed an upcoming release.
-phase_info['cruise']['subsystem_options']['core_aerodynamics'] = {
+phase_info['cruise']['subsystem_options']['aerodynamics'] = {
     'method': 'external',
 }
 
@@ -31,7 +27,11 @@ if __name__ == '__main__':
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+    prob.load_inputs(
+        'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+    )
+
+    prob.load_external_subsystems([CustomAeroBuilder()])
 
     prob.check_and_preprocess_inputs()
 

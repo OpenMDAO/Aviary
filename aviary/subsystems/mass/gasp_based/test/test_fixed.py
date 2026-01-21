@@ -15,7 +15,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     GearMass,
     HighLiftMass,
     MassParameters,
-    PayloadMass,
+    PayloadGroup,
     TailMass,
 )
 from aviary.utils.aviary_values import AviaryValues, get_keys
@@ -265,7 +265,7 @@ class MassParametersTestCase5(unittest.TestCase):
 
 # this is the large single aisle 1 V3 test case
 @use_tempdirs
-class PayloadMassTestCase(unittest.TestCase):
+class PayloadGroupTestCase(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
@@ -275,7 +275,7 @@ class PayloadMassTestCase(unittest.TestCase):
         )  # bug fixed value and original value
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', PayloadMass(), promotes=['*'])
+        self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
         self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units='lbm'
@@ -452,7 +452,6 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 class EngineTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
@@ -1192,7 +1191,6 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=2, units='unitless')
-        options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
         options.set_val(
@@ -1547,7 +1545,6 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 Aircraft.CrewPayload.NUM_PASSENGERS: (150, 'unitless'),
                 Aircraft.CrewPayload.Design.NUM_PASSENGERS: (150, 'unitless'),
                 Aircraft.Electrical.HAS_HYBRID_SYSTEM: (False, 'unitless'),
-                Aircraft.Engine.HAS_PROPELLERS: ([False], 'unitless'),
                 Aircraft.Wing.FLAP_TYPE: ('plain', 'unitless'),
                 Aircraft.Wing.SWEEP: (30.0, 'deg'),
                 Aircraft.Wing.VERTICAL_MOUNT_LOCATION: (0, 'unitless'),
@@ -1649,7 +1646,6 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                                 data.set_val(Aircraft.LandingGear.MAIN_GEAR_LOCATION, gear_loc)
                                 data.set_val(Aircraft.Wing.FLAP_TYPE, flap_type)
                                 data.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, has_hybrid)
-                                data.set_val(Aircraft.Engine.HAS_PROPELLERS, [has_prop])
 
                                 self._run_case(data)
 
@@ -1694,7 +1690,7 @@ class BWBMassParametersTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBPayloadMassTestCase(unittest.TestCase):
+class BWBPayloadGroupTestCase(unittest.TestCase):
     "GASP BWB model"
 
     def setUp(self):
@@ -1704,7 +1700,7 @@ class BWBPayloadMassTestCase(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=225, units='lbm')
 
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('payload', PayloadMass(), promotes=['*'])
+        self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
         self.prob.model.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, 0.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.Design.MAX_CARGO_MASS, 15000.0, units='lbm'

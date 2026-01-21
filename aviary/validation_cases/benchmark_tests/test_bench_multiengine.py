@@ -68,7 +68,9 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.load_external_subsystems([engine1, engine2])
 
         prob.check_and_preprocess_inputs()
 
@@ -81,7 +83,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
+        prob.run_aviary_problem(suppress_solver_print=True)
 
         self.assertTrue(prob.result.success)
 
@@ -107,7 +109,9 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.load_external_subsystems([engine1, engine2])
 
         prob.check_and_preprocess_inputs()
 
@@ -120,7 +124,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
+        prob.run_aviary_problem(suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.parameter_vals:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.parameter_vals:throttle_allocations')
@@ -143,7 +147,9 @@ class MultiengineTestcase(unittest.TestCase):
         engine1 = build_engine_deck(engine_1_inputs)
         engine2 = build_engine_deck(engine_2_inputs)
 
-        prob.load_inputs(inputs, test_phase_info, engine_builders=[engine1, engine2])
+        prob.load_inputs(inputs, test_phase_info)
+
+        prob.load_external_subsystems([engine1, engine2])
 
         prob.check_and_preprocess_inputs()
 
@@ -156,7 +162,7 @@ class MultiengineTestcase(unittest.TestCase):
 
         prob.setup()
 
-        prob.run_aviary_problem('dymos_solution.db', suppress_solver_print=True)
+        prob.run_aviary_problem(suppress_solver_print=True)
 
         alloc_climb = prob.get_val('traj.climb.controls:throttle_allocations')
         alloc_cruise = prob.get_val('traj.cruise.controls:throttle_allocations')

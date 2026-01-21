@@ -11,7 +11,6 @@ def check_fold_location_definition(choose_fold_location, has_strut):
 # Aircraft.Engine.FUSELAGE_MOUNTED - Aircraft.Engine.WING_LOCATIONS
 # Aircraft.Engine.NUM_ENGINES - Aircraft.Engine.NUM_FUSELAGE_ENGINES - Aircraft.Engine.NUM_WING_ENGINES
 # Aircraft.Propulsion.TOTAL_NUM_ENGINES - Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES - Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
-# Aircraft.Engine.TYPE - Aircraft.Engine.HAS_PROPELLERS
 # Aircraft.Design.COMPUTE_TAIL_VOLUME_COEFFS
 # Aircraft.Engine.REFERENCE_WEIGHT
 # Mission.Taxi.MACH - pycycle

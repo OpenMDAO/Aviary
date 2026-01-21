@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core mass.
 
 Classes
 -------
-MassBuilderBase : the interface for a mass subsystem builder.
+MassBuilder : the interface for a mass subsystem builder.
 
 CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 """
@@ -11,7 +11,7 @@ CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -21,7 +21,7 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'mass'
 
 
-class MassBuilderBase(SubsystemBuilderBase):
+class MassBuilder(SubsystemBuilder):
     """Base mass builder."""
 
     def __init__(self, name=None, meta_data=None):
@@ -30,19 +30,13 @@ class MassBuilderBase(SubsystemBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def mission_inputs(self, **kwargs):
-        return ['*']
 
-    def mission_outputs(self, **kwargs):
-        return ['*']
-
-
-class CoreMassBuilder(MassBuilderBase):
+class CoreMassBuilder(MassBuilder):
     """Core mass subsystem builder."""
 
     def __init__(self, name=None, meta_data=None, code_origin=None):
         if name is None:
-            name = 'core_mass'
+            name = 'mass'
 
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
@@ -131,12 +125,12 @@ class CoreMassBuilder(MassBuilderBase):
             Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
             Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-            Aircraft.Design.OPERATING_MASS,
+            Mission.Summary.OPERATING_MASS,
             Aircraft.CrewPayload.PASSENGER_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
-            Aircraft.Design.ZERO_FUEL_MASS,
-            Mission.Design.FUEL_MASS,
+            Mission.Summary.ZERO_FUEL_MASS,
+            Mission.Summary.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.Summary.GROSS_MASS,
         ]

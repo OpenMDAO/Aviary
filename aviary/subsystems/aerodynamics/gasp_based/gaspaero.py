@@ -5,7 +5,7 @@ from openmdao.utils import cs_safe as cs
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, CLFromLift, TanhRampComp
-from aviary.utils.functions import sigmoidX, smooth_min, d_smooth_min
+from aviary.utils.math import sigmoidX, smooth_min, d_smooth_min
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
@@ -40,66 +40,31 @@ xhbar = np.linspace(0, 0.3, sig1.shape[1])
 # data from DRAG
 #
 # flap deflection angles, deg
+# block auto-formatting of tables
+# autopep8: off
+# fmt: off
 adelfd = np.array(
     [
-        0.0,
-        5.0,
-        10.0,
-        15.0,
-        20.0,
-        25.0,
-        30.0,
-        35.0,
-        38.0,
-        40.0,
-        42.0,
-        44.0,
-        50.0,
-        55.0,
-        60.0,
+        0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0,
+        38.0, 40.0, 42.0, 44.0, 50.0, 55.0, 60.0,
     ]
 )
 # flap angle correction of oswald efficiency factor
 adel6 = np.array(
     [
-        1.0,
-        0.995,
-        0.99,
-        0.98,
-        0.97,
-        0.955,
-        0.935,
-        0.90,
-        0.875,
-        0.855,
-        0.83,
-        0.80,
-        0.70,
-        0.54,
-        0.30,
+        1.0, 0.995, 0.99, 0.98, 0.97, 0.955, 0.935, 0.90,
+        0.875, 0.855, 0.83, 0.80, 0.70, 0.54, 0.30,
     ]
 )
 # induced drag correction factors
 asigma = np.array(
     [
-        0.0,
-        0.16,
-        0.285,
-        0.375,
-        0.435,
-        0.48,
-        0.52,
-        0.55,
-        0.575,
-        0.58,
-        0.59,
-        0.60,
-        0.62,
-        0.635,
-        0.65,
+        0.0, 0.16, 0.285, 0.375, 0.435, 0.48, 0.52, 0.55,
+        0.575, 0.58, 0.59, 0.60, 0.62, 0.635, 0.65,
     ]
 )
-
+# autopep8: off
+# fmt: off
 
 def deg2rad(d):
     """Complex step safe deg2rad."""
@@ -282,9 +247,13 @@ class BWBBodyLiftCurveSlope(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         mach = inputs[Dynamic.Atmosphere.MACH]
-        if any(x < 0.0 or x >= 1.0 for x in mach.real):
+
+        # Provide a little buffer for being close to the limit.
+        eps = 1e-8
+
+        if any(x < -eps or x >= 1.0 + eps for x in mach.real):
             raise om.AnalysisError('Mach number must be within the range (0, 1).')
-        elif any(x > 0.8 for x in mach.real):
+        elif any(x > 0.8 + eps for x in mach.real):
             if verbosity > Verbosity.BRIEF:
                 warnings.warn(
                     f"Mach range should be less or equal to 0.8. You've provided a Mach number {mach}."
@@ -1177,12 +1146,6 @@ class AeroSetup(om.Group):
         )
 
         if not self.options['input_atmos']:
-            # self.add_subsystem(
-            #     "atmos",
-            #     USatm1976Comp(num_nodes=nn),
-            #     promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            #     promotes_outputs=["rho", Dynamic.Atmosphere.SPEED_OF_SOUND, "viscosity"],
-            # )
             self.add_subsystem(
                 'kin_visc',
                 om.ExecComp(
