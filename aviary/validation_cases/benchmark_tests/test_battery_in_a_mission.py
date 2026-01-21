@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
@@ -62,7 +63,7 @@ class TestBatteryMission(unittest.TestCase):
         }
 
     def test_subsystems_in_a_mission(self):
-        phase_info = self.phase_info.copy()
+        phase_info = deepcopy(self.phase_info)
 
         prob = av.AviaryProblem(verbosity=0)
 
@@ -72,6 +73,9 @@ class TestBatteryMission(unittest.TestCase):
         )
         prob.load_external_subsystems([BatteryBuilder()])
 
+        prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
+
+        # Preprocess inputs
         prob.check_and_preprocess_inputs()
 
         prob.build_model()

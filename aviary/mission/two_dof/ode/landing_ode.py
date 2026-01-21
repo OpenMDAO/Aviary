@@ -7,7 +7,7 @@ from aviary.mission.two_dof.ode.landing_eom import (
 )
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
@@ -46,14 +46,14 @@ class LandingSegment(TwoDOFODE):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
-                'viscosity',
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
         )
 
         # collect the propulsion group names for later use with
         for subsystem in subsystems:
-            if isinstance(subsystem, AerodyanmicsBuilder):
+            if isinstance(subsystem, AerodynamicsBuilder):
                 kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
@@ -70,7 +70,7 @@ class LandingSegment(TwoDOFODE):
                         ),
                         Dynamic.Atmosphere.DENSITY,
                         Dynamic.Atmosphere.SPEED_OF_SOUND,
-                        'viscosity',
+                        Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
                         ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                         Dynamic.Atmosphere.DYNAMIC_PRESSURE,
@@ -146,7 +146,7 @@ class LandingSegment(TwoDOFODE):
                 (Dynamic.Atmosphere.DENSITY, 'rho_td'),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, 'sos_td'),
                 (Dynamic.Atmosphere.TEMPERATURE, 'T_td'),
-                ('viscosity', 'viscosity_td'),
+                (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'viscosity_td'),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'q_td'),
                 (Dynamic.Atmosphere.MACH, 'mach_td'),
             ],
@@ -162,7 +162,7 @@ class LandingSegment(TwoDOFODE):
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.DENSITY, 'rho_td'),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, 'sos_td'),
-                ('viscosity', 'viscosity_td'),
+                (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'viscosity_td'),
                 ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.MACH, 'mach_td'),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'q_td'),

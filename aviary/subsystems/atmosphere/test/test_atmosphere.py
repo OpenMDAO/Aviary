@@ -1,16 +1,15 @@
 import unittest
 
-import numpy as np
+import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from packaging.version import Version
-import openmdao
-from aviary.variable_info.enums import AtmosphereModel
-from aviary.variable_info.functions import setup_model_options
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Settings
 
 from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
+from aviary.utils.aviary_values import AviaryValues
+from aviary.variable_info.enums import AtmosphereModel
+from aviary.variable_info.functions import setup_model_options
+from aviary.variable_info.variables import Dynamic, Settings
 
 # USATM1976 test values
 # Reference values based on altitudes of [-1000, 0, 10950, 11000, 11100, 20000, 32000] #meters
@@ -63,7 +62,6 @@ class USatm1976TestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
         setup_model_options(self.prob, options)
@@ -74,16 +72,32 @@ class USatm1976TestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [-1000, 0, 10950, 11000, 11100, 20000, 32000], units='m')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [-1000, 0, 10950, 11000, 11100, 20000, 32000], units='m'
+        )
 
         tol = 1e-4
         self.prob.run_model()
 
-        assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
-        assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'),
+            expected_pressure,
+            tol,
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -98,7 +112,6 @@ class USatm1976TestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
         setup_model_options(self.prob, options)
@@ -109,7 +122,9 @@ class USatm1976TestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [-1000, 0, 10950, 11000, 11100, 20000, 32000], units='m')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [-1000, 0, 10950, 11000, 11100, 20000, 32000], units='m'
+        )
 
         tol = 1e-4
         self.prob.run_model()
@@ -154,11 +169,25 @@ class USatm1976TestCase1(unittest.TestCase):
             1.58179488e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
-        assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'),
+            expected_pressure,
+            tol,
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -173,7 +202,6 @@ class USatm1976TestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.STANDARD)
         setup_model_options(self.prob, options)
@@ -184,16 +212,32 @@ class USatm1976TestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m'
+        )
 
         tol = 1e-4
         self.prob.run_model()
 
-        assert_near_equal(self.prob.get_val('temp', units='K'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('pres', units='Pa'), expected_pressure, tol)
-        assert_near_equal(self.prob.get_val('rho', units='kg/m**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'),
+            expected_pressure,
+            tol,
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -219,7 +263,9 @@ class USatm1976TestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [-1000, 0, 10969, 11019, 11119, 20063, 32162], units='m'
+        )
 
         self.prob.run_model()
 
@@ -238,7 +284,6 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.COLD)
         setup_model_options(self.prob, options)
@@ -249,7 +294,9 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [0, 10000, 35000, 55000, 70000, 100000], units='ft')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [0, 10000, 35000, 55000, 70000, 100000], units='ft'
+        )
 
     def test_case1(self):
         tol = 1e-4
@@ -284,14 +331,28 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
             1.31516893e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
 
         # inHg60 is a newer unit in OpenMDAO so we'll do this check only of that newer version is installed
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -308,7 +369,6 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.TROPICAL)
         setup_model_options(self.prob, options)
@@ -319,7 +379,9 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [0, 10000, 35000, 55000, 70000, 100000], units='ft')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [0, 10000, 35000, 55000, 70000, 100000], units='ft'
+        )
 
     def test_case1(self):
         tol = 1e-4
@@ -354,12 +416,26 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
             1.53000203e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -376,7 +452,6 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.HOT)
         setup_model_options(self.prob, options)
@@ -387,7 +462,9 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [0, 10000, 35000, 55000, 70000, 100000], units='ft')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [0, 10000, 35000, 55000, 70000, 100000], units='ft'
+        )
 
     def test_case1(self):
         tol = 1e-4
@@ -422,12 +499,26 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
             1.59359066e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -444,7 +535,6 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        # creating an empty aviary value and setting the atmosphere model option
         options = AviaryValues()
         options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.POLAR)
         setup_model_options(self.prob, options)
@@ -455,7 +545,9 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val('h', [0, 10000, 35000, 55000, 70000, 100000], units='ft')
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [0, 10000, 35000, 55000, 70000, 100000], units='ft'
+        )
 
     def test_case1(self):
         tol = 1e-4
@@ -490,12 +582,26 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
             1.38565730e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(self.prob.get_val('temp', units='degF'), expected_temp, tol)
-        assert_near_equal(self.prob.get_val('rho', units='lbm/ft**3'), expected_density, tol)
-        assert_near_equal(self.prob.get_val('sos', units='m/s'), expected_sos, tol)
-        assert_near_equal(self.prob.get_val('viscosity', units='Pa*s'), expected_viscosity, tol)
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
+        )
+        assert_near_equal(
+            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
+            expected_viscosity,
+            tol,
+        )
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(self.prob.get_val('pres', units='inHg60'), expected_pressure, tol)
+            assert_near_equal(
+                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                expected_pressure,
+                tol,
+            )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
