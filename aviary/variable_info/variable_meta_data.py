@@ -115,6 +115,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CW(7)',
+        # The following note is for FLOPS
         # ['WTS.WSP(24, 2)', '~WEIGHT.WAI', '~WTSTAT.WSP(24, 2)'],
         'FLOPS': None,
         'LEAPS1': [
@@ -5492,7 +5493,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    # see also: station_chord_lengths
+    # see also: station_chord_lengths (of LEAPS1)
     Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
     meta_data=_MetaData,
     historical_name={
@@ -6140,6 +6141,15 @@ add_meta_data(
     units='deg',
     desc='optimum slat deflection angle',
     default_value=20,
+)
+
+add_meta_data(
+    Aircraft.Wing.OUTBOARD_SEMISPAN,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.OSSPAN', 'LEAPS1': None},
+    units='ft',
+    desc='Outboard semispan (used if a detailed wing outboard is being added to a BWB fuselage)',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7307,7 +7317,7 @@ add_meta_data(
         'GASP': None,
         # FLOPS may scale the input value as it resizes the engine if requested by
         # the user
-        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROF', 'LANDG.THROFF'],
+        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROFF'],
         'FLOPS': 'AERIN.THROFF',
         # LEAPS1 uses the average thrust_takeoff of all operational engines
         # actually on the airplane, possibly after resizing (as with FLOPS)

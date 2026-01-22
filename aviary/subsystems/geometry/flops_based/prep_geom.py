@@ -6,14 +6,15 @@ TODO: blended-wing-body support
 TODO: multiple engine model support
 """
 
+import numpy as np
 import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
-    OtherCharacteristicLengths,
     NacelleCharacteristicLength,
+    OtherCharacteristicLengths,
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import (
@@ -34,7 +35,7 @@ from aviary.subsystems.geometry.flops_based.utils import (
 )
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
-from aviary.subsystems.geometry.flops_based.bwb_wing_detailed import (
+from aviary.subsystems.geometry.flops_based.wing_detailed_bwb import (
     BWBUpdateDetailedWingDist,
     BWBComputeDetailedWingDist,
     BWBWingPrelim,
@@ -71,6 +72,7 @@ class PrepGeom(om.Group):
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
+
             if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
                 self.add_subsystem(
                     'detailed_wing',
@@ -420,18 +422,16 @@ class _Prelim(om.ExplicitComponent):
         fuselage_var = self.fuselage_var
 
         XDX = inputs[fuselage_var]
-        area = inputs[Aircraft.HorizontalTail.AREA]
-        aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
-
-        span2 = area * aspect_ratio
-        span = span2**0.5
         if design_type is not AircraftTypes.BLENDED_WING_BODY:
-            f = 0.5 / span
-        else:
-            f = 0.0
+            area = inputs[Aircraft.HorizontalTail.AREA]
+            aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
-        J[Names.SPANHT, Aircraft.HorizontalTail.AREA] = f * aspect_ratio
-        J[Names.SPANHT, Aircraft.HorizontalTail.ASPECT_RATIO] = f * area
+            span2 = area * aspect_ratio
+            span = span2**0.5
+            f = 0.5 / span
+
+            J[Names.SPANHT, Aircraft.HorizontalTail.AREA] = f * aspect_ratio
+            J[Names.SPANHT, Aircraft.HorizontalTail.ASPECT_RATIO] = f * area
 
         da = dr = dt = dx = 0.0
 
@@ -479,10 +479,10 @@ class _Prelim(om.ExplicitComponent):
                 #    = -k
                 dx = -_1m_tr / (2.0 * span)
 
-        J[Names.CRTHTB, Aircraft.HorizontalTail.AREA] = da
-        J[Names.CRTHTB, Aircraft.HorizontalTail.ASPECT_RATIO] = dr
-        J[Names.CRTHTB, Aircraft.HorizontalTail.TAPER_RATIO] = dt
-        J[Names.CRTHTB, fuselage_var] = dx
+            J[Names.CRTHTB, Aircraft.HorizontalTail.AREA] = da
+            J[Names.CRTHTB, Aircraft.HorizontalTail.ASPECT_RATIO] = dr
+            J[Names.CRTHTB, Aircraft.HorizontalTail.TAPER_RATIO] = dt
+            J[Names.CRTHTB, fuselage_var] = dx
 
         area = inputs[Aircraft.Wing.AREA]
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
@@ -548,17 +548,13 @@ class _Prelim(om.ExplicitComponent):
         dg = J[Names.CROTM, fuselage_var]
         J[Names.CROOTB, fuselage_var] = f * dg
 
-        area = inputs[Aircraft.VerticalTail.AREA]
-        aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
-
-        span = (area * aspect_ratio) ** 0.5
-
         if num_vertical_tails > 0:
+            area = inputs[Aircraft.VerticalTail.AREA]
+            aspect_ratio = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
+
+            span = (area * aspect_ratio) ** 0.5
             J[Names.SPANVT, Aircraft.VerticalTail.AREA] = 0.5 * aspect_ratio / span
             J[Names.SPANVT, Aircraft.VerticalTail.ASPECT_RATIO] = 0.5 * area / span
-        else:
-            J[Names.SPANVT, Aircraft.VerticalTail.AREA] = 0.0
-            J[Names.SPANVT, Aircraft.VerticalTail.ASPECT_RATIO] = 0.0
 
         da = dr = dt = 0.0
 
@@ -581,9 +577,9 @@ class _Prelim(om.ExplicitComponent):
                 # dt = d(k / (1 + tr)) = -k / (1 + tr)**2
                 dt = -2.0 * area / (span * _1p_tr**2.0)
 
-        J[Names.CROTVT, Aircraft.VerticalTail.AREA] = da
-        J[Names.CROTVT, Aircraft.VerticalTail.ASPECT_RATIO] = dr
-        J[Names.CROTVT, Aircraft.VerticalTail.TAPER_RATIO] = dt
+            J[Names.CROTVT, Aircraft.VerticalTail.AREA] = da
+            J[Names.CROTVT, Aircraft.VerticalTail.ASPECT_RATIO] = dr
+            J[Names.CROTVT, Aircraft.VerticalTail.TAPER_RATIO] = dt
 
     @property
     def fuselage_var(self):
@@ -673,51 +669,67 @@ class _BWBWing(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
-        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
-        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
+        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_inp_stations, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        input_station_dist = inputs['BWB_INPUT_STATION_DIST']
-        num_stations = len(inputs['BWB_INPUT_STATION_DIST'])
+        verbosity = self.options[Settings.VERBOSITY]
+        width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
+        wingspan = inputs[Aircraft.Wing.SPAN][0]
+        if wingspan <= 0.0:
+            if verbosity > Verbosity.BRIEF:
+                print('Aircraft.Wing.SPAN must be positive.')
+        rate_span = (wingspan - width) / wingspan
 
-        span = inputs[Aircraft.Wing.SPAN]
+        # This part is repeated in BWBWingPrelim()
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        bwb_input_station_dist = np.array(
+            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+        )
+        bwb_input_station_dist = np.where(
+            bwb_input_station_dist <= 1.0,
+            bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+            bwb_input_station_dist + width / 2.0,  # else
+        )
+        bwb_input_station_dist[0] = 0.0
+        bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
         bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
         bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DIST']
 
         if bwb_chord_per_semispan_dist[0] <= 5.0:
-            C1 = bwb_chord_per_semispan_dist[0] * span / 2.0
+            C1 = bwb_chord_per_semispan_dist[0] * wingspan / 2.0
         else:
             C1 = bwb_chord_per_semispan_dist[0]
-        if input_station_dist[0] <= 1.1:
-            Y1 = input_station_dist[0] * span / 2.0
+        if bwb_input_station_dist[0] <= 1.1:
+            Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
-            Y1 = input_station_dist[0]
-        for n in range(1, num_stations):
+            Y1 = bwb_input_station_dist[0]
+        for n in range(1, num_inp_stations):
             avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
             ckt = 2.0 + 0.387 * avg_toc
             if bwb_chord_per_semispan_dist[n] <= 5.0:
-                C2 = bwb_chord_per_semispan_dist[n] * span / 2.0
+                C2 = bwb_chord_per_semispan_dist[n] * wingspan / 2.0
             else:
                 C2 = bwb_chord_per_semispan_dist[n]
-            if input_station_dist[n] <= 1.1:
-                Y2 = input_station_dist[n] * span / 2.0
+            if bwb_input_station_dist[n] <= 1.1:
+                Y2 = bwb_input_station_dist[n] * wingspan / 2.0
             else:
-                Y2 = input_station_dist[n]
+                Y2 = bwb_input_station_dist[n]
             axp = (Y2 - Y1) * (C1 + C2)
             C1 = C2
             Y1 = Y2
