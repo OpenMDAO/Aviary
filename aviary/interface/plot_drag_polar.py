@@ -18,7 +18,6 @@ def plot_drag_polar(input_file=None):
         if not input_file:
             messagebox.showerror('Error', 'No file selected')
             exit()
-        return
 
     try:
         input_path = get_path(input_file)
