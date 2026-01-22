@@ -2,31 +2,28 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: intro
+root: introduction
 parts:
 - caption: Getting Started
   chapters:
+    - file: getting_started/getting_started
     - file: getting_started/installation
-    - file: getting_started/what_aviary_does
-    - file: getting_started/tools_that_aviary_uses
     - file: getting_started/expected_user_knowledge
-    - file: getting_started/onboarding
+    - file: getting_started/tools_that_aviary_uses
+    # current Progress
+    - file: getting_started/Aviary Fundamentals
       sections:
-        - file: getting_started/onboarding_level1
-        - file: getting_started/onboarding_level2
-        - file: getting_started/onboarding_level3
-        - file: getting_started/onboarding_ext_subsystem
-        - file: getting_started/input_csv_phase_info
-    - file: getting_started/now_what
+        - file: getting_started/user_interface
+        - file: getting_started/variables
+        - file: getting_started/input_files
+        - file: getting_started/data_files
 
 - caption: User Guide
   chapters:
     - file: user_guide/user_interface
       sections:
-      - file: user_guide/UI_Levels
       - file: user_guide/examples_of_the_same_mission_at_different_UI_levels
       - file: user_guide/aviary_commands
-      - file: user_guide/input_files
       - file: user_guide/phase_info
       - file: user_guide/phase_info_detailed
       - file: user_guide/phase_info_conversion
@@ -59,7 +56,6 @@ parts:
 
 - caption: Examples
   chapters:
-    - file: examples/intro
     - file: examples/simple_mission_example
     - file: examples/more_advanced_example
     - file: examples/coupled_aircraft_mission_optimization

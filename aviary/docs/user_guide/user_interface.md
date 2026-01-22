@@ -2,6 +2,8 @@
 
 ![three Aviary levels](images/levels.png)
 
+![Aviary user knowledge](images/expected_user_knowledge.svg)
+
 Aviary's user interface is designed to provide a seamless transition between different levels of complexity, allowing users to adapt and progress based on their needs and expertise.
 The levels build upon one another, with each level incorporating the methods and capabilities of the previous level.
 We'll explore how the levels are interconnected, but first let's describe the levels in broad strokes using a Lego-based metaphor.
