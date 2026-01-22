@@ -14,7 +14,7 @@ If you find a bug, please [submit an issue on GitHub](https://github.com/OpenMDA
 The Aviary documentation contains a number of tutorials and example problems to teach important concepts and ways Aviary can be used. For new users, reading the **Getting Started** section should be your first step. Example problems can be found in the **User Guides**.
 
 ## User Guide
-The user guide provides tutorials and explanations on how to use Aviary for various types of aircraft design problems.
+The User Guide provides tutorials and explanations on how to use Aviary for various types of aircraft design problems.
 
 ## Theory Guide
 The [Theory Guide](theory_guide/intro) gives a much deeper explanation of the equations and modeling assumptions behind Aviary. 

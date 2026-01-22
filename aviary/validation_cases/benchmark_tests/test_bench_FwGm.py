@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.models.missions.two_dof_default import phase_info
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.run_aviary import run_aviary
 from aviary.variable_info.variables import Aircraft, Mission
 
 

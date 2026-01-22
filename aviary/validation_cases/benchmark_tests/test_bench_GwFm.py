@@ -14,7 +14,7 @@ import numpy as np
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.run_aviary import run_aviary
 from aviary.models.aircraft.test_aircraft.GwFm_phase_info import phase_info
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 

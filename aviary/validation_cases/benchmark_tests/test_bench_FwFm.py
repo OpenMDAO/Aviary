@@ -6,7 +6,7 @@ from openmdao.utils.mpi import MPI
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.api import Mission
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.run_aviary import run_aviary
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 
 try:

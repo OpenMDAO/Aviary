@@ -4,9 +4,9 @@ import sys
 
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
-from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
+from aviary.interface.run_aviary import _exec_level1, _setup_level1_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
-from aviary.interface.test_installation import _exec_installation_test, _setup_installation_test
+from aviary.interface.installation_test import _exec_installation_test, _setup_installation_test
 from aviary.utils.aero_table_conversion_cmd import _exec_ATC, _setup_ATC_parser
 from aviary.utils.engine_deck_conversion_cmd import _exec_EDC, _setup_EDC_parser
 from aviary.utils.fortran_to_aviary import _exec_F2A, _setup_F2A_parser

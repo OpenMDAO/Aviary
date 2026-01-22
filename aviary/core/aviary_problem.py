@@ -1,6 +1,5 @@
 import csv
 import json
-import math
 import os
 import warnings
 from copy import deepcopy
@@ -35,14 +34,6 @@ GASP = LegacyCode.GASP
 class AviaryProblem(om.Problem):
     """
     Main class for instantiating, formulating, and solving Aviary problems.
-
-    On a basic level, this problem object is all the conventional user needs
-    to interact with. Looking at the three "levels" of use cases, from simplest
-    to most complicated, we have:
-
-    Level 1: users interact with Aviary through input files (.csv or .yaml, TBD)
-    Level 2: users interact with Aviary through a Python interface
-    Level 3: users can modify Aviary's workings through Python and OpenMDAO
 
     This Problem object is simply a specialized OpenMDAO Problem that has
     additional methods to help users create and solve Aviary problems.

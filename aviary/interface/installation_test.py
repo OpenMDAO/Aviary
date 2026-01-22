@@ -1,6 +1,6 @@
 """
 NOTE this file cannot be a unittest, as testflo is an optional dependency. Instead, a separate
-     unittest that imports and runs this function exists under interface/tests/test_installation.py.
+     unittest that imports and runs this function exists under interface/tests/test_installation_test.py.
 """
 
 
