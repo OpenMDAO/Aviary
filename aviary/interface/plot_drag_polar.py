@@ -180,6 +180,12 @@ def plot_drag_polar(input_file=None):
 
     plot_button = Button(master=window, text='Plot', command=update_plot)
     plot_button.pack(side='right', padx=5, pady=5)
+
+    def on_closing():
+        window.quit()
+        window.destroy()
+
+    window.protocol('WM_DELETE_WINDOW', on_closing)
     window.mainloop()
 
 
