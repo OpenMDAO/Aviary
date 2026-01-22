@@ -43,8 +43,6 @@ For this kind of analysis, users are expected to have a basic understanding of P
 Interacting with Aviary in this way unlocks most of its functionality.
 Models and optimization setup are significantly more customizable, and external subsystems can be defined and added.
 
-Knowledge of [OpenMDAO](https://github.com/OpenMDAO/OpenMDAO) is not required at this level, but it is helpful to understand how the Aviary tool is built on top of OpenMDAO.
-
 For advanced users, the Aviary API is just a suggestion.
 The code is very modular and lends itself well to being utilized in pieces.
 A problem can be completely scripted from beginning to end directly utilizing parts of Aviary where desired.
