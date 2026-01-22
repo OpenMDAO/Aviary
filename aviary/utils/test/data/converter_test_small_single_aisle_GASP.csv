@@ -14,8 +14,8 @@ aircraft:crew_and_payload:catering_items_mass_per_passenger,6.0,lbm
 aircraft:crew_and_payload:design:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,8598.0,lbm
 aircraft:crew_and_payload:design:num_passengers,96,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_tourist,4,unitless
-aircraft:crew_and_payload:design:seat_pitch_tourist,31,inch
+aircraft:crew_and_payload:design:num_seats_abreast_economy,4,unitless
+aircraft:crew_and_payload:design:seat_pitch_economy,31,inch
 aircraft:crew_and_payload:mass_per_passenger_with_bags,210.0,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:uld_mass_per_passenger,0.11,lbm

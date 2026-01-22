@@ -89,7 +89,7 @@ class Aircraft:
         NUM_FLIGHT_CREW = 'aircraft:crew_and_payload:num_flight_crew'
         NUM_GALLEY_CREW = 'aircraft:crew_and_payload:num_galley_crew'
         NUM_PASSENGERS = 'aircraft:crew_and_payload:num_passengers'
-        NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:num_tourist_class'
+        NUM_ECONOMY_CLASS = 'aircraft:crew_and_payload:num_economy_class'
         PASSENGER_MASS_TOTAL = 'aircraft:crew_and_payload:passenger_mass_total'
         PASSENGER_PAYLOAD_MASS = 'aircraft:crew_and_payload:passenger_payload_mass'
         PASSENGER_SERVICE_MASS = 'aircraft:crew_and_payload:passenger_service_mass'
@@ -107,16 +107,16 @@ class Aircraft:
             MAX_CARGO_MASS = 'aircraft:crew_and_payload:design:max_cargo_mass'
             NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:design:num_business_class'
             NUM_FIRST_CLASS = 'aircraft:crew_and_payload:design:num_first_class'
-            NUM_TOURIST_CLASS = 'aircraft:crew_and_payload:design:num_tourist_class'
+            NUM_ECONOMY_CLASS = 'aircraft:crew_and_payload:design:num_economy_class'
             NUM_PASSENGERS = 'aircraft:crew_and_payload:design:num_passengers'
             NUM_SEATS_ABREAST_BUSINESS = (
                 'aircraft:crew_and_payload:design:num_seats_abreast_business'
             )
             NUM_SEATS_ABREAST_FIRST = 'aircraft:crew_and_payload:design:num_seats_abreast_first'
-            NUM_SEATS_ABREAST_TOURIST = 'aircraft:crew_and_payload:design:num_seats_abreast_tourist'
+            NUM_SEATS_ABREAST_ECONOMY = 'aircraft:crew_and_payload:design:num_seats_abreast_economy'
             SEAT_PITCH_BUSINESS = 'aircraft:crew_and_payload:design:seat_pitch_business'
             SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
-            SEAT_PITCH_TOURIST = 'aircraft:crew_and_payload:design:seat_pitch_tourist'
+            SEAT_PITCH_ECONOMY = 'aircraft:crew_and_payload:design:seat_pitch_economy'
 
     class Design:
         # These variables are values that do not fall into a particular aircraft

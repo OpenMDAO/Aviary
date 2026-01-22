@@ -38,7 +38,7 @@ def multi_mission_example():
     # aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')
 
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
-    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 1, 'unitless')
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 

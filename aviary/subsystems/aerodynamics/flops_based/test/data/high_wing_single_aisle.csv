@@ -15,7 +15,7 @@ aircraft:crew_and_payload:num_flight_attendants,2,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,2,unitless
 aircraft:crew_and_payload:num_passengers,160,unitless
-aircraft:crew_and_payload:num_tourist_class,148,unitless
+aircraft:crew_and_payload:num_economy_class,148,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.01,unitless   #check
 aircraft:crew_and_payload:wing_cargo,0.01,lbm   #check
 aircraft:design:empty_mass_margin_scaler,0.01,unitless   #check

@@ -2,8 +2,8 @@ aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
 aircraft:controls:stability_augmentation_system_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_tourist,6,unitless
-aircraft:crew_and_payload:design:seat_pitch_tourist,29,inch
+aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
+aircraft:crew_and_payload:design:seat_pitch_economy,29,inch
 aircraft:crew_and_payload:mass_per_passenger_with_bags,200,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
@@ -164,7 +164,7 @@ aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,0,unitless
 aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,169,unitless
-aircraft:crew_and_payload:design:num_tourist_class,158,unitless
+aircraft:crew_and_payload:design:num_economy_class,158,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,180.0,lbm
 aircraft:crew_and_payload:misc_cargo,0.0,lbm

@@ -17,10 +17,10 @@ aircraft:crew_and_payload:design:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,15000,lbm
 aircraft:crew_and_payload:design:num_first_class,11,unitless
 aircraft:crew_and_payload:design:num_passengers,150,unitless
-aircraft:crew_and_payload:design:num_tourist_class,139,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_tourist,18,unitless
+aircraft:crew_and_payload:design:num_economy_class,139,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_economy,18,unitless
 aircraft:crew_and_payload:design:seat_pitch_first,36,inch
-aircraft:crew_and_payload:design:seat_pitch_tourist,32,inch
+aircraft:crew_and_payload:design:seat_pitch_economy,32,inch
 aircraft:crew_and_payload:mass_per_passenger_with_bags,225,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,6,lbm
 aircraft:crew_and_payload:uld_mass_per_passenger,0.0667,lbm

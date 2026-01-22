@@ -51,17 +51,17 @@ inputs.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, 0.0)  # TCCAN
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100)  # NPB
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28)  # NPF
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 468, units='unitless')  # NPB+NPF+NPT
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 340)  # NPT
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 340)  # NPT
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 100)  # NPB
 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 28)  # NPF
 inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 468, units='unitless')  # sum of three classes
-inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 340)  # NPT
+inputs.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 340)  # NPT
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4)  # NBABR
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)  # NFABR
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6)  # NTABR
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)  # NTABR
 inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39, 'inch')  # BPITCH
 inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61, 'inch')  # FPITCH
-inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32, 'inch')  # TPITCH
+inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, 'inch')  # TPITCH
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 22)  # NSTU
@@ -69,7 +69,7 @@ inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)  # WFLCRB
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 2)  # NGALC
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')  # CARGOF
-inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)  # WSTUAB
+inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)  # WSRV
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')  # WPPASS
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')  # CARGOW
@@ -275,7 +275,7 @@ outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 20592.0, 'lbm')  # WPBAG
 outputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0.0, 'lbm')  # WCARGO
 outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 3850.0, 'lbm')  # WCON
 outputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS, 450.0, 'lbm')  # WFLCRB
-outputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, 3810.0, 'lbm')  # WSTUAB
+outputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS, 3810.0, 'lbm')  # WSTUAB
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 10806.675950702213, 'lbm')  # WSRV
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS, 77220.0, 'lbm')  # WPASS
 outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 97812.0, 'lbm')  # WPASS+WPBAG+WCARGO

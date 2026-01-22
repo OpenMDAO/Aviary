@@ -345,7 +345,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # TransportAPUMass
                 Aircraft.APU.MASS,
                 # NonFlightCrewMass
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 # FlightCrewMass
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
                 # TransportInstrumentMass
@@ -608,7 +608,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportAPUMass
         assert_near_equal(prob[Aircraft.APU.MASS], 2148.13002234, tol)
         # NonFlightCrewMass
-        assert_near_equal(prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 3810.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 3810.0, tol)
         # FlightCrewMass
         assert_near_equal(prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 450.0, tol)
         # TransportInstrumentMass
@@ -779,7 +779,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportAPUMass
         assert_near_equal(prob[Aircraft.APU.MASS], 2148.13002234, tol)
         # NonFlightCrewMass
-        assert_near_equal(prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 3810.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 3810.0, tol)
         # FlightCrewMass
         assert_near_equal(prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 450.0, tol)
         # TransportInstrumentMass
@@ -986,7 +986,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # TransportAPUMass
         assert_near_equal(prob[Aircraft.APU.MASS], 2125.8280135763703, tol)
         # NonFlightCrewMass
-        assert_near_equal(prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 3810.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 3810.0, tol)
         # FlightCrewMass
         assert_near_equal(prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 450.0, tol)
         # TransportInstrumentMass
@@ -1157,7 +1157,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # TransportAPUMass
         assert_near_equal(prob[Aircraft.APU.MASS], 2125.8280135763703, tol)
         # NonFlightCrewMass
-        assert_near_equal(prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 3810.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 3810.0, tol)
         # FlightCrewMass
         assert_near_equal(prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 450.0, tol)
         # TransportInstrumentMass

@@ -16,7 +16,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
 
     def setup(self):
@@ -34,7 +34,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        economy_class_count = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
 
         fuse_count = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
@@ -49,7 +49,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
             127.0 * flight_crew_count
             + 112.0 * first_class_count
             + 78.0 * business_class_count
-            + 44.0 * tourist_class_count
+            + 44.0 * economy_class_count
             + 2.6 * pax_compart_length * (fuse_max_width + fuse_max_height) * fuse_count
         ) * scaler
 
@@ -57,7 +57,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        economy_class_count = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
 
         fuse_count = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
 
@@ -71,7 +71,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
             127.0 * flight_crew_count
             + 112.0 * first_class_count
             + 78.0 * business_class_count
-            + 44.0 * tourist_class_count
+            + 44.0 * economy_class_count
             + 2.6 * pax_compart_length * (fuse_max_width + fuse_max_height) * fuse_count
         )
 
@@ -91,7 +91,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_CREW)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
         add_aviary_option(self, Aircraft.Fuselage.MILITARY_CARGO_FLOOR)
 
     def setup(self):
@@ -113,7 +113,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        economy_class_count = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
 
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
@@ -123,7 +123,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             127.0 * flight_crew_count
             + 112.0 * first_class_count
             + 78.0 * business_class_count
-            + 44.0 * tourist_class_count
+            + 44.0 * economy_class_count
         )
         # outputs[Aircraft.Furnishings.MASS] = weight / GRAV_ENGLISH_LBM
 
@@ -144,7 +144,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         first_class_count = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
-        tourist_class_count = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        economy_class_count = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
 
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
 
@@ -152,7 +152,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
             127.0 * flight_crew_count
             + 112.0 * first_class_count
             + 78.0 * business_class_count
-            + 44.0 * tourist_class_count
+            + 44.0 * economy_class_count
         ) / GRAV_ENGLISH_LBM
 
         if self.options[Aircraft.Fuselage.MILITARY_CARGO_FLOOR]:

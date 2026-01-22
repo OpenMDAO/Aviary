@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, NonFlightCrewMass
+from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, CabinCrewMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     flops_validation_test,
@@ -19,7 +19,7 @@ bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
 
 @use_tempdirs
-class NonFlightCrewMassTest(unittest.TestCase):
+class CabinCrewMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
@@ -29,7 +29,7 @@ class NonFlightCrewMassTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'cabin_crew',
-            NonFlightCrewMass(),
+            CabinCrewMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -83,7 +83,7 @@ class FlightCrewMassTest(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBNonFlightCrewMassTest(unittest.TestCase):
+class BWBCabinCrewMassTest(unittest.TestCase):
     """Test non-flight crew mass calculation for BWB data."""
 
     def setUp(self):
@@ -94,8 +94,8 @@ class BWBNonFlightCrewMassTest(unittest.TestCase):
         prob = self.prob
 
         prob.model.add_subsystem(
-            'non_flight_crew',
-            NonFlightCrewMass(),
+            'cabin_crew',
+            CabinCrewMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -107,8 +107,8 @@ class BWBNonFlightCrewMassTest(unittest.TestCase):
         flops_validation_test(
             prob,
             case_name,
-            input_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
-            output_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+            input_keys=Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
+            output_keys=Aircraft.CrewPayload.CABIN_CREW_MASS,
             version=Version.BWB,
             atol=1e-11,
         )

@@ -40,8 +40,8 @@ aircraft:instruments:mass_coefficient, 0.0416, unitless
 # Crew and Payload
 aircraft:crew_and_payload:cargo_mass, 31273, lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger, 0, lbm
-aircraft:crew_and_payload:design:num_seats_abreast_tourist, 6, unitless
-aircraft:crew_and_payload:design:seat_pitch_tourist, 41.24, inch
+aircraft:crew_and_payload:design:num_seats_abreast_economy, 6, unitless
+aircraft:crew_and_payload:design:seat_pitch_economy, 41.24, inch
 aircraft:crew_and_payload:num_passengers, 60, unitless
 aircraft:crew_and_payload:mass_per_passenger_with_bags, 190, lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger, 0, lbm

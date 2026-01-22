@@ -126,7 +126,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:crew_and_payload:design:num_tourist_class",
+        "aircraft:crew_and_payload:design:num_economy_class",
         158,
         "unitless",
         "<class 'int'>"
@@ -1091,7 +1091,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:crew_and_payload:num_tourist_class",
+        "aircraft:crew_and_payload:num_economy_class",
         158,
         "unitless",
         "<class 'int'>"

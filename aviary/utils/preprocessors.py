@@ -106,14 +106,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             Aircraft.CrewPayload.NUM_PASSENGERS,
             Aircraft.CrewPayload.NUM_FIRST_CLASS,
             Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS,
+            Aircraft.CrewPayload.NUM_ECONOMY_CLASS,
         ]
 
         design_pax_keys = [
             Aircraft.CrewPayload.Design.NUM_PASSENGERS,
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
         ]
     else:
         pax_keys = [Aircraft.CrewPayload.NUM_PASSENGERS]
@@ -190,7 +190,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                     'Information on seat class distribution for aircraft design was '
                     'not provided - assuming that all passengers are economy class.'
                 )
-            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, design_pax)
+            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, design_pax)
         else:
             if verbosity >= 1:
                 UserWarning(
@@ -210,7 +210,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                     'Information on seat class distribution for current mission was '
                     'not provided - assuming that all passengers are economy class.'
                 )
-            aviary_options.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, mission_pax)
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, mission_pax)
         else:
             if verbosity >= 1:
                 UserWarning(
@@ -258,13 +258,13 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 )
         # Economy Class
         if aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
-        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
+        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS):
             if verbosity >= 1:
                 UserWarning(
-                    'More tourist class passengers are flying in this mission than there are '
-                    'available tourist class seats on the aircraft. Assuming these passengers '
-                    'have the same mass as other tourist class passengers, but are sitting in '
+                    'More economy class passengers are flying in this mission than there are '
+                    'available economy class seats on the aircraft. Assuming these passengers '
+                    'have the same mass as other economy class passengers, but are sitting in '
                     'different seats.'
                 )
 

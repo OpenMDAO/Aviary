@@ -341,7 +341,7 @@ class BWBOperatingMassTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
                 Aircraft.Design.EMPTY_MASS,
@@ -393,7 +393,7 @@ class BWBTotalSummationTest(unittest.TestCase):
                 Aircraft.CrewPayload.BAGGAGE_MASS,
                 Aircraft.CrewPayload.CARGO_MASS,
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
                 Aircraft.Design.EMPTY_MASS_MARGIN,
                 Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
