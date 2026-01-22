@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryGroup
+from aviary.core.aviary_group import AviaryGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
