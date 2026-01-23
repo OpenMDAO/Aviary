@@ -13,7 +13,7 @@ from aviary.interface.methods_for_level1 import run_aviary
 from aviary.variable_info.variables import Mission
 
 
-@use_tempdirs
+# @use_tempdirs
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using FLOPS mass and aero method
@@ -34,6 +34,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
             verbosity=0,
             max_iter=60,
         )
+        # prob.list_indep_vars()
+        # prob.list_problem_vars()
+        prob.model.list_outputs()
 
         rtol = 1e-3
 
