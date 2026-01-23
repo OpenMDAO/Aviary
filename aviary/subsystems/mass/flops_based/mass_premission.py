@@ -6,7 +6,7 @@ from aviary.subsystems.mass.flops_based.apu import TransportAPUMass
 from aviary.subsystems.mass.flops_based.avionics import TransportAvionicsMass
 from aviary.subsystems.mass.flops_based.canard import CanardMass
 from aviary.subsystems.mass.flops_based.cargo_containers import TransportCargoContainersMass
-from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, NonFlightCrewMass
+from aviary.subsystems.mass.flops_based.crew import CabinCrewMass, FlightCrewMass
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
 from aviary.subsystems.mass.flops_based.engine import EngineMass
 from aviary.subsystems.mass.flops_based.engine_controls import TransportEngineCtrlsMass
@@ -126,13 +126,6 @@ class MassPremission(om.Group):
                 'engine_oil', AltEngineOilMass(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
-            self.add_subsystem(
-                'furnishing_base',
-                AltFurnishingsGroupMassBase(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-
             if design_type == AircraftTypes.BLENDED_WING_BODY:
                 self.add_subsystem(
                     'furnishings',
@@ -141,6 +134,13 @@ class MassPremission(om.Group):
                     promotes_outputs=['*'],
                 )
             else:
+                self.add_subsystem(
+                    'furnishing_base',
+                    AltFurnishingsGroupMassBase(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+
                 self.add_subsystem(
                     'furnishings',
                     AltFurnishingsGroupMass(),
@@ -243,7 +243,7 @@ class MassPremission(om.Group):
         self.add_subsystem('apu', TransportAPUMass(), promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.add_subsystem(
-            'nonflight_crew', NonFlightCrewMass(), promotes_inputs=['*'], promotes_outputs=['*']
+            'cabin_crew', CabinCrewMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(

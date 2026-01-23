@@ -452,13 +452,15 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
 
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REF, 7.557, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.11, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
 
         setup_model_options(self.prob, aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
@@ -520,13 +522,15 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
 
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REF, 7.557, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.11, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
 
         setup_model_options(self.prob, aviary_options)
         prob.setup(check=False, force_alloc_complex=True)

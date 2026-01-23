@@ -106,7 +106,7 @@ class BWBCargoMassTest(unittest.TestCase):
             output_keys=[
                 Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
                 Aircraft.CrewPayload.BAGGAGE_MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS,
+                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
                 Aircraft.CrewPayload.CARGO_MASS,
                 Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             ],

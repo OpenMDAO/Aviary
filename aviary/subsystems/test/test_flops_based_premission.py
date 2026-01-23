@@ -275,7 +275,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # BWBWingPrelim
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
-                Aircraft.Wing.ASPECT_RATIO_REF,
+                Aircraft.Wing.ASPECT_RATIO_REFERENCE,
                 Aircraft.Wing.LOAD_FRACTION,
                 # _BWBWing
                 Aircraft.Wing.WETTED_AREA,
@@ -308,7 +308,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Design.TOTAL_WETTED_AREA,
                 # Mass
                 # CargoMass
-                Aircraft.CrewPayload.PASSENGER_MASS,
+                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
                 Aircraft.CrewPayload.BAGGAGE_MASS,
                 Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
                 Aircraft.CrewPayload.CARGO_MASS,
@@ -393,7 +393,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # PropulsionMass
                 Aircraft.Propulsion.MASS,
                 # SystemsEquipMass
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 # EmptyMass
                 Aircraft.Design.EMPTY_MASS,
                 # OperatingMass
@@ -512,7 +512,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 16555.972297926455, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REF], 3.4488813, tol)
+        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
         # _BWBWing
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
@@ -569,7 +569,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         tol = 1e-4
         # Mass
         # CargoMass
-        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL], 77220.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.BAGGAGE_MASS], 20592.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 97812.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.CARGO_MASS], 0.0, tol)
@@ -656,7 +656,9 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 61597.102467771889, tol)
         # SystemsEquipMass
-        assert_near_equal(prob[Aircraft.Design.SYSTEMS_EQUIP_MASS], 98848.9061107412710, tol)
+        assert_near_equal(
+            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 98848.9061107412710, tol
+        )
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
         # OperatingMass
@@ -707,7 +709,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 16555.972297926455, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REF], 3.4488813, tol)
+        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
         # _BWBWing
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
@@ -740,7 +742,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 35311.53118076, tol)
         # Mass
         # CargoMass
-        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL], 77220.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.BAGGAGE_MASS], 20592.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 97812.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.CARGO_MASS], 0.0, tol)
@@ -827,7 +829,9 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 61597.102467771889, tol)
         # SystemsEquipMass
-        assert_near_equal(prob[Aircraft.Design.SYSTEMS_EQUIP_MASS], 98848.9061107412710, tol)
+        assert_near_equal(
+            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 98848.9061107412710, tol
+        )
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
         # OperatingMass
@@ -890,7 +894,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 12109.879719468739, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REF], 5.36951675, tol)
+        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
         # _BWBWing
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
@@ -947,7 +951,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         tol = 1e-4
         # Mass
         # CargoMass
-        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL], 77220.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.BAGGAGE_MASS], 20592.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 97812.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.CARGO_MASS], 0.0, tol)
@@ -1034,7 +1038,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 58921.857380417721, tol)
         # SystemsEquipMass
-        assert_near_equal(prob[Aircraft.Design.SYSTEMS_EQUIP_MASS], 90644.95111232, tol)
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 90644.95111232, tol)
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 390482.6804821, tol)
         # OperatingMass
@@ -1085,7 +1089,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # BWBWingPrelim
         assert_near_equal(prob[Aircraft.Wing.AREA], 12109.879719468739, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
-        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REF], 5.36951675, tol)
+        assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
         # _BWBWing
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
@@ -1118,7 +1122,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Design.TOTAL_WETTED_AREA], 26208.46595187, tol)
         # Mass
         # CargoMass
-        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS], 77220.0, tol)
+        assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL], 77220.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.BAGGAGE_MASS], 20592.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 97812.0, tol)
         assert_near_equal(prob[Aircraft.CrewPayload.CARGO_MASS], 0.0, tol)
@@ -1205,7 +1209,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 58921.857380417721, tol)
         # SystemsEquipMass
-        assert_near_equal(prob[Aircraft.Design.SYSTEMS_EQUIP_MASS], 90644.95111232, tol)
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 90644.95111232, tol)
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 390482.6804821, tol)
         # OperatingMass

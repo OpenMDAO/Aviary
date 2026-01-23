@@ -16,7 +16,7 @@ class EmptyMassMargin(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials('*', '*')
+        self.declare_partials(Aircraft.Design.EMPTY_MASS_MARGIN, '*')
 
     def compute(self, inputs, outputs):
         prop_mass = inputs[Aircraft.Propulsion.MASS]

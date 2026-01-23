@@ -7,7 +7,10 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassSummation(om.Group):
-    """Group to compute top-level mass groups for FLOPS mass estimation."""
+    """
+    Group to compute top-level mass groups for FLOPS mass estimation. No new masses are computed
+    here, just grouping and summing already calculated masses.
+    """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
@@ -430,6 +433,7 @@ class ZeroFuelMass(om.ExplicitComponent):
 
 
 # TODO DO NOT CALCULATE MISSION FUEL THIS WAY!!! ONLY COMPUTE DIRECTLY FROM INTEGRATING FUEL BURN
+# TODO This should also probably not go in mass summation
 class FuelMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')

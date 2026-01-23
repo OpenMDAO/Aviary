@@ -84,7 +84,7 @@ class BWBEmptyMassMarginTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
             ],
             output_keys=Aircraft.Design.EMPTY_MASS_MARGIN,

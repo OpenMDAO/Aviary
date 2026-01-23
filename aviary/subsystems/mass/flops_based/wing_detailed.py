@@ -293,7 +293,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REFERENCE, units='unitless')
         add_aviary_input(self, Aircraft.Wing.STRUT_BRACING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
@@ -310,7 +310,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Engine.WING_LOCATIONS, units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
-        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REF, units='unitless')
+        add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.BENDING_MATERIAL_FACTOR, units='unitless')
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
@@ -364,7 +364,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         load_path_sweep_mod = np.array(load_path_sweep[1:])
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
-        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REF]
+        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
         chord_mod = []
         for x in chord:
@@ -384,7 +384,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DIST']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
-        tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REF]
+        tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
         thickness_to_chord_mod = []
         for x in thickness_to_chord:
             thickness_to_chord_mod.append(x * tc[0] / tcref[0])

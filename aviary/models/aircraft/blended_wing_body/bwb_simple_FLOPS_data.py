@@ -218,7 +218,7 @@ inputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.0)  # FRSC
 inputs.set_val(Aircraft.Wing.SWEEP, 35.7, 'deg')  # SWEEP
 inputs.set_val(Aircraft.Wing.TAPER_RATIO, 0.311)  # TR
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11)  # TCA
-inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.11)  # TCREF
+inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11)  # TCREF
 
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)  # ULF
 inputs.set_val(Aircraft.Wing.VAR_SWEEP_MASS_PENALTY, 0.0)  # VARSWP
@@ -256,7 +256,7 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 434037.32820147, 'lbm')  # DOWE
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 273591.31917826, 'lbm')  # WSTRCT
-outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 98848.9061107412710, 'lbm')  # WSYS
+outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 98848.9061107412710, 'lbm')  # WSYS
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 35311.53118076, 'ft**2')  # TWET
 outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 699279.2, 'lbm')  # WLDG = GW*WRATIO
 
@@ -277,7 +277,7 @@ outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 3850.0, 'lbm')  # WCO
 outputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS, 450.0, 'lbm')  # WFLCRB
 outputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS, 3810.0, 'lbm')  # WSTUAB
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 10806.675950702213, 'lbm')  # WSRV
-outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS, 77220.0, 'lbm')  # WPASS
+outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, 77220.0, 'lbm')  # WPASS
 outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 97812.0, 'lbm')  # WPASS+WPBAG+WCARGO
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 97812.0, 'lbm')  # WPASS+WPBAG
 
@@ -310,12 +310,15 @@ outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.11)  # FR(2)
 outputs.set_val(Aircraft.HorizontalTail.MASS, 0.0, 'lbm')  # WHT
 outputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.0, 'ft**2')  # SWTHT
 
+outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3159.3781042368792, 'lbm')
+
 outputs.set_val(Aircraft.Hydraulics.MASS, 7368.5077321194321, 'lbm')  # WHYD
 
 outputs.set_val(Aircraft.Instruments.MASS, 1383.9538229392606, 'lbm')  # WIN
 
 outputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, 28200.322805698346, 'lbm')  # WLGM
 outputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, 2698.6740002098945, 'lbm')  # WLGN
+outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 30898.996805908242, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([15.68611614]), 'ft')  # EL(5)
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.38269353]))  # FR(5)
@@ -342,7 +345,6 @@ outputs.set_val(Aircraft.Engine.MASS, 17825.63336233, 'lbm')  # WSP
 outputs.set_val(Aircraft.Engine.POD_MASS, 19593.89025207, 'lbm')  # WPOD
 # In FLOPS BWB, WEC = 0.0 because WEC is scaled by WPMSC (Aircraft.Propulsion.MISC_MASS_SCALER)
 engine_ctrls_mass = 206.36860226  # WEC
-outputs.set_val(Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, 'lbm')
 outputs.set_val(Aircraft.Engine.ADDITIONAL_MASS, 0.0, 'lbm')  # WPMISC
 outputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS, 0.0, 'lbm')  # WTHR
 outputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 1526.1294678475103, 'lbm')  # WSTART
@@ -367,7 +369,7 @@ outputs.set_val(Aircraft.Wing.MISC_MASS, 21498.83307778, 'lbm')  # W3
 outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 38779.21499739, 'lbm')  # W2
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 14152.3734702, 'lbm')  # WSC
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 3.4488813)  # AR
-outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REF, 3.4488813)  # ARREF
+outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 3.4488813)  # ARREF
 outputs.set_val(Aircraft.Wing.MASS, 86742.28126808, 'lbm')  # WWING
 outputs.set_val(Aircraft.Wing.ROOT_CHORD, 63.96, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 16555.972297926455, 'ft**2')  # SW
