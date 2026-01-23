@@ -44,6 +44,7 @@ class FlareEOMTest(unittest.TestCase):
 
     def test_case(self):
         do_validation_test(
+            self,
             self.prob,
             'landing_flare_eom',
             input_validation_data=detailed_landing_flare,

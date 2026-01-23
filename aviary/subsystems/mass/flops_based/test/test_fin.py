@@ -59,6 +59,8 @@ class FinMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
+            self,
             prob,
             case_name,
             input_validation_data=validation_data,

@@ -250,6 +250,7 @@ class _PrelimTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=get_flops_data(case_name),
@@ -313,6 +314,7 @@ class _WingTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=_hybrid_input_data(case_name),
@@ -359,6 +361,7 @@ class _TailTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=_hybrid_input_data(case_name),
@@ -413,6 +416,7 @@ class _FuselageTest(unittest.TestCase):
             outputs.extend(Aircraft.Fuselage.WETTED_AREA)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=_hybrid_input_data(case_name),
@@ -495,6 +499,7 @@ class CanardTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             'canard_test',
             input_validation_data=Canard_test_data,
@@ -578,6 +583,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=_hybrid_input_data(case_name),

@@ -54,6 +54,7 @@ class FlareODETest(unittest.TestCase):
         set_aviary_initial_values(prob, aviary_options)
 
         do_validation_test(
+            self,
             prob,
             'landing_flare_ode',
             input_validation_data=detailed_landing_flare,

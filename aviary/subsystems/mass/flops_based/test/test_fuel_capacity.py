@@ -122,6 +122,7 @@ class WingFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=validation_data,
@@ -168,6 +169,7 @@ class FuselageFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=validation_data,
@@ -207,6 +209,7 @@ class AuxFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=validation_data,
@@ -252,6 +255,7 @@ class TotalFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=validation_data,

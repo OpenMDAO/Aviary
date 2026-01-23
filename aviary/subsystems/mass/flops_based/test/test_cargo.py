@@ -60,6 +60,7 @@ class PayloadGroupTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             case_name,
             input_validation_data=validation_data,
