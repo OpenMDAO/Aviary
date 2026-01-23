@@ -1,0 +1,1264 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aviary.utils.doctape</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/utils/doctape';</script>
+    <link rel="icon" href="../../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/utils/doctape.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for aviary.utils.doctape</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.cmd_entry_points</span><span class="w"> </span><span class="kn">import</span> <span class="n">_command_map</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd"># DocTAPE #</span>
+<span class="sd">------------</span>
+<span class="sd">Documentation Testing and Automated Placement of Expressions</span>
+
+<span class="sd">A collection of utility functions (and wrappers for Glue) that are useful</span>
+<span class="sd">for automating the process of building and testing documentation to ensure that</span>
+<span class="sd">documentation doesn&#39;t get stale.</span>
+
+<span class="sd">expected_error is an exception that can be used in try/except blocks to allow desired errors to</span>
+<span class="sd">pass while still raising unexpected errors.</span>
+
+<span class="sd">gramatical_list combines the elements of a list into a string with proper punctuation</span>
+<span class="sd">check_value is a simple function for comparing two values</span>
+<span class="sd">check_contains confirms that all the elements of one iterable are contained in the other</span>
+<span class="sd">check_args gets the signature of a function and compares it to the arguments you are expecting</span>
+<span class="sd">run_command_no_file_error executes a CLI command but won&#39;t fail if a FileNotFoundError is raised</span>
+<span class="sd">get_attribute_name gets the name of an object&#39;s attribute based on it&#39;s value</span>
+<span class="sd">get_all_keys recursively get all of the keys from a dict of dicts</span>
+<span class="sd">get_value recursively get a value from a dict of dicts</span>
+<span class="sd">glue_variable glue a variable for later use in markdown cells of notebooks (can auto format for code)</span>
+<span class="sd">glue_keys recursively glue all of the keys from a dict of dicts</span>
+<span class="sd">glue_actions glue all Aviary CLI options for a given command</span>
+<span class="sd">glue_class_functions glue all class functions for a gen class</span>
+<span class="sd">glue_function_arguments glue all function arguments and default values for a given function</span>
+<span class="sd">glue_class_options glue all class options for a given class</span>
+<span class="sd">get_previous_line returns the previous n line(s) of code as a string</span>
+<span class="sd">get_class_names return the class names in a file as a set</span>
+<span class="sd">get_function_names returns the function names in a file as a set</span>
+<span class="sd">get_all_non_aviary_names returns the non-Aviary variable names of a component</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="expected_error">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/doctape.html#aviary.utils.doctape.expected_error">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">expected_error</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span> <span class="o">...</span></div>
+
+
+
+<div class="viewcode-block" id="gramatical_list">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.gramatical_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gramatical_list</span><span class="p">(</span><span class="n">list_of_strings</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">cc</span><span class="o">=</span><span class="s1">&#39;and&#39;</span><span class="p">,</span> <span class="n">add_accents</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combines the elements of a list into a string with proper punctuation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    list_of_strings : list</span>
+<span class="sd">        A list of strings (or elements with a string representation)</span>
+<span class="sd">    cc : str, optional</span>
+<span class="sd">        The coordinating conjunction to use with the list (default is `and`)</span>
+<span class="sd">    add_accents : bool, optional</span>
+<span class="sd">        Whether or not to wrap each element with ` characters (default is False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        A string that combines the elements of the list into a string with proper punctuation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_of_strings</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;`&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;`&#39;</span> <span class="k">if</span> <span class="n">add_accents</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">list_of_strings</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_strings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_of_strings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_of_strings</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">list_of_strings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">cc</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">list_of_strings</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">list_of_strings</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">cc</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">list_of_strings</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span></div>
+
+
+
+<div class="viewcode-block" id="get_previous_line">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_previous_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_previous_line</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the previous n line(s) of code as a string.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The number of lines to return (default is 1)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        A string that contains the previous line of code or a</span>
+<span class="sd">        list that contains the previous n lines of code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span>  <span class="c1"># get the previous frame that called this function</span>
+    <span class="c1"># get the lines of code as a list of strings</span>
+    <span class="n">lines</span><span class="p">,</span> <span class="n">first_line</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">pframe</span><span class="p">)</span>
+    <span class="c1"># get the line number of the line that called this function</span>
+    <span class="n">lineno</span> <span class="o">=</span> <span class="n">pframe</span><span class="o">.</span><span class="n">f_lineno</span> <span class="o">-</span> <span class="n">first_line</span> <span class="k">if</span> <span class="n">first_line</span> <span class="k">else</span> <span class="n">pframe</span><span class="o">.</span><span class="n">f_lineno</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="c1"># get the previous lines</span>
+    <span class="k">return</span> <span class="n">lines</span><span class="p">[</span><span class="n">lineno</span> <span class="o">-</span> <span class="n">n</span> <span class="p">:</span> <span class="n">lineno</span><span class="p">]</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">lines</span><span class="p">[</span><span class="n">lineno</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_variable_name">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_variable_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_variable_name</span><span class="p">(</span><span class="o">*</span><span class="n">variables</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the name of the variable passed to the function as a string</span>
+<span class="sd">    # NOTE: You cannot call this function multiple times on one line.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    variables : any</span>
+<span class="sd">        The variable(s) of interest</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        A string that contains the name of variable passed to this function</span>
+<span class="sd">        (or list of strings, if multiple arguments are passed)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span><span class="o">.</span><span class="n">f_back</span>  <span class="c1"># get the previous frame that called this function</span>
+    <span class="c1"># get the lines of code as a list of strings</span>
+    <span class="n">lines</span><span class="p">,</span> <span class="n">first_line</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">pframe</span><span class="p">)</span>
+    <span class="c1"># get the line number that called this function</span>
+    <span class="n">lineno</span> <span class="o">=</span> <span class="n">pframe</span><span class="o">.</span><span class="n">f_lineno</span> <span class="o">-</span> <span class="n">first_line</span> <span class="k">if</span> <span class="n">first_line</span> <span class="k">else</span> <span class="n">pframe</span><span class="o">.</span><span class="n">f_lineno</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="c1"># extract the argument and remove all whitespace</span>
+    <span class="n">arg</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">lineno</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;get_variable_name(&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Use regex to match balanced parentheses</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([^()]*\([^()]*\))*[^()]*&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># # Requires Python 3.11, but allows this to be called multiple times on one line</span>
+    <span class="c1"># positions = inspect.getframeinfo(pframe).positions</span>
+    <span class="c1"># calling_lines = lines[positions.lineno-1:positions.end_lineno]</span>
+    <span class="c1"># calling_lines[-1] = calling_lines[-1][:positions.end_col_offset-1]</span>
+    <span class="c1"># calling_lines[0] = calling_lines[0][positions.col_offset:].removeprefix(&#39;get_variable_name(&#39;)</span>
+    <span class="c1"># arg = &#39;&#39;.join([l.strip() for l in calling_lines])</span>
+
+    <span class="k">if</span> <span class="s1">&#39;,&#39;</span> <span class="ow">in</span> <span class="n">arg</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">arg</span></div>
+
+
+
+<div class="viewcode-block" id="check_value">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.check_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_value</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="n">val2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compares two values and raises a ValueError if they are not equal.</span>
+
+<span class="sd">    This method checks whether the provided values are equal. For primitive data types</span>
+<span class="sd">    such as strings, integers, floats, lists, tuples, dictionaries, and sets, it uses</span>
+<span class="sd">    the equality operator. For other types, it uses identity comparison.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    val1 : any</span>
+<span class="sd">        The first value to be compared.</span>
+<span class="sd">    val2 : any</span>
+<span class="sd">        The second value to be compared.</span>
+<span class="sd">    error_type : Exception, optional</span>
+<span class="sd">        The exception to raise (default is ValueError)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the values are not equal (or not the same object for non-primitive types).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val1</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">type</span><span class="p">({}</span><span class="o">.</span><span class="n">keys</span><span class="p">()))):</span>
+        <span class="k">if</span> <span class="n">val1</span> <span class="o">!=</span> <span class="n">val2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val1</span><span class="si">}</span><span class="s1"> is not equal to </span><span class="si">{</span><span class="n">val2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">val1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">val2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val1</span><span class="si">}</span><span class="s1"> is not </span><span class="si">{</span><span class="n">val2</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="check_contains">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.check_contains">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_contains</span><span class="p">(</span>
+    <span class="n">expected_values</span><span class="p">,</span>
+    <span class="n">actual_values</span><span class="p">,</span>
+    <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in </span><span class="si">{actual_values}</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="n">error_type</span><span class="o">=</span><span class="ne">RuntimeError</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that all of the expected_values exist in actual_values</span>
+<span class="sd">    (It does not check for missing values).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expected_values : any iterable</span>
+<span class="sd">        This can also be a single value, in which case it will be wrapped into a list</span>
+<span class="sd">    actual_values : any iterable</span>
+<span class="sd">    error_string : str, optional</span>
+<span class="sd">        The string to display as the error message,</span>
+<span class="sd">        kwarg substitutions will be made using .format() for &quot;var&quot; and &quot;actual_values&quot;</span>
+<span class="sd">    error_type : Exception, optional</span>
+<span class="sd">        The exception to raise (default is RuntimeError)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If a value in expected_values is not present in actual_values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if a single expected item is provided, wrap it</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">expected_values</span><span class="p">,</span> <span class="s1">&#39;__class_getitem__&#39;</span><span class="p">):</span>
+        <span class="n">expected_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">expected_values</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">expected_values</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual_values</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="n">error_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">actual_values</span><span class="o">=</span><span class="n">actual_values</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="check_args">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.check_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_args</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">,</span>
+    <span class="n">expected_args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">args_to_ignore</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;self&#39;</span><span class="p">],</span>
+    <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">error_type</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks that the expected arguments are valid for a given function.</span>
+
+<span class="sd">    This method verifies that the provided `expected_args` match the actual arguments</span>
+<span class="sd">    of the given function `func`. If `exact` is True, the method checks for an exact</span>
+<span class="sd">    match. If `exact` is False, it only checks that the provided `expected_args` are</span>
+<span class="sd">    included in the actual arguments (it won&#39;t fail if the function has additional arguments).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : function</span>
+<span class="sd">        The function whose arguments are being checked.</span>
+<span class="sd">    expected_args : list, dict, or str</span>
+<span class="sd">        The expected arguments. If a dict, the values will be compared to the default values.</span>
+<span class="sd">        If a string, it will be treated as a single argument of interest. (exact will be set to False)</span>
+<span class="sd">    args_to_ignore : list or tuple, optional</span>
+<span class="sd">        Arguments to ignore during the check (default is [&#39;self&#39;]).</span>
+<span class="sd">    exact : bool, optional</span>
+<span class="sd">        Whether to check for an exact match of arguments (default is True).</span>
+<span class="sd">    error_type : Exception, optional</span>
+<span class="sd">        The exception to raise (default is ValueError)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the expected arguments do not match the actual arguments of the function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_args</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">expected_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">expected_args</span><span class="p">]</span>
+        <span class="n">exact</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span>
+    <span class="n">available_args</span> <span class="o">=</span> <span class="p">{</span><span class="n">arg</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="o">.</span><span class="n">default</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">args_to_ignore</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">check_value</span><span class="p">(</span><span class="n">available_args</span><span class="p">,</span> <span class="n">expected_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">check_value</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">available_args</span><span class="p">),</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">expected_args</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">expected_args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_args</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s1"> is not a valid argument for </span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expected_args</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="n">expected_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">!=</span> <span class="n">available_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;the default value of </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s1"> is </span><span class="si">{</span><span class="n">available_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="si">}</span><span class="s1">, not </span><span class="si">{</span><span class="n">expected_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_command_no_file_error">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.run_command_no_file_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_command_no_file_error</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes a CLI command and handles FileNotFoundError separately.</span>
+
+<span class="sd">    This method runs a given command in a temporary directory and captures the output.</span>
+<span class="sd">    If the command returns a non-zero exit code, it checks the error message. If the</span>
+<span class="sd">    error is a FileNotFoundError, it prints the error name. For other errors, it prints</span>
+<span class="sd">    the full error message.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    command : str</span>
+<span class="sd">        The CLI command to be executed.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Whether or not to include the error message if FileNotFoundError is raised</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    CalledProcessError</span>
+<span class="sd">        If the command returns a non-zero exit code (except for FileNotFoundError).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Save the current directory</span>
+    <span class="n">original_cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tempdir</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">cwd</span><span class="o">=</span><span class="n">tempdir</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">rc</span><span class="o">.</span><span class="n">returncode</span><span class="p">:</span>
+                <span class="n">err</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">rc</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">err</span> <span class="o">==</span> <span class="s1">&#39;FileNotFoundError&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A file required by </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2"> couldn&#39;t be found, continuing anyway&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">rc</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                    <span class="n">rc</span><span class="o">.</span><span class="n">check_returncode</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Always restore the original directory</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">original_cwd</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_attribute_name">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_attribute_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_attribute_name</span><span class="p">(</span><span class="nb">object</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="ne">AttributeError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the name of an object&#39;s attribute based on it&#39;s value.</span>
+
+<span class="sd">    This is intended for use with Enums and other objects that have unique values.</span>
+<span class="sd">    This method will return the name of the first attribute that has a value that</span>
+<span class="sd">    matches the value provided.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    object : any</span>
+<span class="sd">        The object whose attributes will be searched</span>
+<span class="sd">    attribute : any</span>
+<span class="sd">        The value of interest</span>
+<span class="sd">    error_type : Exception, optional</span>
+<span class="sd">        The exception to raise (default is AttributeError)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the attribute</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    AttributeError</span>
+<span class="sd">        If the object has no attributes with the provided value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">object</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">attribute</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">name</span>
+
+    <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;`</span><span class="si">{</span><span class="nb">object</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">` object has no attribute with a value of `</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_keys">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_all_keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_keys</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">all_keys</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively get all of the keys from a dict of dicts</span>
+<span class="sd">    This can also be used to recursively get all of the attributes from a complex object, like the Aircraft hierarchy</span>
+<span class="sd">    Note: this will not add duplicates of keys, but will</span>
+<span class="sd">    continue deeper even if a key is duplicated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dict_of_dicts : dict</span>
+<span class="sd">        The dictionary who&#39;s keys will be gathered</span>
+<span class="sd">    track_layers : Bool</span>
+<span class="sd">        Whether or not to track where keys inside the dict of dicts</span>
+<span class="sd">        came from. This will get every key, by ensuring that all keys</span>
+<span class="sd">        have a unique name by tracking the path it took to get there.</span>
+<span class="sd">    all_keys : list</span>
+<span class="sd">        A list of the keys that have been found so far</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_keys : list</span>
+<span class="sd">        A list of all the keys in the dict_of_dicts</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">dict_of_dicts</span> <span class="o">=</span> <span class="n">dict_of_dicts</span><span class="o">.</span><span class="vm">__dict__</span>
+    <span class="k">if</span> <span class="n">all_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">all_keys</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dict_of_dicts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;__&#39;</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">track_layers</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">current_layer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">elif</span> <span class="n">track_layers</span><span class="p">:</span>
+            <span class="n">current_layer</span> <span class="o">=</span> <span class="n">track_layers</span>
+        <span class="k">if</span> <span class="n">track_layers</span> <span class="ow">and</span> <span class="n">current_layer</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="n">current_layer</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">key</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+            <span class="n">all_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">track_layers</span><span class="p">:</span>
+                <span class="n">current_layer</span> <span class="o">=</span> <span class="n">key</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_layer</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">all_keys</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="n">current_layer</span><span class="p">,</span> <span class="n">all_keys</span><span class="o">=</span><span class="n">all_keys</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_keys</span></div>
+
+
+
+<div class="viewcode-block" id="get_value">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_value</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">comlpete_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively get a value from a dict of dicts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dict_of_dicts : dict</span>
+<span class="sd">    complete_key : str</span>
+<span class="sd">        A string that contains the full path through the dict_of_dicts</span>
+<span class="sd">        (i.e. dictkey1.dictkey2.keyofinterest)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    val : any</span>
+<span class="sd">        The value found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">comlpete_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">dict_of_dicts</span> <span class="o">=</span> <span class="n">dict_of_dicts</span><span class="o">.</span><span class="vm">__dict__</span>
+        <span class="n">dict_of_dicts</span> <span class="o">=</span> <span class="n">dict_of_dicts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">dict_of_dicts</span></div>
+
+
+
+<div class="viewcode-block" id="glue_variable">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.glue_variable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">glue_variable</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Glue a variable for later use in markdown cells of notebooks.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">    glue_variable(get_variable_name(Aircraft.APU.MASS))</span>
+<span class="sd">    can be used to glue the name of the variable (Aircraft.APU.MASS)</span>
+<span class="sd">    not the value of the variable (&#39;aircraft:apu:mass&#39;)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name the value will be glued to</span>
+<span class="sd">    val : any</span>
+<span class="sd">        The value to be displayed in the markdown cell (default is the value of name)</span>
+<span class="sd">    md_code : Bool</span>
+<span class="sd">        Whether to wrap the value in markdown code formatting (e.g. `code`)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># local import so myst isn&#39;t required unless glue is being used</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Markdown</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">IPython.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">io</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">myst_nb</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue</span>
+
+    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">if</span> <span class="n">md_code</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;`</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">capture_output</span><span class="p">()</span> <span class="k">as</span> <span class="n">captured</span><span class="p">:</span>
+        <span class="n">glue</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">display</span><span class="p">)</span>
+    <span class="c1"># if display:</span>
+    <span class="n">captured</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="glue_keys">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.glue_keys">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">glue_keys</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively glue all of the keys from a dict of dicts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dict_of_dicts : dict</span>
+<span class="sd">        The dictionary who&#39;s keys will be glued</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_keys : list</span>
+<span class="sd">        A list of all the keys that were glued</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">track_layers</span> <span class="o">=</span> <span class="n">dict_of_dicts</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">track_layers</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">all_keys</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">dict_of_dicts</span><span class="p">,</span> <span class="n">track_layers</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">all_keys</span><span class="p">:</span>
+        <span class="n">glue_variable</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">display</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_keys</span></div>
+
+
+
+<div class="viewcode-block" id="get_class_names">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_class_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_class_names</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve all class names from a given file and return as a set.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path: str or Path</span>
+<span class="sd">        file path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read the content of the file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># Parse the file content into an AST</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">file_content</span><span class="p">)</span>
+
+    <span class="c1"># Extract class names</span>
+    <span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">ClassDef</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">class_names</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_function_names">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_function_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_function_names</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all function names in a given file and return as a set.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file_path: str or Path</span>
+<span class="sd">        file path</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read the content of the file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file_content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># Parse the file content into an AST</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">file_content</span><span class="p">)</span>
+
+    <span class="c1"># Extract function names</span>
+    <span class="n">function_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">FunctionDef</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">function_names</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="glue_actions">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.glue_actions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">glue_actions</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">curr_glued</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">glue_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">glue_choices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Glue all Aviary CLI options.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cmd: str</span>
+<span class="sd">        Aviary command</span>
+<span class="sd">    curr_glued: list</span>
+<span class="sd">        the parameters that have been glued</span>
+<span class="sd">    glue_default: boolean</span>
+<span class="sd">        flag whether the default values should be glued</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">curr_glued</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">curr_glued</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">_command_map</span><span class="p">[</span><span class="n">cmd</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="n">parser</span><span class="p">)</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">parser</span><span class="o">.</span><span class="n">_get_optional_actions</span><span class="p">(),</span> <span class="o">*</span><span class="n">parser</span><span class="o">.</span><span class="n">_get_positional_actions</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+        <span class="n">opt_list</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">option_strings</span>
+        <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">opt_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">opt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+                <span class="n">glue_variable</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+                <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">dest</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+            <span class="n">glue_variable</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+            <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">glue_default</span><span class="p">:</span>
+            <span class="n">action_default</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">action</span><span class="o">.</span><span class="n">dest</span><span class="si">}</span><span class="s1">_default&#39;</span>
+            <span class="k">if</span> <span class="n">action_default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+                <span class="n">glue_variable</span><span class="p">(</span><span class="n">action_default</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">default</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action_default</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">glue_choices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">choices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">action</span><span class="o">.</span><span class="n">choices</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+                        <span class="n">glue_variable</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">choice</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">choice</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="glue_class_functions">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.glue_class_functions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">glue_class_functions</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">curr_glued</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Glue all class functions.</span>
+
+<span class="sd">    For a function &#39;foo&#39;, glue &#39;foo&#39; and &#39;foo()&#39;</span>
+<span class="sd">    If a prefix is defined, also glue &#39;prefix.foo&#39; and &#39;prefix.foo()&#39;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj: class</span>
+<span class="sd">        class object</span>
+<span class="sd">    curr_glued: list</span>
+<span class="sd">        the parameters that have been glued</span>
+<span class="sd">    prefix: str</span>
+<span class="sd">        Preix to be prepended.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">curr_glued</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">curr_glued</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">methods</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getmembers</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">func_name</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+        <span class="n">forms</span> <span class="o">=</span> <span class="p">[</span><span class="n">func_name</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">func_name</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pre_forms</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">forms</span><span class="p">]</span>
+            <span class="n">forms</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pre_forms</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">form</span> <span class="ow">in</span> <span class="n">forms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">form</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+                <span class="n">glue_variable</span><span class="p">(</span><span class="n">form</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+                <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">form</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="glue_function_arguments">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.glue_function_arguments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">glue_function_arguments</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">curr_glued</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">glue_default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Glue all function arguments and default values for a given function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func: function</span>
+<span class="sd">        function</span>
+<span class="sd">    curr_glued: list</span>
+<span class="sd">        the parameters that have been glued</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">curr_glued</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">curr_glued</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sig</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span> <span class="ow">and</span> <span class="n">param_name</span> <span class="o">!=</span> <span class="s1">&#39;self&#39;</span><span class="p">:</span>
+            <span class="n">glue_variable</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+            <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">glue_default</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">param</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">param_default</span> <span class="o">=</span> <span class="n">param_name</span> <span class="o">+</span> <span class="s1">&#39;_default&#39;</span>
+                <span class="k">if</span> <span class="n">param_default</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+                    <span class="n">glue_variable</span><span class="p">(</span><span class="n">param_default</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">default</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+                    <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_default</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="glue_class_options">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.glue_class_options">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">glue_class_options</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">curr_glued</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Glue all class options for a given class.</span>
+
+<span class="sd">    This includes all options that have been declared in the base options dict. It also optionally</span>
+<span class="sd">    includes class attributes that are declared in the init method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj: class</span>
+<span class="sd">        class</span>
+<span class="sd">    curr_glued: list</span>
+<span class="sd">        the parameters that have been glued</span>
+<span class="sd">    add_attributes: bool</span>
+<span class="sd">        When True, also add any class and instance attributes. Default is True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">curr_glued</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">curr_glued</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">()</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">opts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">opt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+            <span class="n">glue_variable</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+            <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curr_glued</span><span class="p">:</span>
+            <span class="n">glue_variable</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="n">md_code</span><span class="p">)</span>
+            <span class="n">curr_glued</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_all_non_aviary_names">
+<a class="viewcode-back" href="../../../developer_guide/doctape.html#aviary.utils.doctape.get_all_non_aviary_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_non_aviary_names</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">include_in_out</span><span class="o">=</span><span class="s1">&#39;in_out&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the names of all the non-Aviary variables of a component class</span>
+<span class="sd">    created by self.add_input() or self.add_output() methods in setup().</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">method_name</span> <span class="o">=</span> <span class="s1">&#39;setup&#39;</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>  <span class="c1"># remove indentation</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_in_out</span> <span class="o">==</span> <span class="s1">&#39;in_out&#39;</span><span class="p">:</span>
+        <span class="n">including_flags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;add_input&#39;</span><span class="p">,</span> <span class="s1">&#39;add_output&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">include_in_out</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+        <span class="n">including_flags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;add_input&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">include_in_out</span> <span class="o">==</span> <span class="s1">&#39;out&#39;</span><span class="p">:</span>
+        <span class="n">including_flags</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;add_output&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">including_flags</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Call</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Attribute</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">attr</span> <span class="ow">in</span> <span class="n">including_flags</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="n">node</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="s1">&#39;self&#39;</span>
+            <span class="p">):</span>
+                <span class="c1"># Case 1: name is the first positional argument</span>
+                <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">args</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">):</span>
+                    <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                <span class="c1"># Case 2: name is given as a keyword</span>
+                <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">keywords</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">kw</span><span class="o">.</span><span class="n">arg</span> <span class="o">==</span> <span class="s1">&#39;name&#39;</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kw</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Constant</span><span class="p">):</span>
+                        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">kw</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">names</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,864 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Understanding the Variable Hierarchy</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/variable_hierarchy';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/variable_hierarchy.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/variable_hierarchy.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/variable_hierarchy.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Understanding the Variable Hierarchy</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-variable-hierarchies-work">How Variable Hierarchies Work</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-aviary-core-variable-hierarchies">The Aviary-core Variable Hierarchies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conventions-and-requirements-of-the-variable-hierarchies">Conventions and Requirements of the Variable Hierarchies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-your-own-hierarchy">Building Your Own Hierarchy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extend-the-existing-aviary-core-hierarchies">Extend the Existing Aviary-core Hierarchies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-your-own-variable-hierarchy">Creating Your Own Variable Hierarchy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-extended-hierarchies">Merging Extended Hierarchies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#providing-aviary-with-necessary-variable-hierarchies">Providing Aviary with Necessary Variable Hierarchies</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="understanding-the-variable-hierarchy">
+<h1>Understanding the Variable Hierarchy<a class="headerlink" href="#understanding-the-variable-hierarchy" title="Link to this heading">#</a></h1>
+<section id="how-variable-hierarchies-work">
+<h2>How Variable Hierarchies Work<a class="headerlink" href="#how-variable-hierarchies-work" title="Link to this heading">#</a></h2>
+<p>Aircraft models in Aviary usually consist of hundreds of different variables representing different aspects of the physical aircraft, behavior of the model, behavior of the mission, etc. Managing and properly connecting all those variables requires a simple framework within which we can interact with several variables at once. The idea of variable hierarchies meets this need for a simple variable framework and breaks all the variables of a model up into smaller controllable categories.</p>
+<p>The variable hierarchy itself is rather simple. The variables are broken up into separate high level categories and each category becomes its own top-level class. Within that class we create “inner classes” (classes which are an attribute of a higher level class) that encompass a more specific category. If needed, secondary inner classes within an inner class may be created, and so on until the desired detail depth is achieved. However, too many layers down and the tedium will outweigh any value gained through specificity.</p>
+<p>These classes and inner classes are not used for any sort of complex coding functionality. Instead they simply serve to house model variables themselves. Each class and inner class can have variables assigned to it (in object-oriented speak, the variables become an attribute of the class or inner class), and each variable assigned to a class or inner class corresponds 1-to-1 with a variable needed for the model. The variables in each class are really just identifiers that point to the actual variable name in the model. The value assigned to each variable in the classes is a string that is the name of that variable in the actual model. That string is the variable name that OpenMDAO will see, despite the fact that the user will rarely call the variable by that name. Instead the user will refer to a variable name by its hierarchy variable (eg. referring to <code class="docutils literal notranslate"><span class="pre">wingspan</span></code> as <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.SPAN</span></code>) to make it easier to autofill the variable and also to allow more uniform and controlled access to the variable names themselves.</p>
+<p>Below is an example of a simple variable hierarchy that includes basic information for an aircraft:</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Aircraft</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Fuselage</span><span class="p">:</span>
+        <span class="n">DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:avg_diameter&#39;</span>
+        <span class="n">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:length&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">HorizontalTail</span><span class="p">:</span>
+        <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:root_chord&#39;</span>
+        <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:span&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">LandingGear</span><span class="p">:</span>
+        <span class="n">CONFIGURATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:configuration&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:mass&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">VerticalTail</span><span class="p">:</span>
+        <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:root_chord&#39;</span>
+        <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:span&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Wing</span><span class="p">:</span>
+        <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:root_chord&#39;</span>
+        <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:span&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This code snippet is a notional example of how an overly simple hierarchy looks. In this example the variables all have a depth of three, meaning that all the variables are referred to in three tiers: <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuselage.LENGTH</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.HorizontalTail.ROOT_CHORD</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.SPAN</span></code>, etc. The variable names in this hierarchy can actually be used to access the values of those variables in an Aviary model, assuming that the hierarchy has been properly provided to the Aviary model.</p>
+<p>There are special rules for the mapping from the input file variable names to the metadata. For example, variable aircraft:wing:aspect_ratio in <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm.csv</span></code> is mapped to <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.ASPECT_RATIO</span></code> in aviary/variable_info/variable_meta_data.py. So, the first part (e.g., <code class="docutils literal notranslate"><span class="pre">aircraft</span></code> or <code class="docutils literal notranslate"><span class="pre">mission</span></code>) is mapped to the same word but with the first letter capitalized (e.g., <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> or <code class="docutils literal notranslate"><span class="pre">Mission</span></code>). The third word is all caps (e.g., ASPECT_RATIO). The middle part (e.g., wing) is a little more complicated. In most cases, this part capitalizes the first letter (e.g., Wing). The following words have special mappings:</p>
+<ul class="simple">
+<li><p>air_conditioning -&gt; AirConditioning</p></li>
+<li><p>anti_icing -&gt; AntiIcing</p></li>
+<li><p>blended_wing_body -&gt; BWB</p></li>
+<li><p>crew_and_payload -&gt; CrewPayload</p></li>
+<li><p>horizontal_tail -&gt; HorizontalTail</p></li>
+<li><p>landing_gear -&gt; LandingGear</p></li>
+<li><p>tail_boom -&gt; TailBoom</p></li>
+<li><p>vertical_tail -&gt; VerticalTail</p></li>
+</ul>
+<p>This can be summarized as to capitalize the leading letter and to capitalize the first letter after special character “_”.</p>
+<p>Below is an example of using a variable hierarchy variable in the <code class="docutils literal notranslate"><span class="pre">add_aviary_input()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_aviary_output()</span></code> functions to add inputs and outputs to an OpenMDAO component for use in Aviary.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AviaryExampleComponent</span><span class="p">(</span><span class="n">om</span><span class="o">.</span><span class="n">ExplicitComponent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">av</span><span class="o">.</span><span class="n">add_aviary_input</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">VerticalTail</span><span class="o">.</span><span class="n">ROOT_CHORD</span><span class="p">,</span>
+            <span class="n">val</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span>
+            <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;chord of the vertical tail&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">av</span><span class="o">.</span><span class="n">add_aviary_output</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">VerticalTail</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;span of the vertical tail&#39;</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">units</span></code> is not provided, it assumes the <code class="docutils literal notranslate"><span class="pre">units</span></code> in the metadata.</p>
+<p>In this code snippet the variables <code class="docutils literal notranslate"><span class="pre">Aircraft.VerticalTail.ROOT_CHORD</span></code> and <code class="docutils literal notranslate"><span class="pre">Aircraft.VerticalTail.SPAN</span></code> from the variable hierarchy are used in the <code class="docutils literal notranslate"><span class="pre">add_aviary_input()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_aviary_output()</span></code> functions to represent the actual variable names, which are <code class="docutils literal notranslate"><span class="pre">aircraft:vertical_tail:root_chord</span></code> and <code class="docutils literal notranslate"><span class="pre">aircraft:vertical_tail:span</span></code> respectively. The point being illustrated here is that you can use the variables from these variable hierarchies just as you would use their string-valued variable names, and in fact you <em>must</em> use the variable hierarchy variable and <em>not</em> the string-valued variable name. This way, if a change is made to the string-valued variable name in the hierarchy, that change is automatically reflected throughout all your code.</p>
+</section>
+<section id="the-aviary-core-variable-hierarchies">
+<h2>The Aviary-core Variable Hierarchies<a class="headerlink" href="#the-aviary-core-variable-hierarchies" title="Link to this heading">#</a></h2>
+<p>While the idea of a variable hierarchy can be created and used on its own, Aviary-core provides two specific variable hierarchies that are necessary for Aviary-core systems and which follow both the rules of convention and the rules of programmatic necessity laid out above. The two hierarchies provided by Aviary-core are <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> and <code class="docutils literal notranslate"><span class="pre">Mission</span></code>. <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> houses all variables that have to do with physical aspects of the aircraft, as well as all variables that do not affect the mission or change in time. This includes several variables that are options in the model instead of inputs or outputs. <code class="docutils literal notranslate"><span class="pre">Mission</span></code> on the other hand houses all variables that reference the mission or change in time. This includes things such as <code class="docutils literal notranslate"><span class="pre">Mission.Design.CRUISE_ALTITUDE</span></code> and <code class="docutils literal notranslate"><span class="pre">Mission.Design.RANGE</span></code> as well as things such as objectives for the optimization, parameters at various phases of flight, etc. The <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> and <code class="docutils literal notranslate"><span class="pre">Mission</span></code> hierarchies are the only hierarchies provided by Aviary-core, and they are both necessary for the successful running of various Aviary subsystems. Whatever additional or extended variable hierarchies have been created by the user, the end hierarchy <em>must</em> include the variables from the <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> and <code class="docutils literal notranslate"><span class="pre">Mission</span></code> hierarchies in the Aviary core, and these variables must not be altered. We offer more information below on extending and merging together variable hierarchies.</p>
+<p>For a complete list of the variables included in the Aviary-core hierarchy visit the <a class="reference internal" href="variable_metadata.html"><span class="doc std std-doc">Variable Metadata doc page</span></a>. The hierarchies themselves are located <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/variable_info/variables.py">here</a> in the repository and can be accessed in this way:</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="n">Aircraft</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span>
+<span class="n">Mission</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">Mission</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="conventions-and-requirements-of-the-variable-hierarchies">
+<h2>Conventions and Requirements of the Variable Hierarchies<a class="headerlink" href="#conventions-and-requirements-of-the-variable-hierarchies" title="Link to this heading">#</a></h2>
+<p>There are some conventions surrounding the variable hierarchy that are required, and other things that are purely convention. Below is a list of the programmatically required aspects of the variable hierarchy:</p>
+<ul class="simple">
+<li><p>Avoiding periods in the string-valued variable names is a must. Periods that are included here will end up as periods in an OpenMDAO variable name which will throw an error.</p></li>
+<li><p>Including a colon after the first word in the string-valued variable name is also a must. The expressions <code class="docutils literal notranslate"><span class="pre">promotes=[&quot;aircraft:*&quot;]</span></code> and <code class="docutils literal notranslate"><span class="pre">promotes=[&quot;mission:*&quot;]</span></code> appear frequently within Aviary, and if these colons are not included variables will not get properly connected, leading to hard-to-detect errors.</p></li>
+</ul>
+<p>Conversely, other things are merely convention that the Aviary team follows. Below is a list of the conventions that are <em>not</em> programmatically required:</p>
+<ul class="simple">
+<li><p>Inner classes and variables are all organized alphabetically within a hierarchy. This is optional, but we follow this convention within the Aviary-core variable hierarchy to preserve cleanliness.</p></li>
+<li><p>All variables in the hierarchy have a depth of 3. This is optional, but again we follow this convention within the Aviary-core variable hierarchy to preserve cleanliness and uniformity of code.</p></li>
+<li><p>Including colons after all words in the string-valued variable name is optional. As stated above, it is a must after the first word for use in promotion statements, but after that it is purely a choice of convention to preserve clarity.</p></li>
+</ul>
+<p>It is prudent at this point to pause and explain what is meant by <em>hierarchy type</em>. This is not a technical coding in term, instead <em>type</em> is an explanatory term that we use to describe the classification of a hierarchy. A hierarchy’s type is its high level category. For example, a hierarchy of the <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> type would be a hierarchy that houses the variables that have to do with the physical aspects of an aircraft, and a hierarchy of the <code class="docutils literal notranslate"><span class="pre">Mission</span></code> type would be a hierarchy that houses the variables which reference the mission or change in time. These are the only two types of hierarchies that are provided in Aviary-core, however, other types are possible, such as a <code class="docutils literal notranslate"><span class="pre">Fleet</span></code> type hierarchy describing the variables that affect an entire fleet of aircraft, an <code class="docutils literal notranslate"><span class="pre">AirTrafficControl</span></code> type hierarchy describing all the variables having to do with air traffic control, etc. The concept of the <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> and <code class="docutils literal notranslate"><span class="pre">Mission</span></code> type hierarchies will be used throughout the rest of this article.</p>
+</section>
+<section id="building-your-own-hierarchy">
+<h2>Building Your Own Hierarchy<a class="headerlink" href="#building-your-own-hierarchy" title="Link to this heading">#</a></h2>
+<p>The Aviary-core provides the pre-built variable hierarchies listed above. However, for the user that would like to add external subsystems to Aviary, the variables in the Aviary-core hierarchies may not be sufficient. In this case, there are three options: 1) extend the existing variable hierarchies from Aviary-core, 2) create your own variable hierarchies and merge them with the existing hierarchies from Aviary-core, 3) do a combination of #1 and #2. Extending and creating your own variable hierarchies are addressed below.</p>
+<section id="extend-the-existing-aviary-core-hierarchies">
+<h3>Extend the Existing Aviary-core Hierarchies<a class="headerlink" href="#extend-the-existing-aviary-core-hierarchies" title="Link to this heading">#</a></h3>
+<p>If you are just adding one external subsystem to an Aviary-core model, or if you are adding multiple subsystems all being developed in the same location by the same person, our suggested path is to create one extension of the Aviary-core hierarchies. The method to extend the Aviary-core variable hierarchies is to subclass those hierarchies (which preserves all the data from the original hierarchies) and add your own additional variables as necessary. To take a simple example, let’s say we wanted to add a little bit of detail to the existing <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> variable hierarchy for our external subsystem. The detail we would like to add is some information about the flaps on the wing as well as a jury strut and a center of gravity location. We would extend the existing variable hierarchy using the following code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="n">AviaryAircraft</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Aircraft</span><span class="p">(</span><span class="n">AviaryAircraft</span><span class="p">):</span>
+    <span class="n">CG</span> <span class="o">=</span> <span class="s1">&#39;aircraft:center_of_gravity&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Wing</span><span class="p">(</span><span class="n">AviaryAircraft</span><span class="o">.</span><span class="n">Wing</span><span class="p">):</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Flap</span><span class="p">:</span>
+            <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap:area&#39;</span>
+            <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap:root_chord&#39;</span>
+            <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap:span&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Jury</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:jury:mass&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>There are a few things to notice about this code. The first is that, unlike the Aviary-core <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> variable hierarchy, this hierarchy has variables with a depth of two and a depth of four. When we extend the Aviary-core variable hierarchies we are not restricted to the depth of three that the core hierarchies have. The second thing to notice is that when we extend an inner class that already exists in the Aviary-core hierarchy (<code class="docutils literal notranslate"><span class="pre">Wing</span></code>) we subclass the inner class from the Aviary-core so that we can preserve all the information from that Aviary-core inner class. However, in the case of the inner class <code class="docutils literal notranslate"><span class="pre">Jury</span></code> which does not already exist in the Aviary-core hierarchy, there is nothing to subclass, and thus that inner class stands on its own.</p>
+<p>When extending the Aviary-core variable hierarchies, you can create one extension of each type of hierarchy, or you can create multiple extensions of each type which will eventually be merged together. If you are developing only one external subsystem or all your subsystems are being developed in the same place by the same person, one extension of each Aviary-core hierarchy should suffice. However, if you have multiple developers working on different subsystems in different locations, each developer may want to create their own extension. To aid in this case, Aviary provides the capability to merge together multiple hierarchies of the same type into one hierarchy of that type. More information on this capability is shown at the bottom of this page.</p>
+</section>
+<section id="creating-your-own-variable-hierarchy">
+<h3>Creating Your Own Variable Hierarchy<a class="headerlink" href="#creating-your-own-variable-hierarchy" title="Link to this heading">#</a></h3>
+<p>It is possible to create your own variable hierarchy that is not an extension of the Aviary-core variable hierarchies, but there are specific things to know. The use case for this is mostly when you would like to create a third hierarchy that does not fall under either the <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> or the <code class="docutils literal notranslate"><span class="pre">Mission</span></code> categories. An example of this might be if you are doing fleet-level analyses and would like a <code class="docutils literal notranslate"><span class="pre">Fleet</span></code> variable hierarchy.</p>
+<p>A new variable hierarchy can be created in exactly the same manner that Aviary-core creates its own variable hierarchies, illustrated above. For the case of creating a new <code class="docutils literal notranslate"><span class="pre">Fleet</span></code> variable hierarchy, it might look something like this:</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Fleet</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">RegionalSingleAisle</span><span class="p">:</span>
+        <span class="n">NUM_AIRCRAFT</span> <span class="o">=</span> <span class="s1">&#39;fleet:rejoinal_single_aisle:number_of_aircraft&#39;</span>
+        <span class="n">COST_PER_AIRCRAFT</span> <span class="o">=</span> <span class="s1">&#39;fleet:rejoinal_single_aisle:cost_per_aircraft&#39;</span>
+        <span class="n">FLIGHTS_PER_DAY</span> <span class="o">=</span> <span class="s1">&#39;fleet:rejoinal_single_aisle:flights_per_day&#39;</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">JumboJet</span><span class="p">:</span>
+        <span class="n">NUM_AIRCRAFT</span> <span class="o">=</span> <span class="s1">&#39;fleet:jumbo_jet:number_of_aircraft&#39;</span>
+        <span class="n">COST_PER_AIRCRAFT</span> <span class="o">=</span> <span class="s1">&#39;fleet:jumbo_jet:cost_per_aircraft&#39;</span>
+        <span class="n">FLIGHTS_PER_DAY</span> <span class="o">=</span> <span class="s1">&#39;fleet:jumbo_jet:flights_per_day&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Usually if you are creating your own variable hierarchy that is not an extension of the Aviary-core hierarchies it will be because you want a hierarchy that is not of the type <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> or <code class="docutils literal notranslate"><span class="pre">Mission</span></code>. In this case, your new hierarchy is relatively straightforward, you can create it and simply provide it to Aviary along with the core hierarchies or extensions thereof. However, if you are creating your own variable hierarchy that is of the type <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> or <code class="docutils literal notranslate"><span class="pre">Mission</span></code> but is not an extension of the Aviary-core hierarchies (which we do not recommend doing), there are a few things to keep in mind:</p>
+<ul class="simple">
+<li><p>The newly created variable hierarchy does not have any of the information from the Aviary-core hierarchy. You <em>must</em> still provide Aviary with the input values and information from the Aviary-core hierarchy, or all the inputs will be set to their default values which are unlikely to suit your needs.</p>
+<ul>
+<li><p>You can merge together all variable hierarchies that are of the same type (see below).</p></li>
+</ul>
+</li>
+<li><p>You should avoid adding variables to your created hierarchy that already exist in the Aviary-core hierarchy, as this may cause conflicts when merging hierarchies together.</p></li>
+</ul>
+<p>In general, we recommend extending the Aviary-core variable hierarchies whenever possible, and only creating a new hierarchy from scratch when the categories of <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> and <code class="docutils literal notranslate"><span class="pre">Mission</span></code> do not fit your needs.</p>
+</section>
+</section>
+<section id="merging-extended-hierarchies">
+<h2>Merging Extended Hierarchies<a class="headerlink" href="#merging-extended-hierarchies" title="Link to this heading">#</a></h2>
+<p>As briefly mentioned above, when there are multiple variable hierarchies of the same type we need the ability to merge them together into one hierarchy of that type which includes all the information from the different hierarchies. Aviary provides this capability through the <code class="docutils literal notranslate"><span class="pre">merge_hierarchies()</span></code> method. The goal of this method is to clean up all the user hierarchies so that Aviary can be provided with only one hierarchy of each type, and also to resolve any discrepancies between different hierarchies of the same type.</p>
+<p>Using the <a class="reference internal" href="../theory_guide/merging_syntax.html"><span class="doc std std-doc"><code class="docutils literal notranslate"><span class="pre">merge_hierarchies()</span></code> function</span></a> is quite simple. It takes a list of all the hierarchies you would like to merge together and returns one hierarchy that has the merged information from all the input hierarchies, as in this snippet of code where we are merging together three notional <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> type hierarchies:</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="n">FullAircraft</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">merge_hierarchies</span><span class="p">([</span><span class="n">Aircraft1</span><span class="p">,</span> <span class="n">Aircraft2</span><span class="p">,</span> <span class="n">Aircraft3</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>When merging together variable hierarchies, make sure that all the hierarchies are of the same type. The <code class="docutils literal notranslate"><span class="pre">merge_hierarchies()</span></code> will throw an error if you attempt to merge multiple hierarchies subclassed from hierarchies of different types. Also ensure that the hierarchies you are merging don’t contain the same variable with a different value. That is an impossible situation to merge, and will raise an error. Also ensure that when merging hierarchies of the <code class="docutils literal notranslate"><span class="pre">Aircraft</span></code> or <code class="docutils literal notranslate"><span class="pre">Mission</span></code> type the variable information from the Aviary-core hierarchies is present in your final merged hierarchies. This is handled automatically if you have built your hierarchies by extending the Aviary-core hierarchies (which is the recommended behavior), but if you have instead made your hierarchies from scratch then you will have to include the Aviary-core hierarchy of the same type in the hierarchies to be merged.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If even one of the hierarchies to be merged is an extension of the Aviary-core hierarchy of that type, then the Aviary core information will be included. You only need to include the Aviary-core hierarchy of that type in the list of hierarchies to merge if none of the other hierarchies are extensions.</p>
+</div>
+<p>More syntactical data on the merging functions can be found <a class="reference internal" href="../theory_guide/merging_syntax.html"><span class="doc std std-doc">here</span></a>.</p>
+</section>
+<section id="providing-aviary-with-necessary-variable-hierarchies">
+<h2>Providing Aviary with Necessary Variable Hierarchies<a class="headerlink" href="#providing-aviary-with-necessary-variable-hierarchies" title="Link to this heading">#</a></h2>
+<p>Need to add content here.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-variable-hierarchies-work">How Variable Hierarchies Work</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-aviary-core-variable-hierarchies">The Aviary-core Variable Hierarchies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conventions-and-requirements-of-the-variable-hierarchies">Conventions and Requirements of the Variable Hierarchies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-your-own-hierarchy">Building Your Own Hierarchy</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extend-the-existing-aviary-core-hierarchies">Extend the Existing Aviary-core Hierarchies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-your-own-variable-hierarchy">Creating Your Own Variable Hierarchy</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-extended-hierarchies">Merging Extended Hierarchies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#providing-aviary-with-necessary-variable-hierarchies">Providing Aviary with Necessary Variable Hierarchies</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
