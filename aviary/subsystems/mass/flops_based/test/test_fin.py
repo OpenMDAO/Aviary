@@ -134,6 +134,7 @@ class BWBFinMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[

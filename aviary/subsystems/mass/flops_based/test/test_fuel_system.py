@@ -45,6 +45,7 @@ class AltFuelSystemTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
@@ -122,6 +123,7 @@ class TransportFuelSystemTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
@@ -202,6 +204,7 @@ class BWBTransportFuelSystemTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],

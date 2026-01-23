@@ -86,6 +86,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -131,6 +132,7 @@ class PreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -176,6 +178,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.run_model()
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -256,6 +259,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -444,6 +448,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
