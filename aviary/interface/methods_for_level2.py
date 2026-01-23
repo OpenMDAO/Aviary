@@ -63,6 +63,7 @@ class AviaryProblem(om.Problem):
             'run_status',
             'sizing_results',
             'input_checks',
+            'overridden_variables',
         ]
         for report in new_reports:
             if report not in _default_reports:
@@ -97,7 +98,6 @@ class AviaryProblem(om.Problem):
         self,
         aircraft_data,
         phase_info=None,
-        engine_builders=None,
         problem_configurator=None,
         meta_data=None,
         verbosity=None,
@@ -130,7 +130,6 @@ class AviaryProblem(om.Problem):
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,
-            engine_builders=engine_builders,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
         )
@@ -186,8 +185,7 @@ class AviaryProblem(om.Problem):
         self,
         name: str,
         aircraft: AviaryValues,
-        mission: dict,
-        engine_builders=None,
+        phase_info: dict,
         problem_configurator=None,
         verbosity: Verbosity = Verbosity.BRIEF,
     ):
@@ -202,10 +200,10 @@ class AviaryProblem(om.Problem):
             A unique name that identifies this group which can be referenced later.
         aircraft : AviaryValues object
             Defines the aircraft configuration
-        mission : phase_info, dict
+        phase_info : dict
             Defines the mission the aircraft will fly
-        engine_builders : list of EngineBuilder, optional
-            Defines a custom engine model
+        subsystems : list of SubsystemBuilders
+            List of all external subsystems to be added.
         problem_configurator ; ProblemConfigurator, optional
             Required when setting custom equations of motion. See two_dof_problem_configurator.py for an example.
         verbosity : Verbosity or int, optional
@@ -217,6 +215,14 @@ class AviaryProblem(om.Problem):
             The AviaryGroup object containing the specified aircraft, mission, and engine model.
 
         """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         if self.problem_type is not ProblemType.MULTI_MISSION:
             ValueError(
                 'add_aviary_group() should only be called when ProblemType is MULTI_MISSION.'
@@ -226,8 +232,7 @@ class AviaryProblem(om.Problem):
         sub.meta_data = self.meta_data
         sub.load_inputs(
             aircraft_data=aircraft,
-            phase_info=mission,
-            engine_builders=engine_builders,
+            phase_info=phase_info,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
         )
@@ -251,7 +256,8 @@ class AviaryProblem(om.Problem):
     def check_and_preprocess_inputs(self, verbosity=None):
         """
         This method checks the user-supplied input values for any potential problems and
-        preprocesses the inputs to prepare them for use in the Aviary problem.
+        preprocesses the inputs to prepare them for use in the Aviary problem. Also estimates
+        initial conditions for mission analysis.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -261,7 +267,11 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.check_and_preprocess_inputs(verbosity=verbosity)
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.check_and_preprocess_inputs(verbosity=verbosity)
+        else:
+            self.model.check_and_preprocess_inputs(verbosity=verbosity)
 
     def add_pre_mission_systems(self, verbosity=None):
         """

@@ -21,12 +21,18 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
 from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
+from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
-from aviary.utils.process_input_decks import create_vehicle, update_GASP_options
+from aviary.utils.process_input_decks import (
+    create_vehicle,
+    initialization_guessing,
+    update_GASP_options,
+)
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_trajectory_params
@@ -60,8 +66,10 @@ class AviaryGroup(om.Group):
         self.post_mission = PostMissionGroup()
         self.verbosity = verbosity
         self.external_subsystems = []
+        self.engine_models = []
         self.regular_phases = []
         self.reserve_phases = []
+        self.subsystems = []
 
         self.aviary_inputs = None
         self.meta_data = None
@@ -121,7 +129,8 @@ class AviaryGroup(om.Group):
         mission_method = aviary_options.get_val(Settings.EQUATIONS_OF_MOTION)
 
         # Temporarily add extra stuff here, probably patched soon
-        if mission_method is HEIGHT_ENERGY:
+        # add a check for traj using hasattr for pre-mission tests.
+        if mission_method is HEIGHT_ENERGY and hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -157,7 +166,6 @@ class AviaryGroup(om.Group):
         self,
         aircraft_data,
         phase_info=None,
-        engine_builders=None,
         problem_configurator=None,
         verbosity=None,
     ):
@@ -171,6 +179,14 @@ class AviaryGroup(om.Group):
         This method is not strictly necessary; a user could also supply
         an AviaryValues object and/or phase_info dict of their own.
         """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
         # with default values from metadata) and generate initial guesses
@@ -197,9 +213,6 @@ class AviaryGroup(om.Group):
         self.mission_method = mission_method = aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
         self.mass_method = mass_method = aviary_inputs.get_val(Settings.MASS_METHOD)
         self.aero_method = aero_method = aviary_inputs.get_val(Settings.AERODYNAMICS_METHOD)
-
-        # Create engine_builder
-        self.engine_builders = engine_builders
 
         # Determine which problem configurator to use based on mission_method
         if mission_method is HEIGHT_ENERGY:
@@ -264,12 +277,6 @@ class AviaryGroup(om.Group):
         else:
             self.post_mission_info = {}
 
-        self.configurator.initial_guesses(self)
-        # This function sets all the following defaults if they were not already set:
-        # self.engine_builders, self.pre_mission_info, self_post_mission_info,
-        # self.require_range_residual, self.target_range
-        # Other specific self.*** are defined in here as well that are specific to each builder
-
         return self.aviary_inputs, self.verbosity
 
     def load_external_subsystems(self, external_subsystems: list = [], verbosity=None):
@@ -299,7 +306,10 @@ class AviaryGroup(om.Group):
                     'loaded.'
                 )
             else:
-                self.external_subsystems.append(subsystem)
+                if isinstance(subsystem, EngineModel):
+                    self.engine_models.append(subsystem)
+                else:
+                    self.external_subsystems.append(subsystem)
                 meta_data = subsystem.meta_data.copy()
                 self.meta_data = merge_meta_data([self.meta_data, meta_data])
 
@@ -380,22 +390,35 @@ class AviaryGroup(om.Group):
                     else:
                         guesses['time'] = ((None, time_duration), units)
 
+        if self.engine_models == []:
+            self.engine_models = [build_engine_deck(aviary_inputs)]
+
         for external_subsystem in self.external_subsystems:
             aviary_inputs = external_subsystem.preprocess_inputs(aviary_inputs)
 
         # PREPROCESSORS #
         preprocess_options(
             aviary_inputs,
-            engine_models=self.engine_builders,
+            engine_models=self.engine_models,
             verbosity=verbosity,
             metadata=self.meta_data,
         )
+
+        self.initialization_guesses = initialization_guessing(
+            self.aviary_inputs, self.initialization_guesses, self.engine_models
+        )
+
+        # This function sets all the following defaults if they were not already set:
+        # self.pre_mission_info, self_post_mission_info,
+        # self.require_range_residual, self.target_range
+        # Other specific self.*** are defined in here as well that are specific to each builder
+        self.configurator.initial_guesses(self)
 
         # TODO this seems like the wrong place to define the core subsystems. Maybe move to
         # load_inputs?
         ## Set Up Core Subsystems ##
         perf = CorePerformanceBuilder('performance')
-        prop = CorePropulsionBuilder('propulsion', engine_models=self.engine_builders)
+        prop = CorePropulsionBuilder('propulsion', engine_models=self.engine_models)
         mass = CoreMassBuilder('mass', code_origin=self.mass_method)
 
         # If all phases ask for tabular aero, we can skip pre-mission. Check phase_info
@@ -1098,7 +1121,21 @@ class AviaryGroup(om.Group):
                     phases_to_link.append(phase_name)
 
             if len(phases_to_link) > 1:  # TODO: hack
-                self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
+                # go phase by phase and either directly link if two standard phases, or use linkage
+                # constraint if either are analytic
+                # TODO need more unified way to handle this instead of splitting between AviaryGroup
+                #      and configurators
+                for ii in range(len(phases) - 1):
+                    phase1, phase2 = phases[ii : ii + 2]
+                    analytic1 = self.mission_info[phase1]['user_options'].get('analytic', False)
+                    analytic2 = self.mission_info[phase2]['user_options'].get('analytic', False)
+
+                    if not (analytic1 or analytic2):
+                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
+
+                    else:
+                        # TODO need ref value for these linkage constraints
+                        self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
 
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
 

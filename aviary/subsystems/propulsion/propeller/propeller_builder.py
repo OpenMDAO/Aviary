@@ -72,24 +72,24 @@ class PropellerBuilder(SubsystemBuilder):
         """
         # TODO bounds are rough placeholders
         DVs = {
-            Aircraft.Engine.Propeller.ACTIVITY_FACTOR: {
-                'units': 'unitless',
-                'lower': 100,
-                'upper': 200,
-                # 'val': 100,  # initial value
-            },
-            Aircraft.Engine.Propeller.DIAMETER: {
-                'units': 'ft',
-                'lower': 0.0,
-                'upper': None,
-                # 'val': 8,  # initial value
-            },
-            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT: {
-                'units': 'unitless',
-                'lower': 0.0,
-                'upper': 0.5,
-                # 'val': 0.5,
-            },
+            # Aircraft.Engine.Propeller.ACTIVITY_FACTOR: {
+            #     'units': 'unitless',
+            #     'lower': 100,
+            #     'upper': 200,
+            #     # 'val': 100,  # initial value
+            # },
+            # Aircraft.Engine.Propeller.DIAMETER: {
+            #     'units': 'ft',
+            #     'lower': 0.0,
+            #     'upper': None,
+            #     # 'val': 8,  # initial value
+            # },
+            # Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT: {
+            #     'units': 'unitless',
+            #     'lower': 0.0,
+            #     'upper': 0.5,
+            #     # 'val': 0.5,
+            # },
         }
         return DVs
 

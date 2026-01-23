@@ -8,7 +8,7 @@ FLOPS derived input/output for use with Aviary unit tests and benchmarks
 
 import numpy as np
 
-from aviary.mission.flops_based.phases.detailed_landing_phases import (
+from aviary.mission.height_energy.phases.detailed_landing_phases import (
     LandingApproachToMicP3,
     LandingFlareToTouchdown,
     LandingMicP3ToObstacle,
@@ -17,7 +17,7 @@ from aviary.mission.flops_based.phases.detailed_landing_phases import (
     LandingTouchdownToNoseDown,
     LandingTrajectory,
 )
-from aviary.mission.flops_based.phases.detailed_takeoff_phases import (
+from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
     TakeoffBrakeReleaseToDecisionSpeed,
     TakeoffBrakeToAbort,
     TakeoffDecisionSpeedBrakeDelay,
@@ -368,8 +368,8 @@ outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 
 outputs.set_val(Aircraft.Furnishings.MASS, 12556.0, 'lbm')
 
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, 12.65, 'ft')
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 125.0, 'ft')
+outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, 12.65, 'ft')
 # hand computed
 outputs.set_val(Aircraft.Fuselage.CROSS_SECTION, 125.68137760226817, 'ft**2')
 outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 12.65 / (11.5587605382765 * 1220) ** 0.5)

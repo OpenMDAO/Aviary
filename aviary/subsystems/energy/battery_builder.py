@@ -36,7 +36,7 @@ class BatteryBuilder(SubsystemBuilder):
     def get_mass_names(self):
         return [Aircraft.Battery.MASS]
 
-    def build_mission(self, num_nodes, aviary_inputs=None) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs=None, **kwargs) -> om.Group:
         battery_group = om.Group()
         # Here, the efficiency variable is used as an overall efficiency for the battery
         soc = om.ExecComp(
@@ -44,7 +44,7 @@ class BatteryBuilder(SubsystemBuilder):
             state_of_charge={'val': np.zeros(num_nodes), 'units': 'unitless'},
             energy_capacity={'val': 10.0, 'units': 'kJ'},
             cumulative_electric_energy_used={'val': np.zeros(num_nodes), 'units': 'kJ'},
-            efficiency={'val': 0.95, 'units': 'unitless'},
+            efficiency={'val': 1.0, 'units': 'unitless'},
             has_diag_partials=True,
         )
 
@@ -63,6 +63,16 @@ class BatteryBuilder(SubsystemBuilder):
         )
 
         return battery_group
+
+    def mission_inputs(self, **kwargs):
+        return [
+            Aircraft.Battery.ENERGY_CAPACITY,
+            Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
+            Aircraft.Battery.EFFICIENCY,
+        ]
+
+    def mission_outputs(self, **kwargs):
+        return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
 
     def get_states(self):
         state_dict = {
@@ -98,6 +108,10 @@ class BatteryBuilder(SubsystemBuilder):
             Aircraft.Battery.ENERGY_CAPACITY: {
                 'val': 0.0,
                 'units': 'kJ',
+            },
+            Aircraft.Battery.EFFICIENCY: {
+                'val': 1.0,
+                'units': 'unitless',
             },
         }
         return params

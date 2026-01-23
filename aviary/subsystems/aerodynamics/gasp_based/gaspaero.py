@@ -662,7 +662,7 @@ class UFac(om.ExplicitComponent):
             ufac = (1 + lift_ratio) ** 2 / (
                 sigstr * (lift_ratio / bbar) ** 2 + 2 * sigma * lift_ratio / bbar + 1
             )
-        else:
+        elif design_type is AircraftTypes.BLENDED_WING_BODY:
             # Modify for tailless "BWB"
             if bbar < 0.01 * wingspan:
                 bbar = 1.0
@@ -1146,12 +1146,6 @@ class AeroSetup(om.Group):
         )
 
         if not self.options['input_atmos']:
-            # self.add_subsystem(
-            #     "atmos",
-            #     USatm1976Comp(num_nodes=nn),
-            #     promotes_inputs=[("h", Dynamic.Mission.ALTITUDE)],
-            #     promotes_outputs=["rho", Dynamic.Atmosphere.SPEED_OF_SOUND, "viscosity"],
-            # )
             self.add_subsystem(
                 'kin_visc',
                 om.ExecComp(
@@ -1162,7 +1156,7 @@ class AeroSetup(om.Group):
                     has_diag_partials=True,
                 ),
                 promotes=[
-                    '*',
+                    ('viscosity', Dynamic.Atmosphere.DYNAMIC_VISCOSITY),
                     ('rho', Dynamic.Atmosphere.DENSITY),
                     ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
                 ],
@@ -1221,7 +1215,7 @@ class BWBAeroSetup(om.Group):
                     has_diag_partials=True,
                 ),
                 promotes=[
-                    '*',
+                    ('viscosity', Dynamic.Atmosphere.DYNAMIC_VISCOSITY),
                     ('rho', Dynamic.Atmosphere.DENSITY),
                     ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
                 ],
@@ -2480,7 +2474,7 @@ class CruiseAero(om.Group):
                 ),
                 promotes=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'aero_setup',
                 AeroSetup(
@@ -2503,7 +2497,7 @@ class CruiseAero(om.Group):
                 BWBLiftCoeffClean(output_alpha=self.options['output_alpha'], num_nodes=nn),
                 promotes=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'lift_coef',
                 LiftCoeffClean(output_alpha=self.options['output_alpha'], num_nodes=nn),
@@ -2559,7 +2553,7 @@ class LowSpeedAero(om.Group):
                 ),
                 promotes=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'aero_setup',
                 AeroSetup(
@@ -2626,7 +2620,7 @@ class LowSpeedAero(om.Group):
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],
                 )
-            else:
+            elif design_type is AircraftTypes.TRANSPORT:
                 self.add_subsystem(
                     'lift_coef',
                     LiftCoeff(num_nodes=nn),

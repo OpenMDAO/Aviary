@@ -14,6 +14,7 @@ from aviary.variable_info.enums import (
     LegacyCode,
     ProblemType,
     Verbosity,
+    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
@@ -114,6 +115,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CW(7)',
+        # The following note is for FLOPS
         # ['WTS.WSP(24, 2)', '~WEIGHT.WAI', '~WTSTAT.WSP(24, 2)'],
         'FLOPS': None,
         'LEAPS1': [
@@ -2138,20 +2140,6 @@ add_meta_data(
     multivalue=True,
 )
 
-# TODO dependency on NTYE? Does this var need preprocessing? Can this mention be removed?
-add_meta_data(
-    Aircraft.Engine.HAS_PROPELLERS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    default_value=False,
-    types=bool,
-    desc='if True, the aircraft has propellers, otherwise aircraft is assumed to have no '
-    'propellers. In GASP this depended on NTYE',
-    multivalue=True,
-)
-
 add_meta_data(
     Aircraft.Engine.IGNORE_NEGATIVE_THRUST,
     meta_data=_MetaData,
@@ -2453,20 +2441,6 @@ add_meta_data(
     desc='Maximum sea-level static thrust of an engine after scaling. Optional for '
     'EngineDecks if Aircraft.Engine.SCALE_FACTOR is provided, in which case this '
     'variable is computed.',
-    default_value=0.0,
-    multivalue=True,
-)
-
-add_meta_data(
-    Aircraft.Engine.STARTER_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.WSTART',
-        'LEAPS1': '(WeightABC)self._starter_weight',
-    },
-    units='lbm',
-    desc='mass of engine starter subsystem',
     default_value=0.0,
     multivalue=True,
 )
@@ -3268,15 +3242,13 @@ add_meta_data(
     default_value=24,
 )
 
-# TODO FLOPS is not average diameter, but rather a reference diameter using max
-#      height and length. New variable??
 add_meta_data(
     Aircraft.Fuselage.AVG_DIAMETER,
     meta_data=_MetaData,
     historical_name={
         'GASP': ['INGASP.WC', 'INGASP.SWF'],
-        'FLOPS': None,  # 'EDETIN.XD',
-        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+        'FLOPS': None,
+        'LEAPS1': None,
     },
     units='ft',
     desc='average fuselage diameter',
@@ -3689,6 +3661,19 @@ add_meta_data(
     units='ft',
     default_value=0.0,
     desc='additional pressurized fuselage width for cargo bay',
+)
+
+add_meta_data(
+    Aircraft.Fuselage.REF_DIAMETER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': ['EDETIN.XD'],
+        'LEAPS1': 'aircraft.outputs.L0_fuselage.avg_diam',
+    },
+    units='ft',
+    desc='A coarse average diameter calculated using the mean of max width and depth.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -5487,7 +5472,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    # see also: station_chord_lengths
+    # see also: station_chord_lengths (of LEAPS1)
     Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
     meta_data=_MetaData,
     historical_name={
@@ -6137,6 +6122,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Wing.OUTBOARD_SEMISPAN,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.OSSPAN', 'LEAPS1': None},
+    units='ft',
+    desc='Outboard semispan (used if a detailed wing outboard is being added to a BWB fuselage)',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Wing.ROOT_CHORD,
     meta_data=_MetaData,
     historical_name={
@@ -6567,6 +6561,17 @@ add_meta_data(
     default_value=0.0,
     multivalue=True,
 )
+
+add_meta_data(
+    Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},
+    units='ft**2/s',
+    desc="Atmospheric dynamic viscosity at the vehicle's current flight condition",
+    default_value=0.0,
+    multivalue=True,
+)
+
 
 add_meta_data(
     Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
@@ -7300,7 +7305,7 @@ add_meta_data(
         'GASP': None,
         # FLOPS may scale the input value as it resizes the engine if requested by
         # the user
-        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROF', 'LANDG.THROFF'],
+        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROFF'],
         'FLOPS': 'AERIN.THROFF',
         # LEAPS1 uses the average thrust_takeoff of all operational engines
         # actually on the airplane, possibly after resizing (as with FLOPS)
@@ -8142,6 +8147,16 @@ add_meta_data(
     option=True,
     types=LegacyCode,
     default_value=None,
+)
+
+add_meta_data(
+    Settings.ATMOSPHERE_MODEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
+    option=True,
+    types=AtmosphereModel,
+    default_value=AtmosphereModel.STANDARD,
 )
 
 add_meta_data(

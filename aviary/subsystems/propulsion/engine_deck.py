@@ -7,13 +7,13 @@ EngineDeck : the interface for an engine deck builder.
 
 Aliases
 -------
-accepted_headers : dict
+aliases : dict
     The strings that are accepted as valid header names after converted to all lowercase
     with all whitespace removed, mapped to the enum EngineModelVariables.
 
 default_required_variables : set
     Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.).
-    Can be replaced by user-provided list.
+    Can be replaced by user-provided set.
 
 required_options : tuple
     Options that must be present in an EngineDeck's options attribute.
@@ -189,6 +189,7 @@ class EngineDeck(EngineModel):
         self.hybrid_throttle_max = 1.0
 
         # absolute tolerance for how far apart two points must be to be counted as unique
+        # TODO these never get converted to units actually used by engine deck
         self.mach_tol = 0.01
         self.alt_tol = 10.0  # ft
         self.thrust_tol = 1  # lbf
@@ -646,9 +647,11 @@ class EngineDeck(EngineModel):
         # Throttle is already normalized from 0 to 1. Set flight idle to -0.1, which will
         # get re-normalized to 0
         # -0.1 is chosen to avoid stretching out the data range while at the same time
-        # avoiding "discontinuities" in engine data from arbitrarily small negative
-        # throttle (e.g. -1e-6). Basically, this is an arbitrary number
+        # avoiding "discontinuities" in engine data from very small negative throttles
+        # (e.g. a jump from -1e-6 to 0). Basically, this is an arbitrary number
         throttle_idle = -0.1
+        # Hybrid throttle idle MUST be zero by definition. Any lower (negative) and generated power
+        # is increased. Any higher (positive) and consumed power is increased.
         hybrid_throttle_idle = 0
 
         idle_points = {key: np.empty(0) for key in packed_data}
@@ -662,18 +665,25 @@ class EngineDeck(EngineModel):
         if self.use_hybrid_throttle:
             num_points = 3
             # How far apart the "fake" points should be from the actual idle point
-            # This time, we want an arbitrarily small number
+            # This time, we want a small number
             h_tol = 1e-4
 
         for M in range(mach_max_count):
             for A in range(alt_max_count):
+                skip = False
                 # if no data at this Mach, alt index combination, skip
                 if data_indices[M, A] == 0:
-                    continue
+                    skip = True
 
                 # don't generate flight idle points if thrust is already zero or negative
                 # at lowest index
-                if packed_data[THRUST][M, A, 0] <= self.thrust_tol:
+                # NOTE reusing thrust_tol to apply to shaft power, results in shaft power
+                #      tol being much tighter if both in same unit system
+                for var in direct_calc_vars:
+                    if packed_data[var][M, A, 0] <= self.thrust_tol:
+                        skip = True
+
+                if skip:
                     continue
 
                 # define known data for idle point (independent variables)

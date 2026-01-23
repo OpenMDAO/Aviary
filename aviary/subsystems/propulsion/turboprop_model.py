@@ -348,7 +348,7 @@ class TurbopropMission(om.Group):
             if propeller_model_mission is not None:
                 self.add_subsystem(propeller_model.name, subsys=propeller_model_mission)
 
-        thrust_adder = om.ExecComp(
+        thrust_summation = om.ExecComp(
             'turboprop_thrust=turboshaft_thrust+propeller_thrust',
             turboprop_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
             turboshaft_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
@@ -357,8 +357,8 @@ class TurbopropMission(om.Group):
         )
 
         self.add_subsystem(
-            'thrust_adder',
-            subsys=thrust_adder,
+            'thrust_summation',
+            subsys=thrust_summation,
             # promotes_inputs=['*'],
             promotes_outputs=[('turboprop_thrust', Dynamic.Vehicle.Propulsion.THRUST)],
         )

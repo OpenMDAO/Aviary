@@ -1,8 +1,8 @@
 import dymos as dm
 import numpy as np
 
-from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
-from aviary.mission.flops_based.phases.phase_utils import (
+from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
+from aviary.mission.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
@@ -163,7 +163,8 @@ class FlightPhaseBase(PhaseBuilder):
     """
     The base class for flight phase.
 
-    This houses parts of the build_phase process that are common to EnergyPhase and TwoDOFPhase.
+    This houses parts of the build_phase process that are common to EnergyPhase and
+    SolvedTwoDOFPhase.
     """
 
     __slots__ = ('subsystems', 'meta_data')

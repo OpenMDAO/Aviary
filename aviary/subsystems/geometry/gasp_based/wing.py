@@ -1828,7 +1828,7 @@ class ExposedWing(om.ExplicitComponent):
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
             b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             b_fus = body_width * sqt
 
         wingspan = inputs[Aircraft.Wing.SPAN]
@@ -1870,7 +1870,7 @@ class ExposedWing(om.ExplicitComponent):
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * height_to_width
             b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             b_fus = body_width * sqt
 
         wingspan = inputs[Aircraft.Wing.SPAN]
