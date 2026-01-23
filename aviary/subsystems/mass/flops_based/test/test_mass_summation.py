@@ -332,4 +332,4 @@ if __name__ == '__main__':
     # test = TotalSummationTest()
     # test.setUp()
     # test.test_case_multiengine()
-    # test.test_case('LargeSingleAisle2FLOPS')
+    # test.test_case('LargeSingleAisle2FLOPSalt')
