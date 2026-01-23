@@ -245,7 +245,6 @@ class Aircraft:
         SCALE_MASS = 'aircraft:engine:scale_mass'
         SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
         SCALED_SLS_THRUST = 'aircraft:engine:scaled_sls_thrust'
-        STARTER_MASS = 'aircraft:engine:starter_mass'
         SUBSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:subsonic_fuel_flow_scaler'
         SUPERSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:supersonic_fuel_flow_scaler'
         THRUST_REVERSERS_MASS = 'aircraft:engine:thrust_reversers_mass'
@@ -522,7 +521,7 @@ class Aircraft:
         CENTER_DISTANCE = 'aircraft:wing:center_distance'
         CHARACTERISTIC_LENGTH = 'aircraft:wing:characteristic_length'
         CHOOSE_FOLD_LOCATION = 'aircraft:wing:choose_fold_location'
-        CHORD_PER_SEMISPAN_DIST = 'aircraft:wing:chord_per_semispan'
+        CHORD_PER_SEMISPAN_DIST = 'aircraft:wing:chord_per_semispan_dist'
         COMPOSITE_FRACTION = 'aircraft:wing:composite_fraction'
         CONTROL_SURFACE_AREA = 'aircraft:wing:control_surface_area'
         CONTROL_SURFACE_AREA_RATIO = 'aircraft:wing:control_surface_area_ratio'
@@ -577,6 +576,7 @@ class Aircraft:
         NUM_INTEGRATION_STATIONS = 'aircraft:wing:num_integration_stations'
         OPTIMUM_FLAP_DEFLECTION = 'aircraft:wing:optimum_flap_deflection'
         OPTIMUM_SLAT_DEFLECTION = 'aircraft:wing:optimum_slat_deflection'
+        OUTBOARD_SEMISPAN = 'aircraft:wing:outboard_semispan'
         ROOT_CHORD = 'aircraft:wing:root_chord'
         SHEAR_CONTROL_MASS = 'aircraft:wing:shear_control_mass'
 
@@ -618,6 +618,7 @@ class Dynamic:
 
         DENSITY = 'density'
         DYNAMIC_PRESSURE = 'dynamic_pressure'
+        DYNAMIC_VISCOSITY = 'dynamic_viscosity'
         KINEMATIC_VISCOSITY = 'kinematic_viscosity'
         MACH = 'mach'
         MACH_RATE = 'mach_rate'
@@ -627,9 +628,8 @@ class Dynamic:
 
     class Mission:
         """
-        Kinematic description of vehicle states in a ground-fixed axis.
-        These values are typically used by the Equations of Motion to determine
-        vehicle states at other timesteps.
+        Kinematic description of vehicle states in a ground-fixed reference frame. These values are
+        typically used by the Equations of Motion to determine vehicle states at each timestep.
         """
 
         # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
@@ -688,8 +688,7 @@ class Mission:
     """Mission data hierarchy."""
 
     class Constraints:
-        # these can be residuals (for equality constraints),
-        # upper bounds, or lower bounds
+        # these can be residuals (for equality constraints), upper bounds, or lower bounds
         EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'

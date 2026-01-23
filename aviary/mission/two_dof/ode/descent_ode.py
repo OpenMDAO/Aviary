@@ -6,7 +6,7 @@ from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstr
 from aviary.mission.two_dof.ode.descent_eom import DescentRates
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -63,7 +63,7 @@ class DescentODE(TwoDOFODE):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
-                'viscosity',
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
             ],
         )
 
@@ -184,7 +184,7 @@ class DescentODE(TwoDOFODE):
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
-                if isinstance(subsystem, AerodyanmicsBuilder):
+                if isinstance(subsystem, AerodynamicsBuilder):
                     lift_balance_group.add_subsystem(
                         subsystem.name,
                         system,

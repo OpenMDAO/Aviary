@@ -175,8 +175,12 @@ class TestMission(unittest.TestCase):
         prob.model.add_subsystem(
             'atmos',
             AtmosphereComp(num_nodes=nn),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=['rho', 'viscosity', ('temp', Dynamic.Atmosphere.TEMPERATURE)],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
+            promotes_outputs=[
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.DENSITY,
+            ],
         )
         prob.model.add_subsystem(
             'kin_visc',
@@ -187,7 +191,11 @@ class TestMission(unittest.TestCase):
                 nu={'units': 'ft**2/s', 'shape': nn},
                 has_diag_partials=True,
             ),
-            promotes=['*', ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY)],
+            promotes=[
+                ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
+                ('viscosity', Dynamic.Atmosphere.DYNAMIC_VISCOSITY),
+                ('rho', Dynamic.Atmosphere.DENSITY),
+            ],
         )
         prob.model.add_subsystem(
             'comp', WingFuselageInterferenceMission(num_nodes=nn), promotes=['*']

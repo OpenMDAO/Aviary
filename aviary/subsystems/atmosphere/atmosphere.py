@@ -1,18 +1,15 @@
+import numpy as np
 import openmdao.api as om
 
-from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
-from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.enums import AtmosphereModel
-from aviary.variable_info.variables import Dynamic, Settings
-from aviary.variable_info.functions import add_aviary_option
-
-import numpy as np
-
-from aviary.subsystems.atmosphere.data.StandardAtm1976 import atm_data as USatm1976
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Polar import atm_data as polar_210A
-from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Cold import atm_data as cold_210A
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Polar import atm_data as polar_210A
+from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
+from aviary.subsystems.atmosphere.data.StandardAtm1976 import atm_data as USatm1976
+from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
+from aviary.variable_info.enums import AtmosphereModel, SpeedType
+from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.variables import Dynamic, Settings
 
 
 class Atmosphere(om.Group):
@@ -56,14 +53,8 @@ class Atmosphere(om.Group):
         self.add_subsystem(
             name='standard_atmosphere',
             subsys=AtmosphereComp(num_nodes=nn, h_def=h_def),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=[
-                '*',
-                ('sos', Dynamic.Atmosphere.SPEED_OF_SOUND),
-                ('rho', Dynamic.Atmosphere.DENSITY),
-                ('temp', Dynamic.Atmosphere.TEMPERATURE),
-                ('pres', Dynamic.Atmosphere.STATIC_PRESSURE),
-            ],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
@@ -86,9 +77,7 @@ class AtmosphereComp(om.ExplicitComponent):
     """
 
     def initialize(self):
-        """
-        Declare component options.
-        """
+        """Declare component options."""
         self.options.declare(
             'num_nodes', types=int, desc='Number of nodes to be evaluated in the RHS'
         )
@@ -108,9 +97,7 @@ class AtmosphereComp(om.ExplicitComponent):
         )
 
     def setup(self):
-        """
-        Add component inputs and outputs.
-        """
+        """Add component inputs and outputs."""
         nn = self.options['num_nodes']
 
         self._dt = self.options['delta_T_Celcius']
@@ -140,25 +127,46 @@ class AtmosphereComp(om.ExplicitComponent):
         elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.COLD:
             self.source_data = cold_210A
 
-        self.add_input('h', val=1.0 * np.ones(nn), units='m')
+        self.add_input(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
 
-        self.add_output('temp', val=1.0 * np.ones(nn), units='degK', desc='temperature of air')
-        self.add_output('pres', val=1.0 * np.ones(nn), units='Pa', desc='pressure of air')
-        self.add_output('rho', val=1.0 * np.ones(nn), units='kg/m**3', desc='density of air')
         self.add_output(
-            'viscosity', val=1.0 * np.ones(nn), units='Pa*s', desc='dynamic viscosity of air'
+            Dynamic.Atmosphere.TEMPERATURE, val=np.ones(nn), units='degK', desc='temperature of air'
         )
-        self.add_output('sos', val=1 * np.ones(nn), units='m/s', desc='speed of sound')
+        self.add_output(
+            Dynamic.Atmosphere.STATIC_PRESSURE, val=np.ones(nn), units='Pa', desc='pressure of air'
+        )
+        self.add_output(
+            Dynamic.Atmosphere.DENSITY, val=np.ones(nn), units='kg/m**3', desc='density of air'
+        )
+        self.add_output(
+            Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+            val=np.ones(nn),
+            units='Pa*s',
+            desc='dynamic viscosity of air',
+        )
+        self.add_output(
+            Dynamic.Atmosphere.SPEED_OF_SOUND, val=np.ones(nn), units='m/s', desc='speed of sound'
+        )
         self.add_output(
             'dsos_dh',
-            val=1 * np.ones(nn),
+            val=np.ones(nn),
             units='1/s',
             desc='the change in the speed of sound with respect to height',
         )
 
         arange = np.arange(nn, dtype=int)
         self.declare_partials(
-            ['temp', 'pres', 'rho', 'viscosity', 'sos', 'dsos_dh'], 'h', rows=arange, cols=arange
+            [
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+                Dynamic.Atmosphere.DENSITY,
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                Dynamic.Atmosphere.SPEED_OF_SOUND,
+                'dsos_dh',
+            ],
+            Dynamic.Mission.ALTITUDE,
+            rows=arange,
+            cols=arange,
         )
 
     def compute(self, inputs, outputs):
@@ -173,7 +181,7 @@ class AtmosphereComp(om.ExplicitComponent):
             `Vector` containing outputs.
         """
         table_points = self.source_data.alt
-        h = inputs['h']
+        h = inputs[Dynamic.Mission.ALTITUDE]
 
         if self._geodetic:
             h = (
@@ -187,12 +195,12 @@ class AtmosphereComp(om.ExplicitComponent):
         dx = h - h_bin_left[idx]
 
         coeffs = self.source_data.akima_T[idx]
-        outputs['temp'] = T = (
+        outputs[Dynamic.Atmosphere.TEMPERATURE] = T = (
             coeffs[:, 0] + dx * (coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])) + self._dt
         )
 
         coeffs = self.source_data.akima_P[idx]
-        outputs['pres'] = pressure = coeffs[:, 0] + dx * (
+        outputs[Dynamic.Atmosphere.STATIC_PRESSURE] = pressure = coeffs[:, 0] + dx * (
             coeffs[:, 1] + dx * (coeffs[:, 2] + dx * coeffs[:, 3])
         )
 
@@ -204,12 +212,12 @@ class AtmosphereComp(om.ExplicitComponent):
         # We know (P * M)/(R * T) from the akima table lookups (raw data)
         # We must correct the density from the lookup table by dt = delta_T_Celcius
         # Note : _R_air is R/M
-        outputs['rho'] = corrected_density = (
+        outputs[Dynamic.Atmosphere.DENSITY] = corrected_density = (
             raw_density ** (-1) + self._R_air * self._dt * pressure ** (-1)
         ) ** (-1)
 
         # Equation 50
-        outputs['sos'] = (self._K * T) ** (0.5)
+        outputs[Dynamic.Atmosphere.SPEED_OF_SOUND] = (self._K * T) ** (0.5)
 
         # dsos_dh is only used for unsteady_solved_flight_conditions
         coeffs = self.source_data.akima_dT[idx]
@@ -217,7 +225,9 @@ class AtmosphereComp(om.ExplicitComponent):
         outputs['dsos_dh'] = 0.5 * (self._K * T) ** (-0.5) * dT_dh * self._K
 
         # Equation 51
-        outputs['viscosity'] = self._beta * T ** (1.5) * (T + self._S) ** (-1)
+        outputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = (
+            self._beta * T ** (1.5) * (T + self._S) ** (-1)
+        )
 
     def compute_partials(self, inputs, partials):
         """
@@ -231,7 +241,7 @@ class AtmosphereComp(om.ExplicitComponent):
             Subjac components written to partials[output_name, input_name].
         """
         table_points = self.source_data.alt
-        h = inputs['h']
+        h = inputs[Dynamic.Mission.ALTITUDE]
         dz_dh = 1.0
 
         if self._geodetic:
@@ -267,7 +277,7 @@ class AtmosphereComp(om.ExplicitComponent):
             )
         )
 
-        # outputs['viscosity'] = self._beta * T**(1.5) * (T + self._S)**(-1)
+        # outputs[Dynamic.Atmosphere.DYNAMIC_VISCOSITY] = self._beta * T**(1.5) * (T + self._S)**(-1)
         # need the product rule here
         dviscosity_dh = (
             1.5 * self._beta * T ** (0.5) * dT_dh * (T + self._S) ** (-1)
@@ -283,21 +293,25 @@ class AtmosphereComp(om.ExplicitComponent):
         d2T_dh2 = coeffs[:, 1] + dx * (2.0 * coeffs[:, 2] + 3.0 * coeffs[:, 3] * dx)
         # dsos_dh = 0.5 * (self._K * T)**(-0.5) * dT_dh * self._K
         # product rule & chain rule
-        partials['dsos_dh', 'h'] = (
+        partials['dsos_dh', Dynamic.Mission.ALTITUDE] = (
             -(0.5 * 0.5 * (self._K * T) ** (-1.5) * (self._K * dT_dh)) * (dT_dh * self._K)
             + 0.5 * (self._K * T) ** (-0.5) * d2T_dh2 * self._K
         )
 
-        partials['temp', 'h'][...] = dT_dh.ravel()
-        partials['pres', 'h'][...] = dP_dh.ravel()
-        partials['rho', 'h'][...] = corrected_drho_dh.ravel()
-        partials['viscosity', 'h'][...] = dviscosity_dh.ravel()
-        partials['sos', 'h'][...] = dsos_dh.ravel()
+        partials[Dynamic.Atmosphere.TEMPERATURE, Dynamic.Mission.ALTITUDE][...] = dT_dh.ravel()
+        partials[Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.ALTITUDE][...] = dP_dh.ravel()
+        partials[Dynamic.Atmosphere.DENSITY, Dynamic.Mission.ALTITUDE][...] = (
+            corrected_drho_dh.ravel()
+        )
+        partials[Dynamic.Atmosphere.DYNAMIC_VISCOSITY, Dynamic.Mission.ALTITUDE][...] = (
+            dviscosity_dh.ravel()
+        )
+        partials[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.ALTITUDE][...] = dsos_dh.ravel()
 
         if self._geodetic:
-            partials['temp', 'h'][...] *= dz_dh
-            partials['pres', 'h'][...] *= dz_dh
-            partials['rho', 'h'][...] *= dz_dh
-            partials['viscosity', 'h'][...] *= dz_dh
-            partials['sos', 'h'][...] *= dz_dh
-            partials['dsos_dh', 'h'] *= dz_dh**2
+            partials[Dynamic.Atmosphere.TEMPERATURE, Dynamic.Mission.ALTITUDE][...] *= dz_dh
+            partials[Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.ALTITUDE][...] *= dz_dh
+            partials[Dynamic.Atmosphere.DENSITY, Dynamic.Mission.ALTITUDE][...] *= dz_dh
+            partials[Dynamic.Atmosphere.DYNAMIC_VISCOSITY, Dynamic.Mission.ALTITUDE][...] *= dz_dh
+            partials[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.ALTITUDE][...] *= dz_dh
+            partials['dsos_dh', Dynamic.Mission.ALTITUDE] *= dz_dh**2
