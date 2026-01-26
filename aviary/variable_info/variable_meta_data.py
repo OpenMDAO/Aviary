@@ -857,6 +857,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.NUM_ECONOMY_CLASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+        'LEAPS1': None,  # 'aircraft.inputs.L0_crew_and_payload.economy_class_count',
+    },
+    units='unitless',
+    desc='number of economy class passengers',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={
@@ -939,22 +954,6 @@ add_meta_data(
     option=True,
     default_value=0,
     types=int,
-)
-
-# TODO rename to economy?
-add_meta_data(
-    Aircraft.CrewPayload.NUM_ECONOMY_CLASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-        'LEAPS1': None,  # 'aircraft.inputs.L0_crew_and_payload.economy_class_count',
-    },
-    units='unitless',
-    desc='number of economy class passengers',
-    types=int,
-    option=True,
-    default_value=0,
 )
 
 add_meta_data(
@@ -1116,6 +1115,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
+        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.economy_class_count',
+    },
+    units='unitless',
+    desc='number of economy class passengers that the aircraft is designed to accommodate',
+    types=int,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
     meta_data=_MetaData,
     historical_name={
@@ -1157,17 +1171,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR', 'LEAPS1': None},
-    units='unitless',
-    desc='Number of first class passengers abreast',
-    types=int,
-    option=True,
-    default_value=4,
-)
-
-add_meta_data(
     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
@@ -1178,20 +1181,15 @@ add_meta_data(
     default_value=6,
 )
 
-# TODO rename to economy?
 add_meta_data(
-    Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST,
     meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.NPT',  # ['&DEFINE.WTIN.NPT', 'WTS.NPT'],
-        'LEAPS1': 'aircraft.inputs.L0_crew_and_payload.economy_class_count',
-    },
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR', 'LEAPS1': None},
     units='unitless',
-    desc='number of economy class passengers that the aircraft is designed to accommodate',
+    desc='Number of first class passengers abreast',
     types=int,
     option=True,
-    default_value=0,
+    default_value=4,
 )
 
 add_meta_data(
@@ -1205,21 +1203,21 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH', 'LEAPS1': None},
-    units='inch',
-    desc='pitch of the first class seats',
-    option=True,
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH', 'LEAPS1': None},
     units='inch',
     desc='pitch of the economy class seats',
+    option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH', 'LEAPS1': None},
+    units='inch',
+    desc='pitch of the first class seats',
     option=True,
     default_value=0.0,
 )

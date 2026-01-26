@@ -84,12 +84,12 @@ class Aircraft:
         MISC_CARGO = 'aircraft:crew_and_payload:misc_cargo'
         NUM_BUSINESS_CLASS = 'aircraft:crew_and_payload:num_business_class'
         NUM_CABIN_CREW = 'aircraft:crew_and_payload:num_cabin_crew'
+        NUM_ECONOMY_CLASS = 'aircraft:crew_and_payload:num_economy_class'
         NUM_FIRST_CLASS = 'aircraft:crew_and_payload:num_first_class'
         NUM_FLIGHT_ATTENDANTS = 'aircraft:crew_and_payload:num_flight_attendants'
         NUM_FLIGHT_CREW = 'aircraft:crew_and_payload:num_flight_crew'
         NUM_GALLEY_CREW = 'aircraft:crew_and_payload:num_galley_crew'
         NUM_PASSENGERS = 'aircraft:crew_and_payload:num_passengers'
-        NUM_ECONOMY_CLASS = 'aircraft:crew_and_payload:num_economy_class'
         PASSENGER_MASS_TOTAL = 'aircraft:crew_and_payload:passenger_mass_total'
         PASSENGER_PAYLOAD_MASS = 'aircraft:crew_and_payload:passenger_payload_mass'
         PASSENGER_SERVICE_MASS = 'aircraft:crew_and_payload:passenger_service_mass'
@@ -112,11 +112,11 @@ class Aircraft:
             NUM_SEATS_ABREAST_BUSINESS = (
                 'aircraft:crew_and_payload:design:num_seats_abreast_business'
             )
-            NUM_SEATS_ABREAST_FIRST = 'aircraft:crew_and_payload:design:num_seats_abreast_first'
             NUM_SEATS_ABREAST_ECONOMY = 'aircraft:crew_and_payload:design:num_seats_abreast_economy'
+            NUM_SEATS_ABREAST_FIRST = 'aircraft:crew_and_payload:design:num_seats_abreast_first'
             SEAT_PITCH_BUSINESS = 'aircraft:crew_and_payload:design:seat_pitch_business'
-            SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
             SEAT_PITCH_ECONOMY = 'aircraft:crew_and_payload:design:seat_pitch_economy'
+            SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
 
     class Design:
         # These variables are values that do not fall into a particular aircraft
