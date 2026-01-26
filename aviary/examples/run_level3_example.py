@@ -8,9 +8,6 @@ import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-
-# from aviary.models.missions.height_energy_default import phase_info
-# from aviary.models.missions.height_energy_opt_climb_descend import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
@@ -28,9 +25,13 @@ phase_info = {
             'num_segments': 6,
             'order': 3,
             'mach_bounds': ((0.1, 0.8), 'unitless'),
-            'mach_optimize': True,
+            'mach_initial': (0.3, 'unitless'),
+            'mach_optimize': False,
+            'mach_polynomial_order': 3,
             'altitude_bounds': ((0.0, 35000.0), 'ft'),
-            'altitude_optimize': True,
+            'altitude_initial': (0, 'ft'),
+            'altitude_optimize': False,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
             'mass_ref': (200000, 'lbm'),
             'time_initial': (0.0, 'min'),
@@ -45,11 +46,11 @@ phase_info = {
             'order': 3,
             'mach_initial': (0.79, 'unitless'),
             'mach_bounds': ((0.79, 0.79), 'unitless'),
-            'mach_optimize': True,
+            'mach_optimize': False,
             'mach_polynomial_order': 1,
             'altitude_initial': (35000.0, 'ft'),
             'altitude_bounds': ((35000.0, 35000.0), 'ft'),
-            'altitude_optimize': True,
+            'altitude_optimize': False,
             'altitude_polynomial_order': 1,
             'throttle_enforcement': 'boundary_constraint',
             'mass_ref': (200000, 'lbm'),
@@ -65,11 +66,13 @@ phase_info = {
             'mach_initial': (0.79, 'unitless'),
             'mach_final': (0.3, 'unitless'),
             'mach_bounds': ((0.2, 0.8), 'unitless'),
-            'mach_optimize': True,
+            'mach_optimize': False,
+            'mach_polynomial_order': 3,
             'altitude_initial': (35000.0, 'ft'),
             'altitude_final': (35.0, 'ft'),
             'altitude_bounds': ((0.0, 35000.0), 'ft'),
-            'altitude_optimize': True,
+            'altitude_optimize': False,
+            'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
             'mass_ref': (200000, 'lbm'),
             'distance_ref': (3375, 'nmi'),
@@ -220,7 +223,6 @@ for phase_idx, phase_name in enumerate(phase_list):
     initial_guesses = AviaryValues(
         phase_options.get('initial_guesses', ())
     )  # Not used in this example
-    external_subsystems = phase_options.get('external_subsystems', [])  # Not used in this example
 
     # instantiate the PhaseBuilderBaseClass:
     # phase_builder = cls(
@@ -240,7 +242,6 @@ for phase_idx, phase_name in enumerate(phase_list):
     # initial_guesses
     # prob.meta_data
     # default_mission_subsystems
-    # external_subsystems
     transcription = None
     ode_class = None
     is_analytic_phase = False
@@ -268,13 +269,11 @@ for phase_idx, phase_name in enumerate(phase_list):
         transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
 
     kwargs = {
-        'external_subsystems': external_subsystems,
         'meta_data': prob.meta_data,
         'subsystem_options': subsystem_options,
         'throttle_enforcement': user_options['throttle_enforcement'],
         'throttle_allocation': user_options['throttle_allocation'],
-        'core_subsystems': default_mission_subsystems,
-        'external_subsystems': external_subsystems,
+        'subsystems': default_mission_subsystems,
     }
     kwargs = {'aviary_options': aviary_inputs, **kwargs}
     phase = dm.Phase(ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs)
