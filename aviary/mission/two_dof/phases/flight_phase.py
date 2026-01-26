@@ -102,6 +102,16 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'computed from it.',
         )
 
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
+
+
 
 class FlightPhase(PhaseBuilder):
     """
@@ -148,6 +158,7 @@ class FlightPhase(PhaseBuilder):
 
         add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
+        # Add constraints
         if required_available_climb_rate is not None:
             # TODO: this should be altitude rate max
             phase.add_boundary_constraint(
@@ -157,6 +168,9 @@ class FlightPhase(PhaseBuilder):
                 units='ft/min',
                 ref=1,
             )
+
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
 
         # Add parameter if necessary
         if input_speed_type == SpeedType.EAS:
