@@ -30,7 +30,6 @@ class TakeoffODETest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            'takeoff_ode_ground',
             input_validation_data=detailed_takeoff_ground,
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
@@ -60,7 +59,6 @@ class TakeoffODETest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            'takeoff_ode_climbing',
             input_validation_data=detailed_takeoff_climbing,
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[

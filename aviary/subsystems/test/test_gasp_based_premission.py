@@ -87,12 +87,12 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 2276.1316, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 2297.9697, tol)
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 4740.1241, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3819.3564, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 3819.3564, tol)
         assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3682.099, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7489.8343, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6366.3591, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21078.3911, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5341.4317956, tol)
+        assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21078.3911, tol)
+        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5341.4317956, tol)
 
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 850.90095, tol)
         assert_near_equal(prob[Aircraft.Wing.MASS], 16206.8122, tol)
@@ -169,12 +169,12 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 2276.1316, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 2297.9697, tol)
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 4161.22777613, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3819.3564, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 3819.3564, tol)
         assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3682.099, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7489.8343, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6366.3591, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 21078.3911, tol)
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5332.684, tol)
+        assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21078.3911, tol)
+        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5332.684, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 827.5372, tol)
         assert_near_equal(prob[Aircraft.Wing.MASS], 15651.64198957, tol)
         assert_near_equal(prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1779.06667944, tol)
@@ -214,15 +214,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.HorizontalTail.MASS -- WHT = 1
         Aircraft.VerticalTail.MASS -- WVT = 864
         Aircraft.Wing.HIGH_LIFT_MASS -- WHLDEV = 974.0
-        Aircraft.Controls.TOTAL_MASS -- WFC = 2115
+        Aircraft.Controls.MASS -- WFC = 2115
         Aircraft.Wing.SURFACE_CONTROL_MASS -- not in GASP
         Aircraft.LandingGear.TOTAL_MASS -- WLG = 7800
         Aircraft.LandingGear.MAIN_GEAR_MASS -- WMG = 6630
         Aircraft.Avionics.MASS -- CW(5) = 3225.0
         Aircraft.AirConditioning.MASS -- WAC = 1301.57
         Aircraft.Furnishings.MASS -- 11269.88
-        Aircraft.Design.FIXED_EQUIPMENT_MASS -- WFE = 20876.
-        Aircraft.Design.FIXED_USEFUL_LOAD -- WFUL = 5775.
+        Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS -- WFE = 20876.
+        Mission.Summary.USEFUL_LOAD -- WFUL = 5775.
         Aircraft.Engine.ADDITIONAL_MASS -- not in GASP
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
         Aircraft.Wing.MASS -- WW = 7645.
@@ -297,15 +297,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.HorizontalTail.MASS], 1.02402, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.MASS], 864.174, tol)
         assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 974.436, tol)
-        assert_near_equal(prob[Aircraft.Controls.TOTAL_MASS], 2114.982, tol)
+        assert_near_equal(prob[Aircraft.Controls.MASS], 2114.982, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.251, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)
         assert_near_equal(prob[Aircraft.Avionics.MASS], 3225.0, tol)
         assert_near_equal(prob[Aircraft.AirConditioning.MASS], 1301.573, tol)
         assert_near_equal(prob[Aircraft.Furnishings.MASS], 11269.876, tol)
-        assert_near_equal(prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.453, tol)
-        assert_near_equal(prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5971.7946, tol)
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 20876.453, tol)
+        assert_near_equal(prob[Mission.Summary.USEFUL_LOAD], 5971.7946, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.1677, tol)
         assert_near_equal(prob[Aircraft.Wing.FOLD_MASS], 107.8736151, tol)
         assert_near_equal(prob[Aircraft.Wing.MASS], 6962.31442344, tol)
@@ -436,15 +436,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.HorizontalTail.MASS], 1.02402, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.MASS], 864.174, tol)
         assert_near_equal(prob[Aircraft.Wing.HIGH_LIFT_MASS], 971.8248, tol)
-        assert_near_equal(prob[Aircraft.Controls.TOTAL_MASS], 2114.982, tol)
+        assert_near_equal(prob[Aircraft.Controls.MASS], 2114.982, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.251, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7800.0, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6630.0, tol)
         assert_near_equal(prob[Aircraft.Avionics.MASS], 3225.0, tol)
         assert_near_equal(prob[Aircraft.AirConditioning.MASS], 1301.573, tol)
         assert_near_equal(prob[Aircraft.Furnishings.MASS], 11269.876, tol)
-        assert_near_equal(prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 20876.453, tol)
-        assert_near_equal(prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5971.7946, tol)
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 20876.453, tol)
+        assert_near_equal(prob[Mission.Summary.USEFUL_LOAD], 5971.7946, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.1677, tol)
         assert_near_equal(prob[Aircraft.Wing.FOLD_MASS], 107.8335, tol)
         assert_near_equal(prob[Aircraft.Wing.MASS], 6959.7262, tol)

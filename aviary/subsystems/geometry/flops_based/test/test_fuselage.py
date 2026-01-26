@@ -51,11 +51,11 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 158, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 158, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, units='unitless')
-        # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='unitless')
-        # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         prob.model.add_subsystem(
@@ -126,13 +126,13 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 340, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 340, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
 
         prob.model.add_subsystem(

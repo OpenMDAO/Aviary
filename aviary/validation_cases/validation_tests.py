@@ -21,7 +21,6 @@ Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB'])
 
 def do_validation_test(
     prob: om.Problem,
-    case_name: str,
     input_validation_data: AviaryValues,
     output_validation_data: AviaryValues,
     input_keys: list,
@@ -240,7 +239,6 @@ def flops_validation_test(
 
     do_validation_test(
         prob=prob,
-        case_name=case_name,
         input_validation_data=flops_inputs,
         output_validation_data=flops_outputs,
         input_keys=input_keys,

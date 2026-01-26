@@ -17,12 +17,7 @@ class LandingMassGroup(om.Group):
     LandingTakeoffMassRatio, MainGearLength, NoseGearLength, LandingMass, etc.
     """
 
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Design.USE_ALT_MASS)
-
     def setup(self):
-        alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
-
         self.add_subsystem(
             'landing_to_takeoff_mass_ratio',
             LandingTakeoffMassRatio(),
@@ -48,11 +43,6 @@ class LandingMassGroup(om.Group):
             'landing_mass', LandingMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
-        if alt_mass:
-            self.add_subsystem(
-                'landing_gear', AltLandingGearMass(), promotes_inputs=['*'], promotes_outputs=['*']
-            )
-        else:
-            self.add_subsystem(
-                'landing_gear', LandingGearMass(), promotes_inputs=['*'], promotes_outputs=['*']
-            )
+        self.add_subsystem(
+            'landing_gear', LandingGearMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )

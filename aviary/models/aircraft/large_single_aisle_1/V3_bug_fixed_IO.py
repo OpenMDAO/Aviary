@@ -62,9 +62,9 @@ V3_bug_fixed_options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.NUM_AISLES, 1, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
 V3_bug_fixed_options.set_val(
-    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless'
+    Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless'
 )
-V3_bug_fixed_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 29, units='inch')
+V3_bug_fixed_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.DELTA_DIAMETER, 4.5, units='ft')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH, 9.5, units='ft')
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.NOSE_FINENESS, 1, units='unitless')
@@ -78,7 +78,9 @@ V3_bug_fixed_options.set_val(Aircraft.Nacelle.FINENESS, 2, units='unitless')
 
 V3_bug_fixed_options.set_val(Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h')
 V3_bug_fixed_options.set_val(Aircraft.Design.LIFT_CURVE_SLOPE, val=7.1765, units='1/rad')
-V3_bug_fixed_options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=200, units='lbm')
+V3_bug_fixed_options.set_val(
+    Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
+)
 V3_bug_fixed_options.set_val(Aircraft.CrewPayload.CARGO_MASS, val=0, units='lbm')
 V3_bug_fixed_options.set_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, val=10040, units='lbm')
 V3_bug_fixed_options.set_val(Aircraft.VerticalTail.SWEEP, val=0, units='deg')

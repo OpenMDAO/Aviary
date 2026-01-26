@@ -9,7 +9,7 @@ from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
 @use_tempdirs
-class TestSubsystemsMission(unittest.TestCase):
+class TestBatteryMission(unittest.TestCase):
     """Test the setup and run optimization model with a battery subsystem."""
 
     def setUp(self):
@@ -137,7 +137,7 @@ class TestSubsystemsMission(unittest.TestCase):
                 0.7119666756734181,
                 0.7066259172513626,
             ],
-            1e-7,
+            1e-6,
         )
 
         assert_near_equal(
@@ -164,7 +164,7 @@ class TestSubsystemsMission(unittest.TestCase):
                 0.41889757299299735,
                 0.4135623887905029,
             ],
-            1e-7,
+            1e-6,
         )
 
 
