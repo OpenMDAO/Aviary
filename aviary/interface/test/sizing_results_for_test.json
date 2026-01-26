@@ -806,7 +806,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:chord_per_semispan",
+        "aircraft:wing:chord_per_semispan_dist",
         [
             0.31,
             0.23,
@@ -1073,18 +1073,6 @@
         "<enum 'Verbosity'>"
     ],
     [
-        "mission:summary:gross_mass",
-        175400.0,
-        "lbm",
-        "<class 'float'>"
-    ],
-    [
-        "mission:summary:range",
-        1906.0,
-        "NM",
-        "<class 'float'>"
-    ],
-    [
         "aircraft:crew_and_payload:num_passengers",
         169,
         "unitless",
@@ -1149,6 +1137,18 @@
         2,
         "unitless",
         "<class 'int'>"
+    ],
+    [
+        "mission:summary:gross_mass",
+        175400.0,
+        "lbm",
+        "<class 'float'>"
+    ],
+    [
+        "mission:summary:range",
+        1906.0,
+        "NM",
+        "<class 'float'>"
     ],
     [
         "aircraft:fuel:ignore_fuel_capacity_constraint",

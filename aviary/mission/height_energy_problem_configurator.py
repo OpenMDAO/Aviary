@@ -5,17 +5,15 @@ import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.flops_based.phases.build_landing import Landing
-from aviary.mission.flops_based.phases.build_takeoff import Takeoff
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.height_energy.phases.build_landing import Landing
+from aviary.mission.height_energy.phases.build_takeoff import Takeoff
+from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
+from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
-from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.process_input_decks import initialization_guessing
+from aviary.mission.utils import process_guess_var
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
@@ -35,25 +33,12 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        # TODO: This should probably be moved to the set_initial_guesses() method in AviaryProblem class
-        # Defines how the problem should build it's initial guesses for load_inputs()
-        # this modifies mass_method, initialization_guesses, and aviary_values
-
-        aviary_inputs = aviary_group.aviary_inputs
-
-        if aviary_group.engine_builders is None:
-            aviary_group.engine_builders = [build_engine_deck(aviary_inputs)]
-
-        aviary_group.initialization_guesses = initialization_guessing(
-            aviary_inputs, aviary_group.initialization_guesses, aviary_group.engine_builders
-        )
-
         # Deal with missing defaults in phase info:
         aviary_group.pre_mission_info.setdefault('include_takeoff', True)
-        aviary_group.pre_mission_info.setdefault('external_subsystems', [])
 
         aviary_group.post_mission_info.setdefault('include_landing', True)
-        aviary_group.post_mission_info.setdefault('external_subsystems', [])
+
+        aviary_inputs = aviary_group.aviary_inputs
 
         # Commonly referenced values
         aviary_inputs.set_val(
@@ -157,15 +142,14 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
 
         Returns
         -------
-        PhaseBuilderBase
+        PhaseBuilder
             Phase builder for requested phase.
         """
         if 'phase_builder' in phase_options:
             phase_builder = phase_options['phase_builder']
-            if not issubclass(phase_builder, PhaseBuilderBase):
+            if not issubclass(phase_builder, PhaseBuilder):
                 raise TypeError(
-                    'phase_builder for the phase called '
-                    '{phase_name} must be a PhaseBuilderBase object.'
+                    'phase_builder for the phase called {phase_name} must be a PhaseBuilder object.'
                 )
         else:
             phase_builder = EnergyPhase

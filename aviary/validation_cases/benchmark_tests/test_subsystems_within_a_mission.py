@@ -1,17 +1,19 @@
 import unittest
 
 import numpy as np
-from numpy.testing import assert_almost_equal
+from numpy.testing import assert_almost_equal, assert_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.test.test_dummy_subsystem import (
     AdditionalArrayGuessSubsystemBuilder,
+    Aircraft,
     ArrayGuessSubsystemBuilder,
     Mission,
     MoreMission,
     PostOnlyBuilder,
 )
+from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 
 
 @use_tempdirs
@@ -19,23 +21,13 @@ class TestSubsystemsMission(unittest.TestCase):
     """Test the setup and run of a model with external subsystem."""
 
     def setUp(self):
-        self.phase_info = {
+        self.energy_phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {
-                    'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}
-                },
-                'external_subsystems': [
-                    ArrayGuessSubsystemBuilder(),
-                    AdditionalArrayGuessSubsystemBuilder(),
-                ],
+                'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -57,16 +49,41 @@ class TestSubsystemsMission(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [PostOnlyBuilder()],
             },
         }
+        # 2dof currently hardcoded requires an ascent phase (configurator add_post_mission_systems)
+        # self.two_dof_phase_info = {
+        #     'cruise': {
+        #         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
+        #         'user_options': {
+        #             'alt_cruise': (37.5e3, 'ft'),
+        #             'mach_cruise': 0.8,
+        #         },
+        #         'initial_guesses': {
+        #             # [Initial mass, delta mass] for special cruise phase.
+        #             'mass': ([171481.0, -35000], 'lbm'),
+        #             'initial_distance': (200.0e3, 'ft'),
+        #             'initial_time': (1516.0, 's'),
+        #             'altitude': (37.5e3, 'ft'),
+        #             'mach': (0.8, 'unitless'),
+        #         },
+        #     }
+        # }
 
-    def test_subsystems_in_a_mission(self):
-        phase_info = self.phase_info.copy()
+    def test_subsystems_in_a_mission_height_energy(self):
+        phase_info = self.energy_phase_info.copy()
 
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+
+        prob.load_external_subsystems(
+            [
+                ArrayGuessSubsystemBuilder(),
+                AdditionalArrayGuessSubsystemBuilder(),
+                PostOnlyBuilder(),
+            ]
+        )
 
         prob.check_and_preprocess_inputs()
 
@@ -99,8 +116,62 @@ class TestSubsystemsMission(unittest.TestCase):
             np.array([[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T,
         )
 
+        # add an assert to see that the post-mission component correctly computed
+        assert_equal(prob.get_val('default_subsystem_name.y_postmission'), 0.25)
+
+    def test_subsystems_in_a_mission_2dof(self):
+        prob = AviaryProblem(verbosity=0)
+
+        prob.load_inputs(
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', two_dof_phase_info
+        )
+
+        prob.load_external_subsystems(
+            [
+                # NOTE states currently do not work with 2DOF because breguet cruise is analytic
+                # ArrayGuessSubsystemBuilder(),
+                # AdditionalArrayGuessSubsystemBuilder(),
+                PostOnlyBuilder(),
+            ]
+        )
+
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        # prob.model.mission_info['cruise']['initial_guesses'][f'states:{Mission.Dummy.VARIABLE}'] = (
+        #     [10.0, 100.0],
+        #     'm',
+        # )
+
+        prob.add_driver('SLSQP', max_iter=0, verbosity=0)
+
+        prob.add_design_variables()
+
+        prob.add_objective('fuel_burned')
+
+        prob.setup()
+
+        # add an assert to see if the initial guesses are correct for Mission.Dummy.VARIABLE
+        # assert_almost_equal(
+        #     prob.get_val(f'traj.cruise.states:{Mission.Dummy.VARIABLE}'),
+        #     [[10.0], [25.97729616], [48.02270384], [55.0], [70.97729616], [93.02270384], [100.0]],
+        # )
+
+        prob.run_aviary_problem()
+
+        # add an assert to see if MoreMission.Dummy.TIMESERIES_VAR was correctly added to the dymos problem
+        # assert_almost_equal(
+        #     prob[f'traj.phases.cruise.timeseries.{MoreMission.Dummy.TIMESERIES_VAR}'],
+        #     np.array([[0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]]).T,
+        # )
+
+        # add an assert to see that the post-mission component correctly computed
+        # assert_equal(prob.get_val('default_subsystem_name.y_postmission'), 0.25)
+        assert_equal(prob.get_val('default_subsystem_name.y_postmission'), 1)
+
     def test_bad_initial_guess_key(self):
-        phase_info = self.phase_info.copy()
+        phase_info = self.energy_phase_info.copy()
         phase_info['cruise']['initial_guesses']['bad_guess_name'] = ([10.0, 100.0], 'm')
 
         prob = AviaryProblem(reports=False, verbosity=0)
@@ -122,3 +193,6 @@ class TestSubsystemsMission(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TestSubsystemsMission()
+    # test.setUp()
+    # test.test_subsystems_in_a_mission_2dof()

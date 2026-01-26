@@ -1,10 +1,10 @@
 from aviary.subsystems.propulsion.gearbox.model.gearbox_mission import GearboxMission
 from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class GearboxBuilder(SubsystemBuilderBase):
+class GearboxBuilder(SubsystemBuilder):
     """
     Define the builder for a single gearbox subsystem that provides methods
     to define the gearbox subsystem's states, design variables, fixed values,
@@ -41,19 +41,19 @@ class GearboxBuilder(SubsystemBuilderBase):
         additional keyword arguments required by OpenMDAO for the design variable.
         """
         DVs = {
-            Aircraft.Engine.Gearbox.GEAR_RATIO: {
-                'units': 'unitless',
-                'lower': 1.0,
-                'upper': 20.0,
-                # 'val':  10  # initial value
-            },
+            # Aircraft.Engine.Gearbox.GEAR_RATIO: {
+            #     'units': 'unitless',
+            #     'lower': 1.0,
+            #     'upper': 20.0,
+            #     # 'val':  10  # initial value
+            # },
             # This var appears in both mission and pre-mission
-            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                # 'val': 10000,
-                'units': 'kW',
-                'lower': 1.0,
-                'upper': None,
-            },
+            # Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+            #     # 'val': 10000,
+            #     'units': 'kW',
+            #     'lower': 1.0,
+            #     'upper': None,
+            # },
         }
         return DVs
 
@@ -94,7 +94,7 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_mass_names(self):
         return [Aircraft.Engine.Gearbox.MASS]
 
-    def get_outputs(self):
+    def get_timeseries(self):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',

@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core aerodynamics.
 
 Classes
 -------
-AerodynamicsBuilderBase : the interface for an aerodynamics subsystem builder.
+AerodynamicsBuilder : the interface for an aerodynamics subsystem builder.
 
 CoreAerodynamicsBuilder : the interface for Aviary's core aerodynamics subsystem builder
 """
@@ -25,7 +25,7 @@ from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularLowSpeedAero,
 )
 from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -38,14 +38,14 @@ FLOPS = LegacyCode.FLOPS
 _default_name = 'aerodynamics'
 
 
-class AerodynamicsBuilderBase(SubsystemBuilderBase):
+class AerodynamicsBuilder(SubsystemBuilder):
     """
     Base class of aerodynamics builder.
 
     Methods
     -------
     __init__(self, name=None, meta_data=None):
-        Initializes the AerodynamicsBuilderBase object with a given name.
+        Initializes the AerodynamicsBuilder object with a given name.
     mission_inputs(self, **kwargs) -> list:
         Return mission inputs.
     mission_outputs(self, **kwargs) -> list:
@@ -65,7 +65,7 @@ class AerodynamicsBuilderBase(SubsystemBuilderBase):
         return ['*']
 
 
-class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
+class CoreAerodynamicsBuilder(AerodynamicsBuilder):
     """
     Core aerodynamics builder.
 
@@ -87,7 +87,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilderBase):
 
     def __init__(self, name=None, meta_data=None, code_origin=None, tabular=False):
         if name is None:
-            name = 'core_aerodynamics'
+            name = 'aerodynamics'
 
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')

@@ -1,4 +1,3 @@
-import argparse
 import functools
 import importlib.util
 import json
@@ -6,7 +5,6 @@ import os
 import re
 import shutil
 import traceback
-import zipfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -41,6 +39,7 @@ except BaseException:
 from dymos.visualization.timeseries.bokeh_timeseries_report import _meta_tree_subsys_iter
 from openmdao.utils.om_warnings import issue_warning
 
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.visualization.aircraft_3d_model import Aircraft3DModel
 
 # support getting this function from OpenMDAO post movement of the function to utils
@@ -52,7 +51,6 @@ except ImportError:
         _convert_ndarray_to_support_nans_in_json as convert_ndarray_to_support_nans_in_json,
     )
 
-import aviary.api as av
 
 # Enable Panel extensions
 pn.extension(sizing_mode='stretch_width')
@@ -64,148 +62,6 @@ aviary_variables_json_file_name = 'aviary_vars.json'
 documentation_text_align = 'left'
 
 # functions for the aviary command line command
-
-
-def _none_or_str(value):
-    """
-    Get the value of the argparse option.
-
-    If "None", return None. Else, just return the string.
-
-    Parameters
-    ----------
-    value : str
-        The value used by the user on the command line for the argument.
-
-    Returns
-    -------
-    option_value : str or None
-        The value of the option after possibly converting from 'None' to None.
-    """
-    if value == 'None':
-        return None
-    return value
-
-
-def _dashboard_setup_parser(parser):
-    """
-    Set up the aviary subparser for the 'aviary dashboard' command.
-
-    Parameters
-    ----------
-    parser : argparse subparser
-        The parser we're adding options to.
-    """
-    parser.add_argument(
-        'script_name',
-        type=str,
-        nargs='*',
-        help='Name of aviary script that was run (not including .py).',
-    )
-    parser.add_argument(
-        '--port',
-        dest='port',
-        type=int,
-        default=0,
-        help='dashboard server port ID (default is 0, which indicates get any free port)',
-    )
-    parser.add_argument(
-        '-b',
-        '--background',
-        action='store_true',
-        dest='run_in_background',
-        help="Run the server in the background (don't automatically open the browser)",
-    )
-
-    # For future use
-    parser.add_argument(
-        '-d',
-        '--debug',
-        action='store_true',
-        dest='debug_output',
-        help='show debugging output',
-    )
-
-    parser.add_argument(
-        '--save',
-        nargs='?',
-        const=True,
-        default=False,
-        help='Name of zip file in which dashboard files are saved. If no argument given, use the script name to name the zip file',
-    )
-
-    parser.add_argument(
-        '--force',
-        action='store_true',
-        help='When displaying data from a shared zip file, if the directory in the reports directory exists, overrite if this is True',
-    )
-
-
-def _dashboard_cmd(options, user_args):
-    """
-    Run the dashboard command.
-
-    Parameters
-    ----------
-    options : argparse Namespace
-        Command line options.
-    user_args : list of str
-        Args to be passed to the user script.
-    """
-    if options.save and not options.script_name:
-        if options.save is not True:
-            options.script_name = options.save
-            options.save = True
-
-    if not options.script_name:
-        raise argparse.ArgumentError('script_name argument missing')
-
-    if isinstance(options.script_name, list):
-        options.script_name = options.script_name[0]
-
-    # check to see if options.script_name is a zip file
-    # if yes, then unzip into reports directory and run dashboard on it
-    if zipfile.is_zipfile(options.script_name):
-        report_dir_name = Path(options.script_name).stem
-        report_dir_path = Path(f'{report_dir_name}_out')
-        # need to check to see if that directory already exists
-        if not options.force and report_dir_path.is_dir():
-            raise RuntimeError(
-                f'The reports directory {report_dir_path} already exists. If you wish '
-                'to overwrite the existing directory, use the --force option'
-            )
-        if (
-            report_dir_path.is_dir()
-        ):  # need to delete it. The unpacking will just add to what is there, not do a clean unpack
-            shutil.rmtree(report_dir_path)
-
-        shutil.unpack_archive(options.script_name, report_dir_path)
-        dashboard(
-            report_dir_name,
-            # options.problem_recorder,
-            # options.driver_recorder,
-            options.port,
-            options.run_in_background,
-        )
-        return
-
-    # Save the dashboard files to a zip file that can be shared with others
-    if options.save is not False:
-        if options.save is True:
-            save_filename_stem = options.script_name
-        else:
-            save_filename_stem = Path(options.save).stem
-        print(f'Saving to {save_filename_stem}.zip')
-        shutil.make_archive(save_filename_stem, 'zip', f'{options.script_name}_out')
-        return
-
-    dashboard(
-        options.script_name,
-        # options.problem_recorder,
-        # options.driver_recorder,
-        options.port,
-        options.run_in_background,
-    )
 
 
 def _handle_pane_creation_errors():
@@ -402,14 +258,28 @@ def create_report_frame(documentation, format, text_filepath):
     """
     if os.path.isfile(text_filepath):
         if format == 'html':
-            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
+            # Use CSS that allows the iframe to stretch
+            iframe_html = f"""
+            <div style="width: 100%; height: 100%; min-height: 600px;">
+                <iframe
+                    src="/home/{text_filepath}"
+                    style="width: 100%; height: 100%; border: none; min-height: 600px;"
+                    scrolling="yes">
+                </iframe>
+            </div>
+            """
             report_pane = pn.Column(
                 pn.pane.HTML(
                     f'<p class="pane_doc">{documentation}</p>',
                     stylesheets=['assets/aviary_styles.css'],
                     styles={'text-align': 'left'},
                 ),
-                pn.pane.HTML(f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>'),
+                pn.pane.HTML(
+                    iframe_html,
+                    sizing_mode='stretch_both',  # Key: tells Panel to stretch this pane
+                    min_height=600,
+                ),
+                sizing_mode='stretch_both',  # Also stretch the parent Column
             )
         elif format in ['markdown', 'text']:
             with open(text_filepath, 'rb') as f:
@@ -507,7 +377,7 @@ def create_aviary_variables_table_data_nested(output_dir, recorder_file):
         if len(grouped[group_name]) == 1:  # a list of one var.
             var_info = grouped[group_name][0]
             prom_name = outputs[var_info]['prom_name']
-            aviary_metadata = av.CoreMetaData.get(prom_name)
+            aviary_metadata = CoreMetaData.get(prom_name)
             # the metadata has some object types, like "type", that don't serialize normally
             aviary_metadata = make_serializable(aviary_metadata)
             table_data_nested.append(
@@ -524,7 +394,7 @@ def create_aviary_variables_table_data_nested(output_dir, recorder_file):
             children_list = []
             for children_name in grouped[group_name]:
                 prom_name = outputs[children_name]['prom_name']
-                aviary_metadata = av.CoreMetaData.get(prom_name)
+                aviary_metadata = CoreMetaData.get(prom_name)
                 # the metadata has some object types, like "type", that don't serialize normally
                 aviary_metadata = make_serializable(aviary_metadata)
                 children_list.append(
@@ -912,7 +782,6 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             case = cr.get_case('final')
             outputs = case.list_outputs(out_stream=None, units=True)
 
-            # data_by_varname_and_phase = defaultdict(dict)
             data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
             # Find the "largest" unit used for any timeseries output across all phases
@@ -920,7 +789,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.([a-zA-Z0-9_]+)'
+            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.(.+)'
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
@@ -1167,14 +1036,14 @@ def dashboard(script_name, port=0, run_in_background=False):
         'Debug Input List',
         model_tabs_list,
         """
-        A plain text display of the model inputs. Recommended for beginners. Only created if 
-        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
-        are listed in a tree structure. There are three columns. The left column is a list of 
-        variable names, the middle column is the value, and the right column is the promoted 
-        variable name. The hierarchy is phase, subgroups, components, and variables. An input 
-        variable can appear under different phases and within different components. Its values can 
-        be different because its value has been updated during the computation. On the top-left 
-        corner is the total number of inputs. That number counts the duplicates because one variable 
+        A plain text display of the model inputs. Recommended for beginners. Only created if
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables
+        are listed in a tree structure. There are three columns. The left column is a list of
+        variable names, the middle column is the value, and the right column is the promoted
+        variable name. The hierarchy is phase, subgroups, components, and variables. An input
+        variable can appear under different phases and within different components. Its values can
+        be different because its value has been updated during the computation. On the top-left
+        corner is the total number of inputs. That number counts the duplicates because one variable
         can appear in different phases.
         """,
         'text',
@@ -1186,14 +1055,14 @@ def dashboard(script_name, port=0, run_in_background=False):
         'Debug Output List',
         model_tabs_list,
         """
-        A plain text display of the model outputs. Recommended for beginners. Only created if 
-        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables 
-        are listed in a tree structure. There are three columns. The left column is a list of 
-        variable names, the middle column is the value, and the right column is the promoted 
-        variable name. The hierarchy is phase, subgroups, components, and variables. An output 
-        variable can appear under different phases and within different components. Its values can 
-        be different because its value has been updated during the computation. On the top-left 
-        corner is the total number of outputs. That number counts the duplicates because one 
+        A plain text display of the model outputs. Recommended for beginners. Only created if
+        Settings.VERBOSITY is set to at least 2 (VERBOSE or higher) in the input deck. The variables
+        are listed in a tree structure. There are three columns. The left column is a list of
+        variable names, the middle column is the value, and the right column is the promoted
+        variable name. The hierarchy is phase, subgroups, components, and variables. An output
+        variable can appear under different phases and within different components. Its values can
+        be different because its value has been updated during the computation. On the top-left
+        corner is the total number of outputs. That number counts the duplicates because one
         variable can appear in different phases.
         """,
         'text',
@@ -1207,6 +1076,15 @@ def dashboard(script_name, port=0, run_in_background=False):
         'Detailed report on the model inputs.',
         'html',
         reports_dir / 'inputs.html',
+    )
+
+    # Overridden output variables
+    create_report_frame(
+        'Overridden Variables',
+        model_tabs_list,
+        'Report on overridden output variables.',
+        'markdown',
+        reports_dir / 'overridden_variables.md',
     )
 
     # N2
@@ -1571,6 +1449,9 @@ def dashboard(script_name, port=0, run_in_background=False):
 
 
 if __name__ == '__main__':
+    import argparse
+    from aviary.visualization.dashboard_cmd import _dashboard_cmd, _dashboard_setup_parser
+
     parser = argparse.ArgumentParser()
     _dashboard_setup_parser(parser)
     args = parser.parse_args()

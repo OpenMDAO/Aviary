@@ -7,7 +7,7 @@ import numpy as np
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
+from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
 
 # from aviary.models.missions.height_energy_default import phase_info
 # from aviary.models.missions.height_energy_opt_climb_descend import phase_info

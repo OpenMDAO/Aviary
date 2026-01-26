@@ -63,7 +63,6 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuselage.LENGTH, val=125.0, units='ft')
         prob.run_model()
 
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
@@ -191,8 +190,8 @@ class BWBFuselagePrelimTest(unittest.TestCase):
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 
-        avg_diameter = prob.get_val(Aircraft.Fuselage.AVG_DIAMETER)
-        assert_near_equal(avg_diameter, 40.79, tolerance=1e-9)
+        ref_diameter = prob.get_val(Aircraft.Fuselage.REF_DIAMETER)
+        assert_near_equal(ref_diameter, 40.79, tolerance=1e-9)
         planform_area = prob.get_val(Aircraft.Fuselage.PLANFORM_AREA)
         assert_near_equal(planform_area, 4391.90128571, tolerance=1e-9)
 

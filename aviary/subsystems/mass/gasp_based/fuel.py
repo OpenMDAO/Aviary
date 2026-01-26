@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.units import convert_units
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.functions import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
+from aviary.utils.math import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -1635,7 +1635,7 @@ class FuelMassGroup(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'fuselage',
                 FuselageMass(),

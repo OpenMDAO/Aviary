@@ -7,7 +7,7 @@ from aviary.subsystems.geometry.gasp_based.non_dimensional_conversion import (
 )
 from aviary.subsystems.geometry.gasp_based.strut import StrutGeom
 from aviary.utils.conflict_checks import check_fold_location_definition
-from aviary.utils.functions import sigmoidX, dSigmoidXdx
+from aviary.utils.math import sigmoidX, dSigmoidXdx
 from aviary.variable_info.enums import AircraftTypes, Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -1828,7 +1828,7 @@ class ExposedWing(om.ExplicitComponent):
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
             b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             b_fus = body_width * sqt
 
         wingspan = inputs[Aircraft.Wing.SPAN]
@@ -1870,7 +1870,7 @@ class ExposedWing(om.ExplicitComponent):
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             cabin_height = body_width * height_to_width
             b_fus = 0.5 * (body_width - cabin_height) + cabin_height * sqt
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             b_fus = body_width * sqt
 
         wingspan = inputs[Aircraft.Wing.SPAN]
