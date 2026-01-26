@@ -29,7 +29,6 @@ class RangeRateTest(unittest.TestCase):
         do_validation_test(
             self,
             self.prob,
-            'full_mission_test_data',
             input_validation_data=data,
             output_validation_data=data,
             input_keys=[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY],

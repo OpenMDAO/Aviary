@@ -252,7 +252,6 @@ class _PrelimTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=get_flops_data(case_name),
             output_validation_data=local_variables[case_name],
             input_keys=[
@@ -316,7 +315,6 @@ class _WingTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -363,7 +361,6 @@ class _TailTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -418,7 +415,6 @@ class _FuselageTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -501,7 +497,6 @@ class CanardTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            'canard_test',
             input_validation_data=Canard_test_data,
             output_validation_data=Canard_test_data,
             input_keys=[
@@ -585,7 +580,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[

@@ -124,7 +124,6 @@ class WingFuelCapacityTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
@@ -171,7 +170,6 @@ class FuselageFuelCapacityTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_CAPACITY],
@@ -211,7 +209,6 @@ class AuxFuelCapacityTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
@@ -257,7 +254,6 @@ class TotalFuelCapacityTest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[

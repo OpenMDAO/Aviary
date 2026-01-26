@@ -56,7 +56,6 @@ class FlareODETest(unittest.TestCase):
         do_validation_test(
             self,
             prob,
-            'landing_flare_ode',
             input_validation_data=detailed_landing_flare,
             output_validation_data=detailed_landing_flare,
             input_keys=[
