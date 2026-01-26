@@ -429,7 +429,10 @@ class FlightPhaseBase(PhaseBuilderBase):
             )
 
         elif transcription_type == 'PicardShooting':
-            transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward')
+            nodes_per_seg = order * num_segments  # get approximately same number of nodes as radau
+            transcription = dm.PicardShooting(
+                num_segments=1, nodes_per_seg=nodes_per_seg, solve_segments='forward'
+            )
 
         else:
             raise UserWarning(

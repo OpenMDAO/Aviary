@@ -8,12 +8,84 @@ import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
-from aviary.models.missions.height_energy_default import phase_info
+
+# from aviary.models.missions.height_energy_default import phase_info
+# from aviary.models.missions.height_energy_opt_climb_descend import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+
+import time
+
+
+phase_info = {
+    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
+    'climb': {
+        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'user_options': {
+            'num_segments': 6,
+            'order': 3,
+            'mach_bounds': ((0.1, 0.8), 'unitless'),
+            'mach_optimize': True,
+            'altitude_bounds': ((0.0, 35000.0), 'ft'),
+            'altitude_optimize': True,
+            'throttle_enforcement': 'path_constraint',
+            'mass_ref': (200000, 'lbm'),
+            'time_initial': (0.0, 'min'),
+            'time_duration_bounds': ((20.0, 60.0), 'min'),
+            'no_descent': True,
+        },
+    },
+    'cruise': {
+        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'user_options': {
+            'num_segments': 1,
+            'order': 3,
+            'mach_initial': (0.79, 'unitless'),
+            'mach_bounds': ((0.79, 0.79), 'unitless'),
+            'mach_optimize': True,
+            'mach_polynomial_order': 1,
+            'altitude_initial': (35000.0, 'ft'),
+            'altitude_bounds': ((35000.0, 35000.0), 'ft'),
+            'altitude_optimize': True,
+            'altitude_polynomial_order': 1,
+            'throttle_enforcement': 'boundary_constraint',
+            'mass_ref': (200000, 'lbm'),
+            'time_initial_bounds': ((20.0, 60.0), 'min'),
+            'time_duration_bounds': ((60.0, 720.0), 'min'),
+        },
+    },
+    'descent': {
+        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'user_options': {
+            'num_segments': 5,
+            'order': 3,
+            'mach_initial': (0.79, 'unitless'),
+            'mach_final': (0.3, 'unitless'),
+            'mach_bounds': ((0.2, 0.8), 'unitless'),
+            'mach_optimize': True,
+            'altitude_initial': (35000.0, 'ft'),
+            'altitude_final': (35.0, 'ft'),
+            'altitude_bounds': ((0.0, 35000.0), 'ft'),
+            'altitude_optimize': True,
+            'throttle_enforcement': 'path_constraint',
+            'mass_ref': (200000, 'lbm'),
+            'distance_ref': (3375, 'nmi'),
+            'time_initial_bounds': ((80.0, 780.0), 'min'),
+            'time_duration_bounds': ((5.0, 45.0), 'min'),
+            'no_climb': True,
+        },
+    },
+    'post_mission': {
+        'include_landing': False,
+        'constrain_range': True,
+        'target_range': (3375.0, 'nmi'),
+    },
+}
+
+start_time = time.time()
 
 
 class L3SubsystemsGroup(om.Group):
@@ -29,7 +101,7 @@ class L3SubsystemsGroup(om.Group):
 
 
 # Toggle this boolean option to run with shooting vs collocation transcription:
-shooting = True
+shooting = False
 
 prob = av.AviaryProblem()
 
@@ -188,7 +260,10 @@ for phase_idx, phase_name in enumerate(phase_list):
     order = user_options['order']
 
     if shooting:
-        transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward')
+        # transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward') # nodes per seg= num_segments * 3 similar number of nodes to radau
+        transcription = dm.PicardShooting(
+            num_segments=1, nodes_per_seg=10, solve_segments='forward'
+        )  # forces single shooting
     else:
         transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
 
@@ -205,7 +280,7 @@ for phase_idx, phase_name in enumerate(phase_list):
     phase = dm.Phase(ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs)
     tx_mission_bus = dm.GaussLobatto(
         num_segments=transcription.options['num_segments'], order=3, compressed=True
-    )
+    )  # equally spaced points in this output - this is going to be better than using picard or radau.
     phase.add_timeseries(name='mission_bus_variables', transcription=tx_mission_bus, subset='all')
     num_engine_type = len(
         aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
@@ -248,6 +323,10 @@ for phase_idx, phase_name in enumerate(phase_list):
         Dynamic.Atmosphere.MACH,
         targets=Dynamic.Atmosphere.MACH,
         opt=user_options[f'mach_optimize'],
+        lower=user_options[f'mach_bounds'][0][0],
+        upper=user_options[f'mach_bounds'][0][1],
+        ref=user_options['mach_ref'][0],
+        ref0=user_options['mach_ref0'][0],
         control_type='polynomial',
         order=user_options[f'mach_polynomial_order'],
         rate_targets=[Dynamic.Atmosphere.MACH_RATE],
@@ -258,6 +337,10 @@ for phase_idx, phase_name in enumerate(phase_list):
         Dynamic.Mission.ALTITUDE,
         targets=Dynamic.Mission.ALTITUDE,
         opt=user_options[f'altitude_optimize'],
+        lower=user_options[f'altitude_bounds'][0][0],
+        upper=user_options[f'altitude_bounds'][0][1],
+        ref=user_options['altitude_ref'][0],
+        ref0=user_options['altitude_ref0'][0],
         control_type='polynomial',
         order=user_options[f'altitude_polynomial_order'],
         units=user_options[f'altitude_bounds'][1],
@@ -538,28 +621,28 @@ prob.model.connect(
 #####
 # prob.add_driver('SLSQP', max_iter=50)
 # SLSQP Optimizer Settings
-prob.driver = om.ScipyOptimizeDriver()
-prob.driver.options['optimizer'] = 'SLSQP'
-prob.driver.declare_coloring(show_summary=False)
-prob.driver.options['disp'] = True
-prob.driver.options['tol'] = 1e-9
-prob.driver.options['maxiter'] = 50
+# prob.driver = om.ScipyOptimizeDriver()
+# prob.driver.options['optimizer'] = 'SLSQP'
+# prob.driver.declare_coloring(show_summary=False)
+# prob.driver.options['disp'] = True
+# prob.driver.options['tol'] = 1e-9
+# prob.driver.options['maxiter'] = 50
 
 # prob.add_driver('IPOPT', max_iter=50)
 # IPOPT Optimizer Settings
-# prob.driver = om.pyOptSparseDriver()
-# prob.driver.options['optimizer'] = 'IPOPT'
-# prob.driver.declare_coloring(show_summary=False)
-# prob.driver.opt_settings['print_user_options'] = 'no'
-# prob.driver.opt_settings['print_frequency_iter'] = 10
-# prob.driver.opt_settings['print_level'] = 3
-# prob.driver.opt_settings['tol'] = 1.0e-6
-# prob.driver.opt_settings['mu_init'] = 1e-5
-# prob.driver.opt_settings['max_iter'] = 50
-# prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
-# prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
-# prob.driver.opt_settings['mu_strategy'] = 'monotone'
-# prob.driver.options['print_results'] = 'minimal'
+prob.driver = om.pyOptSparseDriver()
+prob.driver.options['optimizer'] = 'IPOPT'
+prob.driver.declare_coloring(show_summary=False)
+prob.driver.opt_settings['print_user_options'] = 'no'
+prob.driver.opt_settings['print_frequency_iter'] = 10
+prob.driver.opt_settings['print_level'] = 3
+prob.driver.opt_settings['tol'] = 1.0e-6
+prob.driver.opt_settings['mu_init'] = 1e-5
+prob.driver.opt_settings['max_iter'] = 300
+prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
+prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
+prob.driver.opt_settings['mu_strategy'] = 'monotone'
+prob.driver.options['print_results'] = 'minimal'
 
 # prob.add_driver('SNOPT', max_iter=50)
 # SNOPT Optimizer Settings #
@@ -696,9 +779,17 @@ descent.set_state_val('mass', 125000, units='lbm')
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
-prob.verbosity = Verbosity.BRIEF
+prob.verbosity = Verbosity.VERBOSE
+
+time_setup = time.time()
 
 prob.run_aviary_problem()
+
+finish_time = time.time()
+setup_time = time_setup - start_time
+total_time = finish_time - start_time
+print(f'Setup_time = {setup_time}')
+print(f'Total_time = {total_time}')
 
 # Uncomment these lines to get printouts of every variable in the openmdao model
 # prob.model.list_vars(units=True, print_arrays=True)
