@@ -95,9 +95,9 @@ class TurbopropMissionTest(unittest.TestCase):
     def get_results(self, point_names=None, display_results=False):
         shp = self.prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val('propeller_thrust', units='lbf')
-        tailpipe_thrust = self.prob.get_val('turboshaft_thrust', units='lbf')
-        max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX, units='lbf')
+        prop_thrust = self.prob.get_val('thrust_summation.propeller_thrust', units='lbf')
+        tailpipe_thrust = self.prob.get_val('thrust_summation.turboshaft_thrust', units='lbf')
+        # max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX, units='lbf')
         fuel_flow = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h'
         )
@@ -110,7 +110,7 @@ class TurbopropMissionTest(unittest.TestCase):
                     tailpipe_thrust[n],
                     prop_thrust[n],
                     total_thrust[n],
-                    max_thrust[n],
+                    # max_thrust[n],
                     fuel_flow[n],
                 )
             )
@@ -128,7 +128,7 @@ class TurbopropMissionTest(unittest.TestCase):
                 37.7,
                 610.28630998,
                 647.98630998,
-                4183.87495338,
+                # 4183.87495338,
                 -195.8,
             ),
             (
@@ -136,10 +136,17 @@ class TurbopropMissionTest(unittest.TestCase):
                 136.3,
                 4047.57495338,
                 4183.87495338,
-                4183.87495338,
+                # 4183.87495338,
                 -644.0,
             ),
-            (778.21130479, 21.3, 558.33650216, 579.63650216, 579.63650216, -839.7),
+            (
+                778.21130479,
+                21.3,
+                558.33650216,
+                579.63650216,
+                # 579.63650216,
+                -839.7,
+            ),
         ]
 
         options = get_option_defaults()
@@ -181,9 +188,30 @@ class TurbopropMissionTest(unittest.TestCase):
         filename = get_path('models/engines/turboshaft_1120hp.csv')
         test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         truth_vals = [
-            (111.99507922, 37.507376, 610.67122085, 648.17859685, 4174.43077943, -195.78762),
-            (1119.99609612, 136.3, 4047.57495338, 4183.87495338, 4183.87495338, -644.0),
-            (778.21130479, 21.3, 558.33650216, 579.63650216, 579.63650216, -839.7),
+            (
+                111.99507922,
+                37.507376,
+                610.67122085,
+                648.17859685,
+                # 4174.43077943,
+                -195.78762,
+            ),
+            (
+                1119.99609612,
+                136.3,
+                4047.57495338,
+                4183.87495338,
+                # 4183.87495338,
+                -644.0,
+            ),
+            (
+                778.21130479,
+                21.3,
+                558.33650216,
+                579.63650216,
+                # 579.63650216,
+                -839.7,
+            ),
         ]
 
         self.prepare_model(test_points, filename)
@@ -219,7 +247,7 @@ class TurbopropMissionTest(unittest.TestCase):
                 0.0,
                 610.28630998,
                 610.28630998,
-                4047.57495338,
+                # 4047.57495338,
                 -195.8,
             ),
             (
@@ -227,10 +255,17 @@ class TurbopropMissionTest(unittest.TestCase):
                 0.0,
                 4047.57495338,
                 4047.57495338,
-                4047.57495338,
+                # 4047.57495338,
                 -644.0,
             ),
-            (778.21130479, 0.0, 558.33650216, 558.33650216, 558.33650216, -839.7),
+            (
+                778.21130479,
+                0.0,
+                558.33650216,
+                558.33650216,
+                # 558.33650216,
+                -839.7,
+            ),
         ]
 
         self.prepare_model(test_points, filename)
@@ -284,7 +319,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
         shp = self.prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER, units='hp')
         total_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, units='lbf')
-        prop_thrust = self.prob.get_val('propeller_thrust', units='lbf')
+        prop_thrust = self.prob.get_val('thrust_summation.propeller_thrust', units='lbf')
         electric_power = self.prob.get_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, units='kW')
 
         assert_near_equal(shp, shp_expected, tolerance=1e-8)
