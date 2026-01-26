@@ -21,6 +21,9 @@ class Nacelles(om.ExplicitComponent):
         add_aviary_input(
             self, Aircraft.Nacelle.WETTED_AREA_SCALER, shape=num_engine_type, units='unitless'
         )
+        add_aviary_input(
+            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
+        )
 
         add_aviary_output(self, Aircraft.Nacelle.TOTAL_WETTED_AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Nacelle.WETTED_AREA, shape=num_engine_type, units='ft**2')
@@ -36,6 +39,7 @@ class Nacelles(om.ExplicitComponent):
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.Nacelle.WETTED_AREA_SCALER,
+                Aircraft.Engine.SCALE_FACTOR,
             ],
         )
 
@@ -45,10 +49,10 @@ class Nacelles(om.ExplicitComponent):
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Nacelle.AVG_LENGTH,
                 Aircraft.Nacelle.WETTED_AREA_SCALER,
+                Aircraft.Engine.SCALE_FACTOR,
             ],
             rows=shape,
             cols=shape,
-            val=1.0,
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
@@ -62,10 +66,18 @@ class Nacelles(om.ExplicitComponent):
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.WETTED_AREA_SCALER]
 
+        engine_scale = inputs[Aircraft.Engine.SCALE_FACTOR]
+
         wetted_area = np.zeros(num_engine_type, dtype=avg_diam.dtype)
 
         calc_idx = np.where(num_engines >= 1)
-        wetted_area[calc_idx] = scaler[calc_idx] * 2.8 * avg_diam[calc_idx] * avg_length[calc_idx]
+        wetted_area[calc_idx] = (
+            scaler[calc_idx]
+            * 2.8
+            * avg_diam[calc_idx]
+            * avg_length[calc_idx]
+            * engine_scale[calc_idx]
+        )
 
         outputs[Aircraft.Nacelle.WETTED_AREA] = wetted_area
 
@@ -80,21 +92,28 @@ class Nacelles(om.ExplicitComponent):
         avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.WETTED_AREA_SCALER]
 
+        engine_scale = inputs[Aircraft.Engine.SCALE_FACTOR]
+
         deriv_area_len = np.zeros(len(num_engines), dtype=avg_diam.dtype)
         deriv_area_diam = np.zeros(len(num_engines), dtype=avg_diam.dtype)
         deriv_area_scaler = np.zeros(len(num_engines), dtype=avg_diam.dtype)
+        deriv_area_thrust = np.zeros(len(num_engines), dtype=avg_diam.dtype)
         deriv_total_len = np.zeros(len(num_engines), dtype=avg_diam.dtype)
         deriv_total_diam = np.zeros(len(num_engines), dtype=avg_diam.dtype)
         deriv_total_scaler = np.zeros(len(num_engines), dtype=avg_diam.dtype)
+        deriv_total_thrust = np.zeros(len(num_engines), dtype=avg_diam.dtype)
 
-        area_to_length = 2.8 * avg_diam
-        area_to_diam = 2.8 * avg_length
-        area_to_scaler = 2.8 * avg_diam * avg_length
+        area_to_length = 2.8 * avg_diam * engine_scale
+        area_to_diam = 2.8 * avg_length * engine_scale
+        area_to_scaler = 2.8 * avg_diam * avg_length * engine_scale
+        area_to_engine_scale = 2.8 * avg_diam * avg_length
 
         calc_idx = np.where(num_engines >= 1)
         deriv_area_len[calc_idx] = scaler[calc_idx] * area_to_length[calc_idx]
         deriv_area_diam[calc_idx] = scaler[calc_idx] * area_to_diam[calc_idx]
         deriv_area_scaler[calc_idx] = area_to_scaler[calc_idx]
+        deriv_area_thrust[calc_idx] = scaler[calc_idx] * area_to_engine_scale[calc_idx]
+
         deriv_total_len[calc_idx] = (
             scaler[calc_idx] * num_engines[calc_idx] * area_to_length[calc_idx]
         )
@@ -102,12 +121,17 @@ class Nacelles(om.ExplicitComponent):
             scaler[calc_idx] * num_engines[calc_idx] * area_to_diam[calc_idx]
         )
         deriv_total_scaler[calc_idx] = num_engines[calc_idx] * area_to_scaler[calc_idx]
+        deriv_total_thrust[calc_idx] = (
+            scaler[calc_idx] * num_engines[calc_idx] * area_to_engine_scale[calc_idx]
+        )
 
         J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Nacelle.AVG_LENGTH] = deriv_area_len
 
         J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Nacelle.AVG_DIAMETER] = deriv_area_diam
 
         J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Nacelle.WETTED_AREA_SCALER] = deriv_area_scaler
+
+        J[Aircraft.Nacelle.WETTED_AREA, Aircraft.Engine.SCALE_FACTOR] = deriv_area_thrust
 
         J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.AVG_LENGTH] = deriv_total_len
 
@@ -116,3 +140,5 @@ class Nacelles(om.ExplicitComponent):
         J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Nacelle.WETTED_AREA_SCALER] = (
             deriv_total_scaler
         )
+
+        J[Aircraft.Nacelle.TOTAL_WETTED_AREA, Aircraft.Engine.SCALE_FACTOR] = deriv_total_thrust

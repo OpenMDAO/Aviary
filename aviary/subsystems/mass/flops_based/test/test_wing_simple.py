@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.wing_simple import SimpleWingBendingFact
@@ -10,10 +11,12 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_inputs,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class SimpleWingBendingFactTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -60,6 +63,7 @@ class SimpleWingBendingFactTest(unittest.TestCase):
                 Aircraft.Wing.BENDING_MATERIAL_FACTOR,
                 Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
             ],
+            version=Version.TRANSPORT,
             atol=1e-11,
             rtol=1e-11,
         )
