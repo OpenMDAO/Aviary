@@ -490,7 +490,7 @@ class TurbopropMission(om.Group):
         if Dynamic.Vehicle.Propulsion.THRUST in shp_output_list:
             self.connect(
                 f'{shp_model.name}.{Dynamic.Vehicle.Propulsion.THRUST}',
-                'thrust_adder.turboshaft_thrust',
+                'thrust_summation.turboshaft_thrust',
             )
             shp_output_list.remove(Dynamic.Vehicle.Propulsion.THRUST)
 
@@ -616,7 +616,7 @@ class TurbopropMission(om.Group):
         if Dynamic.Vehicle.Propulsion.THRUST in propeller_output_list:
             self.connect(
                 f'{propeller_model.name}.{Dynamic.Vehicle.Propulsion.THRUST}',
-                'thrust_adder.propeller_thrust',
+                'thrust_summation.propeller_thrust',
             )
             propeller_output_list.remove(Dynamic.Vehicle.Propulsion.THRUST)
 
