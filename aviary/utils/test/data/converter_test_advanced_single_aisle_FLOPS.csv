@@ -11,8 +11,8 @@ aircraft:canard:mass_scaler,1.0,unitless
 aircraft:crew_and_payload:baggage_mass_per_passenger,35.0,lbm
 aircraft:crew_and_payload:cabin_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,20,unitless
-aircraft:crew_and_payload:design:num_first_class,16,unitless
 aircraft:crew_and_payload:design:num_economy_class,118,unitless
+aircraft:crew_and_payload:design:num_first_class,16,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
