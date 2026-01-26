@@ -43,6 +43,7 @@ class BasicTransportEngineCtrlsTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST],
@@ -112,6 +113,7 @@ class BWBBasicTransportEngineCtrlsTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST],

@@ -1,4 +1,4 @@
-import warnings
+import unittest
 from enum import Enum
 
 import openmdao.api as om
@@ -20,8 +20,8 @@ Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB'])
 
 
 def do_validation_test(
+    test: unittest.TestCase,
     prob: om.Problem,
-    case_name: str,
     input_validation_data: AviaryValues,
     output_validation_data: AviaryValues,
     input_keys: list,
@@ -44,61 +44,53 @@ def do_validation_test(
 
     Parameters
     ----------
+    test : unittest
+        The unittest housing this function call
     prob : om.Problem
         An instantiated and set-up Problem.
     case_name : str
         Name of the case being run.
     input_validation_data : AviaryValues
-        Input variables and their values to use when running the problem.
-        The object must contain at a minimum all the input variables listed
-        in input_keys.
+        Input variables and their values to use when running the problem. The object must contain at
+        a minimum all the input variables listed in input_keys.
     output_validation_data : AviaryValues
-        Output variables and their values to which output from the problem
-        will be compared. The object must contain at a minimum all the
-        output variables listed in output_keys. Note that input_validation_data
-        and output_validation_data may be the same object.
+        Output variables and their values to which output from the problem will be compared. The
+        object must contain at a minimum all the output variables listed in output_keys. Note that
+        input_validation_data and output_validation_data may be the same object.
     input_keys : str, or iter of str
-        List of input variables whose values will be transferred from
-        the input validation data in order to run the problem.
+        List of input variables whose values will be transferred from the input validation data in
+        order to run the problem.
     output_keys : str, or iter of str
-        List of output variables whose values will be looked up in
-        the output validation data and compared against the outputs from the
-        problem.
+        List of output variables whose values will be looked up in the output validation data and
+        compared against the outputs from the problem.
     aviary_option_keys: str, or iter of str
-        List of aviary_options keys whose values will be looked up and
-        listed in the options printout. If None, all items in aviary_options
-        will be listed.
+        List of aviary_options keys whose values will be looked up and listed in the options
+        printout. If None, all items in aviary_options will be listed.
     tol : float
-        Relative tolerance for comparing problem outputs against
-        validation data. The default is 1.0e-4.
+        Relative tolerance for comparing problem outputs against validation data. The default is
+        1.0e-4.
     atol : float
-        Absolute tolerance for checking partial derivative calculations. The
-        default is 1.0e-12.
+        Absolute tolerance for checking partial derivative calculations. The default is 1.0e-12.
     rtol : float
-        Relative tolerance for checking partial derivative calculations. The
-        default is 1.0e-12.
+        Relative tolerance for checking partial derivative calculations. The default is 1.0e-12.
     method : str
         Type of differencing to use. The default is "cs".
     step : float
-        Step size for approximation. Default is None, which means 1e-6 for 'fd' and 1e-40 for
-        'cs'.
+        Step size for approximation. Default is None, which means 1e-6 for 'fd' and 1e-40 for 'cs'.
     check_values : bool
-        If true, check output values against validation data. The default is
-        true.
+        If true, check output values against validation data. The default is true.
     check_partials : bool
         If true, check partial derivative calculations. The default is true.
     excludes : None or list_like
-        List of glob patterns for pathnames to exclude from the partial derivative check.
-        Default is None, which excludes nothing.
+        List of glob patterns for pathnames to exclude from the partial derivative check. Default is
+        None, which excludes nothing.
     list_options: bool
-        If True, values of options for all components in the model will be listed
-        on standard output. Default is False.
+        If True, values of options for all components in the model will be listed on standard
+        output. Default is False.
     list_inputs: bool
-        If True, prob.model.list_inputs() will be called after the model is run.
-        Default is False.
+        If True, prob.model.list_inputs() will be called after the model is run. Default is False.
     list_outputs: bool
-        If True, prob.model.list_outputs() will be called after the model is run.
-        Default is False.
+        If True, prob.model.list_outputs() will be called after the model is run. Default is False.
     """
     input_key_list = _assure_is_list(input_keys)
     output_key_list = _assure_is_list(output_keys)
@@ -127,10 +119,8 @@ def do_validation_test(
         for key in output_key_list:
             desired, units = output_validation_data.get_item(key)
             actual = prob.get_val(key, units)
-            try:
+            with test.subTest(key):
                 assert_near_equal(actual, desired, tol)
-            except ValueError as err:
-                raise ValueError(f'ValueError for key = {key}') from err
 
     if check_partials:
         partial_data = prob.check_partials(
@@ -140,6 +130,7 @@ def do_validation_test(
 
 
 def flops_validation_test(
+    test: unittest.TestCase,
     prob: om.Problem,
     case_name: str,
     input_keys: list,
@@ -165,6 +156,8 @@ def flops_validation_test(
 
     Parameters
     ----------
+    test : unittest
+        The unittest housing this function call
     prob : om.Problem
         An instantiated and set-up Problem.
     case_name : str
@@ -239,8 +232,8 @@ def flops_validation_test(
         return
 
     do_validation_test(
+        test=test,
         prob=prob,
-        case_name=case_name,
         input_validation_data=flops_inputs,
         output_validation_data=flops_outputs,
         input_keys=input_keys,

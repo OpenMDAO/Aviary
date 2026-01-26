@@ -34,8 +34,8 @@ class TakeoffEOMTest(unittest.TestCase):
         prob = self._make_prob(climbing=False)
 
         do_validation_test(
+            self,
             prob,
-            'takeoff_eom_ground',
             input_validation_data=detailed_takeoff_ground,
             output_validation_data=detailed_takeoff_ground,
             input_keys=[
@@ -59,8 +59,8 @@ class TakeoffEOMTest(unittest.TestCase):
         prob = self._make_prob(climbing=True)
 
         do_validation_test(
+            self,
             prob,
-            'takeoff_eom_climbing',
             input_validation_data=detailed_takeoff_climbing,
             output_validation_data=detailed_takeoff_climbing,
             input_keys=[

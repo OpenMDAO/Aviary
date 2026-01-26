@@ -26,8 +26,8 @@ class AltitudeRateTest(unittest.TestCase):
 
     def test_case1(self):
         do_validation_test(
+            self,
             self.prob,
-            'full_mission_test_data',
             input_validation_data=data,
             output_validation_data=data,
             input_keys=[

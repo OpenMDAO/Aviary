@@ -39,6 +39,7 @@ class NonFlightCrewMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
@@ -71,6 +72,7 @@ class FlightCrewMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,
@@ -105,6 +107,7 @@ class BWBNonFlightCrewMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
@@ -137,6 +140,7 @@ class BWBFlightCrewMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER,

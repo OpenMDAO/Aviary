@@ -55,6 +55,7 @@ class EnginePodMassTest(unittest.TestCase):
         # Tol not that tight, but it is unclear where the pod mass values in files come from,
         # since they aren't printed in the FLOPS output.
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -136,6 +137,7 @@ class BWBEnginePodMassTest(unittest.TestCase):
         # Tol not that tight, but it is unclear where the pod mass values in files come from,
         # since they aren't printed in the FLOPS output.
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
