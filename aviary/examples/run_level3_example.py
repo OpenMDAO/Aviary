@@ -8,6 +8,7 @@ import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
 from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
@@ -17,7 +18,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 import time
 
 
-phase_info = {
+phase_info2 = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
@@ -29,7 +30,8 @@ phase_info = {
             'mach_optimize': False,
             'mach_polynomial_order': 3,
             'altitude_bounds': ((0.0, 35000.0), 'ft'),
-            'altitude_initial': (0, 'ft'),
+            'altitude_initial': (0.0, 'ft'),
+            'altitude_final': (35000, 'ft'),
             'altitude_optimize': False,
             'altitude_polynomial_order': 3,
             'throttle_enforcement': 'path_constraint',
@@ -104,7 +106,7 @@ class L3SubsystemsGroup(om.Group):
 
 
 # Toggle this boolean option to run with shooting vs collocation transcription:
-shooting = False
+shooting = True
 
 prob = av.AviaryProblem()
 
@@ -739,13 +741,13 @@ control_keys = ['mach', 'altitude']
 state_keys = ['mass', Dynamic.Mission.DISTANCE]
 guesses = {}
 guesses['mach_climb'] = ([0.2, 0.72], 'unitless')
-guesses['altitude_climb'] = ([0, 32000.0], 'ft')
+guesses['altitude_climb'] = ([0, 35000.0], 'ft')
 guesses['time_climb'] = ([0, 3840.0], 's')
-guesses['mach_cruise'] = ([0.72, 0.72], 'unitless')
-guesses['altitude_cruise'] = ([32000.0, 34000.0], 'ft')
+guesses['mach_cruise'] = ([0.79, 0.79], 'unitless')
+guesses['altitude_cruise'] = ([35000.0, 35000.0], 'ft')
 guesses['time_cruise'] = ([3840.0, 3390.0], 's')
-guesses['mach_descent'] = ([0.72, 0.36], 'unitless')
-guesses['altitude_descent'] = ([34000.0, 500.0], 'ft')
+guesses['mach_descent'] = ([0.77, 0.36], 'unitless')
+guesses['altitude_descent'] = ([35000.0, 500.0], 'ft')
 guesses['time_descent'] = ([7230.0, 1740.0], 's')
 
 climb.set_time_val(
