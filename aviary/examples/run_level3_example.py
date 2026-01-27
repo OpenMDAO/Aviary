@@ -780,7 +780,7 @@ descent.set_state_val('mass', 125000, units='lbm')
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
-prob.verbosity = Verbosity.VERBOSE
+prob.verbosity = Verbosity.BRIEF
 
 time_setup = time.time()
 
