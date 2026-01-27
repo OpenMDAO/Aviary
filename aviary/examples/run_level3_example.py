@@ -1,8 +1,17 @@
+"""
+This is an example of running a coupled aircraft design-mission optimization in Aviary without using the lower level APIs.
+It runs the same aircraft and mission as the `level1_example.py` and 'level2_example.py' scripts.
+The aircraft is loaded from .csv and the default height energy phase_info dictionary is imported from the file.
+
+This script unwraps the subsystem and trajectory builders, exposing how Aviary interacts with openMDAO and Dymos.
+It is divided into sections separated by '####' with the level2 api calls commented out so you can see what happens in each level2 method.
+
+"""
+
 import warnings
 
 import dymos as dm
 import openmdao.api as om
-import numpy as np
 
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
@@ -14,83 +23,6 @@ from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
 from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
-import time
-
-
-phase_info2 = {
-    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
-    'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
-        'user_options': {
-            'num_segments': 6,
-            'order': 3,
-            'mach_bounds': ((0.1, 0.8), 'unitless'),
-            'mach_initial': (0.3, 'unitless'),
-            'mach_optimize': False,
-            'mach_polynomial_order': 3,
-            'altitude_bounds': ((0.0, 35000.0), 'ft'),
-            'altitude_initial': (0.0, 'ft'),
-            'altitude_final': (35000, 'ft'),
-            'altitude_optimize': False,
-            'altitude_polynomial_order': 3,
-            'throttle_enforcement': 'path_constraint',
-            'mass_ref': (200000, 'lbm'),
-            'time_initial': (0.0, 'min'),
-            'time_duration_bounds': ((20.0, 60.0), 'min'),
-            'no_descent': True,
-        },
-    },
-    'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
-        'user_options': {
-            'num_segments': 1,
-            'order': 3,
-            'mach_initial': (0.79, 'unitless'),
-            'mach_bounds': ((0.79, 0.79), 'unitless'),
-            'mach_optimize': False,
-            'mach_polynomial_order': 1,
-            'altitude_initial': (35000.0, 'ft'),
-            'altitude_bounds': ((35000.0, 35000.0), 'ft'),
-            'altitude_optimize': False,
-            'altitude_polynomial_order': 1,
-            'throttle_enforcement': 'boundary_constraint',
-            'mass_ref': (200000, 'lbm'),
-            'time_initial_bounds': ((20.0, 60.0), 'min'),
-            'time_duration_bounds': ((60.0, 720.0), 'min'),
-        },
-    },
-    'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
-        'user_options': {
-            'num_segments': 5,
-            'order': 3,
-            'mach_initial': (0.79, 'unitless'),
-            'mach_final': (0.3, 'unitless'),
-            'mach_bounds': ((0.2, 0.8), 'unitless'),
-            'mach_optimize': False,
-            'mach_polynomial_order': 3,
-            'altitude_initial': (35000.0, 'ft'),
-            'altitude_final': (35.0, 'ft'),
-            'altitude_bounds': ((0.0, 35000.0), 'ft'),
-            'altitude_optimize': False,
-            'altitude_polynomial_order': 3,
-            'throttle_enforcement': 'path_constraint',
-            'mass_ref': (200000, 'lbm'),
-            'distance_ref': (3375, 'nmi'),
-            'time_initial_bounds': ((80.0, 780.0), 'min'),
-            'time_duration_bounds': ((5.0, 45.0), 'min'),
-            'no_climb': True,
-        },
-    },
-    'post_mission': {
-        'include_landing': False,
-        'constrain_range': True,
-        'target_range': (3375.0, 'nmi'),
-    },
-}
-
-start_time = time.time()
 
 
 class L3SubsystemsGroup(om.Group):
@@ -106,7 +38,8 @@ class L3SubsystemsGroup(om.Group):
 
 
 # Toggle this boolean option to run with shooting vs collocation transcription:
-shooting = True
+# shooting = True
+shooting = False
 
 prob = av.AviaryProblem()
 
@@ -145,9 +78,6 @@ prob.model.core_subsystems = {
 }
 prob.meta_data = BaseMetaData.copy()
 
-#####
-# prob.add_pre_mission_systems()
-# overwrites calculated values in pre-mission with override values from .csv
 prob.model.add_subsystem(
     'pre_mission',
     PreMissionGroup(),
@@ -155,7 +85,6 @@ prob.model.add_subsystem(
     promotes_outputs=['aircraft:*', 'mission:*'],
 )
 
-#####
 # This is a combination of prob.add_pre_mission_systems and prob.setup()
 # In the aviary code add_pre_mission_systems only instantiates the objects and methods, the build method is called in prob.setup()
 prob.model.pre_mission.add_subsystem(
@@ -238,16 +167,10 @@ for phase_idx, phase_name in enumerate(phase_list):
     #     transcription=transcription,
     # )
     # This basically just adds these objects to the class - we have them all available in this L3 script so have no need for the extra class!
-    # phase_name
-    # subsystem_options
-    # user_options
-    # initial_guesses
-    # prob.meta_data
-    # default_mission_subsystems
     transcription = None
     ode_class = None
     is_analytic_phase = False
-    num_nodes = 5
+    num_nodes = 5  # this is only used for analytic phases
 
     # Now build the phase using the instantiated phase object:
     # phase = phase_object.build_phase(aviary_options=aviary_inputs)
@@ -255,20 +178,20 @@ for phase_idx, phase_name in enumerate(phase_list):
     # For L3 we need to do this without the builder
 
     ode_class = EnergyODE
-    # if transcription is None and not is_analytic_phase:
-    # transcription = self.make_default_transcription()
-
     user_options = FlightPhaseOptions(user_options)
     num_segments = user_options['num_segments']
     order = user_options['order']
 
     if shooting:
-        # transcription = dm.PicardShooting(num_segments=num_segments, solve_segments='forward') # nodes per seg= num_segments * 3 similar number of nodes to radau
+        nodes_per_seg = order * num_segments
         transcription = dm.PicardShooting(
-            num_segments=1, nodes_per_seg=10, solve_segments='forward'
-        )  # forces single shooting
+            num_segments=1, nodes_per_seg=nodes_per_seg, solve_segments='forward'
+        )
     else:
-        transcription = dm.Radau(num_segments=num_segments, order=order, compressed=True)
+        seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+        transcription = dm.Radau(
+            num_segments=num_segments, order=order, compressed=True, segment_ends=seg_ends
+        )
 
     kwargs = {
         'meta_data': prob.meta_data,
@@ -289,7 +212,7 @@ for phase_idx, phase_name in enumerate(phase_list):
     throttle_enforcement = user_options['throttle_enforcement']
     no_descent = user_options['no_descent']  # not used in this example
     no_climb = user_options['no_climb']  # not used in this example
-    constraints = user_options['constraints']
+    constraints = user_options['constraints']  # not used in this example
     ground_roll = user_options['ground_roll']  # not used in this example
 
     phase.add_state(
@@ -421,8 +344,7 @@ prob.traj = setup_trajectory_params(
     prob.model, prob.traj, aviary_inputs, external_parameters=externs
 )
 
-# need aviary inputs assigned to the problem object for other functions below
-# this maybe needs a better location in this script.
+# Need aviary inputs assigned to the problem object for other functions below
 prob.aviary_inputs = aviary_inputs
 
 #####
@@ -447,8 +369,8 @@ climb.set_time_options(
 )
 
 cruise.set_time_options(
-    duration_bounds=(3390, 10170),
-    duration_ref=6780.0,
+    duration_bounds=(3390, 18000),
+    duration_ref=10695.0,
 )
 
 descent.set_time_options(
@@ -566,16 +488,13 @@ ecomp = om.ExecComp(
     mass_resid={'units': 'lbm'},
 )
 
-# this seems clunky - we could just move this directly into the promotes inputs block?
-payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
-
 prob.model.post_mission.add_subsystem(
     'mass_constraint',
     ecomp,
     promotes_inputs=[
         ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
         ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
-        ('payload_mass', payload_mass_src),
+        ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
         ('initial_mass', Mission.Summary.GROSS_MASS),
     ],
     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
@@ -617,9 +536,10 @@ prob.model.connect(
     src_indices=[-1],
     flat_src_indices=True,
 )
-#### End of link_phases
 
 #####
+# Each driver requires different settings - uncomment the one to be used:
+
 # prob.add_driver('SLSQP', max_iter=50)
 # SLSQP Optimizer Settings
 # prob.driver = om.ScipyOptimizeDriver()
@@ -741,13 +661,13 @@ control_keys = ['mach', 'altitude']
 state_keys = ['mass', Dynamic.Mission.DISTANCE]
 guesses = {}
 guesses['mach_climb'] = ([0.2, 0.72], 'unitless')
-guesses['altitude_climb'] = ([0, 35000.0], 'ft')
+guesses['altitude_climb'] = ([0, 32000.0], 'ft')
 guesses['time_climb'] = ([0, 3840.0], 's')
-guesses['mach_cruise'] = ([0.79, 0.79], 'unitless')
-guesses['altitude_cruise'] = ([35000.0, 35000.0], 'ft')
+guesses['mach_cruise'] = ([0.72, 0.72], 'unitless')
+guesses['altitude_cruise'] = ([32000.0, 34000.0], 'ft')
 guesses['time_cruise'] = ([3840.0, 3390.0], 's')
-guesses['mach_descent'] = ([0.77, 0.36], 'unitless')
-guesses['altitude_descent'] = ([35000.0, 500.0], 'ft')
+guesses['mach_descent'] = ([0.72, 0.36], 'unitless')
+guesses['altitude_descent'] = ([34000.0, 500.0], 'ft')
 guesses['time_descent'] = ([7230.0, 1740.0], 's')
 
 climb.set_time_val(
@@ -782,15 +702,7 @@ prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
 prob.verbosity = Verbosity.BRIEF
 
-time_setup = time.time()
-
 prob.run_aviary_problem()
-
-finish_time = time.time()
-setup_time = time_setup - start_time
-total_time = finish_time - start_time
-print(f'Setup_time = {setup_time}')
-print(f'Total_time = {total_time}')
 
 # Uncomment these lines to get printouts of every variable in the openmdao model
 # prob.model.list_vars(units=True, print_arrays=True)
