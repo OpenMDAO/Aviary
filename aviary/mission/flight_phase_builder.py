@@ -160,7 +160,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='transcription',
             default='Collocation',
-            desc='Set the dymos transcription for the phase. Currently only Collocation and PicardShooting are supported',
+            desc='Set the dymos transcription for the phase. Currently only Collocation and PicardShooting are supported. default = Collocation for backwards compatibility.',
         )
 
 
