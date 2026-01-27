@@ -4595,6 +4595,34 @@ add_meta_data(
     multivalue=True,
 )
 
+#   ____                                             _____                 _
+#  / __ \                                           / ____|               | |
+# | |  | | __  __  _   _    __ _    ___   _ __     | (___    _   _   ___  | |_    ___   _ __ ___
+# | |  | | \ \/ / | | | |  / _` |  / _ \ | '_ \     \___ \  | | | | / __| | __|  / _ \ | '_ ` _ \
+# | |__| |  >  <  | |_| | | (_| | |  __/ | | | |    ____) | | |_| | \__ \ | |_  |  __/ | | | | | |
+#  \____/  /_/\_\  \__, |  \__, |  \___| |_| |_|   |_____/   \__, | |___/  \__|  \___| |_| |_| |_|
+#                   __/ |   __/ |                             __/ |
+#                  |___/   |___/                             |___/
+# ================================================================================================
+
+add_meta_data(
+    Aircraft.OxygenSystem.MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Mass of passenger oxygen system',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.OxygenSystem.MASS_SCALAR,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Mass Scalar for the Passenger Oxygen System',
+    default_value=0.0,
+)
+
 #  _____            _           _
 # |  __ \          (_)         | |
 # | |__) |   __ _   _   _ __   | |_
