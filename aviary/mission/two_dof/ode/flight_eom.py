@@ -163,7 +163,7 @@ class EOMRates(om.ExplicitComponent):
         )
 
         J['required_lift', Dynamic.Vehicle.MASS] = (
-            np.cos(gamma)  - weight * np.sin(gamma) * dGamma_dWeight
+            np.cos(gamma) - weight * np.sin(gamma) * dGamma_dWeight
         ) * GRAV_ENGLISH_LBM
         J['required_lift', Dynamic.Vehicle.Propulsion.THRUST_TOTAL] = -weight * np.sin(
             gamma

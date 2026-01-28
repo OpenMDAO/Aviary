@@ -85,13 +85,13 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             name='EAS_target',
             default=0.0,
             units='kn',
-            desc='Value for maximum speed constraint in this phase.',
+            desc='Value for maximum speed constraint for this phase.',
         )
 
         self.declare(
             name='mach_target',
             default=0.0,
-            desc='Defines the mach constraint in this phase.'
+            desc='Defines the maximum mach constraint for this phase.'
         )
 
         self.declare(
@@ -110,7 +110,6 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
             '_add_user_defined_constraints().',
         )
-
 
 
 class FlightPhase(PhaseBuilder):
