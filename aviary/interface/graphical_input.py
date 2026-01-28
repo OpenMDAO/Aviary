@@ -815,7 +815,7 @@ class AviaryMissionEditor(tk.Tk):
         """
         precision = int(self.data_info['rounding'][col].get()) + extra
         width = 8
-        return f"{value:{width}.{precision}g}"
+        return f'{value:{width}.{precision}g}'
 
     # ----------------------
     # Popup related functions
