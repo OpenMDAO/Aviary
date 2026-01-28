@@ -154,11 +154,10 @@ class CustomEngineTest(unittest.TestCase):
         phase_info = {
             'pre_mission': {
                 'include_takeoff': False,
-                'external_subsystems': [],
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -180,7 +179,6 @@ class CustomEngineTest(unittest.TestCase):
             },
             'post_mission': {
                 'include_landing': False,
-                'external_subsystems': [],
             },
         }
 
@@ -191,8 +189,9 @@ class CustomEngineTest(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
             phase_info,
-            engine_builders=[SimpleTestEngine()],
         )
+
+        prob.load_external_subsystems([SimpleTestEngine()])
 
         prob.check_and_preprocess_inputs()
 

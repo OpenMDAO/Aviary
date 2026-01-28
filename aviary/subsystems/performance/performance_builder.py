@@ -1,8 +1,8 @@
 from aviary.subsystems.performance.performance_premission import PerformancePremission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
-class CorePerformanceBuilder(SubsystemBuilderBase):
+class CorePerformanceBuilder(SubsystemBuilder):
     """Core performance analysis subsystem builder."""
 
     def __init__(self, name=None, meta_data=None):

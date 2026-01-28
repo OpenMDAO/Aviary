@@ -22,7 +22,6 @@ aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
 aircraft:engine:fuel_flow_scaler_linear_term,0.,unitless
 aircraft:engine:geopotential_alt,False,unitless
-aircraft:engine:has_propellers,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1.15,unitless
@@ -218,7 +217,7 @@ aircraft:vertical_tail:num_tails,1,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.92669766647637,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
-aircraft:wing:chord_per_semispan,0.31,0.23,0.084,unitless
+aircraft:wing:chord_per_semispan_dist,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2
 aircraft:wing:control_surface_area_ratio,0.1,unitless

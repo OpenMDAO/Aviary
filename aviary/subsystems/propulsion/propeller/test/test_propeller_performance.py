@@ -221,7 +221,9 @@ class PropellerPerformanceTest(unittest.TestCase):
             800 * np.ones(num_nodes),
             units='ft/s',
         )
-        pp.set_input_defaults(Dynamic.Mission.VELOCITY, 100.0 * np.ones(num_nodes), units='knot')
+        prob.model.set_input_defaults(
+            Dynamic.Mission.VELOCITY, 100.0 * np.ones(num_nodes), units='knot'
+        )
         num_blades = 4
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=num_blades, units='unitless')
         options.set_val(

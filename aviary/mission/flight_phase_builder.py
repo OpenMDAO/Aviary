@@ -1,8 +1,8 @@
 import dymos as dm
 import numpy as np
 
-from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
-from aviary.mission.flops_based.phases.phase_utils import (
+from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
+from aviary.mission.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
@@ -10,7 +10,7 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessControl,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
@@ -159,14 +159,15 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
 
 @register
-class FlightPhaseBase(PhaseBuilderBase):
+class FlightPhaseBase(PhaseBuilder):
     """
     The base class for flight phase.
 
-    This houses parts of the build_phase process that are commmon to EnergyPhase and TwoDOFPhase.
+    This houses parts of the build_phase process that are common to EnergyPhase and
+    SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('external_subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -223,7 +224,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        phase = add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         ################
         # Add Controls #
@@ -423,9 +424,9 @@ class FlightPhaseBase(PhaseBuilderBase):
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
+        # TODO: support subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],

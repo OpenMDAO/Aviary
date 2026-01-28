@@ -3,7 +3,7 @@ Define subsystem builder for Aviary core propulsion.
 
 Classes
 -------
-PropulsionBuilderBase : the interface for a propulsion subsystem builder.
+PropulsionBuilder : the interface for a propulsion subsystem builder.
 
 CorePropulsionBuilder : the interface for Aviary's core propulsion subsystem builder
 """
@@ -14,7 +14,7 @@ from aviary.interface.utils import write_markdown_variable_table
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission
 from aviary.subsystems.propulsion.propulsion_premission import PropulsionPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 # NOTE These are currently needed to get around variable hierarchy being class-based.
 #      Ideally, an alternate solution to loop through the hierarchy will be created and
@@ -25,15 +25,15 @@ from aviary.variable_info.variables import Aircraft
 _default_name = 'propulsion'
 
 
-class PropulsionBuilderBase(SubsystemBuilderBase):
+class PropulsionBuilder(SubsystemBuilder):
     """
     Base class for propulsion builder.
 
     Note
     ----
-    unlike the other subsystem builders, it is not recommended to create additional
-    propulsion subsystems, as propulsion is intended to be an agnostic carrier of
-    all propulsion-related subsystem builders in the form of EngineModels.
+    Unlike the other subsystem builders, it is not recommended to create additional propulsion
+    subsystems, as propulsion is intended to be an agnostic carrier of all propulsion-related
+    subsystem builders in the form of EngineModels.
 
     Methods
     -------
@@ -49,14 +49,8 @@ class PropulsionBuilderBase(SubsystemBuilderBase):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def mission_inputs(self, **kwargs):
-        return ['*']
 
-    def mission_outputs(self, **kwargs):
-        return ['*']
-
-
-class CorePropulsionBuilder(PropulsionBuilderBase):
+class CorePropulsionBuilder(PropulsionBuilder):
     """
     Core propulsion builder.
 
@@ -86,15 +80,15 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         Call get_mass_names() on all engine models and return combined result.
     preprocess_inputs(self) -> aviary_inputs:
         Call get_mass_names() on all engine models and return combined result.
-    get_outputs(self) -> list:
-        Call get_outputs() on all engine models and return combined result.
+    get_timeseries(self) -> list:
+        Call get_timeseries() on all engine models and return combined result.
     report(self):
         Generate the report for Aviary core propulsion analysis.
     """
 
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
         if name is None:
-            name = 'core_propulsion'
+            name = 'propulsion'
 
         super().__init__(name=name, meta_data=meta_data)
 
@@ -265,11 +259,11 @@ class CorePropulsionBuilder(PropulsionBuilderBase):
         return mass_names
 
     # NOTE no unittests!
-    def get_outputs(self):
-        """Call get_outputs() on all engine models and return combined result."""
+    def get_timeseries(self):
+        """Call get_timeseries() on all engine models and return combined result."""
         outputs = []
         for engine in self.engine_models:
-            engine_outputs = engine.get_outputs()
+            engine_outputs = engine.get_timeseries()
             outputs.append(engine_outputs)
 
         return outputs

@@ -258,14 +258,28 @@ def create_report_frame(documentation, format, text_filepath):
     """
     if os.path.isfile(text_filepath):
         if format == 'html':
-            iframe_css = 'width=1200px height=800px overflow-x="scroll" overflow="scroll" margin=0px padding=0px border=20px frameBorder=20px scrolling="yes"'
+            # Use CSS that allows the iframe to stretch
+            iframe_html = f"""
+            <div style="width: 100%; height: 100%; min-height: 600px;">
+                <iframe
+                    src="/home/{text_filepath}"
+                    style="width: 100%; height: 100%; border: none; min-height: 600px;"
+                    scrolling="yes">
+                </iframe>
+            </div>
+            """
             report_pane = pn.Column(
                 pn.pane.HTML(
                     f'<p class="pane_doc">{documentation}</p>',
                     stylesheets=['assets/aviary_styles.css'],
                     styles={'text-align': 'left'},
                 ),
-                pn.pane.HTML(f'<iframe {iframe_css} src=/home/{text_filepath}></iframe>'),
+                pn.pane.HTML(
+                    iframe_html,
+                    sizing_mode='stretch_both',  # Key: tells Panel to stretch this pane
+                    min_height=600,
+                ),
+                sizing_mode='stretch_both',  # Also stretch the parent Column
             )
         elif format in ['markdown', 'text']:
             with open(text_filepath, 'rb') as f:
@@ -768,7 +782,6 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             case = cr.get_case('final')
             outputs = case.list_outputs(out_stream=None, units=True)
 
-            # data_by_varname_and_phase = defaultdict(dict)
             data_by_varname_and_phase = defaultdict(lambda: defaultdict(list))
 
             # Find the "largest" unit used for any timeseries output across all phases
@@ -776,7 +789,7 @@ def _create_interactive_xy_plot_mission_variables(documentation, problem_recorde
             phases = set()
             varnames = set()
             # pattern used to parse out the phase names and variable names
-            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.([a-zA-Z0-9_]+)'
+            pattern = rf'{traj_name}\.phases\.([a-zA-Z0-9_]+)\.timeseries\.(.+)'
             for varname, meta in outputs:
                 match = re.match(pattern, varname)
                 if match:
@@ -1063,6 +1076,15 @@ def dashboard(script_name, port=0, run_in_background=False):
         'Detailed report on the model inputs.',
         'html',
         reports_dir / 'inputs.html',
+    )
+
+    # Overridden output variables
+    create_report_frame(
+        'Overridden Variables',
+        model_tabs_list,
+        'Report on overridden output variables.',
+        'markdown',
+        reports_dir / 'overridden_variables.md',
     )
 
     # N2

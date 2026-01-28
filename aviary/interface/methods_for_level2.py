@@ -63,6 +63,7 @@ class AviaryProblem(om.Problem):
             'run_status',
             'sizing_results',
             'input_checks',
+            'overridden_variables',
         ]
         for report in new_reports:
             if report not in _default_reports:
@@ -97,7 +98,6 @@ class AviaryProblem(om.Problem):
         self,
         aircraft_data,
         phase_info=None,
-        engine_builders=None,
         problem_configurator=None,
         meta_data=None,
         verbosity=None,
@@ -130,7 +130,6 @@ class AviaryProblem(om.Problem):
         aviary_inputs, verbosity = self.model.load_inputs(
             aircraft_data=aircraft_data,
             phase_info=phase_info,
-            engine_builders=engine_builders,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
         )
@@ -149,10 +148,18 @@ class AviaryProblem(om.Problem):
 
         return self.aviary_inputs
 
-    def check_and_preprocess_inputs(self, verbosity=None):
+    def load_external_subsystems(self, external_subsystems: list = [], verbosity=None):
         """
-        This method checks the user-supplied input values for any potential problems
-        and preprocesses the inputs to prepare them for use in the Aviary problem.
+        Add external subsystems to the AviaryProblem. For multi-mission problems, this adds the
+        provided external subsystems to every AviaryGroup.
+
+        Parameters
+        ----------
+        external_subsystems : list of SubsystemBuilders
+            List of all external subsystems to be added.
+
+        verbosity : int, Verbosity (optional)
+            Sets the printout level for the entire off-design problem that is ran.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -162,41 +169,30 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        self.model.check_and_preprocess_inputs(verbosity=verbosity)
-
-        # we have to update meta data after check_and_preprocess because metadata update
-        # requires get_all_subsystems, which requires core_subsystems, which doesn't exist until
-        # after check_and_preprocess is assembled
-        self._update_metadata_from_subsystems(self.model)  # update meta data with new entries
-
-    def _update_metadata_from_subsystems(self, group):
-        """Merge metadata from user-defined subsystems into problem metadata."""
-        # loop through phase_info and external subsystems
-        for phase_name in group.mission_info:
-            external_subsystems = group.get_all_subsystems(
-                group.mission_info[phase_name]['external_subsystems']
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.load_external_subsystems(
+                    external_subsystems=external_subsystems, verbosity=verbosity
+                )
+            self.meta_data = merge_meta_data([self.meta_data, group.meta_data])
+        else:
+            self.model.load_external_subsystems(
+                external_subsystems=external_subsystems, verbosity=verbosity
             )
-
-            for subsystem in external_subsystems:
-                meta_data = subsystem.meta_data.copy()
-                self.meta_data = merge_meta_data([self.meta_data, meta_data])
-
-        # Update the reference to the newly merged meta_data.
-        group.meta_data = self.meta_data
+            self.meta_data = merge_meta_data([self.meta_data, self.model.meta_data])
 
     def add_aviary_group(
         self,
         name: str,
         aircraft: AviaryValues,
-        mission: dict,
-        engine_builders=None,
+        phase_info: dict,
         problem_configurator=None,
         verbosity: Verbosity = Verbosity.BRIEF,
     ):
         """
         Used for creating a multi-mission problem. This method creates an AviaryGroup() for each
-        airraft and mission combination. It can also accept a specific engine_builder for each
-        group. The method loads and checks_and_preprocesses inputs, and then combines metadata.
+        aircraft and mission combination. The method loads and checks_and_preprocesses inputs, and
+        then combines metadata.
 
         Parameters
         ----------
@@ -204,10 +200,10 @@ class AviaryProblem(om.Problem):
             A unique name that identifies this group which can be referenced later.
         aircraft : AviaryValues object
             Defines the aircraft configuration
-        mission : phase_info, dict
+        phase_info : dict
             Defines the mission the aircraft will fly
-        engine_builders : EngineBuilder object, optional
-            Defines a custom engine model
+        subsystems : list of SubsystemBuilders
+            List of all external subsystems to be added.
         problem_configurator ; ProblemConfigurator, optional
             Required when setting custom equations of motion. See two_dof_problem_configurator.py for an example.
         verbosity : Verbosity or int, optional
@@ -219,6 +215,14 @@ class AviaryProblem(om.Problem):
             The AviaryGroup object containing the specified aircraft, mission, and engine model.
 
         """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
         if self.problem_type is not ProblemType.MULTI_MISSION:
             ValueError(
                 'add_aviary_group() should only be called when ProblemType is MULTI_MISSION.'
@@ -228,8 +232,7 @@ class AviaryProblem(om.Problem):
         sub.meta_data = self.meta_data
         sub.load_inputs(
             aircraft_data=aircraft,
-            phase_info=mission,
-            engine_builders=engine_builders,
+            phase_info=phase_info,
             problem_configurator=problem_configurator,
             verbosity=verbosity,
         )
@@ -248,22 +251,39 @@ class AviaryProblem(om.Problem):
         if Settings.PAYLOAD_RANGE in sub.aviary_inputs:
             self.generate_payload_range = sub.aviary_inputs.get_val(Settings.PAYLOAD_RANGE)
 
-        self._update_metadata_from_subsystems(sub)  # update meta data with new entries
-
         return sub
+
+    def check_and_preprocess_inputs(self, verbosity=None):
+        """
+        This method checks the user-supplied input values for any potential problems and
+        preprocesses the inputs to prepare them for use in the Aviary problem. Also estimates
+        initial conditions for mission analysis.
+        """
+        # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
+        # override for just this method
+        if verbosity is not None:
+            # compatibility with being passed int for verbosity
+            verbosity = Verbosity(verbosity)
+        else:
+            verbosity = self.verbosity  # defaults to BRIEF
+
+        if self.problem_type == ProblemType.MULTI_MISSION:
+            for name, group in self.aviary_groups_dict.items():
+                group.check_and_preprocess_inputs(verbosity=verbosity)
+        else:
+            self.model.check_and_preprocess_inputs(verbosity=verbosity)
 
     def add_pre_mission_systems(self, verbosity=None):
         """
-        Add pre-mission systems to the Aviary problem. These systems are executed before
-        the mission.
+        Add pre-mission systems to the Aviary problem. These systems are executed before the
+        mission.
 
-        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds
-        various subsystems to the aircraft model. For the `FLOPS` mission model, a
-        takeoff phase is added using the Takeoff class with the number of engines and
-        airport altitude specified. For the `GASP` mission model, three subsystems are
-        added: a TaxiSegment subsystem, an ExecComp to calculate the time to initiate
-        gear and flaps, and an ExecComp to calculate the speed at which to initiate
-        rotation. All subsystems are promoted with aircraft and mission inputs and
+        Depending on the mission model specified (`FLOPS` or `GASP`), this method adds various
+        subsystems to the aircraft model. For the `FLOPS` mission model, a takeoff phase is added
+        using the Takeoff class with the number of engines and airport altitude specified. For the
+        `GASP` mission model, three subsystems are added: a TaxiSegment subsystem, an ExecComp to
+        calculate the time to initiate gear and flaps, and an ExecComp to calculate the speed at
+        which to initiate rotation. All subsystems are promoted with aircraft and mission inputs and
         outputs as appropriate.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
@@ -292,13 +312,11 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        phase_info_parameterization (function, optional): A function that takes in the
-            phase_info dictionary and aviary_inputs and returns modified phase_info.
-            Defaults to None.
+        phase_info_parameterization (function, optional): A function that takes in the phase_info
+            dictionary and aviary_inputs and returns modified phase_info. Defaults to None.
 
-        parallel_phases (bool, optional): If True, the top-level container of all phases
-            will be a ParallelGroup, otherwise it will be a standard OpenMDAO Group.
-            Defaults to True.
+        parallel_phases (bool, optional): If True, the top-level container of all phases will be a
+            ParallelGroup, otherwise it will be a standard OpenMDAO Group. Defaults to True.
 
         Returns
         -------
@@ -370,9 +388,9 @@ class AviaryProblem(om.Problem):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need
-        special logic to do the Dymos linkages correctly. Some of those
-        connections for the simple GASP and FLOPS mission are shown here.
+        Based on which phases the user has selected, we might need special logic to do the Dymos
+        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
+        shown here.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -392,26 +410,25 @@ class AviaryProblem(om.Problem):
         """
         Add an optimization driver to the Aviary problem.
 
-        Depending on the provided optimizer, the method instantiates the relevant
-        driver (ScipyOptimizeDriver or pyOptSparseDriver) and sets the optimizer
-        options. Options for 'SNOPT', 'IPOPT', and 'SLSQP' are specified. The method
-        also allows for the declaration of coloring and setting debug print options.
+        Depending on the provided optimizer, the method instantiates the relevant driver
+        (ScipyOptimizeDriver or pyOptSparseDriver) and sets the optimizer options. Options for
+        'SNOPT', 'IPOPT', and 'SLSQP' are specified. The method also allows for the declaration of
+        coloring and setting debug print options.
 
         Parameters
         ----------
         optimizer : str
-            The name of the optimizer to use. It can be "SLSQP", "SNOPT", "IPOPT" or
-            others supported by OpenMDAO. If "SLSQP", it will instantiate a
-            ScipyOptimizeDriver, else it will instantiate a pyOptSparseDriver.
+            The name of the optimizer to use. It can be "SLSQP", "SNOPT", "IPOPT" or others
+            supported by OpenMDAO. If "SLSQP", it will instantiate a ScipyOptimizeDriver, else it
+            will instantiate a pyOptSparseDriver.
 
         use_coloring : bool, optional
-            If True (default), the driver will declare coloring, which can speed up
-            derivative computations.
+            If True (default), the driver will declare coloring, which can speed up derivative
+            computations.
 
         max_iter : int, optional
-            The maximum number of iterations allowed for the optimization process.
-            Default is 50. This option is applicable to "SNOPT", "IPOPT", and "SLSQP"
-            optimizers.
+            The maximum number of iterations allowed for the optimization process. Default is 50.
+            This option is applicable to "SNOPT", "IPOPT", and "SLSQP" optimizers.
 
         verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
@@ -522,14 +539,14 @@ class AviaryProblem(om.Problem):
         """
         Adds design variables to the Aviary problem.
 
-        Depending on the mission model and problem type, different design variables and
-        constraints are added.
+        Depending on the mission model and problem type, different design variables and constraints
+        are added.
 
-        If using the FLOPS model, a design variable is added for the gross mass of the
-        aircraft, with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
+        If using the FLOPS model, a design variable is added for the gross mass of the aircraft,
+        with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
-        If using the GASP model, the following design variables are added depending on
-        the mission type:
+        If using the GASP model, the following design variables are added depending on the mission
+        type:
         - the initial thrust-to-weight ratio of the aircraft during ascent
         - the duration of the ascent phase
         - the time constant for the landing gear actuation
@@ -539,17 +556,16 @@ class AviaryProblem(om.Problem):
         - the initial altitude of the aircraft with gear extended is constrained to be 50 ft
         - the initial altitude of the aircraft with flaps extended is constrained to be 400 ft
 
-        If solving a sizing problem, a design variable is added for the gross mass of
-        the aircraft, and another for the gross mass of the aircraft computed during the
-        mission. A constraint is also added to ensure that the residual range is zero.
+        If solving a sizing problem, a design variable is added for the gross mass of the aircraft,
+        and another for the gross mass of the aircraft computed during the mission. A constraint is
+        also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of
-        the aircraft computed during the mission is added. A constraint is also added to
-        ensure that the residual range is zero.
+        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        computed during the mission is added. A constraint is also added to ensure that the residual
+        range is zero.
 
-        In all cases, a design variable is added for the final cruise mass of the
-        aircraft, with no upper bound, and a residual mass constraint is added to ensure
-        that the mass balances.
+        In all cases, a design variable is added for the final cruise mass of the aircraft, with no
+        upper bound, and a residual mass constraint is added to ensure that the mass balances.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -569,20 +585,18 @@ class AviaryProblem(om.Problem):
         """
         Add the objective function based on the given objective_type and ref.
 
-        NOTE: the ref value should be positive for values you're trying
-        to minimize and negative for values you're trying to maximize.
-        Please check and double-check that your ref value makes sense
-        for the objective you're using.
+        NOTE: the ref value should be positive for values you're trying to minimize and negative for
+        values you're trying to maximize. Please check and double-check that your ref value makes
+        sense for the objective you're using.
 
         Parameters
         ----------
         objective_type : str
-            The type of objective to add. Options are 'mass', 'hybrid_objective',
-            'fuel_burned', and 'fuel'.
+            The type of objective to add. Options are 'mass', 'hybrid_objective', 'fuel_burned', and
+            'fuel'.
         ref : float
-            The reference value for the objective. If None, a default value will be used
-            based on the objective type. Please see the `default_ref_values` dict for
-            these default values.
+            The reference value for the objective. If None, a default value will be used based on
+            the objective type. Please see the `default_ref_values` dict for these default values.
         verbosity : Verbosity or int, optional
             Controls the level of printouts for this method. If None, uses the value of
             Settings.VERBOSITY in provided aircraft data.
@@ -590,7 +604,6 @@ class AviaryProblem(om.Problem):
         Raises
         ------
             ValueError: If an invalid problem type is provided.
-
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1267,7 +1280,6 @@ class AviaryProblem(om.Problem):
         fill_cargo=False,
         fill_fuel=False,
         verbosity=None,
-        payload_range_controls=None,
     ):
         """
         Runs the aircraft model in a off-design mission of the specified type. It is assumed that
@@ -1332,12 +1344,6 @@ class AviaryProblem(om.Problem):
             fill_cargo.
         verbosity : (int, Verbosity), optional
             Sets the printout level for the entire off-design problem that is ran.
-        payload_range_controls : bool, optional
-            Flag used by run_payload_range method call. Adds a cargo variable as a design variable
-            (chosen based on the specific problem), which is allowed to float a small amount to
-            account for issues when hardcoding payload & fuel mass for certain points on the
-            payload-range diagram. This argument is generally not needed for users manually running
-            off-design missions.
         """
         # For off-design missions, provided verbosity will be used for all L2 method calls
         if verbosity is not None:

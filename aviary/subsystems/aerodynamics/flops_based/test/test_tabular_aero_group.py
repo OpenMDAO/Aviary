@@ -14,7 +14,7 @@ from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.named_values import NamedValues
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs, print_case
@@ -84,7 +84,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
 
     def test_parameters(self):
         local_phase_info = deepcopy(phase_info)
-        core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
+        core_aero = local_phase_info['cruise']['subsystem_options']['aerodynamics']
 
         core_aero['method'] = 'tabular'
         core_aero['CDI_data'] = CDI_table
@@ -204,7 +204,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
     def test_parameters(self):
         local_phase_info = deepcopy(phase_info)
-        core_aero = local_phase_info['cruise']['subsystem_options']['core_aerodynamics']
+        core_aero = local_phase_info['cruise']['subsystem_options']['aerodynamics']
 
         core_aero['method'] = 'tabular'
         core_aero['connect_training_data'] = True
@@ -617,6 +617,16 @@ def _get_computed_aero_data_at_altitude(altitude, units):
 
 def _run_computed_aero_harness(flops_inputs, dynamic_inputs, num_nodes):
     prob = om.Problem(_ComputedAeroHarness(num_nodes=num_nodes, aviary_options=flops_inputs))
+
+    varnames = [
+        Aircraft.Fuselage.WETTED_AREA,
+        Aircraft.HorizontalTail.WETTED_AREA,
+        Aircraft.VerticalTail.WETTED_AREA,
+        Aircraft.Wing.AREA,
+        Aircraft.Wing.ASPECT_RATIO,
+        Aircraft.Wing.WETTED_AREA,
+    ]
+    set_aviary_input_defaults(prob.model, varnames, flops_inputs)
 
     setup_model_options(prob, flops_inputs)
 

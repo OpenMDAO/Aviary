@@ -80,6 +80,15 @@ def register_custom_reports():
         pre_or_post='post',
     )
 
+    register_report(
+        name='overridden_variables',
+        func=overridden_variables_report,
+        desc='Generates a report on the overridden variables',
+        class_name='AviaryProblem',
+        method='final_setup',
+        pre_or_post='post',
+    )
+
 
 def run_status(prob: AviaryProblem):
     """
@@ -162,10 +171,9 @@ def subsystem_report(prob: AviaryProblem, **kwargs):
     else:
         model = prob.model
 
-    # TODO external subsystems??
-    core_subsystems = model.core_subsystems  # TODO: redo for multimissions
+    subsystems = model.subsystems  # TODO: redo for multimissions
 
-    for subsystem in core_subsystems.values():
+    for subsystem in subsystems:
         subsystem.report(prob, reports_folder, **kwargs)
 
 
@@ -237,13 +245,13 @@ def mission_report(prob: AviaryProblem, **kwargs):
             # TODO for traj in trajectories, currently assuming single one named "traj"
             # TODO delta mass and fuel consumption need to be tracked separately
             fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
-            time = _get_phase_diff(model, 'traj', phase, 't', 'min')
+            time = _get_phase_diff(model, 'traj', phase, 'time', 'min')
             range = _get_phase_diff(model, 'traj', phase, 'distance', 'nmi')
 
             # get initial values, first in traj
             if idx == 0:
                 initial_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', 0)[0]
-                initial_time = _get_phase_value(model, 'traj', phase, 't', 'min', 0)
+                initial_time = _get_phase_value(model, 'traj', phase, 'time', 'min', 0)
                 initial_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', 0)[0]
 
             outputs = NamedValues()
@@ -255,7 +263,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             # get final values, last in traj
             final_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', -1)[0]
-            final_time = _get_phase_value(model, 'traj', phase, 't', 'min', -1)
+            final_time = _get_phase_value(model, 'traj', phase, 'time', 'min', -1)
             final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
             totals = NamedValues()
@@ -583,3 +591,104 @@ def timeseries_csv(prob: AviaryProblem, **kwargs):
 
     # Write the DataFrame to a CSV file
     df.to_csv(report_file, index=False)
+
+
+def overridden_variables_report(prob: AviaryProblem, **kwargs):
+    """
+    Creates a report listing the overridden variables.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem used to generate this report
+    """
+
+    reports_folder = Path(prob.get_reports_dir())
+    report_file = reports_folder / 'overridden_variables.md'
+    with open(report_file, mode='w') as f:
+        # check to see if this is a multi-mission problem
+        #   and make a list of all the aviary groups
+        if prob.aviary_groups_dict:
+            for mission_name, aviary_group in prob.aviary_groups_dict.items():
+                _overridden_variables_group_report(prob, aviary_group, mission_name, f)
+        else:
+            _overridden_variables_group_report(prob, prob.model, None, f)
+
+
+def _overridden_variables_group_report(prob, group, mission_name, f):
+    """
+    Writes overridden variables report for a single aviary group.
+
+    Parameters
+    ----------
+    prob : AviaryProblem
+        The AviaryProblem instance
+    group : Group
+        The OpenMDAO group to analyze for overridden variables
+    mission_name : str or None
+        Name of the mission (for multi-mission problems) or None
+    f : file object
+        Open file handle to write the report to
+    """
+    resolver = group._resolver
+
+    non_external_overridden_variables = []
+    external_variables = {}
+
+    for prom_name in resolver.prom_iter(iotype='output'):
+        # These variables are the result of replacing a computed value
+        #   with the output of another component
+        if 'EXTERNAL_SUBSYSTEM_OVERRIDE' in prom_name:
+            abs_name = resolver.absnames(prom_name, 'output')[0]
+            aircraft_variable_name = abs_name.split('.')[-1]
+            if aircraft_variable_name not in external_variables:
+                external_variables[aircraft_variable_name] = abs_name
+            continue
+        # the phrase "_OVERRIDE" in a variable indicates it is a
+        #   calculated value that we are discarding
+        if 'AIRCRAFT_DATA_OVERRIDE' in prom_name:
+            abs_name = resolver.absnames(prom_name, 'output')[0]
+            aircraft_variable_name = abs_name.split('.')[-1]
+            aviary_metadata = group.meta_data
+            metadata = aviary_metadata.get(aircraft_variable_name)
+            try:
+                units = metadata['units']
+            except (TypeError, KeyError):
+                # This happens when the var is not defined in metadata.
+                metadata = group.get_io_metadata('output')[abs_name]
+                units = metadata['units']
+            val = group.aviary_inputs.get_val(aircraft_variable_name, units=units)
+            non_external_overridden_variables.append((aircraft_variable_name, val, units))
+
+    if MPI and prob.comm.rank != 0:
+        # All collective calls are completed. Reports only generated on rank 0.
+        return
+
+    # Now that we have collected all overridden variables, write the report
+    if mission_name:
+        f.write(f'# MULTIMISSION: {mission_name}\n\n')
+
+    f.write('## Internal Overrides\n')
+    if non_external_overridden_variables:
+        f.write('| Name   | Value | Units |\n')
+        f.write('| ------ |-------| ----- |\n')
+        non_external_overridden_variables.sort(key=lambda x: x[0])
+        for aircraft_variable_name, val, units in non_external_overridden_variables:
+            f.write(f'| {aircraft_variable_name} | {val} | {units} |\n')
+        f.write('\n')
+    else:
+        f.write('No internal overrides found.\n')
+
+    f.write('<br>\n\n')
+
+    f.write('## External Subsystem Overrides\n')
+    if external_variables:
+        f.write('| Name | Overriding OpenMDAO path |\n')
+        f.write('| ---- | ------------------------ |\n')
+        for aircraft_variable_name in sorted(external_variables.keys()):
+            absname = external_variables[aircraft_variable_name]
+            f.write(f'| {aircraft_variable_name} | {absname} |\n')
+
+        f.write('\n')
+    else:
+        f.write('No external subsystem overrides found.\n')

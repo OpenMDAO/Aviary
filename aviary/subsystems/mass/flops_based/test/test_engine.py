@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine import EngineMass
@@ -16,15 +17,19 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
+
+@use_tempdirs
 class EngineMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -47,7 +52,6 @@ class EngineMassTest(unittest.TestCase):
                 Aircraft.Engine.SCALED_SLS_THRUST,
                 Aircraft.Engine.MASS,
                 Aircraft.Engine.ADDITIONAL_MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
             ],
             output_keys=[
                 Aircraft.Engine.MASS,
@@ -133,6 +137,48 @@ class EngineMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
+
+
+@use_tempdirs
+class BWBEngineMassTest(unittest.TestCase):
+    """Tests engine mass calculation for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'engine_mass',
+            EngineMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.ones(1))
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Engine.SCALED_SLS_THRUST,
+                Aircraft.Engine.ADDITIONAL_MASS,
+            ],
+            output_keys=[
+                Aircraft.Engine.MASS,
+                Aircraft.Engine.ADDITIONAL_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
+            ],
+            list_inputs=True,
+            list_outputs=True,
+            version=Version.BWB,
+            rtol=1e-10,
+        )
 
 
 if __name__ == '__main__':
