@@ -91,7 +91,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.declare(
             name='mach_target',
             default=0.0,
-            desc='Defines the maximum mach constraint for this phase.'
+            desc='Defines the maximum mach constraint for this phase.',
         )
 
         self.declare(
