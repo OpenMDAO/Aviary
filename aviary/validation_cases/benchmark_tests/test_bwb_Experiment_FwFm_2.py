@@ -193,11 +193,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
 
-class TestBenchFwFmSerial(ProblemPhaseTestCase):
+class TestBWBFwFmSerial(ProblemPhaseTestCase):
     """Run the model in serial that is setup in ProblemPhaseTestCase class."""
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_FwFm_SNOPT(self):
+    def test_bwb_FwFm_SNOPT(self):
         prob = run_aviary(
             'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
             self.phase_info,
@@ -216,8 +216,37 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         self.assertGreater(overall_fuel, 40000.0)
 
 
+class TestBenchFwFmSerial(ProblemPhaseTestCase):
+    """Run the model in serial that is setup in ProblemPhaseTestCase class."""
+
+    @require_pyoptsparse(optimizer='SNOPT')
+    def test_bench_FwFm_SNOPT(self):
+        prob = run_aviary(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            self.phase_info,
+            verbosity=1,
+            max_iter=50,
+            optimizer='SNOPT',
+        )
+
+        # self.assertTrue(prob.result.success)
+        compare_against_expected_values(prob, self.expected_dict)
+
+        # This is one of the few places we test Height Energy + simple takeoff.
+        overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
+
+        # Making sure we include the fuel mass consumed in take-off and taxi.
+        self.assertGreater(overall_fuel, 40000.0)
+
+
 if __name__ == '__main__':
     # unittest.main()
-    test = TestBenchFwFmSerial()
-    test.setUp()
-    test.test_bench_FwFm_SNOPT()
+    test_bwb = True
+    if test_bwb:
+        test = TestBWBFwFmSerial()
+        test.setUp()
+        test.test_bwb_FwFm_SNOPT()
+    else:
+        test = TestBenchFwFmSerial()
+        test.setUp()
+        test.test_bench_FwFm_SNOPT()
