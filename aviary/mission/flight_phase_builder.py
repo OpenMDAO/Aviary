@@ -13,7 +13,7 @@ from aviary.mission.initial_guess_builders import (
 from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation, Transcription
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -159,7 +159,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         self.declare(
             name='transcription',
-            default='Collocation',
+            default=Transcription.COLLOCATION,
             desc='Set the dymos transcription for the phase. Currently only Collocation and PicardShooting are supported. default = Collocation for backwards compatibility.',
         )
 
@@ -419,7 +419,7 @@ class FlightPhaseBase(PhaseBuilder):
 
         transcription_type = user_options['transcription']
 
-        if transcription_type == 'Collocation':
+        if transcription_type == Transcription.COLLOCATION:
             seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
 
             transcription = dm.Radau(
@@ -429,7 +429,7 @@ class FlightPhaseBase(PhaseBuilder):
                 segment_ends=seg_ends,
             )
 
-        elif transcription_type == 'PicardShooting':
+        elif transcription_type == Transcription.PICARDSHOOTING:
             nodes_per_seg = order * num_segments  # get approximately same number of nodes as radau
             transcription = dm.PicardShooting(
                 num_segments=1, nodes_per_seg=nodes_per_seg, solve_segments='forward'
@@ -438,7 +438,7 @@ class FlightPhaseBase(PhaseBuilder):
         else:
             raise UserWarning(
                 f"Unable to add dymos transcription for phase '{self.name}': transcription = '{transcription_type}' is not supported. "
-                f"Check phase_info definition for phase '{self.name}' and set transcription = 'Collocation' or 'PicardShooting'"
+                f"Check phase_info definition for phase '{self.name}' and set transcription using variable enum"
             )
 
         return transcription
