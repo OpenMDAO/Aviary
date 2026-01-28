@@ -15,6 +15,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import Transcription
 
 
 @use_tempdirs
@@ -156,6 +157,17 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.assertTrue(prob.result.success)
 
     @require_pyoptsparse(optimizer='IPOPT')
+    def test_mission_basic_shooting_pyopt(self):
+        modified_phase_info = self.phase_info.copy()
+        for phase in ['climb', 'cruise', 'descent']:
+            modified_phase_info[phase]['user_options']['transcription'] = (
+                Transcription.PICARDSHOOTING
+            )
+        prob = self.run_mission(modified_phase_info, 'IPOPT')
+        self.assertIsNotNone(prob)
+        self.assertTrue(prob.result.success)
+
+    @require_pyoptsparse(optimizer='IPOPT')
     def test_mission_optimize_mach_only(self):
         # Test with mach_optimize flag set to True
         modified_phase_info = self.phase_info.copy()
@@ -171,6 +183,42 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for phase in ['climb', 'cruise', 'descent']:
             modified_phase_info[phase]['user_options']['altitude_optimize'] = True
             modified_phase_info[phase]['user_options']['mach_optimize'] = True
+        modified_phase_info['climb']['user_options']['constraints'] = {
+            Dynamic.Vehicle.Propulsion.THROTTLE: {
+                'lower': 0.2,
+                'upper': 0.9,
+                'type': 'path',
+            },
+        }
+        prob = self.run_mission(modified_phase_info, 'IPOPT')
+        self.assertTrue(prob.result.success)
+
+        try:
+            numeric, rel = dymos.__version__.split('-')
+        except ValueError:
+            numeric = dymos.__version__
+        dm_version = tuple([int(s) for s in numeric.split('.')])
+
+        if dm_version <= (1, 12, 0):
+            con_name = 'traj.climb.throttle[path]'
+        else:
+            con_name = 'traj.phases.climb->path_constraint->throttle'
+
+        constraints = prob.driver._cons
+        for name, meta in constraints.items():
+            if con_name in name:
+                self.assertEqual(meta['upper'], 0.9)
+                self.assertEqual(meta['lower'], 0.2)
+
+    @require_pyoptsparse(optimizer='IPOPT')
+    def test_mission_optimize_altitude_and_mach_shooting(self):
+        modified_phase_info = self.phase_info.copy()
+        for phase in ['climb', 'cruise', 'descent']:
+            modified_phase_info[phase]['user_options']['altitude_optimize'] = True
+            modified_phase_info[phase]['user_options']['mach_optimize'] = True
+            modified_phase_info[phase]['user_options']['transcription'] = (
+                Transcription.PICARDSHOOTING
+            )
         modified_phase_info['climb']['user_options']['constraints'] = {
             Dynamic.Vehicle.Propulsion.THROTTLE: {
                 'lower': 0.2,
