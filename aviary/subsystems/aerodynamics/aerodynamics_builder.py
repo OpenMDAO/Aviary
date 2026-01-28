@@ -494,7 +494,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
             if method == 'computed':
-                design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+                try:
+                    design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+                except:
+                    design_type = AircraftTypes.TRANSPORT
                 if design_type is AircraftTypes.BLENDED_WING_BODY:
                     core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
                 else:
@@ -627,7 +630,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
 
-            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            try:
+                design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            except:
+                design_type = AircraftTypes.TRANSPORT
 
             if design_type is AircraftTypes.BLENDED_WING_BODY:
                 all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
