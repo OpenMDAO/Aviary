@@ -165,6 +165,20 @@ class LegacyCode(Enum):
         return self.value
 
 
+class PhaseType(Enum):
+    """
+    PhaseType is used for replacing a default phase and its equations of motion with a
+    different one.
+
+    DEFAULT: Use the default phase builder for this phase.
+
+    BREGUET_RANGE: Use a phase builder that implements the Breguet Range equations.
+    """
+
+    DEFAULT = 'default'
+    BREGUET_RANGE = "bregeut_range"
+
+
 class ProblemType(Enum):
     """
     ProblemType is used to switch between different combinations of
