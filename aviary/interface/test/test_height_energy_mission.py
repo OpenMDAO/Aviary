@@ -15,6 +15,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.enums import Transcription
 
 
 @use_tempdirs
@@ -159,7 +160,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
     def test_mission_basic_shooting_pyopt(self):
         modified_phase_info = self.phase_info.copy()
         for phase in ['climb', 'cruise', 'descent']:
-            modified_phase_info[phase]['user_options']['transcription'] = 'PicardShooting'
+            modified_phase_info[phase]['user_options']['transcription'] = (
+                Transcription.PICARDSHOOTING
+            )
         prob = self.run_mission(modified_phase_info, 'IPOPT')
         self.assertIsNotNone(prob)
         self.assertTrue(prob.result.success)
@@ -213,7 +216,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
         for phase in ['climb', 'cruise', 'descent']:
             modified_phase_info[phase]['user_options']['altitude_optimize'] = True
             modified_phase_info[phase]['user_options']['mach_optimize'] = True
-            modified_phase_info[phase]['user_options']['transcription'] = 'PicardShooting'
+            modified_phase_info[phase]['user_options']['transcription'] = (
+                Transcription.PICARDSHOOTING
+            )
         modified_phase_info['climb']['user_options']['constraints'] = {
             Dynamic.Vehicle.Propulsion.THROTTLE: {
                 'lower': 0.2,
