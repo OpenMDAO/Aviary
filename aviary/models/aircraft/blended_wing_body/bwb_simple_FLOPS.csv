@@ -157,6 +157,7 @@ mission:summary:fuel_flow_scaler,1.0,unitless
 settings:aerodynamics_method,FLOPS,unitless
 settings:equations_of_motion,height_energy,unitless
 settings:mass_method,FLOPS,unitless
+settings:verbosity,1,unitless
 
 # Unconverted Values
 AERIN.FLLDG,11000
