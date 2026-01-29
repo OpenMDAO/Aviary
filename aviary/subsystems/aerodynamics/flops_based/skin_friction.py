@@ -49,12 +49,7 @@ class SkinFriction(om.ImplicitComponent):
         num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            # No horizontal tail for BWB
-            nc = 1 + num_tails + num_fuselages + int(sum(num_engines))
-        else:
-            nc = 2 + num_tails + num_fuselages + int(sum(num_engines))
-        self.nc = nc
+        self.nc = nc = 2 + num_tails + num_fuselages + int(sum(num_engines))
 
         # Simulation inputs
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn, units='degR')
