@@ -904,7 +904,10 @@ def update_flops_options(vehicle_data):
         if input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0] < 50:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
             FWMAX = input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0]
-            FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
+            if Aircraft.Fuel.DENSITY in input_values:
+                FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
+            else:
+                FULDEN = 50.12  # 50.12 lbm/ft**3 = 6.7 lbm/galUS
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )

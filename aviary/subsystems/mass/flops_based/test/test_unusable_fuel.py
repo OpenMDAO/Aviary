@@ -163,11 +163,8 @@ class BWBTransportUnusableFuelMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    # @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(
-        self,
-    ):
-        case_name = 'BWBsimpleFLOPS'
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
