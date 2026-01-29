@@ -11,8 +11,9 @@ References
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.enums import Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
 class GroundEffect(om.ExplicitComponent):
@@ -29,6 +30,7 @@ class GroundEffect(om.ExplicitComponent):
     def initialize(self):
         options = self.options
 
+        add_aviary_option(self, Settings.VERBOSITY)
         options.declare('num_nodes', default=1, types=int, lower=0)
 
         options.declare(
