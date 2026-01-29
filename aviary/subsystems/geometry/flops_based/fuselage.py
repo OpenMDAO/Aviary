@@ -167,7 +167,7 @@ class SimpleCabinLayout(om.ExplicitComponent):
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
                     'Passenger compartment lenght is longer than recommended maximum'
-                    ' length (of 190 ft). Suggest using detailed layout algorithm.'
+                    ' length. Suggest using detailed layout algorithm.'
                 )
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
@@ -480,8 +480,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-
-        num_bays = smooth_int_tanh(0.5 + max_width / bay_width_max, mu=20.0)
+        num_bays = int(0.5 + max_width.real / bay_width_max.real)
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
         outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
@@ -660,7 +659,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             # Enforce maximum number of bays
             z = 0.5 + max_width / bay_width_max
             z = z[0]
-            num_bays = smooth_int_tanh(z, mu=20.0)
+            num_bays = int(z.real)
             if num_bays > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
 
