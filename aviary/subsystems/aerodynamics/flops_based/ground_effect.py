@@ -11,9 +11,8 @@ References
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class GroundEffect(om.ExplicitComponent):
@@ -30,7 +29,6 @@ class GroundEffect(om.ExplicitComponent):
     def initialize(self):
         options = self.options
 
-        add_aviary_option(self, Settings.VERBOSITY)
         options.declare('num_nodes', default=1, types=int, lower=0)
 
         options.declare(
@@ -140,7 +138,6 @@ class GroundEffect(om.ExplicitComponent):
         options = self.options
 
         ground_altitude = options['ground_altitude']
-        verbosity = self.options[Settings.VERBOSITY]
 
         angle_of_attack = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
         altitude = inputs[Dynamic.Mission.ALTITUDE]
@@ -151,9 +148,6 @@ class GroundEffect(om.ExplicitComponent):
         aspect_ratio = inputs[Aircraft.Wing.ASPECT_RATIO]
         height = inputs[Aircraft.Wing.HEIGHT]
         span = inputs[Aircraft.Wing.SPAN]
-        if span <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise UserWarning('Aircraft.Wing.SPAN is not positive.')
 
         ground_effect_state = ((altitude - ground_altitude) + height) / span
         height_factor = np.ones_like(ground_effect_state)
@@ -170,9 +164,6 @@ class GroundEffect(om.ExplicitComponent):
             + 4.0 * ground_effect_state * aspect_ratio_term * np.sqrt(ground_effect_term0)
         )
 
-        if lift_coeff_factor_denom <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise UserWarning('lift_coeff_factor_denom is not positive.')
         lift_coeff_factor = 1.0 + height_factor / lift_coeff_factor_denom
 
         lift_coefficient = base_lift_coefficient * lift_coeff_factor
@@ -184,9 +175,6 @@ class GroundEffect(om.ExplicitComponent):
             4.0 * ground_effect_state * np.sqrt(ground_effect_term1) + ground_effect_term1
         )
 
-        if drag_coeff_factor_denom <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                raise UserWarning('drag_coeff_factor_denom is not positive.')
         drag_coeff_factor = 1.0 - height_factor / drag_coeff_factor_denom
 
         drag_coefficient = (
