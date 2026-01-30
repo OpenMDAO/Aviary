@@ -2167,7 +2167,7 @@ add_meta_data(
     types=str,
     desc="method used for interpolation on an engine deck's data file, allowable values are "
     'table methods from openmdao.components.interp_util.interp. Engine models only use the '
-    'models avilable to the MetamodelUnstructured component. These are listed here: '
+    'methods avilable to the MetaModelSemiStructuredComp component. These are listed here: '
     'https://openmdao.org/newdocs/versions/latest/features/building_blocks/components/'
     'metamodelsemistructured_comp.html',
     multivalue=True,
