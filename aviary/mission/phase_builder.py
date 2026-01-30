@@ -326,6 +326,15 @@ class PhaseBuilder(ABC):
         user_options = phase_info.get('user_options', ())
         initial_guesses = AviaryValues(phase_info.get('initial_guesses', ()))
 
+        # This may be an analytic phase, but we require a dynamic phase if the
+        # external subsystems have any states.
+        extra_kwargs = {}
+        for sub in subsystems:
+            states = sub.get_states()
+            if len(states) > 0:
+                extra_kwargs['is_analytic_phase'] = False
+                break
+
         # TODO some of these may be purely programming API hooks, rather than for use
         # with phase info
         # - ode_class
@@ -340,6 +349,7 @@ class PhaseBuilder(ABC):
             meta_data=meta_data,
             subsystems=subsystems,
             transcription=transcription,
+            **extra_kwargs,
         )
 
         return phase_builder

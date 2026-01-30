@@ -10,8 +10,26 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 
 
-class CruisePhaseOptions(AviaryOptionsDictionary):
+class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=5,
+            desc='The number of segments in transcription creation in Dymos. '
+            'While this phase is usually an analytic phase, this option is '
+            'needed if an external subsystem requires a dynamic transcription.',
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. While this phase is usually an analytic phase, this option is '
+            'needed if an external subsystem requires a dynamic transcription.',
+        )
+
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
         self.declare(name='mach_cruise', default=0.0, desc='Cruise Mach number.')
@@ -86,7 +104,7 @@ class CruisePhase(PhaseBuilder):
 
     default_name = 'cruise_phase'
     default_ode_class = BreguetCruiseODE
-    default_options_class = CruisePhaseOptions
+    default_options_class = BreguetCruisePhaseOptions
 
     _initial_guesses_meta_data_ = {}
 
@@ -100,6 +118,7 @@ class CruisePhase(PhaseBuilder):
         transcription=None,
         subsystems=None,
         meta_data=None,
+        is_analytic_phase=True,
     ):
         super().__init__(
             name=name,
@@ -110,7 +129,7 @@ class CruisePhase(PhaseBuilder):
             transcription=transcription,
             subsystems=subsystems,
             meta_data=meta_data,
-            is_analytic_phase=True,
+            is_analytic_phase=is_analytic_phase,
         )
 
     def build_phase(self, aviary_options: AviaryValues = None):

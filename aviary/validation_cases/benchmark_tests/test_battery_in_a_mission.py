@@ -5,6 +5,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
+from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 
 
@@ -167,9 +168,41 @@ class TestSubsystemsMission(unittest.TestCase):
             1e-7,
         )
 
+    def test_subsystems_in_a_mission_2dof(self):
+        phase_info = deepcopy(twodof_phase_info)
+
+        prob = av.AviaryProblem(verbosity=0)
+
+        prob.load_inputs(
+            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            phase_info,
+        )
+        prob.load_external_subsystems([BatteryBuilder()])
+
+        prob.aviary_inputs.set_val(av.Aircraft.Battery.EFFICIENCY, 0.95, 'unitless')
+
+        # Preprocess inputs
+        prob.check_and_preprocess_inputs()
+
+        prob.build_model()
+
+        prob.add_driver('SLSQP')
+
+        prob.add_design_variables()
+
+        prob.add_objective('fuel_burned')
+
+        prob.setup()
+
+        prob.set_val(av.Aircraft.Battery.PACK_ENERGY_DENSITY, 550, units='kJ/kg')
+        prob.set_val(av.Aircraft.Battery.PACK_MASS, 1000, units='lbm')
+        prob.set_val(av.Aircraft.Battery.ADDITIONAL_MASS, 115, units='lbm')
+
+        prob.run_aviary_problem()
+        self.assertTrue(prob.result.success)
+
 
 if __name__ == '__main__':
     unittest.main()
-    # test = TestSubsystemsMission()
-    # test.setUp()
-    # test.test_subsystems_in_a_mission()
+    test = TestSubsystemsMission()
+    test.test_subsystems_in_a_mission_2dof()
