@@ -11,6 +11,7 @@ aircraft:canard:mass_scaler,1.0,unitless
 aircraft:crew_and_payload:baggage_mass_per_passenger,35.0,lbm
 aircraft:crew_and_payload:design:num_business_class,20,unitless
 aircraft:crew_and_payload:design:num_first_class,16,unitless
+aircraft:crew_and_payload:design:num_passengers,154,unitless
 aircraft:crew_and_payload:design:num_tourist_class,118,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
@@ -28,6 +29,7 @@ aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:touchdown_mass,0.0,lbm
+aircraft:design:type,transport,unitless
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
@@ -41,6 +43,7 @@ aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:mass_scaler,1.15,unitless
+aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:reference_mass,6293.8,lbm
@@ -72,6 +75,7 @@ aircraft:fuselage:max_width,12.3,ft
 aircraft:fuselage:military_cargo_floor,False,unitless
 aircraft:fuselage:num_fuselages,1,unitless
 aircraft:fuselage:passenger_compartment_length,97.5,ft
+aircraft:fuselage:simple_layout,True,unitless
 aircraft:fuselage:wetted_area,4235.082096,ft**2
 aircraft:horizontal_tail:area,349.522730527158,ft**2
 aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
@@ -288,7 +292,6 @@ MISSIN.txfufl,0
 MISSIN.vqlm,260.0,320.0
 OPTION.ianal,3
 OPTION.icost,0
-OPTION.ifite,0
 OPTION.iland,1
 OPTION.ineng,0
 OPTION.iplths,0
