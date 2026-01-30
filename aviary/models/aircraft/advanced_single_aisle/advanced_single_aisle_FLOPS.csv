@@ -46,6 +46,7 @@ aircraft:engine:fuel_flow_scaler_linear_term,1,unitless
 aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
+aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1.15,unitless
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_fuselage_engines,0,unitless
