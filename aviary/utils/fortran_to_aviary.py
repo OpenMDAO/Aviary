@@ -946,7 +946,7 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
         else:
-            # If detail wing is not provided, initialize it to [0, 0.5, 1]
+            # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
             input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
 
@@ -1009,6 +1009,10 @@ def update_flops_options(vehicle_data):
                 input_values.set_val(
                     Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
                 )
+    else:
+        raise RuntimeError(
+            f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
+        )
 
     if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values:
         num_business_class = input_values.get_val(
@@ -1107,7 +1111,6 @@ def update_aviary_options(vehicle_data):
     """Special handling for variables that occurs for either legacy code."""
     input_values: NamedValues = vehicle_data['input_values']
 
-    # if reference + scaled thrust both provided, set scale factor -- Is this comment still true?
     try:
         ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
         ref_thrust = float(ref_thrust)
