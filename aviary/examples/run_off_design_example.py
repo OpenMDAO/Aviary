@@ -44,11 +44,15 @@ prob.run_aviary_problem()
 
 # Fallout Mission
 print('Running fixed-mass, varying range off-design problem')
-prob_fallout = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000, name='fallout_mission')
+prob_fallout = prob.run_off_design_mission(
+    problem_type='fallout', mission_gross_mass=115000, name='fallout_mission'
+)
 
 # Alternate Mission
 print('Running fixed-range, varying fuel off-design problem')
-prob_alternate = prob.run_off_design_mission(problem_type='alternate', mission_range=1250, name='alternate_mission')
+prob_alternate = prob.run_off_design_mission(
+    problem_type='alternate', mission_range=1250, name='alternate_mission'
+)
 
 print('\n--------------')
 print('Sizing Results')
