@@ -41,6 +41,12 @@ aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
+# TODO: Needed to reduce the drag so that engine wasn't full throttle in cruise.
+# There must be something about drag that still isn't working for BWB.
+aircraft:design:subsonic_drag_coeff_factor,0.7,unitless
+# aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
