@@ -917,6 +917,15 @@ def update_flops_options(vehicle_data):
     if Aircraft.Wing.INPUT_STATION_DIST in input_values:
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
 
+    if not Mission.Landing.LIFT_COEFFICIENT_MAX in input_values:
+        unused_values = vehicle_data['unused_values']
+        try:
+            CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
+            CLLDM = 1.69 * CLAPP
+        except:
+            CLLDM = 3.0
+        input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
+
     design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
     if design_type[0] == 0:
         input_values.set_val(Aircraft.Design.TYPE, ['transport'], design_units)
@@ -1041,20 +1050,6 @@ def update_flops_options(vehicle_data):
         else:
             num_galley_crew = int(num_passengers / 250) + 1
         input_values.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, [num_galley_crew])
-
-    if not Aircraft.Engine.NUM_ENGINES in input_values:
-        if Aircraft.Engine.NUM_FUSELAGE_ENGINES in input_values:
-            num_fuselage_engines = input_values.get_val(
-                Aircraft.Engine.NUM_FUSELAGE_ENGINES, 'unitless'
-            )[0]
-        else:
-            num_fuselage_engines = 0
-        if Aircraft.Engine.NUM_WING_ENGINES in input_values:
-            num_wing_engines = input_values.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')[0]
-        else:
-            num_wing_engines = 0
-        num_engines = num_fuselage_engines + num_wing_engines
-        input_values.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines])
 
     if not Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER in input_values:
         if Mission.Design.RANGE in input_values:
