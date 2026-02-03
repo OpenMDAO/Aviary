@@ -552,19 +552,19 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
     if Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options:
         num_fuselage_engines = aviary_options.get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES, 'unitless'
-        )
+        )[0]
     else:
-        num_fuselage_engines = [0]
+        num_fuselage_engines = 0
 
     if Aircraft.Engine.NUM_WING_ENGINES in aviary_options:
-        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')
+        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')[0]
     else:
-        num_wing_engines = [0]
-    tot_engines = num_fuselage_engines + num_wing_engines
+        num_wing_engines = 0
+    sum_engines = num_fuselage_engines + num_wing_engines
 
     if Aircraft.Engine.NUM_ENGINES in aviary_options:
-        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        if num_engines == tot_engines:
+        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)[0]
+        if num_engines == sum_engines:
             pass
         else:
             raise UserWarning(
@@ -572,8 +572,8 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
                 'the sum of wing engines and fuselage engines.'
             )
     else:
-        num_engines = tot_engines
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines)
+        num_engines = sum_engines
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines])
 
     return aviary_options
 
