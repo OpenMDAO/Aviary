@@ -974,8 +974,7 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [False], 'unitless')
 
         if Aircraft.Engine.SCALED_SLS_THRUST in input_values:
-            # not sure why THRUST=70000,1,0,0,0,0, just grab the first entry
-            # does it apply to transporters?
+            # This is a design variable. So, first entry is the initial value
             thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
             input_values.set_val(Aircraft.Engine.SCALED_SLS_THRUST, [thrust], 'lbf')
 
