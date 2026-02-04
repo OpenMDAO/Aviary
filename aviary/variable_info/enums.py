@@ -173,10 +173,13 @@ class PhaseType(Enum):
     DEFAULT: Use the default phase builder for this phase.
 
     BREGUET_RANGE: Use a phase builder that implements the Breguet Range equations.
+
+    SIMPLE_CRUISE: Use a phase builder that implements a single DOF (mass) cruise.
     """
 
     DEFAULT = 'default'
-    BREGUET_RANGE = "bregeut_range"
+    BREGUET_RANGE = "breguet_range"
+    SIMPLE_CRUISE = "simple_cruise"
 
 
 class ProblemType(Enum):
