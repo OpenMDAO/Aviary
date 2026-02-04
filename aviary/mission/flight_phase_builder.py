@@ -13,7 +13,7 @@ from aviary.mission.initial_guess_builders import (
 from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation, Transcription
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -155,6 +155,12 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             default=False,
             desc='Set to True to prevent the aircraft from descending during the phase. This '
             'can be used to prevent unexpected descent during a climb phase.',
+        )
+
+        self.declare(
+            name='transcription',
+            default=Transcription.COLLOCATION,
+            desc='Set the dymos transcription for the phase. Currently only Collocation and PicardShooting are supported. default = Collocation for backwards compatibility.',
         )
 
 
@@ -411,14 +417,29 @@ class FlightPhaseBase(PhaseBuilder):
         num_segments = user_options['num_segments']
         order = user_options['order']
 
-        seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+        transcription_type = user_options['transcription']
 
-        transcription = dm.Radau(
-            num_segments=num_segments,
-            order=order,
-            compressed=True,
-            segment_ends=seg_ends,
-        )
+        if transcription_type == Transcription.COLLOCATION:
+            seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+
+            transcription = dm.Radau(
+                num_segments=num_segments,
+                order=order,
+                compressed=True,
+                segment_ends=seg_ends,
+            )
+
+        elif transcription_type == Transcription.PICARDSHOOTING:
+            nodes_per_seg = order * num_segments  # get approximately same number of nodes as radau
+            transcription = dm.PicardShooting(
+                num_segments=1, nodes_per_seg=nodes_per_seg, solve_segments='forward'
+            )
+
+        else:
+            raise UserWarning(
+                f"Unable to add dymos transcription for phase '{self.name}': transcription = '{transcription_type}' is not supported. "
+                f"Check phase_info definition for phase '{self.name}' and set transcription using variable enum"
+            )
 
         return transcription
 
