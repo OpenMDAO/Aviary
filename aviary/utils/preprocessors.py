@@ -45,7 +45,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
-    # preprocess_Engines(aviary_options, verbosity)
+    preprocess_Engines(aviary_options, verbosity)
 
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
@@ -577,7 +577,7 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
         else:
             num_engines = int(num_engines)
         if num_engines != sum_engines:
-            raise UserWarning(
+            print(
                 'Your total number of engines is not the same as '
                 'the sum of wing engines and fuselage engines.'
             )
