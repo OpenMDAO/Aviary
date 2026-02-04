@@ -256,7 +256,7 @@ _data1_nounits = _nounits(_data1)
 _data2 = {
     'NUM_FUSELAGES': (2, 'unitless'),
     'NUM_ENGINES': (4, 'unitless'),
-    'PASSENGER_MASS': (200, 'lbm'),
+    'PASSENGER_MASS_TOTAL': (200, 'lbm'),
 }
 
 # _data2_nounits = _nounits(_data2)
