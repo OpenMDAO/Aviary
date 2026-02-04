@@ -576,7 +576,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         width_closet = 12.0  # inch
 
         # Establish defaults for Number of Passengers Abreast
-        # and Seat Pitch for First, Business and Tourist classes
+        # and Seat Pitch for First, Business and Economy classes
 
         num_seat_abreast_business = self.options[
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS

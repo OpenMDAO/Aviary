@@ -91,11 +91,11 @@ class CoreMassBuilder(MassBuilder):
         filename = self.name + '.md'
         filepath = reports_folder / filename
 
-        # NOTE currently only taking engine information from the first mission
-        if prob.problem_type is ProblemType.MULTI_MISSION:
-            model = next(iter(prob.aviary_groups_dict.values()))
-        else:
+        # NOTE Workaround due to another workaround in reports.py
+        try:
             model = prob.model
+        except AttributeError:
+            model = prob
 
         num_engines = model.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
         engine_models = model.engine_models

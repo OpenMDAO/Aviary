@@ -503,13 +503,13 @@ class BWBCabinLayout(om.ExplicitComponent):
             # If not first class
             EL_FC_last_row = 0
 
-        # First Class/Tourist Class Aisle
+        # First Class/Economy Class Aisle
         if pax_FC > 0:
             EL_TC_ptr = EL_FC_last_row + FC_seat_pitch / 12.0
         else:
             EL_TC_ptr = fwd_pax_fuselage_station
 
-        # Tourist Class
+        # Economy Class
         if pax_FC > 0:
             EL_TC_ptr = EL_TC_ptr + length_FC_to_TC - TC_seat_pitch / 12.0
         else:

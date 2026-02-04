@@ -84,6 +84,8 @@ class AviaryProblem(om.Problem):
             self.model = om.Group()
         else:
             self.model = AviaryGroup()
+            # This causes problems where aviary_inputs are stored in different places for
+            # multi-mission vs. standard mission
             self.aviary_inputs = None
 
         self.aviary_groups_dict = {}
