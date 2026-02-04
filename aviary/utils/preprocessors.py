@@ -553,7 +553,7 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
         num_fuselage_engines = aviary_options.get_val(
             Aircraft.Engine.NUM_FUSELAGE_ENGINES, 'unitless'
         )
-        if isinstance(num_fuselage_engines, np.ndarray):
+        if isinstance(num_fuselage_engines, np.ndarray) or isinstance(num_fuselage_engines, list):
             num_fuselage_engines = num_fuselage_engines[0]
         else:
             num_fuselage_engines = int(num_fuselage_engines)
@@ -562,7 +562,7 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
 
     if Aircraft.Engine.NUM_WING_ENGINES in aviary_options:
         num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')
-        if isinstance(num_wing_engines, np.ndarray):
+        if isinstance(num_wing_engines, np.ndarray) or isinstance(num_wing_engines, list):
             num_wing_engines = num_wing_engines[0]
         else:
             num_wing_engines = int(num_wing_engines)
@@ -572,7 +572,7 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
 
     if Aircraft.Engine.NUM_ENGINES in aviary_options:
         num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        if isinstance(num_engines, np.ndarray):
+        if isinstance(num_engines, np.ndarray) or isinstance(num_engines, list):
             num_engines = num_engines[0]
         else:
             num_engines = int(num_engines)
