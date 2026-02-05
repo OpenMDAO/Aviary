@@ -1022,13 +1022,13 @@ def update_flops_options(vehicle_data):
         )[0]
     else:
         num_first_class = 0
-    if Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS in input_values:
-        num_tourist_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 'unitless'
+    if Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS in input_values:
+        num_economy_class = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 'unitless'
         )[0]
     else:
-        num_tourist_class = 0
-    num_passengers = num_business_class + num_first_class + num_tourist_class
+        num_economy_class = 0
+    num_passengers = num_business_class + num_first_class + num_economy_class
     input_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers])
 
     if not Aircraft.CrewPayload.NUM_GALLEY_CREW in input_values:
