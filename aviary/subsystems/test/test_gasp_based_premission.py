@@ -87,7 +87,7 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 2276.1316, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 2297.9697, tol)
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 4740.1241, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3819.3564, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 3819.3564, tol)
         assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3682.099, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7489.8343, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6366.3591, tol)
