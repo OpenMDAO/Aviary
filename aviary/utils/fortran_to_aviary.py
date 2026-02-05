@@ -1022,25 +1022,6 @@ def update_flops_options(vehicle_data):
             f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
         )
 
-    if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values:
-        num_business_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 'unitless'
-        )[0]
-    else:
-        num_business_class = 0
-    if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in input_values:
-        num_first_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless'
-        )[0]
-    else:
-        num_first_class = 0
-    if Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS in input_values:
-        num_economy_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 'unitless'
-        )[0]
-    else:
-        num_economy_class = 0
-
     if (
         not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values
         or input_values.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
