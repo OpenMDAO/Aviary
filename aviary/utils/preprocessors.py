@@ -604,7 +604,7 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
                 )
     else:
         num_engines = sum_engines
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines])
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([num_engines]))
 
     return aviary_options
 
