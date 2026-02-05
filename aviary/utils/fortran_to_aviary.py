@@ -1029,7 +1029,8 @@ def update_flops_options(vehicle_data):
     else:
         num_economy_class = 0
     num_passengers = num_business_class + num_first_class + num_economy_class
-    input_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers])
+    # TODO: will be moved to preprocess
+    # input_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers])
 
     if not Aircraft.CrewPayload.NUM_GALLEY_CREW in input_values:
         if num_passengers < 151:
