@@ -1223,9 +1223,3 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    import numpy as np
-
-    np.seterr(divide='raise')
-    test = BWBPreMissionGroupCSVTest1()
-    test.setUp()
-    # test.test_case_geom_mass()
