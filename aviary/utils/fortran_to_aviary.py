@@ -1040,28 +1040,6 @@ def update_flops_options(vehicle_data):
         )[0]
     else:
         num_economy_class = 0
-    num_passengers = num_business_class + num_first_class + num_economy_class
-    # TODO: will be moved to preprocess
-    # input_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers])
-
-    if not Aircraft.CrewPayload.NUM_GALLEY_CREW in input_values:
-        if num_passengers < 151:
-            num_galley_crew = 0
-        else:
-            num_galley_crew = int(num_passengers / 250) + 1
-        input_values.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, [num_galley_crew])
-
-    if not Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER in input_values:
-        if Mission.Design.RANGE in input_values:
-            design_range = input_values.get_val(Mission.Design.RANGE, 'nmi')[0]
-            baggage_per_pax = 35.0
-            if design_range > 2900:
-                baggage_per_pax = 44.0
-            elif design_range > 900:
-                baggage_per_pax = 40.0
-        input_values.set_val(
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, [baggage_per_pax], 'lbm'
-        )
 
     if (
         not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values
