@@ -75,11 +75,11 @@ class BWBWingGroupTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 # BWBDetailedWingBendingFact
                 Aircraft.Wing.ASPECT_RATIO,
-                Aircraft.Wing.ASPECT_RATIO_REF,
+                Aircraft.Wing.ASPECT_RATIO_REFERENCE,
                 Aircraft.Wing.STRUT_BRACING_FACTOR,
                 Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
                 Aircraft.Fuselage.MAX_WIDTH,
                 # WingMiscMass
                 Aircraft.Wing.COMPOSITE_FRACTION,

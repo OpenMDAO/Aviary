@@ -75,12 +75,12 @@ class DetailedWingBendingTest(unittest.TestCase):
                 Mission.Design.GROSS_MASS,
                 Aircraft.Engine.POD_MASS,
                 Aircraft.Wing.ASPECT_RATIO,
-                Aircraft.Wing.ASPECT_RATIO_REF,
+                Aircraft.Wing.ASPECT_RATIO_REFERENCE,
                 Aircraft.Wing.STRUT_BRACING_FACTOR,
                 Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
                 Aircraft.Engine.WING_LOCATIONS,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+                Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
             ],
             output_keys=[
                 Aircraft.Wing.BENDING_MATERIAL_FACTOR,
@@ -140,11 +140,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -230,11 +230,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -313,11 +313,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -391,11 +391,11 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
-            Aircraft.Wing.ASPECT_RATIO_REF,
+            Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR,
             Aircraft.Wing.THICKNESS_TO_CHORD,
-            Aircraft.Wing.THICKNESS_TO_CHORD_REF,
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE,
         ]
 
         for key in input_keys:
@@ -453,13 +453,15 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
 
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REF, 7.557, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.11, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
 
         setup_model_options(self.prob, aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
@@ -521,13 +523,15 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
 
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REF, 7.557, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_REF, 0.11, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
 
         setup_model_options(self.prob, aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
