@@ -1366,12 +1366,12 @@ class AviaryProblem(om.Problem):
             )
 
         if name is None:
-            suggestion = self._name + "_" + str(problem_type.value)
-            # For while loop / numbering names
+            # Numbering problem names.
+            suggestion = self._name + '_' + str(problem_type.value)
             suggestion_update = suggestion
             counter = 2
-            while os.path.exists(os.path.join(".", suggestion_update + "_out")):
-                suggestion_update = suggestion + "_" + str(counter)
+            while os.path.exists(suggestion_update + '_out'):
+                suggestion_update = suggestion + '_' + str(counter)
                 counter += 1
             name = suggestion_update
         off_design_prob = AviaryProblem(name=name)

@@ -137,7 +137,7 @@ class TestReports(unittest.TestCase):
         prob.final_setup()
 
     def test_report_directory_naming(self):
-        problem_name = "test_problem"
+        problem_name = 'test_problem'
         phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
         prob = AviaryProblem(name=problem_name)
         prob.load_inputs(
@@ -150,13 +150,14 @@ class TestReports(unittest.TestCase):
         prob.add_objective()
         prob.setup()
         prob.run_aviary_problem()
-        self.assertTrue(os.path.exists(f"{problem_name}_out"))
+        self.assertTrue(os.path.exists(f'{problem_name}_out'))
         _ = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        self.assertTrue(os.path.exists(f"{problem_name}_fallout_out"))
+        self.assertTrue(os.path.exists(f'{problem_name}_fallout_out'))
         _ = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        self.assertTrue(os.path.exists(f"{problem_name}_fallout_2_out"))
+        self.assertTrue(os.path.exists(f'{problem_name}_fallout_2_out'))
         _ = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        self.assertTrue(os.path.exists(f"{problem_name}_fallout_3_out"))
+        self.assertTrue(os.path.exists(f'{problem_name}_fallout_3_out'))
+
 
 if __name__ == '__main__':
     unittest.main()
