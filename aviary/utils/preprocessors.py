@@ -577,10 +577,11 @@ def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
         else:
             num_engines = int(num_engines)
         if num_engines != sum_engines:
-            print(
-                'Your total number of engines is not the same as '
-                'the sum of wing engines and fuselage engines.'
-            )
+            if verbosity >= Verbosity.BRIEF:
+                print(
+                    'Your total number of engines is not the same as '
+                    'the sum of wing engines and fuselage engines.'
+                )
     else:
         num_engines = sum_engines
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines])
