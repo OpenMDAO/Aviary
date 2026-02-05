@@ -379,7 +379,7 @@ class BWBWingPrelim(om.ExplicitComponent):
 
         add_aviary_output(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO_REF, units='unitless')
+        add_aviary_output(self, Aircraft.Wing.ASPECT_RATIO_REFERENCE, units='unitless')
         add_aviary_output(self, Aircraft.Wing.LOAD_FRACTION, units='unitless')
 
     def setup_partials(self):
@@ -439,7 +439,7 @@ class BWBWingPrelim(om.ExplicitComponent):
         # Calculated wing area for aerodynamics
         outputs[Aircraft.Wing.AREA] = ssm
         outputs[Aircraft.Wing.ASPECT_RATIO] = ar
-        outputs[Aircraft.Wing.ASPECT_RATIO_REF] = ar
+        outputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE] = ar
 
         # Estimate the percent load carried by the outboard wing
         pct_load = (1.0 - width / wingspan) ** 2
