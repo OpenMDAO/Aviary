@@ -43,7 +43,6 @@ class BasicFlapsCalculationsTestCase(unittest.TestCase):
     def test_case(self):
         self.prob.run_model()
         tol = 2.1e-4
-        print()
 
         reg_data = 0.74444
         ans = self.prob['VLAM8']

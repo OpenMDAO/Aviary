@@ -9,22 +9,22 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_option, 
 from aviary.variable_info.variables import Aircraft
 
 
-class NonFlightCrewMass(om.ExplicitComponent):
-    """Calculate the estimated mass for the non-flight and their baggage."""
+class CabinCrewMass(om.ExplicitComponent):
+    """Calculate the estimated mass for the cabin crew and their baggage."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS)
         add_aviary_option(self, Aircraft.CrewPayload.NUM_GALLEY_CREW)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, units='unitless')
 
-        add_aviary_output(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.CrewPayload.CABIN_CREW_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
-            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
+            Aircraft.CrewPayload.CABIN_CREW_MASS,
+            Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
@@ -34,9 +34,9 @@ class NonFlightCrewMass(om.ExplicitComponent):
         mass_per_flight_attendant = self._mass_per_flight_attendant
         mass_per_galley_crew = self._mass_per_galley_crew
 
-        mass_scaler = inputs[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER]
+        mass_scaler = inputs[Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER]
 
-        outputs[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS] = (
+        outputs[Aircraft.CrewPayload.CABIN_CREW_MASS] = (
             flight_attendants_count * mass_per_flight_attendant
             + galley_crew_count * mass_per_galley_crew
         ) * mass_scaler
@@ -49,8 +49,8 @@ class NonFlightCrewMass(om.ExplicitComponent):
         mass_per_galley_crew = self._mass_per_galley_crew
 
         J[
-            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
-            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER,
+            Aircraft.CrewPayload.CABIN_CREW_MASS,
+            Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER,
         ] = (
             flight_attendants_count * mass_per_flight_attendant
             + galley_crew_count * mass_per_galley_crew
