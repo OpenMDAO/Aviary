@@ -55,7 +55,7 @@ aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1,unitless
-aircraft:engine:num_engines,3,unitless
+# aircraft:engine:num_engines,3,unitless
 aircraft:engine:num_fuselage_engines,3,unitless
 aircraft:engine:num_wing_engines,0,unitless
 aircraft:engine:reference_mass,22017.0,lbm

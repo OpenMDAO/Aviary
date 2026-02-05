@@ -154,7 +154,7 @@ inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 22017, 'lbm')  # WENG
 inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 70000.0, 'lbf')  # THRUST
 inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, 'lbf')  # THRSO
-inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))  # NEW+NEF
+# inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))  # NEW+NEF
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3)  # NEF
 inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]))  # NEW
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)  # WTHR
