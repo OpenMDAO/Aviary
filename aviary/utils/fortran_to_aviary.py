@@ -544,9 +544,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, [num_first_class], 'unitless'
         )
-        num_tourist_class = num_passengers - num_first_class
+        num_economy_class = num_passengers - num_first_class
         input_values.set_val(
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, [num_tourist_class], 'unitless'
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, [num_economy_class], 'unitless'
         )
 
     ## Seats ##
@@ -554,12 +554,12 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         num_aisles = input_values.get_val(Aircraft.Fuselage.NUM_AISLES, 'unitless')[0]
         num_aisles = int(num_aisles)
         input_values.set_val(Aircraft.Fuselage.NUM_AISLES, [num_aisles], 'unitless')
-        num_seat_abreast_tourist = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 'unitless'
+        num_seat_abreast_economy = input_values.get_val(
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 'unitless'
         )[0]
-        num_seat_abreast_tourist = int(num_seat_abreast_tourist)
+        num_seat_abreast_economy = int(num_seat_abreast_economy)
         input_values.set_val(
-            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, [num_seat_abreast_tourist]
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, [num_seat_abreast_economy]
         )
         try:
             num_seat_abreast_first = int(
@@ -811,9 +811,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('EYEW')
     if not Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
         missing_vars.append('PAX')
-    if not Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST in input_values:
+    if not Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY in input_values:
         missing_vars.append('PS')
-    if not Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST in input_values:
+    if not Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY in input_values:
         missing_vars.append('SAB')
     if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
         missing_vars.append('SAH')
@@ -833,7 +833,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('TCVT')
     if not Aircraft.Nacelle.MASS_SPECIFIC in input_values:
         missing_vars.append('UWNAC')
-    if not Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS in input_values:
+    if not Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS in input_values:
         missing_vars.append('UWPAX')
     if not Aircraft.Design.MAX_STRUCTURAL_SPEED in input_values:
         missing_vars.append('VMLFSL')
@@ -1181,7 +1181,7 @@ flops_scaler_variables = [
     Aircraft.Canard.WETTED_AREA,
     Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
     Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-    Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+    Aircraft.CrewPayload.CABIN_CREW_MASS,
     Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
     Aircraft.Design.EMPTY_MASS_MARGIN,
     Aircraft.Electrical.MASS,

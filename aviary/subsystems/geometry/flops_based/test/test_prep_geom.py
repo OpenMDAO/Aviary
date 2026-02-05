@@ -250,7 +250,6 @@ class _PrelimTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=get_flops_data(case_name),
             output_validation_data=local_variables[case_name],
             input_keys=[
@@ -313,7 +312,6 @@ class _WingTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -359,7 +357,6 @@ class _TailTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -413,7 +410,6 @@ class _FuselageTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -494,7 +490,6 @@ class CanardTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            'canard_test',
             input_validation_data=Canard_test_data,
             output_validation_data=Canard_test_data,
             input_keys=[
@@ -577,7 +572,6 @@ class CharacteristicLengthsTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -1001,13 +995,13 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 340, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 340, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Wing.DETAILED_WING, val=True, units='unitless')

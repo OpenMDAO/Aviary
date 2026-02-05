@@ -228,6 +228,23 @@ class ThrottleAllocation(Enum):
     DYNAMIC = 'dynamic'
 
 
+class Transcription(Enum):
+    """
+    Sets the Dymos Transcription for each phase.
+    See Dymos documentation for more details: https://openmdao.github.io/dymos/getting_started/transcriptions.html
+
+    COLLOCATION uses implicit pseudospectral method for discritizing state and control history over time.
+    PICARDShooting uses explicit numerical integration to propagate the initial state subject to controls.
+
+    """
+
+    COLLOCATION = 'collocation'
+    PICARDSHOOTING = 'picardshooting'
+
+    def __str__(self):
+        return self.value
+
+
 class Verbosity(IntEnum):
     """
     Sets how much information Aviary outputs when run.

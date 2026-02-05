@@ -223,7 +223,9 @@ class BWBWingPrelimTest(unittest.TestCase):
 
         assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 16555.93625697, tolerance=1e-9)
         assert_near_equal(prob.get_val(Aircraft.Wing.ASPECT_RATIO), 3.44888827, tolerance=1e-9)
-        assert_near_equal(prob.get_val(Aircraft.Wing.ASPECT_RATIO_REF), 3.44888827, tolerance=1e-9)
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE), 3.44888827, tolerance=1e-9
+        )
         assert_near_equal(
             prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.531071664997850196, tolerance=1e-9
         )
@@ -270,7 +272,9 @@ class BWBWingPrelimTest(unittest.TestCase):
 
         assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 12109.87971617, tolerance=1e-9)
         assert_near_equal(prob.get_val(Aircraft.Wing.ASPECT_RATIO), 5.36951675, tolerance=1e-9)
-        assert_near_equal(prob.get_val(Aircraft.Wing.ASPECT_RATIO_REF), 5.36951675, tolerance=1e-9)
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE), 5.36951675, tolerance=1e-9
+        )
         assert_near_equal(
             prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.46761341784858923, tolerance=1e-9
         )

@@ -108,14 +108,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             Aircraft.CrewPayload.NUM_PASSENGERS,
             Aircraft.CrewPayload.NUM_FIRST_CLASS,
             Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS,
+            Aircraft.CrewPayload.NUM_ECONOMY_CLASS,
         ]
 
         design_pax_keys = [
             Aircraft.CrewPayload.Design.NUM_PASSENGERS,
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS,
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS,
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS,
         ]
     else:
         pax_keys = [Aircraft.CrewPayload.NUM_PASSENGERS]
@@ -192,7 +192,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                     'Information on seat class distribution for aircraft design was '
                     'not provided - assuming that all passengers are economy class.'
                 )
-            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, design_pax)
+            aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, design_pax)
         else:
             if verbosity >= 1:
                 UserWarning(
@@ -212,7 +212,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                     'Information on seat class distribution for current mission was '
                     'not provided - assuming that all passengers are economy class.'
                 )
-            aviary_options.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, mission_pax)
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, mission_pax)
         else:
             if verbosity >= 1:
                 UserWarning(
@@ -260,13 +260,13 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 )
         # Economy Class
         if aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
-        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS):
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
+        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS):
             if verbosity >= 1:
                 UserWarning(
-                    'More tourist class passengers are flying in this mission than there are '
-                    'available tourist class seats on the aircraft. Assuming these passengers '
-                    'have the same mass as other tourist class passengers, but are sitting in '
+                    'More economy class passengers are flying in this mission than there are '
+                    'available economy class seats on the aircraft. Assuming these passengers '
+                    'have the same mass as other economy class passengers, but are sitting in '
                     'different seats.'
                 )
 
@@ -371,7 +371,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         # calculate passenger mass with bags based on user inputs.
         try:
             pax_mass_with_bag = aviary_options.get_val(
-                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, 'lbm'
+                Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, 'lbm'
             )
         except KeyError:
             pax_mass = aviary_options.get_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 'lbm')
@@ -380,7 +380,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             )
             pax_mass_with_bag = pax_mass + bag_mass
             aviary_options.set_val(
-                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, pax_mass_with_bag, 'lbm'
+                Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, pax_mass_with_bag, 'lbm'
             )
 
         # calculate and check total payload
@@ -400,53 +400,73 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         aviary_options.set_val(Aircraft.CrewPayload.Design.MAX_CARGO_MASS, max_cargo, 'lbm')
         aviary_options.set_val(Aircraft.CrewPayload.Design.CARGO_MASS, des_cargo, 'lbm')
 
-    # Check flight attendants
-    if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
-        flight_attendants_count = 0  # assume no passengers
+    # Process FLOPS based crew variables
+    if mass_method == LegacyCode.FLOPS:
+        # Check flight attendants
+        if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
+            flight_attendants_count = 0  # assume no passengers
 
-        if 0 < design_pax:
-            if design_pax < 51:
-                flight_attendants_count = 1
+            if 0 < design_pax:
+                if design_pax < 51:
+                    flight_attendants_count = 1
 
-            else:
-                flight_attendants_count = design_pax // 40 + 1
+                else:
+                    flight_attendants_count = design_pax // 40 + 1
 
-        aviary_options.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count)
+            aviary_options.set_val(
+                Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count
+            )
 
-    if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
-        galley_crew_count = 0  # assume no passengers
+        if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
+            galley_crew_count = 0  # assume no passengers
 
-        if 150 < design_pax:
-            galley_crew_count = design_pax // 250 + 1
+            if 150 < design_pax:
+                galley_crew_count = design_pax // 250 + 1
 
-        aviary_options.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, galley_crew_count)
-
-    if Aircraft.CrewPayload.NUM_FLIGHT_CREW not in aviary_options:
-        flight_crew_count = 3
-
-        if design_pax < 151:
-            flight_crew_count = 2
-
-        aviary_options.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, flight_crew_count)
-
-    if (
-        Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options
-        and Mission.Design.RANGE in aviary_options
-    ):
-        design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
-
-        if design_range <= 900.0:
-            baggage_mass_per_pax = 35.0
-        elif design_range <= 2900.0:
-            baggage_mass_per_pax = 40.0
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, galley_crew_count)
         else:
-            baggage_mass_per_pax = 44.0
+            galley_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW)
 
-        aviary_options.set_val(
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
-            val=baggage_mass_per_pax,
-            units='lbm',
-        )
+        if Aircraft.CrewPayload.NUM_FLIGHT_CREW not in aviary_options:
+            flight_crew_count = 3
+
+            if design_pax < 151:
+                flight_crew_count = 2
+
+            aviary_options.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, flight_crew_count)
+        else:
+            flight_crew_count = aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW)
+
+        # check cabin crew against flight attendants & galley crew
+        if Aircraft.CrewPayload.NUM_CABIN_CREW in aviary_options:
+            cabin_crew_calc = flight_crew_count + galley_crew_count
+            cabin_crew_provided = aviary_options.get_val(Aircraft.CrewPayload.NUM_CABIN_CREW)
+            if cabin_crew_calc != cabin_crew_provided:
+                warnings.warn(
+                    f'Number of cabin crew ({cabin_crew_provided}) does not equal sum of flight '
+                    f'attendants and galley crew ({cabin_crew_calc}). Setting '
+                    f'aircraft:crew_and_payload:num_cabin_crew to {cabin_crew_calc}'
+                )
+                aviary_options.set_val(Aircraft.CrewPayload.NUM_CABIN_CREW, cabin_crew_calc)
+
+        if (
+            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options
+            and Mission.Design.RANGE in aviary_options
+        ):
+            design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
+
+            if design_range <= 900.0:
+                baggage_mass_per_pax = 35.0
+            elif design_range <= 2900.0:
+                baggage_mass_per_pax = 40.0
+            else:
+                baggage_mass_per_pax = 44.0
+
+            aviary_options.set_val(
+                Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
+                val=baggage_mass_per_pax,
+                units='lbm',
+            )
 
     return aviary_options
 

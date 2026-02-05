@@ -1344,7 +1344,7 @@ def dashboard(script_name, port=0, run_in_background=False):
     # The subsystems report tab shows selected results for every major
     # subsystem in the Aviary problem
 
-    for md_file in sorted(Path(f'{reports_dir}subsystems').glob('*.md'), key=str):
+    for md_file in sorted(Path(f'{reports_dir / "subsystems"}').glob('*.md'), key=str):
         create_report_frame(
             md_file.stem,
             subsystem_tabs_list,
