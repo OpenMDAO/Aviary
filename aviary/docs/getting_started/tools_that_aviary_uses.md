@@ -26,6 +26,7 @@ Similar to OpenMDAO's deep integration into Aviary, mission analysis is built us
 For actual modeling of aircraft properties and performance, Aviary includes equations taken from two of NASA's existing conceptual aircraft design codes: FLOPS (Flight Optimization System) and GASP (General Aviation Synthesis Program).
 These tools are fully-functional, standalone programs that were written in Fortran and used in largely similar ways.
 Both utilized text-based input files and were accessed via the command line. Both codes used different methodologies to model various aspects of aircraft performance, such as mass estimation, aerodynamic performance, and mission modeling.
+Aviary includes utilities for converting FLOPS and GASP input files into formats that can be used by Aviary.
 
 ### FLOPS
 
