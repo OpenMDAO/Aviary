@@ -917,6 +917,15 @@ def update_flops_options(vehicle_data):
     if Aircraft.Wing.INPUT_STATION_DIST in input_values:
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
 
+    if not Mission.Landing.LIFT_COEFFICIENT_MAX in input_values:
+        unused_values = vehicle_data['unused_values']
+        try:
+            CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
+            CLLDM = 1.69 * CLAPP
+        except:
+            CLLDM = 3.0
+        input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
+
     design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
     if design_type[0] == 0:
         input_values.set_val(Aircraft.Design.TYPE, ['transport'], design_units)
@@ -946,7 +955,7 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
         else:
-            # If detail wing is not provided, initialize it to [0, 0.5, 1]
+            # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
             input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
 
@@ -965,8 +974,7 @@ def update_flops_options(vehicle_data):
             input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [False], 'unitless')
 
         if Aircraft.Engine.SCALED_SLS_THRUST in input_values:
-            # not sure why THRUST=70000,1,0,0,0,0, just grab the first entry
-            # does it apply to transporters?
+            # This is a design variable. So, first entry is the initial value
             thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
             input_values.set_val(Aircraft.Engine.SCALED_SLS_THRUST, [thrust], 'lbf')
 
@@ -1009,60 +1017,9 @@ def update_flops_options(vehicle_data):
                 input_values.set_val(
                     Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
                 )
-
-    if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values:
-        num_business_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 'unitless'
-        )[0]
     else:
-        num_business_class = 0
-    if Aircraft.CrewPayload.Design.NUM_FIRST_CLASS in input_values:
-        num_first_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 'unitless'
-        )[0]
-    else:
-        num_first_class = 0
-    if Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS in input_values:
-        num_economy_class = input_values.get_val(
-            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 'unitless'
-        )[0]
-    else:
-        num_economy_class = 0
-    num_passengers = num_business_class + num_first_class + num_economy_class
-    # TODO: will be moved to preprocess
-    # input_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, [num_passengers])
-
-    if not Aircraft.CrewPayload.NUM_GALLEY_CREW in input_values:
-        if num_passengers < 151:
-            num_galley_crew = 0
-        else:
-            num_galley_crew = int(num_passengers / 250) + 1
-        input_values.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, [num_galley_crew])
-
-    if not Aircraft.Engine.NUM_ENGINES in input_values:
-        if Aircraft.Engine.NUM_FUSELAGE_ENGINES in input_values:
-            num_fuselage_engines = input_values.get_val(
-                Aircraft.Engine.NUM_FUSELAGE_ENGINES, 'unitless'
-            )[0]
-        else:
-            num_fuselage_engines = 0
-        if Aircraft.Engine.NUM_WING_ENGINES in input_values:
-            num_wing_engines = input_values.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')[0]
-        else:
-            num_wing_engines = 0
-        num_engines = num_fuselage_engines + num_wing_engines
-        input_values.set_val(Aircraft.Engine.NUM_ENGINES, [num_engines])
-
-    if not Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER in input_values:
-        if Mission.Design.RANGE in input_values:
-            design_range = input_values.get_val(Mission.Design.RANGE, 'nmi')[0]
-            baggage_per_pax = 35.0
-            if design_range > 2900:
-                baggage_per_pax = 44.0
-            elif design_range > 900:
-                baggage_per_pax = 40.0
-        input_values.set_val(
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, [baggage_per_pax], 'lbm'
+        raise RuntimeError(
+            f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
         )
 
     if (
@@ -1108,7 +1065,6 @@ def update_aviary_options(vehicle_data):
     """Special handling for variables that occurs for either legacy code."""
     input_values: NamedValues = vehicle_data['input_values']
 
-    # if reference + scaled thrust both provided, set scale factor -- Is this comment still true?
     try:
         ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
         ref_thrust = float(ref_thrust)
