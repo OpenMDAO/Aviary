@@ -169,6 +169,7 @@ class SimpleCruisePhase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE, units=alt_units)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
 
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(

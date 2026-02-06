@@ -296,11 +296,11 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         range_scale = range_cruise / old_range_cruise
 
     # Altitude
-    old_alt_cruise = phase_info['climb2']['user_options']['altitude_final'][0]
+    old_alt_cruise = phase_info['cruise']['user_options']['alt_cruise'][0]
     if alt_cruise != old_alt_cruise:
         phase_info['climb2']['user_options']['altitude_final'] = (alt_cruise, 'ft')
         phase_info['climb2']['initial_guesses']['altitude'] = ([10.0e3, alt_cruise], 'ft')
-        phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
+        phase_info['cruise']['user_options']['alt_cruise'] = (alt_cruise, 'ft')
         phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.0e3], 'ft')
 
         # TODO - Could adjust time guesses/bounds in climb2 and desc2.
@@ -324,8 +324,8 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         phase_info['desc2']['initial_guesses']['mass'] = (end_mass, 'lbm')
 
     # Mach
-    old_mach_cruise = phase_info['cruise']['initial_guesses']['mach'][0]
+    old_mach_cruise = phase_info['cruise']['user_options']['mach_cruise']
     if mach_cruise != old_mach_cruise:
-        phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
+        phase_info['cruise']['user_options']['mach_cruise'] = (mach_cruise, 'unitless')
 
     return phase_info, post_mission_info

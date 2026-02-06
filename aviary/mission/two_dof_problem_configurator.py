@@ -211,7 +211,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilder
             Phase builder for requested phase.
         """
-        # TODO: Move this to aviary_group.
+        # TODO: Move this to aviary_group and let other EOM use them.
         if 'phase_builder' in phase_options['user_options']:
             builder = phase_options['user_options']['phase_builder']
 
@@ -232,8 +232,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             phase_builder = AscentPhase
         elif 'electric_cruise' in phase_name:
             phase_builder = ElectricCruisePhase
-        elif 'cruise' in phase_name:
-            phase_builder = CruisePhase
         else:
             # All other phases are flight phases.
             phase_builder = FlightPhase

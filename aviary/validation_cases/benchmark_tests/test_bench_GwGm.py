@@ -38,25 +38,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171646.48312684,
+            171595.06049335,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            95100.07583783,
+            95089.98897716,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40546.40728901,
+            40505.07151619,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2655.5028412,
+            2657.88663983,
             tolerance=rtol,
         )
 
@@ -64,7 +64,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136098.07583783,
+            136087.98897716,
             tolerance=rtol,
         )
 
@@ -85,25 +85,25 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171646.48312684,
+            171595.06049335,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            95100.07583783,
+            95089.98897716,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40546.40728901,
+            40505.07151619,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2655.5028412,
+            2657.88663983,
             tolerance=rtol,
         )
 
@@ -111,7 +111,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136098.07583783,
+            136087.98897716,
             tolerance=rtol,
         )
 

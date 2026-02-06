@@ -1,5 +1,4 @@
-from aviary.variable_info.enums import SpeedType
-
+from aviary.variable_info.enums import PhaseType, SpeedType
 
 # 2DOF
 phase_info = {
@@ -174,16 +173,16 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (41_000, 'ft'),
             'mach_cruise': 0.8,
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 8.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([140_000.0, -35_000], 'lbm'),
-            'initial_distance': (100.0e3, 'ft'),
-            'initial_time': (1_000.0, 's'),
-            'altitude': (41_000, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'mass': ([140_000.0, 105000], 'lbm'),
+            'time': ([1000.0, 28000.0], 's'),
         },
     },
     'desc1': {
