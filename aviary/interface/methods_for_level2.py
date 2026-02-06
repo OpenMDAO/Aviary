@@ -1367,7 +1367,7 @@ class AviaryProblem(om.Problem):
 
         if name is None:
             name = self._name + '_' + str(problem_type.value)
-            curr_time = datetime.now().strftime("%m%d%y%H%M%S")
+            curr_time = datetime.now().strftime('%m%d%y%H%M%S')
             name += '_' + curr_time
         off_design_prob = AviaryProblem(name=name)
 
