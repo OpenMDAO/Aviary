@@ -66,7 +66,7 @@ class SubsystemBuilder(ABC):
         derivative of each state. The recommended convention is to name the output
         f"{state_name}_rate", where `state_name` is the name of the state variable.
 
-        Use in the phase builders (e.g. cruise_phase.py) when other states are added to the phase.
+        Use in the phase builders when other states are added to the phase.
 
         Returns
         -------
@@ -95,7 +95,7 @@ class SubsystemBuilder(ABC):
         Notes
         -----
         This method is optional, used if subsystems have control variables.
-        Used in the phase builders (e.g. cruise_phase.py) when other controls are added to the phase.
+        Used in the phase builders when other controls are added to the phase.
 
         Returns
         -------
@@ -115,7 +115,7 @@ class SubsystemBuilder(ABC):
 
         Optional, used if subsystems have fixed values.
 
-        Used in the phase builders (e.g. cruise_phase.py) when other parameters are added to the
+        Used in the phase builders when other parameters are added to the
         phase.
 
         This is distinct from `get_design_vars` in a nuanced way. Design variables are variables
@@ -149,7 +149,7 @@ class SubsystemBuilder(ABC):
 
         Optional, used if subsystems have path or boundary constraints.
 
-        Used in the phase builders (e.g. cruise_phase.py) when other constraints are added to the
+        Used in the phase builders when other constraints are added to the
         phase.
 
         Returns

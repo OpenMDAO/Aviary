@@ -5,7 +5,7 @@ from aviary.variable_info.variables import Dynamic
 
 
 class DistanceComp(om.ExplicitComponent):
-    """Computes range for a simple cruise phase."""
+    """Computes distance for a simple cruise phase."""
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)

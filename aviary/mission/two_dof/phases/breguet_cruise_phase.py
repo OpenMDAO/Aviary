@@ -95,7 +95,7 @@ class CruisePhase(PhaseBuilder):
     Additional method overrides and new methods specific to the cruise phase are included.
     """
 
-    default_name = 'cruise_phase'
+    default_name = 'breguet_cruise_phase'
     default_ode_class = BreguetCruiseODE
     default_options_class = BreguetCruisePhaseOptions
 

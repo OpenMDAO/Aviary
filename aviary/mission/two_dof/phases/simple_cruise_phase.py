@@ -99,7 +99,7 @@ class SimpleCruisePhase(PhaseBuilder):
     Additional method overrides and new methods specific to the cruise phase are included.
     """
 
-    default_name = 'cruise_phase'
+    default_name = 'simple_cruise_phase'
     default_ode_class = SimpleCruiseODE
     default_options_class = SimpleCruisePhaseOptions
 

@@ -6,7 +6,7 @@ from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
-from aviary.mission.two_dof.phases.cruise_phase import CruisePhase, ElectricCruisePhase
+from aviary.mission.two_dof.phases.breguet_cruise_phase import CruisePhase, ElectricCruisePhase
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
