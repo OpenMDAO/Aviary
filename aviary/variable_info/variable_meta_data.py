@@ -3699,7 +3699,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='carry out simple or detailed layout of fuselage.',
+    desc='carry out simple or detailed layout of fuselage (for FLOPS based geometry).',
     option=True,
     default_value=True,
 )
