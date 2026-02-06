@@ -39,16 +39,14 @@ class AscentEOMTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([2.202965, 2.202965]),
-            tol,
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
-            np.array([-3.216328, -3.216328]),
-            tol,
-        )
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: np.array([2.202965, 2.202965]),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE: np.array([-3.216328, -3.216328]),
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
