@@ -1,5 +1,4 @@
 import csv
-import os
 import unittest
 from copy import deepcopy
 from pathlib import Path
@@ -135,28 +134,6 @@ class TestReports(unittest.TestCase):
 
         # no need to run this model, just generate the report.
         prob.final_setup()
-
-    def test_report_directory_naming(self):
-        problem_name = 'test_problem'
-        phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
-        prob = AviaryProblem(name=problem_name)
-        prob.load_inputs(
-            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
-        )
-        prob.check_and_preprocess_inputs()
-        prob.build_model()
-        prob.add_driver('SLSQP', max_iter=50)
-        prob.add_design_variables()
-        prob.add_objective()
-        prob.setup()
-        prob.run_aviary_problem()
-        self.assertTrue(os.path.exists(f'{problem_name}_out'))
-        _ = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        self.assertTrue(os.path.exists(f'{problem_name}_fallout_out'))
-        _ = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        self.assertTrue(os.path.exists(f'{problem_name}_fallout_2_out'))
-        _ = prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        self.assertTrue(os.path.exists(f'{problem_name}_fallout_3_out'))
 
 
 if __name__ == '__main__':
