@@ -26,7 +26,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
 
         # define passengers of every seat class so we can change their values later
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 169)
-        prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 144)
+        prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 144)
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 15)
         prob.aviary_inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 10)
 
@@ -65,7 +65,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
         ]
 
         inputs_var_list = [
-            Aircraft.CrewPayload.NUM_TOURIST_CLASS,
+            Aircraft.CrewPayload.NUM_ECONOMY_CLASS,
             Aircraft.CrewPayload.NUM_BUSINESS_CLASS,
             Aircraft.CrewPayload.NUM_FIRST_CLASS,
             Aircraft.CrewPayload.NUM_PASSENGERS,
@@ -97,7 +97,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
             mission_gross_mass=150_000,
             num_first_class=1,
             num_business=5,
-            num_tourist=75,
+            num_economy=75,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Design.RANGE),
@@ -161,7 +161,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS),
+            prob_fallout.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS),
             75,
             tolerance=1e-12,
         )
@@ -187,7 +187,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
             mission_range=1800,
             num_first_class=1,
             num_business=5,
-            num_tourist=144,
+            num_economy=144,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Design.RANGE),
@@ -251,7 +251,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS),
+            prob_alternate.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS),
             144,
             tolerance=1e-12,
         )

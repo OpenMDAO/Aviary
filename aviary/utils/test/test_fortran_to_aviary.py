@@ -95,12 +95,12 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_advanced_single_aisle(self):
-        # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated using the fortran-to-Aviary converter
-        # and was not evaluated for comparison to the original. Thus, until this file is evaluated, this test is purely a regression
-        # test.
+        # Note: The csv comparison file N3CC_generic_low_speed_polars_FLOPSinp.csv was generated
+        # using the fortran-to-Aviary converter and was not evaluated for comparison to the original.
+        # Thus, until this file is evaluated, this test is purely a regression test.
 
         filepath = 'models/aircraft/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPS.txt'
-        comparison_filepath = 'utils/test/data/converter_test_N3CC_FLOPS.csv'
+        comparison_filepath = 'utils/test/data/converter_test_advanced_single_aisle_FLOPS.csv'
         self.prepare_and_run(
             filepath,
             out_file=Path.cwd() / Path('TEST_' + comparison_filepath),

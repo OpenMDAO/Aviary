@@ -375,14 +375,12 @@ class FuelAndOEMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Propulsion.MASS, val=16129, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3895.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3895.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.STRUCTURE_MASS, val=50461.0, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0, units='lbm'
-        )
+        self.prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4932.0, units='lbm')
         self.prob.model.set_input_defaults(
             Mission.Summary.FUEL_MASS_REQUIRED, val=42892.0, units='lbm'
         )
@@ -434,12 +432,12 @@ class FuelAndOEMTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         prob.model.set_input_defaults(Aircraft.Propulsion.MASS, val=16129, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3895.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3895.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.STRUCTURE_MASS, val=50461.0, units='lbm')
         prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0, units='lbm')
+        prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4932.0, units='lbm')
         prob.model.set_input_defaults(Mission.Summary.FUEL_MASS_REQUIRED, val=42892.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114, units='ft**3')
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
@@ -716,13 +714,11 @@ class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS, val=1759, units='lbm')
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults('eng_comb_mass', val=14370.8, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3895.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3895.0, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0, units='lbm'
-        )
+        self.prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4932.0, units='lbm')
         self.prob.model.set_input_defaults('payload_mass_des', val=36000, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
@@ -773,11 +769,11 @@ class FuelMassTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS, val=1759, units='lbm')
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         prob.model.set_input_defaults('eng_comb_mass', val=14370.8, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3895.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3895.0, units='lbm')
         prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, val=4932.0, units='lbm')
+        prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4932.0, units='lbm')
         prob.model.set_input_defaults('payload_mass_des', val=36000, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
@@ -813,11 +809,11 @@ class FuelMassGroupTestCase1(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3895, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3895, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21089.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, val=4932, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4932, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114.0, units='ft**3'
         )
@@ -966,13 +962,11 @@ class FuelMassGroupTestCase2(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3632, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3632, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=21031.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21031.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_USEFUL_LOAD, val=4885.18, units='lbm'
-        )
+        self.prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4885.18, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 876.7, units='ft**3'
         )
@@ -1096,11 +1090,11 @@ class FuelMassGroupTestCase3(unittest.TestCase):  # this is v 3.6 advanced tube 
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, val=3765, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3765, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.Design.FIXED_EQUIPMENT_MASS, val=17201.0, units='lbm'
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=17201.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, val=4701, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4701, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 677.6, units='ft**3'
         )
@@ -1334,9 +1328,11 @@ class BWBFuelMassTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS, 932.82805, units='lbm')
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
         prob.model.set_input_defaults('eng_comb_mass', 6934.7, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115.19946, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_EQUIPMENT_MASS, 20876.477, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, 4156.795, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.MASS, 2115.19946, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 20876.477, units='lbm'
+        )
+        prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, 4156.795, units='lbm')
         prob.model.set_input_defaults('payload_mass_des', 33750.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0, units='unitless')
         prob.model.set_input_defaults(
@@ -1373,10 +1369,12 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.687, units='lbm/galUS')
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Propulsion.MASS, 16161.21, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 1942.3, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.MASS, 1942.3, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.STRUCTURE_MASS, 43566.079, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_EQUIPMENT_MASS, 20876.477, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, 5736.3, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 20876.477, units='lbm'
+        )
+        prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, 5736.3, units='lbm')
         prob.model.set_input_defaults(Mission.Summary.FUEL_MASS_REQUIRED, 26652.3, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 605.90781747, units='ft**3'
@@ -1498,9 +1496,11 @@ class BWBFuelMassGroupTest(unittest.TestCase):
 
         # FuelMass
         prob.model.set_input_defaults('eng_comb_mass', 7311.5, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Controls.TOTAL_MASS, 2115, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_EQUIPMENT_MASS, 20876, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.FIXED_USEFUL_LOAD, 5775, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Controls.MASS, 2115, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 20876, units='lbm'
+        )
+        prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, 5775, units='lbm')
         prob.model.set_input_defaults('payload_mass_des', 33750.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0, units='unitless')
         prob.model.set_input_defaults(

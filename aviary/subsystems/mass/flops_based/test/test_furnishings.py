@@ -129,8 +129,8 @@ class BWBFurnishingsGroupMassTest2(unittest.TestCase):
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS: flops_inputs.get_val(
                 Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
             ),
-            Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS: flops_inputs.get_val(
-                Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS
+            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS: flops_inputs.get_val(
+                Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
             ),
             Aircraft.Fuselage.MILITARY_CARGO_FLOOR: False,
         }
@@ -211,7 +211,7 @@ class AltFurnishingsGroupMassTest(unittest.TestCase):
                 Aircraft.Furnishings.MASS_BASE,
                 Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS_BASE,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE,
             ],
             output_keys=Aircraft.Furnishings.MASS,
             version=Version.ALTERNATE,
