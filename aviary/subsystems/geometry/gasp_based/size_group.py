@@ -2,9 +2,9 @@ import openmdao.api as om
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
 from aviary.subsystems.geometry.gasp_based.empennage import EmpennageSize
-from aviary.subsystems.geometry.gasp_based.engine import EngineSize, BWBEngineSizeGroup
-from aviary.subsystems.geometry.gasp_based.fuselage import FuselageGroup, BWBFuselageGroup
-from aviary.subsystems.geometry.gasp_based.wing import WingGroup, BWBWingGroup
+from aviary.subsystems.geometry.gasp_based.engine import BWBEngineSizeGroup, EngineSize
+from aviary.subsystems.geometry.gasp_based.fuselage import BWBFuselageGroup, FuselageGroup
+from aviary.subsystems.geometry.gasp_based.wing import BWBWingGroup, WingGroup
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft

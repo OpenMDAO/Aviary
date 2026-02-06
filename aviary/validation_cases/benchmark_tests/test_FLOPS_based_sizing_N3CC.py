@@ -7,16 +7,14 @@ Includes:
   N3CC data
 """
 
-from copy import deepcopy
 import unittest
+from copy import deepcopy
 
 import numpy as np
-
 import openmdao.api as om
-from openmdao.utils.testing_utils import use_tempdirs
-from openmdao.utils.testing_utils import require_pyoptsparse
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values

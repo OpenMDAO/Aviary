@@ -4,10 +4,10 @@ import argparse
 import re
 from enum import Enum
 from pathlib import Path
-from scipy.interpolate import interp1d
 
 import numpy as np
 from openmdao.components.interp_util.interp import InterpND
+from scipy.interpolate import interp1d
 
 from aviary.interface.utils import round_it
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
@@ -15,7 +15,6 @@ from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import CodeOrigin
-
 
 _gasp_keys = ['Altitude', 'Mach', 'Angle of Attack']
 default_units = {
@@ -482,7 +481,7 @@ def _make_structured_grid(data, method='lagrange3', fields=['CL', 'CD']):
 
 
 if __name__ == '__main__':
-    from aviary.utils.aero_table_conversion_cmd import _setup_ATC_parser, _exec_ATC
+    from aviary.utils.aero_table_conversion_cmd import _exec_ATC, _setup_ATC_parser
 
     parser = argparse.ArgumentParser(
         description='Converts FLOPS- or GASP-formatted aero data files into Aviary csv format.\n'

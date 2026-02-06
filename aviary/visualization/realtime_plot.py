@@ -2,9 +2,9 @@ import mimetypes
 import os
 import pathlib
 import subprocess
-from openmdao.utils.file_utils import _load_and_exec
+
 import openmdao.utils.hooks as hooks
-from openmdao.utils.file_utils import is_python_file
+from openmdao.utils.file_utils import _load_and_exec, is_python_file
 
 
 def _rtplot_setup_parser(parser):

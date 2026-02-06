@@ -1450,6 +1450,7 @@ def dashboard(script_name, port=0, run_in_background=False):
 
 if __name__ == '__main__':
     import argparse
+
     from aviary.visualization.dashboard_cmd import _dashboard_cmd, _dashboard_setup_parser
 
     parser = argparse.ArgumentParser()

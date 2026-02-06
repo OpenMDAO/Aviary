@@ -1,6 +1,6 @@
 """
 This is a basic example of running a coupled aircraft design-mission optimization in Aviary using
-the "level 1" API.
+the python API.
 
 The properties of the aircraft are defined in a pre-existing ".csv" file - in this case it describes
 a conventional single-aisle commercial transport. The mission is defined using a "phase_info" file,

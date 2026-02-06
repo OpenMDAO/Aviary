@@ -6,6 +6,7 @@ from aviary.mission.initial_guess_builders import (
 )
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.phase_utils import add_subsystem_variables_to_phase
+from aviary.mission.two_dof.ode.climb_ode import ClimbODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType

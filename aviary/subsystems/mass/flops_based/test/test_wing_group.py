@@ -2,9 +2,10 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.subsystems.mass.flops_based.wing_group import WingMassGroup
+from aviary.validation_cases.validation_tests import Version, flops_validation_test, get_flops_data
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.validation_cases.validation_tests import flops_validation_test, get_flops_data, Version
 
 
 @use_tempdirs

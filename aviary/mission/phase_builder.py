@@ -10,8 +10,8 @@ from abc import ABC
 from collections import namedtuple
 
 import dymos as dm
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
 from aviary.mission.initial_guess_builders import InitialGuess

@@ -10,7 +10,6 @@ import aviary.api as av
 from aviary.examples.external_subsystems.engine_NPSS.NPSS_engine_builder import (
     NPSSTabularEngineBuilder,
 )
-
 from aviary.examples.external_subsystems.engine_NPSS.NPSS_variable_meta_data import ExtendedMetaData
 
 

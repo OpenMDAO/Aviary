@@ -5,16 +5,16 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
-    BWBACMass,
-    BWBFurnishingMass,
-    BWBEquipMassGroup,
     ACMass,
-    EquipMassPartialSum,
-    FurnishingMass,
-    EquipMassSum,
-    EquipMassGroup,
-    UsefulLoadMass,
+    BWBACMass,
+    BWBEquipMassGroup,
+    BWBFurnishingMass,
     EquipAndUsefulLoadMassGroup,
+    EquipMassGroup,
+    EquipMassPartialSum,
+    EquipMassSum,
+    FurnishingMass,
+    UsefulLoadMass,
 )
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import setup_model_options

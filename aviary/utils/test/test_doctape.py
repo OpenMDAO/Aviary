@@ -12,6 +12,7 @@ from aviary.utils.doctape import (
     check_contains,
     check_value,
     get_all_keys,
+    get_all_non_aviary_names,
     get_attribute_name,
     get_previous_line,
     get_value,
@@ -22,7 +23,6 @@ from aviary.utils.doctape import (
     glue_variable,
     gramatical_list,
     run_command_no_file_error,
-    get_all_non_aviary_names,
 )
 
 try:
@@ -96,7 +96,7 @@ class DocTAPETests(unittest.TestCase):
         glue_keys({'d1': {'d2': 2}}, display=False)
 
     def test_glue_class_functions(self):
-        from aviary.interface.methods_for_level2 import AviaryProblem
+        from aviary.core.aviary_problem import AviaryProblem
 
         curr_glued = []
         glue_class_functions(AviaryProblem, curr_glued, prefix='zz')

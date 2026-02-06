@@ -1,5 +1,5 @@
-from aviary.variable_info.variables import Mission
 from aviary.variable_info.enums import Transcription
+from aviary.variable_info.variables import Mission
 
 # defaults for height energy based phases
 

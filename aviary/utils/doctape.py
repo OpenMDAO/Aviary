@@ -6,6 +6,7 @@ import re
 import subprocess
 import tempfile
 import textwrap
+
 import numpy as np
 
 from aviary.interface.cmd_entry_points import _command_map

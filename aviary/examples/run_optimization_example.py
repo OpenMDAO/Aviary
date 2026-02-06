@@ -1,6 +1,6 @@
 """
-This is an example of running constrained optimization in Aviary using the "level 2" API. It runs
-the same aircraft and mission as the `level1_example.py` script, but it uses the AviaryProblem class
+This is an example of running constrained optimization in Aviary using the python API. It runs
+the same aircraft and mission as the `run_basic_example.py` script, but it uses the AviaryProblem class
 to set up the problem.
 
 The same ".csv" file is used to define the aircraft, but wing area and engine scale factor are added
@@ -9,9 +9,8 @@ limits. If this example is run without these constraints, wing area is increased
 and engine scale factor is reduced to its lower bound.
 """
 
-from aviary.models.missions.height_energy_default import phase_info
-
 import aviary.api as av
+from aviary.models.missions.height_energy_default import phase_info
 
 # Suppress outputs
 prob = av.AviaryProblem(verbosity=0)

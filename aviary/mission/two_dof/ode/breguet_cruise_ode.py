@@ -1,11 +1,11 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.mission.ode.altitude_rate import AltitudeRate
+from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.mission.ode.altitude_rate import AltitudeRate
-from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType

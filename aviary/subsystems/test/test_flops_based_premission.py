@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
@@ -15,12 +15,12 @@ from aviary.utils.test_utils.default_subsystems import (
     get_geom_and_mass_subsystems,
 )
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     get_flops_outputs,
     print_case,
-    Version,
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings

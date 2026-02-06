@@ -1,8 +1,8 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
-from importlib.util import spec_from_file_location, module_from_spec
-from pathlib import Path
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import Verbosity
@@ -74,7 +74,7 @@ def run_aviary(
     else:
         name = None
 
-    from aviary.interface.methods_for_level2 import AviaryProblem
+    from aviary.core.aviary_problem import AviaryProblem
 
     # Build problem
     prob = AviaryProblem(name=name, verbosity=verbosity)

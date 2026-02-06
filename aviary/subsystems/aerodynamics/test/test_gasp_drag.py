@@ -5,8 +5,8 @@ from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
 
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.two_dof_default import phase_info
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.variable_info.variables import Aircraft
 
 

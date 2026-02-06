@@ -2,13 +2,13 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.two_dof.ode.params import ParamPort
-from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
     UnsteadySolvedFlightConditions,
 )
+from aviary.mission.two_dof.ode.params import ParamPort
+from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder

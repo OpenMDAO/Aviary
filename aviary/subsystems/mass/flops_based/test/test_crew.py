@@ -4,14 +4,14 @@ import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.crew import FlightCrewMass, CabinCrewMass
+from aviary.subsystems.mass.flops_based.crew import CabinCrewMass, FlightCrewMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
     print_case,
-    Version,
 )
 from aviary.variable_info.variables import Aircraft
 

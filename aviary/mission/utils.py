@@ -1,5 +1,5 @@
-import openmdao.api as om
 import numpy as np
+import openmdao.api as om
 
 from aviary.utils.functions import promote_aircraft_and_mission_vars
 

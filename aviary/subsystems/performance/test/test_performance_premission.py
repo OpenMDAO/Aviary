@@ -2,8 +2,9 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
-from aviary.variable_info.variables import Aircraft, Mission
+
 from aviary.subsystems.performance.performance_premission import PerformancePremission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class PerformancePremissionTest(unittest.TestCase):

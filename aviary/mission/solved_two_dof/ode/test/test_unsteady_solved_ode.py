@@ -5,8 +5,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
 from aviary.mission.solved_two_dof.ode.unsteady_solved_ode import UnsteadySolvedODE
+from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.enums import SpeedType

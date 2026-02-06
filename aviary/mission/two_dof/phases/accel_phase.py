@@ -1,14 +1,14 @@
-from aviary.mission.two_dof.ode.accel_ode import AccelODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder, register
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
+from aviary.mission.two_dof.ode.accel_ode import AccelODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
-from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class AccelPhaseOptions(AviaryOptionsDictionary):

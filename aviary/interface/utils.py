@@ -1,7 +1,7 @@
+import warnings
 from math import floor, log10
 
 import numpy as np
-import warnings
 
 from aviary.variable_info.enums import Verbosity
 

@@ -1,6 +1,5 @@
 from aviary.variable_info.enums import SpeedType
 
-
 # 2DOF
 phase_info = {
     'groundroll': {
