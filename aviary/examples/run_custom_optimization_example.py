@@ -9,9 +9,8 @@ limits. If this example is run without these constraints, wing area is increased
 and engine scale factor is reduced to its lower bound.
 """
 
-from aviary.models.missions.height_energy_default import phase_info
-
 import aviary.api as av
+from aviary.models.missions.height_energy_default import phase_info
 
 # Suppress outputs
 prob = av.AviaryProblem(verbosity=0)

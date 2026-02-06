@@ -4,9 +4,9 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft
-from aviary.utils.aviary_values import AviaryValues
 
 
 class PropellerMapTest(unittest.TestCase):

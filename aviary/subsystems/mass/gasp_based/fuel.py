@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.units import convert_units
 
 from aviary.constants import GRAV_ENGLISH_LBM

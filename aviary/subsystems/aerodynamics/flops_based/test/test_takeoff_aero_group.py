@@ -12,10 +12,10 @@ from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data imp
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.preprocessors import preprocess_options
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.utils.preprocessors import preprocess_options
 
 
 class TestTakeoffAeroGroup(unittest.TestCase):

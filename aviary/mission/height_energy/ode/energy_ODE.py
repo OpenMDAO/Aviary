@@ -3,7 +3,6 @@ import openmdao.api as om
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
 from aviary.mission.height_energy.ode.mission_EOM import MissionEOM
-
 from aviary.subsystems.propulsion.throttle_allocation import ThrottleAllocator
 from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission

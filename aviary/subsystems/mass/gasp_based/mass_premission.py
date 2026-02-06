@@ -1,10 +1,10 @@
 import openmdao.api as om
 
-from aviary.subsystems.mass.gasp_based.design_load import DesignLoadGroup, BWBDesignLoadGroup
+from aviary.subsystems.mass.gasp_based.design_load import BWBDesignLoadGroup, DesignLoadGroup
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import EquipAndUsefulLoadMassGroup
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
-from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, BWBWingMassGroup
+from aviary.subsystems.mass.gasp_based.wing import BWBWingMassGroup, WingMassGroup
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft

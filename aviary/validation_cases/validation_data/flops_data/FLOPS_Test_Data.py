@@ -1,3 +1,6 @@
+from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import N3CC
+from aviary.models.aircraft.blended_wing_body.bwb_detailed_FLOPS_data import BWBdetailedFLOPS
+from aviary.models.aircraft.blended_wing_body.bwb_simple_FLOPS_data import BWBsimpleFLOPS
 from aviary.models.aircraft.large_single_aisle_1.large_single_aisle_1_FLOPS_data import (
     LargeSingleAisle1FLOPS,
 )
@@ -13,9 +16,6 @@ from aviary.models.aircraft.large_single_aisle_2.large_single_aisle_2_FLOPS_data
 from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_data import (
     MultiEngineSingleAisle,
 )
-from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import N3CC
-from aviary.models.aircraft.blended_wing_body.bwb_simple_FLOPS_data import BWBsimpleFLOPS
-from aviary.models.aircraft.blended_wing_body.bwb_detailed_FLOPS_data import BWBdetailedFLOPS
 
 FLOPS_Test_Data = {}
 

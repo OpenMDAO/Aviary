@@ -31,7 +31,6 @@ from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
-
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 

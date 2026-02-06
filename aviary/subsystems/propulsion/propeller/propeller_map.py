@@ -6,10 +6,10 @@ import openmdao.api as om
 
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
-from aviary.utils.named_values import NamedValues
 
 aliases = {
     # whitespaces are replaced with underscores converted to lowercase before

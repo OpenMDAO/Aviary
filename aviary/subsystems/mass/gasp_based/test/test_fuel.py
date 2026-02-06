@@ -6,13 +6,13 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.fuel import (
     BodyTankCalculations,
+    BWBFuselageMass,
     FuelAndOEMOutputs,
     FuelMass,
     FuelMassGroup,
     FuelSysAndFullFuselageMass,
     FuselageMass,
     StructMass,
-    BWBFuselageMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity

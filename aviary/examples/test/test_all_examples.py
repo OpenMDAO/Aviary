@@ -9,8 +9,8 @@ import subprocess
 import unittest
 from pathlib import Path
 
-from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.general_utils import set_pyoptsparse_opt
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 # TODO: Address any issue that requires a skip.

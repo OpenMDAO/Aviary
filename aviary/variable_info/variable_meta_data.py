@@ -3,18 +3,19 @@ Define meta data associated with variables in the Aviary data hierarchy.
 """
 
 from copy import deepcopy
+
 import numpy as np
 
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.enums import (
     AircraftTypes,
+    AtmosphereModel,
     EquationsOfMotion,
     FlapType,
     GASPEngineType,
     LegacyCode,
     ProblemType,
     Verbosity,
-    AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 

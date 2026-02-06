@@ -3,7 +3,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.math import smooth_int_tanh, d_smooth_int_tanh
+from aviary.utils.math import d_smooth_int_tanh, smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings

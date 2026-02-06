@@ -41,6 +41,7 @@ under transient climb conditions," - Mil_Std_210A
 """
 
 from collections import namedtuple
+
 import numpy as np
 
 atm_data = namedtuple('MIL_SPEC_210A_Tropical', ['alt', 'temp', 'pres', 'rho'])
