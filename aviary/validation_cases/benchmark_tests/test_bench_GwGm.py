@@ -36,37 +36,18 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-3
 
         # There are no truth values for these.
-        assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171646.48312684,
-            tolerance=rtol,
-        )
+        expected_values = {
+            (Mission.Design.GROSS_MASS, 'lbm'): 171646.48312684,
+            (Mission.Summary.OPERATING_MASS, 'lbm'): 95100.07583783,
+            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40546.40728901,
+            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.5028412,
+            (Mission.Summary.RANGE, 'NM'): 3675.0,
+            (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136098.07583783,
+        }
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            95100.07583783,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40546.40728901,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2655.5028412,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136098.07583783,
-            tolerance=rtol,
-        )
+        for (var_name, units), expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name, units=units), expected_val, tolerance=rtol)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_GwGm_SNOPT(self):
@@ -83,37 +64,18 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-3
 
         # There are no truth values for these.
-        assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171646.48312684,
-            tolerance=rtol,
-        )
+        expected_values = {
+            (Mission.Design.GROSS_MASS, 'lbm'): 171646.48312684,
+            (Mission.Summary.OPERATING_MASS, 'lbm'): 95100.07583783,
+            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40546.40728901,
+            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.5028412,
+            (Mission.Summary.RANGE, 'NM'): 3675.0,
+            (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136098.07583783,
+        }
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            95100.07583783,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40546.40728901,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2655.5028412,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136098.07583783,
-            tolerance=rtol,
-        )
+        for (var_name, units), expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name, units=units), expected_val, tolerance=rtol)
 
 
 if __name__ == '__main__':
