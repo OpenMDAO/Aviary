@@ -177,7 +177,7 @@ phase_info = {
             'alt_cruise': (41_000, 'ft'),
             'mach_cruise': 0.8,
             'mass_ref': (150_000, 'lbm'),
-            'time_duration_bounds': ((0.0, 8.0), 'h'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
             'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {

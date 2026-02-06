@@ -250,7 +250,7 @@ two_dof_phase_info = {
             'mach_cruise': 0.475,
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
-            'time_duration_bounds': ((0.0, 8.0), 'h'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
             'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
