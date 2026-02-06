@@ -34,7 +34,13 @@ from aviary.utils.process_input_decks import (
     update_GASP_options,
 )
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
+from aviary.variable_info.enums import (
+    EquationsOfMotion,
+    LegacyCode,
+    PhaseType,
+    ProblemType,
+    Verbosity,
+)
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -345,19 +351,6 @@ class AviaryGroup(om.Group):
         # Sets duration_bounds, initial_guesses, and fixed_duration
         for phase_name, phase in self.mission_info.items():
             if 'user_options' in phase:
-                analytic = False
-                if self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM:
-                    try:
-                        # if the user provided an option, use it
-                        analytic = phase['user_options']['analytic']
-                    except KeyError:
-                        # if it isn't specified, only the default 2DOF cruise for
-                        # collocation is analytic
-                        if 'cruise' in phase_name:
-                            analytic = phase['user_options']['analytic'] = True
-                        else:
-                            analytic = phase['user_options']['analytic'] = False
-
                 if 'time_duration' in phase['user_options']:
                     time_duration, units = phase['user_options']['time_duration']
 
@@ -952,9 +945,9 @@ class AviaryGroup(om.Group):
             # this is only used for analytic phases with a target duration
             time_duration = user_options.get('time_duration', (None, 'min'))
             time_duration = wrapped_convert_units(time_duration, 'min')
-            analytic = user_options.get('analytic', False)
+            integrates_mass = user_options['phase_builder'] is PhaseType.BREGUET_RANGE
 
-            if analytic and time_duration is not None:
+            if integrates_mass and time_duration is not None:
                 post_mission.add_subsystem(
                     f'{phase_name}_duration_constraint',
                     om.ExecComp(
@@ -1129,15 +1122,16 @@ class AviaryGroup(om.Group):
                 #      and configurators
                 for ii in range(len(phases) - 1):
                     phase1, phase2 = phases[ii : ii + 2]
-                    analytic1 = self.mission_info[phase1]['user_options'].get('analytic', False)
-                    analytic2 = self.mission_info[phase2]['user_options'].get('analytic', False)
+                    opt1 = self.mission_info[phase1]['user_options']
+                    opt2 = self.mission_info[phase2]['user_options']
+                    integrates_mass1 = opt1['phase_builder'] is PhaseType.BREGUET_RANGE
+                    integrates_mass2 = opt2['phase_builder'] is PhaseType.BREGUET_RANGE
 
-                    if not (analytic1 or analytic2):
-                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
-
-                    else:
+                    if integrates_mass1 or integrates_mass2:
                         # TODO need ref value for these linkage constraints
                         self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
+                    else:
+                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
 
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
 

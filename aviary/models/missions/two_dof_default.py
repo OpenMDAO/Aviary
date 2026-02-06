@@ -187,9 +187,7 @@ phase_info = {
             # [Initial mass, delta mass] for special cruise phase.
             'mass': ([171481.0, -35000], 'lbm'),
             'initial_distance': (200.0e3, 'ft'),
-            'initial_time': (1516.0, 's'),
-            'altitude': (37.5e3, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'time': ([1516.0, 26500.0], 's'),
         },
     },
     'desc1': {

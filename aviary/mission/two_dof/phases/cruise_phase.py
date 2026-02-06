@@ -35,13 +35,6 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
         self.declare(name='mach_cruise', default=0.0, desc='Cruise Mach number.')
 
         self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
-        self.declare(
             'reserve',
             types=bool,
             default=False,
@@ -169,6 +162,7 @@ class CruisePhase(PhaseBuilder):
 
         phase.add_timeseries_output('time', units='s', output_name='time')
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
 
         return phase

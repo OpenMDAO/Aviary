@@ -94,13 +94,6 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         # The options below have not yet been revamped.
 
         self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
-        self.declare(
             name='pitch_constraint_bounds',
             default=(0.0, 15.0),
             types=tuple,

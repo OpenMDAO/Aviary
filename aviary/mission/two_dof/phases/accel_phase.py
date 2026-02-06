@@ -74,13 +74,6 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
         # The options below have not yet been revamped.
 
         self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
-        self.declare(
             name='alt', default=500.0, units='ft', desc='Constant altitude for this phase.'
         )
 
