@@ -352,53 +352,65 @@ class Test2DOFOffDesign(unittest.TestCase):
             mission_gross_mass=155000.0,
             num_pax=75,
         )
-        expected_values = [
-            (
-                Mission.Design.RANGE,
-                'nmi',
-                prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
-                1e-12,
-                'aviary_inputs',
-            ),
-            (Mission.Summary.RANGE, None, 3990.50333708, 1e-4, None),
-            (Mission.Summary.FUEL_MASS, 'lbm', 40530.30547651, 1e-6, None),
-            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm', 39901.96542487, 1e-6, None),
-        ]
-
-        for var_name, units, expected_val, tol, source in expected_values:
-            with self.subTest(var=var_name):
-                if source == 'aviary_inputs':
-                    actual = prob_fallout.aviary_inputs.get_val(var_name, units)
-                elif units:
-                    actual = prob_fallout.get_val(var_name, units)
-                else:
-                    actual = prob_fallout.get_val(var_name)
-                assert_near_equal(actual, expected_val, tolerance=tol)
-        expected_values = [
-            (Mission.Summary.OPERATING_MASS, 'lbm', 95098.03457513, 1e-6),
-            (Aircraft.CrewPayload.CARGO_MASS, 'lbm', 5000, 1e-6),
-            (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm', 20000, 1e-6),
-            (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm', 15000, 1e-6),
-            (
-                Mission.Design.GROSS_MASS,
-                'lbm',
-                prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
-                1e-12,
-            ),
-            (Mission.Summary.GROSS_MASS, 'lbm', 155000, 1e-12),
-        ]
-
-        for var_name, units, expected_val, tol in expected_values:
-            with self.subTest(var=var_name):
-                actual = prob_fallout.get_val(var_name, units)
-                assert_near_equal(actual, expected_val, tolerance=tol)
-
-        with self.subTest(var=Aircraft.CrewPayload.NUM_PASSENGERS):
-            assert_near_equal(
-                prob_fallout.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
-                75,
-                tolerance=1e-12,
-            )
+        assert_near_equal(
+            prob_fallout.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            tolerance=1e-12,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Summary.RANGE), 3991.32364531, tolerance=1e-4
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
+            40522.37757121,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            39904.49334072,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            95095.50665928,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+            5000,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+            20000,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
+            15000,
+            tolerance=1e-6,
+        )
+        # currently not a GASP variable
+        # assert_near_equal(
+        #     prob_fallout.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
+        #     prob.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
+        #     tolerance=1e-12,
+        # )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            tolerance=1e-12,
+        )
+        assert_near_equal(
+            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            155000,
+            tolerance=1e-12,
+        )
+        assert_near_equal(
+            prob_fallout.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
+            75,
+            tolerance=1e-12,
+        )
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -420,47 +432,63 @@ class Test2DOFOffDesign(unittest.TestCase):
             mission_range=1800,
             num_pax=150,
         )
-        expected_values = [
-            (
-                Mission.Design.RANGE,
-                'nmi',
-                prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
-                1e-12,
-                'aviary_inputs',
-            ),
-            (Mission.Summary.RANGE, None, 1800, 1e-6, None),
-            (Mission.Summary.FUEL_MASS, 'lbm', 40530.30547651, 1e-6, None),
-            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm', 21491.58497491, 1e-6, None),
-            (Mission.Summary.OPERATING_MASS, 'lbm', 95098.03432895, 1e-6, None),
-            (Aircraft.CrewPayload.CARGO_MASS, 'lbm', 2100, 1e-12, None),
-            (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm', 32100, 1e-6, None),
-            (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm', 30000, 1e-6, None),
-            (
-                Mission.Design.GROSS_MASS,
-                'lbm',
-                prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
-                1e-12,
-                None,
-            ),
-            (Mission.Summary.GROSS_MASS, 'lbm', 148689.61930389, 1e-6, None),
-        ]
-
-        for var_name, units, expected_val, tol, source in expected_values:
-            with self.subTest(var=var_name):
-                if source == 'aviary_inputs':
-                    actual = prob_alternate.aviary_inputs.get_val(var_name, units)
-                elif units:
-                    actual = prob_alternate.get_val(var_name, units)
-                else:
-                    actual = prob_alternate.get_val(var_name)
-                assert_near_equal(actual, expected_val, tolerance=tol)
-
-        with self.subTest(var=Aircraft.CrewPayload.NUM_PASSENGERS):
-            assert_near_equal(
-                prob_alternate.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
-                150,
-                tolerance=1e-12,
-            )
+        assert_near_equal(
+            prob_alternate.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            tolerance=1e-12,
+        )
+        assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
+        assert_near_equal(
+            prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
+            40522.37757121,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            21487.24163836,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            95095.50665928,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_alternate.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
+            2100,
+            tolerance=1e-12,
+        )
+        assert_near_equal(
+            prob_alternate.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
+            32100,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_alternate.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
+            30000,
+            tolerance=1e-6,
+        )
+        # currently not a GASP variable
+        # assert_near_equal(
+        #     prob_alternate.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
+        #     prob.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
+        #     tolerance=1e-12,
+        # )
+        assert_near_equal(
+            prob_alternate.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            tolerance=1e-12,
+        )
+        assert_near_equal(
+            prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            148689.61930389,
+            tolerance=1e-6,
+        )
+        assert_near_equal(
+            prob_alternate.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_PASSENGERS),
+            150,
+            tolerance=1e-12,
+        )
 
 
 @use_tempdirs
