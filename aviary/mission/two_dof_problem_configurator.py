@@ -436,7 +436,12 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         prefix = ''
 
                     aviary_group.traj.add_linkage_constraint(
-                        phase1, phase2, 'distance', prefix + 'distance', connected=False
+                        phase1,
+                        phase2,
+                        'distance',
+                        prefix + 'distance',
+                        connected=False,
+                        ref=100.0,
                     )
                 else:
                     # Add distance to the linked states.

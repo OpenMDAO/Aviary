@@ -164,7 +164,14 @@ class SimpleCruisePhase(PhaseBuilder):
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
-        phase.add_parameter('initial_distance', opt=True, val=0.0, units='NM', static_target=True)
+        phase.add_parameter(
+            'initial_distance',
+            opt=True,
+            val=0.0,
+            units='nmi',
+            #ref=100.0,
+            static_target=True,
+        )
 
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
