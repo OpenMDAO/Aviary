@@ -1,3 +1,4 @@
+from aviary.mission.two_dof.ode.flight_ode import FlightODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,
@@ -5,14 +6,14 @@ from aviary.mission.initial_guess_builders import (
 )
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.phase_utils import add_subsystem_variables_to_phase
-from aviary.mission.two_dof.ode.descent_ode import DescentODE
+from aviary.mission.two_dof.ode.climb_ode import ClimbODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
 
-class DescentPhaseOptions(AviaryOptionsDictionary):
+class FlightPhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
         self.declare(
             name='num_segments',
@@ -41,7 +42,6 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'altitude_bounds': (0.0, None),
-            'altitude_constraint_ref': 100.0,
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
@@ -65,7 +65,15 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
             'be positive.',
         )
 
-        # The options below have not yet been revamped.
+        self.declare(
+            name='required_available_climb_rate',
+            default=None,
+            units='ft/min',
+            desc='Adds a constraint requiring Dynamic.Mission.ALTITUDE_RATE_MAX to be no '
+            'smaller than required_available_climb_rate. This helps to ensure that the '
+            'propulsion system is large enough to handle emergency maneuvers at all points '
+            'throughout the flight envelope. Default value is None for no constraint.',
+        )
 
         self.declare(
             'analytic',
@@ -75,14 +83,16 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            name='EAS_limit',
+            name='EAS_target',
             default=0.0,
             units='kn',
-            desc='Value for maximum speed constraint in this phase.',
+            desc='Value for maximum speed constraint for this phase.',
         )
 
         self.declare(
-            name='mach_cruise', default=0.0, desc='Defines the mach constraint in this phase.'
+            name='mach_target',
+            default=0.0,
+            desc='Defines the maximum mach constraint for this phase.',
         )
 
         self.declare(
@@ -93,10 +103,19 @@ class DescentPhaseOptions(AviaryOptionsDictionary):
             'computed from it.',
         )
 
+        self.declare(
+            name='constraints',
+            types=dict,
+            default={},
+            desc="Add in custom constraints i.e. 'flight_path_angle': {'equals': -3., "
+            "'loc': 'initial', 'units': 'deg', 'type': 'boundary',}. For more details see "
+            '_add_user_defined_constraints().',
+        )
 
-class DescentPhase(PhaseBuilder):
+
+class FlightPhase(PhaseBuilder):
     """
-    A phase builder for an descent phase in a mission simulation.
+    A phase builder for a 2DOF flight phase.
 
     This class extends the PhaseBuilder class, providing specific implementations for
     the descent phase of a 2-degree of freedom flight mission.
@@ -108,12 +127,12 @@ class DescentPhase(PhaseBuilder):
     Methods
     -------
     Inherits all methods from PhaseBuilder.
-    Additional method overrides and new methods specific to the descent phase are included.
+    Additional method overrides and new methods specific to this phase are included.
     """
 
-    default_name = 'descent_phase'
-    default_ode_class = DescentODE
-    default_options_class = DescentPhaseOptions
+    default_name = 'flight_phase'
+    default_ode_class = FlightODE
+    default_options_class = FlightPhaseOptions
 
     _initial_guesses_meta_data_ = {}
 
@@ -123,7 +142,10 @@ class DescentPhase(PhaseBuilder):
         # Retrieve user options values
         user_options = self.user_options
         input_speed_type = user_options.get_val('input_speed_type')
-        EAS_limit = user_options.get_val('EAS_limit', units='kn')
+        EAS_target = user_options.get_val('EAS_target', units='kn')
+        required_available_climb_rate = user_options.get_val(
+            'required_available_climb_rate', units='ft/min'
+        )
 
         # Add states
         self.add_state('altitude', Dynamic.Mission.ALTITUDE, Dynamic.Mission.ALTITUDE_RATE)
@@ -136,9 +158,23 @@ class DescentPhase(PhaseBuilder):
 
         add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
+        # Add constraints
+        if required_available_climb_rate is not None:
+            # TODO: this should be altitude rate max
+            phase.add_boundary_constraint(
+                Dynamic.Mission.ALTITUDE_RATE,
+                loc='final',
+                lower=required_available_climb_rate,
+                units='ft/min',
+                ref=1,
+            )
+
+        constraints = user_options['constraints']
+        self._add_user_defined_constraints(phase, constraints)
+
         # Add parameter if necessary
         if input_speed_type == SpeedType.EAS:
-            phase.add_parameter('EAS', opt=False, units='kn', val=EAS_limit)
+            phase.add_parameter('EAS', opt=False, units='kn', val=EAS_target)
 
         # Add timeseries outputs
         phase.add_timeseries_output(
@@ -148,10 +184,14 @@ class DescentPhase(PhaseBuilder):
         )
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+        )
+        phase.add_timeseries_output(
             Dynamic.Mission.VELOCITY,
             output_name=Dynamic.Mission.VELOCITY,
             units='kn',
         )
+        phase.add_timeseries_output('TAS_violation', output_name='TAS_violation', units='kn')
         phase.add_timeseries_output(
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
             output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
@@ -179,24 +219,24 @@ class DescentPhase(PhaseBuilder):
         # TODO: support external_subsystems and meta_data in the base class
         return {
             'input_speed_type': self.user_options.get_val('input_speed_type'),
-            'mach_cruise': self.user_options.get_val('mach_cruise'),
-            'EAS_limit': self.user_options.get_val('EAS_limit', 'kn'),
+            'mach_target': self.user_options.get_val('mach_target'),
+            'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
 
 
 # Adding initial guess metadata
-DescentPhase._add_initial_guess_meta_data(
+FlightPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(), desc='initial guess for time options'
 )
-DescentPhase._add_initial_guess_meta_data(
+FlightPhase._add_initial_guess_meta_data(
     InitialGuessState('altitude'), desc='initial guess for altitude state'
 )
-DescentPhase._add_initial_guess_meta_data(
+FlightPhase._add_initial_guess_meta_data(
     InitialGuessState('mass'), desc='initial guess for mass state'
 )
-DescentPhase._add_initial_guess_meta_data(
+FlightPhase._add_initial_guess_meta_data(
     InitialGuessState('distance'), desc='initial guess for distance state'
 )
-DescentPhase._add_initial_guess_meta_data(
+FlightPhase._add_initial_guess_meta_data(
     InitialGuessControl('throttle'), desc='initial guess for throttle'
 )
