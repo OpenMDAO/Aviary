@@ -1,0 +1,1148 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>DocTAPE Examples</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer_guide/doctape_examples';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using Dev Environments from GitHub Actions" href="debugging_env_from_github.html" />
+    <link rel="prev" title="DocTAPE" href="doctape.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="how_to_contribute_docs.html">How to Contribute Docs</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="doctape.html">DocTAPE</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/developer_guide/doctape_examples.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fdeveloper_guide/doctape_examples.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/developer_guide/doctape_examples.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>DocTAPE Examples</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-classes">Custom Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-error"><code class="docutils literal notranslate"><span class="pre">expected_error</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-functions">Testing Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-value"><code class="docutils literal notranslate"><span class="pre">check_value</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-contains"><code class="docutils literal notranslate"><span class="pre">check_contains</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-args"><code class="docutils literal notranslate"><span class="pre">check_args</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-command-no-file-error"><code class="docutils literal notranslate"><span class="pre">run_command_no_file_error</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glue-functions">Glue Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#glue-variable"><code class="docutils literal notranslate"><span class="pre">glue_variable</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#glue-keys"><code class="docutils literal notranslate"><span class="pre">glue_keys</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-functions">Utility Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gramatical-list"><code class="docutils literal notranslate"><span class="pre">gramatical_list</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-variable-name"><code class="docutils literal notranslate"><span class="pre">get_variable_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-previous-line"><code class="docutils literal notranslate"><span class="pre">get_previous_line</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-attribute-name"><code class="docutils literal notranslate"><span class="pre">get_attribute_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-all-keys-and-get-value"><code class="docutils literal notranslate"><span class="pre">get_all_keys</span></code> and <code class="docutils literal notranslate"><span class="pre">get_value</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="doctape-examples">
+<h1>DocTAPE Examples<a class="headerlink" href="#doctape-examples" title="Link to this heading">#</a></h1>
+<p>DocTAPE (Documentation Testing and Automated Placement of Expressions) is a collection of utility functions (and wrappers for <a class="reference external" href="https://myst-nb.readthedocs.io/en/latest/render/glue.html">Glue</a>) that are useful
+for automating the process of building and testing documentation to ensure that documentation doesn’t get stale.</p>
+<section id="custom-classes">
+<h2>Custom Classes<a class="headerlink" href="#custom-classes" title="Link to this heading">#</a></h2>
+<section id="expected-error">
+<h3><code class="docutils literal notranslate"><span class="pre">expected_error</span></code><a class="headerlink" href="#expected-error" title="Link to this heading">#</a></h3>
+<p>Functions that raise an error provide the option to specify an error type to use instead of the default. This allows users to change the error type that is raised which can be useful in try/except blocks, especially when combined with the <code class="docutils literal notranslate"><span class="pre">expected_error</span></code> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_value</span><span class="p">,</span> <span class="n">expected_error</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">expected_error</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;we expected that to fail (1 is not equal to 2),&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;but this will still run&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>we expected that to fail (1 is not equal to 2),
+but this will still run
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we just used <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> in the <code class="docutils literal notranslate"><span class="pre">except</span></code> branch, we might miss errors that we actually do want to catch.</p>
+<div class="cell tag_raises-exception docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_value</span><span class="p">,</span> <span class="n">expected_error</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1)&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 is not equal to 2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;we mistyped &#39;1&#39;, so we should have failed&quot;</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1)&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">expected_error</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 is not equal to 2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;something unnexpected happened (we mistyped &#39;1&#39;), and we won&#39;t reach this&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1 is not equal to 2
+we mistyped &#39;1&#39;, so we should have failed
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">10</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;we mistyped &#39;1&#39;, so we should have failed&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">---&gt; </span><span class="mi">10</span>     <span class="n">check_value</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="s1">&#39;1)&#39;</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="n">expected_error</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span> <span class="k">except</span> <span class="n">expected_error</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1 is not equal to 2&#39;</span><span class="p">)</span>
+
+<span class="ne">ValueError</span>: invalid literal for int() with base 10: &#39;1)&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="testing-functions">
+<h2>Testing Functions<a class="headerlink" href="#testing-functions" title="Link to this heading">#</a></h2>
+<p>The testing functions provide code that will raise errors when the documentation is built if the results don’t match what is expected.
+These can be used in places where it would be too difficult to glue portions of the documentation, or it is preferable to have a more uninterupted flow in the markdown cells.</p>
+<p>However, it is important to note that it is possible to notice an error when the documentation builds and fix the code in the testing cell without updating the text in the markdown cell. For this reason, it is recommended to use a combination of testing and glueing functions in documentation.</p>
+<section id="check-value">
+<h3><code class="docutils literal notranslate"><span class="pre">check_value</span></code><a class="headerlink" href="#check-value" title="Link to this heading">#</a></h3>
+<p>is a simple function for comparing two values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.height_energy_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_value</span>
+
+<span class="n">user_opts</span> <span class="o">=</span> <span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">]</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">user_opts</span><span class="p">[</span><span class="s1">&#39;altitude_final&#39;</span><span class="p">],</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">))</span>
+<span class="n">check_value</span><span class="p">(</span><span class="n">user_opts</span><span class="p">[</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="check-contains">
+<h3><code class="docutils literal notranslate"><span class="pre">check_contains</span></code><a class="headerlink" href="#check-contains" title="Link to this heading">#</a></h3>
+<p>confirms that all the elements of one iterable are contained in the other</p>
+<div class="cell tag_raises-exception docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_contains</span>
+
+<span class="n">off_design_examples</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;examples&#39;</span><span class="p">))</span>
+<span class="n">check_contains</span><span class="p">(</span>
+    <span class="p">(</span><span class="s1">&#39;run_off_design_example.py&#39;</span><span class="p">),</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+    <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+    <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file exists and does not raise any errors&#39;</span><span class="p">)</span>
+<span class="n">check_contains</span><span class="p">(</span>
+    <span class="p">(</span><span class="s1">&#39;made_up_file.py&#39;</span><span class="p">),</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+    <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+    <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file does not exist, so we will not reach this point&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>This file exists and does not raise any errors
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">14</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="n">check_contains</span><span class="p">(</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span>     <span class="p">(</span><span class="s1">&#39;run_off_design_example.py&#39;</span><span class="p">),</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span>     <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>     <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file exists and does not raise any errors&#39;</span><span class="p">)</span>
+<span class="ne">---&gt; </span><span class="mi">14</span> <span class="n">check_contains</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span>     <span class="p">(</span><span class="s1">&#39;made_up_file.py&#39;</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span>     <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span>     <span class="n">error_string</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{var}</span><span class="s1"> not in &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">off_design_examples</span><span class="p">),</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span>     <span class="n">error_type</span><span class="o">=</span><span class="ne">FileNotFoundError</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">20</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This file does not exist, so we will not reach this point&#39;</span><span class="p">)</span>
+
+<span class="nn">File ~/work/Aviary/Aviary/aviary/utils/doctape.py:203,</span> in <span class="ni">check_contains</span><span class="nt">(expected_values, actual_values, error_string, error_type)</span>
+<span class="g g-Whitespace">    </span><span class="mi">201</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">expected_values</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">202</span>     <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">actual_values</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">203</span>         <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="n">error_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var</span><span class="o">=</span><span class="n">var</span><span class="p">,</span> <span class="n">actual_values</span><span class="o">=</span><span class="n">actual_values</span><span class="p">))</span>
+
+<span class="ne">FileNotFoundError</span>: made_up_file.py not in /home/runner/work/Aviary/Aviary/aviary/examples
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we are checking that a certain file exists in a folder and specify a more useful error type than the default RuntimeError</p>
+</section>
+<section id="check-args">
+<h3><code class="docutils literal notranslate"><span class="pre">check_args</span></code><a class="headerlink" href="#check-args" title="Link to this heading">#</a></h3>
+<p>gets the signature of a function and compares it to the arguments you are expecting.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_args</span><span class="p">,</span> <span class="n">check_contains</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="n">default_error</span> <span class="o">=</span> <span class="ne">RuntimeError</span>
+<span class="n">check_args</span><span class="p">(</span><span class="n">check_contains</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;error_type&#39;</span><span class="p">:</span> <span class="n">default_error</span><span class="p">},</span> <span class="n">exact</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;default_error&#39;</span><span class="p">,</span> <span class="n">default_error</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">exact_arg</span> <span class="o">=</span> <span class="s1">&#39;exact&#39;</span>
+<span class="n">check_args</span><span class="p">(</span><span class="n">check_args</span><span class="p">,</span> <span class="n">exact_arg</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">exact_arg</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Setting the <code class="docutils literal notranslate"><span class="pre">exact</span></code> argument to <code class="docutils literal notranslate"><span class="pre">False</span></code> means that we don’t need to exactly match the signature of the function and instead just want to make sure that all of the arguments are valid and possibly that their default values are correct.</p>
+</section>
+<section id="run-command-no-file-error">
+<h3><code class="docutils literal notranslate"><span class="pre">run_command_no_file_error</span></code><a class="headerlink" href="#run-command-no-file-error" title="Link to this heading">#</a></h3>
+<p>executes a CLI command but won’t fail if a FileNotFoundError is raised.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_command_no_file_error</span>
+
+<span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    aviary run_mission --optimizer IPOPT --phase_info outputted_phase_info.py </span>
+<span class="s2">    validation_cases/benchmark_tests/test_aircraft/aircraft_for_bench_FwFm.csv</span>
+<span class="s2">    --max_iter 0</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">run_command_no_file_error</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This allows the command syntax and setup to be tested without requiring all of the files that command will use.</p>
+</section>
+</section>
+<section id="glue-functions">
+<h2>Glue Functions<a class="headerlink" href="#glue-functions" title="Link to this heading">#</a></h2>
+<p>The glue functions provide a wrapper for the myst_nb <code class="docutils literal notranslate"><span class="pre">glue</span></code> function that simplifies the interface.</p>
+<p>After a variable has been glued in a Python cell, it can be accessed from a markdown cell with the {glue:md}`variable name` notation. Note that glue won’t access the value of the glued variable until the documentation is built.</p>
+<section id="glue-variable">
+<h3><code class="docutils literal notranslate"><span class="pre">glue_variable</span></code><a class="headerlink" href="#glue-variable" title="Link to this heading">#</a></h3>
+<p>allows users to specify a value that is not the same as what is displayed, but defaults to using the name of the variable if nothing is specified. This makes adapting old documentation easier, because users can just wrap the entire phrase they want to replace.</p>
+<p>Glued text can either be plain text or can be formatted as <code class="docutils literal notranslate"><span class="pre">inline</span> <span class="pre">code</span></code>. Note that the variables in this context do not have the same naming restrictions as Python variables, they can contain spaces or start with a number.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_variable</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;plain text&#39;</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;inline code&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;something different than&#39;</span><span class="p">,</span> <span class="s1">&#39;not the same as&#39;</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;the entire phrase they want to replace&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="glue-keys">
+<h3><code class="docutils literal notranslate"><span class="pre">glue_keys</span></code><a class="headerlink" href="#glue-keys" title="Link to this heading">#</a></h3>
+<p>combines <code class="docutils literal notranslate"><span class="pre">get_all_keys</span></code> and <code class="docutils literal notranslate"><span class="pre">glue_variable</span></code> to glue all of the unique keys from a dict of dicts for later use.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_keys</span>
+
+<span class="n">simplified_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;phase1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kft&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+    <span class="s1">&#39;phase2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;km&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">}</span>
+<span class="n">glue_keys</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This allows us to ensure that <code class="docutils literal notranslate"><span class="pre">altitude</span></code> and <code class="docutils literal notranslate"><span class="pre">mach</span></code> do exist in the dictionary.</p>
+</section>
+</section>
+<section id="utility-functions">
+<h2>Utility Functions<a class="headerlink" href="#utility-functions" title="Link to this heading">#</a></h2>
+<p>Utility functions are provided that the user may find useful for generating or testing their documentation.</p>
+<section id="gramatical-list">
+<h3><code class="docutils literal notranslate"><span class="pre">gramatical_list</span></code><a class="headerlink" href="#gramatical-list" title="Link to this heading">#</a></h3>
+<p>is a simple function that forms a string that can be used in a sentence using a list of items.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">gramatical_list</span>
+
+<span class="n">single_element</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">two_elements</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="s1">&#39;apples&#39;</span><span class="p">,</span> <span class="s1">&#39;bananas&#39;</span><span class="p">])</span>
+<span class="n">three_elements_with_or</span> <span class="o">=</span> <span class="n">gramatical_list</span><span class="p">([</span><span class="s1">&#39;apples&#39;</span><span class="p">,</span> <span class="s1">&#39;bananas&#39;</span><span class="p">,</span> <span class="s1">&#39;strawberries&#39;</span><span class="p">],</span> <span class="s1">&#39;or&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;I would like to order </span><span class="si">{</span><span class="n">single_element</span><span class="si">}</span><span class="s1"> smoothie.&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Do you want </span><span class="si">{</span><span class="n">three_elements_with_or</span><span class="si">}</span><span class="s1"> in your smoothie?&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;I only want </span><span class="si">{</span><span class="n">two_elements</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>I would like to order 1 smoothie.
+Do you want apples, bananas, or strawberries in your smoothie?
+I only want apples and bananas.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="get-variable-name">
+<h3><code class="docutils literal notranslate"><span class="pre">get_variable_name</span></code><a class="headerlink" href="#get-variable-name" title="Link to this heading">#</a></h3>
+<p>is a function that just returns the name of the variable passed to it as a string.</p>
+<p>The contents of the variable can be of any type, as the variable isn’t used in the function, but rather the <a class="reference external" href="https://docs.python.org/3/library/inspect.html">inspect</a> functionality is used to retrieve the line of code itself.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_variable_name</span></code> can even accept multiple arguments, in which case a list of the names will be returned.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_variable_name</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;function_name&#39;</span><span class="p">,</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">))</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="nb">print</span><span class="p">))</span>
+
+<span class="n">some_string</span> <span class="o">=</span> <span class="s1">&#39;that contains important information&#39;</span>
+<span class="n">simple_variable_name</span> <span class="o">=</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">some_string</span><span class="p">)</span>
+<span class="n">phrase</span> <span class="o">=</span> <span class="n">simple_variable_name</span> <span class="o">+</span> <span class="s1">&#39; is a variable &#39;</span> <span class="o">+</span> <span class="n">some_string</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span>
+
+<span class="n">complex_object_name</span> <span class="o">=</span> <span class="n">get_variable_name</span><span class="p">(</span><span class="n">AviaryProblem</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">complex_object_name</span><span class="p">)</span>
+
+<span class="n">multiple</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">arguments</span> <span class="o">=</span> <span class="nb">str</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">multiple</span><span class="p">,</span> <span class="n">arguments</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<p>get_variable_name</p>
+<p>print</p>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>some_string is a variable that contains important information
+AviaryProblem
+[&#39;multiple&#39;, &#39;arguments&#39;]
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>get_variable_name can be called directly in functions like print or <code class="docutils literal notranslate"><span class="pre">glue_variable</span></code> or the results can be saved.</p>
+</section>
+<section id="get-previous-line">
+<h3><code class="docutils literal notranslate"><span class="pre">get_previous_line</span></code><a class="headerlink" href="#get-previous-line" title="Link to this heading">#</a></h3>
+<p>returns the previous line of code as a string, which allows users to grab individual lines of code from Python cells to use as inline code in markdown cells.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_previous_line</span><span class="p">,</span> <span class="n">get_variable_name</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;var_value_code&#39;</span><span class="p">,</span> <span class="n">get_previous_line</span><span class="p">(),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">get_variable_name</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">EMPTY_MASS</span><span class="p">),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;var_name_code&#39;</span><span class="p">,</span> <span class="n">get_previous_line</span><span class="p">(),</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you want to glue the name of a variable, instead of the value that variable holds, you can use the <code class="docutils literal notranslate"><span class="pre">get_variable_name</span></code> function to extract it.</p>
+<p>For example:
+Using <code class="docutils literal notranslate"><span class="pre">glue_variable('value',</span> <span class="pre">Aircraft.Design.EMPTY_MASS,</span> <span class="pre">md_code=True)</span></code> will result in <code class="docutils literal notranslate"><span class="pre">aircraft:design:empty_mass</span></code>, whereas using <code class="docutils literal notranslate"><span class="pre">glue_variable(get_variable_name(Aircraft.Design.EMPTY_MASS),</span> <span class="pre">md_code=True)</span></code> will result in <code class="docutils literal notranslate"><span class="pre">Aircraft.Design.EMPTY_MASS</span></code></p>
+</section>
+<section id="get-attribute-name">
+<h3><code class="docutils literal notranslate"><span class="pre">get_attribute_name</span></code><a class="headerlink" href="#get-attribute-name" title="Link to this heading">#</a></h3>
+<p>allows users to get the name of object attributes in order to glue them into documentation. This works well for Enums or Class variables that have unique values.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">LegacyCode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_attribute_name</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="n">some_custom_alias</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span>
+
+<span class="n">gasp_name</span> <span class="o">=</span> <span class="n">get_attribute_name</span><span class="p">(</span><span class="n">some_custom_alias</span><span class="p">,</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">GASP</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">gasp_name</span><span class="p">)</span>
+<span class="n">brief_name</span> <span class="o">=</span> <span class="n">get_attribute_name</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Verbosity</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">brief_name</span><span class="p">)</span>
+<span class="n">verbosity</span> <span class="o">=</span> <span class="n">get_attribute_name</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Settings</span><span class="p">,</span> <span class="n">av</span><span class="o">.</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<p>GASP</p>
+<p><em>use_args</em></p>
+<p>VERBOSITY</p>
+<p>settings:verbosity</p>
+</div>
+</details>
+</div>
+</section>
+<section id="get-all-keys-and-get-value">
+<h3><code class="docutils literal notranslate"><span class="pre">get_all_keys</span></code> and <code class="docutils literal notranslate"><span class="pre">get_value</span></code><a class="headerlink" href="#get-all-keys-and-get-value" title="Link to this heading">#</a></h3>
+<p>are intended to be used together for getting keys from nested dictionaries and then getting values back from those nested dictionaries, respectively. They were originally added for complex dictionaries, like the phase_info.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_keys</span><span class="p">,</span> <span class="n">get_value</span>
+
+<span class="n">simplified_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;phase1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;kft&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+    <span class="s1">&#39;phase2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;km&#39;</span><span class="p">},</span> <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">}</span>
+<span class="n">unique_keys_only</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">)</span>
+<span class="n">all_keys</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">unique_keys_only</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">all_keys</span><span class="p">)</span>
+
+<span class="n">p1_alt</span> <span class="o">=</span> <span class="n">get_value</span><span class="p">(</span><span class="n">simplified_dict</span><span class="p">,</span> <span class="s1">&#39;phase1.altitude.val&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">p1_alt</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;phase1&#39;, &#39;altitude&#39;, &#39;val&#39;, &#39;units&#39;, &#39;mach&#39;, &#39;phase2&#39;]
+[&#39;phase1&#39;, &#39;phase1.altitude&#39;, &#39;phase1.altitude.val&#39;, &#39;phase1.altitude.units&#39;, &#39;phase1.mach&#39;, &#39;phase2&#39;, &#39;phase2.altitude&#39;, &#39;phase2.altitude.val&#39;, &#39;phase2.altitude.units&#39;, &#39;phase2.mach&#39;]
+30
+</pre></div>
+</div>
+</div>
+</div>
+<p>These can also be used to recursively get all of the attributes from a complex object, like the Aircraft or Mission hierarchies.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mission</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_keys</span><span class="p">,</span> <span class="n">get_value</span><span class="p">,</span> <span class="n">glue_keys</span>
+
+<span class="n">k1</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">k1</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Display the first 5 keys in Mission</span>
+<span class="n">k2</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">k2</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Display the first 5 keys in Mission</span>
+<span class="n">k3</span> <span class="o">=</span> <span class="n">get_all_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="n">track_layers</span><span class="o">=</span><span class="s1">&#39;Mission&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">k3</span><span class="p">[:</span><span class="mi">5</span><span class="p">])</span>  <span class="c1"># Display the first 5 keys in Mission</span>
+
+<span class="n">glue_keys</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">get_value</span><span class="p">(</span><span class="n">Mission</span><span class="p">,</span> <span class="s1">&#39;Constraints.GEARBOX_SHAFT_POWER_RESIDUAL&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;Constraints&#39;, &#39;EXCESS_FUEL_CAPACITY&#39;, &#39;GEARBOX_SHAFT_POWER_RESIDUAL&#39;, &#39;MASS_RESIDUAL&#39;, &#39;MAX_MACH&#39;]
+[&#39;Constraints&#39;, &#39;Constraints.EXCESS_FUEL_CAPACITY&#39;, &#39;Constraints.GEARBOX_SHAFT_POWER_RESIDUAL&#39;, &#39;Constraints.MASS_RESIDUAL&#39;, &#39;Constraints.MAX_MACH&#39;]
+[&#39;Mission.Constraints&#39;, &#39;Mission.Constraints.EXCESS_FUEL_CAPACITY&#39;, &#39;Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL&#39;, &#39;Mission.Constraints.MASS_RESIDUAL&#39;, &#39;Mission.Constraints.MAX_MACH&#39;]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>mission:constraints:gearbox_shaft_power_residual
+</pre></div>
+</div>
+</div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">get_all_keys</span></code> is used on an object like Mission without specifying a value for track_layers will return all of the uniquely named attributes of the object (such as <code class="docutils literal notranslate"><span class="pre">GEARBOX_SHAFT_POWER_RESIDUAL</span></code>). Setting track_layers to <code class="docutils literal notranslate"><span class="pre">True</span></code> will get all of the attributes in dot notation, but will not include the name of the original object (<code class="docutils literal notranslate"><span class="pre">Constraints.GEARBOX_SHAFT_POWER_RESIDUAL</span></code>). If you want the full name of the attribute, including the name of the original object, you can use that name as the value of track_layers (using track_layers=’Mission’ gives us access to <code class="docutils literal notranslate"><span class="pre">Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL</span></code>)</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">glue_keys</span></code> handles this for us automatically by using the <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute of the object passed to it as the value of track_layers.</p>
+<p>As with the dict_of_dicts, we can recusively get the value of an attribute using the full path along with <code class="docutils literal notranslate"><span class="pre">get_value</span></code>.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./developer_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="doctape.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">DocTAPE</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="debugging_env_from_github.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Using Dev Environments from GitHub Actions</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-classes">Custom Classes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-error"><code class="docutils literal notranslate"><span class="pre">expected_error</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-functions">Testing Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-value"><code class="docutils literal notranslate"><span class="pre">check_value</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-contains"><code class="docutils literal notranslate"><span class="pre">check_contains</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#check-args"><code class="docutils literal notranslate"><span class="pre">check_args</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-command-no-file-error"><code class="docutils literal notranslate"><span class="pre">run_command_no_file_error</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glue-functions">Glue Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#glue-variable"><code class="docutils literal notranslate"><span class="pre">glue_variable</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#glue-keys"><code class="docutils literal notranslate"><span class="pre">glue_keys</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#utility-functions">Utility Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gramatical-list"><code class="docutils literal notranslate"><span class="pre">gramatical_list</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-variable-name"><code class="docutils literal notranslate"><span class="pre">get_variable_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-previous-line"><code class="docutils literal notranslate"><span class="pre">get_previous_line</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-attribute-name"><code class="docutils literal notranslate"><span class="pre">get_attribute_name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-all-keys-and-get-value"><code class="docutils literal notranslate"><span class="pre">get_all_keys</span></code> and <code class="docutils literal notranslate"><span class="pre">get_value</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

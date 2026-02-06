@@ -1,0 +1,1473 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Converting from legacy phase_info user options</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/phase_info_conversion';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Drawing and running simple missions" href="drawing_and_running_simple_missions.html" />
+    <link rel="prev" title="Complete phase_info user options reference for all Aviary EquationsOfMotion" href="phase_info_detailed.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/phase_info_conversion.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/phase_info_conversion.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/phase_info_conversion.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Converting from legacy phase_info user options</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-the-changes">Summary of the Changes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naming-convention">Naming Convention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardize-options-for-states">Standardize Options for States</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardize-options-for-controls">Standardize Options for Controls</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametric-control-options">Parametric Control Options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardize-options-for-time">Standardize Options for Time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compact-specification-of-lower-and-upper-bounds">Compact Specification of Lower and Upper Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#streamline-phase-boundary-conditions">Streamline Phase Boundary Conditions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-unused-options">Remove Unused Options</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#height-energy-example">Height Energy Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-dof-example">Two-DOF Example</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="converting-from-legacy-phase-info-user-options">
+<h1>Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options<a class="headerlink" href="#converting-from-legacy-phase-info-user-options" title="Link to this heading">#</a></h1>
+<p>If you are using a version of Aviary that was released before 0.10.0, then you may have some aircraft phase_info files that were written before a major reorganization of the options. You will need to convert them to the new format, and this document is meant to provide some guidance. The redesign of the phase options was driven by the following goals:</p>
+<ul class="simple">
+<li><p>Provide a set of keys that is more consistent across the different phase types.</p></li>
+<li><p>Remove redundancies, particularly cases where we can replace 2 keys with 1.</p></li>
+<li><p>Rename keys to be more understandable to the user.</p></li>
+<li><p>Add missing options such as certain missing scaling parameters.</p></li>
+</ul>
+<p>This next section of this document will explain the changes in detail, followed by a phase_info example pre- and post- conversion for the height energy and two-dof equations.</p>
+<section id="summary-of-the-changes">
+<h2>Summary of the Changes<a class="headerlink" href="#summary-of-the-changes" title="Link to this heading">#</a></h2>
+<section id="naming-convention">
+<h3>Naming Convention<a class="headerlink" href="#naming-convention" title="Link to this heading">#</a></h3>
+<p>All of the phase_info keys have been renamed so that the variable name comes first. This means that the option originally named <code class="docutils literal notranslate"><span class="pre">optimize_mach</span></code> is now named <code class="docutils literal notranslate"><span class="pre">mach_optimize</span></code>. This helps with readibility, and it is recommended that all “mach” options be grouped together, etc.</p>
+</section>
+<section id="standardize-options-for-states">
+<h3>Standardize Options for States<a class="headerlink" href="#standardize-options-for-states" title="Link to this heading">#</a></h3>
+<p>A “state” in Aviary is a time-integration variable in the trajectory equations of motion. The new phase_info format exposes a consistent set of options for each state across all equations. Many of the options were present in the previous format, but there are some new ones that give the user more control over scaling the state to improve optimization robustness.</p>
+</section>
+<section id="standardize-options-for-controls">
+<h3>Standardize Options for Controls<a class="headerlink" href="#standardize-options-for-controls" title="Link to this heading">#</a></h3>
+<p>A “control” in Aviary is a dynamic variable that is not a state. It can be chosen by the optimizer or set by the user. The new phase_info format exposes a consistent set of options for each control across all equations. Note that there is considerable overlap between the options available for a state and a control.</p>
+</section>
+<section id="parametric-control-options">
+<h3>Parametric Control Options<a class="headerlink" href="#parametric-control-options" title="Link to this heading">#</a></h3>
+<p>The options for specifying parameteric controls have changed. The old way required that <code class="docutils literal notranslate"><span class="pre">use_polynomial_control</span></code> be set to True to run all of the phase’s controls into polynomial controls, which represents each control as a polynomial with order equal to the value in <code class="docutils literal notranslate"><span class="pre">polynomial_control_order</span></code>. This is a technique used to reduce the number of design variables. The new phase_info format allows a polynomial control to be specified for each control individually using a single option <code class="docutils literal notranslate"><span class="pre">mach_polynomial_order</span></code>. The default value is False, which means a regular full-order control. Setting this option to an integer turns the control into a polyomial control of that order.</p>
+</section>
+<section id="standardize-options-for-time">
+<h3>Standardize Options for Time<a class="headerlink" href="#standardize-options-for-time" title="Link to this heading">#</a></h3>
+<p>A similar refactor was applied to the time-related phase variables, so that all of these keys start with “time”. Thus, <code class="docutils literal notranslate"><span class="pre">initial_bounds</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">time_initial_bounds</span></code>.</p>
+</section>
+<section id="compact-specification-of-lower-and-upper-bounds">
+<h3>Compact Specification of Lower and Upper Bounds<a class="headerlink" href="#compact-specification-of-lower-and-upper-bounds" title="Link to this heading">#</a></h3>
+<p>All individual “_lower” and “_upper” bounds keys are now combined into a single “_bounds” key, which now contains a tuple with the lower and upper bounds. Some variables were already using “_lower” and “_upper”, so this change makes the behvaior uniform across all equations.</p>
+</section>
+<section id="streamline-phase-boundary-conditions">
+<h3>Streamline Phase Boundary Conditions<a class="headerlink" href="#streamline-phase-boundary-conditions" title="Link to this heading">#</a></h3>
+<p>The old format used the options “fix_initial”, “input_initial”, and “constrain_final” to broadly specify the phase boundary conditions. These were confusing to users, no flexible enough for some cases, and required changes when using <code class="docutils literal notranslate"><span class="pre">include_takeoff</span></code>. This process has been partially automated in the new format. The user now has the ability to constrain specific variables at the start or end of the phase. For example, you can now individually constrain the mach number at the end of cruise using <code class="docutils literal notranslate"><span class="pre">mach_final</span></code> while letting the optimizer pick the final altitude by leaving <code class="docutils literal notranslate"><span class="pre">altitude_final</span></code> at its default value of None. Note that constraining a variable at the end of one phase, and at the start of the next phase is redundant, and can be accomplished by constraining one end or the other.</p>
+</section>
+<section id="remove-unused-options">
+<h3>Remove Unused Options<a class="headerlink" href="#remove-unused-options" title="Link to this heading">#</a></h3>
+<p>The option <code class="docutils literal notranslate"><span class="pre">add_initial_mass_constraint</span></code> was leftover from an experimental feature, and has been removed.</p>
+</section>
+</section>
+<section id="height-energy-example">
+<h2>Height Energy Example<a class="headerlink" href="#height-energy-example" title="Link to this heading">#</a></h2>
+<p>The following phase_info is specified in the old format:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">old_phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s1">&#39;climb&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;input_initial&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;optimize_mach&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;optimize_altitude&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;use_polynomial_control&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;solve_for_distance&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;initial_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.79</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;constrain_final&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;fix_duration&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;no_descent&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;add_initial_mass_constraint&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;optimize_mach&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;optimize_altitude&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;polynomial_control_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;use_polynomial_control&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;solve_for_distance&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;initial_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.79</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.79</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">35000.0</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;constrain_final&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;fix_duration&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">60.0</span><span class="p">,</span> <span class="mf">720.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">128</span><span class="p">,</span> <span class="mi">113</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;optimize_mach&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;optimize_altitude&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;use_polynomial_control&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;solve_for_distance&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;initial_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.79</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;constrain_final&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;fix_duration&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">120.0</span><span class="p">,</span> <span class="mf">800.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">35.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;no_climb&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">241</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;constrain_range&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">3375.0</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This phase_info has been updated to the new format below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s1">&#39;climb&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">200000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;no_descent&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">35</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.79</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">35000.0</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">200000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">60.0</span><span class="p">,</span> <span class="mf">720.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">40</span><span class="p">,</span> <span class="mi">200</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">35000</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.79</span><span class="p">,</span> <span class="mf">0.79</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.79</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">35000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">200000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3375</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">80.0</span><span class="p">,</span> <span class="mf">780.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;no_climb&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">240</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;constrain_range&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">3375.0</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="two-dof-example">
+<h2>Two-DOF Example<a class="headerlink" href="#two-dof-example" title="Link to this heading">#</a></h2>
+<p>The following phase_info is specified in the old format:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpeedType</span>
+
+<span class="c1"># defaults for 2DOF based phases</span>
+<span class="n">mission_distance</span> <span class="o">=</span> <span class="mi">3675</span>
+
+<span class="n">old_phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;groundroll&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;connect_initial_mass&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial_mass&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.066</span><span class="p">,</span> <span class="mf">143.1</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;rotation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;normal_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="s1">&#39;lbf&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">143</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">3680.37217765</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;ascent&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;velocity_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">700</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">15_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1e4</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1e4</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">700</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="s1">&#39;rad&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">57.2958</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">57.2958</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;pitch_constraint_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;pitch_constraint_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;pitch_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">45.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flight_path_angle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">150.0</span><span class="p">,</span> <span class="mf">185.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">4.0e3</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;tau_gear&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;tau_flaps&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;accel&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;alt&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;EAS_constraint_eq&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">270</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">70.0</span><span class="p">,</span> <span class="mf">13.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">185.0</span><span class="p">,</span> <span class="mf">250.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="mf">20.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;climb1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_target&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_cruise&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s1">&#39;target_mach&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">30</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">11_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">20.0e3</span><span class="p">,</span> <span class="mf">100.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;climb2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_target&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">270</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_cruise&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s1">&#39;target_mach&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;required_available_climb_rate&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;ft/min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">17_000</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">9000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">40000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">30000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">216.0</span><span class="p">,</span> <span class="mf">1300.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">100.0e3</span><span class="p">,</span> <span class="mf">200.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="mf">37.5e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;alt_cruise&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_cruise&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="c1"># [Initial mass, delta mass] for special cruise phase.</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">171481.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">35000</span><span class="p">],</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_distance&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">200.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_time&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1516.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;desc1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;input_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_limit&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">350</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_cruise&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s1">&#39;input_speed_type&#39;</span><span class="p">:</span> <span class="n">SpeedType</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">300.0</span><span class="p">,</span> <span class="mf">900.0</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">40_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">30_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">140_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">140_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">5000.0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mission_distance</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">136000.0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.92</span> <span class="o">*</span> <span class="n">mission_distance</span><span class="p">,</span> <span class="mf">0.96</span> <span class="o">*</span> <span class="n">mission_distance</span><span class="p">],</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">28000.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;desc2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;input_initial&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_limit&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_cruise&#39;</span><span class="p">:</span> <span class="mf">0.80</span><span class="p">,</span>
+            <span class="s1">&#39;input_speed_type&#39;</span><span class="p">:</span> <span class="n">SpeedType</span><span class="o">.</span><span class="n">EAS</span><span class="p">,</span>
+            <span class="s1">&#39;final_altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">100.0</span><span class="p">,</span> <span class="mi">5000</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">11_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;alt_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_lower&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_upper&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">136000.0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="mf">1.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.96</span> <span class="o">*</span> <span class="n">mission_distance</span><span class="p">,</span> <span class="n">mission_distance</span><span class="p">],</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">28500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This phase_info has been updated to the new format below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">new_phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;groundroll&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.066</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.066</span><span class="p">,</span> <span class="mf">143.1</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;rotation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">),</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">12.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">12.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;normal_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="s1">&#39;lbf&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">143</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">3680.37217765</span><span class="p">,</span> <span class="mi">4000</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;ascent&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;velocity_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">700</span><span class="p">),</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15_000</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1e4</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1e4</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">700.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flight_path_angle_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">),</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flight_path_angle_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">57.2958</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flight_path_angle_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">57.2958</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flight_path_angle_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;pitch_constraint_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">),</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;pitch_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">45.0</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;flight_path_angle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;angle_of_attack&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">150.0</span><span class="p">,</span> <span class="mf">185.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">4.0e3</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;tau_gear&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;tau_flaps&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;accel&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;cruise&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;alt&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;EAS_constraint_eq&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">150</span><span class="p">,</span> <span class="mi">270</span><span class="p">),</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">),</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">70.0</span><span class="p">,</span> <span class="mf">13.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">185.0</span><span class="p">,</span> <span class="mf">250.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="mf">20.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;climb1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;cruise&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_target&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_target&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">30</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">400.0</span><span class="p">,</span> <span class="mf">11_000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">),</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">20.0e3</span><span class="p">,</span> <span class="mf">100.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;climb2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;cruise&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_target&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">270</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_target&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s1">&#39;required_available_climb_rate&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;ft/min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">17_000</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">9000.0</span><span class="p">,</span> <span class="mf">40000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">30000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">),</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">216.0</span><span class="p">,</span> <span class="mf">1300.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">100.0e3</span><span class="p">,</span> <span class="mf">200.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="mf">37.5e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.956</span><span class="p">,</span> <span class="mf">0.956</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;cruise&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;alt_cruise&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_cruise&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="c1"># [Initial mass, delta mass] for special cruise phase.</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">171481.0</span><span class="p">,</span> <span class="o">-</span><span class="mi">35000</span><span class="p">],</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_distance&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">200.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;initial_time&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1516.0</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;desc1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;cruise&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_target&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">350</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_target&#39;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
+            <span class="s1">&#39;input_speed_type&#39;</span><span class="p">:</span> <span class="n">SpeedType</span><span class="o">.</span><span class="n">MACH</span><span class="p">,</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">300.0</span><span class="p">,</span> <span class="mf">900.0</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">40_000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">30_000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">140_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">140_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">),</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">mission_distance</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">136000.0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">37.5e3</span><span class="p">,</span> <span class="mf">10.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.92</span> <span class="o">*</span> <span class="n">mission_distance</span><span class="p">,</span> <span class="mf">0.96</span> <span class="o">*</span> <span class="n">mission_distance</span><span class="p">],</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">28000.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;desc2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;core_aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;cruise&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s1">&#39;EAS_target&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_target&#39;</span><span class="p">:</span> <span class="mf">0.80</span><span class="p">,</span>
+            <span class="s1">&#39;input_speed_type&#39;</span><span class="p">:</span> <span class="n">SpeedType</span><span class="o">.</span><span class="n">EAS</span><span class="p">,</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">100.0</span><span class="p">,</span> <span class="mi">5000</span><span class="p">),</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">500.0</span><span class="p">,</span> <span class="mf">11_000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_ref0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_constraint_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mass_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">150_000</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">),</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">3500</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance_defect_ref&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">136000.0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">10.0e3</span><span class="p">,</span> <span class="mf">1.0e3</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;distance&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">0.96</span> <span class="o">*</span> <span class="n">mission_distance</span><span class="p">,</span> <span class="n">mission_distance</span><span class="p">],</span> <span class="s1">&#39;NM&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mf">28500.0</span><span class="p">,</span> <span class="mf">500.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="phase_info_detailed.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="drawing_and_running_simple_missions.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Drawing and running simple missions</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-the-changes">Summary of the Changes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#naming-convention">Naming Convention</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardize-options-for-states">Standardize Options for States</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardize-options-for-controls">Standardize Options for Controls</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parametric-control-options">Parametric Control Options</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standardize-options-for-time">Standardize Options for Time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compact-specification-of-lower-and-upper-bounds">Compact Specification of Lower and Upper Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#streamline-phase-boundary-conditions">Streamline Phase Boundary Conditions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#remove-unused-options">Remove Unused Options</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#height-energy-example">Height Energy Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#two-dof-example">Two-DOF Example</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

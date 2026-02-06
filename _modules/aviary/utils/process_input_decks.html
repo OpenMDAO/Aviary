@@ -1,0 +1,1133 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aviary.utils.process_input_decks</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/utils/process_input_decks';</script>
+    <link rel="icon" href="../../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/utils/process_input_decks.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for aviary.utils.process_input_decks</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module, process_input_decks.py, is responsible for reading vehicle input decks, initializing</span>
+<span class="sd">options, and setting initial guesses for aircraft design parameters. It works primarily with .csv</span>
+<span class="sd">files, allowing for the specification of units, comments, and lists within these files.</span>
+
+<span class="sd">The module supports various functions like creating a vehicle, parsing input files, updating options</span>
+<span class="sd">based on inputs, and handling initial guesses for different aircraft design aspects. It heavily</span>
+<span class="sd">relies on the aviary and openMDAO libraries for processing and interpreting the aircraft design</span>
+<span class="sd">parameters.</span>
+
+<span class="sd">Functions:</span>
+<span class="sd">    create_vehicle(vehicle_deck=&#39;&#39;): Create and initialize a vehicle with default or specified parameters.</span>
+<span class="sd">    parse_inputs(vehicle_deck, aircraft_values): Parse input files and update aircraft values and initial guesses.</span>
+<span class="sd">    update_options(aircraft_values, initialization_guesses): Update dependent options based on current aircraft values.</span>
+<span class="sd">    update_dependent_options(aircraft_values, dependent_options): Update options that depend on the value of an input variable.</span>
+<span class="sd">    initialization_guessing(aircraft_values): Set initial guesses for aircraft parameters based on problem type and other factors.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">eq</span><span class="p">,</span> <span class="n">ge</span><span class="p">,</span> <span class="n">gt</span><span class="p">,</span> <span class="n">le</span><span class="p">,</span> <span class="n">lt</span><span class="p">,</span> <span class="n">ne</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">valid_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">get_keys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_strings_to_data</span><span class="p">,</span> <span class="n">get_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProblemType</span><span class="p">,</span> <span class="n">Verbosity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variable_meta_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">_MetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span><span class="p">,</span> <span class="n">Settings</span>
+
+<span class="n">operation_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="n">lt</span><span class="p">,</span>
+    <span class="s1">&#39;&lt;=&#39;</span><span class="p">:</span> <span class="n">le</span><span class="p">,</span>
+    <span class="s1">&#39;==&#39;</span><span class="p">:</span> <span class="n">eq</span><span class="p">,</span>
+    <span class="s1">&#39;!=&#39;</span><span class="p">:</span> <span class="n">ne</span><span class="p">,</span>
+    <span class="s1">&#39;&gt;=&#39;</span><span class="p">:</span> <span class="n">ge</span><span class="p">,</span>
+    <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="n">gt</span><span class="p">,</span>
+    <span class="s1">&#39;isinstance&#39;</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">problem_types</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;sizing&#39;</span><span class="p">:</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">,</span>
+    <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">ALTERNATE</span><span class="p">,</span>
+    <span class="s1">&#39;fallout&#39;</span><span class="p">:</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">FALLOUT</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="create_vehicle">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.create_vehicle">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_vehicle</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">_MetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates and initializes a vehicle with default or specified parameters. It sets up the aircraft values</span>
+<span class="sd">    and initial guesses based on the input from the vehicle deck.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vehicle_deck (str, AviaryValues):</span>
+<span class="sd">        Path to the vehicle deck file, or an AviaryValues object that contains aircraft</span>
+<span class="sd">        inputs. Default is an empty string.</span>
+<span class="sd">    meta_data (dict):</span>
+<span class="sd">        Variable metadata used when reading input file for unit validation,</span>
+<span class="sd">        default values, and other checks.</span>
+<span class="sd">    verbosity (int, Verbosity):</span>
+<span class="sd">        Verbosity level for the AviaryProblem. If provided, this overrides verbosity</span>
+<span class="sd">        specified in the aircraft data. Default is None, and verbosity will be taken</span>
+<span class="sd">        from aircraft data or defaulted to Verbosity.BRIEF if not found.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (aircraft_values, initialization_guesses): (tuple)</span>
+<span class="sd">        Returns a tuple containing aircraft values and initial guesses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
+
+    <span class="n">aircraft_values</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">()</span>
+
+    <span class="c1"># TODO remove all hardcoded GASP values here, find appropriate place for them</span>
+    <span class="c1"># We should only set FLOPS- or GASP-specific variables for those aircraft models</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;INGASP.JENGSZ&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;test_mode&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;use_surrogates&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;mass_defect&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+
+    <span class="c1"># TODO setting defaults for variables needed outside OM problem during load_inputs()</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">PROBLEM_TYPE</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RESERVE_FUEL_ADDITIONAL</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RESERVE_FUEL_FRACTION</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># these are used in initialization_guessing()</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">25000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+    <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+
+    <span class="n">initialization_guesses</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># initialization_guesses is a dictionary that contains values used to initialize the trajectory</span>
+        <span class="s1">&#39;actual_takeoff_mass&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;rotation_mass&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;cruise_mass_final&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;flight_duration&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;time_to_climb&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;climb_range&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;reserves&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">AviaryValues</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span> <span class="ow">in</span> <span class="n">vehicle_deck</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">):</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="n">aircraft_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">vehicle_deck</span> <span class="o">=</span> <span class="n">get_path</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="n">aircraft_values</span><span class="p">,</span> <span class="n">initialization_guesses</span> <span class="o">=</span> <span class="n">parse_inputs</span><span class="p">(</span>
+            <span class="n">vehicle_deck</span><span class="o">=</span><span class="n">vehicle_deck</span><span class="p">,</span>
+            <span class="n">aircraft_values</span><span class="o">=</span><span class="n">aircraft_values</span><span class="p">,</span>
+            <span class="n">initialization_guesses</span><span class="o">=</span><span class="n">initialization_guesses</span><span class="p">,</span>
+            <span class="n">meta_data</span><span class="o">=</span><span class="n">meta_data</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># make sure verbosity is always set</span>
+    <span class="c1"># if verbosity set via parameter, use that - override what is in the file</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Enum conversion here, so user can pass either number or actual Enum as parameter</span>
+        <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">))</span>
+    <span class="c1"># else, if verbosity not specified anywhere, use default of BRIEF</span>
+    <span class="k">elif</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
+        <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">_MetaData</span><span class="p">[</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">aircraft_values</span><span class="p">,</span> <span class="n">initialization_guesses</span></div>
+
+
+
+<div class="viewcode-block" id="parse_inputs">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.parse_inputs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_inputs</span><span class="p">(</span>
+    <span class="n">vehicle_deck</span><span class="p">,</span>
+    <span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">initialization_guesses</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">meta_data</span><span class="o">=</span><span class="n">_MetaData</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the input files and updates the aircraft values and initial guesses. The function reads the</span>
+<span class="sd">    vehicle deck file, processes each line, and updates the aircraft_values object based on the data found.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    vehicle_deck (str): The vehicle deck file path.</span>
+<span class="sd">    aircraft_values (AviaryValues): An instance of AviaryValues to be updated.</span>
+<span class="sd">    initialization_guesses: An initialized dictionary of trajectory values to be updated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple: Updated aircraft values and initial guesses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">aircraft_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">aircraft_values</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">initialization_guesses</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">guess_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">initialization_guesses</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">vehicle_deck</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f_in</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f_in</span><span class="p">:</span>
+            <span class="n">data_units</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+            <span class="n">line</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># anything after the first # is a comment</span>
+
+            <span class="c1"># remove any elements that are empty (caused by trailing commas or extra commas)</span>
+            <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">dat</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">dat</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># skip line it contained only commas</span>
+
+            <span class="c1"># continue if there&#39;s no data in the line but there are commas</span>
+            <span class="c1"># this might occur if someone edits a .csv file in Excel</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">var_name</span> <span class="o">=</span> <span class="n">data_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">valid_units</span><span class="p">(</span><span class="n">data_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="c1"># if the last element is a unit, remove it from the list and update the variable&#39;s units</span>
+                <span class="n">data_units</span> <span class="o">=</span> <span class="n">data_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="n">var_value</span> <span class="o">=</span> <span class="n">convert_strings_to_data</span><span class="p">(</span><span class="n">data_list</span><span class="p">)</span>
+            <span class="c1"># If var_value is length 1 list and is not supposed to be a list, pull out</span>
+            <span class="c1"># individual value. Otherwise, convert list to numpy array</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">meta_data</span> <span class="ow">and</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">]:</span>
+                    <span class="c1"># if data is numeric, convert to numpy array</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                        <span class="n">var_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">var_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">var_value</span> <span class="o">=</span> <span class="n">var_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">data_units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">data_units</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var_name</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">var_name</span><span class="p">,</span> <span class="n">var_value</span><span class="p">,</span> <span class="n">data_units</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">guess_names</span><span class="p">:</span>
+                <span class="c1"># all initial guesses take only a single value</span>
+                <span class="c1"># get values from supplied dictionary</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_value</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="n">var_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">):</span>
+                <span class="c1"># get values labeled as initialization_guesses in .csv input file</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="n">var_name</span><span class="o">.</span><span class="n">removeprefix</span><span class="p">(</span><span class="s1">&#39;initialization_guesses:&#39;</span><span class="p">)]</span> <span class="o">=</span> <span class="n">var_value</span>
+                <span class="k">continue</span>
+
+            <span class="k">elif</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">var_name</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Variable &#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&#39; is not in meta_data nor in &#39;guess_names&#39;. &quot;</span>
+                    <span class="s1">&#39;It will be ignored.&#39;</span><span class="p">,</span>
+                    <span class="ne">UserWarning</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+    <span class="k">return</span> <span class="n">aircraft_values</span><span class="p">,</span> <span class="n">initialization_guesses</span></div>
+
+
+
+<span class="c1"># TODO this should be a preprocessor, and tasks split to be specific to subsystem</span>
+<span class="c1">#      e.g. aero preprocessor, mass preprocessor, 2DOF preprocessor, etc.</span>
+
+
+<div class="viewcode-block" id="update_GASP_options">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.update_GASP_options">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_GASP_options</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates options based on the current values in aircraft_values. This function also handles special cases</span>
+<span class="sd">    and prints debug information if the debug mode is active.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aircraft_values (AviaryValues): An instance of AviaryValues containing current aircraft values.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple: Updated aircraft values and initial guesses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># update the options that depend on variables</span>
+    <span class="n">update_dependent_options</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">,</span> <span class="n">dependent_options</span><span class="p">)</span>
+
+    <span class="c1">## STRUT AND FOLD ##</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_STRUT</span><span class="p">):</span>
+        <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_FOLD</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">CHOOSE_FOLD_LOCATION</span><span class="p">):</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dim_loc_spec</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">)</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">dim_loc_spec</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">CHOOSE_FOLD_LOCATION</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Options&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">get_keys</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">):</span>
+            <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aircraft_values</span></div>
+
+
+
+<div class="viewcode-block" id="update_dependent_options">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.update_dependent_options">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_dependent_options</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">dependent_options</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates options that are dependent on the value of an input variable or option. The function iterates</span>
+<span class="sd">    through each dependent option and sets its value based on the current aircraft values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aircraft_values (AviaryValues): An instance of AviaryValues containing current aircraft values.</span>
+<span class="sd">    dependent_options (list): A list of dependent options and their dependencies.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    AviaryValues: Updated aircraft values with modified dependent options.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># gets the names of all the variables that affect dependent options</span>
+    <span class="k">for</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">dependency</span> <span class="ow">in</span> <span class="n">dependent_options</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">get_keys</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">):</span>
+            <span class="n">var_value</span><span class="p">,</span> <span class="n">var_units</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
+            <span class="c1"># dependency is a dictionary that contains the target option, the relationship to the variable and the output values</span>
+            <span class="k">if</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">operation_dict</span><span class="p">:</span>
+                <span class="n">comp</span> <span class="o">=</span> <span class="n">operation_dict</span><span class="p">[</span><span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]]</span>
+                <span class="n">outcome</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">comp</span><span class="p">(</span><span class="n">var_value</span><span class="p">,</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">])</span>
+                    <span class="k">else</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;alternate&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;in&#39;</span><span class="p">:</span>
+                <span class="n">outcome</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">var_value</span> <span class="ow">in</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;val&#39;</span><span class="p">]</span>
+                    <span class="k">else</span> <span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;alternate&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;relation&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; is not a valid selection&#39;</span><span class="p">)</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">dependency</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">],</span> <span class="n">val</span><span class="o">=</span><span class="n">outcome</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aircraft_values</span></div>
+
+
+
+<div class="viewcode-block" id="initialization_guessing">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/process_input_decks.html#aviary.utils.process_input_decks.initialization_guessing">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initialization_guessing</span><span class="p">(</span><span class="n">aircraft_values</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">initialization_guesses</span><span class="p">,</span> <span class="n">engine_models</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sets initial guesses for various aircraft parameters based on the current problem type, aircraft values,</span>
+<span class="sd">    and other factors. It calculates and sets values like takeoff mass, cruise mass, flight duration, etc.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aircraft_values : AviaryValues</span>
+<span class="sd">        An instance of AviaryValues containing current aircraft values.</span>
+
+<span class="sd">    initialization_guesses : dict</span>
+<span class="sd">        Initial guesses.</span>
+
+<span class="sd">    engine_models : list or None</span>
+<span class="sd">        List of engine builders. This is needed if there are multiple engine models.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        Updated aircraft values and initial guesses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">problem_type</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">PROBLEM_TYPE</span><span class="p">)</span>
+    <span class="n">num_pax</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">)</span>
+    <span class="n">reserve_val</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RESERVE_FUEL_ADDITIONAL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">reserve_frac</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RESERVE_FUEL_FRACTION</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="n">reserves</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;reserves&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">reserves</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;initialization_guesses[&quot;reserves&quot;] must be greater than or equal to 0.&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">reserves</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">reserves</span> <span class="o">+=</span> <span class="n">reserve_val</span>
+        <span class="n">reserves</span> <span class="o">+=</span> <span class="n">reserve_frac</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="n">num_pax</span>
+            <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">reserves</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="n">reserves</span> <span class="o">*=</span> <span class="p">(</span>
+            <span class="n">num_pax</span>
+            <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;reserves&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reserves</span>
+
+    <span class="k">if</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">GROSS_MASS</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
+        <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">CRUISE_MASS_FINAL</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
+        <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">CRUISE_MASS_FINAL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;cruise_mass_final&#39;</span><span class="p">]</span>
+
+    <span class="c1"># takeoff mass not given</span>
+    <span class="k">if</span> <span class="n">mission_mass</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">ALTERNATE</span><span class="p">:</span>
+            <span class="n">fuel_mass</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">num_pax</span>
+                <span class="o">*</span> <span class="p">(</span>
+                    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;fuel_burn_per_passenger_mile&#39;</span><span class="p">]</span>
+                    <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">+</span> <span class="n">reserves</span>
+            <span class="p">)</span>
+            <span class="n">mission_mass</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">(</span>
+                    <span class="n">num_pax</span>
+                    <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="o">+</span> <span class="n">fuel_mass</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">FALLOUT</span> <span class="ow">or</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
+            <span class="n">mission_mass</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;actual_takeoff_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mission_mass</span>
+
+    <span class="k">if</span> <span class="n">cruise_mass_final</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># no guess given</span>
+        <span class="k">if</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
+            <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="mf">0.8</span>
+        <span class="k">elif</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">ALTERNATE</span><span class="p">:</span>
+            <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="c1"># estimation based on payload and fuel</span>
+    <span class="k">if</span> <span class="n">cruise_mass_final</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;operating_empty_mass&#39;</span><span class="p">]</span>
+            <span class="o">+</span> <span class="n">num_pax</span>
+            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="n">reserves</span>
+        <span class="p">)</span>
+    <span class="c1"># fraction of takeoff mass</span>
+    <span class="k">elif</span> <span class="n">cruise_mass_final</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">cruise_mass_final</span> <span class="o">=</span> <span class="n">mission_mass</span> <span class="o">*</span> <span class="n">cruise_mass_final</span>
+    <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;cruise_mass_final&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cruise_mass_final</span>
+
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.99</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># fraction of takeoff mass</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">mission_mass</span> <span class="o">*</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;rotation_mass&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">MACH</span> <span class="ow">in</span> <span class="n">aircraft_values</span><span class="p">:</span>
+        <span class="n">cruise_mach</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">MACH</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cruise_mach</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">CRUISE_MACH</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># estimation based on mach</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;NM&#39;</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mi">667</span> <span class="o">*</span> <span class="n">cruise_mach</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">15</span><span class="p">:</span>  <span class="c1"># duration entered in hours</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;flight_duration&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="p">)</span>
+
+    <span class="n">total_thrust</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">engine_models</span><span class="p">):</span>
+        <span class="c1"># For large turboprops, 1 pound of thrust per hp at takeoff seems to be close enough</span>
+        <span class="c1"># TODO scale factor?</span>
+        <span class="c1"># thrust = np.dot(</span>
+        <span class="c1">#     aircraft_values.get_val(Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN, &#39;hp&#39;)[i],</span>
+        <span class="c1">#     aircraft_values.get_val(Aircraft.Engine.NUM_ENGINES)[i],</span>
+        <span class="c1"># )</span>
+
+        <span class="n">thrust</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">REFERENCE_SLS_THRUST</span><span class="p">,</span> <span class="s1">&#39;lbf&#39;</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">num_engines</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">total_thrust</span> <span class="o">+=</span> <span class="n">thrust</span> <span class="o">*</span> <span class="n">num_engines</span>
+
+    <span class="n">gamma_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">total_thrust</span> <span class="o">/</span> <span class="n">mission_mass</span><span class="p">)</span>
+    <span class="n">avg_speed_guess</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="mi">667</span> <span class="o">*</span> <span class="n">cruise_mach</span>  <span class="c1"># kts</span>
+
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># no guess given</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+            <span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">avg_speed_guess</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">gamma_guess</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># duration entered in hours</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">200</span><span class="p">:</span>  <span class="c1"># average climb rate in ft/s</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CRUISE_ALTITUDE</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+            <span class="o">/</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="c1"># range covered using an average speed from 0 to cruise</span>
+    <span class="k">if</span> <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;climb_range&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;climb_range&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">initialization_guesses</span><span class="p">[</span><span class="s1">&#39;time_to_climb&#39;</span><span class="p">]</span>
+            <span class="o">/</span> <span class="p">(</span><span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+            <span class="o">*</span> <span class="p">(</span><span class="n">avg_speed_guess</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">gamma_guess</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">aircraft_values</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Initial Guesses&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">initialization_guesses</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">initialization_guesses</span></div>
+
+
+
+<span class="n">dependent_options</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># dependent_options is a list that is used to update options that depend on the value of</span>
+    <span class="c1"># an input variable or option.</span>
+    <span class="c1"># Each dependency comes in the form of a list with the variable name and a dictionary.</span>
+    <span class="c1"># The dictionary contains a value that the variable will be compared against (val), the</span>
+    <span class="c1"># particular mathematical comparison (relation), the option that is effected (target), and</span>
+    <span class="c1"># the value the option should be set to based on whether the relation is true (result) or</span>
+    <span class="c1"># false (alternate)</span>
+    <span class="c1"># For example, an aircraft&#39;s engines are on the fuselage if the span fraction on the wing is 0.</span>
+    <span class="c1"># In this case the value of Aircraft.Engine.WING_LOCATIONS is compared to 0. If the span location</span>
+    <span class="c1"># is exactly equal to zero, engine_on_fuselage is set to to True, otherwise it is set to False.</span>
+    <span class="c1"># One variable can be used to set the value of any number of options, but an option can only be</span>
+    <span class="c1"># set by one variable</span>
+    <span class="c1"># [Aircraft.Engine.WING_LOCATIONS, {</span>
+    <span class="c1">#     &#39;val&#39;: 0, &#39;relation&#39;: &#39;==&#39;, &#39;target&#39;: Aircraft.Engine.FUSELAGE_MOUNTED, &#39;result&#39;: True, &#39;alternate&#39;: False}],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">WING_LOADING</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">LOADING_ABOVE_20</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">ATTACHMENT_LOCATION</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;!=&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_STRUT</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">ATTACHMENT_LOCATION</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Strut</span><span class="o">.</span><span class="n">DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_MASS_COEFFICIENT</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">HAS_FOLD</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLDED_SPAN</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">PART25_STRUCTURAL_CATEGORY</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">ULF_CALCULATED_FROM_MANEUVER</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="s1">&#39;JENGSZ&#39;</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;!=&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_PERFORMANCE</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">VOLUME_COEFFICIENT</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">COMPUTE_HTAIL_VOLUME_COEFF</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">VerticalTail</span><span class="o">.</span><span class="n">VOLUME_COEFFICIENT</span><span class="p">,</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;relation&#39;</span><span class="p">:</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">COMPUTE_VTAIL_VOLUME_COEFF</span><span class="p">,</span>
+            <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">&#39;alternate&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

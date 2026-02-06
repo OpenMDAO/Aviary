@@ -1,0 +1,1342 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aviary.utils.preprocessors</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/utils/preprocessors';</script>
+    <link rel="icon" href="../../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/utils/preprocessors.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for aviary.utils.preprocessors</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Preprocessors are utility functions that handle issues with Aviary inputs before model</span>
+<span class="sd">setup and execution. These tasks include consistency checking between related variables,.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.aviary_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryValues</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.named_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_keys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.test_utils.variable_test</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_names_from_hierarchy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">isiterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">LegacyCode</span><span class="p">,</span> <span class="n">ProblemType</span><span class="p">,</span> <span class="n">Verbosity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variable_meta_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">_MetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Mission</span><span class="p">,</span> <span class="n">Settings</span>
+
+
+<span class="c1"># TODO document what kwargs are used, and by which preprocessors in docstring?</span>
+<span class="c1"># TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)</span>
+<div class="viewcode-block" id="preprocess_options">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.preprocess_options">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_options</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">_MetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run all preprocessors on provided AviaryValues object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aviary_options : AviaryValues</span>
+<span class="sd">        Options to be updated</span>
+
+<span class="sd">    meta_data : dict</span>
+<span class="sd">        Variable metadata being used with this set of aviary_options</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">engine_models</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;engine_models&#39;</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">engine_models</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">verbosity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">verbosity</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+
+    <span class="n">preprocess_crewpayload</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+    <span class="n">preprocess_fuel_capacities</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">engine_models</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">preprocess_propulsion</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">engine_models</span><span class="p">,</span> <span class="n">meta_data</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="remove_preprocessed_options">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.remove_preprocessed_options">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_preprocessed_options</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove options whose values will be computed in the preprocessors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aviary_options : AviaryValues</span>
+<span class="sd">        Options to be updated</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pre_opt</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_CREW</span><span class="p">,</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_ATTENDANTS</span><span class="p">,</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_GALLEY_CREW</span><span class="p">,</span>
+        <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">BAGGAGE_MASS_PER_PASSENGER</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">pre_opt</span><span class="p">:</span>
+        <span class="n">aviary_options</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">option</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="preprocess_crewpayload">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.preprocess_crewpayload">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_crewpayload</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">_MetaData</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates option values that are derived from other options, and are not direct inputs.</span>
+<span class="sd">    This function modifies the entries in the supplied collection, and for convenience also</span>
+<span class="sd">    returns the modified collection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aviary_options : AviaryValues</span>
+<span class="sd">        Options to be updated</span>
+
+<span class="sd">    meta_data : dict</span>
+<span class="sd">        Variable metadata being used with this set of aviary_options</span>
+
+<span class="sd">    Verbosity, optional</span>
+<span class="sd">        Sets level of printouts for this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check and process cargo variables - confirm mass method</span>
+    <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">MASS_METHOD</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+        <span class="n">mass_method</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">MASS_METHOD</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">&#39;MASS_METHOD not specified. Cannot preprocess cargo inputs.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># compatibility with being passed int for verbosity</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span>
+    <span class="n">pax_provided</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">design_pax_provided</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
+        <span class="n">pax_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="n">design_pax_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">,</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pax_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">]</span>
+
+        <span class="n">design_pax_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pax_keys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="c1"># mark that the user provided any information on mission passenger count</span>
+            <span class="n">pax_provided</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># default all non-provided passenger info to 0</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">design_pax_keys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="c1"># mark that the user provided any information on design passenger count</span>
+            <span class="n">design_pax_provided</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># default all non-provided passenger info to 0</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># no passenger info provided</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pax_provided</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">design_pax_provided</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="s1">&#39;No passenger information has been provided for the aircraft, assuming &#39;</span>
+                <span class="s1">&#39;that this aircraft is not designed to carry passengers.&#39;</span>
+            <span class="p">)</span>
+    <span class="c1"># only mission passenger info provided</span>
+    <span class="k">if</span> <span class="n">pax_provided</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">design_pax_provided</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="s1">&#39;Passenger information for the aircraft as designed was not provided. &#39;</span>
+                <span class="s1">&#39;Assuming that the design passenger count is the same as the passenger &#39;</span>
+                <span class="s1">&#39;count for the flown mission.&#39;</span>
+            <span class="p">)</span>
+        <span class="c1"># set design passengers to mission passenger values</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pax_keys</span><span class="p">)):</span>
+            <span class="n">mission_val</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">pax_keys</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">design_pax_keys</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mission_val</span><span class="p">)</span>
+    <span class="c1"># only design passenger info provided</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pax_provided</span> <span class="ow">and</span> <span class="n">design_pax_provided</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="s1">&#39;Passenger information for the flown mission was not provided. &#39;</span>
+                <span class="s1">&#39;Assuming that the mission passenger count is the same as the design &#39;</span>
+                <span class="s1">&#39;passenger count.&#39;</span>
+            <span class="p">)</span>
+        <span class="c1"># set mission passengers to design passenger values</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pax_keys</span><span class="p">)):</span>
+            <span class="n">design_val</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">design_pax_keys</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">pax_keys</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">design_val</span><span class="p">)</span>
+
+    <span class="c1"># check that passenger sums match individual seat class values</span>
+    <span class="n">design_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">)</span>
+    <span class="n">mission_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">)</span>
+
+    <span class="n">mission_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">design_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pax_keys</span><span class="p">)):</span>
+        <span class="n">mission_sum</span> <span class="o">+=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">pax_keys</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">design_sum</span> <span class="o">+=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">design_pax_keys</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+    <span class="c1"># Resolve conflicts between seat class totals and num_passengers</span>
+    <span class="c1"># Specific beats general - trust the individual class counts over the total provided, unless</span>
+    <span class="c1">#    the class counts are all zero, in which case trust the total provided and assume all economy</span>
+    <span class="c1"># design num_passengers does not match sum of seat classes for design</span>
+    <span class="k">if</span> <span class="n">design_pax</span> <span class="o">!=</span> <span class="n">design_sum</span><span class="p">:</span>
+        <span class="c1"># if sum of seat classes is zero (design pax is not), assume all economy</span>
+        <span class="k">if</span> <span class="n">design_sum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;Information on seat class distribution for aircraft design was &#39;</span>
+                    <span class="s1">&#39;not provided - assuming that all passengers are economy class.&#39;</span>
+                <span class="p">)</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span> <span class="n">design_pax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;Sum of all passenger classes does not equal total number of &#39;</span>
+                    <span class="s1">&#39;passengers provided for aircraft design. Overriding &#39;</span>
+                    <span class="s1">&#39;Aircraft.CrewPayload.Design.NUM_PASSENGERS with the sum of &#39;</span>
+                    <span class="s1">&#39;passenger classes for design.&#39;</span>
+                <span class="p">)</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="n">design_sum</span><span class="p">)</span>
+
+    <span class="c1"># mission num_passengers does not match sum of seat classes for mission</span>
+    <span class="k">if</span> <span class="n">mission_pax</span> <span class="o">!=</span> <span class="n">mission_sum</span><span class="p">:</span>
+        <span class="c1"># if sum of seat classes is zero (mission pax is not), assume all economy</span>
+        <span class="k">if</span> <span class="n">mission_sum</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;Information on seat class distribution for current mission was &#39;</span>
+                    <span class="s1">&#39;not provided - assuming that all passengers are economy class.&#39;</span>
+                <span class="p">)</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">,</span> <span class="n">mission_pax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;Sum of all passenger classes does not equal total number of &#39;</span>
+                    <span class="s1">&#39;passengers provided for current mission. Overriding &#39;</span>
+                    <span class="s1">&#39;Aircraft.CrewPayload.NUM_PASSENGERS with the sum of &#39;</span>
+                    <span class="s1">&#39;passenger classes for the flown mission.&#39;</span>
+                <span class="p">)</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">,</span> <span class="n">mission_sum</span><span class="p">)</span>
+
+    <span class="c1"># Check cases where mission passengers are greater than design passengers</span>
+    <span class="n">design_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">)</span>
+    <span class="n">mission_pax</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_PASSENGERS</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mission_pax</span> <span class="o">&gt;</span> <span class="n">design_pax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;The aircraft is designed for </span><span class="si">{</span><span class="n">design_pax</span><span class="si">}</span><span class="s1"> passengers but the current &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;mission is being flown with </span><span class="si">{</span><span class="n">mission_pax</span><span class="si">}</span><span class="s1"> passengers. The mission &#39;</span>
+                <span class="s1">&#39;will be flown using the mass of these extra passengers and baggage, &#39;</span>
+                <span class="s1">&#39;but this mission may not be realistic due to lack of room.&#39;</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
+        <span class="c1"># First Class</span>
+        <span class="k">if</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span>
+        <span class="p">)</span> <span class="o">&lt;</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FIRST_CLASS</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;More first class passengers are flying in this mission than there are &#39;</span>
+                    <span class="s1">&#39;available first class seats on the aircraft. Assuming these passengers &#39;</span>
+                    <span class="s1">&#39;have the same mass as other first class passengers, but are sitting in &#39;</span>
+                    <span class="s1">&#39;different seats.&#39;</span>
+                <span class="p">)</span>
+        <span class="c1"># Business Class</span>
+        <span class="k">if</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span>
+        <span class="p">)</span> <span class="o">&lt;</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_BUSINESS_CLASS</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;More business class passengers are flying in this mission than there are &#39;</span>
+                    <span class="s1">&#39;available business class seats on the aircraft. Assuming these passengers &#39;</span>
+                    <span class="s1">&#39;have the same mass as other business class passengers, but are sitting in &#39;</span>
+                    <span class="s1">&#39;different seats.&#39;</span>
+                <span class="p">)</span>
+        <span class="c1"># Economy Class</span>
+        <span class="k">if</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span>
+        <span class="p">)</span> <span class="o">&lt;</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_ECONOMY_CLASS</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="s1">&#39;More economy class passengers are flying in this mission than there are &#39;</span>
+                    <span class="s1">&#39;available economy class seats on the aircraft. Assuming these passengers &#39;</span>
+                    <span class="s1">&#39;have the same mass as other economy class passengers, but are sitting in &#39;</span>
+                    <span class="s1">&#39;different seats.&#39;</span>
+                <span class="p">)</span>
+
+    <span class="c1"># Process GASP based cargo variables</span>
+    <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">GASP</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cargo</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">cargo</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">max_cargo</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">MAX_CARGO_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">max_cargo</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">des_cargo</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">des_cargo</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">PROBLEM_TYPE</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">problem_type</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">PROBLEM_TYPE</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">problem_type</span> <span class="o">=</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span>
+
+        <span class="k">if</span> <span class="n">cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">max_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">des_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span> <span class="ow">and</span> <span class="n">cargo</span> <span class="o">!=</span> <span class="n">des_cargo</span><span class="p">:</span>
+                        <span class="c1"># user has set all three check if self consistent</span>
+                        <span class="n">cargo</span> <span class="o">=</span> <span class="n">des_cargo</span>
+                        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.CARGO_MASS (</span><span class="si">{</span><span class="n">cargo</span><span class="si">}</span><span class="s1">) does not equal &#39;</span>
+                                <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.Design.CARGO_MASS (</span><span class="si">{</span><span class="n">des_cargo</span><span class="si">}</span><span class="s1">) for SIZING &#39;</span>
+                                <span class="s1">&#39;mission. Setting as-flown CARGO_MASS equal to Design.CARGO_MASS &#39;</span>
+                                <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">des_cargo</span><span class="si">}</span><span class="s1">)&#39;</span>
+                            <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># user has set cargo &amp; max: assume des = max</span>
+                    <span class="n">des_cargo</span> <span class="o">=</span> <span class="n">max_cargo</span>
+                    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                            <span class="s1">&#39;Aircraft.CrewPayload.Design.CARGO_MASS missing, assume &#39;</span>
+                            <span class="sa">f</span><span class="s1">&#39;Design.CARGO_MASS = Design.MAX_CARGO_MASS (</span><span class="si">{</span><span class="n">max_cargo</span><span class="si">}</span><span class="s1">)&#39;</span>
+                        <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">des_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># user has set cargo &amp; des: assume max = des</span>
+                <span class="n">max_cargo</span> <span class="o">=</span> <span class="n">des_cargo</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.Design.MAX_CARGO_MASS is missing, assuming &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;Design.MAX_CARGO_MASS equals Design.CARGO_MASS (</span><span class="si">{</span><span class="n">des_cargo</span><span class="si">}</span><span class="s1">)&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># user has set cargo only: assume design and max cargo is equal to flown cargo</span>
+                <span class="n">des_cargo</span> <span class="o">=</span> <span class="n">max_cargo</span> <span class="o">=</span> <span class="n">cargo</span>
+
+        <span class="k">elif</span> <span class="n">max_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">des_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># user has set max &amp; des: assume flown = 0</span>
+                <span class="n">cargo</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.CARGO_MASS is missing, assuming CARGO_MASS = 0&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># user has set max only: assume flown = des = 0</span>
+                <span class="n">cargo</span> <span class="o">=</span> <span class="n">des_cargo</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.CARGO_MASS &#39;</span>
+                        <span class="s1">&#39;missing, assume CARGO_MASS and Design.CARGO_MASS = 0. No Cargo is flown on &#39;</span>
+                        <span class="s1">&#39;mission.&#39;</span>
+                    <span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">des_cargo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># user has only input des: assume max = des and flown = 0</span>
+            <span class="n">max_cargo</span> <span class="o">=</span> <span class="n">des_cargo</span>
+            <span class="n">cargo</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;Aircraft.CrewPayload.CARGO_MASS and Aircraft.CrewPayload.Design.MAX_CARGO_MASS &#39;</span>
+                    <span class="s1">&#39;missing, assume CARGO_MASS = 0 and Design.MAX_CARGO_MASS = Design.CARGO_MASS &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">des_cargo</span><span class="si">}</span><span class="s1">).&#39;</span>
+                <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># user has input no cargo information</span>
+            <span class="n">cargo</span> <span class="o">=</span> <span class="n">max_cargo</span> <span class="o">=</span> <span class="n">des_cargo</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;No CARGO variables detected, assume CARGO_MASS, Design.MAX_CARGO_MASS, and &#39;</span>
+                    <span class="s1">&#39;Design.CARGO_MASS equal to 0.&#39;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cargo</span> <span class="o">&gt;</span> <span class="n">max_cargo</span> <span class="ow">or</span> <span class="n">des_cargo</span> <span class="o">&gt;</span> <span class="n">max_cargo</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.CARGO_MASS (</span><span class="si">{</span><span class="n">cargo</span><span class="si">}</span><span class="s1">) and/or &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.Design.CARGO_MASS (</span><span class="si">{</span><span class="n">des_cargo</span><span class="si">}</span><span class="s1">) is greater than&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;Aircraft.CrewPayload.Design.MAX_CARGO_MASS (</span><span class="si">{</span><span class="n">max_cargo</span><span class="si">}</span><span class="s1">)&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># calculate passenger mass with bags based on user inputs.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pax_mass_with_bag</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">pax_mass</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="n">bag_mass</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">BAGGAGE_MASS_PER_PASSENGER</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span>
+            <span class="p">)</span>
+            <span class="n">pax_mass_with_bag</span> <span class="o">=</span> <span class="n">pax_mass</span> <span class="o">+</span> <span class="n">bag_mass</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">MASS_PER_PASSENGER_WITH_BAGS</span><span class="p">,</span> <span class="n">pax_mass_with_bag</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># calculate and check total payload</span>
+        <span class="c1"># NOTE this is only used for error messaging the calculations for analysis are subsystems/mass/gasp_based</span>
+        <span class="n">design_passenger_payload_mass</span> <span class="o">=</span> <span class="n">design_pax</span> <span class="o">*</span> <span class="n">pax_mass_with_bag</span>
+        <span class="n">max_payload</span> <span class="o">=</span> <span class="n">design_passenger_payload_mass</span> <span class="o">+</span> <span class="n">max_cargo</span>
+        <span class="n">as_flown_passenger_payload_mass</span> <span class="o">=</span> <span class="n">mission_pax</span> <span class="o">*</span> <span class="n">pax_mass_with_bag</span>
+        <span class="n">as_flown_payload</span> <span class="o">=</span> <span class="n">as_flown_passenger_payload_mass</span> <span class="o">+</span> <span class="n">cargo</span>
+        <span class="k">if</span> <span class="n">as_flown_payload</span> <span class="o">&gt;</span> <span class="n">max_payload</span> <span class="ow">and</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;As-flown payload (</span><span class="si">{</span><span class="n">as_flown_payload</span><span class="si">}</span><span class="s1">) is greater than maximum payload &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">max_payload</span><span class="si">}</span><span class="s1">). The aircraft will be undersized for this payload!&#39;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># set assumed cargo mass variables:</span>
+        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="n">cargo</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">MAX_CARGO_MASS</span><span class="p">,</span> <span class="n">max_cargo</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">CARGO_MASS</span><span class="p">,</span> <span class="n">des_cargo</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Process FLOPS based crew variables</span>
+    <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
+        <span class="c1"># Check flight attendants</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_ATTENDANTS</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">flight_attendants_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># assume no passengers</span>
+
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">design_pax</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">design_pax</span> <span class="o">&lt;</span> <span class="mi">51</span><span class="p">:</span>
+                    <span class="n">flight_attendants_count</span> <span class="o">=</span> <span class="mi">1</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">flight_attendants_count</span> <span class="o">=</span> <span class="n">design_pax</span> <span class="o">//</span> <span class="mi">40</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_ATTENDANTS</span><span class="p">,</span> <span class="n">flight_attendants_count</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_GALLEY_CREW</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">galley_crew_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># assume no passengers</span>
+
+            <span class="k">if</span> <span class="mi">150</span> <span class="o">&lt;</span> <span class="n">design_pax</span><span class="p">:</span>
+                <span class="n">galley_crew_count</span> <span class="o">=</span> <span class="n">design_pax</span> <span class="o">//</span> <span class="mi">250</span> <span class="o">+</span> <span class="mi">1</span>
+
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_GALLEY_CREW</span><span class="p">,</span> <span class="n">galley_crew_count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">galley_crew_count</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_GALLEY_CREW</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_CREW</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">flight_crew_count</span> <span class="o">=</span> <span class="mi">3</span>
+
+            <span class="k">if</span> <span class="n">design_pax</span> <span class="o">&lt;</span> <span class="mi">151</span><span class="p">:</span>
+                <span class="n">flight_crew_count</span> <span class="o">=</span> <span class="mi">2</span>
+
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_CREW</span><span class="p">,</span> <span class="n">flight_crew_count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flight_crew_count</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_FLIGHT_CREW</span><span class="p">)</span>
+
+        <span class="c1"># check cabin crew against flight attendants &amp; galley crew</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_CABIN_CREW</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">cabin_crew_calc</span> <span class="o">=</span> <span class="n">flight_crew_count</span> <span class="o">+</span> <span class="n">galley_crew_count</span>
+            <span class="n">cabin_crew_provided</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_CABIN_CREW</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cabin_crew_calc</span> <span class="o">!=</span> <span class="n">cabin_crew_provided</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Number of cabin crew (</span><span class="si">{</span><span class="n">cabin_crew_provided</span><span class="si">}</span><span class="s1">) does not equal sum of flight &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;attendants and galley crew (</span><span class="si">{</span><span class="n">cabin_crew_calc</span><span class="si">}</span><span class="s1">). Setting &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;aircraft:crew_and_payload:num_cabin_crew to </span><span class="si">{</span><span class="n">cabin_crew_calc</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">NUM_CABIN_CREW</span><span class="p">,</span> <span class="n">cabin_crew_calc</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">BAGGAGE_MASS_PER_PASSENGER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+            <span class="ow">and</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span> <span class="ow">in</span> <span class="n">aviary_options</span>
+        <span class="p">):</span>
+            <span class="n">design_range</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">RANGE</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">design_range</span> <span class="o">&lt;=</span> <span class="mf">900.0</span><span class="p">:</span>
+                <span class="n">baggage_mass_per_pax</span> <span class="o">=</span> <span class="mf">35.0</span>
+            <span class="k">elif</span> <span class="n">design_range</span> <span class="o">&lt;=</span> <span class="mf">2900.0</span><span class="p">:</span>
+                <span class="n">baggage_mass_per_pax</span> <span class="o">=</span> <span class="mf">40.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">baggage_mass_per_pax</span> <span class="o">=</span> <span class="mf">44.0</span>
+
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                <span class="n">Aircraft</span><span class="o">.</span><span class="n">CrewPayload</span><span class="o">.</span><span class="n">BAGGAGE_MASS_PER_PASSENGER</span><span class="p">,</span>
+                <span class="n">val</span><span class="o">=</span><span class="n">baggage_mass_per_pax</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aviary_options</span></div>
+
+
+
+<div class="viewcode-block" id="preprocess_fuel_capacities">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.preprocess_fuel_capacities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_fuel_capacities</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocesses the AviaryValues object to ensure the user has provided a consistent set of fuel capacity overrides.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aviary_options : AviaryValues</span>
+<span class="sd">        Options to be updated</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># compatibility with being passed int for verbosity</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Settings</span><span class="o">.</span><span class="n">MASS_METHOD</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+        <span class="n">mass_method</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">MASS_METHOD</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span><span class="s1">&#39;MASS_METHOD not specified. Cannot preprocess fuel capacity inputs.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mass_method</span> <span class="o">==</span> <span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">:</span>
+        <span class="c1"># find which fuel capacity variables the user has set:</span>
+        <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">TOTAL_CAPACITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="c1"># Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero</span>
+            <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">FUSELAGE_FUEL_CAPACITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">FUSELAGE_FUEL_CAPACITY</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY is missing assume = 0&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">AUXILIARY_FUEL_CAPACITY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+                <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">AUXILIARY_FUEL_CAPACITY</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY is missing assume = 0&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">total_capacity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">TOTAL_CAPACITY</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">wing_capacity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">WING_FUEL_CAPACITY</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">wing_capacity</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fuselage_capacity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">FUSELAGE_FUEL_CAPACITY</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">fuselage_capacity</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">auxiliary_capacity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                    <span class="n">Aircraft</span><span class="o">.</span><span class="n">Fuel</span><span class="o">.</span><span class="n">AUXILIARY_FUEL_CAPACITY</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">auxiliary_capacity</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">capacity_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="mi">1</span>
+                <span class="k">for</span> <span class="n">capacity</span> <span class="ow">in</span> <span class="p">[</span><span class="n">wing_capacity</span><span class="p">,</span> <span class="n">fuselage_capacity</span><span class="p">,</span> <span class="n">auxiliary_capacity</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">)</span>
+            <span class="n">capacity_check</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="n">capacity</span>
+                <span class="k">for</span> <span class="n">capacity</span> <span class="ow">in</span> <span class="p">[</span><span class="n">wing_capacity</span><span class="p">,</span> <span class="n">fuselage_capacity</span><span class="p">,</span> <span class="n">auxiliary_capacity</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">capacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="p">)</span>
+
+            <span class="c1"># check if the user inputs are self consistent (as far as possible at this stage!) Aviary can still calculate -ve outputs at runtime.</span>
+            <span class="k">if</span> <span class="n">capacity_count</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">capacity_check</span> <span class="o">!=</span> <span class="n">total_capacity</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.Fuel.TOTAL_CAPACITY (</span><span class="si">{</span><span class="n">total_capacity</span><span class="si">}</span><span class="s1">) != Aircraft.Fuel.WING_FUEL_CAPACITY (</span><span class="si">{</span><span class="n">wing_capacity</span><span class="si">}</span><span class="s1">)&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;+ Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY (</span><span class="si">{</span><span class="n">fuselage_capacity</span><span class="si">}</span><span class="s1">) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY (</span><span class="si">{</span><span class="n">auxiliary_capacity</span><span class="si">}</span><span class="s1">)&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; = </span><span class="si">{</span><span class="n">capacity_check</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">capacity_count</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">capacity_check</span> <span class="o">&gt;</span> <span class="n">total_capacity</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">UserWarning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Aircraft.Fuel.TOTAL_CAPACITY (</span><span class="si">{</span><span class="n">total_capacity</span><span class="si">}</span><span class="s1">) &lt; Aircraft.Fuel.WING_FUEL_CAPACITY (</span><span class="si">{</span><span class="n">wing_capacity</span><span class="si">}</span><span class="s1">)&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; + Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY (</span><span class="si">{</span><span class="n">fuselage_capacity</span><span class="si">}</span><span class="s1">) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY (</span><span class="si">{</span><span class="n">auxiliary_capacity</span><span class="si">}</span><span class="s1">)&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39; = </span><span class="si">{</span><span class="n">capacity_check</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">aviary_options</span></div>
+
+
+
+<div class="viewcode-block" id="preprocess_propulsion">
+<a class="viewcode-back" href="../../../_srcdocs/packages/utils/preprocessors.html#aviary.utils.preprocessors.preprocess_propulsion">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">preprocess_propulsion</span><span class="p">(</span>
+    <span class="n">aviary_options</span><span class="p">:</span> <span class="n">AviaryValues</span><span class="p">,</span>
+    <span class="n">engine_models</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">meta_data</span><span class="o">=</span><span class="n">_MetaData</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates AviaryValues object with values taken from provided EngineModels.</span>
+
+<span class="sd">    Vectorizes variables in aviary_options in the correct order for vehicles with</span>
+<span class="sd">    heterogeneous engines.</span>
+
+<span class="sd">    Performs basic sanity checks on inputs that are universal to all EngineModels.</span>
+
+<span class="sd">    !!! WARNING !!!</span>
+<span class="sd">    Values in aviary_options can be overwritten with corresponding values from</span>
+<span class="sd">    engine_models!</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    aviary_options : AviaryValues</span>
+<span class="sd">        Options to be updated. EngineModels (provided or generated) are added, and</span>
+<span class="sd">        Aircraft:Engine:* and Aircraft:Nacelle:* variables are vectorized as numpy arrays</span>
+
+<span class="sd">    engine_models : &lt;list of EngineModels&gt; (optional)</span>
+<span class="sd">        EngineModel objects to be added to aviary_options. Replaced existing EngineModels</span>
+<span class="sd">        in aviary_options</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># compatibility with being passed int for verbosity</span>
+        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="p">(</span><span class="n">verbosity</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+            <span class="n">verbosity</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Settings</span><span class="o">.</span><span class="n">VERBOSITY</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">verbosity</span> <span class="o">=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span>
+
+    <span class="c1">##############################</span>
+    <span class="c1"># Vectorize Engine Variables #</span>
+    <span class="c1">##############################</span>
+    <span class="c1"># Only vectorize variables user has defined in some way or engine model has calculated</span>
+    <span class="c1"># Combine aviary_options and all engine options into single AviaryValues</span>
+    <span class="c1"># It is assumed that all EngineModels are up-to-date at this point and will NOT</span>
+    <span class="c1"># be changed later on (otherwise preprocess_propulsion must be run again)</span>
+    <span class="n">num_engine_type</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">engine_models</span><span class="p">)</span>
+
+    <span class="n">complete_options_list</span> <span class="o">=</span> <span class="n">AviaryValues</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">engine_models</span><span class="p">:</span>
+        <span class="n">complete_options_list</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">options</span><span class="p">)</span>
+
+    <span class="c1"># update_list has keys of all variables that are already defined, and must</span>
+    <span class="c1"># be vectorized</span>
+    <span class="n">update_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">get_keys</span><span class="p">(</span><span class="n">complete_options_list</span><span class="p">))</span>
+
+    <span class="c1"># Vectorize engine variables. Only update variables in update_list that are relevant</span>
+    <span class="c1"># to engines (defined by _get_engine_variables())</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">_get_engine_variables</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">update_list</span><span class="p">:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
+            <span class="n">default_value</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;default_value&#39;</span><span class="p">]</span>
+            <span class="n">multivalue</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;multivalue&#39;</span><span class="p">]</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+
+            <span class="c1"># If dtype has multiple options, prefer type of default value</span>
+            <span class="c1"># Otherwise, use the first type in the tuple</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">default_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+                        <span class="n">dtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">dtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]):</span>
+                <span class="n">typeset</span> <span class="o">=</span> <span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">typeset</span> <span class="o">=</span> <span class="p">(</span><span class="n">meta_data</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="s1">&#39;types&#39;</span><span class="p">],)</span>
+
+            <span class="c1"># Variables are multidimensional if their base types have iterables, and are</span>
+            <span class="c1"># flagged as `multivalue`</span>
+            <span class="n">multidimensional</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">typeset</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">((</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span> <span class="ow">and</span> <span class="n">multivalue</span>
+
+            <span class="c1"># vec is where the vectorized engine data is stored - always a list right</span>
+            <span class="c1"># now, converted to other types like np array later</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Vectorize variable &quot;var&quot; from available sources #</span>
+
+            <span class="c1"># If var is supposed to be a unique array per engine model, assemble flat</span>
+            <span class="c1"># vector manually to avoid ragged arrays (such as for wing engine locations)</span>
+
+            <span class="c1"># Priority order is (checked per engine):</span>
+            <span class="c1"># 1. EngineModel.options</span>
+            <span class="c1"># 2. aviary_options</span>
+            <span class="c1"># 3. default value from metadata</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">engine</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">engine_models</span><span class="p">):</span>
+                <span class="c1"># test to see if engine has this variable - if so, use it</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># variables in engine models are trusted to be &quot;safe&quot;, and only</span>
+                    <span class="c1"># contain data for that engine</span>
+                    <span class="n">engine_val</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+                <span class="c1"># if the variable is not in the engine model, pull from aviary options</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># check if variable is defined in aviary options (for this engine&#39;s</span>
+                    <span class="c1"># index) - if so, use it</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">aviary_val</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+                    <span class="c1"># if the variable is not in aviary_options, use default from metadata</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+                        <span class="n">vec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># save value from aviary_options</span>
+                        <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">aviary_val</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">multidimensional</span><span class="p">:</span>
+                                <span class="n">vec</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">aviary_val</span><span class="p">)</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="c1"># if aviary_val is an iterable, just grab val for this engine</span>
+                                <span class="n">vec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aviary_val</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">vec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aviary_val</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># save value from EngineModel</span>
+                    <span class="k">if</span> <span class="n">isiterable</span><span class="p">(</span><span class="n">engine_val</span><span class="p">)</span> <span class="ow">and</span> <span class="n">multidimensional</span><span class="p">:</span>
+                        <span class="n">vec</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">engine_val</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">engine_val</span><span class="p">)</span>
+                <span class="c1"># TODO update each engine&#39;s options with &quot;new&quot; values? Allows each engine</span>
+                <span class="c1">#      to have a copy of all options/inputs, beyond what it was</span>
+                <span class="c1">#      originally initialized with</span>
+
+            <span class="c1"># Update aviary options with new vectors</span>
+            <span class="c1"># If data is numerical, store in a numpy array, else use a list</span>
+            <span class="c1"># Some machines default to specific-bit np array types, so we have to</span>
+            <span class="c1"># check for those too</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">vec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+                <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">vec</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+
+    <span class="c1">###################################</span>
+    <span class="c1"># Input/Option Consistency Checks #</span>
+    <span class="c1">###################################</span>
+    <span class="c1"># Make sure number of engines based on mount location match expected total</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">num_engines_all</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">num_engines_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_engine_type</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">num_fuse_engines_all</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_FUSELAGE_ENGINES</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">num_fuse_engines_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_engine_type</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">num_wing_engines_all</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_WING_ENGINES</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">num_wing_engines_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_engine_type</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">engine</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">engine_models</span><span class="p">):</span>
+        <span class="n">eng_name</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">num_engines</span> <span class="o">=</span> <span class="n">num_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">num_fuse_engines</span> <span class="o">=</span> <span class="n">num_fuse_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">num_wing_engines</span> <span class="o">=</span> <span class="n">num_wing_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">total_engines_calc</span> <span class="o">=</span> <span class="n">num_fuse_engines</span> <span class="o">+</span> <span class="n">num_wing_engines</span>
+
+        <span class="c1"># If engine mount type is not specified at all, default to wing (unless there is</span>
+        <span class="c1"># only one engine, in which case default to fuselage)</span>
+        <span class="k">if</span> <span class="n">total_engines_calc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num_engines</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">num_wing_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_engines</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Mount location for engines of type &lt;</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">&gt; not &#39;</span>
+                        <span class="s1">&#39;specified. Wing-mounted engines are assumed.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">num_fuse_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_engines</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s1">&#39;Mount location for single engine of type &lt;</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">&gt; not &#39;</span>
+                        <span class="s1">&#39;specified. Assuming it is fuselage-mounted.&#39;</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># If wing mount type are specified but inconsistent, handle it</span>
+        <span class="k">elif</span> <span class="n">total_engines_calc</span> <span class="o">&gt;</span> <span class="n">num_engines</span><span class="p">:</span>
+            <span class="c1"># more defined engine locations than number of engines - increase num engines</span>
+            <span class="n">num_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_engines_calc</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;Sum of user-specified fuselage-mounted and wing-mounted engines do &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;not match total number of engines for EngineModel &lt;</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">&gt;. &#39;</span>
+                    <span class="s1">&#39;Overwriting total number of engines with the sum of wing and &#39;</span>
+                    <span class="s1">&#39;fuselage mounted engines.&#39;</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">total_engines_calc</span> <span class="o">&lt;</span> <span class="n">num_engines</span><span class="p">:</span>
+            <span class="c1"># fewer defined locations than num_engines - assume rest are wing mounted</span>
+            <span class="c1"># (unless there is just one prospective wing engine, then fuselage mount it)</span>
+            <span class="n">num_unspecified_engines</span> <span class="o">=</span> <span class="n">num_engines</span> <span class="o">-</span> <span class="n">num_fuse_engines</span> <span class="o">-</span> <span class="n">num_wing_engines</span>
+            <span class="k">if</span> <span class="n">num_unspecified_engines</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">num_wing_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_wing_engines</span> <span class="o">+</span> <span class="n">num_unspecified_engines</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Mount location was not defined for all engines of EngineModel &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">&gt; - unspecified engines are assumed wing-mounted.&#39;</span>
+                    <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">num_unspecified_engines</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">num_wing_engines</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">num_fuse_engines_all</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_fuse_engines</span> <span class="o">+</span> <span class="n">num_unspecified_engines</span>
+                <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">BRIEF</span><span class="p">:</span>  <span class="c1"># BRIEF, VERBOSE, DEBUG</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s1">&#39;Mount location was not defined for all engine of EngineModel &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">&gt; - unspecified engine is assumed fuselage-mounted.&#39;</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">num_wing_engines</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;=</span> <span class="n">Verbosity</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">:</span>  <span class="c1"># VERBOSE, DEBUG</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s1">&#39;Odd number of wing engines are specified for EngineModel &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;&lt;</span><span class="si">{</span><span class="n">eng_name</span><span class="si">}</span><span class="s1">&gt; - this may cause issues with some mass and geometry &#39;</span>
+                    <span class="s1">&#39;components that assume symmetric wing engine distribution.&#39;</span>
+                <span class="p">)</span>
+
+    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">,</span> <span class="n">num_engines_all</span><span class="p">)</span>
+    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_WING_ENGINES</span><span class="p">,</span> <span class="n">num_wing_engines_all</span><span class="p">)</span>
+    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_FUSELAGE_ENGINES</span><span class="p">,</span> <span class="n">num_fuse_engines_all</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_FLOW_SCALER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_options</span><span class="p">:</span>
+        <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_FLOW_SCALER</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="n">num_engines</span> <span class="o">=</span> <span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_ENGINES</span><span class="p">)</span>
+    <span class="n">total_num_engines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">num_engines_all</span><span class="p">))</span>
+    <span class="n">total_num_fuse_engines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">num_fuse_engines_all</span><span class="p">))</span>
+    <span class="n">total_num_wing_engines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">num_wing_engines_all</span><span class="p">))</span>
+
+    <span class="c1"># compute propulsion-level engine count totals here</span>
+    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">TOTAL_NUM_ENGINES</span><span class="p">,</span> <span class="n">total_num_engines</span><span class="p">)</span>
+    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">TOTAL_NUM_FUSELAGE_ENGINES</span><span class="p">,</span> <span class="n">total_num_fuse_engines</span><span class="p">)</span>
+    <span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Propulsion</span><span class="o">.</span><span class="n">TOTAL_NUM_WING_ENGINES</span><span class="p">,</span> <span class="n">total_num_wing_engines</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_engine_variables</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yields all propulsion-related variables in Aircraft that need to be vectorized.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">get_names_from_hierarchy</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">item</span>
+
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">get_names_from_hierarchy</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Nacelle</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">item</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

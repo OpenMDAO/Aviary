@@ -1,0 +1,1251 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aviary.interface.reports</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/interface/reports';</script>
+    <link rel="icon" href="../../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/interface/reports.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for aviary.interface.reports</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.mpi</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openmdao.utils.reports_system</span><span class="w"> </span><span class="kn">import</span> <span class="n">register_report</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.methods_for_level2</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_markdown_variable_table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.named_values</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedValues</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrapped_convert_units</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProblemType</span>
+
+
+<div class="viewcode-block" id="register_custom_reports">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.register_custom_reports">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_custom_reports</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Registers Aviary reports with OpenMDAO, so they are automatically generated and</span>
+<span class="sd">    added to the same reports folder as other default reports.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># TODO top-level aircraft report?</span>
+    <span class="c1"># TODO add flag to skip registering reports?</span>
+
+    <span class="c1"># register per-subsystem report generation</span>
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;subsystems&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">subsystem_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates reports for each subsystem builder in the Aviary Problem&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+        <span class="c1"># **kwargs</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;mission&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">mission_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates report for mission results from Aviary problem&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;timeseries_csv&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">timeseries_csv</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates an output .csv file for variables in the timeseries of the trajectory&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;run_status&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">run_status</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the status of the run&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sizing_results&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">sizing_results</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates an output file containing all variables in a completed sizing problem&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;run_driver&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_checks&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">input_check_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the aviary inputs&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">register_report</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;overridden_variables&#39;</span><span class="p">,</span>
+        <span class="n">func</span><span class="o">=</span><span class="n">overridden_variables_report</span><span class="p">,</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Generates a report on the overridden variables&#39;</span><span class="p">,</span>
+        <span class="n">class_name</span><span class="o">=</span><span class="s1">&#39;AviaryProblem&#39;</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;final_setup&#39;</span><span class="p">,</span>
+        <span class="n">pre_or_post</span><span class="o">=</span><span class="s1">&#39;post&#39;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="run_status">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.run_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_status</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a JSON file that contains high level overview of the run.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">MPI</span> <span class="ow">and</span> <span class="n">prob</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
+    <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;status.json&#39;</span>
+
+    <span class="n">runtime</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">runtime</span>
+    <span class="n">runtime_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">runtime</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">%</span> <span class="mf">1000.0</span>
+    <span class="n">runtime_formatted</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%H hours %M minutes %S seconds&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">time</span><span class="o">.</span><span class="n">gmtime</span><span class="p">(</span><span class="n">runtime</span><span class="p">))</span><span class="si">}</span><span class="s1"> &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">runtime_ms</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> milliseconds&#39;</span>
+    <span class="p">)</span>
+
+    <span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="n">time_stamp</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S %Z&#39;</span><span class="p">)</span>
+
+    <span class="n">status</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Problem&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">_name</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Script&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Optimizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">_get_name</span><span class="p">()</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Number of driver iterations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">iter_count</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Number of model evals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">model_evals</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Number of deriv evals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">deriv_evals</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Wall clock run time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runtime_formatted</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Exit status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">result</span><span class="o">.</span><span class="n">exit_status</span>
+    <span class="n">status</span><span class="p">[</span><span class="s1">&#39;Report generation date and time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time_stamp</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>  <span class="c1"># avoid &#39;no newline at end of file&#39; message</span></div>
+
+
+
+<div class="viewcode-block" id="sizing_results">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.sizing_results">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sizing_results</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a JSON file that contains the variable set from a sizing problem. If the ProblemType run</span>
+<span class="sd">    was not sizing, no file is generated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
+    <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;sizing_results.json&#39;</span>
+
+    <span class="k">if</span> <span class="n">prob</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">SIZING</span><span class="p">:</span>
+        <span class="n">prob</span><span class="o">.</span><span class="n">save_results</span><span class="p">(</span><span class="n">report_file</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="subsystem_report">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.subsystem_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">subsystem_report</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loops through all subsystem builders in the AviaryProblem calls their write_report</span>
+<span class="sd">    method. All generated report files are placed in the &quot;reports/subsystem_reports&quot; folder.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">()</span> <span class="o">/</span> <span class="s1">&#39;subsystems&#39;</span><span class="p">)</span>
+    <span class="n">reports_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">multi_mission</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">problem_type</span> <span class="ow">is</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span>
+    <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+        <span class="c1"># TODO: We need to rewrite the reports to support multimission. This may require</span>
+        <span class="c1"># standardizing how all attributes work in AviaryProblem (things like prob.model.get_val</span>
+        <span class="c1"># don&#39;t work with multi-mission but does for normal problems). End goal is to loop through</span>
+        <span class="c1"># each mission and get reports for each mission. Show in dashboard in nested tabs (new</span>
+        <span class="c1"># tab for each mission containing its own subsystems).</span>
+        <span class="c1"># Currently only getting reports for subsystems in first mission.</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">model</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">aviary_groups_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span>
+
+    <span class="n">subsystems</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">subsystems</span>  <span class="c1"># TODO: redo for multimissions</span>
+
+    <span class="k">for</span> <span class="n">subsystem</span> <span class="ow">in</span> <span class="n">subsystems</span><span class="p">:</span>
+        <span class="n">subsystem</span><span class="o">.</span><span class="n">report</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">reports_folder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="mission_report">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.mission_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mission_report</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a basic mission summary report that is placed in the &quot;reports&quot; folder.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">traj</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">.timeseries.</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span>
+                <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+                <span class="n">get_remote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">traj</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span>
+                    <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+                    <span class="n">get_remote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="c1"># 2DOF breguet range cruise uses time integration to track mass</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">traj</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">.timeseries.time&#39;</span><span class="p">,</span>
+                    <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span>
+                    <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span>
+                    <span class="n">get_remote</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">vals</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">vals</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_phase_diff</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">indices</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">diff</span> <span class="o">=</span> <span class="n">diff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">diff</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
+    <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;mission_summary.md&#39;</span>
+
+    <span class="n">multi_mission</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span>
+    <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_groups_dict</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="n">prob</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="p">}</span>
+
+    <span class="n">all_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">all_totals</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># read per-phase data from trajectory</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">phase</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">mission_info</span><span class="p">):</span>  <span class="c1"># TODO: redo for multimissions</span>
+            <span class="c1"># TODO for traj in trajectories, currently assuming single one named &quot;traj&quot;</span>
+            <span class="c1"># TODO delta mass and fuel consumption need to be tracked separately</span>
+            <span class="n">fuel_burn</span> <span class="o">=</span> <span class="n">_get_phase_diff</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">_get_phase_diff</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">)</span>
+            <span class="nb">range</span> <span class="o">=</span> <span class="n">_get_phase_diff</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">)</span>
+
+            <span class="c1"># get initial values, first in traj</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">initial_mass</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">initial_time</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">initial_range</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">NamedValues</span><span class="p">()</span>
+            <span class="c1"># Fuel burn is negative of delta mass</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Fuel Burn&#39;</span><span class="p">,</span> <span class="n">fuel_burn</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Elapsed Time&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">)</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Ground Distance&#39;</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">phase</span><span class="p">]</span> <span class="o">=</span> <span class="n">outputs</span>
+
+            <span class="c1"># get final values, last in traj</span>
+            <span class="n">final_mass</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">final_time</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">final_range</span> <span class="o">=</span> <span class="n">_get_phase_value</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">totals</span> <span class="o">=</span> <span class="n">NamedValues</span><span class="p">()</span>
+            <span class="n">totals</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Total Fuel Burn&#39;</span><span class="p">,</span> <span class="n">initial_mass</span> <span class="o">-</span> <span class="n">final_mass</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+                <span class="n">var_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">var_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="n">totals</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                <span class="s1">&#39;Total Fuel Capacity&#39;</span><span class="p">,</span>
+                <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1">aircraft:fuel:total_capacity&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">totals</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+                <span class="s1">&#39;Excess Fuel Capacity&#39;</span><span class="p">,</span>
+                <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s1">mission:constraints:excess_fuel_capacity&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">totals</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Total Time&#39;</span><span class="p">,</span> <span class="n">final_time</span> <span class="o">-</span> <span class="n">initial_time</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">)</span>
+            <span class="n">totals</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;Total Ground Distance&#39;</span><span class="p">,</span> <span class="n">final_range</span> <span class="o">-</span> <span class="n">initial_range</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">)</span>
+
+        <span class="n">all_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">all_totals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">totals</span>
+
+    <span class="k">if</span> <span class="n">MPI</span> <span class="ow">and</span> <span class="n">prob</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># All collective calls are completed. We only output on rank 0.</span>
+        <span class="k">return</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">all_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="n">totals</span> <span class="o">=</span> <span class="n">all_totals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n\n\n</span><span class="s1"># MULTIMISSION: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# MISSION SUMMARY&#39;</span><span class="p">)</span>
+            <span class="n">write_markdown_variable_table</span><span class="p">(</span>
+                <span class="n">f</span><span class="p">,</span>
+                <span class="n">totals</span><span class="p">,</span>
+                <span class="p">[</span>
+                    <span class="s1">&#39;Total Fuel Burn&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Total Fuel Capacity&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Excess Fuel Capacity&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Total Time&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;Total Ground Distance&#39;</span><span class="p">,</span>
+                <span class="p">],</span>
+                <span class="p">{</span>
+                    <span class="s1">&#39;Total Fuel Burn&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+                    <span class="s1">&#39;Total Fuel Capacity&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+                    <span class="s1">&#39;Excess Fuel Capacity&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+                    <span class="s1">&#39;Total Time&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;min&#39;</span><span class="p">},</span>
+                    <span class="s1">&#39;Total Ground Distance&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;nmi&#39;</span><span class="p">},</span>
+                <span class="p">},</span>
+            <span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"># MISSION SEGMENTS&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">## </span><span class="si">{</span><span class="n">phase</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">write_markdown_variable_table</span><span class="p">(</span>
+                    <span class="n">f</span><span class="p">,</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">phase</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s1">&#39;Fuel Burn&#39;</span><span class="p">,</span> <span class="s1">&#39;Elapsed Time&#39;</span><span class="p">,</span> <span class="s1">&#39;Ground Distance&#39;</span><span class="p">],</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;Fuel Burn&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;lbm&#39;</span><span class="p">},</span>
+                        <span class="s1">&#39;Elapsed Time&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;min&#39;</span><span class="p">},</span>
+                        <span class="s1">&#39;Ground Distance&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;nmi&#39;</span><span class="p">},</span>
+                    <span class="p">},</span>
+                <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="input_check_report">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.input_check_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">input_check_report</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a basic input checking report.</span>
+
+<span class="sd">    This report informs the user which aviary inputs were not specified by the user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
+    <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;input_checks.md&#39;</span>
+
+    <span class="n">multi_mission</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span>
+    <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_groups_dict</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="n">prob</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="p">}</span>
+
+    <span class="c1"># a change in OpenMDAO 3.38.1-dev adds a resolver in place of the prom2abs/abs2prom attributes</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">resolver</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_resolver</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">prom2abs</span><span class="p">(</span><span class="n">prom_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">resolver</span><span class="o">.</span><span class="n">absnames</span><span class="p">(</span><span class="n">prom_name</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">abs2prom</span><span class="p">(</span><span class="n">abs_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">resolver</span><span class="o">.</span><span class="n">abs2prom</span><span class="p">(</span><span class="n">abs_name</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">prom2abs</span><span class="p">(</span><span class="n">prom_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_var_allprocs_prom2abs_list</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">prom_name</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">abs2prom</span><span class="p">(</span><span class="n">abs_name</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_var_allprocs_abs2prom</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">abs_name</span><span class="p">]</span>
+
+    <span class="c1"># Find all unconnected inputs.</span>
+    <span class="n">all_ivc_abs</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_conn_abs_in2out</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;ivc&#39;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+    <span class="n">all_ivc_prom</span> <span class="o">=</span> <span class="p">[</span><span class="n">abs2prom</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">all_ivc_abs</span><span class="p">]</span>
+    <span class="n">aviary_metadata</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">meta_data</span>
+
+    <span class="n">bare_inputs</span> <span class="o">=</span> <span class="n">all_ivc_prom</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+            <span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">aviary_inputs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aviary_inputs</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_inputs</span>
+
+        <span class="n">bare_inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bare_inputs</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_inputs</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+            <span class="n">bare_inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bare_inputs</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aviary_inputs</span><span class="p">}</span>
+
+    <span class="n">bare_hierarchy_inputs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">v</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">bare_inputs</span>
+        <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;mission:&#39;</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;aircraft:&#39;</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="s1">&#39;.mission:&#39;</span> <span class="ow">in</span> <span class="n">v</span>
+        <span class="ow">or</span> <span class="s1">&#39;.aircraft:&#39;</span> <span class="ow">in</span> <span class="n">v</span>
+    <span class="p">}</span>
+    <span class="n">bare_local_inputs</span> <span class="o">=</span> <span class="n">bare_inputs</span> <span class="o">-</span> <span class="n">bare_hierarchy_inputs</span>
+
+    <span class="c1"># There are no more collective calls, so we can exit.</span>
+    <span class="k">if</span> <span class="n">MPI</span> <span class="ow">and</span> <span class="n">prob</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# Unspecified Hierarchy Variables</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s1">&#39;These aviary inputs are unspecified in aviary_inputs, and may be using default values &#39;</span>
+            <span class="s1">&#39;defined in the Aviary metadata.</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bare_hierarchy_inputs</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| Name | Value | Units | Description | Absolute Paths</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| :- |  :- |  :- | :- | :- |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bare_hierarchy_inputs</span><span class="p">):</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">aviary_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="n">abs_paths</span> <span class="o">=</span> <span class="n">prom2abs</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+                    <span class="n">metadata</span> <span class="o">=</span> <span class="n">aviary_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">var</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+                        <span class="c1"># This happens when the var is not defined in metadata.</span>
+                        <span class="n">metadata</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">)[</span><span class="n">abs_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                        <span class="n">units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+
+                <span class="n">val</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+                <span class="n">desc</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;desc&#39;</span><span class="p">]</span>
+
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;| **</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">** | </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">desc</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">abs_paths</span><span class="si">}</span><span class="s1">|</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;None</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;# Unspecified Local Variables</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+            <span class="s1">&#39;These local subsystem inputs are unconnected, and may be using default &#39;</span>
+            <span class="s1">&#39;values specified in the component.</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bare_local_inputs</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| Name | Value | Units | Absolute Paths</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| :- |  :- |  :- | :- |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">bare_local_inputs</span><span class="p">):</span>
+                <span class="c1"># Filter out dymos internals.</span>
+                <span class="k">if</span> <span class="n">var</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;.rhs_all.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">var</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">abs_paths</span> <span class="o">=</span> <span class="n">prom2abs</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+                <span class="n">meta</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_var_allprocs_abs2meta</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">][</span><span class="n">abs_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">units</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;| **</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s1">** | </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">abs_paths</span><span class="si">}</span><span class="s1">|</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;None&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="timeseries_csv">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.timeseries_csv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">timeseries_csv</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a CSV file containing timeseries data for variables from an Aviary mission.</span>
+
+<span class="sd">    This function extracts timeseries data from the provided problem object, processes the data</span>
+<span class="sd">    to unify units across different phases of the mission, and then outputs the result to a CSV file.</span>
+<span class="sd">    The &#39;time&#39; variable is moved to the beginning of the dataset so it&#39;s always the leftmost column.</span>
+<span class="sd">    Duplicate consecutive rows are eliminated.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Additional keyword arguments (unused)</span>
+
+<span class="sd">    The output CSV file is named &#39;mission_timeseries_data.csv&#39; and is saved in the reports directory.</span>
+<span class="sd">    The first row of the CSV file contains headers with variable names and units.</span>
+<span class="sd">    Each subsequent row represents the mission outputs at a different time step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">multi_mission</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">problem_type</span> <span class="o">==</span> <span class="n">ProblemType</span><span class="o">.</span><span class="n">MULTI_MISSION</span>
+    <span class="k">if</span> <span class="n">multi_mission</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_groups_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># TODO: We need to rewrite this report to support multimission</span>
+            <span class="c1"># For now, just write the first mission&#39;s csv file.</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span>
+
+    <span class="n">timeseries_outputs</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">list_outputs</span><span class="p">(</span>
+        <span class="n">includes</span><span class="o">=</span><span class="s1">&#39;*timeseries*&#39;</span><span class="p">,</span> <span class="n">out_stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_format</span><span class="o">=</span><span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">phase_names</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">traj</span><span class="o">.</span><span class="n">_phases</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="c1"># There are no more collective calls, so we can exit.</span>
+    <span class="k">if</span> <span class="n">MPI</span> <span class="ow">and</span> <span class="n">prob</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">timeseries_outputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;prom_name&#39;</span><span class="p">]:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">timeseries_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="n">timeseries_outputs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">timeseries_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_phase&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">unique_variable_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">timeseries_output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">timeseries_output</span> <span class="ow">in</span> <span class="n">timeseries_outputs</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">timeseries_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">variable_name</span> <span class="ow">in</span> <span class="n">unique_variable_names</span><span class="p">:</span>
+        <span class="n">timeseries_data</span><span class="p">[</span><span class="n">variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># flag to check if this is first iteration in for loop</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">idx_phase</span><span class="p">,</span> <span class="n">phase_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">phase_names</span><span class="p">):</span>
+            <span class="n">variable_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;traj.</span><span class="si">{</span><span class="n">phase_name</span><span class="si">}</span><span class="s1">.timeseries.</span><span class="si">{</span><span class="n">variable_name</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">time_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;traj.</span><span class="si">{</span><span class="n">phase_name</span><span class="si">}</span><span class="s1">.timeseries.time&#39;</span>
+
+            <span class="k">if</span> <span class="n">variable_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">timeseries_outputs</span><span class="p">:</span>
+                <span class="ne">Warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Variable </span><span class="si">{</span><span class="n">variable_str</span><span class="si">}</span><span class="s1"> not found in timeseries_outputs for phase &#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">phase_name</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="p">)</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">timeseries_outputs</span><span class="p">[</span><span class="n">time_str</span><span class="p">][</span><span class="s1">&#39;val&#39;</span><span class="p">])</span>
+                <span class="n">val</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                    <span class="n">val_full_traj</span> <span class="o">=</span> <span class="n">val</span>
+                    <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">val_full_traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">val_full_traj</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">timeseries_outputs</span><span class="p">[</span><span class="n">variable_str</span><span class="p">][</span><span class="s1">&#39;val&#39;</span><span class="p">]</span>
+
+                <span class="c1"># grab the units from the first phase that uses this variable; use these units for all others</span>
+                <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">units</span> <span class="o">=</span> <span class="n">timeseries_outputs</span><span class="p">[</span><span class="n">variable_str</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                        <span class="n">val_full_traj</span> <span class="o">=</span> <span class="n">val</span>
+                        <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">val_full_traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">val_full_traj</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">original_units</span> <span class="o">=</span> <span class="n">timeseries_outputs</span><span class="p">[</span><span class="n">variable_str</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+
+                    <span class="k">if</span> <span class="n">original_units</span> <span class="o">!=</span> <span class="n">units</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">wrapped_convert_units</span><span class="p">((</span><span class="n">val</span><span class="p">,</span> <span class="n">original_units</span><span class="p">),</span> <span class="n">units</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">first</span><span class="p">:</span>
+                        <span class="n">val_full_traj</span> <span class="o">=</span> <span class="n">val</span>
+                        <span class="n">first</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">val_full_traj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">val_full_traj</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+
+        <span class="n">timeseries_data</span><span class="p">[</span><span class="n">variable_name</span><span class="p">][</span><span class="s1">&#39;val&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val_full_traj</span>
+        <span class="n">timeseries_data</span><span class="p">[</span><span class="n">variable_name</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="n">timeseries_data</span><span class="p">[</span><span class="n">variable_name</span><span class="p">][</span><span class="s1">&#39;shape&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val_full_traj</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># Create a DataFrame from timeseries_data</span>
+    <span class="n">df_data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">variable_name</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">timeseries_data</span><span class="p">[</span><span class="n">variable_name</span><span class="p">][</span><span class="s1">&#39;val&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">variable_name</span> <span class="ow">in</span> <span class="n">timeseries_data</span>
+    <span class="p">}</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_data</span><span class="p">)</span>
+
+    <span class="n">time_column</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>  <span class="c1"># Isolate the &#39;time&#39; column</span>
+    <span class="c1"># Sort the rest of the columns</span>
+    <span class="n">other_columns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s1">&#39;time&#39;</span><span class="p">])</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="n">time_column</span> <span class="o">+</span> <span class="n">other_columns</span>  <span class="c1"># Combine them, keeping &#39;time&#39; first</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">columns</span><span class="p">]</span>
+
+    <span class="c1"># Add units to column names</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">timeseries_data</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;units&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">)&#39;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+
+    <span class="n">df</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+
+    <span class="c1"># The path where you want to save the CSV file</span>
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
+    <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;mission_timeseries_data.csv&#39;</span>
+
+    <span class="c1"># Write the DataFrame to a CSV file</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="overridden_variables_report">
+<a class="viewcode-back" href="../../../_srcdocs/packages/interface/reports.html#aviary.interface.reports.overridden_variables_report">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">overridden_variables_report</span><span class="p">(</span><span class="n">prob</span><span class="p">:</span> <span class="n">AviaryProblem</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a report listing the overridden variables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem used to generate this report</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">reports_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">get_reports_dir</span><span class="p">())</span>
+    <span class="n">report_file</span> <span class="o">=</span> <span class="n">reports_folder</span> <span class="o">/</span> <span class="s1">&#39;overridden_variables.md&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">report_file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="c1"># check to see if this is a multi-mission problem</span>
+        <span class="c1">#   and make a list of all the aviary groups</span>
+        <span class="k">if</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_groups_dict</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">mission_name</span><span class="p">,</span> <span class="n">aviary_group</span> <span class="ow">in</span> <span class="n">prob</span><span class="o">.</span><span class="n">aviary_groups_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">_overridden_variables_group_report</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">aviary_group</span><span class="p">,</span> <span class="n">mission_name</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_overridden_variables_group_report</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_overridden_variables_group_report</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">mission_name</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes overridden variables report for a single aviary group.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prob : AviaryProblem</span>
+<span class="sd">        The AviaryProblem instance</span>
+<span class="sd">    group : Group</span>
+<span class="sd">        The OpenMDAO group to analyze for overridden variables</span>
+<span class="sd">    mission_name : str or None</span>
+<span class="sd">        Name of the mission (for multi-mission problems) or None</span>
+<span class="sd">    f : file object</span>
+<span class="sd">        Open file handle to write the report to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resolver</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">_resolver</span>
+
+    <span class="n">non_external_overridden_variables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">external_variables</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">prom_name</span> <span class="ow">in</span> <span class="n">resolver</span><span class="o">.</span><span class="n">prom_iter</span><span class="p">(</span><span class="n">iotype</span><span class="o">=</span><span class="s1">&#39;output&#39;</span><span class="p">):</span>
+        <span class="c1"># These variables are the result of replacing a computed value</span>
+        <span class="c1">#   with the output of another component</span>
+        <span class="k">if</span> <span class="s1">&#39;EXTERNAL_SUBSYSTEM_OVERRIDE&#39;</span> <span class="ow">in</span> <span class="n">prom_name</span><span class="p">:</span>
+            <span class="n">abs_name</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">absnames</span><span class="p">(</span><span class="n">prom_name</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">aircraft_variable_name</span> <span class="o">=</span> <span class="n">abs_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">aircraft_variable_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">external_variables</span><span class="p">:</span>
+                <span class="n">external_variables</span><span class="p">[</span><span class="n">aircraft_variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">abs_name</span>
+            <span class="k">continue</span>
+        <span class="c1"># the phrase &quot;_OVERRIDE&quot; in a variable indicates it is a</span>
+        <span class="c1">#   calculated value that we are discarding</span>
+        <span class="k">if</span> <span class="s1">&#39;AIRCRAFT_DATA_OVERRIDE&#39;</span> <span class="ow">in</span> <span class="n">prom_name</span><span class="p">:</span>
+            <span class="n">abs_name</span> <span class="o">=</span> <span class="n">resolver</span><span class="o">.</span><span class="n">absnames</span><span class="p">(</span><span class="n">prom_name</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">aircraft_variable_name</span> <span class="o">=</span> <span class="n">abs_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">aviary_metadata</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">meta_data</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">aviary_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aircraft_variable_name</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">):</span>
+                <span class="c1"># This happens when the var is not defined in metadata.</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">get_io_metadata</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">)[</span><span class="n">abs_name</span><span class="p">]</span>
+                <span class="n">units</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">aviary_inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">aircraft_variable_name</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+            <span class="n">non_external_overridden_variables</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">aircraft_variable_name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">MPI</span> <span class="ow">and</span> <span class="n">prob</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">rank</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># All collective calls are completed. Reports only generated on rank 0.</span>
+        <span class="k">return</span>
+
+    <span class="c1"># Now that we have collected all overridden variables, write the report</span>
+    <span class="k">if</span> <span class="n">mission_name</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;# MULTIMISSION: </span><span class="si">{</span><span class="n">mission_name</span><span class="si">}</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## Internal Overrides</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">non_external_overridden_variables</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| Name   | Value | Units |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| ------ |-------| ----- |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">non_external_overridden_variables</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">aircraft_variable_name</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="n">non_external_overridden_variables</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;| </span><span class="si">{</span><span class="n">aircraft_variable_name</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s1"> |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;No internal overrides found.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;br&gt;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;## External Subsystem Overrides</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">external_variables</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| Name | Overriding OpenMDAO path |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;| ---- | ------------------------ |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">aircraft_variable_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">external_variables</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">absname</span> <span class="o">=</span> <span class="n">external_variables</span><span class="p">[</span><span class="n">aircraft_variable_name</span><span class="p">]</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;| </span><span class="si">{</span><span class="n">aircraft_variable_name</span><span class="si">}</span><span class="s1"> | </span><span class="si">{</span><span class="n">absname</span><span class="si">}</span><span class="s1"> |</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;No external subsystem overrides found.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

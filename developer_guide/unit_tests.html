@@ -1,0 +1,773 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Unit Tests</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'developer_guide/unit_tests';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Guidelines for Contributing Code" href="contributing_guidelines.html" />
+    <link rel="prev" title="Aviary’s AI Policy" href="ai_policy.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fdeveloper_guide/unit_tests.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/developer_guide/unit_tests.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Unit Tests</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-unit-tests">Running Unit Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-unit-tests">Writing Unit Tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-near-equal">assert_near_equal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-almost-equal-and-similar-assertions">assert_almost_equal and similar assertions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-check-partials">assert_check_partials</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-warning">assert_warning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-match-varnames">assert_match_varnames</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-assertions">Other Assertions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-unit-tests">Adding Unit Tests</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="unit-tests">
+<h1>Unit Tests<a class="headerlink" href="#unit-tests" title="Link to this heading">#</a></h1>
+<p>Tests help us know that Aviary is working properly as we update the code.
+If you are adding to or modifying Aviary, you should add unit tests to ensure that your code is working as expected.</p>
+<p>The goal of unit tests is to provide fine-grained details about how the functionality of the code is modified by your changes and to pinpoint any bugs that may have been introduced.
+This page describes how to run the unit tests and how to add new tests.</p>
+<section id="running-unit-tests">
+<h2>Running Unit Tests<a class="headerlink" href="#running-unit-tests" title="Link to this heading">#</a></h2>
+<p>Aviary ships with a suite of unit tests that can be run using the <code class="docutils literal notranslate"><span class="pre">testflo</span></code> command.
+To run all unit tests, simply run <code class="docutils literal notranslate"><span class="pre">testflo</span></code> from the root directory of the Aviary repository.
+To run a specific test, use the command <code class="docutils literal notranslate"><span class="pre">testflo</span> <span class="pre">&lt;path_to_test_file&gt;</span></code>.
+We use the <a class="reference external" href="https://github.com/naylor-b/testflo">testflo</a> package to run our unit tests as it allows us to run tests in parallel, which can significantly speed up the testing process.</p>
+<p>Running <code class="docutils literal notranslate"><span class="pre">testflo</span> <span class="pre">.</span></code> at the base of the Aviary repository will run all unit tests and should produce output that looks like this (though the number of tests and skips may be different):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>OK
+
+Passed:<span class="w">  </span><span class="m">1065</span>
+Failed:<span class="w">  </span><span class="m">0</span>
+Skipped:<span class="w"> </span><span class="m">3</span>
+
+
+Ran<span class="w"> </span><span class="m">888</span><span class="w"> </span>tests<span class="w"> </span>using<span class="w"> </span><span class="m">16</span><span class="w"> </span>processes
+Wall<span class="w"> </span>clock<span class="w"> </span>time:<span class="w">   </span><span class="m">00</span>:00:54.15
+</pre></div>
+</div>
+</section>
+<section id="writing-unit-tests">
+<h2>Writing Unit Tests<a class="headerlink" href="#writing-unit-tests" title="Link to this heading">#</a></h2>
+<p>To write your own unittests, you should use the following utilities.</p>
+<section id="assert-near-equal">
+<h3>assert_near_equal<a class="headerlink" href="#assert-near-equal" title="Link to this heading">#</a></h3>
+<p>The unit test that Aviary uses most is <code class="docutils literal notranslate"><span class="pre">assert_near_equal</span></code> from the OpenMDAO utility <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/utils/assert_utils.html">assert_near_equal</a>. This assertion takes about 70% of all the assertions. It has the following format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">assert_near_equal</span><span class="p">(</span><span class="n">actual_value</span><span class="p">,</span> <span class="n">expected_value</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">,</span> <span class="n">tol_type</span><span class="o">=</span><span class="s1">&#39;rel&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where the <code class="docutils literal notranslate"><span class="pre">actual_value</span></code> is the value from Aviary and <code class="docutils literal notranslate"><span class="pre">expected_value</span></code> is what the developer expects. Ideally, the <code class="docutils literal notranslate"><span class="pre">expected_value</span></code> should come from computation by another tool (e.g. GASP, FLOPS or LEAPS1) or hand computation. When it is not possible, one can accept an Aviary computed value as expected. This guarantees that future development will not alter the outputs by mistake. As for the tolerance, it is good practice to take 1.e-6. By default, it checks relative error. If the <code class="docutils literal notranslate"><span class="pre">expected_value</span></code> is 0.0, it checks the absolute error.</p>
+<p>One can find examples mostly in <code class="docutils literal notranslate"><span class="pre">subsystems</span></code> and <code class="docutils literal notranslate"><span class="pre">mission</span></code> The purpose is to make sure that a variable in an object (namely a component and/or a group) is computed as expected. It is advised that <code class="docutils literal notranslate"><span class="pre">assert_near_equal</span></code> test is carried for all outputs both in components and groups.</p>
+</section>
+<section id="assert-almost-equal-and-similar-assertions">
+<h3>assert_almost_equal and similar assertions<a class="headerlink" href="#assert-almost-equal-and-similar-assertions" title="Link to this heading">#</a></h3>
+<p>A similar unit test is NumPy’s utility is <code class="docutils literal notranslate"><span class="pre">assert_almost_equal</span></code>. It checks whether the absolute difference of <code class="docutils literal notranslate"><span class="pre">actual_value</span></code> from <code class="docutils literal notranslate"><span class="pre">expected_value</span></code> is within certain tolerance. As <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.testing.assert_almost_equal.html">documented</a> by NumPy, it is not recommended.
+For strings and integers, <code class="docutils literal notranslate"><span class="pre">assertEqual</span></code> of <code class="docutils literal notranslate"><span class="pre">unittest</span></code> is used.</p>
+<p>There are other similar assertions like <code class="docutils literal notranslate"><span class="pre">assertIsNone</span></code>, <code class="docutils literal notranslate"><span class="pre">assertIsNotNone</span></code>, <code class="docutils literal notranslate"><span class="pre">assertNotEqual</span></code>, <code class="docutils literal notranslate"><span class="pre">assertGreater</span></code>, <code class="docutils literal notranslate"><span class="pre">assertIn</span></code>, <code class="docutils literal notranslate"><span class="pre">assertNotIn</span></code>, <code class="docutils literal notranslate"><span class="pre">assertTrue</span></code>, and <code class="docutils literal notranslate"><span class="pre">assertFalse</span></code>. They together represent about 15% of all the assertions.</p>
+</section>
+<section id="assert-check-partials">
+<h3>assert_check_partials<a class="headerlink" href="#assert-check-partials" title="Link to this heading">#</a></h3>
+<p>The second most used assertion is <code class="docutils literal notranslate"><span class="pre">assert_check_partials</span></code> from the OpenMDAO utility. This is critically important because it checks whether the partial derivatives coded by develops are correct. It is the key in optimization. To use this test, you first prepare the partial derivative <code class="docutils literal notranslate"><span class="pre">data</span></code> by calling <code class="docutils literal notranslate"><span class="pre">check_partials</span></code> on a model after the model is setup. Then call <code class="docutils literal notranslate"><span class="pre">assert_check_partials</span></code> function with the <code class="docutils literal notranslate"><span class="pre">data</span></code>. Note that you don’t need to run the model if you only want to check partials.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">check_partials</span><span class="p">(</span><span class="n">out_stream</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">assert_check_partials</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This assert makes sure that the computed derivatives in the code match those computed numerically within the given absolute and relative tolerances.</p>
+<p>In Aviary, there are two ways to compute a component’s derivatives: analytically or numerically. When the derivatives are analytic, it is best practice to use <code class="docutils literal notranslate"><span class="pre">check_partials</span></code> to compare them against the complex step (<code class="docutils literal notranslate"><span class="pre">cs</span></code>) or finite difference (<code class="docutils literal notranslate"><span class="pre">fd</span></code>) estimates.
+Complex step is much more accurate, but all code in your component’s <code class="docutils literal notranslate"><span class="pre">compute</span></code> method must be complex-safe to use this – in other words, no calculation that squelches the imaginary part of the calculation (like <code class="docutils literal notranslate"><span class="pre">abs</span></code>.)
+Note that there are some complex-safe alternatives to commonly-used calculations in the openmdao library. If your code is not complex-safe, or it wraps an external component that doesn’t support complex numbers, then finite difference should be used.</p>
+<p>If your component computes its derivatives numerically, there is less reason to test it because you are testing one numerical method against another.  If you choose to do this, you will need to use a different method, form, or step.
+For example, if the partial derivatives are computed using <code class="docutils literal notranslate"><span class="pre">cs</span></code> method, you need to use <code class="docutils literal notranslate"><span class="pre">fd</span></code> method, or use <code class="docutils literal notranslate"><span class="pre">cs</span></code> method but with a different stepsize (e.g. <code class="docutils literal notranslate"><span class="pre">step=1.01e-40</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">check_partials</span><span class="p">(</span><span class="n">out_stream</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;cs&quot;</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">1.01e-40</span><span class="p">)</span>
+<span class="n">assert_check_partials</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Although the default method of <code class="docutils literal notranslate"><span class="pre">check_partials</span></code> is <code class="docutils literal notranslate"><span class="pre">fd</span></code> (finite difference), we prefer <code class="docutils literal notranslate"><span class="pre">cs</span></code> (<a class="reference external" href="https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html">complex step</a> because it usually gives more accurate results.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In general, we really don’t have to check partials that are computed with complex step, since you expect that you should already be getting cs level of accuracy from them. Checks are primarily for analytic derivatives, where you can make mistakes.</p>
+</div>
+</aside>
+<p><code class="docutils literal notranslate"><span class="pre">check_partials</span></code> allows you to exclude some components in a group. For example <code class="docutils literal notranslate"><span class="pre">excludes=[&quot;*atmosphere*&quot;]</span></code> means that atmosphere component will not be included.</p>
+<p>Sometimes, you may need to exclude a particular partial derivative. You need to write your own code to do so. One example is in <code class="docutils literal notranslate"><span class="pre">subsystems/propulsion/test/test_propeller_performance.py</span></code>.</p>
+<aside class="margin sidebar">
+<p class="sidebar-title"></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some of the partials in Aviary use table look up and interpolations. In the openmdao interpolation, the derivatives aren’t always continuous if you interpolate right on one of the table points. You may need to tune the points you choose. For example, if 0.04 is a point in your test, you can change it to 0.04000001 and try again.</p>
+</div>
+</aside>
+</section>
+<section id="assert-warning">
+<h3>assert_warning<a class="headerlink" href="#assert-warning" title="Link to this heading">#</a></h3>
+<p>This assertion checks that a warning is issued as expected. Currently, there is only one usage in Aviary but we should add more.</p>
+</section>
+<section id="assert-match-varnames">
+<h3>assert_match_varnames<a class="headerlink" href="#assert-match-varnames" title="Link to this heading">#</a></h3>
+<p>Another assertion used in tests is <code class="docutils literal notranslate"><span class="pre">assert_match_varnames</span></code> (about 4%). All of them are in <code class="docutils literal notranslate"><span class="pre">test_IO()</span></code> functions. It tests that all of the variables in an object (component or group) that are declared as inputs or outputs exist in the Aviary variable hierarchy. Exceptions are allowed by specifying <code class="docutils literal notranslate"><span class="pre">exclude_inputs</span></code> and <code class="docutils literal notranslate"><span class="pre">exclude_outputs</span></code>. For details, see <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/utils/test_utils/assert_utils.py">assert_utils.py</a>.</p>
+</section>
+<section id="other-assertions">
+<h3>Other Assertions<a class="headerlink" href="#other-assertions" title="Link to this heading">#</a></h3>
+<p>Aviary has built several utility functions for unit tests:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">assert_no_duplicates</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assert_structure_alphabetization</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assert_metadata_alphabetization</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="adding-unit-tests">
+<h2>Adding Unit Tests<a class="headerlink" href="#adding-unit-tests" title="Link to this heading">#</a></h2>
+<p>Whenever you add to Aviary, you should add a unit test to check its functionality.
+Ideally, this test would check all logical paths in the code that you’ve added.
+For example, if you add a new component, you should add a test that checks the component’s output for a variety of inputs, as well as the partial derivative calculations.
+If you add to an existing component, you should add a test that checks the new functionality you’ve added.</p>
+<p>The logistical process of adding tests is relatively simple.
+It’s generally easier to look at existing tests to see how they’re structured, but here’s a quick overview.</p>
+<p>Within the directory where you’re adding or modifying code, there should be a <code class="docutils literal notranslate"><span class="pre">test</span></code> directory.
+If there’s not, you can create one.
+Add a new file to this directory with the name <code class="docutils literal notranslate"><span class="pre">test_&lt;name_of_file&gt;.py</span></code> where <code class="docutils literal notranslate"><span class="pre">&lt;name_of_file&gt;</span></code> is the name of the file you’re adding or modifying.
+Within this file, add a class called <code class="docutils literal notranslate"><span class="pre">Test&lt;name_of_file&gt;</span></code> that inherits from <code class="docutils literal notranslate"><span class="pre">unittest.TestCase</span></code>.
+Within this class, add a method called <code class="docutils literal notranslate"><span class="pre">test_&lt;name_of_test&gt;</span></code> where <code class="docutils literal notranslate"><span class="pre">&lt;name_of_test&gt;</span></code> is the name of the test you’re adding.</p>
+<p>Do not write docstrings for unittest methods, as they interfere with printouts while running testflo.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./developer_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="ai_policy.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Aviary’s AI Policy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="contributing_guidelines.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Guidelines for Contributing Code</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-unit-tests">Running Unit Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-unit-tests">Writing Unit Tests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-near-equal">assert_near_equal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-almost-equal-and-similar-assertions">assert_almost_equal and similar assertions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-check-partials">assert_check_partials</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-warning">assert_warning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assert-match-varnames">assert_match_varnames</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-assertions">Other Assertions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-unit-tests">Adding Unit Tests</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

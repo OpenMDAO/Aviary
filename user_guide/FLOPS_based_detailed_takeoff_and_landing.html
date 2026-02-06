@@ -1,0 +1,1316 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>FLOPS Based Detailed Takeoff and Landing</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/FLOPS_based_detailed_takeoff_and_landing';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reserve Mission" href="reserve_missions.html" />
+    <link rel="prev" title="Overriding Variables" href="features/overriding.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/FLOPS_based_detailed_takeoff_and_landing.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/FLOPS_based_detailed_takeoff_and_landing.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/FLOPS_based_detailed_takeoff_and_landing.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>FLOPS Based Detailed Takeoff and Landing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeoff">Takeoff</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aerodynamics-builder">Aerodynamics Builder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-builders">Phase Builders</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectory-builder">Trajectory Builder</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#landing">Landing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Aerodynamics Builder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Phase Builders</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Trajectory Builder</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="flops-based-detailed-takeoff-and-landing">
+<h1>FLOPS Based Detailed Takeoff and Landing<a class="headerlink" href="#flops-based-detailed-takeoff-and-landing" title="Link to this heading">#</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This doc page details the Level 3 API for FLOPS-based detailed takeoff and landing. This is useful for advanced users who want to model these flight phases and have supreme control over how the problem is set up. For a simpler and slightly more limited experience, please see the Level 2 takeoff and landing examples.</p>
+</div>
+<p>Aviary support of FLOPS based detailed takeoff and landing is implemented in terms of
+user options, initial guesses, and different types of builders. User options and initial guesses are often collected in <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> objects, which are then used to setup different builders. Builders are used to create analysis components. The builders for takeoff and landing can be separated into three general categories: aerodynamics, phases, and trajectories. The following sections describe which builders are associated with takeoff and landing and how to generally use them.</p>
+<p>The following code excerpts were copied from Aviary validation data and benchmarks. For a
+more complete working example, with appropriate support for drivers, see the following
+files:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/OpenMDAO/Aviary/tree/main/aviary/models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py">N3CC data set</a></p></li>
+<li><p><a class="reference external" href="https://github.com/OpenMDAO/Aviary/tree/main/aviary/validation_cases/benchmark_tests/test_FLOPS_balanced_field_length.py">Balanced Field Length benchmark</a></p></li>
+<li><p><a class="reference external" href="https://github.com/OpenMDAO/Aviary/tree/main/aviary/validation_cases/benchmark_tests/test_FLOPS_detailed_landing.py">Detailed Landing benchmark</a></p></li>
+<li><p><a class="reference external" href="https://github.com/OpenMDAO/Aviary/tree/main/aviary/validation_cases/benchmark_tests/test_FLOPS_detailed_takeoff.py">Detailed Takeoff benchmark</a></p></li>
+</ul>
+<section id="takeoff">
+<h2>Takeoff<a class="headerlink" href="#takeoff" title="Link to this heading">#</a></h2>
+<section id="aerodynamics-builder">
+<h3>Aerodynamics Builder<a class="headerlink" href="#aerodynamics-builder" title="Link to this heading">#</a></h3>
+<p>Both takeoff and landing are designed to use the FLOPS-derived <code class="docutils literal notranslate"><span class="pre">low_speed</span></code> aerodynamics method defined in the <code class="docutils literal notranslate"><span class="pre">CoreAerodynamicsBuilder</span></code>. The builder supports several options specified in a <code class="docutils literal notranslate"><span class="pre">subsystem_options</span></code> dictionary provided to the phase builder. The most important subsystem options are the three required sequences: <code class="docutils literal notranslate"><span class="pre">angles_of_attack</span></code>, <code class="docutils literal notranslate"><span class="pre">lift_coefficients</span></code>, and <code class="docutils literal notranslate"><span class="pre">drag_coefficients</span></code>. At least two values must be specified in <code class="docutils literal notranslate"><span class="pre">angles_of_attack</span></code>. For each value in <code class="docutils literal notranslate"><span class="pre">angles_of_attack</span></code>, there must be one dependent value at the corresponding index in each of <code class="docutils literal notranslate"><span class="pre">lift_coefficients</span></code> and <code class="docutils literal notranslate"><span class="pre">drag_coefficients</span></code>.</p>
+<p>Once a <code class="docutils literal notranslate"><span class="pre">CoreAerodynamicsBuilder</span></code> object is created, it can be used to create a phase builder.
+The phase builder will pass the aerodynamics builder down to where it is needed to
+create appropriate aerodynamics analysis components. A single <code class="docutils literal notranslate"><span class="pre">CoreAerodynamicsBuilder</span></code> object
+can be shared with different phase builders. Subsystem options can also often be shared by different phase builders. In most cases, values like <code class="docutils literal notranslate"><span class="pre">angles_of_attack</span></code>, <code class="docutils literal notranslate"><span class="pre">lift_coefficients</span></code>, <code class="docutils literal notranslate"><span class="pre">drag_coefficients</span></code>, and a few others are identical across all phases of takeoff/landing trajectory, even if other option values vary by phase.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dynamic</span><span class="p">,</span> <span class="n">Mission</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">inputs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.preprocessors</span><span class="w"> </span><span class="kn">import</span> <span class="n">preprocess_options</span>
+
+<span class="n">aviary_options</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">()</span>
+
+<span class="c1"># This builder can be used for both takeoff and landing phases</span>
+<span class="n">aero_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CoreAerodynamicsBuilder</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;low_speed_aero&#39;</span><span class="p">,</span> <span class="n">code_origin</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">)</span>
+
+<span class="c1"># fmt: off</span>
+<span class="n">takeoff_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ground_altitude&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units=&#39;m&#39;</span>
+        <span class="s1">&#39;angles_of_attack&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">11.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">,</span> <span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span>
+        <span class="p">],</span>  <span class="c1"># units=&#39;deg&#39;</span>
+        <span class="s1">&#39;lift_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mf">0.5178</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span>
+            <span class="mf">1.35</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">1.85</span><span class="p">,</span> <span class="mf">1.9</span><span class="p">,</span> <span class="mf">1.95</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;drag_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mf">0.0674</span><span class="p">,</span> <span class="mf">0.065</span><span class="p">,</span> <span class="mf">0.065</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.072</span><span class="p">,</span> <span class="mf">0.076</span><span class="p">,</span> <span class="mf">0.084</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span>
+            <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;lift_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1"># fmt: off</span>
+
+<span class="c1"># when using spoilers, add a few more options</span>
+<span class="n">takeoff_spoiler_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">takeoff_subsystem_options</span><span class="p">[</span><span class="s1">&#39;low_speed_aero&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;use_spoilers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;spoiler_drag_coefficient&#39;</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">SPOILER_DRAG_COEFFICIENT</span><span class="p">),</span>
+        <span class="s1">&#39;spoiler_lift_coefficient&#39;</span><span class="p">:</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Takeoff</span><span class="o">.</span><span class="n">SPOILER_LIFT_COEFFICIENT</span><span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># We also need propulsion analysis for takeoff and landing. No additional configuration</span>
+<span class="c1"># is needed for this builder</span>
+<span class="n">engines</span> <span class="o">=</span> <span class="p">[</span><span class="n">av</span><span class="o">.</span><span class="n">build_engine_deck</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">)]</span>
+<span class="n">preprocess_options</span><span class="p">(</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">engine_models</span><span class="o">=</span><span class="n">engines</span><span class="p">)</span>
+<span class="n">prop_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">CorePropulsionBuilder</span><span class="p">(</span><span class="n">engine_models</span><span class="o">=</span><span class="n">engines</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="phase-builders">
+<h3>Phase Builders<a class="headerlink" href="#phase-builders" title="Link to this heading">#</a></h3>
+<p>There are eleven types of phase builders for takeoff. In general, the following phase
+builders are always required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffBrakeReleaseToDecisionSpeed</span></code> : a phase builder for the first phase of takeoff,
+from brake release to decision speed, the maximum speed at which takeoff can be safely
+brought to full stop using zero thrust while braking</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffDecisionSpeedToRotate</span></code> : a phase builder for the second phase of takeoff, from
+decision speed to rotation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffRotateToLiftoff</span></code> : a phase builder for the third phase of takeoff, from
+rotation to liftoff</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffLiftoffToObstacle</span></code> : a phase builder for the fourth phase of takeoff, from
+liftoff to clearing the required obstacle.</p></li>
+</ul>
+<p>The following phase builders are only required if acoustic calculations are required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffObstacleToMicP2</span></code> : a phase builder for the fifth phase of takeoff, from
+clearing the required obstacle to the P2 mic location</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffMicP2ToEngineCutback</span></code> : a phase builder for the sixth phase of takeoff, from
+the P2 mic location to engine cutback</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffEngineCutback</span></code> : a phase builder for the seventh phase of takeoff, from start
+to finish of engine cutback</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffEngineCutbackToMicP1</span></code> : a phase builder for the eighth phase of takeoff, from
+engine cutback to the P1 mic location</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffMicP1ToClimb</span></code> : a phase builder for the ninth phase of takeoff, from P1 mic
+location to climb.</p></li>
+</ul>
+<p>The following phase builders are only required if balanced field length calculations are
+required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffDecisionSpeedBrakeDelay</span></code> : a phase builder for the second phase of aborted
+takeoff, from decision speed to brake application</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TakeoffBrakeToAbort</span></code> : a phase builder for the last phase of aborted takeoff, from
+brake application to full stop.</p></li>
+</ul>
+<p>When creating any of these phase builders, the following data should first be collected
+and passed to the builder during creation: subsystem builders, subsystem options, user options, and initial guesses. The subsystem builders and options are created as described in the previous
+section. User options are collected in an <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object. Each type of phase
+builder supports its own set of user options, with associated default values. Initial
+guesses are collected in an <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object separate from the user options. Each
+type of phase builder supports its own set of initial guesses; initial guesses have no
+default values and are required.</p>
+<p>Once the required phase builders are created, they can be used to create a trajectory
+builder. The trajectory builder will then use the phase builders to create phase analysis
+components as required to be added to a trajectory analysis component.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">takeoff_brake_release_user_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_duration&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time_duration_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">7500.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_velocity&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">167.85</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">)</span>
+
+<span class="n">takeoff_brake_release_initial_guesses</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4100.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">150.0</span><span class="p">],</span> <span class="s1">&#39;kn&#39;</span><span class="p">)</span>
+
+<span class="n">gross_mass_units</span> <span class="o">=</span> <span class="s1">&#39;lbm&#39;</span>
+<span class="n">gross_mass</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">gross_mass_units</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">gross_mass</span><span class="p">,</span> <span class="n">gross_mass_units</span><span class="p">)</span>
+
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;throttle&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">takeoff_brake_release_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;angle_of_attack&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+
+<span class="n">takeoff_brake_release_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder</span><span class="p">(</span>
+    <span class="s1">&#39;takeoff_brake_release&#39;</span><span class="p">,</span>
+    <span class="n">subsystems</span><span class="o">=</span><span class="p">[</span><span class="n">aero_builder</span><span class="p">,</span> <span class="n">prop_builder</span><span class="p">],</span>
+    <span class="n">subsystem_options</span><span class="o">=</span><span class="n">takeoff_subsystem_options</span><span class="p">,</span>
+    <span class="n">user_options</span><span class="o">=</span><span class="n">takeoff_brake_release_user_options</span><span class="p">,</span>
+    <span class="n">initial_guesses</span><span class="o">=</span><span class="n">takeoff_brake_release_initial_guesses</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="trajectory-builder">
+<h3>Trajectory Builder<a class="headerlink" href="#trajectory-builder" title="Link to this heading">#</a></h3>
+<p>Objects of the trajectory builder type <code class="docutils literal notranslate"><span class="pre">TakeoffTrajectory</span></code> can be used to collect the
+required phases for either general takeoff analysis or balanced field length analysis.
+The builder has setters for each of the following generally required phase builders:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_brake_release_to_decision_speed()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffBrakeReleaseToDecisionSpeed</span></code>, for the beginning of takeoff to the time when the
+pilot must choose either to liftoff or halt the aircraft</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_decision_speed_to_rotate()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffDecisionSpeedToRotate</span></code>, for the short distance between achieving decision speed
+and beginning the rotation phase</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_rotate_to_liftoff()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffRotateToLiftoff</span></code>, for the short distance required to rotate the aircraft to
+achieve liftoff</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_liftoff_to_obstacle()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffLiftoffToObstacle</span></code>, for the short period between liftoff and clearing the
+required obstacle.</p></li>
+</ul>
+<p>The builder has setters for the following phase builders, which are only required if
+acoustic calculations are required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_obstacle_to_mic_p2()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffObstacleToMicP2</span></code>, for the fifth phase of takeoff, from clearing the required
+obstacle to the p2 mic loation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_mic_p2_to_engine_cutback()</span></code> : a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffMicP2ToEngineCutback</span></code>, for the sixth phase of takeoff, from the p2 mic location
+to engine cutback</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_engine_cutback()</span></code> : a phase builder, typically of type <code class="docutils literal notranslate"><span class="pre">TakeoffEngineCutback</span></code>, for
+the seventh phase of takeoff, from start to finish of engine cutback</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_engine_cutback_to_mic_p1()</span></code> : a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffEngineCutbackToMicP1</span></code>, for the eighth phase of takeoff, engine cutback to the
+P1 mic location</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{glue:md}</span></code>set_mic_p1_to_climb<code class="docutils literal notranslate"><span class="pre">()</span></code> : a phase builder, typically of type <code class="docutils literal notranslate"><span class="pre">TakeoffMicP1ToClimb</span></code>, for
+the ninth phase of takeoff, from P1 mic location to climb.</p></li>
+</ul>
+<p>The builder also has setters for the following phase builders, which are only required if
+balanced field length calculations are required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_decision_speed_to_brake()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffDecisionSpeedBrakeDelay</span></code>, for delayed braking when the engine fails</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_brake_to_abort()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">TakeoffBrakeToAbort</span></code>, for braking to fullstop after engine failure.</p></li>
+</ul>
+<p>After all required phase builders have been assigned, the <code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code> method can
+be called on the builder, which requires an <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object for Aviary level
+analysis options, and which optionally accepts a model (an OpenMDAO <code class="docutils literal notranslate"><span class="pre">Group</span></code>) and a
+trajectory. If specified, the model is used in handling trajectory parameter setup;
+otherwise, trajectory parameter setup must be handled by client code. If specified, the
+trajectory is updated with phase analysis components created from the phase builders;
+otherwise, a new trajectory is created, updated with these components, and returned.
+Calling <code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code> adds phase analysis components to the trajectory, and then
+links those phases appropriately.  Note, externally created trajectories can be added to
+the problem model either before or after the call to <code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code>.</p>
+<p>Once <code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code> is called on the builder, client code can optionally retrieve
+named phase analysis components from the builder with the <code class="docutils literal notranslate"><span class="pre">get_phase()</span></code> method. Client
+code can then add objectives and constraints to these components to satisfy application
+specific requirements.</p>
+<p>Before running the problem, the <code class="docutils literal notranslate"><span class="pre">apply_initial_guesses()</span></code> method should be called on the
+trajectory builder with the problem and the name of the trajectory. For each created
+phase, this method calls the <code class="docutils literal notranslate"><span class="pre">apply_initial_guesses()</span></code> method on the associated phase
+builder. Any initial guesses not applied are returned in a dictionary, where the name of
+the phase maps to the list of initial guesses not applied. Once the problem is built up
+and set up, the problem can be run for trajectory analysis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dymos</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">takeoff_decision_speed_builder</span><span class="p">,</span>
+    <span class="n">takeoff_engine_cutback_builder</span><span class="p">,</span>
+    <span class="n">takeoff_engine_cutback_to_mic_p1_builder</span><span class="p">,</span>
+    <span class="n">takeoff_liftoff_builder</span><span class="p">,</span>
+    <span class="n">takeoff_liftoff_user_options</span><span class="p">,</span>
+    <span class="n">takeoff_mic_p1_to_climb_builder</span><span class="p">,</span>
+    <span class="n">takeoff_mic_p2_builder</span><span class="p">,</span>
+    <span class="n">takeoff_mic_p2_to_engine_cutback_builder</span><span class="p">,</span>
+    <span class="n">takeoff_rotate_builder</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.test_utils.default_subsystems</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_default_premission_subsystems</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_model_options</span>
+
+<span class="n">takeoff_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedTakeoffTrajectoryBuilder</span><span class="p">(</span><span class="s1">&#39;detailed_takeoff&#39;</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_brake_release_to_decision_speed</span><span class="p">(</span><span class="n">takeoff_brake_release_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_decision_speed_to_rotate</span><span class="p">(</span><span class="n">takeoff_decision_speed_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_rotate_to_liftoff</span><span class="p">(</span><span class="n">takeoff_rotate_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_liftoff_to_obstacle</span><span class="p">(</span><span class="n">takeoff_liftoff_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_obstacle_to_mic_p2</span><span class="p">(</span><span class="n">takeoff_mic_p2_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_mic_p2_to_engine_cutback</span><span class="p">(</span><span class="n">takeoff_mic_p2_to_engine_cutback_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_engine_cutback</span><span class="p">(</span><span class="n">takeoff_engine_cutback_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_engine_cutback_to_mic_p1</span><span class="p">(</span><span class="n">takeoff_engine_cutback_to_mic_p1_builder</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">set_mic_p1_to_climb</span><span class="p">(</span><span class="n">takeoff_mic_p1_to_climb_builder</span><span class="p">)</span>
+
+<span class="n">takeoff</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="p">()</span>
+
+<span class="c1"># default subsystems</span>
+<span class="n">default_premission_subsystems</span> <span class="o">=</span> <span class="n">get_default_premission_subsystems</span><span class="p">(</span><span class="s1">&#39;FLOPS&#39;</span><span class="p">,</span> <span class="n">engines</span><span class="p">)</span>
+
+<span class="c1"># Upstream pre-mission analysis for aero</span>
+<span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
+    <span class="s1">&#39;core_subsystems&#39;</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">CorePreMission</span><span class="p">(</span>
+        <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span>
+        <span class="n">subsystems</span><span class="o">=</span><span class="n">default_premission_subsystems</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Instantiate the trajectory and add the phases</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">()</span>
+<span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">build_trajectory</span><span class="p">(</span>
+    <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="o">=</span><span class="n">traj</span>
+<span class="p">)</span>
+
+<span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">takeoff_liftoff_user_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">)</span>
+<span class="n">liftoff</span> <span class="o">=</span> <span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">get_phase</span><span class="p">(</span><span class="s1">&#39;takeoff_liftoff&#39;</span><span class="p">)</span>
+
+<span class="n">liftoff</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+
+<span class="c1"># Insert a constraint for a fake decision speed, until abort is added.</span>
+<span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
+    <span class="s1">&#39;traj.takeoff_brake_release.states:velocity&#39;</span><span class="p">,</span> <span class="n">equals</span><span class="o">=</span><span class="mf">149.47</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">150.0</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
+    <span class="s1">&#39;traj.takeoff_decision_speed.states:velocity&#39;</span><span class="p">,</span>
+    <span class="n">equals</span><span class="o">=</span><span class="mf">155.36</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">,</span>
+    <span class="n">ref</span><span class="o">=</span><span class="mf">159.0</span><span class="p">,</span>
+    <span class="n">indices</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">AREA</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">av</span><span class="o">.</span><span class="n">set_aviary_input_defaults</span><span class="p">(</span><span class="n">takeoff</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">varnames</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
+
+<span class="n">setup_model_options</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
+
+<span class="c1"># suppress warnings:</span>
+<span class="c1"># &quot;input variable &#39;...&#39; promoted using &#39;*&#39; was already promoted using &#39;aircraft:*&#39;</span>
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
+    <span class="n">takeoff</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">av</span><span class="o">.</span><span class="n">set_aviary_initial_values</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
+
+<span class="n">takeoff_trajectory_builder</span><span class="o">.</span><span class="n">apply_initial_guesses</span><span class="p">(</span><span class="n">takeoff</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/system.py:4656: OpenMDAOWarning:Calling `list_inputs` before `final_setup` will only display the default values of variables and will not show the result of any `set_val` calls.
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="landing">
+<h2>Landing<a class="headerlink" href="#landing" title="Link to this heading">#</a></h2>
+<section id="id1">
+<h3>Aerodynamics Builder<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>Aerodynamics analysis is added to landing phases identically to takeoff. See the “Aerodynamics Builder” subsection in the “Takeoff” section above for a description.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">landing_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;low_speed&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;ground_altitude&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># units=&#39;m&#39;</span>
+        <span class="s1">&#39;angles_of_attack&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mf">0.0</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="mf">2.0</span><span class="p">,</span>
+            <span class="mf">3.0</span><span class="p">,</span>
+            <span class="mf">4.0</span><span class="p">,</span>
+            <span class="mf">5.0</span><span class="p">,</span>
+            <span class="mf">6.0</span><span class="p">,</span>
+            <span class="mf">7.0</span><span class="p">,</span>
+            <span class="mf">8.0</span><span class="p">,</span>
+            <span class="mf">9.0</span><span class="p">,</span>
+            <span class="mf">10.0</span><span class="p">,</span>
+            <span class="mf">11.0</span><span class="p">,</span>
+            <span class="mf">12.0</span><span class="p">,</span>
+            <span class="mf">13.0</span><span class="p">,</span>
+            <span class="mf">14.0</span><span class="p">,</span>
+            <span class="mf">15.0</span><span class="p">,</span>
+        <span class="p">],</span>  <span class="c1"># units=&#39;deg&#39;</span>
+        <span class="s1">&#39;lift_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mf">0.7</span><span class="p">,</span>
+            <span class="mf">0.9</span><span class="p">,</span>
+            <span class="mf">1.05</span><span class="p">,</span>
+            <span class="mf">1.15</span><span class="p">,</span>
+            <span class="mf">1.25</span><span class="p">,</span>
+            <span class="mf">1.4</span><span class="p">,</span>
+            <span class="mf">1.5</span><span class="p">,</span>
+            <span class="mf">1.60</span><span class="p">,</span>
+            <span class="mf">1.7</span><span class="p">,</span>
+            <span class="mf">1.8</span><span class="p">,</span>
+            <span class="mf">1.9</span><span class="p">,</span>
+            <span class="mf">2.0</span><span class="p">,</span>
+            <span class="mf">2.1</span><span class="p">,</span>
+            <span class="mf">2.2</span><span class="p">,</span>
+            <span class="mf">2.3</span><span class="p">,</span>
+            <span class="mf">2.40</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;drag_coefficients&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mf">0.1</span><span class="p">,</span>
+            <span class="mf">0.1</span><span class="p">,</span>
+            <span class="mf">0.12</span><span class="p">,</span>
+            <span class="mf">0.13</span><span class="p">,</span>
+            <span class="mf">0.14</span><span class="p">,</span>
+            <span class="mf">0.15</span><span class="p">,</span>
+            <span class="mf">0.16</span><span class="p">,</span>
+            <span class="mf">0.17</span><span class="p">,</span>
+            <span class="mf">0.18</span><span class="p">,</span>
+            <span class="mf">0.20</span><span class="p">,</span>
+            <span class="mf">0.22</span><span class="p">,</span>
+            <span class="mf">0.24</span><span class="p">,</span>
+            <span class="mf">0.26</span><span class="p">,</span>
+            <span class="mf">0.3</span><span class="p">,</span>
+            <span class="mf">0.32</span><span class="p">,</span>
+            <span class="mf">0.34</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="s1">&#39;lift_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">&#39;drag_coefficient_factor&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># when using spoilers, add a few more options</span>
+<span class="n">landing_spoiler_subsystem_options</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;low_speed_aero&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">landing_subsystem_options</span><span class="p">[</span><span class="s1">&#39;low_speed_aero&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;use_spoilers&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;spoiler_lift_coefficient&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.81</span><span class="p">,</span>
+        <span class="s1">&#39;spoiler_drag_coefficient&#39;</span><span class="p">:</span> <span class="mf">0.085</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h3>Phase Builders<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>There are six types of phase builders for landing. In general, the following phase
+builders are always required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LandingObstacleToFlare</span></code> : a phase builder for moving from the start of the runway,
+just above the required clearance height, to the start of a maneuver to help soften the
+impact of touchdown</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LandingFlareToTouchdown</span></code> : a phase builder for moving through a maneuver to help
+soften the impact of touchdown</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LandingTouchdownToNoseDown</span></code> : a phase builder for rotating the nose down after
+touchdown</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LandingNoseDownToStop</span></code> : a phase builder for the final phase of landing, from nose
+down to full stop.</p></li>
+</ul>
+<p>The following phase builders are only required if acoustic calculations are required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">LandingApproachToMicP3</span></code> : a phase builder for moving from descent to the mic location
+P3</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LandingMicP3ToObstacle</span></code> : a phase builder for moving from the mic location P3 to the
+start of the runway, just above the required clearance height.</p></li>
+</ul>
+<p>The general procedure for creating and using phase builders for landing is the same as
+that for phase buiders for takeoff. See the “Phase Builders” subsection in the “Takeoff”
+section above for a description.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">DetailedLandingApproachToMicP3PhaseBuilder</span> <span class="k">as</span> <span class="n">LandingApproachToMicP3</span>
+
+<span class="c1"># NOTE FLOPS output is based on &quot;constant&quot; landing mass - assume reserves weight</span>
+<span class="c1">#    - currently neglecting taxi</span>
+<span class="n">detailed_landing_mass</span> <span class="o">=</span> <span class="mf">106292.0</span>  <span class="c1"># units=&#39;lbm&#39;</span>
+
+<span class="c1"># Flops variable APRANG</span>
+<span class="n">apr_angle</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span>  <span class="c1"># deg</span>
+<span class="n">apr_angle_ref</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">apr_angle</span><span class="p">)</span>
+
+<span class="c1"># From FLOPS output data.</span>
+<span class="c1"># throttle position should be (roughly) thrust / max thrust</span>
+<span class="n">throttle</span> <span class="o">=</span> <span class="mf">7233.0</span> <span class="o">/</span> <span class="mi">44000</span>
+
+<span class="n">landing_approach_to_mic_p3_user_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_duration&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time_duration_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time_initial_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">10000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;max_velocity&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">140.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kn&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;altitude_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">800.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;lower_angle_of_attack&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;upper_angle_of_attack&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;angle_of_attack_ref&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_user_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;initial_height&#39;</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">600.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">42.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">],</span> <span class="s1">&#39;s&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;distance&#39;</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">4000.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2000.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="mf">140.0</span><span class="p">,</span> <span class="s1">&#39;kn&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span> <span class="n">detailed_landing_mass</span><span class="p">,</span> <span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;throttle&#39;</span><span class="p">,</span> <span class="n">throttle</span><span class="p">)</span>
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;altitude&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mf">600.0</span><span class="p">,</span> <span class="mf">394.0</span><span class="p">],</span> <span class="s1">&#39;ft&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+    <span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">FLIGHT_PATH_ANGLE</span><span class="p">,</span> <span class="p">[</span><span class="n">apr_angle</span><span class="p">,</span> <span class="n">apr_angle</span><span class="p">],</span> <span class="s1">&#39;deg&#39;</span>
+<span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="s1">&#39;angle_of_attack&#39;</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">,</span> <span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+
+<span class="n">landing_approach_to_mic_p3_builder</span> <span class="o">=</span> <span class="n">LandingApproachToMicP3</span><span class="p">(</span>
+    <span class="s1">&#39;landing_approach_to_mic_p3&#39;</span><span class="p">,</span>
+    <span class="n">subsystems</span><span class="o">=</span><span class="p">[</span><span class="n">aero_builder</span><span class="p">,</span> <span class="n">prop_builder</span><span class="p">],</span>
+    <span class="n">subsystem_options</span><span class="o">=</span><span class="n">landing_subsystem_options</span><span class="p">,</span>
+    <span class="n">user_options</span><span class="o">=</span><span class="n">landing_approach_to_mic_p3_user_options</span><span class="p">,</span>
+    <span class="n">initial_guesses</span><span class="o">=</span><span class="n">landing_approach_to_mic_p3_initial_guesses</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id3">
+<h3>Trajectory Builder<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>Objects of the trajectory builder type <code class="docutils literal notranslate"><span class="pre">LandingTrajectory</span></code> can be used to collect the
+required phases for general landing analysis. The builder has setters for each of the
+following generally required phase builders:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_obstacle_to_flare()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">LandingObstacleToFlare</span></code>, for moving from the start of the runway, just above the
+required clearance height, to the start of a maneuver to help soften the impact of
+touchdown</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_flare_to_touchdown()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">LandingFlareToTouchdown</span></code>, for moving through a maneuver to help soften the impact of touchdown</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_touchdown_to_nose_down()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">LandingTouchdownToNoseDown</span></code>, for rotating the nose down after touchdown</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_nose_down_to_stop()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">LandingNoseDownToStop</span></code>, for the final phase of landing, from nose down to full stop.</p></li>
+</ul>
+<p>The builder also has setters for each of the following phase builders, which are only
+required if acoustic calculations are required:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">set_approach_to_mic_p3()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">LandingApproachToMicP3</span></code>, for moving from the end of descent to the mic location P3</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_mic_p3_to_obstacle()</span></code> : assign a phase builder, typically of type
+<code class="docutils literal notranslate"><span class="pre">LandingMicP3ToObstacle</span></code>, for moving from the mic location P3 to the start of the
+runway, just above the required clearance height.</p></li>
+</ul>
+<p>After all required phase builders have been assigned, the general procedure for using the
+<code class="docutils literal notranslate"><span class="pre">build_trajectory()</span></code>, <code class="docutils literal notranslate"><span class="pre">get_phase()</span></code>, and <code class="docutils literal notranslate"><span class="pre">apply_initial_guesses()</span></code> methods of the
+trajectory builder is the same for landing as that for takeoff. See the “Trajectory
+Builder” subsection in the “Takeoff” section above for a description.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">landing_flare_builder</span><span class="p">,</span>
+    <span class="n">landing_fullstop_builder</span><span class="p">,</span>
+    <span class="n">landing_fullstop_user_options</span><span class="p">,</span>
+    <span class="n">landing_mic_p3_to_obstacle_builder</span><span class="p">,</span>
+    <span class="n">landing_obstacle_builder</span><span class="p">,</span>
+    <span class="n">landing_touchdown_builder</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">DetailedLandingTrajectoryBuilder</span><span class="p">(</span><span class="s1">&#39;detailed_landing&#39;</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_approach_to_mic_p3</span><span class="p">(</span><span class="n">landing_approach_to_mic_p3_builder</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_mic_p3_to_obstacle</span><span class="p">(</span><span class="n">landing_mic_p3_to_obstacle_builder</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_obstacle_to_flare</span><span class="p">(</span><span class="n">landing_obstacle_builder</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_flare_to_touchdown</span><span class="p">(</span><span class="n">landing_flare_builder</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_touchdown_to_nose_down</span><span class="p">(</span><span class="n">landing_touchdown_builder</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">set_nose_down_to_stop</span><span class="p">(</span><span class="n">landing_fullstop_builder</span><span class="p">)</span>
+
+<span class="n">landing</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">Problem</span><span class="p">()</span>
+
+<span class="c1"># Upstream pre-mission analysis for aero</span>
+<span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span>
+    <span class="s1">&#39;core_subsystems&#39;</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">CorePreMission</span><span class="p">(</span>
+        <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span>
+        <span class="n">subsystems</span><span class="o">=</span><span class="n">default_premission_subsystems</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">promotes_inputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+    <span class="n">promotes_outputs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># Instantiate the trajectory and add the phases</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">()</span>
+<span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_subsystem</span><span class="p">(</span><span class="s1">&#39;traj&#39;</span><span class="p">,</span> <span class="n">traj</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">build_trajectory</span><span class="p">(</span>
+    <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">traj</span><span class="o">=</span><span class="n">traj</span>
+<span class="p">)</span>
+
+<span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="n">landing_fullstop_user_options</span><span class="o">.</span><span class="n">get_item</span><span class="p">(</span><span class="s1">&#39;distance_max&#39;</span><span class="p">)</span>
+<span class="n">fullstop</span> <span class="o">=</span> <span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">get_phase</span><span class="p">(</span><span class="s1">&#39;landing_fullstop&#39;</span><span class="p">)</span>
+
+<span class="n">fullstop</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">DISTANCE</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;final&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">distance_max</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">)</span>
+
+<span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">AREA</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">SPAN</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">av</span><span class="o">.</span><span class="n">set_aviary_input_defaults</span><span class="p">(</span><span class="n">landing</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">varnames</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
+
+<span class="n">setup_model_options</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
+
+<span class="c1"># suppress warnings:</span>
+<span class="c1"># &quot;input variable &#39;...&#39; promoted using &#39;*&#39; was already promoted using &#39;aircraft:*&#39;</span>
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">om</span><span class="o">.</span><span class="n">PromotionWarning</span><span class="p">)</span>
+    <span class="n">landing</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">av</span><span class="o">.</span><span class="n">set_aviary_initial_values</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="n">aviary_options</span><span class="p">)</span>
+
+<span class="n">landing_trajectory_builder</span><span class="o">.</span><span class="n">apply_initial_guesses</span><span class="p">(</span><span class="n">landing</span><span class="p">,</span> <span class="s1">&#39;traj&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/system.py:4656: OpenMDAOWarning:Calling `list_inputs` before `final_setup` will only display the default values of variables and will not show the result of any `set_val` calls.
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="features/overriding.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Overriding Variables</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="reserve_missions.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Reserve Mission</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#takeoff">Takeoff</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#aerodynamics-builder">Aerodynamics Builder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-builders">Phase Builders</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trajectory-builder">Trajectory Builder</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#landing">Landing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Aerodynamics Builder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Phase Builders</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Trajectory Builder</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1013 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Off-Design Missions</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/off_design_missions';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Payload Range Functionality." href="payload_range_functionality.html" />
+    <link rel="prev" title="Multi-Mission Optimization" href="multi_mission.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/off_design_missions.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/off_design_missions.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/off_design_missions.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Off-Design Missions</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#off-design-from-an-already-sized-aircraft">Off-Design from an already sized aircraft.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sizing-off-design-in-the-same-script">Sizing &amp; off-design in the same script.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#off-design-missions-separately">Off-design missions separately</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="off-design-missions">
+<h1>Off-Design Missions<a class="headerlink" href="#off-design-missions" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>Off-design missions are missions that take an already designed and sized aircraft and attempt to run different mission trajectories, different payload quantities, or both.</p>
+<p>Off-design missions are enabled for the following mission types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HEIGHT_ENERGY</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TWO_DEGREES_OF_FREEDOM</span></code></p></li>
+</ul>
+<p>There are currently two types of off-design missions supported in Aviary:</p>
+<ul class="simple">
+<li><p>Alternate Missions: the mission’s target range and aircraft payload mass are inputs and the fuel mass required is solved for.</p></li>
+<li><p>Fallout Missions: the aircraft payload and gross mass as inputs and the range of the aircraft is solved for.</p></li>
+</ul>
+<p>The off-design missions correspond to the different problem types that can have differing objectives which are discussed in detail in <a class="reference internal" href="../getting_started/onboarding_level2.html"><span class="doc std std-doc">Level 2</span></a>.
+The problem type determines what the optimizer can control to find a valid solution.</p>
+<ul class="simple">
+<li><p>Sizing Missions allow the optimizer to control both the <code class="docutils literal notranslate"><span class="pre">mission:summary:gross_mass</span></code> and <code class="docutils literal notranslate"><span class="pre">mission:design:gross_mass</span></code> for the given mission and objective.</p></li>
+<li><p>Alternate Missions allow the optimizer to only control the <code class="docutils literal notranslate"><span class="pre">mission:summary:gross_mass</span></code> for the mission.</p></li>
+<li><p>Fallout Missions don’t allow the optimizer to control either <code class="docutils literal notranslate"><span class="pre">mission:summary:gross_mass</span></code> or <code class="docutils literal notranslate"><span class="pre">mission:design:gross_mass</span></code> but allows the optimizer to extend the range until the summary matches the design.</p></li>
+</ul>
+<p>There are currently 3 different methods for running an off-design mission within Aviary.</p>
+<p>The first method is to take the input deck of an already sized aircraft and change its problem type to either <code class="docutils literal notranslate"><span class="pre">fallout</span></code> or <code class="docutils literal notranslate"><span class="pre">alternate</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The user may need to revise some of the values in their input deck for the off-design mission.
+Since the aircraft is not re-designed, it is assumed that provided inputs constitute a valid aircraft.</p>
+</div>
+<p>The second method is to run off-design missions in the same script used to solve the design mission.
+An example of this is shown in <code class="docutils literal notranslate"><span class="pre">aviary/examples/run_off_design_example.py</span></code>.</p>
+<p>The third method is to run a sizing mission to design the aircraft, save the sizing information to a JSON file, then load the off-design mission in another script.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If the sizing mission did not converge to a valid aircraft design, any off-design analysis will be invalid even if the off-design missions themselves converged.
+Therefore the validity of off-design analysis depends entirely on the validity of its source sizing mission.</p>
+</div>
+</section>
+<section id="off-design-from-an-already-sized-aircraft">
+<h2>Off-Design from an already sized aircraft.<a class="headerlink" href="#off-design-from-an-already-sized-aircraft" title="Link to this heading">#</a></h2>
+<p>The first method of running an off-design mission requires that the user has an input deck of a fully sized and valid aircraft.
+ex: <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_FwFm.csv</span></code>.
+This is done by adding one of the following lines to its csv file:</p>
+<p><code class="docutils literal notranslate"><span class="pre">settings:problem_type,</span> <span class="pre">fallout</span></code></p>
+<p>or</p>
+<p><code class="docutils literal notranslate"><span class="pre">settings:problem_type,</span> <span class="pre">alternate</span></code></p>
+<p>Once the problem type is specified, run Aviary as you would any other mission.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Off-design missions are run with the assumption that the sizing mission’s <code class="docutils literal notranslate"><span class="pre">mission:design:gross_mass</span></code> is the maximum structural mass the aircraft can support.
+However, Aviary is capable of running a converging off-design missions with <code class="docutils literal notranslate"><span class="pre">mission:summary:gross_mass</span></code> that exceed that structural constraint.
+Therefore the user should check the <code class="docutils literal notranslate"><span class="pre">mission:summary:gross_mass</span></code> of the off-design to ensure the optimization is valid.</p>
+</div>
+</section>
+<section id="sizing-off-design-in-the-same-script">
+<h2>Sizing &amp; off-design in the same script.<a class="headerlink" href="#sizing-off-design-in-the-same-script" title="Link to this heading">#</a></h2>
+<p>Firstly, we highly recommend users first read through and understand the <a class="reference internal" href="../getting_started/onboarding_level2.html"><span class="doc std std-doc">Level 2</span></a> onboarding guide before attempting an off-design mission.</p>
+<p>This is the Aviary Team’s preferred method for running off-design missions as it allows the user to interrogate both the sizing and off-design missions together in the same script.
+Off-design functionality within the script involves first running a sizing mission then transferring the sizing parameters via JSON file into a new <code class="docutils literal notranslate"><span class="pre">AviaryProblem()</span></code> object.
+User input payload, <code class="docutils literal notranslate"><span class="pre">phase_info</span></code>, and <code class="docutils literal notranslate"><span class="pre">mission_mass</span></code> or <code class="docutils literal notranslate"><span class="pre">mission_range</span></code> is parsed to the new problem object and the problem is executed within the level 2 method.</p>
+<p>Running an off-design mission first requires a sizing mission setup similar to <code class="docutils literal notranslate"><span class="pre">aviary/examples/run_level2_example.py</span></code> then the addition of <code class="docutils literal notranslate"><span class="pre">save_sizing_to_json()</span></code> to the <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">prob.save_sizing_to_json(json_filename</span> <span class="pre">=</span> <span class="pre">'sizing_problem.json')</span></code></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">save_sizing_to_json()</span></code> argument saves the sizing mission’s parameters to a JSON filename of the user’s choosing where <code class="docutils literal notranslate"><span class="pre">sizing_problem.json</span></code> is the default filename.</p>
+<p>To run a fallout or alternate mission these level 2 functions can be added to the end of the script.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">prob.fallout_mission(json_filename</span> <span class="pre">=</span> <span class="pre">'sizing_problem.json')</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prob.alternate_mission(json_filename</span> <span class="pre">=</span> <span class="pre">'sizing_problem.json')</span></code></p></li>
+</ul>
+<p>If an argument is left empty Aviary will assume it is the same as that of the sizing mission.
+Both off-design mission types take payload as an input parameter.
+The mission’s payload is split up into the 3 passenger classes and the 2 cargo loadings.
+The respective Aviary variables are then updated with the user’s off-design passenger and cargo quantities.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of v0.9.10 Aviary’s off-design capabilities do not allow missions to be run with 0 passengers, so a minimum of 1 passenger must be specified.
+This is a known bug and is currently being investigated.</p>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">Inputs</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">Aviary</span> <span class="pre">Variable</span> <span class="pre">Name</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">Description</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_first</span></code></p></td>
+<td><p>aircraft:crew_and_payload:num_first_class</p></td>
+<td><p>The number of first class passengers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_business</span></code></p></td>
+<td><p>aircraft:crew_and_payload:num_business_class</p></td>
+<td><p>The number of business class passengers</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_economy</span></code></p></td>
+<td><p>aircraft:crew_and_payload:num_economy_class</p></td>
+<td><p>The number of economy class passengers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_pax</span></code></p></td>
+<td><p>aircraft:crew_and_payload:num_passengers</p></td>
+<td><p>Total number of passengers</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">wing_cargo</span></code></p></td>
+<td><p>aircraft:crew_and_payload:wing_cargo</p></td>
+<td><p>Cargo carried in wing</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">misc_cargo</span></code></p></td>
+<td><p>aircraft:crew_and_payload:misc_cargo</p></td>
+<td><p>Additional cargo carried in fuselage</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cargo_mass</span></code></p></td>
+<td><p>aircraft:crew_and_payload:cargo_mass</p></td>
+<td><p>Total mass of as-flown cargo</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phase_info</span></code></p></td>
+<td><p>phase_info</p></td>
+<td><p>The mission trajectory for the aircraft</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mission_range</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">target_range</span></code></p></td>
+<td><p>The target range for alternate missions</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mission_mass</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mission:summary:gross_mass</span></code></p></td>
+<td><p>The mission mass for fallout missions</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Off-design missions <strong>cannot</strong> be run with more passengers than the original sizing mission.
+For example, if aircraft:crew_and_payload:num_first_class within the Aviary inputs csv was set to 3, an off-design mission cannot be run where <code class="docutils literal notranslate"><span class="pre">num_first</span> <span class="pre">=</span> <span class="pre">8</span></code> as the cabin for first class was sized for precisely 3 passengers.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> argument allows the user to specify a different phase information for an off-design mission trajectory, more information can be found in <a class="reference internal" href="phase_info.html"><span class="doc std std-doc">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</span></a>.
+This can be due to the off-design mission requiring a different trajectory shape or phase durations than the sizing mission.
+For example, an aircraft sized for long-range cruise might need its climb and descent profiles modified to operate on shorter routes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In cases where passengers or cargo are changed and the user has not specified a <code class="docutils literal notranslate"><span class="pre">aircraft:crew_and_payload:cargo_container_mass</span></code> in the Aviary input deck, off-design missions recalculates it in the off-design mission.
+It is the only parameter within the operating mass that gets recalculated between off-design and sizing.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is an example of a sizing mission and alternate mission being run in the same script. </span>
+<span class="sd">This is done with </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="c1"># inputs that run_aviary() requires</span>
+<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;SLSQP&#39;</span>
+<span class="n">phase_info</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">default_height_energy_phase_info</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">15</span>
+
+<span class="c1"># Set up and run avairy problem.</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># This is the default FwFm (Flops weights Flops mission) aircraft.</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_data</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_pre_mission_systems</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_phases</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_post_mission_systems</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">link_phases</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">set_initial_guesses</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+
+<span class="c1"># save the sizing mission to a JSON file</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">save_sizing_to_json</span><span class="p">(</span><span class="n">json_filename</span><span class="o">=</span><span class="s1">&#39;off_design_documentation_example.json&#39;</span><span class="p">)</span>
+
+<span class="c1"># initialize alternate mission flying a much shorter distance.</span>
+<span class="c1"># if payload values are unspecified, off-design will uses the values from the sizing mission.</span>
+<span class="c1"># the mission_range argument is much shorter than the sizing mission&#39;s 1906 NM range.</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">alternate_mission</span><span class="p">(</span>
+    <span class="n">json_filename</span><span class="o">=</span><span class="s1">&#39;off_design_documentation_example.json&#39;</span><span class="p">,</span>
+    <span class="n">num_first</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_business</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_economy</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">num_pax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">wing_cargo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">misc_cargo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">cargo_mass</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">mission_range</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">42</span>
+<span class="g g-Whitespace">     </span><span class="mi">39</span> <span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span> <span class="c1"># save the sizing mission to a JSON file</span>
+<span class="ne">---&gt; </span><span class="mi">42</span> <span class="n">prob</span><span class="o">.</span><span class="n">save_sizing_to_json</span><span class="p">(</span><span class="n">json_filename</span><span class="o">=</span><span class="s1">&#39;off_design_documentation_example.json&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">44</span> <span class="c1"># initialize alternate mission flying a much shorter distance.</span>
+<span class="g g-Whitespace">     </span><span class="mi">45</span> <span class="c1"># if payload values are unspecified, off-design will uses the values from the sizing mission.</span>
+<span class="g g-Whitespace">     </span><span class="mi">46</span> <span class="c1"># the mission_range argument is much shorter than the sizing mission&#39;s 1906 NM range.</span>
+<span class="g g-Whitespace">     </span><span class="mi">47</span> <span class="n">prob</span><span class="o">.</span><span class="n">alternate_mission</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">48</span>     <span class="n">json_filename</span><span class="o">=</span><span class="s1">&#39;off_design_documentation_example.json&#39;</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">49</span>     <span class="n">num_first</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>     <span class="mi">58</span>     <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">59</span> <span class="p">)</span>
+
+<span class="ne">AttributeError</span>: &#39;AviaryProblem&#39; object has no attribute &#39;save_sizing_to_json&#39;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="off-design-missions-separately">
+<h2>Off-design missions separately<a class="headerlink" href="#off-design-missions-separately" title="Link to this heading">#</a></h2>
+<p>The third method in running an off-design mission requires saving the sizing information as a JSON file using <code class="docutils literal notranslate"><span class="pre">save_sizing_to_json()</span></code> then calls the JSON file into an off-design mission in another script.
+This method allows for off-design missions to be run without re-executing the sizing mission every time.
+Once saved, the third method works identically to the second method except that the user must manually run the <code class="docutils literal notranslate"><span class="pre">_load_off_design()</span></code> function to create a new Aviary problem.</p>
+<p>The  <code class="docutils literal notranslate"><span class="pre">_load_off_design()</span></code> function then requires the <code class="docutils literal notranslate"><span class="pre">json_filename</span></code> input along with 3 additional problem definition parameters <code class="docutils literal notranslate"><span class="pre">problem_type</span></code>, <code class="docutils literal notranslate"><span class="pre">equations_of_motion</span></code>, and <code class="docutils literal notranslate"><span class="pre">mass_method</span></code>.
+Once defined, the <code class="docutils literal notranslate"><span class="pre">_load_off_design()</span></code> function essentially replaces the <code class="docutils literal notranslate"><span class="pre">load_inputs()</span></code> step of a standard level 2 problem.
+The user can then adjust payload quantities and <code class="docutils literal notranslate"><span class="pre">mission_range</span></code>/<code class="docutils literal notranslate"><span class="pre">mission_gross_mass</span></code> then complete the level 2 script as shown below.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">problem_type</span></code>: Determines which type of off-design analysis the user would like to run. (alternate or fallout)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">equations_of_motion</span></code>: Determines the type of trajectory calculations the user is running. (<code class="docutils literal notranslate"><span class="pre">HEIGHT_ENERGY</span></code> or <code class="docutils literal notranslate"><span class="pre">TWO_DEGREES_OF_FREEDOM</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mass_method</span></code>: Specifies how mass calculations are handled (FLOPS or GASP)</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is an example of running off-design mission directly form a saved sized aircraft JSON file</span>
+<span class="sd">Note: If there were external subsystems in the original sized aircraft model </span>
+<span class="sd">these will NOT be transferred (since these are not saved in the JSON file).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.methods_for_level2</span><span class="w"> </span><span class="kn">import</span> <span class="n">_load_off_design</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">LegacyCode</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;SLSQP&#39;</span>
+<span class="n">phase_info</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">default_height_energy_phase_info</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">15</span>
+<span class="c1"># Load aircraft and options data from provided sources</span>
+
+<span class="c1"># To run an alternate mission, we need the sized aircraft JSON file from the sizing mission.</span>
+<span class="c1"># Set ProblemType to ALTERNATE, and specify the mission range and payload mass.</span>
+<span class="c1"># mission_gross_mass does nothing).</span>
+
+<span class="c1"># Use specific _load_off_design function to define the off-design mission.</span>
+<span class="n">prob_alternate</span> <span class="o">=</span> <span class="n">_load_off_design</span><span class="p">(</span>
+    <span class="n">json_filename</span><span class="o">=</span><span class="s1">&#39;off_design_documentation_example.json&#39;</span><span class="p">,</span>
+    <span class="n">problem_type</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">ProblemType</span><span class="o">.</span><span class="n">ALTERNATE</span><span class="p">,</span>
+    <span class="n">equations_of_motion</span><span class="o">=</span><span class="n">av</span><span class="o">.</span><span class="n">EquationsOfMotion</span><span class="o">.</span><span class="n">HEIGHT_ENERGY</span><span class="p">,</span>
+    <span class="n">mass_method</span><span class="o">=</span><span class="n">LegacyCode</span><span class="o">.</span><span class="n">FLOPS</span><span class="p">,</span>
+    <span class="n">phase_info</span><span class="o">=</span><span class="n">phase_info</span><span class="p">,</span>
+    <span class="n">num_first</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_business</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">num_economy</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">num_pax</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">wing_cargo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">misc_cargo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">cargo_mass</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">mission_range</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+    <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Run off-design mission the same way as any Level 2 aviary problem.</span>
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">add_pre_mission_systems</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">add_phases</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">add_post_mission_systems</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">link_phases</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">set_initial_guesses</span><span class="p">()</span>
+
+<span class="n">prob_alternate</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">7</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span><span class="sd"> This is an example of running off-design mission directly form a saved sized aircraft JSON file</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span><span class="sd"> Note: If there were external subsystems in the original sized aircraft model </span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="sd"> these will NOT be transferred (since these are not saved in the JSON file).</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="ne">----&gt; </span><span class="mi">7</span> <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.methods_for_level2</span><span class="w"> </span><span class="kn">import</span> <span class="n">_load_off_design</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="kn">from</span><span class="w"> </span><span class="nn">aviary.variable_info.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">LegacyCode</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="ne">ImportError</span>: cannot import name &#39;_load_off_design&#39; from &#39;aviary.interface.methods_for_level2&#39; (/home/runner/work/Aviary/Aviary/aviary/interface/methods_for_level2.py)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h2><a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="multi_mission.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Multi-Mission Optimization</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="payload_range_functionality.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Payload Range Functionality.</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#off-design-from-an-already-sized-aircraft">Off-Design from an already sized aircraft.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sizing-off-design-in-the-same-script">Sizing &amp; off-design in the same script.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#off-design-missions-separately">Off-design missions separately</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1"></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

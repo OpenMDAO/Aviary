@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Atmosphere Subsystem</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/atmosphere';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Propulsion" href="propulsion.html" />
+    <link rel="prev" title="Externally Computed Polars" href="external_aero.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/atmosphere.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/atmosphere.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/atmosphere.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Atmosphere Subsystem</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Atmosphere Subsystem</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-between-different-models">Comparison between Different Models</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-atmosphere-model-works">How the Atmosphere Model Works</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#user-options-reference-for-atmospherecomp-and-atmospheregroup">User options reference for AtmosphereComp and AtmosphereGroup</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature-offset-options">Temperature Offset Options</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#us-1976-atmosphere-notes">US 1976 Atmosphere Notes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mil-spec-210a-atmosphere-notes">MIL-SPEC-210A Atmosphere Notes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-your-own-atmosphere-model">Adding your own Atmosphere Model</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-new-atmosphere-file">Create a new Atmosphere file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-raw-data-proper-units">Converting Raw data Proper Units</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#processing-new-akima-splines">Processing new Akima Splines</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-new-data-to-enums">Add the new data to Enums</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-the-processed-data">Import the Processed Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-your-model">Test Your Model</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="atmosphere-subsystem">
+<h1>Atmosphere Subsystem<a class="headerlink" href="#atmosphere-subsystem" title="Link to this heading">#</a></h1>
+<p>Aviary has several built-in atmosphere models that support the Aerodynamics calculations, by providing temperature, pressure, speed of sound, and viscosity based on an input altitude. There are two different atmosphere models implemented in Aviary, one coming from the 1976 standard atmosphere tables and the other coming from the publically released MIL-SPEC-210A tables. The standard 1976 tables are the default option and represent the typical conditions experienced at a given altitude. However, it is important to note that “the atmosphere has never, and will never be, standard”. All of the atmosphere models are approximations. The MIL-SPEC-210A tables represent extreme atmospheres in tropical, arctic (polar winter), extreme hot, and extreme cold climates.</p>
+<p>To select the atmosphere type, you can use <code class="docutils literal notranslate"><span class="pre">options.set_val(Settings.ATMOSPHERE_MODEL,</span> <span class="pre">val=AtmosphereModel.STANDARD)</span></code></p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="comparison-between-different-models">
+<h1>Comparison between Different Models<a class="headerlink" href="#comparison-between-different-models" title="Link to this heading">#</a></h1>
+<p>A few graphs comparing the different models have been included so the user can visually understand the different atmosphere models.
+<img alt="images/Atmosphere_Profile_Temp.png" src="../_images/Atmosphere_Profile_Temp.png" />
+<img alt="images/Atmosphere_Profile_Pressure.png" src="../_images/Atmosphere_Profile_Pressure.png" />
+<img alt="images/Atmosphere_Profile_Density.png" src="../_images/Atmosphere_Profile_Density.png" /></p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="how-the-atmosphere-model-works">
+<h1>How the Atmosphere Model Works<a class="headerlink" href="#how-the-atmosphere-model-works" title="Link to this heading">#</a></h1>
+<p>Examining <code class="docutils literal notranslate"><span class="pre">atmosphereComp.py</span></code> will show the code on how the atmosphere component is implemented. Generally speaking, akima splines that represent the raw data are loaded into the model during initialization. The akima splines are used to enhances computational speed. During every subsequent call to the atmosphere mode, an input altitude is translated via the akima splines into a temperature, pressure, density and then additional calculations are performed to determine speed of sound, and dynamic viscosity. The raw data and the akima splines of that data are contained in individual files (<code class="docutils literal notranslate"><span class="pre">StandardAtm1976.py</span></code>, <code class="docutils literal notranslate"><span class="pre">MIL_SPEC_210A_cold.py</span></code>, <code class="docutils literal notranslate"><span class="pre">MIL_SPEC_210A_hot.py</span></code>, <code class="docutils literal notranslate"><span class="pre">MIL_SPEC_210A_polar.py</span></code>, <code class="docutils literal notranslate"><span class="pre">MIL_SPEC_210A_tropical.py</span></code>).</p>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="user-options-reference-for-atmospherecomp-and-atmospheregroup">
+<h1>User options reference for AtmosphereComp and AtmosphereGroup<a class="headerlink" href="#user-options-reference-for-atmospherecomp-and-atmospheregroup" title="Link to this heading">#</a></h1>
+<p>There are some critical options you can pass to atmosphere that you should know about. These options will allow you to change which source data you use, swap between geocentric or geodetic altitude inputs, and add a temperature offset. Changing the source data swaps the akima splines used to calculate temperature, pressure, and density as a function of altitude.</p>
+<p>All the options and their defaults and functions are shown below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">om</span><span class="o">.</span><span class="n">show_options_table</span><span class="p">(</span><span class="s1">&#39;aviary.subsystems.atmosphere.atmosphere.AtmosphereComp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h2></h2>
+        <table style="border: 1px solid #999; border-collapse: collapse;">
+        <tr><th style="border: 1px solid #999; border-collapse: collapse; padding: 5px; background-color: #E9E9E9; text-align: left;">Option</th><th style="border: 1px solid #999; border-collapse: collapse; padding: 5px; background-color: #E9E9E9; text-align: left;">Default</th><th style="border: 1px solid #999; border-collapse: collapse; padding: 5px; background-color: #E9E9E9; text-align: left;">Acceptable Values</th><th style="border: 1px solid #999; border-collapse: collapse; padding: 5px; background-color: #E9E9E9; text-align: left;">Acceptable Types</th><th style="border: 1px solid #999; border-collapse: collapse; padding: 5px; background-color: #E9E9E9; text-align: left;">Description</th></tr>
+       <tr style="background-color: ghostwhite;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">always_opt</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">False</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[True, False]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;bool&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">If True, force nonlinear operations on this component to be included in the optimization loop even if this component is not relevant to the design variables and responses.</td></tr>
+       <tr style="background-color: #F3F3F3;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">default_shape</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">(1,)</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;tuple&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">Default shape for variables that do not set val to a non-scalar value or set shape, shape_by_conn, copy_shape, or compute_shape. Default is (1,).</td></tr>
+       <tr style="background-color: ghostwhite;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">delta_T_Celcius</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">0.0</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;float&#x27;, &#x27;int&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">Temperature delta from International Standard Atmosphere (ISA) standard day conditions (degrees Celcius)</td></tr>
+       <tr style="background-color: #F3F3F3;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">derivs_method</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;jax&#x27;, &#x27;cs&#x27;, &#x27;fd&#x27;, None]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">The method to use for computing derivatives</td></tr>
+       <tr style="background-color: ghostwhite;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">distributed</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">False</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[True, False]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;bool&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">If True, set all variables in this component as distributed across multiple processes</td></tr>
+       <tr style="background-color: #F3F3F3;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">h_def</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">geopotential</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;geopotential&#x27;, &#x27;geodetic&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">The definition of altitude provided as input to the component.  If &quot;geodetic&quot;,it will be converted to geopotential based on Equation 19 in the original standard.</td></tr>
+       <tr style="background-color: ghostwhite;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">num_nodes</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">**Required**</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;int&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">Number of nodes to be evaluated in the RHS</td></tr>
+       <tr style="background-color: #F3F3F3;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">run_root_only</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">False</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[True, False]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;bool&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">If True, call compute, compute_partials, linearize, apply_linear, apply_nonlinear, solve_linear, solve_nonlinear, and compute_jacvec_product only on rank 0 and broadcast the results to the other ranks.</td></tr>
+       <tr style="background-color: ghostwhite;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">settings:atmosphere_model</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">AtmosphereModel.STANDARD</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">N/A</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;AtmosphereModel&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.</td></tr>
+       <tr style="background-color: #F3F3F3;"><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">use_jit</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">True</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[True, False]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">[&#x27;bool&#x27;]</td><td style="border: 1px solid #999; border-collapse: collapse; padding: 5px; text-align: left;">If True, attempt to use jit on compute_primal, assuming jax or some other AD package capable of jitting is active.</td></tr>
+    </table>
+</body>
+</html>
+</div></div>
+</div>
+<section id="temperature-offset-options">
+<h2>Temperature Offset Options<a class="headerlink" href="#temperature-offset-options" title="Link to this heading">#</a></h2>
+<p>Adding a temperature offset can enable simulation with especially hot or cold days which is useful in acoustic certification of aircraft.  When inputting a temperature offset as an option, the temperature throughout the entire altitude regime is shifted up or down by this ammount. The pressure is assumed to remain constant. This is a simplification we must adhere to because we do not have any additional pressure data or assumptions to build upon. Density is then recalculated as an offset from the source data. This is important because that source data may differ from the ideal gas equations used to calculate density. This is the case for the MIL-SPEC-210A data.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="us-1976-atmosphere-notes">
+<h1>US 1976 Atmosphere Notes<a class="headerlink" href="#us-1976-atmosphere-notes" title="Link to this heading">#</a></h1>
+<p>The US 1976 atmospheres source information and notes are as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.subsystems.atmosphere.data.StandardAtm1976</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_ORIGIN_NOTE</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">DATA_ORIGIN_NOTE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    United States standard atmosphere 1976 tables, data
+    Based on the original model documented in https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
+    based on NASA-TM-X-74335.
+
+    Notes:
+    The data table contains data from -5,000 meters to 83,000 meters altitude
+    
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="mil-spec-210a-atmosphere-notes">
+<h1>MIL-SPEC-210A Atmosphere Notes<a class="headerlink" href="#mil-spec-210a-atmosphere-notes" title="Link to this heading">#</a></h1>
+<p>The MIL-SPEC-210A atmospheres (including hot/cold/tropical/polar) source information and notes are as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_ORIGIN_NOTE</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">DATA_ORIGIN_NOTE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>This information applies to MIL_SPEC_201A_tropical, MIL_SPEC_201A_polar, MIL_SPEC_201A_cold, 
+and MIL_SPEC_201A_hot
+
+Source:
+Data for the models was obtained from ASC-TR-93-5002 / AD-A264 639, 
+Graphical Comparison of U.S. Standard Atmospheres and Military Standard Climatic Extremes
+by Joseph C. Zuppardo, February 1993
+Approved for public release with unlimited distribution
+https://apps.dtic.mil/sti/tr/pdf/ADA264639.pdf
+
+Notes:
+1) The data table contains data from 0 feet to 100,000 ft =~ 30,000 meters altitude
+2) The composition of the atmosphere is constant throughout the altitude range.
+3) Polar data represents an Arctic Winter atmosphere rather than a true polar atmosphere
+4) Altitude was given in the raw data as Geopotential Altitude
+5) Some data points in the original tables appeared to be in error. 
+i.e. for hot atmosphere at 20,000 ft pressure increased so much as to be the same as pressure
+at 11,500 ft. Presumed errors like these were smoothed out to prevent kinks in the akima 
+splines.
+6) Using the ideal gas equations to recalculate Density will yield
+different results than the table. 
+7) Hot/Cold vs. Tropical/Polar have different sea level pressures (29.9 vs. 29.92 respectively), 
+despite the description by the paper that Hot/Cold are at 29.9. This can be verified by
+looking directly at the tabular data presented in the paper.
+8) The inHG measurement shown in the tables is assumed to be taken at 60 degF = 15C, 
+(as opposed to 32F = 0C). Supporting documentation for this is based on NIST and the US1976 
+atmosphere standard which lists sea-level pressure of 101,325 Pa, based on the NIST conversion 
+factors to translate Pa to inHG at 60F, these match up. inHg has a dependence on temperature 
+which makes it a very temperamental unit and should be avoided in the future.
+https://physics.nist.gov/cgi-bin/cuu/Value?stdatm
+https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
+9) &quot;The cold and hot atmosphere tables cannot be used for determining
+engine and aircraft performance, aerodynamic characteristics, skin, compartment
+and equipment temperatures under transient climb conditions&quot; - Mil_Std_210A
+10) &quot;The polar and tropical atmospheres provide criteria for consideration in problems
+dependent upon a hydrodynamically consistent homogeneous polar or tropical atmosphere.
+These problems include determination of engine and aircraft performance,
+aerodynamic characteristics, skin, compartment and equipment temperatures
+under transient climb conditions,&quot; - Mil_Std_210A
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="adding-your-own-atmosphere-model">
+<h1>Adding your own Atmosphere Model<a class="headerlink" href="#adding-your-own-atmosphere-model" title="Link to this heading">#</a></h1>
+<p>If you desire to add your own atmosphere model you can do this one of two ways. Either create a new <code class="docutils literal notranslate"><span class="pre">AtmosphereComp.py</span></code> from scratch, or by importing a new set of raw data and using the current <code class="docutils literal notranslate"><span class="pre">atmosphereComp.py</span></code> to read it in and process it. This will include first saving your new raw data set in a new file and then creating a new set of akima splines for that data and also saving them in the same file. After that, <code class="docutils literal notranslate"><span class="pre">utils/build_akima_coefs.py</span></code> can read in the akima’s and run as normal. This walkthrough will help you perform the latter option. Start by creating a new file to hold your raw atmosphere model and the eventual akima splines.</p>
+<section id="create-a-new-atmosphere-file">
+<h2>Create a new Atmosphere file<a class="headerlink" href="#create-a-new-atmosphere-file" title="Link to this heading">#</a></h2>
+<p>You will need to make a new file to hold the raw data of your atmosphere model and the akima splines. This file should be titled after your atmosphere model, i.e. <code class="docutils literal notranslate"><span class="pre">StandardAtm1976</span></code> or <code class="docutils literal notranslate"><span class="pre">MIL_SPEC_210A_Cold</span></code>.
+Save that file inside of the <code class="docutils literal notranslate"><span class="pre">aviary/subsystems/atmosphere/data</span></code> folder.
+You will need to make a new <code class="docutils literal notranslate"><span class="pre">_raw_data</span></code> dictionary inside your new file. Look at the example <code class="docutils literal notranslate"><span class="pre">_raw_data</span></code> contained in <code class="docutils literal notranslate"><span class="pre">data/StandardAtm1976</span></code> for reference.</p>
+</section>
+<section id="converting-raw-data-proper-units">
+<h2>Converting Raw data Proper Units<a class="headerlink" href="#converting-raw-data-proper-units" title="Link to this heading">#</a></h2>
+<p>From here on our we need to be especially mindful of units. We are going to use a utility function <code class="docutils literal notranslate"><span class="pre">build_akima_coefs</span></code> to help create the akima coefficients. The helper function is located in <code class="docutils literal notranslate"><span class="pre">utils/build_akima_coefs.py</span></code>.
+We only need to build the akima coefficients once and we do it so that the atmosphere model is very fast. The atmosphere model will need the following information: (Altitude, Temperature, Pressure, Density). If you don’t have one of those values that’s ok, typically given Altitude, Temperature, and some assumption of the pressure at sea level, all other values can be calculated based on ideal gas assumptions.</p>
+<p>Your units inside of <code class="docutils literal notranslate"><span class="pre">_raw_data</span></code> should be one of the following:
+English: [altitude (ft, ), temperature (degF), pressure (inHg at 60degF), density (lbm/ft**3)]
+Altitude can be in either in geodetic or deocentric
+Pressure will only translate properly if given in inHg at 60degF. However, many data sets use inHg at 30degF.</p>
+<p>SI Units: [altitude (m), temperature (degK), pressure (millibar), density (kg/m^3)]
+Altitude can be in either in geodetic or deocentric</p>
+<p>If your units do not match either English or SI as designated above, you will need to modify the <code class="docutils literal notranslate"><span class="pre">build_akima_coefs</span></code> function to properly translate your raw data into SI units. (All calculations inside of <a class="reference external" href="http://atmosphere.py">atmosphere.py</a> are happening in SI units with SI akima splines)</p>
+</section>
+<section id="processing-new-akima-splines">
+<h2>Processing new Akima Splines<a class="headerlink" href="#processing-new-akima-splines" title="Link to this heading">#</a></h2>
+<p>Next, open up <code class="docutils literal notranslate"><span class="pre">utils/build_akima_coefs.py</span></code>, you will notice that at the bottom of the file there is an call to <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__':</span></code>. Change the import location to point to your new <code class="docutils literal notranslate"><span class="pre">_raw_data</span></code> file and change the units to be either SI or English, depending on your raw data. Then execute <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">atmosphereComp.py</span></code>, this will call the <code class="docutils literal notranslate"><span class="pre">build_akima_coefs</span></code> to build the akima splines using your raw data. Copy those splines into your new atmosphere file you made a few steps earlier and save the file.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="add-the-new-data-to-enums">
+<h1>Add the new data to Enums<a class="headerlink" href="#add-the-new-data-to-enums" title="Link to this heading">#</a></h1>
+<p>You also need to add your new atmosphere model to the Enums so that it shows up automatically for ease of use:
+Head over to <code class="docutils literal notranslate"><span class="pre">aviary.variable_info.enums.py</span></code> and modify the <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">AtmosphereModel(Enum):</span></code> to add your new atmosphere model name.</p>
+<section id="import-the-processed-data">
+<h2>Import the Processed Data<a class="headerlink" href="#import-the-processed-data" title="Link to this heading">#</a></h2>
+<p>Next we will need to import these akima splines into <code class="docutils literal notranslate"><span class="pre">AtmosphereComp()</span></code> i.e.</p>
+<p><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">aviary.subsystems.atmosphere.data.NEW_DATA_FILE</span> <span class="pre">import</span> <span class="pre">atm_data</span> <span class="pre">as</span> <span class="pre">new_data</span></code></p>
+<p>Lastly in <code class="docutils literal notranslate"><span class="pre">Setup()</span></code> section of <code class="docutils literal notranslate"><span class="pre">AtmosphereComp()</span></code> there is a section of code that loads the atmosphere model based on the user specified option. Add a new line there to properly load youre new file:</p>
+<p><code class="docutils literal notranslate"><span class="pre">elif</span> <span class="pre">self.options[Settings.ATMOSPHERE_MODEL]</span> <span class="pre">is</span> <span class="pre">AtmosphereModel.'new_name':</span> <span class="pre">self.source_data</span> <span class="pre">=</span> <span class="pre">new_data</span></code></p>
+</section>
+<section id="test-your-model">
+<h2>Test Your Model<a class="headerlink" href="#test-your-model" title="Link to this heading">#</a></h2>
+<p>Now that you have your model loaded and ready to go, use the manual test at the bottom of <code class="docutils literal notranslate"><span class="pre">utils/build_akima_coefs.py</span></code> to test inputting a few altitude values into your model and inspect the resulting output of temperature, pressure, density, speed of sound, and dynamic viscosity.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="external_aero.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Externally Computed Polars</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="propulsion.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Propulsion</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Atmosphere Subsystem</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-between-different-models">Comparison between Different Models</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#how-the-atmosphere-model-works">How the Atmosphere Model Works</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#user-options-reference-for-atmospherecomp-and-atmospheregroup">User options reference for AtmosphereComp and AtmosphereGroup</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature-offset-options">Temperature Offset Options</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#us-1976-atmosphere-notes">US 1976 Atmosphere Notes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#mil-spec-210a-atmosphere-notes">MIL-SPEC-210A Atmosphere Notes</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-your-own-atmosphere-model">Adding your own Atmosphere Model</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-a-new-atmosphere-file">Create a new Atmosphere file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#converting-raw-data-proper-units">Converting Raw data Proper Units</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#processing-new-akima-splines">Processing new Akima Splines</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#add-the-new-data-to-enums">Add the new data to Enums</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-the-processed-data">Import the Processed Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-your-model">Test Your Model</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

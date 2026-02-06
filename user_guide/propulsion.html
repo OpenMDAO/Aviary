@@ -1,0 +1,917 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Propulsion</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/propulsion';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Creating a Turboprop Powered Aircraft Example" href="creating_a_turboprop_engine.html" />
+    <link rel="prev" title="Atmosphere Subsystem" href="atmosphere.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Propulsion</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/propulsion.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/propulsion.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/propulsion.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Propulsion</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#engine-decks">Engine Decks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#formatting">Formatting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables">Variables</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-propulsion-analysis">Setting Up Propulsion Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beginner-guide">Beginner Guide</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intermediate-guide">Intermediate Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heterogenous-engine-sets">Heterogenous Engine Sets</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-guide">Advanced Guide</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="propulsion">
+<h1>Propulsion<a class="headerlink" href="#propulsion" title="Link to this heading">#</a></h1>
+<p>The propulsion subsystem in Aviary organizes and executes models for engine sizing and performance.</p>
+<p>Aviary does not natively model gas-turbine performance, and instead relies on user-provided data and/or custom performance models to perform propulsion analysis.</p>
+<p>Aviary supports an arbitrary number of propulsor models on a vehicle, each with their own unique properties such as performance characteristics, scaling behaviors, and number of propulsors for that given type.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Aviary, when we refer to multiple engines of the same type, we say they are homogenous. When you are dealing with multiple engines of different types, we say they are heterogeneous.</p>
+</div>
+<!-- A diagram would be helpful here, showing X propulsors of type A and Y propulsors of type B on an outline of an aircraft -->
+<p>Each unique type of engine is defined by a <em>engine model</em><!-- Link to wherever this class is described - theory guide? -->. In Aviary, an <em>engine model</em> contains information on how to size and estimate performance for a single instance of an engine of that type. During analysis, Aviary handles summing performance data to a system level. This way, information is available on the performance of both a single instance of an engine, as well as aircraft-level totals, for other Aviary subsystems to utilize.</p>
+<p>Aviary’s variable hierarchy makes a distinction between variables that apply to a single instance of an engine, under the <code class="docutils literal notranslate"><span class="pre">Aircraft.Engine</span></code> sub-category, and variables that apply to the propulsion system as a whole under <code class="docutils literal notranslate"><span class="pre">Aircraft.Propulsion</span></code>. As an example, imagine an aircraft with a heterogeneous set of engines (those with unique properties). Maximum sea-level-static thrust would be defined differently per engine vs propulsion system like so:</p>
+<blockquote>
+<div><p><em>aircraft:engine:scaled_sls_thrust = [1500, 2200], lbf</em></p>
+<p><em>aircraft:engine:num_engines = [3, 2], unitless</em></p>
+<p><em>aircraft:propulsion:total_scaled_sls_thrust = 8900, lbf</em></p>
+</div></blockquote>
+<p>As you can see, variables under <em>engine</em> are vectors that store a value for a single each instance of a single type of engine, while variables under <em>propulsion</em> only store a single value that is relevant to the entire aircraft rather than any one specific engine or set of engines. Put another way, this aircraft has two hereogenous types of engines, the first that produces 1,500 lbf of thrust <em>per engine</em>, with three of those engines on the aircraft, and the second engine that produces 2,200 lbf of thrust <em>per engine</em> with only two copies of that engine on the aircraft. The propulsion-level total is 8,900 lbf of thrust, which is every engine physically present on the aircraft combined together (1500*3 + 2200*2).</p>
+<p>In general, the user does not need to define <em>propulsion</em> variables, as Aviary can calculate them given values in <em>engine</em>, but they are important to understand when reading results.</p>
+<p>In this section, we will explain how to set up the propulsion systems of an Aviary model, focusing on relatively straightforward aircraft configurations.</p>
+<section id="engine-decks">
+<h2>Engine Decks<a class="headerlink" href="#engine-decks" title="Link to this heading">#</a></h2>
+<!--parts of this are probably theory?-->
+<p>The primary way Aviary handles engine performance is by interpolating tabular data from a user-defined file that describes performance characteristics for a given engine. Engines modeled in this manner are called <em>engine decks</em><!-- Link to wherever this class is described - theory guide? -->. Engine decks are a type of engine model - they use the same basic interface, but have additional functionality to handle reading and processing data files.</p>
+<p>Engine decks can contain a variety of different data to represent any number of propulsion systems, typically ones that utilize combustion such as turbofan or turboshaft engines, including hybridized ones. The most common application of an <em>engine deck</em> is to represent a turbofan engine, essentially as black box model that describes the relationship between energy consuption (in the form of fuel) into useful work (the production of thrust).</p>
+<p>More advanced applications of <em>engine decks</em> are as parts of larger, more detailed <em>engine models</em>, such as a turboprop. A turboprop model, as described later, connects a turboshaft engine deck with a gearbox and propeller model to bridge the gap between energy consumption and thrust production, packaged together into a single model that treated as a singular unit by the greater propulsion system.</p>
+<section id="formatting">
+<h3>Formatting<a class="headerlink" href="#formatting" title="Link to this heading">#</a></h3>
+<p>An <em>engine deck</em> data file requires specific formatting for Aviary to correctly interpret. These files must follow the <a class="reference internal" href="input_files.html"><span class="std std-doc">Aviary data file format</span></a>. An example of a properly-formatted <em>engine deck</em> can be found <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/models/engines/turbofan_22k.csv">here</a>.</p>
+</section>
+<section id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Link to this heading">#</a></h3>
+<p>The following engine performance parameters are supported natively by Aviary for use in <em>engine decks</em>. If units are not specified, the default units are assumed. A variety of alternate names for these variables are understood by Aviary, but it is recommended to use the official names given here. A column with a header not recognized by Aviary will be ignored, with a warning raised at runtime. This allows for variables not used by Aviary to still be included in a data file, either for reference or compatibility with another analysis tool.</p>
+<!-- default variables and their units are not finalized -->
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Variable</p></th>
+<th class="head text-left"><p>Default Units</p></th>
+<th class="head text-center"><p>Required?</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Mach</span> <span class="pre">Number</span></code></p></td>
+<td class="text-left"><p>unitless</p></td>
+<td class="text-center"><p>✔</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Altitude</span></code></p></td>
+<td class="text-left"><p>ft</p></td>
+<td class="text-center"><p>✔</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Throttle</span></code></p></td>
+<td class="text-left"><p>unitless</p></td>
+<td class="text-center"><p>✔</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Hybrid</span> <span class="pre">Throttle</span></code></p></td>
+<td class="text-left"><p>unitless</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Net</span> <span class="pre">Thrust</span></code></p></td>
+<td class="text-left"><p>lbf</p></td>
+<td class="text-center"><p>✔*</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Gross</span> <span class="pre">Thrust</span></code></p></td>
+<td class="text-left"><p>lbf</p></td>
+<td class="text-center"><p>✘*</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Ram</span> <span class="pre">Drag</span></code></p></td>
+<td class="text-left"><p>lbf</p></td>
+<td class="text-center"><p>✘*</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Shaft</span> <span class="pre">Power</span></code></p></td>
+<td class="text-left"><p>hp</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">RPM</span></code></p></td>
+<td class="text-left"><p>rpm</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Fuel</span> <span class="pre">Flow</span> <span class="pre">Rate</span></code></p></td>
+<td class="text-left"><p>lbm/h</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">Electric</span> <span class="pre">Power</span></code></p></td>
+<td class="text-left"><p>kW</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">NOx</span> <span class="pre">Rate</span></code></p></td>
+<td class="text-left"><p>lbm/h</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><code class="docutils literal notranslate"><span class="pre">T4</span> <span class="pre">Temperature</span></code></p></td>
+<td class="text-left"><p>degR</p></td>
+<td class="text-center"><p>✘</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>*<em><code class="docutils literal notranslate"><span class="pre">Net</span> <span class="pre">Thrust</span></code> (defined as <code class="docutils literal notranslate"><span class="pre">Gross</span> <span class="pre">Thrust</span></code> - <code class="docutils literal notranslate"><span class="pre">Ram</span> <span class="pre">Drag</span></code>) is not required if both of those variables are provided for calculation</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">Mach</span> <span class="pre">Number</span></code>, <code class="docutils literal notranslate"><span class="pre">Altitude</span></code>, and the two throttle parameters are independent variables required to describe the operating conditions of the engine. <code class="docutils literal notranslate"><span class="pre">Hybrid</span> <span class="pre">Throttle</span></code> is optional, and is intended for use as a second degree of control for engines using independently controllable fuel- and electric-based power. The remaining variables are dependent on the operating conditions and are therefore typically optional.</p>
+<p><em>Engine decks</em> without headers are assumed to contain only the required variable set, in the order specified by the table (<code class="docutils literal notranslate"><span class="pre">Mach</span></code>, <code class="docutils literal notranslate"><span class="pre">Altitude</span></code>, <code class="docutils literal notranslate"><span class="pre">Throttle</span></code>, and <code class="docutils literal notranslate"><span class="pre">Net</span> <span class="pre">Thrust</span></code>), and with default units.</p>
+<p>Comments may be added to an engine deck data file by using a ‘<code class="docutils literal notranslate"><span class="pre">#</span></code>’ symbol preceding the comment. Anything after this symbol on that line is ignored by Aviary, allowing the user to temporarily remove data points or add in-line comments with context for the data. It is good practice to include comments at the start of the file to explain what kind of engine the data represents, and where it came from.</p>
+</section>
+</section>
+<section id="setting-up-propulsion-analysis">
+<h2>Setting Up Propulsion Analysis<a class="headerlink" href="#setting-up-propulsion-analysis" title="Link to this heading">#</a></h2>
+<section id="beginner-guide">
+<h3>Beginner Guide<a class="headerlink" href="#beginner-guide" title="Link to this heading">#</a></h3>
+<p>To add an engine deck to Aviary, the minimum set of variables to describe it must be provided in your input file. This list includes:</p>
+<!-- This list is for EngineDecks specifically, does that need clarification? No other engine model is currently planned to be supported with a level1 interface right? -->
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.SCALE_PERFORMANCE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.IGNORE_NEGATIVE_THRUST</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.GEOPOTENTIAL_ALT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.GENERATE_FLIGHT_IDLE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.NUM_WING_ENGINES</span></code> and/or <code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.NUM_FUSELAGE_ENGINES</span></code></p></li>
+</ul>
+<!--At a system level, there a few variables you must include that affect all engines. This list includes: -->
+<!-- Additional variables are required but will depend on preprocessor behavior, which is not finalized. NUM_WING_ENGINES & NUM_FUSELAGE_ENGINES vs NUM_ENGINES behavior, SCALE_FACTOR vs. SCALED_SLS_THRUST, etc. -->
+<p>If generating flight idle points is desired, the following variables are also required. More information on flight idle generation is available here <!--TODO link here-->.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION</span></code></p></li>
+</ul>
+<p>If you are missing any required variables, you may see a warning at runtime, depending on verbosity level. Aviary will try using the default value for the missing variable, which may affect analysis results.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="ne">UserWarning</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">aircraft</span><span class="p">:</span><span class="n">engine</span><span class="p">:</span><span class="n">scale_performance</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">required</span> <span class="n">option</span> <span class="k">for</span> <span class="n">EngineDecks</span><span class="p">,</span> <span class="n">but</span> <span class="n">has</span> <span class="ow">not</span> <span class="n">been</span> <span class="n">specified</span> <span class="k">for</span> <span class="n">EngineDeck</span> <span class="o">&lt;</span><span class="n">example</span><span class="o">&gt;.</span> <span class="n">The</span> <span class="n">default</span> <span class="n">value</span> <span class="n">will</span> <span class="n">be</span> <span class="n">used</span><span class="o">.</span>
+</pre></div>
+</div>
+<!-- See !!!LINK HERE!!! for a complete list of all available options to define engine behavior -->
+<!-- Section on setting up Propulsion-level variables, which ones are required? --></section>
+<section id="intermediate-guide">
+<h3>Intermediate Guide<a class="headerlink" href="#intermediate-guide" title="Link to this heading">#</a></h3>
+<p>Engine models are defined in Aviary using an <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> object. An <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> is responsible for handling many tasks required to prepare an engine for use in Aviary, such as reading engine data from a file in the case of an <code class="docutils literal notranslate"><span class="pre">EngineDeck</span></code> (which is a child class of <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code>). <!-- link to theory guide? --></p>
+<p>An <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> (and classes inheriting it) can be manually created and added to the Aviary problem, instead of being created from the values provided via an Aviary input file. This is extremely useful when setting up an aircraft with multiple heterogenous types of engines, each with unique properties, or using a custom engine model. An <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> requires an <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object containing the variables required for that engine (such as those outlined in the Beginner Guide example for <code class="docutils literal notranslate"><span class="pre">EngineDeck</span></code>)<!-- link to that subsection -->.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span>
+
+<span class="n">aviary_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+
+<span class="c1"># Add relevant inputs and options to engine_options</span>
+<span class="c1"># using engine_options.set_val(...)</span>
+<span class="n">filename</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;models/engines/turbofan_28k.csv&#39;</span><span class="p">)</span>
+<span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">DATA_FILE</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+<span class="c1"># example of setting an engine variable to a specific value</span>
+<span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
+
+<span class="c1"># It is assumed here that aviary_options is configured to have</span>
+<span class="c1"># all inputs needed for analysis, except engine-level values.</span>
+<span class="c1"># Because not all required options were defined in this example, we</span>
+<span class="c1"># see a number of warnings about the missing variables.</span>
+<span class="n">engine_deck</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">EngineDeck</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;example&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this example code snippet, we didn’t set a value for every required variable and option previously listed - because of this, we get a number of warnings letting us know which ones we forgot to set, and that the default values specified will be used.</p>
+<p>Once an <code class="docutils literal notranslate"><span class="pre">EngineDeck</span></code> has been successfully created, it must be attached to the vehicle model you want to analyze. The simplest way to do this is to take advantage of the propulsion preprocessor utility. This preprocessor handles all of the details of getting data related to <code class="docutils literal notranslate"><span class="pre">EngineModels</span></code>, which may change during initialization, correctly set up in the <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object which is used to define the vehicle at the Aviary problem level. This is a critical step, because once Aviary begins analysis it assumes that all of the relevant data present in individual <code class="docutils literal notranslate"><span class="pre">EngineModels</span></code> have made their way into the vehicle-level data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">av</span><span class="o">.</span><span class="n">preprocess_propulsion</span><span class="p">(</span><span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">engine_models</span><span class="o">=</span><span class="p">[</span><span class="n">engine_deck</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Aviary/Aviary/aviary/utils/preprocessors.py:729: UserWarning: Mount location for single engine of type &lt;example&gt; not specified. Assuming it is fuselage-mounted.
+  warnings.warn(
+</pre></div>
+</div>
+</div>
+</div>
+<section id="heterogenous-engine-sets">
+<h4>Heterogenous Engine Sets<a class="headerlink" href="#heterogenous-engine-sets" title="Link to this heading">#</a></h4>
+<p>In this example, our aircraft model has two distinct types of engines, which are assumed to have different properties. To keep this example simple, we will build an aircraft with two sets of engines based on the <code class="docutils literal notranslate"><span class="pre">EngineDeck</span></code> we just set up, but one set of engines is scaled to half size using <code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.SCALE_FACTOR</span></code>.</p>
+<p><em>aviary_options</em> is modified in-place with updated values to represent our new <em>engine_deck</em>. When working with multiple heterogenous engines, simply provide <code class="docutils literal notranslate"><span class="pre">preprocess_propulsion()</span></code> with a list of all <code class="docutils literal notranslate"><span class="pre">EngineModels</span></code>, like so:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test Cell</span>
+<span class="n">aviary_options</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+<span class="c1"># set this to avoid warning in later cell</span>
+<span class="n">aviary_options</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">NUM_WING_ENGINES</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">av</span><span class="o">.</span><span class="n">preprocess_propulsion</span><span class="p">(</span>
+    <span class="n">aviary_options</span><span class="o">=</span><span class="n">aviary_options</span><span class="p">,</span> <span class="n">engine_models</span><span class="o">=</span><span class="p">[</span><span class="n">engine_deck_1</span><span class="p">,</span> <span class="n">engine_deck_2</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Interpolation Method: </span><span class="si">{</span><span class="n">aviary_options</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Interpolation Method: [1.  0.5]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note how calling <code class="docutils literal notranslate"><span class="pre">preprocess_propulsion()</span></code> changes <code class="docutils literal notranslate"><span class="pre">Aircraft.Engine.SCALE_FACTOR</span></code>, which was individually defined for each <code class="docutils literal notranslate"><span class="pre">EngineDeck</span></code>, into a list containing both values. This way Aviary can access information on every <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> present on the aircraft without needing access to each individual <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> object. This is important to be aware of if you are manually setting any variables related to engines or propulsion rather than using the built-in methods and functions presented in the Intermediate guide, which will do this work for you.</p>
+</section>
+</section>
+<section id="advanced-guide">
+<h3>Advanced Guide<a class="headerlink" href="#advanced-guide" title="Link to this heading">#</a></h3>
+<p>This section is a work in progress. Please check back later for more information.</p>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="atmosphere.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Atmosphere Subsystem</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="creating_a_turboprop_engine.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Creating a Turboprop Powered Aircraft Example</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#engine-decks">Engine Decks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#formatting">Formatting</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables">Variables</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-propulsion-analysis">Setting Up Propulsion Analysis</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beginner-guide">Beginner Guide</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intermediate-guide">Intermediate Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heterogenous-engine-sets">Heterogenous Engine Sets</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-guide">Advanced Guide</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

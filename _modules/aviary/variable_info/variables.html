@@ -1,0 +1,1430 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>aviary.variable_info.variables</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/aviary/variable_info/variables';</script>
+    <link rel="icon" href="../../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user_guide/features/blended_wing_body.html">Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2F_modules/aviary/variable_info/variables.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1></h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for aviary.variable_info.variables</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This is a variable hierarchy that is for a single mission. Each mission</span>
+<span class="sd">gets a copy of this hierarchy.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Aircraft">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Aircraft</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aircraft data hierarchy.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Aircraft.AirConditioning">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.AirConditioning">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">AirConditioning</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:air_conditioning:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:air_conditioning:mass_coefficient&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:air_conditioning:mass_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.AntiIcing">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.AntiIcing">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">AntiIcing</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:anti_icing:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:anti_icing:mass_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.APU">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.APU">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">APU</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:apu:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:apu:mass_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Avionics">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Avionics">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Avionics</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:avionics:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:avionics:mass_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Battery">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Battery">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Battery</span><span class="p">:</span>
+        <span class="n">ADDITIONAL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:additional_mass&#39;</span>
+        <span class="n">DISCHARGE_LIMIT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:discharge_limit&#39;</span>
+        <span class="n">EFFICIENCY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:efficiency&#39;</span>
+        <span class="n">ENERGY_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:energy_capacity&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:mass&#39;</span>
+        <span class="n">PACK_ENERGY_DENSITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:pack_energy_density&#39;</span>
+        <span class="n">PACK_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:pack_mass&#39;</span>
+        <span class="n">PACK_VOLUMETRIC_DENSITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:pack_volumetric_density&#39;</span>
+        <span class="n">VOLUME</span> <span class="o">=</span> <span class="s1">&#39;aircraft:battery:volume&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.BWB">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.BWB">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">BWB</span><span class="p">:</span>
+        <span class="n">DETAILED_WING_PROVIDED</span> <span class="o">=</span> <span class="s1">&#39;aircraft:blended_wing_body_design:detailed_wing_provided&#39;</span>
+        <span class="n">MAX_NUM_BAYS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:blended_wing_body_design:max_num_bays&#39;</span>
+        <span class="n">NUM_BAYS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:blended_wing_body_design:num_bays&#39;</span>
+        <span class="n">PASSENGER_LEADING_EDGE_SWEEP</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;aircraft:blended_wing_body_design:passenger_leading_edge_sweep&#39;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Canard">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Canard">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Canard</span><span class="p">:</span>
+        <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:area&#39;</span>
+        <span class="n">ASPECT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:aspect_ratio&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:characteristic_length&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:fineness&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:laminar_flow_upper&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:mass_scaler&#39;</span>
+        <span class="n">TAPER_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:taper_ratio&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:thickness_to_chord&#39;</span>
+        <span class="n">WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:wetted_area&#39;</span>
+        <span class="n">WETTED_AREA_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:canard:wetted_area_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Controls">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Controls">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Controls</span><span class="p">:</span>
+        <span class="n">COCKPIT_CONTROL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:controls:cockpit_control_mass_scaler&#39;</span>
+        <span class="n">CONTROL_MASS_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:controls:control_mass_increment&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:controls:mass&#39;</span>
+        <span class="n">STABILITY_AUGMENTATION_SYSTEM_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:controls:stability_augmentation_system_mass&#39;</span>
+        <span class="n">STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;aircraft:controls:stability_augmentation_system_mass_scaler&#39;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.CrewPayload">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.CrewPayload">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">CrewPayload</span><span class="p">:</span>
+        <span class="n">BAGGAGE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:baggage_mass&#39;</span>
+        <span class="n">BAGGAGE_MASS_PER_PASSENGER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:baggage_mass_per_passenger&#39;</span>
+        <span class="n">CABIN_CREW_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:cabin_crew_mass&#39;</span>
+        <span class="n">CABIN_CREW_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:cabin_crew_mass_scaler&#39;</span>
+        <span class="n">CARGO_CONTAINER_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:cargo_container_mass&#39;</span>
+        <span class="n">CARGO_CONTAINER_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:cargo_container_mass_scaler&#39;</span>
+        <span class="n">CARGO_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:cargo_mass&#39;</span>
+        <span class="n">CATERING_ITEMS_MASS_PER_PASSENGER</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;aircraft:crew_and_payload:catering_items_mass_per_passenger&#39;</span>
+        <span class="p">)</span>
+        <span class="n">FLIGHT_CREW_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:flight_crew_mass&#39;</span>
+        <span class="n">FLIGHT_CREW_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:flight_crew_mass_scaler&#39;</span>
+        <span class="n">MASS_PER_PASSENGER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:mass_per_passenger&#39;</span>
+        <span class="n">MASS_PER_PASSENGER_WITH_BAGS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:mass_per_passenger_with_bags&#39;</span>
+        <span class="n">MISC_CARGO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:misc_cargo&#39;</span>
+        <span class="n">NUM_BUSINESS_CLASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_business_class&#39;</span>
+        <span class="n">NUM_CABIN_CREW</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_cabin_crew&#39;</span>
+        <span class="n">NUM_ECONOMY_CLASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_economy_class&#39;</span>
+        <span class="n">NUM_FIRST_CLASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_first_class&#39;</span>
+        <span class="n">NUM_FLIGHT_ATTENDANTS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_flight_attendants&#39;</span>
+        <span class="n">NUM_FLIGHT_CREW</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_flight_crew&#39;</span>
+        <span class="n">NUM_GALLEY_CREW</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_galley_crew&#39;</span>
+        <span class="n">NUM_PASSENGERS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:num_passengers&#39;</span>
+        <span class="n">PASSENGER_MASS_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:passenger_mass_total&#39;</span>
+        <span class="n">PASSENGER_PAYLOAD_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:passenger_payload_mass&#39;</span>
+        <span class="n">PASSENGER_SERVICE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:passenger_service_mass&#39;</span>
+        <span class="n">PASSENGER_SERVICE_MASS_PER_PASSENGER</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;aircraft:crew_and_payload:passenger_service_mass_per_passenger&#39;</span>
+        <span class="p">)</span>
+        <span class="n">PASSENGER_SERVICE_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:passenger_service_mass_scaler&#39;</span>
+        <span class="n">TOTAL_PAYLOAD_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:total_payload_mass&#39;</span>
+        <span class="n">ULD_MASS_PER_PASSENGER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:uld_mass_per_passenger&#39;</span>
+        <span class="n">WATER_MASS_PER_OCCUPANT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:water_mass_per_occupant&#39;</span>
+        <span class="n">WING_CARGO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:wing_cargo&#39;</span>
+
+<div class="viewcode-block" id="Aircraft.CrewPayload.Design">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.CrewPayload.Design">[docs]</a>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Design</span><span class="p">:</span>
+            <span class="n">CARGO_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:cargo_mass&#39;</span>
+            <span class="n">MAX_CARGO_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:max_cargo_mass&#39;</span>
+            <span class="n">NUM_BUSINESS_CLASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:num_business_class&#39;</span>
+            <span class="n">NUM_FIRST_CLASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:num_first_class&#39;</span>
+            <span class="n">NUM_ECONOMY_CLASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:num_economy_class&#39;</span>
+            <span class="n">NUM_PASSENGERS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:num_passengers&#39;</span>
+            <span class="n">NUM_SEATS_ABREAST_BUSINESS</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s1">&#39;aircraft:crew_and_payload:design:num_seats_abreast_business&#39;</span>
+            <span class="p">)</span>
+            <span class="n">NUM_SEATS_ABREAST_ECONOMY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:num_seats_abreast_economy&#39;</span>
+            <span class="n">NUM_SEATS_ABREAST_FIRST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:num_seats_abreast_first&#39;</span>
+            <span class="n">SEAT_PITCH_BUSINESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:seat_pitch_business&#39;</span>
+            <span class="n">SEAT_PITCH_ECONOMY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:seat_pitch_economy&#39;</span>
+            <span class="n">SEAT_PITCH_FIRST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:crew_and_payload:design:seat_pitch_first&#39;</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Aircraft.Design">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Design">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Design</span><span class="p">:</span>
+        <span class="c1"># These variables are values that do not fall into a particular aircraft</span>
+        <span class="c1"># component.</span>
+        <span class="n">BASE_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:base_area&#39;</span>
+        <span class="n">CG_DELTA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:cg_delta&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTHS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:characteristic_lengths&#39;</span>
+        <span class="n">COCKPIT_CONTROL_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:cockpit_control_mass_coefficient&#39;</span>
+        <span class="n">COMPUTE_HTAIL_VOLUME_COEFF</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:compute_htail_volume_coeff&#39;</span>
+        <span class="n">COMPUTE_VTAIL_VOLUME_COEFF</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:compute_vtail_volume_coeff&#39;</span>
+        <span class="n">DRAG_COEFFICIENT_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:drag_coefficient_increment&#39;</span>
+        <span class="n">DRAG_DIVERGENCE_SHIFT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:drag_divergence_shift&#39;</span>
+        <span class="n">DRAG_POLAR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:drag_polar&#39;</span>
+        <span class="n">EMERGENCY_EQUIPMENT_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:emergency_equipment_mass&#39;</span>
+        <span class="n">EMPENNAGE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:empennage_mass&#39;</span>
+        <span class="n">EMPTY_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:empty_mass&#39;</span>
+        <span class="n">EMPTY_MASS_MARGIN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:empty_mass_margin&#39;</span>
+        <span class="n">EMPTY_MASS_MARGIN_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:empty_mass_margin_scaler&#39;</span>
+        <span class="n">EXTERNAL_SUBSYSTEMS_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:external_subsystems_mass&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:fineness&#39;</span>
+        <span class="n">IJEFF</span> <span class="o">=</span> <span class="s1">&#39;ijeff&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:laminar_flow_upper&#39;</span>
+        <span class="n">LANDING_TO_TAKEOFF_MASS_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:landing_to_takeoff_mass_ratio&#39;</span>
+        <span class="n">LIFT_CURVE_SLOPE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:lift_curve_slope&#39;</span>
+        <span class="n">LIFT_DEPENDENT_DRAG_COEFF_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:lift_dependent_drag_coeff_factor&#39;</span>
+        <span class="n">LIFT_DEPENDENT_DRAG_POLAR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:lift_dependent_drag_polar&#39;</span>
+        <span class="n">LIFT_INDEPENDENT_DRAG_POLAR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:lift_independent_drag_polar&#39;</span>
+        <span class="n">LIFT_POLAR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:lift_polar&#39;</span>
+        <span class="n">MAX_FUSELAGE_PITCH_ANGLE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:max_fuselage_pitch_angle&#39;</span>
+        <span class="n">MAX_STRUCTURAL_SPEED</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:max_structural_speed&#39;</span>
+        <span class="n">PART25_STRUCTURAL_CATEGORY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:part25_structural_category&#39;</span>
+        <span class="n">RESERVE_FUEL_ADDITIONAL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:reserve_fuel_additional&#39;</span>
+        <span class="n">RESERVE_FUEL_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:reserve_fuel_fraction&#39;</span>
+        <span class="n">SMOOTH_MASS_DISCONTINUITIES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:smooth_mass_discontinuities&#39;</span>
+        <span class="n">STATIC_MARGIN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:static_margin&#39;</span>
+        <span class="n">STRUCTURAL_MASS_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:structural_mass_increment&#39;</span>
+        <span class="n">STRUCTURE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:structure_mass&#39;</span>
+        <span class="n">SUBSONIC_DRAG_COEFF_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:subsonic_drag_coeff_factor&#39;</span>
+        <span class="n">SUPERSONIC_DRAG_COEFF_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:supersonic_drag_coeff_factor&#39;</span>
+        <span class="n">SYSTEMS_AND_EQUIPMENT_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:systems_and_equipment_mass&#39;</span>
+        <span class="n">SYSTEMS_AND_EQUIPMENT_MASS_BASE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:systems_and_equipment_mass_base&#39;</span>
+        <span class="n">THRUST_TO_WEIGHT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:thrust_to_weight_ratio&#39;</span>
+        <span class="n">TOTAL_WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:total_wetted_area&#39;</span>
+        <span class="n">TOUCHDOWN_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:touchdown_mass&#39;</span>
+        <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:type&#39;</span>
+        <span class="n">ULF_CALCULATED_FROM_MANEUVER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:ulf_calculated_from_maneuver&#39;</span>
+        <span class="n">USE_ALT_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:use_alt_mass&#39;</span>
+        <span class="n">WETTED_AREAS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:wetted_areas&#39;</span>
+        <span class="n">WING_LOADING</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:wing_loading&#39;</span>
+        <span class="n">ZERO_LIFT_DRAG_COEFF_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:design:zero_lift_drag_coeff_factor&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Electrical">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Electrical">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Electrical</span><span class="p">:</span>
+        <span class="n">HAS_HYBRID_SYSTEM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:electrical:has_hybrid_system&#39;</span>
+        <span class="n">HYBRID_CABLE_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:electrical:hybrid_cable_length&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:electrical:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:electrical:mass_scaler&#39;</span>
+        <span class="n">SYSTEM_MASS_PER_PASSENGER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:electrical:system_mass_per_passenger&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Engine">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Engine">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Engine</span><span class="p">:</span>
+        <span class="n">ADDITIONAL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:additional_mass&#39;</span>
+        <span class="n">ADDITIONAL_MASS_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:additional_mass_fraction&#39;</span>
+        <span class="n">CONSTANT_FUEL_CONSUMPTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:constant_fuel_consumption&#39;</span>
+        <span class="n">DATA_FILE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:data_file&#39;</span>
+        <span class="n">FIXED_RPM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:fixed_rpm&#39;</span>
+        <span class="n">FLIGHT_IDLE_MAX_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:flight_idle_max_fraction&#39;</span>
+        <span class="n">FLIGHT_IDLE_MIN_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:flight_idle_min_fraction&#39;</span>
+        <span class="n">FLIGHT_IDLE_THRUST_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:flight_idle_thrust_fraction&#39;</span>
+        <span class="n">FUEL_FLOW_SCALER_CONSTANT_TERM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:fuel_flow_scaler_constant_term&#39;</span>
+        <span class="n">FUEL_FLOW_SCALER_LINEAR_TERM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:fuel_flow_scaler_linear_term&#39;</span>
+        <span class="n">GENERATE_FLIGHT_IDLE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:generate_flight_idle&#39;</span>
+        <span class="n">GEOPOTENTIAL_ALT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:geopotential_alt&#39;</span>
+        <span class="n">GLOBAL_HYBRID_THROTTLE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:global_hybrid_throttle&#39;</span>
+        <span class="n">GLOBAL_THROTTLE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:global_throttle&#39;</span>
+        <span class="n">IGNORE_NEGATIVE_THRUST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:ignore_negative_thrust&#39;</span>
+        <span class="n">INTERPOLATION_METHOD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:interpolation_method&#39;</span>
+        <span class="n">INTERPOLATION_SORT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:interpolation_sort&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:mass_scaler&#39;</span>
+        <span class="n">MASS_SPECIFIC</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:mass_specific&#39;</span>
+        <span class="n">NUM_ENGINES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:num_engines&#39;</span>
+        <span class="n">NUM_FUSELAGE_ENGINES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:num_fuselage_engines&#39;</span>
+        <span class="n">NUM_WING_ENGINES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:num_wing_engines&#39;</span>
+        <span class="n">POD_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:pod_mass&#39;</span>
+        <span class="n">POD_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:pod_mass_scaler&#39;</span>
+        <span class="n">POSITION_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:position_factor&#39;</span>
+        <span class="n">PYLON_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:pylon_factor&#39;</span>
+        <span class="n">REFERENCE_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:reference_diameter&#39;</span>
+        <span class="n">REFERENCE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:reference_mass&#39;</span>
+        <span class="n">REFERENCE_SLS_THRUST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:reference_sls_thrust&#39;</span>
+        <span class="n">RPM_DESIGN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:rpm_design&#39;</span>
+        <span class="n">SCALE_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:scale_factor&#39;</span>
+        <span class="n">SCALE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:scale_mass&#39;</span>
+        <span class="n">SCALE_PERFORMANCE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:scale_performance&#39;</span>
+        <span class="n">SCALED_SLS_THRUST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:scaled_sls_thrust&#39;</span>
+        <span class="n">SUBSONIC_FUEL_FLOW_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:subsonic_fuel_flow_scaler&#39;</span>
+        <span class="n">SUPERSONIC_FUEL_FLOW_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:supersonic_fuel_flow_scaler&#39;</span>
+        <span class="n">THRUST_REVERSERS_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:thrust_reversers_mass&#39;</span>
+        <span class="n">THRUST_REVERSERS_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:thrust_reversers_mass_scaler&#39;</span>
+        <span class="n">TYPE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:type&#39;</span>
+        <span class="n">WING_LOCATIONS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:wing_locations&#39;</span>
+
+<div class="viewcode-block" id="Aircraft.Engine.Gearbox">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Engine.Gearbox">[docs]</a>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Gearbox</span><span class="p">:</span>
+            <span class="n">EFFICIENCY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:gearbox:efficiency&#39;</span>
+            <span class="n">GEAR_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:gearbox:gear_ratio&#39;</span>
+            <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:gearbox:mass&#39;</span>
+            <span class="n">SHAFT_POWER_DESIGN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:gearbox:shaft_power_design&#39;</span>
+            <span class="n">SPECIFIC_TORQUE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:gearbox:specific_torque&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Engine.Motor">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Engine.Motor">[docs]</a>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Motor</span><span class="p">:</span>
+            <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:motor:mass&#39;</span>
+            <span class="n">TORQUE_MAX</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:motor:torque_max&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Engine.Propeller">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Engine.Propeller">[docs]</a>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Propeller</span><span class="p">:</span>
+            <span class="n">ACTIVITY_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:activity_factor&#39;</span>
+            <span class="n">COMPUTE_INSTALLATION_LOSS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:compute_installation_loss&#39;</span>
+            <span class="n">DATA_FILE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:data_file&#39;</span>
+            <span class="n">DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:diameter&#39;</span>
+            <span class="n">INTEGRATED_LIFT_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:integrated_lift_coefficient&#39;</span>
+            <span class="n">NUM_BLADES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:num_blades&#39;</span>
+            <span class="n">TIP_MACH_MAX</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:tip_mach_max&#39;</span>
+            <span class="n">TIP_SPEED_MAX</span> <span class="o">=</span> <span class="s1">&#39;aircraft:engine:propeller:tip_speed_max&#39;</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Aircraft.Fins">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Fins">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Fins</span><span class="p">:</span>
+        <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fins:area&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fins:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fins:mass_scaler&#39;</span>
+        <span class="n">NUM_FINS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fins:num_fins&#39;</span>
+        <span class="n">TAPER_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fins:taper_ratio&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Fuel">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Fuel">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Fuel</span><span class="p">:</span>
+        <span class="n">AUXILIARY_FUEL_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:auxiliary_fuel_capacity&#39;</span>
+        <span class="n">BURN_PER_PASSENGER_MILE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:burn_per_passenger_mile&#39;</span>
+        <span class="n">DENSITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:density&#39;</span>
+        <span class="n">FUEL_MARGIN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:fuel_margin&#39;</span>
+        <span class="n">FUEL_SYSTEM_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:fuel_system_mass&#39;</span>
+        <span class="n">FUEL_SYSTEM_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:fuel_system_mass_coefficient&#39;</span>
+        <span class="n">FUEL_SYSTEM_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:fuel_system_mass_scaler&#39;</span>
+        <span class="n">FUSELAGE_FUEL_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:fuselage_fuel_capacity&#39;</span>
+        <span class="n">IGNORE_FUEL_CAPACITY_CONSTRAINT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:ignore_fuel_capacity_constraint&#39;</span>
+        <span class="n">NUM_TANKS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:num_tanks&#39;</span>
+        <span class="n">TOTAL_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:total_capacity&#39;</span>
+        <span class="n">TOTAL_VOLUME</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:total_volume&#39;</span>
+        <span class="n">UNUSABLE_FUEL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:unusable_fuel_mass&#39;</span>
+        <span class="n">UNUSABLE_FUEL_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:unusable_fuel_mass_coefficient&#39;</span>
+        <span class="n">UNUSABLE_FUEL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:unusable_fuel_mass_scaler&#39;</span>
+        <span class="n">WING_FUEL_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_fuel_capacity&#39;</span>
+        <span class="n">WING_FUEL_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_fuel_fraction&#39;</span>
+        <span class="n">WING_REF_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_ref_capacity&#39;</span>
+        <span class="n">WING_REF_CAPACITY_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_ref_capacity_area&#39;</span>
+        <span class="n">WING_REF_CAPACITY_TERM_A</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_ref_capacity_term_a&#39;</span>
+        <span class="n">WING_REF_CAPACITY_TERM_B</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_ref_capacity_term_b&#39;</span>
+        <span class="c1"># WING_VOLUME = &#39;aircraft:fuel:wing_volume&#39;</span>
+        <span class="n">WING_VOLUME_DESIGN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_volume_design&#39;</span>
+        <span class="n">WING_VOLUME_GEOMETRIC_MAX</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_volume_geometric_max&#39;</span>
+        <span class="n">WING_VOLUME_STRUCTURAL_MAX</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuel:wing_volume_structural_max&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Furnishings">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Furnishings">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Furnishings</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:furnishings:mass&#39;</span>
+        <span class="n">MASS_BASE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:furnishings:mass_base&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:furnishings:mass_scaler&#39;</span>
+        <span class="n">USE_EMPIRICAL_EQUATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:furnishings:use_empirical_equation&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Fuselage">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Fuselage">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Fuselage</span><span class="p">:</span>
+        <span class="n">AFTBODY_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:aftbody_mass&#39;</span>
+        <span class="n">AFTBODY_MASS_PER_UNIT_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:aftbody_mass_per_unit_area&#39;</span>
+        <span class="n">AISLE_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:aisle_width&#39;</span>
+        <span class="n">AVG_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:avg_diameter&#39;</span>
+        <span class="n">CABIN_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:cabin_area&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:characteristic_length&#39;</span>
+        <span class="n">CROSS_SECTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:cross_section&#39;</span>
+        <span class="n">DELTA_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:delta_diameter&#39;</span>
+        <span class="n">DIAMETER_TO_WING_SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:diameter_to_wing_span&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:fineness&#39;</span>
+        <span class="n">FLAT_PLATE_AREA_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:flat_plate_area_increment&#39;</span>
+        <span class="n">FOREBODY_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:forebody_mass&#39;</span>
+        <span class="n">FORM_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:form_factor&#39;</span>
+        <span class="n">HEIGHT_TO_WIDTH_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:height_to_width_ratio&#39;</span>
+        <span class="n">HYDRAULIC_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:hydraulic_diameter&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:laminar_flow_upper&#39;</span>
+        <span class="n">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:length&#39;</span>
+        <span class="n">LENGTH_TO_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:length_to_diameter&#39;</span>
+        <span class="n">LIFT_COEFFICIENT_RATIO_BODY_TO_WING</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;aircraft:fuselage:lift_coefficient_ratio_body_to_wing&#39;</span>
+        <span class="p">)</span>
+        <span class="n">LIFT_CURVE_SLOPE_MACH0</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:lift_curve_slope_mach0&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:mass_coefficient&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:mass_scaler&#39;</span>
+        <span class="n">MAX_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:max_height&#39;</span>
+        <span class="n">MAX_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:max_width&#39;</span>
+        <span class="n">MILITARY_CARGO_FLOOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:military_cargo_floor&#39;</span>
+        <span class="n">NOSE_FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:nose_fineness&#39;</span>
+        <span class="n">NUM_AISLES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:num_aisles&#39;</span>
+        <span class="n">NUM_FUSELAGES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:num_fuselages&#39;</span>
+        <span class="n">PASSENGER_COMPARTMENT_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:passenger_compartment_length&#39;</span>
+        <span class="n">PILOT_COMPARTMENT_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:pilot_compartment_length&#39;</span>
+        <span class="n">PLANFORM_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:planform_area&#39;</span>
+        <span class="n">PRESSURE_DIFFERENTIAL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:pressure_differential&#39;</span>
+        <span class="n">PRESSURIZED_WIDTH_ADDITIONAL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:pressurized_width_additional&#39;</span>
+        <span class="n">REF_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:ref_diameter&#39;</span>
+        <span class="n">SEAT_WIDTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:seat_width&#39;</span>
+        <span class="n">SIMPLE_LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:simple_layout&#39;</span>
+        <span class="n">TAIL_FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:tail_fineness&#39;</span>
+        <span class="n">WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:wetted_area&#39;</span>
+        <span class="n">WETTED_AREA_RATIO_AFTBODY_TO_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:wetted_area_ratio_aftbody_to_total&#39;</span>
+        <span class="n">WETTED_AREA_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:fuselage:wetted_area_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.HorizontalTail">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.HorizontalTail">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">HorizontalTail</span><span class="p">:</span>
+        <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:area&#39;</span>
+        <span class="n">ASPECT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:aspect_ratio&#39;</span>
+        <span class="n">AVERAGE_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:average_chord&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:characteristic_length&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:fineness&#39;</span>
+        <span class="n">FORM_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:form_factor&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:laminar_flow_upper&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:mass_coefficient&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:mass_scaler&#39;</span>
+        <span class="n">MOMENT_ARM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:moment_arm&#39;</span>
+        <span class="n">MOMENT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:moment_ratio&#39;</span>
+        <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:root_chord&#39;</span>
+        <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:span&#39;</span>
+        <span class="n">SWEEP</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:sweep&#39;</span>
+        <span class="n">TAPER_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:taper_ratio&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:thickness_to_chord&#39;</span>
+        <span class="n">VERTICAL_TAIL_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:vertical_tail_fraction&#39;</span>
+        <span class="n">VOLUME_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:volume_coefficient&#39;</span>
+        <span class="n">WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:wetted_area&#39;</span>
+        <span class="n">WETTED_AREA_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:horizontal_tail:wetted_area_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Hydraulics">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Hydraulics">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Hydraulics</span><span class="p">:</span>
+        <span class="n">FLIGHT_CONTROL_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:hydraulics:flight_control_mass_coefficient&#39;</span>
+        <span class="n">GEAR_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:hydraulics:gear_mass_coefficient&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:hydraulics:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:hydraulics:mass_scaler&#39;</span>
+        <span class="n">SYSTEM_PRESSURE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:hydraulics:system_pressure&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Instruments">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Instruments">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Instruments</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:instruments:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:instruments:mass_coefficient&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:instruments:mass_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.LandingGear">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.LandingGear">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">LandingGear</span><span class="p">:</span>
+        <span class="n">DRAG_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:drag_coefficient&#39;</span>
+        <span class="n">FIXED_GEAR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:fixed_gear&#39;</span>
+        <span class="n">MAIN_GEAR_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:main_gear_location&#39;</span>
+        <span class="n">MAIN_GEAR_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:main_gear_mass&#39;</span>
+        <span class="n">MAIN_GEAR_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:main_gear_mass_coefficient&#39;</span>
+        <span class="n">MAIN_GEAR_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:main_gear_mass_scaler&#39;</span>
+        <span class="n">MAIN_GEAR_OLEO_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:main_gear_oleo_length&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:mass_coefficient&#39;</span>
+        <span class="n">NOSE_GEAR_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:nose_gear_mass&#39;</span>
+        <span class="n">NOSE_GEAR_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:nose_gear_mass_scaler&#39;</span>
+        <span class="n">NOSE_GEAR_OLEO_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:nose_gear_oleo_length&#39;</span>
+        <span class="n">TAIL_HOOK_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:tail_hook_mass_scaler&#39;</span>
+        <span class="n">TOTAL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:total_mass&#39;</span>
+        <span class="n">TOTAL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:landing_gear:total_mass_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Nacelle">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Nacelle">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Nacelle</span><span class="p">:</span>
+        <span class="n">AVG_DIAMETER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:avg_diameter&#39;</span>
+        <span class="n">AVG_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:avg_length&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:characteristic_length&#39;</span>
+        <span class="n">CLEARANCE_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:clearance_ratio&#39;</span>
+        <span class="n">CORE_DIAMETER_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:core_diameter_ratio&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:fineness&#39;</span>
+        <span class="n">FORM_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:form_factor&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:laminar_flow_upper&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:mass&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:mass_scaler&#39;</span>
+        <span class="n">MASS_SPECIFIC</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:mass_specific&#39;</span>
+        <span class="n">PERCENT_DIAM_BURIED_IN_FUSELAGE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:percent_diam_buried_in_fuselage&#39;</span>
+        <span class="n">SURFACE_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:surface_area&#39;</span>
+        <span class="n">TOTAL_WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:total_wetted_area&#39;</span>
+        <span class="n">WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:wetted_area&#39;</span>
+        <span class="n">WETTED_AREA_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:nacelle:wetted_area_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Paint">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Paint">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Paint</span><span class="p">:</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:paint:mass&#39;</span>
+        <span class="n">MASS_PER_UNIT_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:paint:mass_per_unit_area&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Propulsion">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Propulsion">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Propulsion</span><span class="p">:</span>
+        <span class="n">ENERGY_SYSTEM_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:energy_system_mass&#39;</span>
+        <span class="n">ENGINE_OIL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:engine_oil_mass_scaler&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:mass&#39;</span>
+        <span class="n">MISC_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:misc_mass_scaler&#39;</span>
+        <span class="n">TOTAL_ENGINE_CONTROLS_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_engine_controls_mass&#39;</span>
+        <span class="n">TOTAL_ENGINE_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_engine_mass&#39;</span>
+        <span class="n">TOTAL_ENGINE_OIL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_engine_oil_mass&#39;</span>
+        <span class="n">TOTAL_ENGINE_POD_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_engine_pod_mass&#39;</span>
+        <span class="n">TOTAL_MISC_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_misc_mass&#39;</span>
+        <span class="n">TOTAL_NUM_ENGINES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_num_engines&#39;</span>
+        <span class="n">TOTAL_NUM_FUSELAGE_ENGINES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_num_fuselage_engines&#39;</span>
+        <span class="n">TOTAL_NUM_WING_ENGINES</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_num_wing_engines&#39;</span>
+        <span class="n">TOTAL_REFERENCE_SLS_THRUST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_reference_sls_thrust&#39;</span>
+        <span class="n">TOTAL_SCALED_SLS_THRUST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_scaled_sls_thrust&#39;</span>
+        <span class="n">TOTAL_STARTER_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_starter_mass&#39;</span>
+        <span class="n">TOTAL_THRUST_REVERSERS_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:propulsion:total_thrust_reversers_mass&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Strut">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Strut">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Strut</span><span class="p">:</span>
+        <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:area&#39;</span>
+        <span class="n">AREA_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:area_ratio&#39;</span>
+        <span class="n">ATTACHMENT_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:attachment_location&#39;</span>
+        <span class="n">ATTACHMENT_LOCATION_DIMENSIONLESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:attachment_location_dimensionless&#39;</span>
+        <span class="n">CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:chord&#39;</span>
+        <span class="n">DIMENSIONAL_LOCATION_SPECIFIED</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:dimensional_location_specified&#39;</span>
+        <span class="n">FUSELAGE_INTERFERENCE_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:fuselage_interference_factor&#39;</span>
+        <span class="n">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:length&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:mass_coefficient&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:strut:thickness_to_chord&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.TailBoom">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.TailBoom">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">TailBoom</span><span class="p">:</span>
+        <span class="n">LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:tail_boom:length&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.VerticalTail">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.VerticalTail">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">VerticalTail</span><span class="p">:</span>
+        <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:area&#39;</span>
+        <span class="n">ASPECT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:aspect_ratio&#39;</span>
+        <span class="n">AVERAGE_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:average_chord&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:characteristic_length&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:fineness&#39;</span>
+        <span class="n">FORM_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:form_factor&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:laminar_flow_upper&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:mass_coefficient&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:mass_scaler&#39;</span>
+        <span class="n">MOMENT_ARM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:moment_arm&#39;</span>
+        <span class="n">MOMENT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:moment_ratio&#39;</span>
+        <span class="n">NUM_TAILS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:num_tails&#39;</span>
+        <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:root_chord&#39;</span>
+        <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:span&#39;</span>
+        <span class="n">SWEEP</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:sweep&#39;</span>
+        <span class="n">TAPER_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:taper_ratio&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:thickness_to_chord&#39;</span>
+        <span class="n">VOLUME_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:volume_coefficient&#39;</span>
+        <span class="n">WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:wetted_area&#39;</span>
+        <span class="n">WETTED_AREA_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:vertical_tail:wetted_area_scaler&#39;</span></div>
+
+
+<div class="viewcode-block" id="Aircraft.Wing">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Aircraft.Wing">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Wing</span><span class="p">:</span>
+        <span class="n">AEROELASTIC_TAILORING_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:aeroelastic_tailoring_factor&#39;</span>
+        <span class="n">AIRFOIL_TECHNOLOGY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:airfoil_technology&#39;</span>
+        <span class="n">AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:area&#39;</span>
+        <span class="n">ASPECT_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:aspect_ratio&#39;</span>
+        <span class="n">ASPECT_RATIO_REFERENCE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:aspect_ratio_reference&#39;</span>
+        <span class="n">AVERAGE_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:average_chord&#39;</span>
+        <span class="n">BENDING_MATERIAL_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:bending_material_factor&#39;</span>
+        <span class="n">BENDING_MATERIAL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:bending_material_mass&#39;</span>
+        <span class="c1"># Not defined in metadata!</span>
+        <span class="c1"># BENDING_MASS_NO_INERTIA = &#39;aircraft:wing:bending_mass_no_inertia&#39;</span>
+        <span class="n">BENDING_MATERIAL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:bending_material_mass_scaler&#39;</span>
+        <span class="n">BWB_AFTBODY_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:bwb_aftbody_mass&#39;</span>
+        <span class="n">BWB_AFTBODY_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:bwb_aftbody_mass_scaler&#39;</span>
+        <span class="n">CENTER_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:center_chord&#39;</span>
+        <span class="n">CENTER_DISTANCE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:center_distance&#39;</span>
+        <span class="n">CHARACTERISTIC_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:characteristic_length&#39;</span>
+        <span class="n">CHOOSE_FOLD_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:choose_fold_location&#39;</span>
+        <span class="n">CHORD_PER_SEMISPAN_DIST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:chord_per_semispan_dist&#39;</span>
+        <span class="n">COMPOSITE_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:composite_fraction&#39;</span>
+        <span class="n">CONTROL_SURFACE_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:control_surface_area&#39;</span>
+        <span class="n">CONTROL_SURFACE_AREA_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:control_surface_area_ratio&#39;</span>
+        <span class="n">DETAILED_WING</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:detailed_wing&#39;</span>
+        <span class="n">DIHEDRAL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:dihedral&#39;</span>
+        <span class="n">ENG_POD_INERTIA_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:eng_pod_inertia_factor&#39;</span>
+        <span class="n">EXPOSED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:exposed_area&#39;</span>
+        <span class="n">FINENESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:fineness&#39;</span>
+        <span class="n">FLAP_CHORD_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_chord_ratio&#39;</span>
+        <span class="n">FLAP_DEFLECTION_LANDING</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_deflection_landing&#39;</span>
+        <span class="n">FLAP_DEFLECTION_TAKEOFF</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_deflection_takeoff&#39;</span>
+        <span class="n">FLAP_DRAG_INCREMENT_OPTIMUM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_drag_increment_optimum&#39;</span>
+        <span class="n">FLAP_LIFT_INCREMENT_OPTIMUM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_lift_increment_optimum&#39;</span>
+        <span class="n">FLAP_SPAN_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_span_ratio&#39;</span>
+        <span class="n">FLAP_TYPE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:flap_type&#39;</span>
+        <span class="n">FOLD_DIMENSIONAL_LOCATION_SPECIFIED</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:fold_dimensional_location_specified&#39;</span>
+        <span class="n">FOLD_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:fold_mass&#39;</span>
+        <span class="n">FOLD_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:fold_mass_coefficient&#39;</span>
+        <span class="n">FOLDED_SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:folded_span&#39;</span>
+        <span class="n">FOLDED_SPAN_DIMENSIONLESS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:folded_span_dimensionless&#39;</span>
+        <span class="n">FOLDING_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:folding_area&#39;</span>
+        <span class="n">FORM_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:form_factor&#39;</span>
+        <span class="n">FUSELAGE_INTERFERENCE_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:fuselage_interference_factor&#39;</span>
+        <span class="n">GLOVE_AND_BAT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:glove_and_bat&#39;</span>
+        <span class="n">HAS_FOLD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:has_fold&#39;</span>
+        <span class="n">HAS_STRUT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:has_strut&#39;</span>
+        <span class="n">HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:height&#39;</span>
+        <span class="n">HIGH_LIFT_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:high_lift_mass&#39;</span>
+        <span class="n">HIGH_LIFT_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:high_lift_mass_coefficient&#39;</span>
+        <span class="n">INCIDENCE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:incidence&#39;</span>
+        <span class="n">INPUT_STATION_DIST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:input_station_dist&#39;</span>
+        <span class="n">LAMINAR_FLOW_LOWER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:laminar_flow_lower&#39;</span>
+        <span class="n">LAMINAR_FLOW_UPPER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:laminar_flow_upper&#39;</span>
+        <span class="n">LEADING_EDGE_SWEEP</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:leading_edge_sweep&#39;</span>
+        <span class="n">LOAD_DISTRIBUTION_CONTROL</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:load_distribution_control&#39;</span>
+        <span class="n">LOAD_FRACTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:load_fraction&#39;</span>
+        <span class="n">LOAD_PATH_SWEEP_DIST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:load_path_sweep_dist&#39;</span>
+        <span class="n">LOADING_ABOVE_20</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:loading_above_20&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:mass&#39;</span>
+        <span class="n">MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:mass_coefficient&#39;</span>
+        <span class="n">MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:mass_scaler&#39;</span>
+        <span class="n">MATERIAL_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:material_factor&#39;</span>
+        <span class="n">MAX_CAMBER_AT_70_SEMISPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:max_camber_at_70_semispan&#39;</span>
+        <span class="n">MAX_LIFT_REF</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:max_lift_ref&#39;</span>
+        <span class="n">MAX_SLAT_DEFLECTION_LANDING</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:max_slat_deflection_landing&#39;</span>
+        <span class="n">MAX_SLAT_DEFLECTION_TAKEOFF</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:max_slat_deflection_takeoff&#39;</span>
+        <span class="n">MAX_THICKNESS_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:max_thickness_location&#39;</span>
+        <span class="n">MIN_PRESSURE_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:min_pressure_location&#39;</span>
+        <span class="n">MISC_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:misc_mass&#39;</span>
+        <span class="n">MISC_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:misc_mass_scaler&#39;</span>
+        <span class="n">NUM_FLAP_SEGMENTS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:num_flap_segments&#39;</span>
+        <span class="n">NUM_INTEGRATION_STATIONS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:num_integration_stations&#39;</span>
+        <span class="n">OPTIMUM_FLAP_DEFLECTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:optimum_flap_deflection&#39;</span>
+        <span class="n">OPTIMUM_SLAT_DEFLECTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:optimum_slat_deflection&#39;</span>
+        <span class="n">OUTBOARD_SEMISPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:outboard_semispan&#39;</span>
+        <span class="n">ROOT_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:root_chord&#39;</span>
+        <span class="n">SHEAR_CONTROL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:shear_control_mass&#39;</span>
+        <span class="n">SHEAR_CONTROL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:shear_control_mass_scaler&#39;</span>
+        <span class="n">SLAT_CHORD_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:slat_chord_ratio&#39;</span>
+        <span class="n">SLAT_LIFT_INCREMENT_OPTIMUM</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:slat_lift_increment_optimum&#39;</span>
+        <span class="n">SLAT_SPAN_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:slat_span_ratio&#39;</span>
+        <span class="n">SPAN</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:span&#39;</span>
+        <span class="n">SPAN_EFFICIENCY_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:span_efficiency_factor&#39;</span>
+        <span class="n">SPAN_EFFICIENCY_REDUCTION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:span_efficiency_reduction&#39;</span>
+        <span class="n">STRUT_BRACING_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:strut_bracing_factor&#39;</span>
+        <span class="n">SURFACE_CONTROL_MASS</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:surface_control_mass&#39;</span>
+        <span class="n">SURFACE_CONTROL_MASS_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:surface_control_mass_coefficient&#39;</span>
+        <span class="n">SURFACE_CONTROL_MASS_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:surface_control_mass_scaler&#39;</span>
+        <span class="n">SWEEP</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:sweep&#39;</span>
+        <span class="n">TAPER_RATIO</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:taper_ratio&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:thickness_to_chord&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD_DIST</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:thickness_to_chord_dist&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD_REFERENCE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:thickness_to_chord_reference&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD_ROOT</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:thickness_to_chord_root&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD_TIP</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:thickness_to_chord_tip&#39;</span>
+        <span class="n">THICKNESS_TO_CHORD_UNWEIGHTED</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:thickness_to_chord_unweighted&#39;</span>
+        <span class="n">ULTIMATE_LOAD_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:ultimate_load_factor&#39;</span>
+        <span class="n">VAR_SWEEP_MASS_PENALTY</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:var_sweep_mass_penalty&#39;</span>
+        <span class="n">VERTICAL_MOUNT_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:vertical_mount_location&#39;</span>
+        <span class="n">WETTED_AREA</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:wetted_area&#39;</span>
+        <span class="n">WETTED_AREA_SCALER</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:wetted_area_scaler&#39;</span>
+        <span class="n">ZERO_LIFT_ANGLE</span> <span class="o">=</span> <span class="s1">&#39;aircraft:wing:zero_lift_angle&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Dynamic">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Dynamic">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dynamic</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;All time-dependent variables used during mission analysis.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Dynamic.Atmosphere">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Dynamic.Atmosphere">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Atmosphere</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Atmospheric and freestream conditions.&quot;&quot;&quot;</span>
+
+        <span class="n">DENSITY</span> <span class="o">=</span> <span class="s1">&#39;density&#39;</span>
+        <span class="n">DYNAMIC_PRESSURE</span> <span class="o">=</span> <span class="s1">&#39;dynamic_pressure&#39;</span>
+        <span class="n">DYNAMIC_VISCOSITY</span> <span class="o">=</span> <span class="s1">&#39;dynamic_viscosity&#39;</span>
+        <span class="n">KINEMATIC_VISCOSITY</span> <span class="o">=</span> <span class="s1">&#39;kinematic_viscosity&#39;</span>
+        <span class="n">MACH</span> <span class="o">=</span> <span class="s1">&#39;mach&#39;</span>
+        <span class="n">MACH_RATE</span> <span class="o">=</span> <span class="s1">&#39;mach_rate&#39;</span>
+        <span class="n">SPEED_OF_SOUND</span> <span class="o">=</span> <span class="s1">&#39;speed_of_sound&#39;</span>
+        <span class="n">STATIC_PRESSURE</span> <span class="o">=</span> <span class="s1">&#39;static_pressure&#39;</span>
+        <span class="n">TEMPERATURE</span> <span class="o">=</span> <span class="s1">&#39;temperature&#39;</span></div>
+
+
+<div class="viewcode-block" id="Dynamic.Mission">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Dynamic.Mission">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Mission</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Kinematic description of vehicle states in a ground-fixed reference frame. These values are</span>
+<span class="sd">        typically used by the Equations of Motion to determine vehicle states at each timestep.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here</span>
+        <span class="n">ALTITUDE</span> <span class="o">=</span> <span class="s1">&#39;altitude&#39;</span>
+        <span class="n">ALTITUDE_RATE</span> <span class="o">=</span> <span class="s1">&#39;altitude_rate&#39;</span>
+        <span class="n">ALTITUDE_RATE_MAX</span> <span class="o">=</span> <span class="s1">&#39;altitude_rate_max&#39;</span>
+        <span class="c1"># TODO Angle of Attack</span>
+        <span class="n">DISTANCE</span> <span class="o">=</span> <span class="s1">&#39;distance&#39;</span>
+        <span class="n">DISTANCE_RATE</span> <span class="o">=</span> <span class="s1">&#39;distance_rate&#39;</span>
+        <span class="n">FLIGHT_PATH_ANGLE</span> <span class="o">=</span> <span class="s1">&#39;flight_path_angle&#39;</span>
+        <span class="n">FLIGHT_PATH_ANGLE_RATE</span> <span class="o">=</span> <span class="s1">&#39;flight_path_angle_rate&#39;</span>
+        <span class="n">SPECIFIC_ENERGY</span> <span class="o">=</span> <span class="s1">&#39;specific_energy&#39;</span>
+        <span class="n">SPECIFIC_ENERGY_RATE</span> <span class="o">=</span> <span class="s1">&#39;specific_energy_rate&#39;</span>
+        <span class="n">SPECIFIC_ENERGY_RATE_EXCESS</span> <span class="o">=</span> <span class="s1">&#39;specific_energy_rate_excess&#39;</span>
+        <span class="n">VELOCITY</span> <span class="o">=</span> <span class="s1">&#39;velocity&#39;</span>
+        <span class="n">VELOCITY_RATE</span> <span class="o">=</span> <span class="s1">&#39;velocity_rate&#39;</span></div>
+
+
+<div class="viewcode-block" id="Dynamic.Vehicle">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Dynamic.Vehicle">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Vehicle</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vehicle properties and states in a vehicle-fixed reference frame.&quot;&quot;&quot;</span>
+
+        <span class="n">ANGLE_OF_ATTACK</span> <span class="o">=</span> <span class="s1">&#39;angle_of_attack&#39;</span>
+        <span class="n">BATTERY_STATE_OF_CHARGE</span> <span class="o">=</span> <span class="s1">&#39;battery_state_of_charge&#39;</span>
+        <span class="n">CUMULATIVE_ELECTRIC_ENERGY_USED</span> <span class="o">=</span> <span class="s1">&#39;cumulative_electric_energy_used&#39;</span>
+        <span class="n">DRAG</span> <span class="o">=</span> <span class="s1">&#39;drag&#39;</span>
+        <span class="n">LIFT</span> <span class="o">=</span> <span class="s1">&#39;lift&#39;</span>
+        <span class="n">MASS</span> <span class="o">=</span> <span class="s1">&#39;mass&#39;</span>
+        <span class="n">MASS_RATE</span> <span class="o">=</span> <span class="s1">&#39;mass_rate&#39;</span>
+
+<div class="viewcode-block" id="Dynamic.Vehicle.Propulsion">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Dynamic.Vehicle.Propulsion">[docs]</a>
+        <span class="k">class</span><span class="w"> </span><span class="nc">Propulsion</span><span class="p">:</span>
+            <span class="c1"># variables specific to the propulsion subsystem</span>
+            <span class="n">ELECTRIC_POWER_IN</span> <span class="o">=</span> <span class="s1">&#39;electric_power_in&#39;</span>
+            <span class="n">ELECTRIC_POWER_IN_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;electric_power_in_total&#39;</span>
+            <span class="c1"># EXIT_AREA = &#39;exit_area&#39;</span>
+            <span class="n">FUEL_FLOW_RATE</span> <span class="o">=</span> <span class="s1">&#39;fuel_flow_rate&#39;</span>
+            <span class="n">FUEL_FLOW_RATE_NEGATIVE</span> <span class="o">=</span> <span class="s1">&#39;fuel_flow_rate_negative&#39;</span>
+            <span class="n">FUEL_FLOW_RATE_NEGATIVE_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;fuel_flow_rate_negative_total&#39;</span>
+            <span class="n">FUEL_FLOW_RATE_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;fuel_flow_rate_total&#39;</span>
+            <span class="n">HYBRID_THROTTLE</span> <span class="o">=</span> <span class="s1">&#39;hybrid_throttle&#39;</span>
+            <span class="n">NOX_RATE</span> <span class="o">=</span> <span class="s1">&#39;nox_rate&#39;</span>
+            <span class="n">NOX_RATE_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;nox_rate_total&#39;</span>
+            <span class="n">PROPELLER_TIP_SPEED</span> <span class="o">=</span> <span class="s1">&#39;propeller_tip_speed&#39;</span>
+            <span class="n">RPM</span> <span class="o">=</span> <span class="s1">&#39;rotations_per_minute&#39;</span>
+            <span class="n">SHAFT_POWER</span> <span class="o">=</span> <span class="s1">&#39;shaft_power&#39;</span>
+            <span class="n">SHAFT_POWER_MAX</span> <span class="o">=</span> <span class="s1">&#39;shaft_power_max&#39;</span>
+            <span class="n">TEMPERATURE_T4</span> <span class="o">=</span> <span class="s1">&#39;t4&#39;</span>
+            <span class="n">THROTTLE</span> <span class="o">=</span> <span class="s1">&#39;throttle&#39;</span>
+            <span class="n">THRUST</span> <span class="o">=</span> <span class="s1">&#39;thrust_net&#39;</span>
+            <span class="n">THRUST_MAX</span> <span class="o">=</span> <span class="s1">&#39;thrust_net_max&#39;</span>
+            <span class="n">THRUST_MAX_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;thrust_net_max_total&#39;</span>
+            <span class="n">THRUST_TOTAL</span> <span class="o">=</span> <span class="s1">&#39;thrust_net_total&#39;</span>
+            <span class="n">TORQUE</span> <span class="o">=</span> <span class="s1">&#39;torque&#39;</span>
+            <span class="n">TORQUE_MAX</span> <span class="o">=</span> <span class="s1">&#39;torque_max&#39;</span></div>
+</div>
+</div>
+
+
+
+<div class="viewcode-block" id="Mission">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Mission</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Mission data hierarchy.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Mission.Constraints">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Constraints">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Constraints</span><span class="p">:</span>
+        <span class="c1"># these can be residuals (for equality constraints), upper bounds, or lower bounds</span>
+        <span class="n">EXCESS_FUEL_CAPACITY</span> <span class="o">=</span> <span class="s1">&#39;mission:constraints:excess_fuel_capacity&#39;</span>
+        <span class="n">GEARBOX_SHAFT_POWER_RESIDUAL</span> <span class="o">=</span> <span class="s1">&#39;mission:constraints:gearbox_shaft_power_residual&#39;</span>
+        <span class="n">MASS_RESIDUAL</span> <span class="o">=</span> <span class="s1">&#39;mission:constraints:mass_residual&#39;</span>
+        <span class="n">MAX_MACH</span> <span class="o">=</span> <span class="s1">&#39;mission:constraints:max_mach&#39;</span>
+        <span class="n">RANGE_RESIDUAL</span> <span class="o">=</span> <span class="s1">&#39;mission:constraints:range_residual&#39;</span>
+        <span class="n">RANGE_RESIDUAL_RESERVE</span> <span class="o">=</span> <span class="s1">&#39;mission:constraints:range_residual_reserve&#39;</span></div>
+
+
+<div class="viewcode-block" id="Mission.Design">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Design">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Design</span><span class="p">:</span>
+        <span class="c1"># These values may change in a design mission, but not during off-design. In a design</span>
+        <span class="c1"># mission these are either user inputs or calculated outputs, in off-design they are</span>
+        <span class="c1"># strictly inputs and therefore do not change.</span>
+        <span class="n">CRUISE_ALTITUDE</span> <span class="o">=</span> <span class="s1">&#39;mission:design:cruise_altitude&#39;</span>
+        <span class="n">CRUISE_RANGE</span> <span class="o">=</span> <span class="s1">&#39;mission:design:cruise_range&#39;</span>
+        <span class="n">GROSS_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:design:gross_mass&#39;</span>
+        <span class="n">LIFT_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:design:lift_coefficient&#39;</span>
+        <span class="n">LIFT_COEFFICIENT_MAX_FLAPS_UP</span> <span class="o">=</span> <span class="s1">&#39;mission:design:lift_coefficient_max_flaps_up&#39;</span>
+        <span class="n">MACH</span> <span class="o">=</span> <span class="s1">&#39;mission:design:mach&#39;</span>
+        <span class="n">RANGE</span> <span class="o">=</span> <span class="s1">&#39;mission:design:range&#39;</span>
+        <span class="n">RATE_OF_CLIMB_AT_TOP_OF_CLIMB</span> <span class="o">=</span> <span class="s1">&#39;mission:design:rate_of_climb_at_top_of_climb&#39;</span>
+        <span class="n">RESERVE_FUEL</span> <span class="o">=</span> <span class="s1">&#39;mission:design:reserve_fuel&#39;</span>
+        <span class="n">THRUST_TAKEOFF_PER_ENG</span> <span class="o">=</span> <span class="s1">&#39;mission:design:thrust_takeoff_per_eng&#39;</span></div>
+
+
+<div class="viewcode-block" id="Mission.Landing">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Landing">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Landing</span><span class="p">:</span>
+        <span class="c1"># These are values which have to do with landing</span>
+        <span class="n">AIRPORT_ALTITUDE</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:airport_altitude&#39;</span>
+        <span class="n">BRAKING_DELAY</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:braking_delay&#39;</span>
+        <span class="n">BRAKING_FRICTION_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:braking_friction_coefficient&#39;</span>
+        <span class="n">DRAG_COEFFICIENT_FLAP_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:drag_coefficient_flap_increment&#39;</span>
+        <span class="n">DRAG_COEFFICIENT_MIN</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:drag_coefficient_min&#39;</span>
+        <span class="n">FIELD_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:field_length&#39;</span>
+        <span class="n">FLARE_RATE</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:flare_rate&#39;</span>
+        <span class="n">GLIDE_TO_STALL_RATIO</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:glide_to_stall_ratio&#39;</span>
+        <span class="n">GROUND_DISTANCE</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:ground_distance&#39;</span>
+        <span class="n">INITIAL_ALTITUDE</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:initial_altitude&#39;</span>
+        <span class="n">INITIAL_MACH</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:initial_mach&#39;</span>
+        <span class="n">INITIAL_VELOCITY</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:initial_velocity&#39;</span>
+        <span class="n">LIFT_COEFFICIENT_FLAP_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:lift_coefficient_flap_increment&#39;</span>
+        <span class="n">LIFT_COEFFICIENT_MAX</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:lift_coefficient_max&#39;</span>
+        <span class="n">MAXIMUM_FLARE_LOAD_FACTOR</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:maximum_flare_load_factor&#39;</span>
+        <span class="n">MAXIMUM_SINK_RATE</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:maximum_sink_rate&#39;</span>
+        <span class="n">OBSTACLE_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:obstacle_height&#39;</span>
+        <span class="n">ROLLING_FRICTION_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:rolling_friction_coefficient&#39;</span>
+        <span class="n">SPOILER_DRAG_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:spoiler_drag_coefficient&#39;</span>
+        <span class="n">SPOILER_LIFT_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:spoiler_lift_coefficient&#39;</span>
+        <span class="n">STALL_VELOCITY</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:stall_velocity&#39;</span>
+        <span class="n">TOUCHDOWN_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:touchdown_mass&#39;</span>
+        <span class="n">TOUCHDOWN_SINK_RATE</span> <span class="o">=</span> <span class="s1">&#39;mission:landing:touchdown_sink_rate&#39;</span></div>
+
+
+<div class="viewcode-block" id="Mission.Objectives">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Objectives">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Objectives</span><span class="p">:</span>
+        <span class="c1"># these are values that can be fed to the optimizer as objectives,</span>
+        <span class="c1"># they may often be composite and/or regularized</span>
+        <span class="n">FUEL</span> <span class="o">=</span> <span class="s1">&#39;mission:objectives:fuel&#39;</span>
+        <span class="n">RANGE</span> <span class="o">=</span> <span class="s1">&#39;mission:objectives:range&#39;</span></div>
+
+
+<div class="viewcode-block" id="Mission.Summary">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Summary">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Summary</span><span class="p">:</span>
+        <span class="c1"># These values are inputs and outputs to/from mission analysis for the given mission</span>
+        <span class="c1"># (whether it is design or off-design). In design these may be constrained to design values,</span>
+        <span class="c1"># but in off-design they independently represent the final analysis based on the</span>
+        <span class="c1"># user selection.</span>
+        <span class="n">CRUISE_MACH</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:cruise_mach&#39;</span>
+        <span class="n">CRUISE_MASS_FINAL</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:cruise_mass_final&#39;</span>
+        <span class="n">FINAL_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:final_mass&#39;</span>
+        <span class="n">FINAL_TIME</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:final_time&#39;</span>
+        <span class="n">FUEL_BURNED</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:fuel_burned&#39;</span>
+        <span class="n">FUEL_FLOW_SCALER</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:fuel_flow_scaler&#39;</span>
+        <span class="n">FUEL_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:fuel_mass&#39;</span>
+        <span class="n">FUEL_MASS_REQUIRED</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:fuel_mass_required&#39;</span>
+        <span class="n">GROSS_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:gross_mass&#39;</span>
+        <span class="n">OPERATING_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:operating_mass&#39;</span>
+        <span class="n">RANGE</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:range&#39;</span>
+        <span class="n">RESERVE_FUEL_BURNED</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:reserve_fuel_burned&#39;</span>
+        <span class="n">TOTAL_FUEL_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:total_fuel_mass&#39;</span>
+        <span class="n">USEFUL_LOAD</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:useful_load&#39;</span>
+        <span class="n">ZERO_FUEL_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:summary:zero_fuel_mass&#39;</span></div>
+
+
+<div class="viewcode-block" id="Mission.Takeoff">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Takeoff">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Takeoff</span><span class="p">:</span>
+        <span class="c1"># These are values which have to do with takeoff</span>
+        <span class="n">AIRPORT_ALTITUDE</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:airport_altitude&#39;</span>
+        <span class="n">ANGLE_OF_ATTACK_RUNWAY</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:angle_of_attack_runway&#39;</span>
+        <span class="n">ASCENT_DURATION</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:ascent_duration&#39;</span>
+        <span class="n">ASCENT_T_INITIAL</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:ascent_t_initial&#39;</span>
+        <span class="n">BRAKING_FRICTION_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:braking_friction_coefficient&#39;</span>
+        <span class="n">DECISION_SPEED_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:decision_speed_increment&#39;</span>
+        <span class="n">DRAG_COEFFICIENT_FLAP_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:drag_coefficient_flap_increment&#39;</span>
+        <span class="n">DRAG_COEFFICIENT_MIN</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:drag_coefficient_min&#39;</span>
+        <span class="n">FIELD_LENGTH</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:field_length&#39;</span>
+        <span class="n">FINAL_ALTITUDE</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:final_altitude&#39;</span>
+        <span class="n">FINAL_MACH</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:final_mach&#39;</span>
+        <span class="n">FINAL_MASS</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:final_mass&#39;</span>
+        <span class="n">FINAL_VELOCITY</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:final_velocity&#39;</span>
+        <span class="n">FUEL_SIMPLE</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:fuel_simple&#39;</span>
+        <span class="n">GROUND_DISTANCE</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:ground_distance&#39;</span>
+        <span class="n">LIFT_COEFFICIENT_FLAP_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:lift_coefficient_flap_increment&#39;</span>
+        <span class="n">LIFT_COEFFICIENT_MAX</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:lift_coefficient_max&#39;</span>
+        <span class="n">LIFT_OVER_DRAG</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:lift_over_drag&#39;</span>
+        <span class="n">OBSTACLE_HEIGHT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:obstacle_height&#39;</span>
+        <span class="n">ROLLING_FRICTION_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:rolling_friction_coefficient&#39;</span>
+        <span class="n">ROTATION_SPEED_INCREMENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:rotation_speed_increment&#39;</span>
+        <span class="n">ROTATION_VELOCITY</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:rotation_velocity&#39;</span>
+        <span class="n">SPOILER_DRAG_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:spoiler_drag_coefficient&#39;</span>
+        <span class="n">SPOILER_LIFT_COEFFICIENT</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:spoiler_lift_coefficient&#39;</span>
+        <span class="n">THRUST_INCIDENCE</span> <span class="o">=</span> <span class="s1">&#39;mission:takeoff:thrust_incidence&#39;</span></div>
+
+
+<div class="viewcode-block" id="Mission.Taxi">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Mission.Taxi">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Taxi</span><span class="p">:</span>
+        <span class="n">DURATION</span> <span class="o">=</span> <span class="s1">&#39;mission:taxi:duration&#39;</span>
+        <span class="n">MACH</span> <span class="o">=</span> <span class="s1">&#39;mission:taxi:mach&#39;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Settings">
+<a class="viewcode-back" href="../../../_srcdocs/packages/variable_info/variables.html#aviary.variable_info.variables.Settings">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Settings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setting data hierarchy.&quot;&quot;&quot;</span>
+
+    <span class="n">AERODYNAMICS_METHOD</span> <span class="o">=</span> <span class="s1">&#39;settings:aerodynamics_method&#39;</span>
+    <span class="n">ATMOSPHERE_MODEL</span> <span class="o">=</span> <span class="s1">&#39;settings:atmosphere_model&#39;</span>
+    <span class="n">EQUATIONS_OF_MOTION</span> <span class="o">=</span> <span class="s1">&#39;settings:equations_of_motion&#39;</span>
+    <span class="n">MASS_METHOD</span> <span class="o">=</span> <span class="s1">&#39;settings:mass_method&#39;</span>
+    <span class="n">PAYLOAD_RANGE</span> <span class="o">=</span> <span class="s1">&#39;settings:payload_range&#39;</span>
+    <span class="n">PROBLEM_TYPE</span> <span class="o">=</span> <span class="s1">&#39;settings:problem_type&#39;</span>
+    <span class="n">VERBOSITY</span> <span class="o">=</span> <span class="s1">&#39;settings:verbosity&#39;</span></div>
+
+</pre></div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
