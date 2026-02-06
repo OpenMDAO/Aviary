@@ -138,12 +138,12 @@ aircraft:wing:dihedral,6,deg
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:glove_and_bat,0,ft**2
 aircraft:wing:height,8.6,ft
-aircraft:wing:input_station_dist,0,0.34453777998,0.919,1,unitless
+aircraft:wing:input_station_distribution,0,0.34453777998,0.919,1,unitless
 aircraft:wing:laminar_flow_lower,0,unitless
 aircraft:wing:laminar_flow_upper,58,unitless
 aircraft:wing:load_distribution_control,2,unitless
 aircraft:wing:load_fraction,1,unitless
-aircraft:wing:load_path_sweep_dist,0,23.6286942529271,23.6286942529271,deg
+aircraft:wing:load_path_sweep_distribution,0,23.6286942529271,23.6286942529271,deg
 aircraft:wing:mass_scaler,0.7412,unitless
 aircraft:wing:max_camber_at_70_semispan,0.015,unitless
 aircraft:wing:misc_mass_scaler,1.7,unitless

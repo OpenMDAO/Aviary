@@ -681,7 +681,7 @@ class _BWBWing(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_INPUT_STATION_DISTRIBUTION', shape=num_stations, units='unitless')
         self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
         self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
 
@@ -690,8 +690,8 @@ class _BWBWing(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        input_station_dist = inputs['BWB_INPUT_STATION_DIST']
-        num_stations = len(inputs['BWB_INPUT_STATION_DIST'])
+        input_station_dist = inputs['BWB_INPUT_STATION_DISTRIBUTION']
+        num_stations = len(inputs['BWB_INPUT_STATION_DISTRIBUTION'])
 
         span = inputs[Aircraft.Wing.SPAN]
 

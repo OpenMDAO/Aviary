@@ -21,18 +21,21 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Engine.NUM_WING_ENGINES)
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES)
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
 
     def setup(self):
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
         num_input_stations = len(input_station_dist)
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         add_aviary_input(
-            self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST, shape=num_input_stations - 1, units='deg'
+            self,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            shape=num_input_stations - 1,
+            units='deg',
         )
         add_aviary_input(
             self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST, shape=num_input_stations, units='unitless'
@@ -68,7 +71,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DIST]
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
         inp_stations = np.array(input_station_dist)
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
         num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
@@ -83,7 +86,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # 2.0-3.0 : blend of elliptical and rectangular
         load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
 
-        load_path_sweep = inputs[Aircraft.Wing.LOAD_PATH_SWEEP_DIST]
+        load_path_sweep = inputs[Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION]
         thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DIST]
         chord = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST]
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]

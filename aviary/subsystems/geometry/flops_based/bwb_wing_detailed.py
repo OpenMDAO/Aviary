@@ -14,18 +14,20 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
         add_aviary_input(
             self, Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, shape=num_stations, units='unitless'
         )
         add_aviary_input(
             self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST, shape=num_stations, units='unitless'
         )
-        add_aviary_input(self, Aircraft.Wing.LOAD_PATH_SWEEP_DIST, shape=num_stations, units='deg')
+        add_aviary_input(
+            self, Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, shape=num_stations, units='deg'
+        )
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
@@ -38,13 +40,13 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        self.add_output('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
+        self.add_output('BWB_INPUT_STATION_DISTRIBUTION', shape=num_stations, units='unitless')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
         self.add_output('BWB_THICKNESS_TO_CHORD_DIST', shape=num_stations, units='unitless')
-        self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=num_stations, units='deg')
+        self.add_output('BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_stations, units='deg')
 
     def setup_partials(self):
-        self.declare_partials('BWB_INPUT_STATION_DIST', '*', method='fd', form='forward')
+        self.declare_partials('BWB_INPUT_STATION_DISTRIBUTION', '*', method='fd', form='forward')
 
         self.declare_partials('BWB_CHORD_PER_SEMISPAN_DIST', '*', method='fd', form='forward')
 
@@ -57,8 +59,8 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         )
 
         self.declare_partials(
-            'BWB_LOAD_PATH_SWEEP_DIST',
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             val=1.0,
         )
 
@@ -77,7 +79,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         xl_out = root_chord / rear_spar_percent_chord
 
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
         )
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
@@ -86,7 +88,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         )
         bwb_input_station_dist[0] = 0.0
         bwb_input_station_dist[1] = width / 2.0
-        outputs['BWB_INPUT_STATION_DIST'] = bwb_input_station_dist
+        outputs['BWB_INPUT_STATION_DISTRIBUTION'] = bwb_input_station_dist
 
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'] = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST]
         idx = np.where(inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DIST] < 5.0)
@@ -100,7 +102,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             2:
         ]
 
-        outputs['BWB_LOAD_PATH_SWEEP_DIST'][:] = inputs[Aircraft.Wing.LOAD_PATH_SWEEP_DIST]
+        outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][:] = inputs[
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION
+        ]
 
     def compute_partials(self, inputs, J):
         # width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
@@ -112,7 +116,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         # rear_spar_percent_chord = inputs['Rear_spar_percent_chord'][0]
         # xl_out = root_chord / rear_spar_percent_chord
 
-        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
 
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD][0] = 1.0
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD][1] = 1.0
@@ -132,7 +136,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -149,14 +153,14 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        self.add_output('BWB_INPUT_STATION_DIST', shape=3, units='unitless')
+        self.add_output('BWB_INPUT_STATION_DISTRIBUTION', shape=3, units='unitless')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DIST', shape=3, units='unitless')
         self.add_output('BWB_THICKNESS_TO_CHORD_DIST', shape=3, units='unitless')
-        self.add_output('BWB_LOAD_PATH_SWEEP_DIST', shape=3, units='deg')
+        self.add_output('BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=3, units='deg')
 
     def setup_partials(self):
         self.declare_partials(
-            'BWB_INPUT_STATION_DIST',
+            'BWB_INPUT_STATION_DISTRIBUTION',
             [
                 Aircraft.Fuselage.MAX_WIDTH,
             ],
@@ -172,7 +176,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         )
         self.declare_partials('BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD)
         self.declare_partials(
-            'BWB_LOAD_PATH_SWEEP_DIST',
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
             [
                 Aircraft.Wing.SWEEP,
                 Aircraft.Wing.SPAN,
@@ -202,9 +206,9 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         angle = np.tan(sweep / 57.2958) - 2.0 * (1 - tr_out) / (1 + tr_out) / ar_out
         swp_ld_path = 57.2958 * np.arctan(angle)
 
-        outputs['BWB_INPUT_STATION_DIST'][0] = 0.0
-        outputs['BWB_INPUT_STATION_DIST'][1] = width / 2.0
-        outputs['BWB_INPUT_STATION_DIST'][2] = 1.0
+        outputs['BWB_INPUT_STATION_DISTRIBUTION'][0] = 0.0
+        outputs['BWB_INPUT_STATION_DISTRIBUTION'][1] = width / 2.0
+        outputs['BWB_INPUT_STATION_DISTRIBUTION'][2] = 1.0
 
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'][0] = length
         outputs['BWB_CHORD_PER_SEMISPAN_DIST'][1] = xl_out
@@ -214,9 +218,9 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         outputs['BWB_THICKNESS_TO_CHORD_DIST'][1] = tc
         outputs['BWB_THICKNESS_TO_CHORD_DIST'][2] = tc
 
-        outputs['BWB_LOAD_PATH_SWEEP_DIST'][0] = 0.0
-        outputs['BWB_LOAD_PATH_SWEEP_DIST'][1] = swp_ld_path
-        outputs['BWB_LOAD_PATH_SWEEP_DIST'][2] = swp_ld_path
+        outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][0] = 0.0
+        outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][1] = swp_ld_path
+        outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][2] = swp_ld_path
 
     def compute_partials(self, inputs, J):
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
@@ -233,7 +237,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         angle = np.tan(sweep / 57.2958) - 2.0 * (1 - tr_out) / (1 + tr_out) / ar_out
         swp_ld_path = 57.2958 * np.arctan(angle)
 
-        J['BWB_INPUT_STATION_DIST', Aircraft.Fuselage.MAX_WIDTH] = [0.0, 0.5, 0.0]
+        J['BWB_INPUT_STATION_DISTRIBUTION', Aircraft.Fuselage.MAX_WIDTH] = [0.0, 0.5, 0.0]
 
         J['BWB_CHORD_PER_SEMISPAN_DIST', Aircraft.Fuselage.LENGTH] = [1.0, 0.0, 0.0]
         J['BWB_CHORD_PER_SEMISPAN_DIST', Aircraft.Wing.ROOT_CHORD] = [
@@ -251,7 +255,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         J['BWB_THICKNESS_TO_CHORD_DIST', Aircraft.Wing.THICKNESS_TO_CHORD] = 1
 
         dswp_ld_path_dsweep = 1 / (1 + angle**2) / np.cos(sweep / 57.2958) ** 2
-        J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.SWEEP] = [
+        J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Wing.SWEEP] = [
             0.0,
             dswp_ld_path_dsweep,
             dswp_ld_path_dsweep,
@@ -271,7 +275,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
                 + 2 * (2 / (1 + tr_out) - 1) * dar_out_dspan / ar_out**2
             )
         )
-        J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.SPAN] = [
+        J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Wing.SPAN] = [
             0.0,
             dswp_ld_path_dspan,
             dswp_ld_path_dspan,
@@ -289,7 +293,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
                 + 2 * (2 / (1 + tr_out) - 1) * dar_out_droot_chord / ar_out**2
             )
         )
-        J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Wing.ROOT_CHORD] = [
+        J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Wing.ROOT_CHORD] = [
             0.0,
             dswp_ld_path_droot_chord,
             dswp_ld_path_droot_chord,
@@ -305,7 +309,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
                 + 2 * (2 / (1 + tr_out) - 1) * dar_out_dwidth / ar_out**2
             )
         )
-        J['BWB_LOAD_PATH_SWEEP_DIST', Aircraft.Fuselage.MAX_WIDTH] = [
+        J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Fuselage.MAX_WIDTH] = [
             0.0,
             dswp_ld_path_dwidth,
             dswp_ld_path_dwidth,
@@ -327,7 +331,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
                 + 2 * (2 / (1 + tr_out) - 1) * dar_out_drear_chord / ar_out**2
             )
         )
-        J['BWB_LOAD_PATH_SWEEP_DIST', 'Rear_spar_percent_chord'] = [
+        J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', 'Rear_spar_percent_chord'] = [
             0.0,
             dswp_ld_path_drear_chord,
             dswp_ld_path_drear_chord,
@@ -346,7 +350,7 @@ class BWBWingPrelim(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_INPUT_STATION_DIST', shape=num_stations, units='unitless')
+        self.add_input('BWB_INPUT_STATION_DISTRIBUTION', shape=num_stations, units='unitless')
         self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_stations, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.AREA, units='ft**2')
@@ -356,8 +360,8 @@ class BWBWingPrelim(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
-        input_station_dist = inputs['BWB_INPUT_STATION_DIST']
-        num_stations = len(inputs['BWB_INPUT_STATION_DIST'])
+        input_station_dist = inputs['BWB_INPUT_STATION_DISTRIBUTION']
+        num_stations = len(inputs['BWB_INPUT_STATION_DISTRIBUTION'])
 
         glove_and_bat = inputs[Aircraft.Wing.GLOVE_AND_BAT]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH]

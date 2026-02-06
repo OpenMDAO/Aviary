@@ -10,6 +10,7 @@ parts:
     - file: getting_started/installation
     - file: getting_started/expected_user_knowledge
     - file: getting_started/tools_that_aviary_uses
+    - file: whats_next
 
 - caption: User Guide
   chapters:

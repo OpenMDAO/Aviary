@@ -260,13 +260,13 @@ inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)
 inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.HEIGHT, 8.6, 'ft')
-inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.34453777998, 0.919, 1.0]))
+inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.0, 0.34453777998, 0.919, 1.0]))
 inputs.set_val(Aircraft.Wing.LAMINAR_FLOW_LOWER, 0.0)
 inputs.set_val(Aircraft.Wing.LAMINAR_FLOW_UPPER, 58.0)
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)
 inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)
 inputs.set_val(
-    Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+    Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
     np.array([0.0, 23.6286942529271, 23.6286942529271]),
     'deg',
 )

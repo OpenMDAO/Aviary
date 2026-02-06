@@ -44,7 +44,7 @@ The basic subsystems included with Aviary are:
 - mission analysis
 
 For each of these subsystems, Aviary provides a few different methods that can be used.
-In general, these are empirical models based on historical data, raw tabular data from other models or experiments, and some physics-based models.
+In general, these are very low-fidelity methods that emphasize computational speed over detail. These methods are primarily empirical models based on historical data, occasionally augmented with raw tabular data from other models or experiments or some physics-based models.
 
 The [Theory Guide](./theory_guide/intro) provides much more information on the specific methods used for each subsystem.
 
