@@ -904,7 +904,10 @@ def update_flops_options(vehicle_data):
         if input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0] < 50:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
             FWMAX = input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0]
-            FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
+            if Aircraft.Fuel.DENSITY in input_values:
+                FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
+            else:
+                FULDEN = 50.12  # 50.12 lbm/ft**3 = 6.7 lbm/galUS
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
@@ -914,6 +917,146 @@ def update_flops_options(vehicle_data):
     if Aircraft.Wing.INPUT_STATION_DIST in input_values:
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
 
+    if not Mission.Landing.LIFT_COEFFICIENT_MAX in input_values:
+        unused_values = vehicle_data['unused_values']
+        try:
+            CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
+            CLLDM = 1.69 * CLAPP
+        except:
+            CLLDM = 3.0
+        input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
+
+    design_type, design_units = input_values.get_item(Aircraft.Design.TYPE)
+    if design_type[0] == 0:
+        input_values.set_val(Aircraft.Design.TYPE, ['transport'], design_units)
+
+        if Aircraft.Fuselage.LENGTH in input_values:
+            input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [True], 'unitless')
+        else:
+            input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [False], 'unitless')
+    elif design_type[0] == 3:
+        input_values.set_val(Aircraft.Design.TYPE, ['BWB'], design_units)
+
+        # BWB always have detailed wing.
+        input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
+        if Aircraft.Wing.INPUT_STATION_DIST in input_values:
+            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+            input_station_dist = [0.0] + input_station_dist
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, input_station_dist)
+            n_dist = len(input_station_dist)
+            chord_per_semispan_dist = input_values.get_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST)
+            chord_per_semispan_dist = [-1.0] + chord_per_semispan_dist[0 : n_dist - 1]
+            input_values.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, chord_per_semispan_dist)
+            load_path_sweep_dist = input_values.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, 'deg')
+            load_path_sweep_dist = [0.0] + load_path_sweep_dist[0 : n_dist - 2]
+            input_values.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, load_path_sweep_dist, 'deg')
+            thickness_to_chord_dist = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST)
+            thickness_to_chord_dist = [-1.0] + thickness_to_chord_dist[0 : n_dist - 1]
+            input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
+            input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
+        else:
+            # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.
+            input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
+
+        if (
+            Aircraft.Fuselage.LENGTH in input_values
+            and Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP in input_values
+        ):
+            if (
+                input_values.get_val(Aircraft.Fuselage.LENGTH, 'ft')[0] > 0.0
+                and input_values.get_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 'deg')[0] > 0.0
+            ):
+                input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [True], 'unitless')
+            else:
+                input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [False], 'unitless')
+        else:
+            input_values.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, [False], 'unitless')
+
+        if Aircraft.Engine.SCALED_SLS_THRUST in input_values:
+            # This is a design variable. So, first entry is the initial value
+            thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
+            input_values.set_val(Aircraft.Engine.SCALED_SLS_THRUST, [thrust], 'lbf')
+
+        if not Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO in input_values:
+            if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
+                wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
+                input_values.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, [wing_tc], 'unitless')
+
+        if not Aircraft.Fuel.WING_FUEL_FRACTION in input_values:
+            # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
+            FWMAX = 23  # the default
+            if Aircraft.Fuel.DENSITY in input_values:
+                FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
+            else:
+                FULDEN = 50.1194909  # lbm/ft**3 or 6.7 lbm/galUS
+                input_values.set_val(Aircraft.Fuel.DENSITY, [6.7], 'lbm/galUS')
+            input_values.set_val(
+                Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
+            )
+
+        # For BWB, wing area is always computed
+        if Aircraft.Wing.AREA in input_values:
+            input_values.delete(Aircraft.Wing.AREA)
+        if Aircraft.Wing.ASPECT_RATIO in input_values:
+            input_values.delete(Aircraft.Wing.ASPECT_RATIO)
+
+        if (
+            Aircraft.Engine.SCALED_SLS_THRUST in input_values
+            and Aircraft.Engine.REFERENCE_SLS_THRUST in input_values
+        ):
+            ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
+            scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
+            if scaled_thrust <= 0:
+                print(
+                    'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
+                    f'but you have {scaled_thrust}'
+                )
+            else:
+                engine_scale_factor = scaled_thrust / ref_thrust
+                input_values.set_val(
+                    Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
+                )
+    else:
+        raise RuntimeError(
+            f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
+        )
+
+    if (
+        not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values
+        or input_values.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
+    ):
+        if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
+            wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
+            input_values.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
+
+    if (not Aircraft.VerticalTail.THICKNESS_TO_CHORD in input_values) or (
+        input_values.get_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
+    ):
+        if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
+            wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
+            input_values.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
+
+    # These variables should be removed if they are zero.
+    rem_list = [
+        (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
+        (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
+        (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
+        (Aircraft.Fuselage.LENGTH, 'ft'),
+        (Aircraft.Fuselage.MAX_WIDTH, 'ft'),
+        (Aircraft.HorizontalTail.SWEEP, 'deg'),
+    ]
+    for var in rem_list:
+        try:
+            val = input_values.get_val(var[0], var[1])[0]
+            if val == 0.0:
+                input_values.delete(var[0])
+        except:
+            pass
+
+    if design_type[0] != 3:
+        input_values.delete(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP)
+
     vehicle_data['input_values'] = input_values
     return vehicle_data
 
@@ -922,7 +1065,6 @@ def update_aviary_options(vehicle_data):
     """Special handling for variables that occurs for either legacy code."""
     input_values: NamedValues = vehicle_data['input_values']
 
-    # if reference + scaled thrust both provided, set scale factor
     try:
         ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
         ref_thrust = float(ref_thrust)
