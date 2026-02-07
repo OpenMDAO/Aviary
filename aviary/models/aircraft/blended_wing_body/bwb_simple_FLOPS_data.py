@@ -20,7 +20,6 @@ inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUP
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
-inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
 inputs.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, True)
 inputs.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False)
 
@@ -50,11 +49,11 @@ inputs.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, 0.0)  # TCCAN
 # ---------------------------
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100)  # NPB
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28)  # NPF
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 468, units='unitless')  # NPB+NPF+NPT
+# inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 468, units='unitless')  # NPB+NPF+NPT
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 340)  # NPT
 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 100)  # NPB
 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 28)  # NPF
-inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 468, units='unitless')  # sum of three classes
+# inputs.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 468, units='unitless')  # sum of three classes
 inputs.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 340)  # NPT
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4)  # NBABR
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)  # NFABR
@@ -89,13 +88,13 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)  # FRFIN
 # Fuel
 # ---------------------------
 inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')  # FULAUX
-inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')  # FULDEN
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)  # WFSYS
 inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.68835495693, 'unitless')
+inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 
 # Furnishings
 # ---------------------------
@@ -116,7 +115,7 @@ inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 # Horizontal Tail
 # ---------------------------
 inputs.set_val(Aircraft.HorizontalTail.AREA, 0.0, 'ft**2')  # SHT
-inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # SHT
+inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # ARHT
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT
 # inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT
@@ -161,7 +160,7 @@ inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
 inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 22017, 'lbm')  # WENG
 inputs.set_val(Aircraft.Engine.SCALED_SLS_THRUST, 70000.0, 'lbf')  # THRUST
 inputs.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, 'lbf')  # THRSO
-inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))  # NEW+NEF
+# inputs.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]))  # NEW+NEF
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3)  # NEF
 inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]))  # NEW
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)  # WTHR

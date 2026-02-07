@@ -1752,7 +1752,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.TYPE,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.IHWB'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': ['INGASP.IHWB'], 'FLOPS': ['OPTION.IFITE'], 'LEAPS1': None},
     units='unitless',
     types=AircraftTypes,
     option=True,
@@ -3699,7 +3699,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='carry out simple or detailed layout of fuselage.',
+    desc='carry out simple or detailed layout of fuselage (for FLOPS based geometry).',
     option=True,
     default_value=True,
 )

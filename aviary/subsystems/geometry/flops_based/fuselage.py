@@ -70,7 +70,9 @@ class BWBFuselagePrelim(om.ExplicitComponent):
             'Rear_spar_percent_chord',
             0.7,
             units='unitless',
-            desc='RSPSOB: Rear spar percent chord for BWB at side of body',
+            desc='RSPSOB: Rear spar percent chord for BWB at side of body, '
+            ' or more precisely, the passenger compartment ends at the '
+            ' 70% of fuselage length from the leading edge.',
         )
 
         add_aviary_output(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
