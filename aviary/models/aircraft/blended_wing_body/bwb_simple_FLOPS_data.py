@@ -234,7 +234,7 @@ inputs.set_val(Mission.Design.RANGE, 7750.0, 'NM')  # DESRNG
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO
 # inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')  # FTKOFL
 
-# inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM
+inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM
 # inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO
