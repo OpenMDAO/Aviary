@@ -397,7 +397,7 @@ class BWBWingPrelim(om.ExplicitComponent):
         # This part is repeated in _BWBWing()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=width.dtype
         )
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,

@@ -185,7 +185,7 @@ class BWBTransportAirCondMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options(case_name)
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
