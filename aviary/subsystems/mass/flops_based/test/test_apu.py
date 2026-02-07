@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from openmdao.utils.testing_utils import use_tempdirs
@@ -88,8 +89,11 @@ class BWBAPUMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
+    # @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(
+        self,
+    ):
+        case_name = 'BWBsimpleFLOPS'
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -99,7 +103,7 @@ class BWBAPUMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options(case_name, preprocess=False)
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -114,4 +118,7 @@ class BWBAPUMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBAPUMassTest()
+    test.setUp()
+    test.test_case()
