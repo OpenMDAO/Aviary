@@ -115,11 +115,11 @@ inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 # Horizontal Tail
 # ---------------------------
 inputs.set_val(Aircraft.HorizontalTail.AREA, 0.0, 'ft**2')  # SHT
-inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # SHT
+inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # ARHT
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT
 # inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT
-inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # SHT
+inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # FRHT
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)  # SWETH
 # inputs.set_val(Aircraft.HorizontalTail.SWEEP, 0.0)  # SWPHT
 
