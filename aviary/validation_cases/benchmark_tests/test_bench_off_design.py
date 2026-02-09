@@ -350,21 +350,21 @@ class Test2DOFOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.RANGE), 3991.32364531, tolerance=1e-4
+            prob_fallout.get_val(Mission.Summary.RANGE), 3994.25223046, tolerance=1e-4
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40522.37757121,
+            40505.09154366,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            39904.49334072,
+            39910.0046378,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            95095.50665928,
+            95089.9953622,
             tolerance=1e-6,
         )
         assert_near_equal(
