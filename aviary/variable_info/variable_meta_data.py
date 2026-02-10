@@ -7476,9 +7476,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    # TODO: missing &DEFINE.AERIN.CLAPP ???
-    #    - NOTE: there is a relationship in FLOPS/LEAPS1 between CLAPP and
-    #      CLLDM (this variable)
     Mission.Landing.LIFT_COEFFICIENT_MAX,
     meta_data=_MetaData,
     historical_name={
