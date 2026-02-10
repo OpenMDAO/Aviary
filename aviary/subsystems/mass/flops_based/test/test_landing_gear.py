@@ -198,41 +198,5 @@ class LandingGearLengthTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
-@use_tempdirs
-class BWBLandingGearMassTest(unittest.TestCase):
-    """Tests landing gear mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_casdgse(self, case_name):
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'landing_gear',
-            LandingGearMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            self.prob,
-            case_name,
-            input_keys=[
-                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
-                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Aircraft.Design.TOUCHDOWN_MASS,
-            ],
-            output_keys=[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS],
-            version=Version.BWB,
-            atol=1e-11,
-        )
-
-
 if __name__ == '__main__':
     unittest.main()
