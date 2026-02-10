@@ -37,7 +37,7 @@ aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
 aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
-aircraft:fuel:wing_fuel_fraction,0.688354956933531,unitless
+aircraft:fuel:wing_fuel_fraction,0.6883549569366508,unitless
 aircraft:furnishings:mass_scaler,1,unitless
 aircraft:fuselage:height_to_width_ratio,0.11,unitless
 aircraft:fuselage:length,137.5,ft

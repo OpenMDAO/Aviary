@@ -999,7 +999,14 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     'lbm/ft**3',
                 )
                 # FULDEN = 50.1194909  # lbm/ft**3 or 6.7 lbm/galUS
-                input_values.set_val(Aircraft.Fuel.DENSITY, [FULDEN], 'lbm/galUS')
+                FULDEN2 = wrapped_convert_units(
+                    (
+                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                    ),
+                    'lbm/galUS',
+                )
+                input_values.set_val(Aircraft.Fuel.DENSITY, [FULDEN2], 'lbm/galUS')
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
