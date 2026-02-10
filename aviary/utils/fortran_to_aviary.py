@@ -19,6 +19,7 @@ ARNGE(1) = 3600 !target range in nautical miles
 import csv
 import getpass
 import re
+import warnings
 from datetime import datetime
 from pathlib import Path
 
@@ -28,6 +29,7 @@ from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.utils.legacy_code_data.flops_defaults import flops_default_values, flops_deprecated_vars
 from aviary.utils.legacy_code_data.gasp_defaults import gasp_default_values, gasp_deprecated_vars
 from aviary.utils.named_values import NamedValues
+from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -123,7 +125,7 @@ def fortran_to_aviary(
     if legacy_code is GASP:
         vehicle_data = update_gasp_options(vehicle_data, verbosity)
     elif legacy_code is FLOPS:
-        vehicle_data = update_flops_options(vehicle_data)
+        vehicle_data = update_flops_options(vehicle_data, verbosity)
     vehicle_data = update_aviary_options(vehicle_data)
 
     # Add settings and engine data file
@@ -856,7 +858,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     return vehicle_data
 
 
-def update_flops_options(vehicle_data):
+def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
     """Handles variables that are affected by the values of others."""
     input_values: NamedValues = vehicle_data['input_values']
 
@@ -989,8 +991,15 @@ def update_flops_options(vehicle_data):
             if Aircraft.Fuel.DENSITY in input_values:
                 FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
             else:
-                FULDEN = 50.1194909  # lbm/ft**3 or 6.7 lbm/galUS
-                input_values.set_val(Aircraft.Fuel.DENSITY, [6.7], 'lbm/galUS')
+                FULDEN = wrapped_convert_units(
+                    (
+                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                    ),
+                    'lbm/ft**3',
+                )
+                # FULDEN = 50.1194909  # lbm/ft**3 or 6.7 lbm/galUS
+                input_values.set_val(Aircraft.Fuel.DENSITY, [FULDEN], 'lbm/galUS')
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
@@ -1008,10 +1017,11 @@ def update_flops_options(vehicle_data):
             ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
             scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
             if scaled_thrust <= 0:
-                print(
-                    'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
-                    f'but you have {scaled_thrust}'
-                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
+                        f'but you have {scaled_thrust}'
+                    )
             else:
                 engine_scale_factor = scaled_thrust / ref_thrust
                 input_values.set_val(
