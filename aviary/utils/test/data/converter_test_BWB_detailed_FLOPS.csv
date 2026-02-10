@@ -35,7 +35,6 @@ aircraft:engine:scaled_sls_thrust,70000,lbf
 aircraft:fins:area,184.89,ft**2
 aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
-aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:wing_fuel_fraction,0.6883549569366508,unitless
 aircraft:furnishings:mass_scaler,1,unitless
