@@ -31,6 +31,7 @@ aircraft:engine:num_fuselage_engines,3,unitless
 aircraft:engine:num_wing_engines,0,unitless
 aircraft:engine:reference_mass,22017,lbm
 aircraft:engine:reference_sls_thrust,86459.2,lbf
+aircraft:engine:scale_factor,0.8096304384033163,unitless
 aircraft:engine:scaled_sls_thrust,70000,lbf
 aircraft:fins:area,184.89,ft**2
 aircraft:fins:num_fins,2,unitless

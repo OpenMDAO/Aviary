@@ -85,6 +85,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()

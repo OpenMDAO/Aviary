@@ -163,7 +163,7 @@ inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3)  # NEF
 inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, np.array([0]))  # NEW
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)  # WTHR
 inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0)  # ETAE
-# inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)  # THRUST/THRSO
+inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)  # THRUST/THRSO
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.0)  # EEXP
 inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)

@@ -1017,6 +1017,22 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.Wing.ASPECT_RATIO in input_values:
             input_values.delete(Aircraft.Wing.ASPECT_RATIO)
 
+        if (
+            Aircraft.Engine.SCALED_SLS_THRUST in input_values
+            and Aircraft.Engine.REFERENCE_SLS_THRUST in input_values
+        ):
+            ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
+            scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
+            if scaled_thrust <= 0:
+                print(
+                    'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
+                    f'but you have {scaled_thrust}'
+                )
+            else:
+                engine_scale_factor = scaled_thrust / ref_thrust
+                input_values.set_val(
+                    Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
+                )
     else:
         raise RuntimeError(
             f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
