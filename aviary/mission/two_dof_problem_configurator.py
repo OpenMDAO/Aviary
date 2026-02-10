@@ -216,7 +216,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             builder = phase_options['user_options']['phase_builder']
 
             if builder is PhaseType.BREGUET_RANGE:
-                phase_builder = CruisePhase
+                if 'electric_cruise' in phase_name:
+                    phase_builder = ElectricCruisePhase
+                else:
+                    phase_builder = CruisePhase
                 return phase_builder
             elif builder is PhaseType.SIMPLE_CRUISE:
                 phase_builder = SimpleCruisePhase
@@ -230,8 +233,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             phase_builder = AccelPhase
         elif 'ascent' in phase_name:
             phase_builder = AscentPhase
-        elif 'electric_cruise' in phase_name:
-            phase_builder = ElectricCruisePhase
         else:
             # All other phases are flight phases.
             phase_builder = FlightPhase
