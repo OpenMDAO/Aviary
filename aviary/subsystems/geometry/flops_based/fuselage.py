@@ -1,5 +1,6 @@
 """Contains any preliminary calculations on the fuselage."""
 
+import warnings
 import numpy as np
 import openmdao.api as om
 
@@ -167,7 +168,7 @@ class SimpleCabinLayout(om.ExplicitComponent):
         pax_compart_length = 0.6085 * length * (np.arctan(length / 59.0)) ** 1.1
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                raise UserWarning(
+                warnings.warn(
                     'Passenger compartment lenght is longer than recommended maximum'
                     ' length (of 190 ft). Suggest using detailed layout algorithm.'
                 )
