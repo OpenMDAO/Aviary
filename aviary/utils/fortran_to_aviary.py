@@ -932,7 +932,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         try:
             CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
             CLLDM = 1.69 * CLAPP
-        except:
+        except TypeError:
             CLLDM = 3.0
         input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
 
