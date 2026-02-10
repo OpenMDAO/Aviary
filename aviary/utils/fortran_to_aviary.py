@@ -909,7 +909,14 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             if Aircraft.Fuel.DENSITY in input_values:
                 FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
             else:
-                FULDEN = 50.12  # 50.12 lbm/ft**3 = 6.7 lbm/galUS
+                FULDEN = wrapped_convert_units(
+                    (
+                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                    ),
+                    'lbm/ft**3',
+                )
+                # FULDEN = 50.12 lbm/ft**3 = 6.7 lbm/galUS
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
@@ -1010,23 +1017,6 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.Wing.ASPECT_RATIO in input_values:
             input_values.delete(Aircraft.Wing.ASPECT_RATIO)
 
-        if (
-            Aircraft.Engine.SCALED_SLS_THRUST in input_values
-            and Aircraft.Engine.REFERENCE_SLS_THRUST in input_values
-        ):
-            ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
-            scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
-            if scaled_thrust <= 0:
-                if verbosity >= Verbosity.BRIEF:
-                    warnings.warn(
-                        'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
-                        f'but you have {scaled_thrust}'
-                    )
-            else:
-                engine_scale_factor = scaled_thrust / ref_thrust
-                input_values.set_val(
-                    Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
-                )
     else:
         raise RuntimeError(
             f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
@@ -1056,6 +1046,11 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
             wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
             input_values.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
+            if verbosity >= Verbosity.BRIEF:
+                print(
+                    'Aircraft.HorizontalTail.THICKNESS_TO_CHORD is not defined. Use '
+                    'Aircraft.Wing.THICKNESS_TO_CHORD.'
+                )
 
     if (Aircraft.VerticalTail.THICKNESS_TO_CHORD not in input_values) or (
         input_values.get_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
@@ -1063,6 +1058,11 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
             wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
             input_values.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
+            if verbosity >= Verbosity.BRIEF:
+                print(
+                    'Aircraft.VerticalTail.THICKNESS_TO_CHORD is not defined. Use '
+                    'Aircraft.Wing.THICKNESS_TO_CHORD.'
+                )
 
     # These variables should be removed if they are zero.
     rem_list = [
