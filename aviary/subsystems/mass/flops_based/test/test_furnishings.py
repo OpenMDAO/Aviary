@@ -65,7 +65,7 @@ class TransportFurnishingsGroupMassTest(unittest.TestCase):
 
 
 class BWBFurnishingsGroupMassTest(unittest.TestCase):
-    """Tests transport/GA furnishings mass calculation."""
+    """Tests BWB furnishings mass calculation."""
 
     def setUp(self):
         self.prob = om.Problem()
