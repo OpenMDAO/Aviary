@@ -101,7 +101,7 @@ class BWBFurnishingsGroupMassTest(unittest.TestCase):
         )
 
 
-class BWBFurnishingsGroupMassTest2(unittest.TestCase):
+class TransportFurnishingsGroupMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):

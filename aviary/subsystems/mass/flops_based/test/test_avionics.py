@@ -16,8 +16,6 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class TransportAvionicsMassTest(unittest.TestCase):
@@ -26,7 +24,7 @@ class TransportAvionicsMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -51,6 +49,7 @@ class TransportAvionicsMassTest(unittest.TestCase):
             ],
             output_keys=Aircraft.Avionics.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.NUM_FLIGHT_CREW],
+            version=Version.TRANSPORT_and_BWB,
             tol=2.0e-4,
         )
 
@@ -98,7 +97,7 @@ class BWBTransportAvionicsMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
+    def ttest_case(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
