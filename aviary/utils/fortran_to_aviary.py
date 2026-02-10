@@ -789,65 +789,65 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
     # Variables required by GASP, but no default values are provided in GASP
     missing_vars = []
-    if not Aircraft.Wing.ZERO_LIFT_ANGLE in input_values:
+    if Aircraft.Wing.ZERO_LIFT_ANGLE not in input_values:
         missing_vars.append('ALPHL0')
-    if not Aircraft.Wing.ASPECT_RATIO in input_values:
+    if Aircraft.Wing.ASPECT_RATIO not in input_values:
         missing_vars.append('AR')
-    if not Aircraft.HorizontalTail.ASPECT_RATIO in input_values:
+    if Aircraft.HorizontalTail.ASPECT_RATIO not in input_values:
         missing_vars.append('ARHT')
-    if not Aircraft.VerticalTail.ASPECT_RATIO in input_values:
+    if Aircraft.VerticalTail.ASPECT_RATIO not in input_values:
         missing_vars.append('ARVT')
-    if not Aircraft.Design.PART25_STRUCTURAL_CATEGORY in input_values:
+    if Aircraft.Design.PART25_STRUCTURAL_CATEGORY not in input_values:
         missing_vars.append('CATD')
-    if not Aircraft.Fuselage.PRESSURE_DIFFERENTIAL in input_values:
+    if Aircraft.Fuselage.PRESSURE_DIFFERENTIAL not in input_values:
         missing_vars.append('DELP')
-    if not Mission.Taxi.DURATION in input_values:
+    if Mission.Taxi.DURATION not in input_values:
         missing_vars.append('DELTT')
-    if not Aircraft.Wing.FLAP_DEFLECTION_LANDING in input_values:
+    if Aircraft.Wing.FLAP_DEFLECTION_LANDING not in input_values:
         missing_vars.append('DFLPLD')
-    if not Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF in input_values:
+    if Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF not in input_values:
         missing_vars.append('DFLPTO')
-    if not Aircraft.Wing.SWEEP in input_values:
+    if Aircraft.Wing.SWEEP not in input_values:
         missing_vars.append('DLMC4')
-    if not Aircraft.Wing.INCIDENCE in input_values:
+    if Aircraft.Wing.INCIDENCE not in input_values:
         missing_vars.append('EYEW')
-    if not Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
+    if Aircraft.CrewPayload.Design.NUM_PASSENGERS not in input_values:
         missing_vars.append('PAX')
-    if not Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY in input_values:
+    if Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY not in input_values:
         missing_vars.append('PS')
-    if not Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY in input_values:
+    if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not in input_values:
         missing_vars.append('SAB')
-    if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
         missing_vars.append('SAH')
-    if not Aircraft.Wing.TAPER_RATIO in input_values:
+    if Aircraft.Wing.TAPER_RATIO not in input_values:
         missing_vars.append('SLM')
-    if not Aircraft.HorizontalTail.TAPER_RATIO in input_values:
+    if Aircraft.HorizontalTail.TAPER_RATIO not in input_values:
         missing_vars.append('SLMH')
-    if not Aircraft.VerticalTail.TAPER_RATIO in input_values:
+    if Aircraft.VerticalTail.TAPER_RATIO not in input_values:
         missing_vars.append('SLMV')
-    if not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values:
+    if Aircraft.HorizontalTail.THICKNESS_TO_CHORD not in input_values:
         missing_vars.append('TCHT')
-    if not Aircraft.Wing.THICKNESS_TO_CHORD_ROOT in input_values:
+    if Aircraft.Wing.THICKNESS_TO_CHORD_ROOT not in input_values:
         missing_vars.append('TCR')
-    if not Aircraft.Wing.THICKNESS_TO_CHORD_TIP in input_values:
+    if Aircraft.Wing.THICKNESS_TO_CHORD_TIP not in input_values:
         missing_vars.append('TCT')
-    if not Aircraft.VerticalTail.THICKNESS_TO_CHORD in input_values:
+    if Aircraft.VerticalTail.THICKNESS_TO_CHORD not in input_values:
         missing_vars.append('TCVT')
-    if not Aircraft.Nacelle.MASS_SPECIFIC in input_values:
+    if Aircraft.Nacelle.MASS_SPECIFIC not in input_values:
         missing_vars.append('UWNAC')
-    if not Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS in input_values:
+    if Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS not in input_values:
         missing_vars.append('UWPAX')
-    if not Aircraft.Design.MAX_STRUCTURAL_SPEED in input_values:
+    if Aircraft.Design.MAX_STRUCTURAL_SPEED not in input_values:
         missing_vars.append('VMLFSL')
-    if not Aircraft.Fuselage.AISLE_WIDTH in input_values:
+    if Aircraft.Fuselage.AISLE_WIDTH not in input_values:
         missing_vars.append('WAS')
-    if not Aircraft.Fuselage.SEAT_WIDTH in input_values:
+    if Aircraft.Fuselage.SEAT_WIDTH not in input_values:
         missing_vars.append('WS')
-    if not Aircraft.LandingGear.MAIN_GEAR_LOCATION in input_values:
+    if Aircraft.LandingGear.MAIN_GEAR_LOCATION not in input_values:
         missing_vars.append('YMG')
-    if not Aircraft.Engine.WING_LOCATIONS in input_values:
+    if Aircraft.Engine.WING_LOCATIONS not in input_values:
         missing_vars.append('YP')
-    if not Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
         raise RuntimeError(
@@ -919,7 +919,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.Wing.INPUT_STATION_DIST in input_values:
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
 
-    if not Mission.Landing.LIFT_COEFFICIENT_MAX in input_values:
+    if Mission.Landing.LIFT_COEFFICIENT_MAX not in input_values:
+        # TODO revisit this once CLAPP is added to metadata and is no longer skipped by fortran_to_aviary
         unused_values = vehicle_data['unused_values']
         try:
             CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
@@ -980,12 +981,12 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
             input_values.set_val(Aircraft.Engine.SCALED_SLS_THRUST, [thrust], 'lbf')
 
-        if not Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO in input_values:
+        if Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO not in input_values:
             if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
                 wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
                 input_values.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, [wing_tc], 'unitless')
 
-        if not Aircraft.Fuel.WING_FUEL_FRACTION in input_values:
+        if Aircraft.Fuel.WING_FUEL_FRACTION not in input_values:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
             FWMAX = 23  # the default
             if Aircraft.Fuel.DENSITY in input_values:
@@ -999,14 +1000,6 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     'lbm/ft**3',
                 )
                 # FULDEN = 50.1194909  # lbm/ft**3 or 6.7 lbm/galUS
-                FULDEN2 = wrapped_convert_units(
-                    (
-                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
-                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
-                    ),
-                    'lbm/galUS',
-                )
-                input_values.set_val(Aircraft.Fuel.DENSITY, [FULDEN2], 'lbm/galUS')
             input_values.set_val(
                 Aircraft.Fuel.WING_FUEL_FRACTION, [FWMAX / (FULDEN * (2 / 3))], 'unitless'
             )
