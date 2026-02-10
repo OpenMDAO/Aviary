@@ -4,6 +4,7 @@
 aircraft:avionics:mass_scaler,1,unitless
 aircraft:blended_wing_body_design:detailed_wing_provided,True,unitless
 aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45.0,deg
+aircraft:crew_and_payload:baggage_mass_per_passenger,44.0,lbm
 aircraft:crew_and_payload:design:num_business_class,100,unitless
 aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_first_class,28,unitless

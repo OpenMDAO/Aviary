@@ -1032,15 +1032,32 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
         )
 
+    if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in input_values:
+        if Mission.Design.RANGE in input_values:
+            design_range = input_values.get_val(Mission.Design.RANGE, 'nmi')[0]
+            baggage_per_pax = 35.0
+            if design_range > 2900:
+                baggage_per_pax = 44.0
+            elif design_range > 900:
+                baggage_per_pax = 40.0
+        input_values.set_val(
+            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, [baggage_per_pax], 'lbm'
+        )
+        if verbosity >= Verbosity.BRIEF:
+            print(
+                'Set Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER to : '
+                f'FLOPS specific assumption {baggage_per_pax}'
+            )
+
     if (
-        not Aircraft.HorizontalTail.THICKNESS_TO_CHORD in input_values
+        Aircraft.HorizontalTail.THICKNESS_TO_CHORD not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
     ):
         if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
             wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
             input_values.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
 
-    if (not Aircraft.VerticalTail.THICKNESS_TO_CHORD in input_values) or (
+    if (Aircraft.VerticalTail.THICKNESS_TO_CHORD not in input_values) or (
         input_values.get_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
     ):
         if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
