@@ -458,7 +458,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 # and neither phase is ground roll or rotation (altitude isn't a state):
                 # we want altitude to be continuous as well
                 if (
-                    phase_builder1 is PhaseType.SIMPLE_CRUISEr
+                    phase_builder1 is PhaseType.SIMPLE_CRUISE
                     or phase_builder2 is PhaseType.SIMPLE_CRUISE
                 ):
                     aviary_group.traj.add_linkage_constraint(
