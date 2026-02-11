@@ -30,7 +30,7 @@ class DistanceComp(om.ExplicitComponent):
             'TAS_cruise',
             val=0.0001 * np.ones(nn),
             units='NM/s',
-            desc='Constant true airspeed at each point in cruise.'
+            desc='Constant true airspeed at each point in cruise.',
         )
 
         self.add_output(

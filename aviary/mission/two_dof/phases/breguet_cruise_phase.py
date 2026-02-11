@@ -95,7 +95,6 @@ class BreguetCruisePhase(PhaseBuilder):
         meta_data=None,
         is_analytic_phase=True,
     ):
-
         if is_analytic_phase is not True:
             msg = 'The Breguet Cruise phase does not support dynamic variables in its subsystems.'
             raise AttributeError(msg)
