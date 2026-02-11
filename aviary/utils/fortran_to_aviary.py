@@ -906,6 +906,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0] < 50:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
             FWMAX = input_values.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')[0]
+            if FWMAX < 0.0:
+                FWMAX = 23.0
             if Aircraft.Fuel.DENSITY in input_values:
                 FULDEN = input_values.get_val(Aircraft.Fuel.DENSITY, 'lbm/ft**3')[0]
             else:
