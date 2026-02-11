@@ -20,7 +20,6 @@ inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUP
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
-inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
 inputs.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, False)
 inputs.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True)
 
@@ -89,13 +88,13 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)  # FRFIN
 # Fuel
 # ---------------------------
 inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')  # FULAUX
-inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')  # FULDEN
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)  # WFSYS
 inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.68835495693, 'unitless')
+inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 
 # Furnishings
 # ---------------------------
@@ -114,11 +113,11 @@ inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 # Horizontal Tail
 # ---------------------------
 inputs.set_val(Aircraft.HorizontalTail.AREA, 0.0, 'ft**2')  # SHT
-inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # SHT
+inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # ARHT
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT
 # inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT
-inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # SHT
+inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # FRHT
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)  # SWETH
 # inputs.set_val(Aircraft.HorizontalTail.SWEEP, 0.0)  # SWPHT
 
