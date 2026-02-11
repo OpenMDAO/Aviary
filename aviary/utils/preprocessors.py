@@ -400,6 +400,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
     # Process FLOPS based crew variables
     if mass_method == LegacyCode.FLOPS:
+        # TODO: check if this is excuted.
         # Check flight attendants
         if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
             flight_attendants_count = 0  # assume no passengers
