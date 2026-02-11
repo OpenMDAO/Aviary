@@ -16,7 +16,7 @@ class CargoTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(
-            Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, val=0.0667, units='lbm'
+            Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER, val=0, units='lbm'
         )  # generic_BWB_GASP
         options.set_val(
             Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless'
@@ -37,7 +37,7 @@ class CargoTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 2145.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 165.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
