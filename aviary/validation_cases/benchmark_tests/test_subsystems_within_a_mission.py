@@ -144,7 +144,7 @@ class TestSubsystemsMission(unittest.TestCase):
         #     'm',
         # )
 
-        prob.add_driver('SLSQP', max_iter=0, verbosity=0)
+        prob.add_driver('SNOPT', max_iter=0, verbosity=0)
 
         prob.add_design_variables()
 
