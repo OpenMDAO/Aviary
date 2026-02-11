@@ -7,6 +7,8 @@ import openmdao.api as om
 from aviary.variable_info.functions import add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
+from aviary.constants import GRAV_ENGLISH_LBM
+
 
 class EmergencyEquipment(om.ExplicitComponent):
     """
@@ -21,10 +23,7 @@ class EmergencyEquipment(om.ExplicitComponent):
     def setup(self):
         add_aviary_output(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, units='lbm')
 
-    def setup_partials(self):
-        self.declare_partials('*', '*')
-
-    def compute(self, outputs):
+    def compute(self, inputs, outputs):
         num_pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         num_flight_attendants = 0
@@ -49,4 +48,4 @@ class EmergencyEquipment(om.ExplicitComponent):
         if num_pax >= 35.0:
             emergency_wt = 25.0 * num_flight_attendants + 15.0
 
-        outputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = emergency_wt
+        outputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = emergency_wt / GRAV_ENGLISH_LBM

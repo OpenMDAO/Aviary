@@ -57,6 +57,8 @@ class ElectricalMass(om.ExplicitComponent):
 
         J[Aircraft.Electrical.MASS, Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER] = (
             delectrical_wt_delec_mass_coeff
-        )
+        ) / GRAV_ENGLISH_LBM
 
-        J[Aircraft.Electrical.MASS, Mission.Design.GROSS_MASS] = delectrical_wt_dgross_wt_initial
+        J[Aircraft.Electrical.MASS, Mission.Design.GROSS_MASS] = (
+            delectrical_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
+        )

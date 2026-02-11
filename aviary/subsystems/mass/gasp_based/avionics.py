@@ -18,7 +18,7 @@ class AvionicsMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='NM')
+        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Avionics.MASS, units='lbm')
 
@@ -62,20 +62,14 @@ class AvionicsMass(om.ExplicitComponent):
             avionics_wt = 600.0
         if PAX > 100:
             avionics_wt = 2.8 * PAX + 1010.0
-        # TODO The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
-        if not (-1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5):
-            # note: this technically creates a discontinuity !WILL NOT CHANGE
-            avionics_wt = inputs[Aircraft.Avionics.MASS] * GRAV_ENGLISH_LBM
 
-        outputs[Aircraft.Avionics.MASS] = avionics_wt
+        outputs[Aircraft.Avionics.MASS] = avionics_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-
-        davionics_wt_dmass_coeff_4 = 0.0
 
         if PAX < 20:
             if smooth:
@@ -84,10 +78,7 @@ class AvionicsMass(om.ExplicitComponent):
                 davionics_wt_dgross_wt_initial = 0.0
         else:
             davionics_wt_dgross_wt_initial = 0.0
-        # TODO The following if-block should be removed. Aircraft.Avionics.MASS should be output, not input.
-        if not (-1e-5 < inputs[Aircraft.Avionics.MASS] < 1e-5):
-            # note: this technically creates a discontinuity !WILL NOT CHANGE
-            davionics_wt_dgross_wt_initial = 0.0
-            davionics_wt_dmass_coeff_4 = GRAV_ENGLISH_LBM
 
-        J[Aircraft.Avionics.MASS, Mission.Design.GROSS_MASS] = davionics_wt_dgross_wt_initial
+        J[Aircraft.Avionics.MASS, Mission.Design.GROSS_MASS] = (
+            davionics_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
+        )

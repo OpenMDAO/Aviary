@@ -4,6 +4,8 @@ from aviary.variable_info.enums import GASPEngineType, Verbosity
 from aviary.variable_info.variables import Aircraft, Settings
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 
+from aviary.constants import GRAV_ENGLISH_LBM
+
 
 class EngineOilMass(om.ExplicitComponent):
     """
@@ -47,9 +49,11 @@ class EngineOilMass(om.ExplicitComponent):
                 print('This engine_type is not curretly supported in Aviary.')
             oil_per_eng_wt = 0
 
-        outputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = num_engines * oil_per_eng_wt
+        outputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = (
+            num_engines * oil_per_eng_wt / GRAV_ENGLISH_LBM
+        )
 
-    def compute_partials(self, J):
+    def compute_partials(self, inputs, J):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
 
@@ -64,5 +68,5 @@ class EngineOilMass(om.ExplicitComponent):
             doil_per_eng_wt_dFn_SLS = 0.0
 
         J[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, Aircraft.Engine.SCALED_SLS_THRUST] = (
-            doil_per_eng_wt_dFn_SLS * num_engines
+            doil_per_eng_wt_dFn_SLS * num_engines / GRAV_ENGLISH_LBM
         )

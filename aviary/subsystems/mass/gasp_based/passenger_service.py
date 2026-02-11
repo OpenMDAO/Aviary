@@ -22,9 +22,9 @@ class PassengerServiceMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(
-            self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, units='unitless'
+            self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, units='lbm'
         )
-        add_aviary_input(self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, units='unitless')
+        add_aviary_input(self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, units='lbm')
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')
@@ -56,38 +56,36 @@ class PassengerServiceMass(om.ExplicitComponent):
 
         service_wt = 0.0
         if num_pax > 9.0:
-            service_wt = (
-                service_mass_per_passenger * num_pax * GRAV_ENGLISH_LBM + 16.0 * num_lavatories
-            )
+            service_wt = service_mass_per_passenger * num_pax + 16.0 * num_lavatories
 
         water_wt = 0.0
         if num_pax > 19.0:
-            water_wt = water_mass_per_occupant * num_pax * GRAV_ENGLISH_LBM
+            water_wt = water_mass_per_occupant * num_pax
 
         catering_wt = 0.0
         if num_pax > 19.0:
-            catering_wt = catering_mass_per_passenger * num_pax * GRAV_ENGLISH_LBM
+            catering_wt = catering_mass_per_passenger * num_pax
 
         outputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = service_wt + water_wt + catering_wt
 
-    def compute_partials(self, J):
+    def compute_partials(self, inputs, J):
         num_pax = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
 
         if num_pax > 19.0:
             J[
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER,
-            ] = 1
+            ] = num_pax
 
             J[
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
                 Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT,
-            ] = 1
+            ] = num_pax
 
             J[
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
                 Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER,
-            ] = 1
+            ] = num_pax
 
         else:
             J[

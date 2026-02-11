@@ -24,6 +24,7 @@ class InstrumentMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
+        add_aviary_input(self, Aircraft.Instruments.MASS_COEFFICIENT, units='unitless')
 
         add_aviary_output(self, Aircraft.Instruments.MASS, units='lbm')
 
@@ -54,7 +55,7 @@ class InstrumentMass(om.ExplicitComponent):
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan**0.696
-        )
+        ) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -80,8 +81,8 @@ class InstrumentMass(om.ExplicitComponent):
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan**0.696
-        )
-        J[Aircraft.Instruments.MASS, Aircraft.Instruments.MASS_SCALER] = (
+        ) / GRAV_ENGLISH_LBM
+        J[Aircraft.Instruments.MASS, Aircraft.Instruments.MASS_COEFFICIENT] = (
             dinstrument_wt_dmass_coeff_1
         )
 
@@ -93,7 +94,7 @@ class InstrumentMass(om.ExplicitComponent):
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan**0.696
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Instruments.MASS, Mission.Design.GROSS_MASS] = dinstrument_wt_dgross_wt_initial
 
         dinstrument_wt_dfus_len = (
@@ -104,7 +105,7 @@ class InstrumentMass(om.ExplicitComponent):
             * num_pilots**0.31
             * fus_len ** (0.05 - 1)
             * wingspan**0.696
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Instruments.MASS, Aircraft.Fuselage.LENGTH] = dinstrument_wt_dfus_len
 
         dinstrument_wt_dwingspan = (
@@ -115,5 +116,5 @@ class InstrumentMass(om.ExplicitComponent):
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan ** (0.696 - 1)
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Instruments.MASS, Aircraft.Wing.SPAN] = dinstrument_wt_dwingspan

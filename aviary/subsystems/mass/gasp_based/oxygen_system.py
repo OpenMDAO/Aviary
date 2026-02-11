@@ -47,7 +47,7 @@ class OxygenSystemMass(om.ExplicitComponent):
         else:
             oxygen_system_wt = 50.0
 
-        outputs[Aircraft.OxygenSystem.MASS] = oxygen_system_wt
+        outputs[Aircraft.OxygenSystem.MASS] = oxygen_system_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -66,4 +66,6 @@ class OxygenSystemMass(om.ExplicitComponent):
         else:
             d_aux_wt_dgross_wt_initial = 0.0
 
-        J[Aircraft.OxygenSystem.MASS, Mission.Design.GROSS_MASS] = d_aux_wt_dgross_wt_initial
+        J[Aircraft.OxygenSystem.MASS, Mission.Design.GROSS_MASS] = (
+            d_aux_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
+        )

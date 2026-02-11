@@ -66,7 +66,7 @@ class EquipMassSum(om.ExplicitComponent):
 
         outputs[Aircraft.Design.FIXED_EQUIPMENT_MASS] = equip_mass_sum
 
-    def compute_partials(self, J):
+    def compute_partials(self, inputs, J):
         J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.AirConditioning.MASS] = 1
         J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Furnishings.MASS] = 1
         J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.APU.MASS] = 1
@@ -149,7 +149,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS)
         add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS)
-        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS)
 
         add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
 
@@ -162,7 +162,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         service_wt = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         emergency_wt = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS]
         trapped_fuel_wt = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
-        cargo_handling_wt = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
+        cargo_handling_wt = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
 
         useful_wt = (
             pilot_wt
@@ -183,7 +183,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = 1
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = 1
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.BAGGAGE_MASS] = 1
+        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = 1
 
 
 class UsefulLoadMassGroup(om.Group):

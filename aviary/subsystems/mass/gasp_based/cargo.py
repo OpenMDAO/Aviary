@@ -6,26 +6,21 @@ equations, modified to output mass instead of weight.
 
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.functions import add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
+
+from aviary.constants import GRAV_ENGLISH_LBM
 
 
 class CargoMass(om.ExplicitComponent):
     """Calculate the mass of any passengers, their baggage, and other cargo."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.CrewPayload.ULD_MASS_PER_PASSENGER)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO, units='lbm')
-        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO, units='lbm')
-        add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
-
-    def setup_partials(self):
-        self.declare_partials('*', '*')
+        add_aviary_output(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS, units='lbm')
 
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -36,4 +31,4 @@ class CargoMass(om.ExplicitComponent):
 
         cargo_handling_wt = (int(PAX * uld_per_pax) + 1) * unit_weight_cargo_handling
 
-        outputs[Aircraft.CrewPayload.BAGGAGE_MASS] = cargo_handling_wt
+        outputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = cargo_handling_wt / GRAV_ENGLISH_LBM
