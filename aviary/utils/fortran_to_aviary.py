@@ -992,6 +992,10 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
                 wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
                 input_values.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, [wing_tc], 'unitless')
+                print(
+                    'Set Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO to '
+                    'Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO.'
+                )
 
         if Aircraft.Fuel.WING_FUEL_FRACTION not in input_values:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
@@ -1034,8 +1038,9 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.Engine.SCALE_FACTOR, [engine_scale_factor], 'unitless'
                 )
     else:
-        raise RuntimeError(
-            f'Currently, Aircraft.Design.TYPE must be either 0 or 3 not {design_type[0]}.'
+        raise ValueError(
+            'Aviary currently only supports values of IFITE = 0 ("transport") or 3 ("bwb"), '
+            f'the target file uses IFITE = {design_type[0]} .'
         )
 
     if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in input_values:
