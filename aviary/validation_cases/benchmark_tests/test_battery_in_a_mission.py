@@ -187,7 +187,7 @@ class TestBatteryMission(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('SLSQP')
+        prob.add_driver('SNOPT')
 
         prob.add_design_variables()
 
