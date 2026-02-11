@@ -12,24 +12,6 @@ from aviary.variable_info.variables import Dynamic
 
 class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
-        self.declare(
-            name='num_segments',
-            types=int,
-            default=5,
-            desc='The number of segments in transcription creation in Dymos. '
-            'While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
-        )
-
-        self.declare(
-            name='order',
-            types=int,
-            default=3,
-            desc='The order of polynomials for interpolation in the transcription '
-            'created in Dymos. While this phase is usually an analytic phase, this option is '
-            'needed if an external subsystem requires a dynamic transcription.',
-        )
-
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
         self.declare(name='mach_cruise', default=0.0, desc='Cruise Mach number.')

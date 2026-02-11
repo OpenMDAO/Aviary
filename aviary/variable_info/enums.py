@@ -170,7 +170,7 @@ class PhaseType(Enum):
     PhaseType is used for replacing a default phase and its equations of motion with a
     different one.
 
-    DEFAULT: Use the default phase builder for this phase.
+    DEFAULT: Use the default phase builder for this EquationsOfMotion.
 
     BREGUET_RANGE: Use a phase builder that implements the Breguet Range equations.
 

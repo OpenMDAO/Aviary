@@ -221,6 +221,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 else:
                     phase_builder = BreguetCruisePhase
                 return phase_builder
+
             elif builder is PhaseType.SIMPLE_CRUISE:
                 phase_builder = SimpleCruisePhase
                 return phase_builder
@@ -490,7 +491,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                     kwargs = {}
                     if not connected:
                         # Some better scaling of the linkage constraint.
-                        kwargs = {}
                         if state in initial_guesses1:
                             val, units = initial_guesses1[state]
                             if isinstance(val, (tuple, list)):
