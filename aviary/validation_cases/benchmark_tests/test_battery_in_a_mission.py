@@ -2,7 +2,7 @@ import unittest
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
-from openmdao.utils.testing_utils import use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
@@ -168,6 +168,7 @@ class TestBatteryMission(unittest.TestCase):
             1e-6,
         )
 
+    @require_pyoptsparse(optimizer='SNOPT')
     def test_subsystems_in_a_mission_2dof(self):
         phase_info = deepcopy(twodof_phase_info)
 
