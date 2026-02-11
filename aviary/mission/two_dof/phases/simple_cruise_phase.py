@@ -219,5 +219,3 @@ SimpleCruisePhase._add_initial_guess_meta_data(
 SimpleCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_time'), desc='initial guess for initial_time'
 )
-
-
