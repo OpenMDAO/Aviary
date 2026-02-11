@@ -29,11 +29,13 @@ class DistanceComp(om.ExplicitComponent):
         self.add_input(
             'TAS_cruise',
             val=0.0001 * np.ones(nn),
-            units='NM/s', desc='Constant true airspeed at each point in cruise.')
+            units='NM/s',
+            desc='Constant true airspeed at each point in cruise.'
+        )
 
         self.add_output(
             Dynamic.Mission.DISTANCE,
-            shape=(nn, ),
+            shape=(nn,),
             units='NM',
             desc='Computed distance at each point in the cruise phase.',
         )
@@ -57,8 +59,8 @@ class DistanceComp(om.ExplicitComponent):
         )
 
         # Sparsity pattern includes a vertical row at i=0
-        xtra_row = np.arange(nn-1) + 1
-        xtra_col = np.zeros(nn-1)
+        xtra_row = np.arange(nn - 1) + 1
+        xtra_col = np.zeros(nn - 1)
 
         all_row = np.hstack((row_col, xtra_row))
         all_col = np.hstack((row_col, xtra_col))

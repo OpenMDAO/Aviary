@@ -6,7 +6,10 @@ from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
-from aviary.mission.two_dof.phases.breguet_cruise_phase import BreguetCruisePhase, ElectricCruisePhase
+from aviary.mission.two_dof.phases.breguet_cruise_phase import (
+    BreguetCruisePhase,
+    ElectricCruisePhase,
+)
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
@@ -429,8 +432,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
                 # Distance is a constraint for SIMPLE_CRUISE
                 if (
-                    phase_builder1 is PhaseType.SIMPLE_CRUISE or
-                    phase_builder2 is PhaseType.SIMPLE_CRUISE
+                    phase_builder1 is PhaseType.SIMPLE_CRUISE
+                    or phase_builder2 is PhaseType.SIMPLE_CRUISE
                 ):
                     if phase_builder2 is PhaseType.SIMPLE_CRUISE:
                         prefix = 'initial_'
@@ -455,8 +458,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 # and neither phase is ground roll or rotation (altitude isn't a state):
                 # we want altitude to be continuous as well
                 if (
-                    phase_builder1 is PhaseType.SIMPLE_CRUISE or
-                    phase_builder2 is PhaseType.SIMPLE_CRUISE
+                    phase_builder1 is PhaseType.SIMPLE_CRUISEr
+                    or phase_builder2 is PhaseType.SIMPLE_CRUISE
                 ):
                     aviary_group.traj.add_linkage_constraint(
                         phase1, phase2, 'altitude', 'altitude', connected=False, ref=1.0e4

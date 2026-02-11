@@ -169,7 +169,6 @@ class SimpleCruisePhase(PhaseBuilder):
             opt=True,
             val=0.0,
             units='nmi',
-            #ref=100.0,
             static_target=True,
         )
 
@@ -209,7 +208,9 @@ SimpleCruisePhase._add_initial_guess_meta_data(
     desc='initial guess for initial time and duration specified as a tuple',
 )
 
-SimpleCruisePhase._add_initial_guess_meta_data(InitialGuessState('mass'), desc='initial guess for mass')
+SimpleCruisePhase._add_initial_guess_meta_data(
+    InitialGuessState('mass'), desc='initial guess for mass'
+)
 
 SimpleCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_distance'), desc='initial guess for initial_distance'

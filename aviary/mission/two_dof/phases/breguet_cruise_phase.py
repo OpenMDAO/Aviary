@@ -97,7 +97,7 @@ class BreguetCruisePhase(PhaseBuilder):
     ):
 
         if is_analytic_phase is not True:
-            msg = "The Breguet Cruise phase does not support dynamic variables in its subsystems."
+            msg = 'The Breguet Cruise phase does not support dynamic variables in its subsystems.'
             raise AttributeError(msg)
 
         super().__init__(
@@ -155,7 +155,9 @@ BreguetCruisePhase._add_initial_guess_meta_data(
     desc='initial guess for initial time and duration specified as a tuple',
 )
 
-BreguetCruisePhase._add_initial_guess_meta_data(InitialGuessState('mass'), desc='initial guess for mass')
+BreguetCruisePhase._add_initial_guess_meta_data(
+    InitialGuessState('mass'), desc='initial guess for mass'
+)
 
 BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_distance'), desc='initial guess for initial_distance'
@@ -169,7 +171,9 @@ BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('altitude'), desc='initial guess for altitude'
 )
 
-BreguetCruisePhase._add_initial_guess_meta_data(InitialGuessState('mach'), desc='initial guess for mach')
+BreguetCruisePhase._add_initial_guess_meta_data(
+    InitialGuessState('mach'), desc='initial guess for mach'
+)
 
 
 class ElectricCruisePhase(BreguetCruisePhase):

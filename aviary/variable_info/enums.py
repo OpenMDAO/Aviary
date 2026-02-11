@@ -178,8 +178,8 @@ class PhaseType(Enum):
     """
 
     DEFAULT = 'default'
-    BREGUET_RANGE = "breguet_range"
-    SIMPLE_CRUISE = "simple_cruise"
+    BREGUET_RANGE = 'breguet_range'
+    SIMPLE_CRUISE = 'simple_cruise'
 
 
 class ProblemType(Enum):

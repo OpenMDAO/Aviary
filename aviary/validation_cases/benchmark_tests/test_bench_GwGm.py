@@ -23,7 +23,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
     def check_values(self, prob):
-
         self.assertTrue(prob.result.success)
 
         rtol = 1e-3
