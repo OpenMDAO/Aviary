@@ -6,7 +6,7 @@ from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
-from aviary.mission.two_dof.phases.breguet_cruise_phase import CruisePhase, ElectricCruisePhase
+from aviary.mission.two_dof.phases.breguet_cruise_phase import BreguetCruisePhase, ElectricCruisePhase
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
@@ -219,7 +219,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 if 'electric_cruise' in phase_name:
                     phase_builder = ElectricCruisePhase
                 else:
-                    phase_builder = CruisePhase
+                    phase_builder = BreguetCruisePhase
                 return phase_builder
             elif builder is PhaseType.SIMPLE_CRUISE:
                 phase_builder = SimpleCruisePhase

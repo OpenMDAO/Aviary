@@ -78,7 +78,7 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
 
-class CruisePhase(PhaseBuilder):
+class BreguetCruisePhase(PhaseBuilder):
     """
     A phase builder for a climb phase in a mission simulation.
 
@@ -168,28 +168,28 @@ class CruisePhase(PhaseBuilder):
         return phase
 
 
-CruisePhase._add_initial_guess_meta_data(
+BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple',
 )
 
-CruisePhase._add_initial_guess_meta_data(InitialGuessState('mass'), desc='initial guess for mass')
+BreguetCruisePhase._add_initial_guess_meta_data(InitialGuessState('mass'), desc='initial guess for mass')
 
-CruisePhase._add_initial_guess_meta_data(
+BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_distance'), desc='initial guess for initial_distance'
 )
 
-CruisePhase._add_initial_guess_meta_data(
+BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_time'), desc='initial guess for initial_time'
 )
 
-CruisePhase._add_initial_guess_meta_data(
+BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('altitude'), desc='initial guess for altitude'
 )
 
-CruisePhase._add_initial_guess_meta_data(InitialGuessState('mach'), desc='initial guess for mach')
+BreguetCruisePhase._add_initial_guess_meta_data(InitialGuessState('mach'), desc='initial guess for mach')
 
 
-class ElectricCruisePhase(CruisePhase):
+class ElectricCruisePhase(BreguetCruisePhase):
     default_name = 'electric_cruise_phase'
     default_ode_class = ElectricBreguetCruiseODE
