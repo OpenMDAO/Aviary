@@ -457,7 +457,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
         if (
             Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options
-            or aviary_options.get_val(Mission.Design.RANGE) < 0.0
+            or aviary_options.get_val(Mission.Design.RANGE, 'nmi') < 0.0
         ):
             baggage_mass_per_pax = 35.0
             if Mission.Design.RANGE in aviary_options:
