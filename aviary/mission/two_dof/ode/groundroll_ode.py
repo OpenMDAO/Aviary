@@ -1,8 +1,8 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.groundroll_eom import GroundrollEOM
 from aviary.mission.two_dof.ode.params import ParamPort
+from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -71,7 +71,7 @@ class GroundrollODE(TwoDOFODE):
                     src_indices=np.zeros(nn, dtype=int),
                 )
 
-        self.add_subsystem('groundroll_eom', GroundrollEOM(num_nodes=nn), promotes=['*'])
+        self.add_subsystem('groundroll_eom', TakeoffEOM(num_nodes=nn, ground_roll=True), promotes=['*'])
 
         self.add_subsystem(
             'exec',

@@ -1,6 +1,6 @@
 import numpy as np
 
-from aviary.mission.two_dof.ode.ascent_eom import AscentEOM
+from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.variable_info.enums import AlphaModes
@@ -46,7 +46,7 @@ class AscentODE(TwoDOFODE):
 
         self.add_subsystem(
             'ascent_eom',
-            AscentEOM(num_nodes=nn),
+            TakeoffEOM(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.MASS,
                 Dynamic.Vehicle.Propulsion.THRUST_TOTAL,

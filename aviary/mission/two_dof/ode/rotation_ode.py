@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.mission.two_dof.ode.params import ParamPort
-from aviary.mission.two_dof.ode.rotation_eom import RotationEOM
+from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -27,7 +27,7 @@ class RotationODE(TwoDOFODE):
 
         self.add_subsystems()
 
-        self.add_subsystem('rotation_eom', RotationEOM(num_nodes=nn), promotes=['*'])
+        self.add_subsystem('rotation_eom', TakeoffEOM(num_nodes=nn, rotation=True), promotes=['*'])
 
         ParamPort.set_default_vals(self)
         self.set_input_defaults('t_init_flaps', val=47.5, units='s')
