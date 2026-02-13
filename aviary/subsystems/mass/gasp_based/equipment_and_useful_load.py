@@ -176,7 +176,7 @@ class UsefulLoadMass(om.ExplicitComponent):
 
         outputs[Aircraft.Design.FIXED_USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
 
-    def compute_partials(self, J):
+    def compute_partials(self, inputs, J):
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.FLIGHT_CREW_MASS] = 1
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS] = 1
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = 1
@@ -247,8 +247,44 @@ class BWBEquipMassGroup(om.Group):
             promotes_outputs=['*'],
         )
         self.add_subsystem(
-            'equip_sum',
-            EquipMassSum(),
+            'anti_icing',
+            AntiIcingMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'apu',
+            APUMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'avionics',
+            AvionicsMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'electrical',
+            ElectricalMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'hydraulic',
+            HydraulicsMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'instrument',
+            InstrumentMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
+            'oxygen_system',
+            OxygenSystemMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
