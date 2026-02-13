@@ -1045,23 +1045,6 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             f'the target file uses IFITE = {design_type[0]} .'
         )
 
-    if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in input_values:
-        if Mission.Design.RANGE in input_values:
-            design_range = input_values.get_val(Mission.Design.RANGE, 'nmi')[0]
-            baggage_per_pax = 35.0
-            if design_range > 2900:
-                baggage_per_pax = 44.0
-            elif design_range > 900:
-                baggage_per_pax = 40.0
-        input_values.set_val(
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, [baggage_per_pax], 'lbm'
-        )
-        if verbosity >= Verbosity.BRIEF:
-            print(
-                'Set Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER to : '
-                f'FLOPS specific assumption {baggage_per_pax}'
-            )
-
     if (
         Aircraft.HorizontalTail.THICKNESS_TO_CHORD not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 'unitless')[0] == 0
@@ -1087,14 +1070,62 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     'Aircraft.Wing.THICKNESS_TO_CHORD.'
                 )
 
+    if (
+        Aircraft.HorizontalTail.TAPER_RATIO not in input_values
+        or input_values.get_val(Aircraft.HorizontalTail.TAPER_RATIO)[0] < 0.0
+    ):
+        if Aircraft.WING.SWEEP in input_values:
+            TR = input_values.get_val(Aircraft.Wing.TAPER_RATIO)[0]
+            input_values.set_val(Aircraft.HorizontalTail.TAPER_RATIO, [TR])
+
+    if (
+        Aircraft.VerticalTail.TAPER_RATIO not in input_values
+        or input_values.get_val(Aircraft.VerticalTail.TAPER_RATIO)[0] < 0.0
+    ):
+        if Aircraft.HorizontalTail.TAPER_RATIO in input_values:
+            TRHT = input_values.get_val(Aircraft.HorizontalTail.TAPER_RATIO)[0]
+            input_values.set_val(Aircraft.VerticalTail.TAPER_RATIO, [TRHT])
+
+    if (
+        Aircraft.HorizontalTail.SWEEP not in input_values
+        or input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0] < -90.0
+    ):
+        if Aircraft.WING.SWEEP in input_values:
+            SWEEP = input_values.get_val(Aircraft.Wing.SWEEP, units='deg')[0]
+            input_values.set_val(Aircraft.HorizontalTail.SWEEP, [SWEEP], 'deg')
+
+    if (
+        Aircraft.VerticalTail.SWEEP not in input_values
+        or input_values.get_val(Aircraft.VerticalTail.SWEEP, units='deg')[0] < -90.0
+    ):
+        if Aircraft.HorizontalTail.SWEEP in input_values:
+            SWPHT = input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0]
+            input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWPHT], 'deg')
+
+    if (
+        Aircraft.HorizontalTail.ASPECT_RATIO not in input_values
+        or input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0] < 0
+    ):
+        if Aircraft.WING.ASPECT_RATIO in input_values:
+            AR = input_values.get_val(Aircraft.WING.ASPECT_RATIO)
+            input_values.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, [AR], 'unitless')
+
+    if (
+        Aircraft.VerticalTail.ASPECT_RATIO not in input_values
+        or input_values.get_val(Aircraft.VerticalTail.ASPECT_RATIO)[0] < 0
+    ):
+        if Aircraft.HorizontalTail.ASPECT_RATIO in input_values:
+            ARHT = input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0]
+            input_values.set_val(Aircraft.VerticalTail.ASPECT_RATIO, [ARHT / 2.0], 'unitless')
+
     # These variables should be removed if they are zero.
     rem_list = [
+        (Aircraft.Design.TOUCHDOWN_MASS, 'lbm'),
         (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
         (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
         (Aircraft.Fuselage.LENGTH, 'ft'),
         (Aircraft.Fuselage.MAX_WIDTH, 'ft'),
-        (Aircraft.HorizontalTail.SWEEP, 'deg'),
     ]
     for var in rem_list:
         try:

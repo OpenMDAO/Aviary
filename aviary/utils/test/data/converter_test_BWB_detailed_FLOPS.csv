@@ -4,7 +4,6 @@
 aircraft:avionics:mass_scaler,1,unitless
 aircraft:blended_wing_body_design:detailed_wing_provided,True,unitless
 aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45.0,deg
-aircraft:crew_and_payload:baggage_mass_per_passenger,44.0,lbm
 aircraft:crew_and_payload:design:num_business_class,100,unitless
 aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_first_class,28,unitless
@@ -48,6 +47,7 @@ aircraft:fuselage:wetted_area_scaler,1,unitless
 aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,0,unitless
 aircraft:horizontal_tail:mass_scaler,1,unitless
+aircraft:horizontal_tail:sweep,0,deg
 aircraft:horizontal_tail:taper_ratio,0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:hydraulics:mass_scaler,1,unitless
@@ -57,8 +57,11 @@ aircraft:landing_gear:nose_gear_oleo_length,87,inch
 aircraft:nacelle:avg_diameter,12.608,ft
 aircraft:nacelle:avg_length,17.433,ft
 aircraft:propulsion:misc_mass_scaler,0,unitless
+aircraft:vertical_tail:aspect_ratio,0.0,unitless
 aircraft:vertical_tail:mass_scaler,1,unitless
 aircraft:vertical_tail:num_tails,0,unitless
+aircraft:vertical_tail:sweep,0,deg
+aircraft:vertical_tail:taper_ratio,0,unitless
 aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0,unitless
