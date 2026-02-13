@@ -17,13 +17,7 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-omit_cases = [
-    'LargeSingleAisle2FLOPS',
-    'LargeSingleAisle2FLOPSalt',
-    'BWBsimpleFLOPS',
-    'BWBdetailedFLOPS',
-]
+omit_cases = ['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']
 
 
 @use_tempdirs
@@ -71,6 +65,7 @@ class EnginePodMassTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.Engine.POD_MASS,
+            version=Version.TRANSPORT_and_BWB,
             tol=3e-3,
         )
 
@@ -106,55 +101,6 @@ class EnginePodMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-@use_tempdirs
-class BWBEnginePodMassTest(unittest.TestCase):
-    """Tests the engine pod mass needed for the detailed wing calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        inputs = get_flops_inputs(case_name, preprocess=True)
-
-        options = {
-            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-        }
-
-        prob.model.add_subsystem(
-            'engine_pod', EnginePodMass(), promotes_outputs=['*'], promotes_inputs=['*']
-        )
-
-        prob.model_options['*'] = options
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        # Tol not that tight, but it is unclear where the pod mass values in files come from,
-        # since they aren't printed in the FLOPS output.
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[
-                Aircraft.Electrical.MASS,
-                Aircraft.Fuel.FUEL_SYSTEM_MASS,
-                Aircraft.Hydraulics.MASS,
-                Aircraft.Instruments.MASS,
-                Aircraft.Nacelle.MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
-                Aircraft.Engine.MASS,
-                Aircraft.Propulsion.TOTAL_STARTER_MASS,
-                Aircraft.Engine.THRUST_REVERSERS_MASS,
-                Aircraft.Engine.SCALED_SLS_THRUST,
-                Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
-            ],
-            output_keys=Aircraft.Engine.POD_MASS,
-            version=Version.BWB,
-            tol=3e-3,
-        )
 
 
 if __name__ == '__main__':

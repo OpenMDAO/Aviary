@@ -22,7 +22,7 @@ class PaintMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -40,6 +40,7 @@ class PaintMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Design.TOTAL_WETTED_AREA, Aircraft.Paint.MASS_PER_UNIT_AREA],
             output_keys=Aircraft.Paint.MASS,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_IO(self):
@@ -54,7 +55,7 @@ class BWBPaintMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
+    def test_cdsase(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
