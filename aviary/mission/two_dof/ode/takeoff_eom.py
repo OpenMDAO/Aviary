@@ -32,8 +32,8 @@ class TakeoffEOM(om.ExplicitComponent):
             'ground_roll',
             types=bool,
             default=False,
-            desc='True if the aircraft is confined to the ground. Removes altitude rate as an '
-            'output and adjusts the TAS rate equation.',
+            desc='True if the aircraft is confined to the ground. Angle of attack is fixed and '
+            'removed as an input.',
         )
 
         self.options.declare(
@@ -367,7 +367,11 @@ class TakeoffEOM(om.ExplicitComponent):
             weight * cos_gamma
         )
 
-        normal_force = weight - incremented_lift - thrust_across_flightpath
+        if ground_roll or rotation:
+            normal_force = weight - incremented_lift - thrust_across_flightpath
+        else:
+            normal_force = np.zeros(nn, dtype=TAS.dtype)
+
         idx = np.where(normal_force < 0)
         normal_force[idx] = 0.0
 
@@ -447,7 +451,8 @@ class TakeoffEOM(om.ExplicitComponent):
             J[Dynamic.Mission.VELOCITY_RATE, Aircraft.Wing.INCIDENCE] = (
                 (dTAlF_dIwing - mu * dNF_dIwing) * GRAV_ENGLISH_GASP / weight
             )
-            J['normal_force', Aircraft.Wing.INCIDENCE] = dNF_dIwing
+            if rotation:
+                J['normal_force', Aircraft.Wing.INCIDENCE] = dNF_dIwing
             J['fuselage_pitch', Aircraft.Wing.INCIDENCE] = -1
             J['load_factor', Aircraft.Wing.INCIDENCE] = dTAcF_dIwing / (weight * cos_gamma)
 
@@ -458,7 +463,8 @@ class TakeoffEOM(om.ExplicitComponent):
             J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.ANGLE_OF_ATTACK] = (
                 (dTAlF_dAlpha - mu * dNF_dAlpha) * GRAV_ENGLISH_GASP / weight
             )
-            J['normal_force', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha
+            if rotation:
+                J['normal_force', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha
             J['fuselage_pitch', Dynamic.Vehicle.ANGLE_OF_ATTACK] = 1
             J['load_factor', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dTAcF_dAlpha / (
                 weight * cos_gamma

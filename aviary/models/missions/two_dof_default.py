@@ -8,6 +8,8 @@ phase_info = {
     'groundroll': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'ground_roll': True,
             'num_segments': 1,
             'order': 3,
             'time_initial': (0.0, 's'),
@@ -34,6 +36,8 @@ phase_info = {
     'rotation': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'rotation': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 100), 's'),
@@ -63,6 +67,7 @@ phase_info = {
     'ascent': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),

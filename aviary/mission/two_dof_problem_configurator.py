@@ -5,15 +5,13 @@ from aviary.mission.two_dof.ode.landing_ode import LandingSegment
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
-from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
 from aviary.mission.two_dof.phases.breguet_cruise_phase import (
     BreguetCruisePhase,
     ElectricCruisePhase,
 )
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase
-from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
-from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
 from aviary.mission.two_dof.phases.simple_cruise_phase import SimpleCruisePhase
+from aviary.mission.two_dof.phases.takeoff_phase import TakeoffPhase
 from aviary.mission.two_dof.polynomial_fit import PolynomialFit
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.utils import process_guess_var
@@ -229,14 +227,12 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 phase_builder = SimpleCruisePhase
                 return phase_builder
 
-        if 'groundroll' in phase_name:
-            phase_builder = GroundrollPhase
-        elif 'rotation' in phase_name:
-            phase_builder = RotationPhase
-        elif 'accel' in phase_name:
+            elif builder is PhaseType.TWO_DOF_TAKEOFF:
+                phase_builder = TakeoffPhase
+                return phase_builder
+
+        if 'accel' in phase_name:
             phase_builder = AccelPhase
-        elif 'ascent' in phase_name:
-            phase_builder = AscentPhase
         else:
             # All other phases are flight phases.
             phase_builder = FlightPhase

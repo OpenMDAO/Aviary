@@ -218,12 +218,12 @@ class AscentEOMTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.two_dof.ode.ascent_eom as ascent
+        import aviary.mission.two_dof.ode.takeoff_eom as ascent
 
         ascent.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.two_dof.ode.ascent_eom as ascent
+        import aviary.mission.two_dof.ode.takeoff_eom as ascent
 
         ascent.GRAV_ENGLISH_LBM = 1.0
 

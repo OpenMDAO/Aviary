@@ -175,11 +175,16 @@ class PhaseType(Enum):
     BREGUET_RANGE: Use a phase builder that implements the Breguet Range equations.
 
     SIMPLE_CRUISE: Use a phase builder that implements a single DOF (mass) cruise.
+
+    TWO_DOF_TAKEOFF: Use a phase builder that implements two DOF equations suitable for takeoff
+    phases, including ground_roll and rotation phases. Angle of attack is an additional control
+    unless ground_roll=True.
     """
 
     DEFAULT = 'default'
     BREGUET_RANGE = 'breguet_range'
     SIMPLE_CRUISE = 'simple_cruise'
+    TWO_DOF_TAKEOFF = 'two_dof_takeoff'
 
 
 class ProblemType(Enum):
