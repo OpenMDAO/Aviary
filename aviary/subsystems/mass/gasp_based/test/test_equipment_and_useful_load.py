@@ -336,14 +336,9 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
+            Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
-        prob.model.set_input_defaults(
-            Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT, val=0.112, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
-        )
+
         setup_model_options(self.prob, options)
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -357,9 +352,9 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.AntiIcing.MASS], 706.48495598, tol)
         assert_near_equal(self.prob[Aircraft.APU.MASS], 928.46163145, tol)
         assert_near_equal(self.prob[Aircraft.Avionics.MASS], 1430.0, tol)
-        assert_near_equal(self.prob[Aircraft.Electrical.MASS], 170.0, tol)
-        assert_near_equal(self.prob[Aircraft.Hydraulics.MASS], 1328.90233952, tol)
-        assert_near_equal(self.prob[Aircraft.Instruments.MASS], 581.94821634, tol)
+        assert_near_equal(self.prob[Aircraft.Electrical.MASS], 1887.5, tol)
+        assert_near_equal(self.prob[Aircraft.Hydraulics.MASS], 1279.32634222, tol)
+        assert_near_equal(self.prob[Aircraft.Instruments.MASS], 917.20099314, tol)
         assert_near_equal(self.prob[Aircraft.OxygenSystem.MASS], 50.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -383,20 +378,27 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.FLIGHT_CREW_MASS, val=492.0, units='lbm'
         )
-        prob.model.set_input_defaults(Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, val=800.0, units='lbm'
         )
-        prob.model.set_input_defaults(
-            Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
+        self.prob.model.set_input_defaults(
+            Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=342.6, units='lbm'
         )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, [19580.1602], units='lbf')
-        prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.45, units='unitless')
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, val=2872.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Fuel.UNUSABLE_FUEL_MASS, val=619.76, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CARGO_CONTAINER_MASS, val=165, units='lbm'
+        )
 
         setup_model_options(self.prob, options)
 
@@ -511,6 +513,6 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = BWBFixedEquipMassGroupTest()  # FixedEquipMassGroupTest()
+    test = BWBUsefulMassTestCase1()  # FixedEquipMassGroupTest()
     test.setUp()
     test.test_case1()
