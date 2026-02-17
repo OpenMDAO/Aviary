@@ -701,7 +701,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR in input_values:
         if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
             if verbosity > Verbosity.BRIEF:
-                print(
+                warnings.warn(
                     'When XLFMX > 4, it is landing flare initiation height (ft), '
                     'not landing flare load factor.'
                 )
@@ -765,7 +765,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     if Aircraft.Engine.TYPE in input_values:
         engine_type = input_values.get_val(Aircraft.Engine.TYPE, 'unitless')[0]
         if verbosity > Verbosity.BRIEF:
-            print(
+            warnings.warn(
                 f'Engine type {engine_type} was provided; currently only TURBOPROP(6) and '
                 'TURBOJET(7) are supported by Aviary'
             )
@@ -994,10 +994,11 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
                 wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
                 input_values.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, [wing_tc], 'unitless')
-                print(
-                    'Set Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO to '
-                    'Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO.'
-                )
+                if verbosity > Verbosity.BRIEF:
+                    warnings.warn(
+                        'Set Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO to '
+                        'Aircraft.Fuselage.THICKNESS_TO_CHORD.'
+                    )
 
         if Aircraft.Fuel.WING_FUEL_FRACTION not in input_values:
             # Interpret value equivalently to FWMAX = wing_fuel_fraction * fuel_density * 2/3
@@ -1030,10 +1031,11 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             ref_thrust = input_values.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf')[0]
             scaled_thrust = input_values.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')[0]
             if scaled_thrust <= 0:
-                print(
-                    'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
-                    f'but you have {scaled_thrust}'
-                )
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Aircraft.Engine.REFERENCE_SLS_THRUST must be positive '
+                        f'but you have {scaled_thrust}'
+                    )
             else:
                 engine_scale_factor = scaled_thrust / ref_thrust
                 input_values.set_val(
@@ -1052,8 +1054,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
             wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
             input_values.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
-            if verbosity >= Verbosity.BRIEF:
-                print(
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(
                     'Aircraft.HorizontalTail.THICKNESS_TO_CHORD is not defined. Use '
                     'Aircraft.Wing.THICKNESS_TO_CHORD.'
                 )
@@ -1064,8 +1066,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.Wing.THICKNESS_TO_CHORD in input_values:
             wing_tc = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD, 'unitless')[0]
             input_values.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, [wing_tc], 'unitless')
-            if verbosity >= Verbosity.BRIEF:
-                print(
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(
                     'Aircraft.VerticalTail.THICKNESS_TO_CHORD is not defined. Use '
                     'Aircraft.Wing.THICKNESS_TO_CHORD.'
                 )
