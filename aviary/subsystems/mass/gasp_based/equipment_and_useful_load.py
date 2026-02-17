@@ -314,7 +314,7 @@ class EquipAndUsefulLoadMassGroup(om.Group):
 
         self.add_subsystem(
             'useful',
-            UsefulLoadMass(),
+            UsefulLoadMassGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

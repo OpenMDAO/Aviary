@@ -36,7 +36,7 @@ class InstrumentMass(om.ExplicitComponent):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Mission.Design.GROSS_MASS]
         mass_coefficient = inputs[Aircraft.Instruments.MASS_COEFFICIENT]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
@@ -50,12 +50,12 @@ class InstrumentMass(om.ExplicitComponent):
 
         outputs[Aircraft.Instruments.MASS] = (
             mass_coefficient
-            * gross_wt_initial**0.386
+            * gross_mass_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan**0.696
-        ) / GRAV_ENGLISH_LBM
+        )
 
     def compute_partials(self, inputs, J):
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
@@ -63,7 +63,7 @@ class InstrumentMass(om.ExplicitComponent):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_mass_initial = inputs[Mission.Design.GROSS_MASS]
         mass_coefficient = inputs[Aircraft.Instruments.MASS_COEFFICIENT]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
@@ -76,12 +76,12 @@ class InstrumentMass(om.ExplicitComponent):
             num_pilots = 3
 
         dinstrument_wt_dmass_coeff_1 = (
-            gross_wt_initial**0.386
+            gross_mass_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan**0.696
-        ) / GRAV_ENGLISH_LBM
+        )
         J[Aircraft.Instruments.MASS, Aircraft.Instruments.MASS_COEFFICIENT] = (
             dinstrument_wt_dmass_coeff_1
         )
@@ -89,32 +89,32 @@ class InstrumentMass(om.ExplicitComponent):
         dinstrument_wt_dgross_wt_initial = (
             0.386
             * mass_coefficient
-            * gross_wt_initial ** (0.386 - 1)
+            * gross_mass_initial ** (0.386 - 1)
             * num_engines**0.687
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan**0.696
-        ) / GRAV_ENGLISH_LBM
+        )
         J[Aircraft.Instruments.MASS, Mission.Design.GROSS_MASS] = dinstrument_wt_dgross_wt_initial
 
         dinstrument_wt_dfus_len = (
             0.05
             * mass_coefficient
-            * gross_wt_initial**0.386
+            * gross_mass_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
             * fus_len ** (0.05 - 1)
             * wingspan**0.696
-        ) / GRAV_ENGLISH_LBM
+        )
         J[Aircraft.Instruments.MASS, Aircraft.Fuselage.LENGTH] = dinstrument_wt_dfus_len
 
         dinstrument_wt_dwingspan = (
             0.696
             * mass_coefficient
-            * gross_wt_initial**0.386
+            * gross_mass_initial**0.386
             * num_engines**0.687
             * num_pilots**0.31
             * fus_len**0.05
             * wingspan ** (0.696 - 1)
-        ) / GRAV_ENGLISH_LBM
+        )
         J[Aircraft.Instruments.MASS, Aircraft.Wing.SPAN] = dinstrument_wt_dwingspan

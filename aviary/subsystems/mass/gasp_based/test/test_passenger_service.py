@@ -44,7 +44,47 @@ class PassengerServiceTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2584.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2872.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+class PassengerServiceTestCase2(unittest.TestCase):
+    """BWB Parameters"""
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(
+            Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless'
+        )  # large_single_aisle_1_GASP.csv
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'passenger_service',
+            PassengerServiceMass(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=6.0, units='lbm'
+        )  # generic_BWB_GASP.csv - 6
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
+        )  # large_single_aisle_1_GASP.csv
+        self.prob.model.set_input_defaults(
+            Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=5.0, units='lbm'
+        )  # large_single_aisle_1_GASP.csv - 5
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2148.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
