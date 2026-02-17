@@ -59,12 +59,12 @@ class GroundrollEOMTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.two_dof.ode.groundroll_eom as gr
+        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
 
         gr.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.two_dof.ode.groundroll_eom as gr
+        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
 
         gr.GRAV_ENGLISH_LBM = 1.0
 

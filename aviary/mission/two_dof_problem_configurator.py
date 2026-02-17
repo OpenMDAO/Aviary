@@ -217,22 +217,26 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             builder = phase_options['user_options']['phase_builder']
 
             if builder is PhaseType.BREGUET_RANGE:
+
+                # TODO: This is the only one currently accessed by name string, to preserve
+                # some legacy tests.
                 if 'electric_cruise' in phase_name:
                     phase_builder = ElectricCruisePhase
                 else:
                     phase_builder = BreguetCruisePhase
-                return phase_builder
 
             elif builder is PhaseType.SIMPLE_CRUISE:
                 phase_builder = SimpleCruisePhase
-                return phase_builder
 
             elif builder is PhaseType.TWO_DOF_TAKEOFF:
                 phase_builder = TakeoffPhase
-                return phase_builder
 
-        if 'accel' in phase_name:
-            phase_builder = AccelPhase
+            elif builder is PhaseType.ACCEL:
+                phase_builder = AccelPhase
+
+            else:
+                phase_builder = FlightPhase
+
         else:
             # All other phases are flight phases.
             phase_builder = FlightPhase
@@ -260,7 +264,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         comm : MPI.Comm or <FakeComm>
             MPI Communicator from OpenMDAO problem.
         """
-        if user_options['phase_builder'] is PhaseType.BREGUET_RANGE:
+        phase_builder = user_options['phase_builder']
+        if phase_builder is PhaseType.BREGUET_RANGE:
             # The Breguet Range Cruise phase integrates over mass instead of time.
             # We rely on mass being monotonically non-increasing across the phase.
             phase.set_time_options(
@@ -287,63 +292,47 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         fix_duration = duration is not None
         fix_initial = initial is not None
 
-        if 'ascent' in phase_name:
-            phase.set_time_options(
-                units='s',
-                targets='t_curr',
-                input_initial=True,
-                input_duration=True,
-            )
+        if initial_bounds[0] is not None and initial_bounds[1]:
+            # Upper bound is good for a ref.
+            time_initial_ref = initial_bounds[1]
+        else:
+            time_initial_ref = 600.0
 
-        elif 'descent' in phase_name:
-            phase.set_time_options(
-                duration_bounds=duration_bounds,
-                fix_initial=fix_initial,
-                input_initial=input_initial,
-                units='s',
-                duration_ref=duration_ref,
-            )
+        if duration_ref is None:
+            # Why are we overriding this?
+            duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
+
+        input_initial = phase_idx > 0
+        extra_args = {}
+
+        if fix_initial or input_initial:
+            if comm.size > 1:
+                # Phases are disconnected to run in parallel, so initial ref is
+                # valid.
+                initial_ref = time_initial_ref
+            else:
+                # Redundant on a fixed input; raises a warning if specified.
+                initial_ref = None
 
         else:
-            if initial_bounds[0] is not None and initial_bounds[1]:
-                # Upper bound is good for a ref.
-                time_initial_ref = initial_bounds[1]
-            else:
-                time_initial_ref = 600.0
+            extra_args['initial_bounds'] = initial_bounds
 
-            if duration_ref is None:
-                # Why are we overriding this?
-                duration_ref = 0.5 * (duration_bounds[0] + duration_bounds[1])
+        if phase_builder is PhaseType.SIMPLE_CRUISE:
+            extra_args['targets'] = 'time'
+        elif phase_builder is PhaseType.TWO_DOF_TAKEOFF:
+            extra_args['targets'] = 't_curr'
 
-            input_initial = phase_idx > 0
-            extra_args = {}
+        phase.set_time_options(
+            fix_initial=fix_initial,
+            fix_duration=fix_duration,
+            units=time_units,
+            duration_bounds=duration_bounds,
+            duration_ref=duration_ref,
+            initial_ref=initial_ref,
+            **extra_args,
+        )
 
-            if fix_initial or input_initial:
-                if comm.size > 1:
-                    # Phases are disconnected to run in parallel, so initial ref is
-                    # valid.
-                    initial_ref = time_initial_ref
-                else:
-                    # Redundant on a fixed input; raises a warning if specified.
-                    initial_ref = None
-
-            else:
-                extra_args['initial_bounds'] = initial_bounds
-
-            if user_options['phase_builder'] is PhaseType.SIMPLE_CRUISE:
-                extra_args['targets'] = 'time'
-
-            phase.set_time_options(
-                fix_initial=fix_initial,
-                fix_duration=fix_duration,
-                units=time_units,
-                duration_bounds=duration_bounds,
-                duration_ref=duration_ref,
-                initial_ref=initial_ref,
-                **extra_args,
-            )
-
-        if user_options['phase_builder'] is not PhaseType.SIMPLE_CRUISE:
+        if phase_builder is not PhaseType.SIMPLE_CRUISE:
             phase.add_control(
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 targets=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -355,7 +344,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         #       The issue is that aero methods are hardcoded for GASP mission phases
         #       instead of being defaulted somewhere, so they don't use phase_info
         # aviary_group.mission_info[phase_name]['phase_type'] = phase_name
-        if phase_name in ['ascent', 'groundroll', 'rotation']:
+        if phase_builder is PhaseType.TWO_DOF_TAKEOFF:
             # safely add in default method in way that doesn't overwrite existing method
             # and create nested structure if it doesn't already exist
             aviary_group.mission_info[phase_name].setdefault('subsystem_options', {}).setdefault(
@@ -466,17 +455,18 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         (phase1 in aviary_group.reserve_phases)
                         == (phase2 in aviary_group.reserve_phases)
                     )
-                    and not ({'groundroll', 'rotation'} & {phase1, phase2})
-                    and not ('accel', 'climb1') == (phase1, phase2)
+                    and not info1['user_options'].get('ground_roll')
+                    and phase_builder1 is not PhaseType.TWO_DOF_TAKEOFF
                 ):  # required for convergence of FwGm
                     states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
 
                 # if either phase is rotation, we need to connect velocity
                 # ascent to accel also requires velocity
-                if 'rotation' in (phase1, phase2) or ('ascent', 'accel') == (phase1, phase2):
+                # TODO: This may need refined now that trajectories are more flexible.
+                if phase_builder1 is PhaseType.TWO_DOF_TAKEOFF:
                     states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
                     # if the first phase is rotation, we also need alpha
-                    if phase1 == 'rotation':
+                    if info1['user_options'].get('rotation'):
                         states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
 
                 for state, connected in states_to_link.items():
@@ -568,8 +558,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.promotes('landing', inputs=param_list)
         aviary_group.connect('taxi.mass', 'vrot.mass')
 
-        if 'ascent' in aviary_group.mission_info:
-            self._add_groundroll_eq_constraint(aviary_group)
+        if len(phases) > 1:
+            self._add_groundroll_eq_constraint(aviary_group, phases)
 
     def check_trajectory(self, aviary_group):
         """
@@ -582,11 +572,20 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         pass
 
-    def _add_groundroll_eq_constraint(self, aviary_group):
+    def _add_groundroll_eq_constraint(self, aviary_group, phases):
         """
         Add an equality constraint to the problem to ensure that the TAS at the end of the
         groundroll phase is equal to the rotation velocity at the start of the rotation phase.
         """
+        phase1 = phases[0]
+        info1 = aviary_group.mission_info[phase1]['user_options']
+        groundroll = info1.get('ground_roll')
+
+        if not groundroll:
+            # Ground roll should be the first phase. If it isn't, then the aircraft is starting
+            # in flight.
+            return
+
         aviary_group.add_subsystem(
             'groundroll_boundary',
             om.EQConstraintComp(
@@ -598,7 +597,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         )
         aviary_group.connect(Mission.Takeoff.ROTATION_VELOCITY, 'groundroll_boundary.rhs:velocity')
         aviary_group.connect(
-            'traj.groundroll.states:velocity',
+            f'traj.{phase1}.states:velocity',
             'groundroll_boundary.lhs:velocity',
             src_indices=[-1],
             flat_src_indices=True,
@@ -789,9 +788,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                                 process_guess_var(val, guess_key, phase),
                                 units=units,
                             )
-
-                if guess_key in control_keys:
-                    pass
 
                 # Set initial guess for state variables
                 elif guess_key in state_keys:

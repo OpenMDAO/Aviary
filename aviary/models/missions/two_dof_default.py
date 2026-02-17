@@ -72,6 +72,7 @@ phase_info = {
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
             'velocity_ref': (200, 'kn'),
+            'time_duration_ref': (10, 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -106,6 +107,7 @@ phase_info = {
     'accel': {
         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
