@@ -7388,7 +7388,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': ['AERIN.CDMLD', 'TOLIN.CDMLD'],  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
+        'FLOPS': 'TOLIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
         'LEAPS1': None,
     },
     units='unitless',
@@ -7902,7 +7902,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': ['AERIN.CDMTO', 'TOLIN.CDMTO'],  # ['&DEFINE.AERIN.CDMTO', 'LANDG.CDMTO'],
+        'FLOPS': 'TOLIN.CDMTO',  # ['&DEFINE.AERIN.CDMTO', 'LANDG.CDMTO'],
         'LEAPS1': None,
     },
     units='unitless',
