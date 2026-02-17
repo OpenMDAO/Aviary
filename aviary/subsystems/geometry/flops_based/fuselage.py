@@ -12,24 +12,21 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 class FuselagePrelim(om.ExplicitComponent):
     """
     Calculate fuselage average diameter and planform area defined by:
-    Aircraft.Fuselage.AVG_DIAMETER = 0.5 * (max_height + max_width)
+    Aircraft.Fuselage.REF_DIAMETER = 0.5 * (max_height + max_width)
     Aircraft.Fuselage.PLANFORM_AREA = length * max_width.
     """
-
-    def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
 
     def setup_partials(self):
         self.declare_partials(
-            of=[Aircraft.Fuselage.AVG_DIAMETER],
+            of=[Aircraft.Fuselage.REF_DIAMETER],
             wrt=[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH],
             val=0.5,
         )
@@ -39,16 +36,16 @@ class FuselagePrelim(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
+            )
 
-        avg_diameter = 0.5 * (max_height + max_width)
-        outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
+        ref_diameter = 0.5 * (max_height + max_width)
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
 
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = length * max_width
 
@@ -64,9 +61,6 @@ class FuselagePrelim(om.ExplicitComponent):
 class BWBFuselagePrelim(om.ExplicitComponent):
     """Calculate fuselage average diameter and planform area for BWB"""
 
-    def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
-
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
@@ -79,12 +73,12 @@ class BWBFuselagePrelim(om.ExplicitComponent):
             desc='RSPSOB: Rear spar percent chord for BWB at side of body',
         )
 
-        add_aviary_output(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
+        add_aviary_output(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
 
     def setup_partials(self):
         self.declare_partials(
-            of=[Aircraft.Fuselage.AVG_DIAMETER],
+            of=[Aircraft.Fuselage.REF_DIAMETER],
             wrt=[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.MAX_WIDTH],
             val=0.5,
         )
@@ -99,7 +93,6 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         length = inputs[Aircraft.Fuselage.LENGTH]
         max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
@@ -107,17 +100,19 @@ class BWBFuselagePrelim(om.ExplicitComponent):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
 
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
+            )
         if rear_spar_percent_chord <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be positive. It is default to 0.7')
+            raise ValueError(
+                'Rear_spar_percent_chord must be positive, '
+                f'however {rear_spar_percent_chord} is provided.'
+            )
 
-        # not sure if this is right definition and not sure if it is used for BWB.
-        avg_diameter = 0.5 * (max_height + max_width)
+        ref_diameter = 0.5 * (max_height + max_width)
         planform_area = max_width * (length + root_chord / rear_spar_percent_chord) / 2.0
 
-        outputs[Aircraft.Fuselage.AVG_DIAMETER] = avg_diameter
+        outputs[Aircraft.Fuselage.REF_DIAMETER] = ref_diameter
         outputs[Aircraft.Fuselage.PLANFORM_AREA] = planform_area
 
     def compute_partials(self, inputs, partials):
@@ -139,15 +134,16 @@ class BWBFuselagePrelim(om.ExplicitComponent):
 
 
 class SimpleCabinLayout(om.ExplicitComponent):
-    """Given fuselage length, height and width, compute passenger compartment length."""
+    """
+    Given fuselage length, compute passenger compartment length.
+    This is for transporter aircraft, not BWB.
+    """
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
 
@@ -161,24 +157,19 @@ class SimpleCabinLayout(om.ExplicitComponent):
         verbosity = self.options[Settings.VERBOSITY]
 
         length = inputs[Aircraft.Fuselage.LENGTH]
-        max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
-        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
-        if max_height <= 0.0 or max_width <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print(
-                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive, however {length} is provided.'
+            )
 
         pax_compart_length = 0.6085 * length * (np.arctan(length / 59.0)) ** 1.1
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Passenger compartiment lenght is longer than recommended maximum length. '
-                    'Suggest use detailed laylout algorithm.'
+                raise UserWarning(
+                    'Passenger compartment lenght is longer than recommended maximum'
+                    ' length (of 190 ft). Suggest using detailed layout algorithm.'
                 )
+
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
 
     def compute_partials(self, inputs, J):
@@ -191,17 +182,18 @@ class SimpleCabinLayout(om.ExplicitComponent):
 
 
 class DetailedCabinLayout(om.ExplicitComponent):
-    """Compute fuselage dimensions using cabin seat information."""
+    """
+    Compute fuselage dimensions using cabin seat information.
+    This is for transporter aircraft, not BWB.
+    """
 
     def initialize(self):
-        add_aviary_option(self, Settings.VERBOSITY)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
@@ -215,44 +207,39 @@ class DetailedCabinLayout(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
-        num_tourist_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        num_economy_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
         fuselage_multiplier = 1.0
-        num_fuselage = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
-        if num_fuselage > 1:
-            if verbosity > Verbosity.BRIEF:
-                print('Multiple fuselage configuration is not implemented yet.')
 
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
-        num_seat_abreast_tourist = self.options[
-            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST
+        num_seat_abreast_economy = self.options[
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
         ]
         # The 200 was derived from B757 - the largest single aisle western desig.
-        if num_tourist_class_pax > 200:
-            if num_seat_abreast_tourist <= 0:
-                num_seat_abreast_tourist = 8
+        if num_economy_class_pax > 200:
+            if num_seat_abreast_economy <= 0:
+                num_seat_abreast_economy = 8
             if num_seat_abreast_first > 0 and num_seat_abreast_first <= 0:
-                num_seat_abreast_first = num_seat_abreast_tourist - 2
+                num_seat_abreast_first = num_seat_abreast_economy - 2
 
         if num_seat_abreast_first <= 0 and num_first_class_pax > 0:
             num_seat_abreast_first = 4
-        if num_seat_abreast_tourist <= 0 and num_tourist_class_pax > 0:
-            num_seat_abreast_tourist = 6
+        if num_seat_abreast_economy <= 0 and num_economy_class_pax > 0:
+            num_seat_abreast_economy = 6
 
         # Though these are not user definable, the values here are typical for most transport
         aisle_width_first_class = 20.0  # inch
-        aisle_width_tourist_class = 18.0  # inch
+        aisle_width_economy_class = 18.0  # inch
 
         # If there are less than 60 passengers on board, then the aisle should be slightly narrow.
         # Also, if the number of passengers abreast was not specified, then set it to 5 as 6 is too much
         # for a typical short range transport.
-        if num_tourist_class_pax < 60:
-            if num_seat_abreast_tourist <= 0:
-                num_seat_abreast_tourist = 5
-            aisle_width_tourist_class = 15.0
+        if num_economy_class_pax < 60:
+            if num_seat_abreast_economy <= 0:
+                num_seat_abreast_economy = 5
+            aisle_width_economy_class = 15.0
 
-        if num_seat_abreast_tourist > 6:
+        if num_seat_abreast_economy > 6:
             num_aisles = 2
         else:
             num_aisles = 1
@@ -262,18 +249,18 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # 4 or 6 as shown below that we are working with a widebody aircraft.
         if num_seat_abreast_first > 4:
             aisle_width_first_class = 18.0
-        if num_seat_abreast_tourist > 6:
-            aisle_width_tourist_class = 15.0
+        if num_seat_abreast_economy > 6:
+            aisle_width_economy_class = 15.0
 
         seat_pitch_first = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0 and num_first_class_pax > 0:
             seat_pitch_first = 38.0  # inch
-        seat_pitch_tourist = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST][0]
-        if seat_pitch_tourist <= 0 and num_tourist_class_pax > 0:
-            seat_pitch_tourist = 34.0  # inch
+        seat_pitch_economy = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
+        if seat_pitch_economy <= 0 and num_economy_class_pax > 0:
+            seat_pitch_economy = 34.0  # inch
 
         # set maximum number of galleys based on statistics (this block is not from FLOPS)
-        num_pax = num_first_class_pax + num_tourist_class_pax
+        num_pax = num_first_class_pax + num_economy_class_pax
         if num_pax < 80:
             max_galleys = 1
             max_lav = 1
@@ -330,36 +317,36 @@ class DetailedCabinLayout(om.ExplicitComponent):
                 max_lav = 2
             else:
                 max_lav = 3
-            if num_tourist_class_pax < 180:
+            if num_economy_class_pax < 180:
                 fuselage_multiplier = 0.91
             max_galleys = 2
             max_closets = 2
 
-        if num_first_class_pax == 0 and num_tourist_class_pax < 110:
+        if num_first_class_pax == 0 and num_economy_class_pax < 110:
             max_lav = 1
             max_galleys = 1
             max_closets = 1
 
-        if num_tourist_class_pax > 320:
+        if num_economy_class_pax > 320:
             max_lav = 4
             max_galleys = 4
             max_closets = 4
-        elif num_tourist_class_pax > 600:
+        elif num_economy_class_pax > 600:
             max_lav = 8
             max_galleys = 8
             max_closets = 8
 
-        if num_first_class_pax > 0 and num_seat_abreast_tourist < 8:
+        if num_first_class_pax > 0 and num_seat_abreast_economy < 8:
             fuselage_multiplier = 0.95
 
         # Calculate the number of galleys, lavatories and closets
-        num_galleys = int(1 + ((num_first_class_pax + num_tourist_class_pax) / 100))
+        num_galleys = int(1 + ((num_first_class_pax + num_economy_class_pax) / 100))
         if num_galleys > max_galleys:
             num_galleys = max_galleys
-        num_lavas = int(1 + (num_tourist_class_pax / 60)) + int(1 + (num_first_class_pax / 100))
+        num_lavas = int(1 + (num_economy_class_pax / 60)) + int(1 + (num_first_class_pax / 100))
         if num_lavas > max_lav:
             num_lavas = max_lav
-        num_closets = int(1 + (num_first_class_pax / 30)) + int(1 + (num_tourist_class_pax / 60))
+        num_closets = int(1 + (num_first_class_pax / 30)) + int(1 + (num_economy_class_pax / 60))
         if num_closets > max_closets:
             num_closets = max_closets
 
@@ -368,16 +355,16 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES][0]
         eng_flag = num_engines - 2 * int(num_engines / 2)  # a center mounted engine if 1.
         first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
-        tourist_class_len = num_tourist_class_pax * seat_pitch_tourist / num_seat_abreast_tourist
+        economy_class_len = num_economy_class_pax * seat_pitch_economy / num_seat_abreast_economy
         pax_compart_length = (
             first_class_len
             + (num_galleys + num_lavas) * 36.0
-            + tourist_class_len
+            + economy_class_len
             + num_closets * 12.0
         ) / 12.0
 
         # Correct for doors that may be in the way
-        num_doors = 1 + int((pax_compart_length / 50.0) * num_seat_abreast_tourist / 6.0)
+        num_doors = 1 + int((pax_compart_length / 50.0) * num_seat_abreast_economy / 6.0)
 
         # Final passenger compartment length
         pax_compart_length = (pax_compart_length + num_doors * 2.96) * fuselage_multiplier
@@ -388,17 +375,17 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # Calculate the number of rows of each class of passenger (not needed)
         if num_first_class_pax > 0:
             num_rows_first = int(np.ceil(num_first_class_pax / num_seat_abreast_first))
-        if num_tourist_class_pax > 0:
-            num_rows_tourist = int(np.ceil(num_tourist_class_pax / num_seat_abreast_tourist))
+        if num_economy_class_pax > 0:
+            num_rows_economy = int(np.ceil(num_economy_class_pax / num_seat_abreast_economy))
 
         # Calculate the fuselage width of the passenger seats
         width_first_class = (
             num_aisles * aisle_width_first_class + num_seat_abreast_first * 20.0
         ) / 12.0
-        width_tourist_class = (
-            num_aisles * aisle_width_tourist_class + num_seat_abreast_tourist * 25.0
+        width_economy_class = (
+            num_aisles * aisle_width_economy_class + num_seat_abreast_economy * 25.0
         ) / 12.0
-        width_fuselage = np.maximum(width_first_class, width_tourist_class) * 1.06
+        width_fuselage = np.maximum(width_first_class, width_economy_class) * 1.06
         outputs[Aircraft.Fuselage.MAX_WIDTH] = width_fuselage
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = width_fuselage + 0.9
 
@@ -428,7 +415,10 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
     def setup_partials(self):
         self.declare_partials(
             of=[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH],
-            wrt=[Aircraft.Fuselage.LENGTH, 'Rear_spar_percent_chord'],
+            wrt=[
+                Aircraft.Fuselage.LENGTH,
+                'Rear_spar_percent_chord',
+            ],
         )
         self.declare_partials(
             of=[Aircraft.Wing.ROOT_CHORD],
@@ -461,25 +451,25 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         length = inputs[Aircraft.Fuselage.LENGTH]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
-        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
+        max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
         bay_width_max = 12.0  # ft
 
         if length <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.')
+            raise ValueError(
+                f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
+            )
         if max_width <= 0.0:
-            if verbosity > Verbosity.BRIEF:
-                print(
-                    'Aircraft.Fuselage.MAX_HEIGHT & Aircraft.Fuselage.MAX_WIDTH must be positive.'
-                )
+            raise ValueError(
+                f'Aircraft.Fuselage.MAX_HEIGHT must be positive, however {max_width} is provided.'
+            )
 
         pax_compart_length = rear_spar_percent_chord * length
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
-                print(
-                    'Passenger compartiment lenght is longer than recommended maximum length. '
-                    'Suggest use detailed laylout algorithm.'
+                raise UserWarning(
+                    'Passenger compartment lenght is longer than recommended maximum'
+                    ' length. Suggest using detailed layout algorithm.'
                 )
 
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
@@ -541,16 +531,15 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Settings.VERBOSITY)
-        add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
 
     def setup(self):
@@ -568,7 +557,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
 
-        self.declare_partials('*', '*', method='fd', form='forward')
+    def setup_partials(self):
+        self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
@@ -586,7 +576,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         width_closet = 12.0  # inch
 
         # Establish defaults for Number of Passengers Abreast
-        # and Seat Pitch for First, Business and Tourist classes
+        # and Seat Pitch for First, Business and Economy classes
 
         num_seat_abreast_business = self.options[
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS
@@ -596,11 +586,11 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
         if num_seat_abreast_first <= 0:
             num_seat_abreast_first = 4
-        num_seat_abreast_tourist = self.options[
-            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST
+        num_seat_abreast_economy = self.options[
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
         ]
-        if num_seat_abreast_tourist <= 0:
-            num_seat_abreast_tourist = 6
+        if num_seat_abreast_economy <= 0:
+            num_seat_abreast_economy = 6
 
         seat_pitch_business = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
         if seat_pitch_business <= 0:
@@ -608,24 +598,24 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         seat_pitch_first = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0:
             seat_pitch_first = 61.0  # inch
-        seat_pitch_tourist = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST][0]
-        if seat_pitch_tourist <= 0:
-            seat_pitch_tourist = 32.0  # inch
+        seat_pitch_economy = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
+        if seat_pitch_economy <= 0:
+            seat_pitch_economy = 32.0  # inch
 
         # Determine unit seat areas for each type of passenger
         area_seat_business = bay_width_max * seat_pitch_business / 12.0 / num_seat_abreast_business
         area_seat_first = bay_width_max * seat_pitch_first / 12.0 / num_seat_abreast_first
-        area_seat_tourist = bay_width_max * seat_pitch_tourist / 12.0 / num_seat_abreast_tourist
+        area_seat_economy = bay_width_max * seat_pitch_economy / 12.0 / num_seat_abreast_economy
 
         # Find the number of lavatories, galleys and closets based on the
         # number of passengers for each class and the area for each
         num_business_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
-        num_tourist_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS]
+        num_economy_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
         num_lavas = (
             int(0.99 + num_first_class_pax / 16.0)
             + int(0.99 + num_business_class_pax / 24.0)
-            + int(0.99 + num_tourist_class_pax / 40.0)
+            + int(0.99 + num_economy_class_pax / 40.0)
         )
         num_galleys = int(0.99 + 0.6 * num_lavas)
         num_closets = int(0.99 + 0.4 * num_lavas)
@@ -636,7 +626,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
         # Calculate area required for passengers and services
         area_seats = (
-            num_tourist_class_pax * area_seat_tourist
+            num_economy_class_pax * area_seat_economy
             + num_business_class_pax * area_seat_business
             + num_first_class_pax * area_seat_first
         )
@@ -667,7 +657,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays = int(0.5 + max_width / bay_width_max)
+            z = 0.5 + max_width / bay_width_max
+            z = z[0]
+            num_bays = int(z.real)
             if num_bays > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
 
@@ -699,6 +691,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
         # the algorithm will probably take many more iteratiions. I wonder if it would still
         # converge. One solution might be to rewrite this using an openmado solver, solve for
-        # a real-valued num_bays, then use a smoothed int afterwards. LOPS did something similar
+        # a real-valued num_bays, then use a smoothed int afterwards. FLOPS did something similar
         # with the skin friction calculation, except there were no ints. I rewrote the equations
         # in residual form and used a Newton solver on them. (Ken)

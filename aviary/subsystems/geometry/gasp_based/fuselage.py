@@ -14,8 +14,8 @@ class FuselageParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, units='inch')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -43,12 +43,12 @@ class FuselageParameters(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
-        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
-        seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST]
+        seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY]
 
         delta_diameter = inputs[Aircraft.Fuselage.DELTA_DIAMETER]
 
@@ -81,7 +81,7 @@ class FuselageParameters(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         options = self.options
-        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
 
         J['nose_height', Aircraft.Fuselage.DELTA_DIAMETER] = -sigmoidX(seats_abreast, 1.5, 0.01)
         J['cabin_height', Aircraft.Fuselage.DELTA_DIAMETER] = sigmoidX(seats_abreast, 1.5, -0.01)
@@ -261,7 +261,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
-        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
         add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
@@ -317,7 +317,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
 
-        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
@@ -346,7 +346,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         options = self.options
 
-        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST]
+        seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
@@ -391,7 +391,7 @@ class BWBCabinLayout(om.ExplicitComponent):
             self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='inch', desc='PS_FC'
         )
         add_aviary_option(
-            self, Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, units='inch', desc='INGASP.PS'
+            self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch', desc='INGASP.PS'
         )
         add_aviary_option(
             self, Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless', desc='INGASP.PAX'
@@ -430,13 +430,13 @@ class BWBCabinLayout(om.ExplicitComponent):
         FC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST]
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
-        length_FC_to_TC = 5.0  # Length of first class/tourist class aisle, ft
-        TC_num_pax_per_lav = 78  # NLAVTC: tourist class passengers per lav
+        length_FC_to_TC = 5.0  # Length of first class/economy class aisle, ft
+        TC_num_pax_per_lav = 78  # NLAVTC: economy class passengers per lav
         TC_lav_width = 42.0  # WIDLAV: Lav width, inches, in FLOPS, WIDTHL
-        TC_galley_area_per_pax = 0.15  # AGAL_TC: tourist class galley area per passenger, ft**2
+        TC_galley_area_per_pax = 0.15  # AGAL_TC: economy class galley area per passenger, ft**2
         # If there is no first class cabin, please set NUM_FIRST_CLASS = 0.
 
-        TC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST]
+        TC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY]
         seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
         if seat_width <= 0.0:
             raise ValueError('fuselage seat width must be positive.')
@@ -503,20 +503,20 @@ class BWBCabinLayout(om.ExplicitComponent):
             # If not first class
             EL_FC_last_row = 0
 
-        # First Class/Tourist Class Aisle
+        # First Class/Economy Class Aisle
         if pax_FC > 0:
             EL_TC_ptr = EL_FC_last_row + FC_seat_pitch / 12.0
         else:
             EL_TC_ptr = fwd_pax_fuselage_station
 
-        # Tourist Class
+        # Economy Class
         if pax_FC > 0:
             EL_TC_ptr = EL_TC_ptr + length_FC_to_TC - TC_seat_pitch / 12.0
         else:
             EL_TC_ptr = EL_TC_ptr - TC_seat_pitch / 12.0
-        length_TC_by_row = []  # length in tourist class, ft
-        width_TC_by_row = []  # width in tourist class, ft
-        num_seats_TC_by_row = []  # num of seats in tourist class
+        length_TC_by_row = []  # length in economy class, ft
+        width_TC_by_row = []  # width in economy class, ft
+        num_seats_TC_by_row = []  # num of seats in economy class
         sum_num_seats_TC = 0
         Idx_row_TC = -1
         while sum_num_seats_TC < pax_TC:
@@ -534,13 +534,13 @@ class BWBCabinLayout(om.ExplicitComponent):
             EL_TC_ptr = length_TC_by_row[Idx_row_TC]
 
         sum_num_seats_TC = pax_TC
-        # last row in tourist class: find number of seats in last row
+        # last row in economy class: find number of seats in last row
         num_seats_last_row = sum_num_seats_TC - prev_num_seats_TC
         # find width available for last row for lavs/galleys (Assumes Steward's seat in TC aisle)
         width_last_row = num_seats_last_row * seat_width / 12.0
         width_aisle = num_aisles * aisle_width / 12.0
         wid_last_row_avail = cabin_width - width_last_row - width_aisle
-        # find number of tourist class lavs and aft galley (galley width = lav width)
+        # find number of economy class lavs and aft galley (galley width = lav width)
         num_lav_TC = int(sum_num_seats_TC / TC_num_pax_per_lav) + 1
         wid_galley = 144.0 * sum_num_seats_TC * TC_galley_area_per_pax / TC_lav_width
 

@@ -6,7 +6,7 @@ mission_distance = 3675
 
 phase_info = {
     'groundroll': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -32,7 +32,7 @@ phase_info = {
         },
     },
     'rotation': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -61,7 +61,7 @@ phase_info = {
         },
     },
     'ascent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
             'num_segments': 4,
             'order': 3,
@@ -99,7 +99,7 @@ phase_info = {
         },
     },
     'accel': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -125,13 +125,12 @@ phase_info = {
         },
     },
     'climb1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
             'EAS_target': (250, 'kn'),
-            'mach_cruise': 0.8,
-            'target_mach': False,
+            'mach_target': 0.8,
             'time_duration_bounds': ((30, 300), 's'),
             'time_duration_ref': (1000, 's'),
             'altitude_initial': (500.0, 'ft'),
@@ -152,13 +151,12 @@ phase_info = {
         },
     },
     'climb2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
             'EAS_target': (270, 'kn'),
-            'mach_cruise': 0.8,
-            'target_mach': True,
+            'mach_target': 0.8,
             'required_available_climb_rate': (0.1, 'ft/min'),
             'time_duration_bounds': ((200, 17_000), 's'),
             'time_duration_ref': (5000, 's'),
@@ -180,7 +178,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
@@ -195,12 +193,12 @@ phase_info = {
         },
     },
     'desc1': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 3,
             'order': 3,
-            'EAS_limit': (350, 'kn'),
-            'mach_cruise': 0.8,
+            'EAS_target': (350, 'kn'),
+            'mach_target': 0.8,
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 900.0), 's'),
             'time_duration_ref': (1000, 's'),
@@ -224,12 +222,12 @@ phase_info = {
         },
     },
     'desc2': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
             'num_segments': 1,
             'order': 7,
-            'EAS_limit': (250, 'kn'),
-            'mach_cruise': 0.80,
+            'EAS_target': (250, 'kn'),
+            'mach_target': 0.80,
             'input_speed_type': SpeedType.EAS,
             'time_duration_bounds': ((100.0, 5000), 's'),
             'time_duration_ref': (500, 's'),

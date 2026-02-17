@@ -573,7 +573,11 @@ def setup_model_options(
 
     # Multi-engines need to index into their options.
     try:
-        num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
+        num = aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
+        if isinstance(num, int):
+            num_engine_models = 1
+        else:
+            num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
     except KeyError:
         # No engine data.
         return
@@ -584,9 +588,9 @@ def setup_model_options(
         if engine_models is None:
             # Required in multi-mission cases
             if group is None:
-                engine_models = prob.model.engine_builders
+                engine_models = prob.model.engine_models
             else:
-                engine_models = group.engine_builders
+                engine_models = group.engine_models
 
         for idx in range(num_engine_models):
             eng_name = engine_models[idx].name
@@ -613,5 +617,5 @@ def setup_model_options(
                     val, units = aviary_inputs.get_item(key)
                     opts[key] = (val[idx], units)
 
-            path = f'{prefix}*core_propulsion.{eng_name}*'
+            path = f'{prefix}*propulsion.{eng_name}*'
             prob.model_options[path] = opts

@@ -54,10 +54,10 @@ inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 12)
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 1)
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 4077.0, 'lbm')
-inputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS_SCALER, 1.0)
+inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 162, units='unitless')
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)
-inputs.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 150)
+inputs.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 150)
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')
 
@@ -254,11 +254,13 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 88507.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 452.6, 'lbm')
+outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 2968.4, 'lbm')
 outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 146328.0, 'lbm')
 outputs.set_val(Mission.Summary.OPERATING_MASS, 95267.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 19232.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 44648.0, 'lbm')
-outputs.set_val(Aircraft.Design.SYSTEMS_EQUIP_MASS, 24174.0, 'lbm')
+outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 24174.0, 'lbm')
+outputs.set_val(Mission.Summary.USEFUL_LOAD, 6760.42285438, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 131744.0, 'lbm')
 outputs.set_val(Mission.Summary.FUEL_MASS, 42456.0, 'lbm')
@@ -280,9 +282,9 @@ outputs.set_val(Aircraft.CrewPayload.BAGGAGE_MASS, 5670.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 1925.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 4077.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS, 450.0, 'lbm')
-outputs.set_val(Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, 975.0, 'lbm')
+outputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS, 975.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 2787.30285438, 'lbm')
-outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS, 26730.0, 'lbm')
+outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, 26730.0, 'lbm')
 outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 36477.0, 'lbm')
 
 outputs.set_val(Aircraft.Electrical.MASS, 1935.6, 'lbm')
@@ -294,7 +296,7 @@ outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 
 avg_diameter = (13.0208 + 12.33) / 2
 avg_diameter_units = 'ft'
-outputs.set_val(Aircraft.Fuselage.AVG_DIAMETER, avg_diameter, avg_diameter_units)
+outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, avg_diameter, avg_diameter_units)
 outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 124.75, 'ft')
 outputs.set_val(
     Aircraft.Fuselage.CROSS_SECTION, np.pi * (avg_diameter / 2.0) ** 2.0, f'{avg_diameter_units}**2'
@@ -316,6 +318,7 @@ outputs.set_val(Aircraft.Instruments.MASS, 484, 'lbm')
 
 outputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, 0.0117 * 146328.0**0.95 * 84.0**0.43, 'lbm')
 outputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, 0.048 * 146328.0**0.67 * 58.8**0.43, 'lbm')
+outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 7148.277290864326, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([11.65]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.6643]))
@@ -335,7 +338,6 @@ outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 2)
 
 engine_ctrls_mass = 0.26 * 2 * 27301.0**0.5  # 85.92
 engine_ctrls_mass_units = 'lbm'
-outputs.set_val(Aircraft.Engine.CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units)
 outputs.set_val(
     Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS, engine_ctrls_mass, engine_ctrls_mass_units
 )

@@ -54,7 +54,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:crew_and_payload:passenger_mass_with_bags",
+        "aircraft:crew_and_payload:mass_per_passenger_with_bags",
         0.0,
         "lbm",
         "<class 'float'>"
@@ -126,7 +126,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:crew_and_payload:design:num_tourist_class",
+        "aircraft:crew_and_payload:design:num_economy_class",
         158,
         "unitless",
         "<class 'int'>"
@@ -150,7 +150,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:crew_and_payload:non_flight_crew_mass_scaler",
+        "aircraft:crew_and_payload:cabin_crew_mass_scaler",
         1.0,
         "unitless",
         "<class 'float'>"
@@ -806,7 +806,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:chord_per_semispan",
+        "aircraft:wing:chord_per_semispan_dist",
         [
             0.31,
             0.23,
@@ -1073,18 +1073,6 @@
         "<enum 'Verbosity'>"
     ],
     [
-        "mission:summary:gross_mass",
-        175400.0,
-        "lbm",
-        "<class 'float'>"
-    ],
-    [
-        "mission:summary:range",
-        1906.0,
-        "NM",
-        "<class 'float'>"
-    ],
-    [
         "aircraft:crew_and_payload:num_passengers",
         169,
         "unitless",
@@ -1103,7 +1091,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:crew_and_payload:num_tourist_class",
+        "aircraft:crew_and_payload:num_economy_class",
         158,
         "unitless",
         "<class 'int'>"
@@ -1149,6 +1137,18 @@
         2,
         "unitless",
         "<class 'int'>"
+    ],
+    [
+        "mission:summary:gross_mass",
+        175400.0,
+        "lbm",
+        "<class 'float'>"
+    ],
+    [
+        "mission:summary:range",
+        1906.0,
+        "NM",
+        "<class 'float'>"
     ],
     [
         "aircraft:fuel:ignore_fuel_capacity_constraint",

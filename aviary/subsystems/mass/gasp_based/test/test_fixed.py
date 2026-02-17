@@ -271,7 +271,7 @@ class PayloadGroupTestCase(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(
-            Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=200, units='lbm'
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )  # bug fixed value and original value
 
         self.prob = om.Problem()
@@ -452,7 +452,6 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 class EngineTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
@@ -799,7 +798,7 @@ class ControlMassTestCase(unittest.TestCase):
 
         tol = 5e-4
         # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3945, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 3945, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
@@ -940,7 +939,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(
-            Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=200, units='lbm'
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )  # bug fixed value and original value
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
@@ -1159,7 +1158,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 4082.1, tol)
 
         # bug fixed value
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3945, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 3945, tol)
 
         assert_near_equal(
             self.prob[Aircraft.LandingGear.TOTAL_MASS], 7511, tol
@@ -1192,11 +1191,10 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, val=2, units='unitless')
-        options.set_val(Aircraft.Engine.HAS_PROPELLERS, val=[True], units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.Strut.DIMENSIONAL_LOCATION_SPECIFIED, val=False, units='unitless')
         options.set_val(
-            Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=200, units='lbm'
+            Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=200, units='lbm'
         )  # bug fixed value and original value
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
@@ -1463,7 +1461,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 4162.1, tol)
 
         # original GASP value
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 3895, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 3895, tol)
 
         assert_near_equal(
             self.prob[Aircraft.LandingGear.TOTAL_MASS], 7016, tol
@@ -1547,7 +1545,6 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 Aircraft.CrewPayload.NUM_PASSENGERS: (150, 'unitless'),
                 Aircraft.CrewPayload.Design.NUM_PASSENGERS: (150, 'unitless'),
                 Aircraft.Electrical.HAS_HYBRID_SYSTEM: (False, 'unitless'),
-                Aircraft.Engine.HAS_PROPELLERS: ([False], 'unitless'),
                 Aircraft.Wing.FLAP_TYPE: ('plain', 'unitless'),
                 Aircraft.Wing.SWEEP: (30.0, 'deg'),
                 Aircraft.Wing.VERTICAL_MOUNT_LOCATION: (0, 'unitless'),
@@ -1557,7 +1554,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 'max_mach': (0.9, 'unitless'),
                 Aircraft.Strut.ATTACHMENT_LOCATION: (10.0, 'ft'),
                 Aircraft.LandingGear.MAIN_GEAR_LOCATION: (0.2, 'unitless'),
-                Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS: (200.0, 'lbm'),
+                Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS: (200.0, 'lbm'),
                 Aircraft.CrewPayload.CARGO_MASS: (0.0, 'lbm'),
                 Aircraft.CrewPayload.Design.MAX_CARGO_MASS: (10040.0, 'lbm'),
                 'wire_area': (0.0015, 'ft**2'),
@@ -1649,7 +1646,6 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                                 data.set_val(Aircraft.LandingGear.MAIN_GEAR_LOCATION, gear_loc)
                                 data.set_val(Aircraft.Wing.FLAP_TYPE, flap_type)
                                 data.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, has_hybrid)
-                                data.set_val(Aircraft.Engine.HAS_PROPELLERS, [has_prop])
 
                                 self._run_case(data)
 
@@ -1701,7 +1697,7 @@ class BWBPayloadGroupTestCase(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=225, units='lbm')
+        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('payload', PayloadGroup(), promotes=['*'])
@@ -1921,7 +1917,7 @@ class BWBControlMassTestCase(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 2045.5556421, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 2174.28611375, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 2174.28611375, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
@@ -1971,7 +1967,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
-        options.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=225, units='lbm')
+        options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
         options.set_val(Settings.VERBOSITY, 0)
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
 
@@ -2105,7 +2101,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.HorizontalTail.MASS], 1.02401953, tol)
         assert_near_equal(self.prob[Aircraft.VerticalTail.MASS], 864.17404177, tol)
         assert_near_equal(self.prob[Aircraft.Wing.HIGH_LIFT_MASS], 1068.88854499, tol)
-        assert_near_equal(self.prob[Aircraft.Controls.TOTAL_MASS], 2114.98158947, tol)
+        assert_near_equal(self.prob[Aircraft.Controls.MASS], 2114.98158947, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_MASS], 7005.15475443, tol)
         assert_near_equal(self.prob[Aircraft.Nacelle.MASS], 549.8807447, tol)
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 2230.13208284, tol)

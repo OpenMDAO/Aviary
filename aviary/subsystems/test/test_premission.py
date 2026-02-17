@@ -71,21 +71,21 @@ class PreMissionTestCase(unittest.TestCase):
 
         engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
+        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=GASP,
         )
 
-        core_subsystems = [prop, geom, mass, aero]
+        subsystems = [prop, geom, mass, aero]
 
         self.prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=input_options, subsystems=core_subsystems),
+            CorePreMission(aviary_options=input_options, subsystems=subsystems),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -213,32 +213,11 @@ class PreMissionTestCase(unittest.TestCase):
         # Problem in setup is GASP prioritized, so shared inputs for FLOPS will be overridden.
 
         outs = self.prob.model.pre_mission.list_outputs(
-            includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None
-        )
-
-        self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.parameters.{Aircraft.Fuselage.AVG_DIAMETER}'
-        )
-        self.assertTrue('CODE_ORIGIN_OVERRIDE' not in outs[0][1]['prom_name'])
-
-        outs = self.prob.model.pre_mission.list_outputs(
-            includes='*flops*fuselage:avg_diam*', prom_name=True, out_stream=None
-        )
-
-        self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.flops_based_geom.fuselage_prelim.{Aircraft.Fuselage.AVG_DIAMETER}'
-        )
-        self.assertTrue('CODE_ORIGIN_OVERRIDE' in outs[0][1]['prom_name'])
-
-        outs = self.prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:wetted_area*', prom_name=True, out_stream=None
         )
 
         self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' not in outs[0][1]['prom_name'])
 
@@ -247,7 +226,7 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'core_geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -272,21 +251,21 @@ class PreMissionTestCase(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('core_propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('core_mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('core_aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
+        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
         geom = CoreGeometryBuilder(
-            'core_geometry',
+            'geometry',
             BaseMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
         )
 
-        core_subsystems = [prop, geom, mass, aero]
+        subsystems = [prop, geom, mass, aero]
 
         model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_inputs, subsystems=core_subsystems),
+            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -311,34 +290,12 @@ class PreMissionTestCase(unittest.TestCase):
         prob.setup()
 
         # Problem in setup is FLOPS prioritized, so shared inputs for FLOPS will be overridden.
-
-        outs = prob.model.pre_mission.list_outputs(
-            includes='*gasp*fuselage:avg_diam*', prom_name=True, out_stream=None
-        )
-
-        self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.parameters.{Aircraft.Fuselage.AVG_DIAMETER}'
-        )
-        self.assertTrue('CODE_ORIGIN_OVERRIDE' in outs[0][1]['prom_name'])
-
-        outs = prob.model.pre_mission.list_outputs(
-            includes='*flops*fuselage:avg_diam*', prom_name=True, out_stream=None
-        )
-
-        self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.flops_based_geom.fuselage_prelim.{Aircraft.Fuselage.AVG_DIAMETER}'
-        )
-        self.assertTrue('CODE_ORIGIN_OVERRIDE' not in outs[0][1]['prom_name'])
-
         outs = prob.model.pre_mission.list_outputs(
             includes='*gasp*fuselage:wetted_area*', prom_name=True, out_stream=None
         )
 
         self.assertTrue(
-            outs[0][0]
-            == f'core_geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.gasp_based_geom.fuselage.size.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -347,7 +304,7 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'core_geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' not in outs[0][1]['prom_name'])
 

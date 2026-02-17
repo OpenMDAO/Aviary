@@ -2,12 +2,20 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fin import FinMass
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_tests import do_validation_test, print_case
+from aviary.validation_cases.validation_tests import (
+    do_validation_test,
+    flops_validation_test,
+    get_flops_case_names,
+    get_flops_options,
+    print_case,
+    Version,
+)
 from aviary.variable_info.variables import Aircraft, Mission
 
 # TODO - None of the flops cases have any fins.
@@ -25,6 +33,8 @@ fin_test_data['1'] = AviaryValues(
 )
 
 fin_data_sets = [key for key in fin_test_data]
+
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
 
 class FinMassTest(unittest.TestCase):
@@ -50,7 +60,6 @@ class FinMassTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
@@ -99,6 +108,46 @@ class FinMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBFinMassTest(unittest.TestCase):
+    """Tests engine mass calculation for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'engine_mass',
+            FinMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Mission.Design.GROSS_MASS,
+                Aircraft.Fins.TAPER_RATIO,
+                Aircraft.Fins.AREA,
+            ],
+            output_keys=[
+                Aircraft.Fins.MASS,
+            ],
+            list_inputs=True,
+            list_outputs=True,
+            version=Version.BWB,
+            rtol=1e-10,
+        )
 
 
 if __name__ == '__main__':

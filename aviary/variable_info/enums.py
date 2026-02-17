@@ -46,6 +46,24 @@ class AlphaModes(Enum):
     FLIGHT_PATH_ANGLE = auto()
 
 
+class AtmosphereModel(Enum):
+    """
+    Specifies which atmosphere model to select.
+
+    STANDARD use the 1976 US atmosphere model.
+    HOT use the MIL-SPEC-210A Hottest Day in Northern Hemesphere atmosphere model
+    COLD use the MIL-SPEC-210A Coldest Day in Northern Hemesphere atmosphere model
+    TROPICAL use the MIL-SPEC-210A Tropical atmosphere model
+    POLAR use the MIL-SPEC-210A Arctic Winter atmosphere model
+    """
+
+    STANDARD = 'standard'
+    COLD = 'cold'
+    HOT = 'hot'
+    TROPICAL = 'tropical'
+    POLAR = 'polar'
+
+
 class CodeOrigin(Enum):
     FLOPS = 'FLOPS'
     GASP = 'GASP'
@@ -208,6 +226,23 @@ class ThrottleAllocation(Enum):
     FIXED = 'fixed'
     STATIC = 'static'
     DYNAMIC = 'dynamic'
+
+
+class Transcription(Enum):
+    """
+    Sets the Dymos Transcription for each phase.
+    See Dymos documentation for more details: https://openmdao.github.io/dymos/getting_started/transcriptions.html
+
+    COLLOCATION uses implicit pseudospectral method for discritizing state and control history over time.
+    PICARDShooting uses explicit numerical integration to propagate the initial state subject to controls.
+
+    """
+
+    COLLOCATION = 'collocation'
+    PICARDSHOOTING = 'picardshooting'
+
+    def __str__(self):
+        return self.value
 
 
 class Verbosity(IntEnum):

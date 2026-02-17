@@ -1,3 +1,13 @@
+"""
+This is an example of running a coupled aircraft design-mission optimization in Aviary without using the lower level APIs.
+It runs the same aircraft and mission as the `level1_example.py` and 'level2_example.py' scripts.
+The aircraft is loaded from .csv and the default height energy phase_info dictionary is imported from the file.
+
+This script unwraps the subsystem and trajectory builders, exposing how Aviary interacts with openMDAO and Dymos.
+It is divided into sections separated by '####' with the level2 api calls commented out so you can see what happens in each level2 method.
+
+"""
+
 import warnings
 
 import dymos as dm
@@ -5,7 +15,8 @@ import openmdao.api as om
 
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
-from aviary.mission.flops_based.phases.energy_phase import EnergyPhase
+from aviary.mission.flight_phase_builder import FlightPhaseOptions
+from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
 from aviary.models.missions.height_energy_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -25,6 +36,10 @@ class L3SubsystemsGroup(om.Group):
         )
         self.code_origin_overrides = []
 
+
+# Toggle this boolean option to run with shooting vs collocation transcription:
+# shooting = True
+shooting = False
 
 prob = av.AviaryProblem()
 
@@ -63,9 +78,6 @@ prob.model.core_subsystems = {
 }
 prob.meta_data = BaseMetaData.copy()
 
-#####
-# prob.add_pre_mission_systems()
-# overwrites calculated values in pre-mission with override values from .csv
 prob.model.add_subsystem(
     'pre_mission',
     PreMissionGroup(),
@@ -73,7 +85,6 @@ prob.model.add_subsystem(
     promotes_outputs=['aircraft:*', 'mission:*'],
 )
 
-#####
 # This is a combination of prob.add_pre_mission_systems and prob.setup()
 # In the aviary code add_pre_mission_systems only instantiates the objects and methods, the build method is called in prob.setup()
 prob.model.pre_mission.add_subsystem(
@@ -109,13 +120,14 @@ prob.model.pre_mission.core_subsystems.add_subsystem(
 
 #####
 # prob.add_phases()
-phases = ['climb', 'cruise', 'descent']
+phase_list = ['climb', 'cruise', 'descent']
 prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
 default_mission_subsystems = [
     prob.model.core_subsystems['aerodynamics'],
     prob.model.core_subsystems['propulsion'],
 ]
-for phase_idx, phase_name in enumerate(phases):
+phases = {}
+for phase_idx, phase_name in enumerate(phase_list):
     base_phase_options = prob.model.mission_info[phase_name]
     phase_options = {}
     for key, val in base_phase_options.items():
@@ -123,12 +135,203 @@ for phase_idx, phase_name in enumerate(phases):
     phase_options['user_options'] = {}
     for key, val in base_phase_options['user_options'].items():
         phase_options['user_options'][key] = val
-    phase_builder = EnergyPhase
-    phase_object = phase_builder.from_phase_info(
-        phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
+
+    # Create the dymos phase object and add it to the trajectory
+    # phase_builder = EnergyPhase
+
+    # Unpack the phase info without using the phase builder
+    # phase_object = phase_builder.from_phase_info(
+    #     phase_name, phase_options, default_mission_subsystems, meta_data=prob.meta_data
+    # )
+
+    # user_options dict entries need reformatting
+    # if the value is not a tuple, wrap it in a tuple with the second entry of 'unitless'
+    for key, value in phase_options['user_options'].items():
+        if not isinstance(value, tuple):
+            phase_options['user_options'][key] = (value, 'unitless')
+    subsystem_options = phase_options.get('subsystem_options', {})
+    user_options = phase_options.get('user_options', ())
+    initial_guesses = AviaryValues(
+        phase_options.get('initial_guesses', ())
+    )  # Not used in this example
+
+    # instantiate the PhaseBuilderBaseClass:
+    # phase_builder = cls(
+    #     name,
+    #     subsystem_options=subsystem_options,
+    #     user_options=user_options,
+    #     initial_guesses=initial_guesses,
+    #     meta_data=meta_data,
+    #     core_subsystems=core_subsystems,
+    #     external_subsystems=external_subsystems,
+    #     transcription=transcription,
+    # )
+    # This basically just adds these objects to the class - we have them all available in this L3 script so have no need for the extra class!
+    transcription = None
+    ode_class = None
+    is_analytic_phase = False
+    num_nodes = 5  # this is only used for analytic phases
+
+    # Now build the phase using the instantiated phase object:
+    # phase = phase_object.build_phase(aviary_options=aviary_inputs)
+    # phase: dm.Phase = super().build_phase(aviary_options)
+    # For L3 we need to do this without the builder
+
+    ode_class = EnergyODE
+    user_options = FlightPhaseOptions(user_options)
+    num_segments = user_options['num_segments']
+    order = user_options['order']
+
+    if shooting:
+        nodes_per_seg = order * num_segments
+        transcription = dm.PicardShooting(
+            num_segments=1, nodes_per_seg=nodes_per_seg, solve_segments='forward'
+        )
+    else:
+        seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+        transcription = dm.Radau(
+            num_segments=num_segments, order=order, compressed=True, segment_ends=seg_ends
+        )
+
+    kwargs = {
+        'meta_data': prob.meta_data,
+        'subsystem_options': subsystem_options,
+        'throttle_enforcement': user_options['throttle_enforcement'],
+        'throttle_allocation': user_options['throttle_allocation'],
+        'subsystems': default_mission_subsystems,
+    }
+    kwargs = {'aviary_options': aviary_inputs, **kwargs}
+    phase = dm.Phase(ode_class=ode_class, transcription=transcription, ode_init_kwargs=kwargs)
+    tx_mission_bus = dm.GaussLobatto(
+        num_segments=transcription.options['num_segments'], order=3, compressed=True
+    )  # equally spaced points in this output - this is going to be better than using picard or radau.
+    phase.add_timeseries(name='mission_bus_variables', transcription=tx_mission_bus, subset='all')
+    num_engine_type = len(
+        aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
+    )  # not used in this example
+    throttle_enforcement = user_options['throttle_enforcement']
+    no_descent = user_options['no_descent']  # not used in this example
+    no_climb = user_options['no_climb']  # not used in this example
+    constraints = user_options['constraints']  # not used in this example
+    ground_roll = user_options['ground_roll']  # not used in this example
+
+    phase.add_state(
+        name=Dynamic.Vehicle.MASS,
+        fix_initial=False,
+        input_initial=False,
+        lower=user_options['mass_bounds'][0][0],
+        upper=user_options['mass_bounds'][0][1],
+        units=user_options['mass_bounds'][1],
+        rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        ref=user_options['mass_ref'][0],
+        ref0=user_options['mass_ref0'][0],
+        defect_ref=user_options['mass_defect_ref'][0],
+        solve_segments='forward' if user_options['mass_solve_segments'] else None,
     )
-    phase = phase_object.build_phase(aviary_options=aviary_inputs)
+
+    phase.add_state(
+        name=Dynamic.Mission.DISTANCE,
+        fix_initial=False,
+        input_initial=False,
+        lower=user_options['distance_bounds'][0][0],
+        upper=user_options['distance_bounds'][0][1],
+        units=user_options['distance_bounds'][1],
+        rate_source=Dynamic.Mission.DISTANCE_RATE,
+        ref=user_options['distance_ref'][0],
+        ref0=user_options['distance_ref0'][0],
+        defect_ref=user_options['distance_defect_ref'][0],
+        solve_segments='forward' if user_options['distance_solve_segments'] else None,
+    )
+
+    phase.add_control(
+        Dynamic.Atmosphere.MACH,
+        targets=Dynamic.Atmosphere.MACH,
+        opt=user_options[f'mach_optimize'],
+        lower=user_options[f'mach_bounds'][0][0],
+        upper=user_options[f'mach_bounds'][0][1],
+        ref=user_options['mach_ref'][0],
+        ref0=user_options['mach_ref0'][0],
+        control_type='polynomial',
+        order=user_options[f'mach_polynomial_order'],
+        rate_targets=[Dynamic.Atmosphere.MACH_RATE],
+    )
+    phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
+
+    phase.add_control(
+        Dynamic.Mission.ALTITUDE,
+        targets=Dynamic.Mission.ALTITUDE,
+        opt=user_options[f'altitude_optimize'],
+        lower=user_options[f'altitude_bounds'][0][0],
+        upper=user_options[f'altitude_bounds'][0][1],
+        ref=user_options['altitude_ref'][0],
+        ref0=user_options['altitude_ref0'][0],
+        control_type='polynomial',
+        order=user_options[f'altitude_polynomial_order'],
+        units=user_options[f'altitude_bounds'][1],
+        rate_targets=[Dynamic.Mission.ALTITUDE_RATE],
+    )
+    phase.add_timeseries_output(Dynamic.Mission.ALTITUDE)
+
+    # if throttle_enforcement == 'control':
+    # add throttle as control
+    # not used in this example
+
+    phase.add_timeseries_output(
+        Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+        output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+        units='lbf',
+    )
+
+    phase.add_timeseries_output(Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf')
+
+    phase.add_timeseries_output(
+        Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+        output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
+        units='m/s',
+    )
+    phase.add_timeseries_output(
+        Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        output_name=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        units='lbm/h',
+    )
+
+    phase.add_timeseries_output(
+        Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+        output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+        units='kW',
+    )
+
+    phase.add_timeseries_output(
+        Dynamic.Mission.ALTITUDE_RATE,
+        output_name=Dynamic.Mission.ALTITUDE_RATE,
+        units='ft/s',
+    )
+
+    if throttle_enforcement != 'control':
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
+            units='unitless',
+        )
+
+    phase.add_timeseries_output(
+        Dynamic.Mission.VELOCITY,
+        output_name=Dynamic.Mission.VELOCITY,
+        units='m/s',
+    )
+
+    phase.add_path_constraint(
+        Dynamic.Vehicle.Propulsion.THROTTLE,
+        lower=0.0,
+        upper=1.0,
+        units='unitless',
+    )
     prob.traj.add_phase(phase_name, phase)
+    phases[phase_name] = phase
+
+climb = phases['climb']
+cruise = phases['cruise']
+descent = phases['descent']
 
 externs = {'climb': {}, 'cruise': {}, 'descent': {}}
 for default_subsys in default_mission_subsystems:
@@ -141,8 +344,7 @@ prob.traj = setup_trajectory_params(
     prob.model, prob.traj, aviary_inputs, external_parameters=externs
 )
 
-# need aviary inputs assigned to the problem object for other functions below
-# this maybe needs a better location in this script.
+# Need aviary inputs assigned to the problem object for other functions below
 prob.aviary_inputs = aviary_inputs
 
 #####
@@ -154,15 +356,11 @@ prob.model.add_subsystem(
     promotes_outputs=['*'],
 )
 
-prob.traj._phases['climb'].set_state_options(
-    Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
-)
+climb.set_state_options(Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False)
 
-prob.traj._phases['climb'].set_state_options(
-    Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False
-)
+climb.set_state_options(Dynamic.Mission.DISTANCE, fix_initial=True, input_initial=False)
 
-prob.traj._phases['climb'].set_time_options(
+climb.set_time_options(
     fix_initial=False,
     initial_bounds=(0, 0),
     initial_ref=600,
@@ -170,12 +368,12 @@ prob.traj._phases['climb'].set_time_options(
     duration_ref=7680.0,
 )
 
-prob.traj._phases['cruise'].set_time_options(
-    duration_bounds=(3390, 10170),
-    duration_ref=6780.0,
+cruise.set_time_options(
+    duration_bounds=(3390, 18000),
+    duration_ref=10695.0,
 )
 
-prob.traj._phases['descent'].set_time_options(
+descent.set_time_options(
     duration_bounds=(1740, 5220),
     duration_ref=3480.0,
 )
@@ -290,16 +488,13 @@ ecomp = om.ExecComp(
     mass_resid={'units': 'lbm'},
 )
 
-# this seems clunky - we could just move this directly into the promotes inputs block?
-payload_mass_src = Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
-
 prob.model.post_mission.add_subsystem(
     'mass_constraint',
     ecomp,
     promotes_inputs=[
         ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
         ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
-        ('payload_mass', payload_mass_src),
+        ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
         ('initial_mass', Mission.Summary.GROSS_MASS),
     ],
     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
@@ -332,49 +527,55 @@ prob.model.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, uni
 all_subsystems = []
 all_subsystems.append(prob.model.core_subsystems['propulsion'])
 
-phases = list(prob.model.mission_info.keys())
-prob.traj.link_phases(phases, ['time'], ref=None, connected=True)
-prob.traj.link_phases(phases, [Dynamic.Vehicle.MASS], ref=None, connected=True)
-prob.traj.link_phases(phases, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
-
+prob.traj.link_phases(phase_list, ['time'], ref=None, connected=True)
+prob.traj.link_phases(phase_list, [Dynamic.Vehicle.MASS], ref=None, connected=True)
+prob.traj.link_phases(phase_list, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
 prob.model.connect(
     f'traj.descent.timeseries.distance',
     Mission.Summary.RANGE,
     src_indices=[-1],
     flat_src_indices=True,
 )
-#### End of link_phases
 
 #####
+# Each driver requires different settings - uncomment the one to be used:
+
 # prob.add_driver('SLSQP', max_iter=50)
 # SLSQP Optimizer Settings
-prob.driver = om.ScipyOptimizeDriver()
-prob.driver.options['optimizer'] = 'SLSQP'
-prob.driver.declare_coloring(show_summary=False)
-prob.driver.options['disp'] = True
-prob.driver.options['tol'] = 1e-9
-prob.driver.options['maxiter'] = 50
+# prob.driver = om.ScipyOptimizeDriver()
+# prob.driver.options['optimizer'] = 'SLSQP'
+# prob.driver.declare_coloring(show_summary=False)
+# prob.driver.options['disp'] = True
+# prob.driver.options['tol'] = 1e-9
+# prob.driver.options['maxiter'] = 50
 
+# prob.add_driver('IPOPT', max_iter=50)
 # IPOPT Optimizer Settings
-# prob.driver.opt_settings['print_user_options'] = 'no'
-# prob.driver.opt_settings['print_frequency_iter'] = 10
-# prob.driver.opt_settings['print_level'] = 3
-# prob.driver.opt_settings['tol'] = 1.0e-6
-# prob.driver.opt_settings['mu_init'] = 1e-5
-# prob.driver.opt_settings['max_iter'] = 50
-# prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
-# prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
-# prob.driver.opt_settings['mu_strategy'] = 'monotone'
-# prob.driver.options['print_results'] = 'minimal'
+prob.driver = om.pyOptSparseDriver()
+prob.driver.options['optimizer'] = 'IPOPT'
+prob.driver.declare_coloring(show_summary=False)
+prob.driver.opt_settings['print_user_options'] = 'no'
+prob.driver.opt_settings['print_frequency_iter'] = 10
+prob.driver.opt_settings['print_level'] = 3
+prob.driver.opt_settings['tol'] = 1.0e-6
+prob.driver.opt_settings['mu_init'] = 1e-5
+prob.driver.opt_settings['max_iter'] = 300
+prob.driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
+prob.driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
+prob.driver.opt_settings['mu_strategy'] = 'monotone'
+prob.driver.options['print_results'] = 'minimal'
+
+# prob.add_driver('SNOPT', max_iter=50)
+# SNOPT Optimizer Settings #
+# prob.driver = om.pyOptSparseDriver()
+# prob.driver.options['optimizer'] = 'SNOPT'
+# prob.driver.declare_coloring(show_summary=False)
 # prob.driver.opt_settings['iSumm'] = 6
 # prob.driver.opt_settings['iPrint'] = 0
-
-# SNOPT Optimizer Settings #
 # prob.driver.opt_settings['Major iterations limit'] = 50
 # prob.driver.opt_settings['Major optimality tolerance'] = 1e-4
 # prob.driver.opt_settings['Major feasibility tolerance'] = 1e-7
-# prob.driver.opt_settings['iSumm'] = 6
-# prob.driver.opt_settings['iPrint'] = 0
+# prob.driver.options['print_results'] = 'minimal'
 
 #####
 # prob.add_design_variables()
@@ -469,47 +670,32 @@ guesses['mach_descent'] = ([0.72, 0.36], 'unitless')
 guesses['altitude_descent'] = ([34000.0, 500.0], 'ft')
 guesses['time_descent'] = ([7230.0, 1740.0], 's')
 
-prob.set_val('traj.climb.t_initial', guesses['time_climb'][0][0], units='s')
-prob.set_val('traj.climb.t_duration', guesses['time_climb'][0][1], units='s')
-prob.set_val(
-    'traj.climb.controls:mach',
-    prob.model.traj.phases.climb.interp('mach', xs=[-1, 1], ys=guesses['mach_climb'][0]),
-    units='unitless',
+climb.set_time_val(
+    initial=guesses['time_climb'][0][0], duration=guesses['time_climb'][0][1], units='s'
 )
-prob.set_val(
-    'traj.climb.controls:altitude',
-    prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_climb'][0]),
-    units='ft',
-)
+climb.set_control_val('mach', vals=guesses['mach_climb'][0], time_vals=[-1, 1], units='unitless')
+climb.set_control_val('altitude', vals=guesses['altitude_climb'][0], time_vals=[-1, 1], units='ft')
+climb.set_state_val('mass', 125000, units='lbm')
 
-prob.set_val('traj.cruise.t_initial', guesses['time_cruise'][0][0], units='s')
-prob.set_val('traj.cruise.t_duration', guesses['time_cruise'][0][1], units='s')
-prob.set_val(
-    'traj.cruise.controls:mach',
-    prob.model.traj.phases.cruise.interp('mach', xs=[-1, 1], ys=guesses['mach_cruise'][0]),
-    units='unitless',
+cruise.set_time_val(
+    initial=guesses['time_cruise'][0][0], duration=guesses['time_cruise'][0][1], units='s'
 )
-prob.set_val(
-    'traj.cruise.controls:altitude',
-    prob.model.traj.phases.cruise.interp('altitude', xs=[-1, 1], ys=guesses['altitude_cruise'][0]),
-    units='ft',
+cruise.set_control_val('mach', vals=guesses['mach_cruise'][0], time_vals=[-1, 1], units='unitless')
+cruise.set_control_val(
+    'altitude', vals=guesses['altitude_cruise'][0], time_vals=[-1, 1], units='ft'
 )
+cruise.set_state_val('mass', 125000, units='lbm')
 
-prob.set_val('traj.descent.t_initial', guesses['time_descent'][0][0], units='s')
-prob.set_val('traj.descent.t_duration', guesses['time_descent'][0][1], units='s')
-prob.set_val(
-    'traj.descent.controls:mach',
-    prob.model.traj.phases.climb.interp('mach', xs=[-1, 1], ys=guesses['mach_descent'][0]),
-    units='unitless',
+descent.set_time_val(
+    initial=guesses['time_descent'][0][0], duration=guesses['time_descent'][0][1], units='s'
 )
-prob.set_val(
-    'traj.descent.controls:altitude',
-    prob.model.traj.phases.climb.interp('altitude', xs=[-1, 1], ys=guesses['altitude_descent'][0]),
-    units='ft',
+descent.set_control_val(
+    'mach', vals=guesses['mach_descent'][0], time_vals=[-1, 1], units='unitless'
 )
-prob.set_val('traj.climb.states:mass', 125000, units='lbm')
-prob.set_val('traj.cruise.states:mass', 125000, units='lbm')
-prob.set_val('traj.descent.states:mass', 125000, units='lbm')
+descent.set_control_val(
+    'altitude', vals=guesses['altitude_descent'][0], time_vals=[-1, 1], units='ft'
+)
+descent.set_state_val('mass', 125000, units='lbm')
 
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')

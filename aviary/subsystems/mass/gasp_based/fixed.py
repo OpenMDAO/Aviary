@@ -225,7 +225,7 @@ class PayloadGroup(om.ExplicitComponent):
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
-        add_aviary_option(self, Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm')
+        add_aviary_option(self, Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm')
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)
 
     def setup(self):
@@ -257,7 +257,7 @@ class PayloadGroup(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        pax_mass, _ = self.options[Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS]
+        pax_mass, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS]
         pax = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
         pax_des = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
@@ -767,9 +767,6 @@ class EngineMass(om.ExplicitComponent):
                 sum(CK5 * dry_wt_eng * num_engines) + CK7 * eng_instl_wt_all + aug_wt
             ) / GRAV_ENGLISH_LBM
 
-        # prop_wt = np.zeros(num_engine_type)
-        # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
-        # prop_wt[prop_idx] = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         outputs['prop_mass_all'] = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
@@ -890,7 +887,6 @@ class EngineMass(om.ExplicitComponent):
         pod_wt = nacelle_wt + pylon_wt
         eng_instl_wt = c_instl * dry_wt_eng
 
-        # prop_idx = np.where(self.options[Aircraft.Engine.HAS_PROPELLERS))
         prop_wt = inputs['prop_mass'] * GRAV_ENGLISH_LBM
         # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
@@ -2480,11 +2476,11 @@ class ControlMass(om.ExplicitComponent):
         )
         add_aviary_input(self, Aircraft.Controls.CONTROL_MASS_INCREMENT, units='lbm')
 
-        add_aviary_output(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Controls.MASS, units='lbm')
         add_aviary_output(self, Aircraft.Wing.SURFACE_CONTROL_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Controls.TOTAL_MASS, '*')
+        self.declare_partials(Aircraft.Controls.MASS, '*')
         self.declare_partials(
             Aircraft.Wing.SURFACE_CONTROL_MASS,
             [
@@ -2529,7 +2525,7 @@ class ControlMass(om.ExplicitComponent):
         outputs[Aircraft.Wing.SURFACE_CONTROL_MASS] = wing_control_wt / GRAV_ENGLISH_LBM
         stab_control_wt = stab_aug_wt
 
-        outputs[Aircraft.Controls.TOTAL_MASS] = (
+        outputs[Aircraft.Controls.MASS] = (
             CK15 * cockpit_control_wt
             + CK18 * wing_control_wt
             + CK19 * stab_control_wt
@@ -2607,17 +2603,17 @@ class ControlMass(om.ExplicitComponent):
             Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT,
         ] = dSCW_dSWCC / GRAV_ENGLISH_LBM
 
-        J[Aircraft.Controls.TOTAL_MASS, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT] = (
+        J[Aircraft.Controls.MASS, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT] = (
             CK18 * dSCW_dSWCC / GRAV_ENGLISH_LBM
         )
 
         J[Aircraft.Wing.SURFACE_CONTROL_MASS, Aircraft.Wing.AREA] = dSCW_dWA / GRAV_ENGLISH_LBM
 
-        J[Aircraft.Controls.TOTAL_MASS, Aircraft.Wing.AREA] = CK18 * dSCW_dWA / GRAV_ENGLISH_LBM
+        J[Aircraft.Controls.MASS, Aircraft.Wing.AREA] = CK18 * dSCW_dWA / GRAV_ENGLISH_LBM
 
         J[Aircraft.Wing.SURFACE_CONTROL_MASS, Mission.Design.GROSS_MASS] = dSCW_dWG
 
-        J[Aircraft.Controls.TOTAL_MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Controls.MASS, Mission.Design.GROSS_MASS] = (
             0.41
             * CK15
             * (
@@ -2631,11 +2627,11 @@ class ControlMass(om.ExplicitComponent):
             dSCW_dULF / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.Controls.TOTAL_MASS, Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = (
+        J[Aircraft.Controls.MASS, Aircraft.Wing.ULTIMATE_LOAD_FACTOR] = (
             CK18 * dSCW_dULF / GRAV_ENGLISH_LBM
         )
         J[Aircraft.Wing.SURFACE_CONTROL_MASS, 'min_dive_vel'] = dSCW_dMDV / GRAV_ENGLISH_LBM
-        J[Aircraft.Controls.TOTAL_MASS, 'min_dive_vel'] = CK18 * dSCW_dMDV / GRAV_ENGLISH_LBM
+        J[Aircraft.Controls.MASS, 'min_dive_vel'] = CK18 * dSCW_dMDV / GRAV_ENGLISH_LBM
 
         J[
             Aircraft.Wing.SURFACE_CONTROL_MASS,
@@ -2643,28 +2639,28 @@ class ControlMass(om.ExplicitComponent):
         ] = dSCW_dCCWC / GRAV_ENGLISH_LBM
 
         J[
-            Aircraft.Controls.TOTAL_MASS,
+            Aircraft.Controls.MASS,
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT,
         ] = (CK15 * (gross_wt_initial / 1000.0) ** 0.41 + CK18 * dSCW_dCCWC) / GRAV_ENGLISH_LBM
 
         J[
-            Aircraft.Controls.TOTAL_MASS,
+            Aircraft.Controls.MASS,
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
         ] = CK19
 
-        J[Aircraft.Controls.TOTAL_MASS, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER] = (
+        J[Aircraft.Controls.MASS, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER] = (
             cockpit_control_wt / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.Controls.TOTAL_MASS, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER] = (
+        J[Aircraft.Controls.MASS, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER] = (
             wing_control_wt / GRAV_ENGLISH_LBM
         )
 
         J[
-            Aircraft.Controls.TOTAL_MASS,
+            Aircraft.Controls.MASS,
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER,
         ] = stab_aug_wt
-        J[Aircraft.Controls.TOTAL_MASS, Aircraft.Controls.CONTROL_MASS_INCREMENT] = 1
+        J[Aircraft.Controls.MASS, Aircraft.Controls.CONTROL_MASS_INCREMENT] = 1
 
 
 class GearMass(om.ExplicitComponent):

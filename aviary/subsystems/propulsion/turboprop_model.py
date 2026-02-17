@@ -8,7 +8,7 @@ from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
 from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
 from aviary.subsystems.propulsion.utils import EngineModelVariables, build_engine_deck
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
@@ -25,13 +25,13 @@ class TurbopropModel(EngineModel):
         Object label.
     options : AviaryValues (<empty>)
         Inputs and options related to engine model.
-    shaft_power_model : SubsystemBuilderBase (<empty>)
+    shaft_power_model : SubsystemBuilder (<empty>)
         Subsystem builder for the shaft power generating component. If None, an
         EngineDeck built using provided options is used.
-    propeller_model : SubsystemBuilderBase (<empty>)
+    propeller_model : SubsystemBuilder (<empty>)
         Subsystem builder for the propeller. If None, the Hamilton Standard methodology
         is used to model the propeller.
-    gearbox_model : SubsystemBuilderBase (<empty>)
+    gearbox_model : SubsystemBuilder (<empty>)
         Subsystem builder used for the gearbox. If None, the simple gearbox model is
         used.
 
@@ -49,9 +49,9 @@ class TurbopropModel(EngineModel):
         self,
         name='turboprop_model',
         options: AviaryValues = None,
-        shaft_power_model: SubsystemBuilderBase = None,
-        propeller_model: SubsystemBuilderBase = None,
-        gearbox_model: SubsystemBuilderBase = None,
+        shaft_power_model: SubsystemBuilder = None,
+        propeller_model: SubsystemBuilder = None,
+        gearbox_model: SubsystemBuilder = None,
     ):
         # also calls _preprocess_inputs() as part of EngineModel __init__
         super().__init__(name, options)
@@ -331,7 +331,7 @@ class TurbopropMission(om.Group):
 
                 self.add_subsystem(propeller_model.name, propeller_group)
 
-        thrust_adder = om.ExecComp(
+        thrust_summation = om.ExecComp(
             'turboprop_thrust=turboshaft_thrust+propeller_thrust',
             turboprop_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
             turboshaft_thrust={'val': np.zeros(num_nodes), 'units': 'lbf'},
@@ -339,7 +339,7 @@ class TurbopropMission(om.Group):
             has_diag_partials=True,
         )
 
-        max_thrust_adder = om.ExecComp(
+        max_thrust_summation = om.ExecComp(
             'turboprop_thrust_max=turboshaft_thrust_max+propeller_thrust_max',
             turboprop_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
             turboshaft_thrust_max={'val': np.zeros(num_nodes), 'units': 'lbf'},
@@ -348,15 +348,15 @@ class TurbopropMission(om.Group):
         )
 
         self.add_subsystem(
-            'thrust_adder',
-            subsys=thrust_adder,
+            'thrust_summation',
+            subsys=thrust_summation,
             promotes_inputs=['*'],
             promotes_outputs=[('turboprop_thrust', Dynamic.Vehicle.Propulsion.THRUST)],
         )
 
         self.add_subsystem(
-            'max_thrust_adder',
-            subsys=max_thrust_adder,
+            'max_thrust_summation',
+            subsys=max_thrust_summation,
             promotes_inputs=['*'],
             promotes_outputs=[('turboprop_thrust_max', Dynamic.Vehicle.Propulsion.THRUST_MAX)],
         )

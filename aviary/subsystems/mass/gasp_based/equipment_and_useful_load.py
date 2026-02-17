@@ -151,9 +151,9 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS)
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS)
 
-        add_aviary_output(self, Aircraft.Design.FIXED_USEFUL_LOAD, units='lbm')
+        add_aviary_output(self, Mission.Summary.USEFUL_LOAD, units='lbm')
 
-        self.declare_partials(Aircraft.Design.FIXED_USEFUL_LOAD, '*')
+        self.declare_partials(Mission.Summary.USEFUL_LOAD, '*')
 
     def compute(self, inputs, outputs):
         pilot_wt = inputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS]
@@ -174,7 +174,7 @@ class UsefulLoadMass(om.ExplicitComponent):
             + cargo_handling_wt
         )
 
-        outputs[Aircraft.Design.FIXED_USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
+        outputs[Mission.Summary.USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.FLIGHT_CREW_MASS] = 1
@@ -304,7 +304,7 @@ class EquipAndUsefulLoadMassGroup(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'equip',
                 EquipMassGroup(),
