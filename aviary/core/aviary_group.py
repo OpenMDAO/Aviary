@@ -727,7 +727,7 @@ class AviaryGroup(om.Group):
                     aviary_inputs=self.aviary_inputs,
                     **kwargs,
                 )
-                for parameter in parameter_dict:
+                for parameter in sorted(parameter_dict):
                     external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
         traj = setup_trajectory_params(
