@@ -61,15 +61,6 @@ class TakeOffODE(TwoDOFODE):
         ground_roll = self.options['ground_roll']
         rotation = self.options['rotation']
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'low_speed'}
-        if self.options['clean']:
-            kwargs['method'] = 'cruise'
-            kwargs['output_alpha'] = False
-
-        if not (ground_roll or rotation):
-            kwargs['retract_gear'] = True
-            kwargs['retract_flaps'] = True
-
         EOM_inputs = [
             Dynamic.Vehicle.MASS,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
@@ -82,6 +73,7 @@ class TakeOffODE(TwoDOFODE):
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         subsystems = self.options['subsystems']
+        subsystem_options = self.options['subsystem_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -144,18 +136,32 @@ class TakeOffODE(TwoDOFODE):
             )
 
         for subsystem in subsystems:
+            name = subsystem.name
+
+            kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'low_speed'}
+            if self.options['clean']:
+                kwargs['method'] = 'cruise'
+                kwargs['output_alpha'] = False
+
+            if not (ground_roll or rotation):
+                kwargs['retract_gear'] = True
+                kwargs['retract_flaps'] = True
+
+            if name in subsystem_options:
+                kwargs.update(subsystem_options[name])
+
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
                     self.add_subsystem(
-                        subsystem.name,
+                        name,
                         system,
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),
                     )
                 else:
                     self.add_subsystem(
-                        subsystem.name,
+                        name,
                         system,
                         promotes_inputs=subsystem.mission_inputs(**kwargs),
                         promotes_outputs=subsystem.mission_outputs(**kwargs),

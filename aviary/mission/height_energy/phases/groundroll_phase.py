@@ -192,6 +192,7 @@ class GroundrollPhase(PhaseBuilder):
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
+            'ground_roll': True,
         }
 
 
