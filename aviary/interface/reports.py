@@ -161,13 +161,15 @@ def subsystem_report(prob: AviaryProblem, **kwargs):
     reports_folder = Path(prob.get_reports_dir() / 'subsystems')
     reports_folder.mkdir(exist_ok=True)
 
-    multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
+    multi_mission = prob.problem_type is ProblemType.MULTI_MISSION
     if multi_mission:
-        for _, model in prob.aviary_groups_dict.items():
-            # TODO: We need to rewrite the reports to support multimission.
-            # For now, we are just running the reports on the first mission.
-            break
-        prob = model
+        # TODO: We need to rewrite the reports to support multimission. This may require
+        # standardizing how all attributes work in AviaryProblem (things like prob.model.get_val
+        # don't work with multi-mission but does for normal problems). End goal is to loop through
+        # each mission and get reports for each mission. Show in dashboard in nested tabs (new
+        # tab for each mission containing its own subsystems).
+        # Currently only getting reports for subsystems in first mission.
+        prob = model = next(iter(prob.aviary_groups_dict.values()))
     else:
         model = prob.model
 

@@ -31,6 +31,9 @@ design variable
     Dymos is built on top of OpenMDAO and uses collocation integration methods to solve optimal control problems.
     Aviary can use Dymos to solve the mission analysis problem.
 
+explicit shooting method
+    A method of propagating the states of the trajectory over time, subject to the given controls. [much more info on these methods](https://openmdao.github.io/dymos/getting_started/transcriptions.html).
+
 [external subsystem](../user_guide/using_external_subsystems)
     A subsystem that is not included in the Aviary core subsystems.
     External subsystems are added to the Aviary model by the user.

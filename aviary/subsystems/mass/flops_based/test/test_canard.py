@@ -47,7 +47,6 @@ class CanardMassTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
