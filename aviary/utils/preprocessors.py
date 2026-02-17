@@ -476,7 +476,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 units='lbm',
             )
 
-        if aviary_options.get_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION) < 0.0:
+        if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in aviary_options:
             HHT = 0
             if (
                 Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
