@@ -45,7 +45,6 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
-    preprocess_Engines(aviary_options, verbosity)
 
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
@@ -570,63 +569,6 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
                     f' + Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity}) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity})'
                     f' = {capacity_check}'
                 )
-
-    return aviary_options
-
-
-def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
-    """
-    Preprocesses the AviaryValues object to ensure the number of engines is
-    the sum of wing engines and body engines.
-
-    Parameters
-    ----------
-    aviary_options : AviaryValues
-        Options to be updated
-
-    """
-    if verbosity is not None:
-        # compatibility with being passed int for verbosity
-        verbosity = Verbosity(verbosity)
-    else:
-        verbosity = aviary_options.get_val(Settings.VERBOSITY)
-
-    if Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options:
-        num_fuselage_engines = aviary_options.get_val(
-            Aircraft.Engine.NUM_FUSELAGE_ENGINES, 'unitless'
-        )
-        if isinstance(num_fuselage_engines, np.ndarray) or isinstance(num_fuselage_engines, list):
-            num_fuselage_engines = num_fuselage_engines[0]
-        else:
-            num_fuselage_engines = int(num_fuselage_engines)
-    else:
-        num_fuselage_engines = 0
-
-    if Aircraft.Engine.NUM_WING_ENGINES in aviary_options:
-        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')
-        if isinstance(num_wing_engines, np.ndarray) or isinstance(num_wing_engines, list):
-            num_wing_engines = num_wing_engines[0]
-        else:
-            num_wing_engines = int(num_wing_engines)
-    else:
-        num_wing_engines = 0
-    sum_engines = num_fuselage_engines + num_wing_engines
-
-    if Aircraft.Engine.NUM_ENGINES in aviary_options:
-        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        if isinstance(num_engines, np.ndarray) or isinstance(num_engines, list):
-            num_engines = num_engines[0]
-        else:
-            num_engines = int(num_engines)
-        if num_engines != sum_engines:
-            if verbosity >= Verbosity.BRIEF:
-                print(
-                    'Your total number of engines is not the same as '
-                    'the sum of wing engines and fuselage engines.'
-                )
-    else:
-        num_engines = sum_engines
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([num_engines]))
 
     return aviary_options
 
