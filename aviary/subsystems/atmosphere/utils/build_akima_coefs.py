@@ -1,4 +1,9 @@
+import textwrap
+
 import numpy as np
+from openmdao.components.interp_util.interp import InterpND
+
+from aviary.variable_info.variables import Dynamic
 
 
 def build_akima_coefs(out_stream, raw_data, units):
@@ -23,12 +28,19 @@ def build_akima_coefs(out_stream, raw_data, units):
         Output units are always in SI.
         (altitude: m, temp: degK, pressure: Pa, density: kg/ft**3)
     """
-
     raw_data = np.reshape(raw_data, (raw_data.size // 4, 4))
 
     from collections import namedtuple
 
-    atm_data = namedtuple('atm_data', ['alt', 'temp', 'pres', 'rho'])
+    atm_data = namedtuple(
+        'atm_data',
+        [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.TEMPERATURE,
+            Dynamic.Atmosphere.STATIC_PRESSURE,
+            Dynamic.Atmosphere.DENSITY,
+        ],
+    )
 
     atm_data.alt = raw_data[:, 0]
 
@@ -49,10 +61,8 @@ def build_akima_coefs(out_stream, raw_data, units):
     else:
         print(f"units must be SI or English but '{units}' was supplied.")
         exit()
-    # Units have now been translated into (altitude (meters), temperature (degK), pressure(pascals), dynamic viscosity (kg/m**3))
 
-    import textwrap
-    from openmdao.components.interp_util.interp import InterpND
+    # Units have now been translated into (altitude (meters), temperature (degK), pressure(pascals), dynamic viscosity (kg/m**3))
 
     coeff_data = {}
 
@@ -134,8 +144,9 @@ if __name__ == '__main__':
         # Running this script generates and prints the Akima coefficients using the OpenMDAO akima1D interpolant.
 
         print(
-            'WARNING: build_akima_coefs() does not have the standard unit conversion capabilities you may be used to from OpenMDAO. '
-            'Make sure your input units match the requirements shown in build_akima_coefs()!'
+            'WARNING: build_akima_coefs() does not have the standard unit conversion capabilities '
+            'you may be used to from OpenMDAO. Make sure your input units match the requirements '
+            'shown in build_akima_coefs()!'
         )
         input('Press Enter to continue: ')
 
@@ -152,10 +163,11 @@ if __name__ == '__main__':
     else:
         ################ Test problem below ################
         import openmdao.api as om
+
         from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
+        from aviary.utils.aviary_values import AviaryValues
         from aviary.variable_info.enums import AtmosphereModel
         from aviary.variable_info.functions import setup_model_options
-        from aviary.utils.aviary_values import AviaryValues
         from aviary.variable_info.variables import Settings
 
         prob = om.Problem()
@@ -183,14 +195,14 @@ if __name__ == '__main__':
 
         # prob.check_partials(method='cs')
 
-        # print('Temperatures (K):', prob.get_val('temp', units='K'))
-        # print('Pressure (Pa)', prob.get_val('pres', units='Pa'))
-        # print('Density (kg/m**3)', prob.get_val('rho', units='kg/m**3'))
-        # print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
-        # print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
+        # print('Temperatures (K):', prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'))
+        # print('Pressure (Pa)', prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'))
+        # print('Density (kg/m**3)', prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'))
+        # print('Viscosity (Pa*s)', prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'))
+        # print('Speed of Sound (m/s)', prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'))
 
-        print('Temperatures (degF):', prob.get_val('temp', units='degF'))
-        print('Pressure (inHg60)', prob.get_val('pres', units='inHg60'))
-        print('Density (lbm/ft**3)', prob.get_val('rho', units='lbm/ft**3'))
-        print('Viscosity (Pa*s)', prob.get_val('viscosity', units='Pa*s'))
-        print('Speed of Sound (m/s)', prob.get_val('sos', units='m/s'))
+        print('Temperatures (degF):', prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'))
+        print('Pressure (inHg60)', prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'))
+        print('Density (lbm/ft**3)', prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'))
+        print('Viscosity (Pa*s)', prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'))
+        print('Speed of Sound (m/s)', prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'))

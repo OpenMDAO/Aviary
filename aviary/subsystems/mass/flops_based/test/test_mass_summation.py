@@ -3,9 +3,16 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.mass.flops_based.mass_summation import MassSummation, StructureMass
+from aviary.subsystems.mass.flops_based.mass_summation import (
+    EmptyMass,
+    MassSummation,
+    OperatingMass,
+    PropulsionMass,
+    StructureMass,
+)
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.preprocessors import preprocess_propulsion
@@ -20,12 +27,15 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
+
+@use_tempdirs
 class TotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -51,13 +61,12 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.APU.MASS,
                 Aircraft.Avionics.MASS,
                 Aircraft.Canard.MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS,
+                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
                 Aircraft.CrewPayload.BAGGAGE_MASS,
                 Aircraft.CrewPayload.CARGO_MASS,
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-                Aircraft.Design.EMPTY_MASS_MARGIN,
                 Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
                 Aircraft.Electrical.MASS,
                 Aircraft.Fins.MASS,
@@ -68,8 +77,7 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.HorizontalTail.MASS,
                 Aircraft.Hydraulics.MASS,
                 Aircraft.Instruments.MASS,
-                Aircraft.LandingGear.MAIN_GEAR_MASS,
-                Aircraft.LandingGear.NOSE_GEAR_MASS,
+                Aircraft.LandingGear.TOTAL_MASS,
                 Aircraft.Nacelle.MASS,
                 Aircraft.Paint.MASS,
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
@@ -83,10 +91,13 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_MISC_MASS,
             ],
             output_keys=[
-                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Design.EMPTY_MASS_MARGIN,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
+                Aircraft.Design.EMPENNAGE_MASS,
                 Aircraft.Design.EMPTY_MASS,
+                Mission.Summary.USEFUL_LOAD,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
                 Mission.Summary.FUEL_MASS,
@@ -94,11 +105,13 @@ class TotalSummationTest(unittest.TestCase):
             version=Version.TRANSPORT,
             atol=1e-10,
         )
+        om.n2(prob, show_browser=False)
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class AltTotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -135,13 +148,12 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.APU.MASS,
                 Aircraft.Avionics.MASS,
                 Aircraft.Canard.MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS,
+                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
                 Aircraft.CrewPayload.BAGGAGE_MASS,
                 Aircraft.CrewPayload.CARGO_MASS,
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-                Aircraft.Design.EMPTY_MASS_MARGIN,
                 Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
                 Aircraft.Electrical.MASS,
                 Aircraft.Fins.MASS,
@@ -152,8 +164,7 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.HorizontalTail.MASS,
                 Aircraft.Hydraulics.MASS,
                 Aircraft.Instruments.MASS,
-                Aircraft.LandingGear.MAIN_GEAR_MASS,
-                Aircraft.LandingGear.NOSE_GEAR_MASS,
+                Aircraft.LandingGear.TOTAL_MASS,
                 Aircraft.Propulsion.TOTAL_MISC_MASS,
                 Aircraft.Nacelle.MASS,
                 Aircraft.Paint.MASS,
@@ -167,10 +178,12 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS,
             ],
             output_keys=[
-                Aircraft.Design.STRUCTURE_MASS,
                 Aircraft.Propulsion.MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
+                Aircraft.Design.EMPENNAGE_MASS,
                 Aircraft.Design.EMPTY_MASS,
+                Mission.Summary.USEFUL_LOAD,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
                 Mission.Summary.FUEL_MASS,
@@ -183,6 +196,7 @@ class AltTotalSummationTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class StructureMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -210,15 +224,11 @@ class StructureMassTest(unittest.TestCase):
         prob.model.add_subsystem('structure_mass', StructureMass(**comp_options), promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val(Aircraft.Canard.MASS, val=10.0, units='lbm')
-        prob.set_val(Aircraft.Fins.MASS, val=20.0, units='lbm')
         prob.set_val(Aircraft.Fuselage.MASS, val=30.0, units='lbm')
-        prob.set_val(Aircraft.HorizontalTail.MASS, val=40.0, units='lbm')
-        prob.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, val=50.0, units='lbm')
-        prob.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, val=60.0, units='lbm')
+        prob.set_val(Aircraft.Design.EMPENNAGE_MASS, 150.0, units='lbm')
+        prob.set_val(Aircraft.LandingGear.TOTAL_MASS, 110.0, units='lbm')
         prob.set_val(Aircraft.Nacelle.MASS, val=np.array([1000.0, 500.0, 1500.0]), units='lbm')
         prob.set_val(Aircraft.Paint.MASS, val=70.0, units='lbm')
-        prob.set_val(Aircraft.VerticalTail.MASS, val=80.0, units='lbm')
         prob.set_val(Aircraft.Wing.MASS, val=90.0, units='lbm')
 
         prob.run_model()
@@ -237,5 +247,89 @@ class StructureMassTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-6, rtol=1e-6)
 
 
+@use_tempdirs
+class BWBTotalSummationTest(unittest.TestCase):
+    """Tests total summation mass calculation for BWB."""
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case(self, case_name):
+        prob = self.prob
+
+        prob.model.add_subsystem(
+            'tot',
+            MassSummation(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        setup_model_options(
+            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([3], 'unitless')})
+        )
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.AirConditioning.MASS,
+                Aircraft.AntiIcing.MASS,
+                Aircraft.APU.MASS,
+                Aircraft.Avionics.MASS,
+                Aircraft.Canard.MASS,
+                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
+                Aircraft.CrewPayload.BAGGAGE_MASS,
+                Aircraft.CrewPayload.CARGO_MASS,
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
+                Aircraft.CrewPayload.FLIGHT_CREW_MASS,
+                Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
+                Aircraft.Electrical.MASS,
+                Aircraft.Fins.MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
+                Aircraft.Fuel.FUEL_SYSTEM_MASS,
+                Aircraft.Furnishings.MASS,
+                Aircraft.Fuselage.MASS,
+                Aircraft.HorizontalTail.MASS,
+                Aircraft.Hydraulics.MASS,
+                Aircraft.Instruments.MASS,
+                Aircraft.LandingGear.TOTAL_MASS,
+                Aircraft.Nacelle.MASS,
+                Aircraft.Paint.MASS,
+                Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
+                Aircraft.Wing.SURFACE_CONTROL_MASS,
+                Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
+                Aircraft.Fuel.UNUSABLE_FUEL_MASS,
+                Aircraft.VerticalTail.MASS,
+                Aircraft.Wing.MASS,
+                Mission.Design.GROSS_MASS,
+                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
+                Aircraft.Propulsion.TOTAL_MISC_MASS,
+            ],
+            output_keys=[
+                Aircraft.Design.EMPTY_MASS_MARGIN,
+                Aircraft.Propulsion.MASS,
+                Aircraft.Design.STRUCTURE_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
+                Aircraft.Design.EMPENNAGE_MASS,
+                Aircraft.Design.EMPTY_MASS,
+                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
+                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.Summary.FUEL_MASS,
+            ],
+            version=Version.TRANSPORT,
+            atol=1e-10,
+        )
+
+
 if __name__ == '__main__':
     unittest.main()
+    # test = AltTotalSummationTest()
+    # test = TotalSummationTest()
+    # test.setUp()
+    # test.test_case_multiengine()
+    # test.test_case('LargeSingleAisle2FLOPSalt')

@@ -8,9 +8,12 @@ from parameterized import parameterized
 
 from aviary.subsystems.geometry.flops_based.canard import Canard
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
-    WingCharacteristicLength,
+    CanardCharacteristicLength,
+    FuselageCharacteristicLengths,
+    HorizontalTailCharacteristicLength,
     NacelleCharacteristicLength,
-    OtherCharacteristicLengths,
+    VerticalTailCharacteristicLength,
+    WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
 from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
@@ -58,6 +61,8 @@ wetted_area_overide = get_flops_case_names(
     ]
 )
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+
 
 # TODO: We have no integration tests for canard, so canard-related names are commented
 # out.
@@ -68,7 +73,7 @@ class PrepGeomTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
     def test_case(self, case_name):
         class PreMission(om.Group):
             def initialize(self):
@@ -93,12 +98,17 @@ class PrepGeomTest(unittest.TestCase):
             Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION,
             Aircraft.Engine.NUM_ENGINES,
             Aircraft.Propulsion.TOTAL_NUM_ENGINES,
+            Aircraft.Engine.REFERENCE_SLS_THRUST,
         ]
 
         options = get_flops_data(case_name, preprocess=True, keys=keys)
         model_options = {}
         for key in keys:
             model_options[key] = options.get_item(key)[0]
+
+        model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = options.get_item(
+            Aircraft.Engine.REFERENCE_SLS_THRUST
+        )
 
         prob = self.prob
 
@@ -174,6 +184,7 @@ class PrepGeomTest(unittest.TestCase):
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Wing.WETTED_AREA_SCALER,
+                Aircraft.Engine.SCALED_SLS_THRUST,
             ],
             output_keys=output_keys,
             aviary_option_keys=[
@@ -239,7 +250,6 @@ class _PrelimTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=get_flops_data(case_name),
             output_validation_data=local_variables[case_name],
             input_keys=[
@@ -302,7 +312,6 @@ class _WingTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -348,7 +357,6 @@ class _TailTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -402,7 +410,6 @@ class _FuselageTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -445,12 +452,9 @@ class NacellesTest(unittest.TestCase):
         options = {}
         for key in keys:
             options[key] = flops_inputs.get_item(key)[0]
+        options[Aircraft.Engine.NUM_ENGINES] = np.array([2])
 
         prob.model.add_subsystem('nacelles', Nacelles(**options), promotes=['*'])
-
-        setup_model_options(
-            prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless')})
-        )
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -486,7 +490,6 @@ class CanardTest(unittest.TestCase):
 
         do_validation_test(
             prob,
-            'canard_test',
             input_validation_data=Canard_test_data,
             output_validation_data=Canard_test_data,
             input_keys=[
@@ -529,22 +532,46 @@ class CharacteristicLengthsTest(unittest.TestCase):
         )
 
         prob.model.add_subsystem(
-            'nacelle_characteristic_lengths', NacelleCharacteristicLength(), promotes=['*']
+            'canard_char_lengths', CanardCharacteristicLength(), promotes=['*']
         )
 
         prob.model.add_subsystem(
-            'other_characteristic_lengths', OtherCharacteristicLengths(), promotes=['*']
+            'fuselage_char_lengths', FuselageCharacteristicLengths(), promotes=['*']
         )
 
-        setup_model_options(
-            prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: (np.array([2]), 'unitless')})
+        prob.model.add_subsystem(
+            'horizontal_tail_char_lengths', HorizontalTailCharacteristicLength(), promotes=['*']
+        )
+
+        prob.model.add_subsystem(
+            'vertical_tail_char_lengths', VerticalTailCharacteristicLength(), promotes=['*']
+        )
+
+        # options[Aircraft.Engine.REFERENCE_SLS_THRUST] = (np.array([28928.1]), 'lbf')
+        keys = [
+            Aircraft.Engine.REFERENCE_SLS_THRUST,
+            Aircraft.Engine.NUM_ENGINES,
+        ]
+        flops_inputs = get_flops_inputs(case_name, keys=keys)
+        options = get_flops_data(case_name, preprocess=True, keys=keys)
+        model_options = {}
+        for key in keys:
+            model_options[key] = options.get_item(key)[0]
+
+        model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = options.get_item(
+            Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf'
+        )
+
+        prob.model.add_subsystem(
+            'nacelle_characteristic_lengths',
+            NacelleCharacteristicLength(**model_options),
+            promotes=['*'],
         )
 
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
             prob,
-            case_name,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
             input_keys=[
@@ -552,6 +579,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
                 Aircraft.Canard.AREA,
                 Aircraft.Canard.ASPECT_RATIO,
                 Aircraft.Canard.THICKNESS_TO_CHORD,
+                Aircraft.Engine.SCALED_SLS_THRUST,
                 Aircraft.Fuselage.REF_DIAMETER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.HorizontalTail.AREA,
@@ -664,31 +692,14 @@ class BWBWingTest(unittest.TestCase):
     def test_case1(self):
         prob = self.prob
         self.aviary_options = AviaryValues()
-        self.aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            units='unitless',
+        )
         prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
         setup_model_options(self.prob, self.aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(
-            'BWB_INPUT_STATION_DIST',
-            [
-                0.0,
-                32.29,
-                0.56275201612903225,
-                0.59918934811827951,
-                0.63562668010752688,
-                0.67206401209677424,
-                0.7085013440860215,
-                0.74486580141129033,
-                0.78137600806451613,
-                0.81781334005376349,
-                0.85425067204301075,
-                0.89068800403225801,
-                0.92705246135752695,
-                0.96356266801075263,
-                1.0,
-            ],
-            units='unitless',
-        )
         prob.set_val(
             'BWB_CHORD_PER_SEMISPAN_DIST',
             val=[
@@ -757,7 +768,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
-        options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 3, units='unitless')
+        options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
+        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -773,7 +785,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', 0.7, units='unitless')
         # BWBComputeDetailedWingDist
-        prob.set_val(Aircraft.Wing.SPAN, val=238.08)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.SWEEP, val=35.7)
         # BWBFuselagePrelim
@@ -782,6 +794,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         # _Prelim
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
+        # prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
+        # prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
         prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.TAPER_RATIO, val=0.0)
@@ -799,16 +813,18 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
         # XNAC = 17.433 * sqrt(0.80963) = 15.6861161407
-        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=11.3446080595)
-        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=15.6861161407)
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=12.608)
+        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
         # Canard
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
         prob.set_val(Aircraft.Canard.WETTED_AREA_SCALER, val=0.0)
         # BWBWingCharacteristicLength
+        # NacelleCharacteristicLength
         # OtherCharacteristicLengths
-        # TotalWettedArea
         # TotalWettedArea
 
     def test_case1(self):
@@ -877,7 +893,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-8)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 15.33723721, 15.33723721]
+        exp3 = [0.0, 15.33723721]
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
@@ -929,9 +945,9 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         )
         # Nacelles
         assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80385257, tolerance=1e-8
+            prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80466199, tolerance=1e-8
         )
-        assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26795086, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26822066, tolerance=1e-8)
         # Canard
         assert_near_equal(prob.get_val(Aircraft.Canard.WETTED_AREA), 0.0, tolerance=1e-8)
         # BWBWingCharacteristicLength
@@ -939,6 +955,11 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
             prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH), 69.53952222, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.Wing.FINENESS), 0.11, tolerance=1e-8)
+        # NacelleCharacteristicLength
+        assert_near_equal(
+            prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68612039, tolerance=1e-8
+        )
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
         # OtherCharacteristicLengths
         assert_near_equal(prob.get_val(Aircraft.Canard.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.Canard.FINENESS), 0.0, tolerance=1e-8)
@@ -951,16 +972,12 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         )
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.FINENESS), 0.11, tolerance=1e-8)
         assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68611614, tolerance=1e-8
-        )
-        assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
-        assert_near_equal(
             prob.get_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.FINENESS), 0.11, tolerance=1e-8)
         # TotalWettedArea
         assert_near_equal(
-            prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 35311.53037134, tolerance=1e-8
+            prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 35311.53118076, tolerance=1e-8
         )
 
 
@@ -978,13 +995,13 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 340, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 340, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Wing.DETAILED_WING, val=True, units='unitless')
@@ -993,9 +1010,10 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
-        options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 15, units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([3]), units='unitless')
+        options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 86459.2, units='lbf')
+        options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
 
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('prep_geom', PrepGeom(), promotes=['*'])
@@ -1051,9 +1069,9 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
-        prob.set_val(Aircraft.Wing.SPAN, val=253.720756)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
         # BWBFuselagePrelim
         # skip
@@ -1061,6 +1079,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         # _Prelim
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
+        # prob.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=0.0)
         # prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0)
         prob.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
@@ -1084,16 +1103,19 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
         # XNAC = 17.433 * sqrt(0.80963) = 15.6861161407
-        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=11.3446080595)
-        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=15.6861161407)
+        prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, val=12.608)
+        prob.set_val(Aircraft.Nacelle.AVG_LENGTH, val=17.433)
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
+        prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]), units='lbf')
+        prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
+
         # Canard
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
         prob.set_val(Aircraft.Canard.WETTED_AREA_SCALER, val=0.0)
         # BWBWingCharacteristicLength
+        # NacelleCharacteristicLength
         # OtherCharacteristicLengths
-        # TotalWettedArea
         # TotalWettedArea
 
     def test_case1(self):
@@ -1196,7 +1218,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(out2, exp2, tolerance=1e-8)
 
         out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
-        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
+        exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
         # BWBFuselagePrelim
@@ -1241,9 +1263,9 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         # Nacelles
         assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80385258, tolerance=1e-8
+            prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80466199, tolerance=1e-8
         )
-        assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26795086, tolerance=1e-8)
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26822066, tolerance=1e-8)
         # Canard
         assert_near_equal(prob.get_val(Aircraft.Canard.WETTED_AREA), 0.0, tolerance=1e-8)
         # BWBWingCharacteristicLength
@@ -1251,6 +1273,11 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             prob.get_val(Aircraft.Wing.CHARACTERISTIC_LENGTH), 47.72916456, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.Wing.FINENESS), 0.11, tolerance=1e-8)
+        # NacelleCharacteristicLength
+        assert_near_equal(
+            prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68612039, tolerance=1e-8
+        )
+        assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
         # OtherCharacteristicLengths
         assert_near_equal(prob.get_val(Aircraft.Canard.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.Canard.FINENESS), 0.0, tolerance=1e-8)
@@ -1263,16 +1290,12 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.FINENESS), 0.11, tolerance=1e-8)
         assert_near_equal(
-            prob.get_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH), 15.68611614, tolerance=1e-8
-        )
-        assert_near_equal(prob.get_val(Aircraft.Nacelle.FINENESS), 1.38269353, tolerance=1e-8)
-        assert_near_equal(
             prob.get_val(Aircraft.VerticalTail.CHARACTERISTIC_LENGTH), 0.0, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.FINENESS), 0.11, tolerance=1e-8)
         # TotalWettedArea
         assert_near_equal(
-            prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 26208.46514246, tolerance=1e-8
+            prob.get_val(Aircraft.Design.TOTAL_WETTED_AREA), 26208.46595188, tolerance=1e-8
         )
 
 

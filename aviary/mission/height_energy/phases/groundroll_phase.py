@@ -11,6 +11,7 @@ from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 # Solved 2DOF uses this builder.
 #
@@ -104,6 +105,8 @@ class GroundrollPhase(PhaseBuilder):
         duration_bounds = user_options.get_val('time_duration_bounds', units='kn')
         duration_ref = user_options.get_val('time_duration_ref', units='kn')
         constraints = user_options.get_val('constraints')
+
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         phase.set_time_options(
             fix_initial=True,

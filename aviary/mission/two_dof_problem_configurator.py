@@ -6,19 +6,18 @@ from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.ascent_phase import AscentPhase
-from aviary.mission.two_dof.phases.climb_phase import ClimbPhase
-from aviary.mission.two_dof.phases.cruise_phase import CruisePhase
-from aviary.mission.two_dof.phases.descent_phase import DescentPhase
+from aviary.mission.two_dof.phases.cruise_phase import CruisePhase, ElectricCruisePhase
+from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
 from aviary.mission.two_dof.polynomial_fit import PolynomialFit
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
+from aviary.mission.utils import process_guess_var
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-from aviary.mission.utils import process_guess_var
 
 
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
@@ -220,17 +219,13 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             phase_builder = AccelPhase
         elif 'ascent' in phase_name:
             phase_builder = AscentPhase
-        elif 'climb' in phase_name:
-            phase_builder = ClimbPhase
+        elif 'electric_cruise' in phase_name:
+            phase_builder = ElectricCruisePhase
         elif 'cruise' in phase_name:
             phase_builder = CruisePhase
-        elif 'desc' in phase_name:
-            phase_builder = DescentPhase
         else:
-            raise ValueError(
-                f'{phase_name} does not have an associated phase_builder \n phase_name must '
-                'include one of: groundroll, rotation, accel, ascent, climb, cruise, or desc'
-            )
+            # All other phases are flight phases.
+            phase_builder = FlightPhase
 
         return phase_builder
 
@@ -428,6 +423,18 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         elif state in initial_guesses2:
                             kwargs = {'units': initial_guesses2[state][-1]}
 
+                        # Some better scaling of the linkage constraint.
+                        if state in initial_guesses1:
+                            val = initial_guesses1[state][0]
+                            if isinstance(val, (tuple, list)):
+                                val = val[-1]
+                            kwargs['ref'] = abs(val)
+                        elif state in initial_guesses2:
+                            val = initial_guesses2[state][0]
+                            if isinstance(val, (tuple, list)):
+                                val = val[0]
+                            kwargs['ref'] = abs(val)
+
                     aviary_group.traj.link_phases(
                         [phase1, phase2], [state], connected=connected, **kwargs
                     )
@@ -472,10 +479,27 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             inputs=[
                 ('ascent.parameters:t_init_gear', 't_init_gear'),
                 ('ascent.parameters:t_init_flaps', 't_init_flaps'),
-                ('ascent.t_initial', Mission.Takeoff.ASCENT_T_INITIAL),
                 ('ascent.t_duration', Mission.Takeoff.ASCENT_DURATION),
             ],
         )
+
+        # Ascent t_iniitial is connected, so we need a slack constraint for the desvar that feeds
+        # into the event xform.
+        comp = om.ExecComp(
+            ['con_val = initial_time - initial_time_slack'],
+            con_val={'units': 's'},
+            initial_time={'units': 's'},
+            initial_time_slack={'units': 's'},
+        )
+        aviary_group.add_subsystem(
+            'ascent_initial_time_slack_constraint',
+            comp,
+            promotes_inputs=[
+                ('initial_time', 'ascent.t_initial'),
+                ('initial_time_slack', Mission.Takeoff.ASCENT_T_INITIAL),
+            ],
+        )
+        aviary_group.add_constraint('ascent_initial_time_slack_constraint.con_val', ref=30.0)
 
         # imitate input_initial for taxi -> groundroll
         eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())

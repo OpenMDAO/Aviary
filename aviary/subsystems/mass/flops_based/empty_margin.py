@@ -10,18 +10,18 @@ class EmptyMassMargin(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_EQUIP_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, units='unitless')
 
         add_aviary_output(self, Aircraft.Design.EMPTY_MASS_MARGIN, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials('*', '*')
+        self.declare_partials(Aircraft.Design.EMPTY_MASS_MARGIN, '*')
 
     def compute(self, inputs, outputs):
         prop_mass = inputs[Aircraft.Propulsion.MASS]
         struct_mass = inputs[Aircraft.Design.STRUCTURE_MASS]
-        sys_eq_mass = inputs[Aircraft.Design.SYSTEMS_EQUIP_MASS]
+        sys_eq_mass = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS]
         scaler = inputs[Aircraft.Design.EMPTY_MASS_MARGIN_SCALER]
 
         outputs[Aircraft.Design.EMPTY_MASS_MARGIN] = (
@@ -31,12 +31,12 @@ class EmptyMassMargin(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         prop_mass = inputs[Aircraft.Propulsion.MASS]
         struct_mass = inputs[Aircraft.Design.STRUCTURE_MASS]
-        sys_eq_mass = inputs[Aircraft.Design.SYSTEMS_EQUIP_MASS]
+        sys_eq_mass = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS]
         scaler = inputs[Aircraft.Design.EMPTY_MASS_MARGIN_SCALER]
 
         J[Aircraft.Design.EMPTY_MASS_MARGIN, Aircraft.Propulsion.MASS] = scaler
         J[Aircraft.Design.EMPTY_MASS_MARGIN, Aircraft.Design.STRUCTURE_MASS] = scaler
-        J[Aircraft.Design.EMPTY_MASS_MARGIN, Aircraft.Design.SYSTEMS_EQUIP_MASS] = scaler
+        J[Aircraft.Design.EMPTY_MASS_MARGIN, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = scaler
         J[Aircraft.Design.EMPTY_MASS_MARGIN, Aircraft.Design.EMPTY_MASS_MARGIN_SCALER] = (
             prop_mass + struct_mass + sys_eq_mass
         )

@@ -30,7 +30,7 @@ class TestUnsteadyFlightConditions(unittest.TestCase):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
-                'viscosity',
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
                 'dsos_dh',
             ],
         )
