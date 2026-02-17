@@ -137,7 +137,7 @@ def read_data_file(
                                 if 'output' in item:
                                     raise UserWarning(
                                         f'{filepath}: Variable {name} is listed as both an input '
-                                        'and an output.'
+                                        'and an output. Treating it as an input only.'
                                     )
                                 item.pop(item.index('input'))
                                 inputs.append(name)
