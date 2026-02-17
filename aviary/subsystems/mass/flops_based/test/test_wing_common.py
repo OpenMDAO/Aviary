@@ -42,6 +42,7 @@ class WingShearControlMassTest(unittest.TestCase):
         prob = self.prob
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -107,6 +108,7 @@ class WingMiscMassTest(unittest.TestCase):
         prob = self.prob
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -175,6 +177,7 @@ class WingBendingMassTest(unittest.TestCase):
         prob = self.prob
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[

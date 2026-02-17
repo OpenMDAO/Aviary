@@ -45,6 +45,7 @@ class TransportUnusableFuelMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -118,6 +119,7 @@ class AltUnusableFuelMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
@@ -179,6 +181,7 @@ class BWBTransportUnusableFuelMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[

@@ -40,18 +40,16 @@ class AccelerationTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([5.51533958, 5.51533958]),
-            tol,
-            # note: this was finite differenced from GASP. The fd value is: np.array([5.2353365, 5.2353365])
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE],
-            np.array([425.32808399, 425.32808399]),
-            tol,
-            # note: this was finite differenced from GASP. The fd value is: np.array([441.6439, 441.6439])
-        )
+        # note: values were finite differenced from GASP
+        # fd values are: VELOCITY_RATE=[5.2353365, 5.2353365], DISTANCE_RATE=[441.6439, 441.6439]
+        expected_values = {
+            Dynamic.Mission.VELOCITY_RATE: np.array([5.51533958, 5.51533958]),
+            Dynamic.Mission.DISTANCE_RATE: np.array([425.32808399, 425.32808399]),
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

@@ -79,25 +79,17 @@ class USatm1976TestCase1(unittest.TestCase):
         tol = 1e-4
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'),
-            expected_pressure,
-            tol,
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'K'): expected_temp,
+            (Dynamic.Atmosphere.STATIC_PRESSURE, 'Pa'): expected_pressure,
+            (Dynamic.Atmosphere.DENSITY, 'kg/m**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -169,25 +161,17 @@ class USatm1976TestCase1(unittest.TestCase):
             1.58179488e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'),
-            expected_pressure,
-            tol,
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'K'): expected_temp,
+            (Dynamic.Atmosphere.STATIC_PRESSURE, 'Pa'): expected_pressure,
+            (Dynamic.Atmosphere.DENSITY, 'kg/m**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -219,25 +203,17 @@ class USatm1976TestCase1(unittest.TestCase):
         tol = 1e-4
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='K'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='Pa'),
-            expected_pressure,
-            tol,
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'K'): expected_temp,
+            (Dynamic.Atmosphere.STATIC_PRESSURE, 'Pa'): expected_pressure,
+            (Dynamic.Atmosphere.DENSITY, 'kg/m**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -331,28 +307,25 @@ class MILSPEC210AColdTestCase1(unittest.TestCase):
             1.31516893e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'degF'): expected_temp,
+            (Dynamic.Atmosphere.DENSITY, 'lbm/ft**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
         # inHg60 is a newer unit in OpenMDAO so we'll do this check only of that newer version is installed
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(
-                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                expected_pressure,
-                tol,
-            )
+            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+                assert_near_equal(
+                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                    expected_pressure,
+                    tol,
+                )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -416,26 +389,24 @@ class MILSPEC210ATropicalTestCase1(unittest.TestCase):
             1.53000203e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'degF'): expected_temp,
+            (Dynamic.Atmosphere.DENSITY, 'lbm/ft**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
+
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(
-                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                expected_pressure,
-                tol,
-            )
+            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+                assert_near_equal(
+                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                    expected_pressure,
+                    tol,
+                )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -499,26 +470,24 @@ class MILSPEC210AHotTestCase1(unittest.TestCase):
             1.59359066e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'degF'): expected_temp,
+            (Dynamic.Atmosphere.DENSITY, 'lbm/ft**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
+
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(
-                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                expected_pressure,
-                tol,
-            )
+            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+                assert_near_equal(
+                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                    expected_pressure,
+                    tol,
+                )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
@@ -582,26 +551,24 @@ class MILSPEC210APolarTestCase1(unittest.TestCase):
             1.38565730e-05,
         ]  # (Pa*s)
 
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.TEMPERATURE, units='degF'), expected_temp, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DENSITY, units='lbm/ft**3'), expected_density, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s'), expected_sos, tol
-        )
-        assert_near_equal(
-            self.prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s'),
-            expected_viscosity,
-            tol,
-        )
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'degF'): expected_temp,
+            (Dynamic.Atmosphere.DENSITY, 'lbm/ft**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
+
         if Version(openmdao.__version__) >= Version('3.42.0'):
-            assert_near_equal(
-                self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
-                expected_pressure,
-                tol,
-            )
+            with self.subTest(var=Dynamic.Atmosphere.STATIC_PRESSURE):
+                assert_near_equal(
+                    self.prob.get_val(Dynamic.Atmosphere.STATIC_PRESSURE, units='inHg60'),
+                    expected_pressure,
+                    tol,
+                )
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 

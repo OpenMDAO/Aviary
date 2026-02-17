@@ -46,6 +46,7 @@ class EngineMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.zeros(1))
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -163,6 +164,7 @@ class BWBEngineMassTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.MASS_SCALER, val=np.ones(1))
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[

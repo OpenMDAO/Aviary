@@ -47,6 +47,7 @@ class FuselageMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -114,6 +115,7 @@ class AltFuselageMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -183,6 +185,7 @@ class BWBFuselageMassTest(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -221,6 +224,7 @@ class BWBAftBodyMassTest(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[

@@ -68,36 +68,26 @@ class GlideTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob.get_val(Mission.Landing.INITIAL_VELOCITY, units='kn'), 142.783, tol
-        )  # note: actual GASP value is: 142.74
-        assert_near_equal(
-            self.prob.get_val(Mission.Landing.STALL_VELOCITY, units='kn'), 109.8331, tol
-        )  # note: EAS in GASP, although at this altitude they are nearly identical. actual GASP value is 109.73
-        assert_near_equal(
-            self.prob.get_val('TAS_touchdown', units='kn'), 126.3081, tol
-        )  # note: actual GASP value is: 126.27
-        assert_near_equal(
-            self.prob.get_val('density_ratio', units='unitless'), 1.0, tol
-        )  # note: calculated from GASP glide speed values as: .998739
-        assert_near_equal(
-            self.prob.get_val('wing_loading_land', units='lbf/ft**2'), 120.61519375, tol
-        )  # note: actual GASP value is: 120.61
-        assert_near_equal(
-            self.prob.get_val('theta', units='deg'), 3.56857, tol
-        )  # note: actual GASP value is: 3.57
-        assert_near_equal(
-            self.prob.get_val('glide_distance', units='ft'), 801.7444, tol
-        )  # note: actual GASP value is: 802
-        assert_near_equal(
-            self.prob.get_val('tr_distance', units='ft'), 166.5303, tol
-        )  # note: actual GASP value is: 167
-        assert_near_equal(
-            self.prob.get_val('delay_distance', units='ft'), 213.184, tol
-        )  # note: actual GASP value is: 213
-        assert_near_equal(
-            self.prob.get_val('flare_alt', units='ft'), 20.73407, tol
-        )  # note: actual GASP value is: 20.8
+        # note: actual GASP values differ slightly
+        # GASP values: INITIAL_VELOCITY=142.74, STALL_VELOCITY=109.73, TAS_touchdown=126.27,
+        #              density_ratio=.998739, wing_loading_land=120.61, theta=3.57,
+        #              glide_distance=802, tr_distance=167, delay_distance=213, flare_alt=20.8
+        expected_values = {
+            (Mission.Landing.INITIAL_VELOCITY, 'kn'): 142.783,
+            (Mission.Landing.STALL_VELOCITY, 'kn'): 109.8331,
+            ('TAS_touchdown', 'kn'): 126.3081,
+            ('density_ratio', 'unitless'): 1.0,
+            ('wing_loading_land', 'lbf/ft**2'): 120.61519375,
+            ('theta', 'deg'): 3.56857,
+            ('glide_distance', 'ft'): 801.7444,
+            ('tr_distance', 'ft'): 166.5303,
+            ('delay_distance', 'ft'): 213.184,
+            ('flare_alt', 'ft'): 20.73407,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-12)
@@ -172,15 +162,17 @@ class GroundRollTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob['ground_roll_distance'], 2406.43116212, tol
-        )  # actual GASP value is: 1798
-        assert_near_equal(
-            self.prob[Mission.Landing.GROUND_DISTANCE], 3588.43116212, tol
-        )  # actual GASP value is: 2980
-        assert_near_equal(
-            self.prob['average_acceleration'], 0.29308129, tol
-        )  # actual GASP value is: 0.3932
+        # note: actual GASP values differ: ground_roll_distance=1798, GROUND_DISTANCE=2980,
+        #       average_acceleration=0.3932
+        expected_values = {
+            'ground_roll_distance': 2406.43116212,
+            Mission.Landing.GROUND_DISTANCE: 3588.43116212,
+            'average_acceleration': 0.29308129,
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=5e-12, rtol=1e-12)

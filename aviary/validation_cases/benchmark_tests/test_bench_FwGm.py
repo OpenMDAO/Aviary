@@ -38,17 +38,20 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 177536.28, tolerance=rtol)
+        expected_values = {
+            Mission.Design.GROSS_MASS: 177536.28,
+            Mission.Summary.OPERATING_MASS: 101262.9,
+            Mission.Summary.TOTAL_FUEL_MASS: 38417.3,
+            Mission.Landing.GROUND_DISTANCE: 2613.4,
+            'traj.desc2.timeseries.distance': 3675.0,
+        }
 
-        assert_near_equal(prob.get_val(Mission.Summary.OPERATING_MASS), 101262.9, tolerance=rtol)
-
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 38417.3, tolerance=rtol)
-
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2613.4, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val('traj.desc2.timeseries.distance')[-1], 3675.0, tolerance=rtol
-        )
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                if var_name == 'traj.desc2.timeseries.distance':
+                    assert_near_equal(prob.get_val(var_name)[-1], expected_val, tolerance=rtol)
+                else:
+                    assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_swap_3_FwGm_SNOPT(self):
@@ -66,17 +69,20 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-2
 
         # There are no truth values for these.
-        assert_near_equal(prob.get_val(Mission.Design.GROSS_MASS), 177536.28, tolerance=rtol)
+        expected_values = {
+            Mission.Design.GROSS_MASS: 177536.28,
+            Mission.Summary.OPERATING_MASS: 101262.9,
+            Mission.Summary.TOTAL_FUEL_MASS: 38417.3,
+            Mission.Landing.GROUND_DISTANCE: 2613.4,
+            'traj.desc2.timeseries.distance': 3675.0,
+        }
 
-        assert_near_equal(prob.get_val(Mission.Summary.OPERATING_MASS), 101262.9, tolerance=rtol)
-
-        assert_near_equal(prob.get_val(Mission.Summary.TOTAL_FUEL_MASS), 38417.3, tolerance=rtol)
-
-        assert_near_equal(prob.get_val(Mission.Landing.GROUND_DISTANCE), 2613.4, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val('traj.desc2.timeseries.distance')[-1], 3675.0, tolerance=rtol
-        )
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                if var_name == 'traj.desc2.timeseries.distance':
+                    assert_near_equal(prob.get_val(var_name)[-1], expected_val, tolerance=rtol)
+                else:
+                    assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
 
 
 if __name__ == '__main__':

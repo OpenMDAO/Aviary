@@ -152,6 +152,7 @@ class PrepGeomTest(unittest.TestCase):
             )
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -249,6 +250,7 @@ class _PrelimTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=get_flops_data(case_name),
             output_validation_data=local_variables[case_name],
@@ -311,6 +313,7 @@ class _WingTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
@@ -356,6 +359,7 @@ class _TailTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
@@ -409,6 +413,7 @@ class _FuselageTest(unittest.TestCase):
             outputs.extend(Aircraft.Fuselage.WETTED_AREA)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
@@ -459,6 +464,7 @@ class NacellesTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -489,6 +495,7 @@ class CanardTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=Canard_test_data,
             output_validation_data=Canard_test_data,
@@ -571,6 +578,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=_hybrid_input_data(case_name),
             output_validation_data=get_flops_outputs(case_name),
