@@ -1,4 +1,4 @@
-from aviary.variable_info.enums import SpeedType, ThrottleAllocation
+from aviary.variable_info.enums import SpeedType, PhaseType, ThrottleAllocation
 
 # Energy method
 energy_phase_info = {
@@ -253,6 +253,7 @@ two_dof_phase_info = {
     },
     'electric_cruise': {
         'user_options': {
+            'phase_builder': PhaseType.BREGUET_RANGE,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
         },
