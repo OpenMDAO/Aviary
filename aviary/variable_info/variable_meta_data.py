@@ -6729,11 +6729,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Mission.REYNOLDS_NUMBER,
+    Dynamic.Mission.REYNOLDS_NUMBER_PER_UNIT_LENGTH,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='1/ft',
-    desc='Reynolds number at current flight condition',
+    desc='Reynolds number per unit length at current flight condition',
     multivalue=True,
 )
 
