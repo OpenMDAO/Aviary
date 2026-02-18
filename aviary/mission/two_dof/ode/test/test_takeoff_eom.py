@@ -11,7 +11,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, ground_roll=True), promotes=['*'])
+        self.prob.model.add_subsystem(
+            'group', TakeoffEOM(num_nodes=2, ground_roll=True), promotes=['*']
+        )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
         )
@@ -89,7 +91,9 @@ class GroundrollEOMTestCase2(unittest.TestCase):
 class RotationEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, rotation=True), promotes=['*'])
+        self.prob.model.add_subsystem(
+            'group', TakeoffEOM(num_nodes=2, rotation=True), promotes=['*']
+        )
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
         )

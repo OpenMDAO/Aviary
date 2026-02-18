@@ -252,7 +252,6 @@ class TakeoffPhase(PhaseBuilder):
             )
 
         if not (ground_roll or rotation):
-
             phase.add_path_constraint('load_factor', upper=1.10, lower=0.0)
 
             phase.add_path_constraint(

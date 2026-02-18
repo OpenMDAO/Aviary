@@ -217,7 +217,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             builder = phase_options['user_options']['phase_builder']
 
             if builder is PhaseType.BREGUET_RANGE:
-
                 # TODO: This is the only one currently accessed by name string, to preserve
                 # some legacy tests.
                 if 'electric_cruise' in phase_name:

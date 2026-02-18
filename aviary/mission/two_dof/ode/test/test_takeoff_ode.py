@@ -61,7 +61,7 @@ class GroundrollODETestCase(unittest.TestCase):
             Dynamic.Mission.DISTANCE_RATE: [126.58573928, 253.17147857],
             'normal_force': [85313.25425063, 41138.11842255],
             'fuselage_pitch': [0.0, 0.0],
-            'dmass_dv': [-0.4852005,  -0.60896963],
+            'dmass_dv': [-0.4852005, -0.60896963],
         }
         check_prob_outputs(self.prob, testvals, rtol=1e-6)
 

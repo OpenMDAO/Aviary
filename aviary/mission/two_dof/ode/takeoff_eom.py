@@ -49,7 +49,7 @@ class TakeoffEOM(om.ExplicitComponent):
             'rotation_pitch_rate',
             types=float,
             default=3.33,
-            desc='Pitch rate during rotation in degrees/second.'
+            desc='Pitch rate during rotation in degrees/second.',
         )
 
     def setup(self):
@@ -284,12 +284,7 @@ class TakeoffEOM(om.ExplicitComponent):
         sin_gamma = np.sin(gamma)
 
         outputs[Dynamic.Mission.VELOCITY_RATE] = (
-            (
-                thrust_along_flightpath
-                - incremented_drag
-                - weight * sin_gamma
-                - mu * normal_force
-            )
+            (thrust_along_flightpath - incremented_drag - weight * sin_gamma - mu * normal_force)
             * GRAV_ENGLISH_GASP
             / weight
         )
@@ -466,9 +461,7 @@ class TakeoffEOM(om.ExplicitComponent):
             if rotation:
                 J['normal_force', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dNF_dAlpha
             J['fuselage_pitch', Dynamic.Vehicle.ANGLE_OF_ATTACK] = 1
-            J['load_factor', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dTAcF_dAlpha / (
-                weight * cos_gamma
-            )
+            J['load_factor', Dynamic.Vehicle.ANGLE_OF_ATTACK] = dTAcF_dAlpha / (weight * cos_gamma)
 
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.VELOCITY] = cos_gamma
         J[Dynamic.Mission.DISTANCE_RATE, Dynamic.Mission.FLIGHT_PATH_ANGLE] = -TAS * sin_gamma
