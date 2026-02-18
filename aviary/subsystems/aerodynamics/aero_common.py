@@ -59,7 +59,7 @@ class DynamicPressure(om.ExplicitComponent):
 class ReynoldsNumber(om.ExplicitComponent):
     """
     Compute Reynolds number as
-    Dynamic.Mission.REYNOLDS_NUMBER_PER_UNIT_LENGTH_PER_UNIT_LENGTH = speed of sound * Mach * density / dynamic viscosity.
+    Dynamic.Mission.REYNOLDS_NUMBER_PER_UNIT_LENGTH = speed of sound * Mach * density / dynamic viscosity.
     """
 
     def initialize(self):
