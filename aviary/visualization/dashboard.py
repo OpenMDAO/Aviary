@@ -175,7 +175,9 @@ def create_csv_frame(documentation, csv_filepath):
     """
     if os.path.isfile(csv_filepath):
         df = pd.read_csv(csv_filepath)
-        formatters = {c: ScientificFormatter(precision=3) for c in df.columns if df[c].dtype == np.float64}
+        formatters = {
+            c: ScientificFormatter(precision=3) for c in df.columns if df[c].dtype == np.float64
+        }
 
         df_pane = pn.widgets.Tabulator(
             df,
@@ -185,7 +187,7 @@ def create_csv_frame(documentation, csv_filepath):
             max_height=600,
             sizing_mode='scale_both',
             disabled=True,  # disables editing of the table
-            formatters=formatters
+            formatters=formatters,
         )
         report_pane = pn.Column(
             pn.pane.HTML(
