@@ -216,13 +216,13 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
             add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
             add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
@@ -258,7 +258,7 @@ class _Prelim(om.ExplicitComponent):
         self.add_output(Names.XMULT, 1.0, units='unitless')
 
     def setup_partials(self):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         fuselage_var = self.fuselage_var
@@ -279,7 +279,7 @@ class _Prelim(om.ExplicitComponent):
             Names.XMULTV, Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=thickness_to_chord_scaler
         )
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             self.declare_partials(
                 Names.SPANHT,
                 [
@@ -347,7 +347,7 @@ class _Prelim(om.ExplicitComponent):
             )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         w_tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
@@ -363,7 +363,7 @@ class _Prelim(om.ExplicitComponent):
         fuselage_var = self.fuselage_var
         XDX = outputs[Names.XDX] = inputs[fuselage_var]
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
             area = inputs[Aircraft.HorizontalTail.AREA]
             span = outputs[Names.SPANHT] = (aspect_ratio * area) ** 0.5
@@ -416,13 +416,13 @@ class _Prelim(om.ExplicitComponent):
         outputs[Names.CROTVT] = CROTVT
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         fuselage_var = self.fuselage_var
 
         XDX = inputs[fuselage_var]
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             area = inputs[Aircraft.HorizontalTail.AREA]
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
@@ -435,7 +435,7 @@ class _Prelim(om.ExplicitComponent):
 
         da = dr = dt = dx = 0.0
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             if 0.0 < span:
                 # b = (a * ar)**0.5
                 #
