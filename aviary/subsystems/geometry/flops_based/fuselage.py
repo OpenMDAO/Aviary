@@ -667,7 +667,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             bay_width = max_width / num_bays
             if bay_width > bay_width_max:
                 bay_width = bay_width_max
-                num_bays = int(0.999 + max_width / bay_width)
+                num_bays = int(0.999 + max_width[0] / bay_width)
                 if num_bays > num_bays_max and num_bays_max > 0:
                     num_bays = num_bays_max
                     max_width = bay_width_max * bay_width
