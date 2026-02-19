@@ -169,11 +169,7 @@ class SimpleCabinLayout(om.ExplicitComponent):
         if pax_compart_length > 190.0:
             if verbosity > Verbosity.BRIEF:
                 raise UserWarning(
-<<<<<<< BWB_FLOPS_mission
-                    'Passenger compartment lenght is longer than recommended maximum'
-=======
                     'Passenger compartment length is longer than recommended maximum'
->>>>>>> main
                     ' length. Suggest using detailed layout algorithm.'
                 )
 
