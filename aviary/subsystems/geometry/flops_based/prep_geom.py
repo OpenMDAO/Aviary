@@ -422,7 +422,7 @@ class _Prelim(om.ExplicitComponent):
         fuselage_var = self.fuselage_var
 
         XDX = inputs[fuselage_var]
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if design_type is AircraftTypes.TRANSPORT:
             area = inputs[Aircraft.HorizontalTail.AREA]
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
@@ -691,7 +691,7 @@ class _BWBWing(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Wing.SPAN must be positive.')
+                raise ValueError('Aircraft.Wing.SPAN must be positive.')
         rate_span = (wingspan - width) / wingspan
 
         # This part is repeated in BWBWingPrelim()
