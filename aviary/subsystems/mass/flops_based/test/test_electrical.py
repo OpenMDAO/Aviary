@@ -24,7 +24,7 @@ class ElectricMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -54,7 +54,7 @@ class ElectricMassTest(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER,
             ],
             output_keys=Aircraft.Electrical.MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_IO(self):
@@ -169,47 +169,6 @@ class AltElectricMassTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-@use_tempdirs
-class BWBElectricMassTest(unittest.TestCase):
-    """Test electric mass calculation for BWB data."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'electric_test',
-            ElectricalMass(),
-            promotes_outputs=[
-                Aircraft.Electrical.MASS,
-            ],
-            promotes_inputs=[
-                Aircraft.Fuselage.LENGTH,
-                Aircraft.Fuselage.MAX_WIDTH,
-                Aircraft.Electrical.MASS_SCALER,
-            ],
-        )
-
-        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            self.prob,
-            case_name,
-            input_keys=[
-                Aircraft.Fuselage.LENGTH,
-                Aircraft.Fuselage.MAX_WIDTH,
-                Aircraft.Electrical.MASS_SCALER,
-            ],
-            output_keys=Aircraft.Electrical.MASS,
-            version=Version.BWB,
-        )
 
 
 if __name__ == '__main__':

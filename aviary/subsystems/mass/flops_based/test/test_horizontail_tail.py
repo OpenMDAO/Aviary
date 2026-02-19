@@ -18,15 +18,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class ExplicitHorizontalTailMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -49,7 +47,7 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
                 Aircraft.HorizontalTail.MASS_SCALER,
             ],
             output_keys=Aircraft.HorizontalTail.MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             tol=2.0e-4,
         )
 
@@ -87,6 +85,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -142,41 +141,6 @@ class ExplicitAltHorizontalTailMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class BWBExplicitHorizontalTailMassTest(unittest.TestCase):
-    """Tests horizontal tail mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'horizontal_tail',
-            HorizontalTailMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[
-                Aircraft.HorizontalTail.AREA,
-                Aircraft.HorizontalTail.TAPER_RATIO,
-                Mission.Design.GROSS_MASS,
-                Aircraft.HorizontalTail.MASS_SCALER,
-            ],
-            output_keys=Aircraft.HorizontalTail.MASS,
-            version=Version.BWB,
-            tol=2.0e-4,
-        )
 
 
 if __name__ == '__main__':

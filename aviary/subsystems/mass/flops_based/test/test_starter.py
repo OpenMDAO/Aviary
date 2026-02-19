@@ -18,16 +18,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-omit_cases = ['AdvancedSingleAisle', 'BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class TransportStarterMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(omit='AdvancedSingleAisle'), name_func=print_case)
     def test_case_1(self, case_name):
         prob = self.prob
 
@@ -49,6 +46,7 @@ class TransportStarterMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR],
             output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_case_2(self):
@@ -127,44 +125,6 @@ class TransportStarterMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class BWBTransportStarterMassTest(unittest.TestCase):
-    """
-    Tests starter mass calculation for BWB.
-    In FLOPS, WSTART is scaled after override. We ignore the difference for now.
-    """
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case_1(self, case_name):
-        prob = self.prob
-
-        options = get_flops_options(case_name)
-        options[Aircraft.Engine.NUM_ENGINES] = np.array([3])
-        options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 3
-
-        prob.model.add_subsystem(
-            'starter_test',
-            TransportStarterMass(),
-            promotes_outputs=['*'],
-            promotes_inputs=['*'],
-        )
-
-        prob.model_options['*'] = options
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR],
-            output_keys=Aircraft.Propulsion.TOTAL_STARTER_MASS,
-            version=Version.BWB,
-        )
 
 
 if __name__ == '__main__':

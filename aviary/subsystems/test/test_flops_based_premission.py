@@ -426,7 +426,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        preprocess_options(flops_inputs)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
+
         default_premission_subsystems = get_geom_and_mass_subsystems('FLOPS')[0:1]
 
         prob = self.prob
@@ -1223,9 +1225,6 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    import numpy as np
-
-    np.seterr(divide='raise')
-    test = BWBPreMissionGroupCSVTest1()
-    test.setUp()
-    # test.test_case_geom_mass()
+    # test = BWBPreMissionGroupTest()
+    # test.setUp()
+    # test.test_case_geom()

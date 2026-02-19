@@ -27,7 +27,6 @@ aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
-aircraft:design:touchdown_mass,0.0,lbm
 aircraft:design:type,transport,unitless
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
@@ -154,6 +153,7 @@ mission:design:lift_coefficient,-1.0,unitless
 mission:design:mach,-1.0,unitless
 mission:design:range,3500.0,NM
 mission:design:thrust_takeoff_per_eng,0.0,lbf
+mission:landing:drag_coefficient_min,0.045,unitless
 mission:landing:flare_rate,2.2,deg/s
 mission:landing:initial_velocity,145.0,ft/s
 mission:landing:lift_coefficient_max,2.5,unitless
@@ -161,6 +161,7 @@ mission:summary:cruise_mach,0.785,0.0,0.0,0.0,0.0,0.0,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:angle_of_attack_runway,0.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
+mission:takeoff:drag_coefficient_min,0.05,unitless
 mission:takeoff:final_altitude,35.0,ft
 mission:takeoff:fuel_simple,0.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
@@ -345,15 +346,12 @@ TOLIN.aprhgt,100
 TOLIN.argef,1
 TOLIN.cdeout,0.0046077279938182
 TOLIN.cdld,0.1,0.1,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.2,0.22,0.24,0.26,0.3,0.32,0.34
-TOLIN.cdmld,0.045
-TOLIN.cdmto,0.05
 TOLIN.cdrev,0
 TOLIN.cdto,0.0674,0.065,0.065,0.07,0.072,0.076,0.084,0.09,0.1,0.11,0.12,0.13,0.15,0.16,0.18,0.2
 TOLIN.clld,0.7,0.9,1.05,1.15,1.25,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4
 TOLIN.clldm,2.4
 TOLIN.clrev,0
 TOLIN.clto,0.5178,0.6,0.75,0.85,0.95,1.05,1.15,1.25,1.35,1.5,1.6,1.7,1.8,1.85,1.9,1.95
-TOLIN.cltom,2
 TOLIN.deldfl,2
 TOLIN.delhap,2
 TOLIN.deltcl,0.2

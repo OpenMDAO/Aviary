@@ -3699,7 +3699,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='carry out simple or detailed layout of fuselage.',
+    desc='carry out simple or detailed layout of fuselage (for FLOPS based geometry).',
     option=True,
     default_value=True,
 )
@@ -7388,7 +7388,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'AERIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
+        'FLOPS': 'TOLIN.CDMLD',  # ['&DEFINE.AERIN.CDMLD', 'LANDG.CDMLD'],
         'LEAPS1': None,
     },
     units='unitless',
@@ -7902,7 +7902,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
-        'FLOPS': 'AERIN.CDMTO',  # ['&DEFINE.AERIN.CDMTO', 'LANDG.CDMTO'],
+        'FLOPS': 'TOLIN.CDMTO',  # ['&DEFINE.AERIN.CDMTO', 'LANDG.CDMTO'],
         'LEAPS1': None,
     },
     units='unitless',
@@ -8016,7 +8016,7 @@ add_meta_data(
     historical_name={
         'GASP': 'INGASP.CLMWTO',
         # ['&DEFINE.AERIN.CLTOM', 'LANDG.CLTOM', '~DEFTOL.CLTOA'],
-        'FLOPS': 'AERIN.CLTOM',
+        'FLOPS': ['AERIN.CLTOM', 'TOLIN.CLTOM'],
         'LEAPS1': 'aircraft.inputs.L0_takeoff_and_landing.max_takeoff_lift_coeff',
     },
     units='unitless',
