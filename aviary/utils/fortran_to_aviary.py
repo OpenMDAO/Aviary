@@ -1076,7 +1076,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         Aircraft.HorizontalTail.TAPER_RATIO not in input_values
         or input_values.get_val(Aircraft.HorizontalTail.TAPER_RATIO)[0] < 0.0
     ):
-        if Aircraft.WING.SWEEP in input_values:
+        if Aircraft.HorizontalTail.TAPER_RATIO:
             TR = input_values.get_val(Aircraft.Wing.TAPER_RATIO)[0]
             input_values.set_val(Aircraft.HorizontalTail.TAPER_RATIO, [TR])
 
@@ -1103,6 +1103,9 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.HorizontalTail.SWEEP in input_values:
             SWPHT = input_values.get_val(Aircraft.HorizontalTail.SWEEP, units='deg')[0]
             input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWPHT], 'deg')
+        elif Aircraft.WING.SWEEP in input_values:
+            SWEEP = input_values.get_val(Aircraft.Wing.SWEEP, units='deg')[0]
+            input_values.set_val(Aircraft.VerticalTail.SWEEP, [SWEEP], 'deg')
 
     if (
         Aircraft.HorizontalTail.ASPECT_RATIO not in input_values

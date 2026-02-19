@@ -423,7 +423,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options
             or aviary_options.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW) < 0
         ):
-            galley_crew_count = 0  # assume no passengers
+            galley_crew_count = 0  # assume no galley_crew
 
             if 150 < design_pax:
                 galley_crew_count = design_pax // 250 + 1
@@ -454,10 +454,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 )
                 aviary_options.set_val(Aircraft.CrewPayload.NUM_CABIN_CREW, cabin_crew_calc)
 
-        if (
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options
-            or aviary_options.get_val(Mission.Design.RANGE, 'nmi') < 0.0
-        ):
+        if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options:
             baggage_mass_per_pax = 35.0
             if Mission.Design.RANGE in aviary_options:
                 design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
@@ -475,19 +472,31 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 units='lbm',
             )
 
-        if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in aviary_options:
-            HHT = 0
-            if (
-                Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
-                and aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES) > 1
-                and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
-            ):
-                HHT = 1
-            aviary_options.set_val(
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
-                val=HHT,
-                units='unitless',
+        if (
+            Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
+            and aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES) > 1
+            and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
+        ):
+            HHT = 1
+            warnings.warn(
+                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified and '
+                'Aircraft.Engine.NUM_FUSELAGE_ENGINES = '
+                f'{aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)}'
+                ' assume T-Tail configuration. Setting '
+                ' Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 1'
             )
+        else:
+            HHT = 0
+            warnings.warn(
+                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified '
+                'assume conventional tail configuration. Setting '
+                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0'
+            )
+        aviary_options.set_val(
+            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+            val=HHT,
+            units='unitless',
+        )
 
     return aviary_options
 
