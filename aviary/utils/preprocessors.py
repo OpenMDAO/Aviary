@@ -472,9 +472,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 units='lbm',
             )
 
+        if Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options:
+            num_fulselage_engines = aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)
+            if isinstance(num_fulselage_engines, (list, np.ndarray)):
+                num_fulselage_engines = num_fulselage_engines[0]
+
         if (
             Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
-            and aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)[0] > 1
+            and num_fulselage_engines > 1
             and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
         ):
             HHT = 1
