@@ -676,7 +676,10 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
         f.write('| ------ |-------| ----- |\n')
         non_external_overridden_variables.sort(key=lambda x: x[0])
         for aircraft_variable_name, val, units in non_external_overridden_variables:
-            valstring = np.array2string(val, formatter={'float_kind': lambda x: f'{x:.3g}'})
+            if isinstance(val, np.ndarray):
+                valstring = np.array2string(val, formatter={'float_kind': lambda x: f'{x:.3g}'})
+            else:
+                valstring = f"{val:.3g}"
             f.write(f'| {aircraft_variable_name} | {valstring} | {units} |\n')
         f.write('\n')
     else:
