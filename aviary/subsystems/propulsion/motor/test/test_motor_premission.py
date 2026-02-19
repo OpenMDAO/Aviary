@@ -10,11 +10,11 @@ from aviary.variable_info.variables import Aircraft
 
 class TestGearbox(unittest.TestCase):
     @use_tempdirs
-    def test_motor_map(self):
+    def test_motor_premission(self):
         prob = om.Problem()
 
         prob.model.add_subsystem(
-            'motor_map', MotorPreMission(), promotes=['*']
+            'motor_map', MotorPreMission(motor_model='aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'), promotes=['*']
         )
 
         prob.setup(force_alloc_complex=True)

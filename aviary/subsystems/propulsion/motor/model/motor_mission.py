@@ -11,9 +11,11 @@ class MotorMission(om.Group):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.name = 'motor_mission'
+        self.options.declare('motor_model', types=str)
 
     def setup(self):
         nn = self.options['num_nodes']
+        motor_model = self.options['motor_model']
 
         ivc = om.IndepVarComp()
         ivc.add_output('max_throttle', val=np.ones(nn), units='unitless')
@@ -24,7 +26,7 @@ class MotorMission(om.Group):
 
         motor_group.add_subsystem(
             'motor_map',
-            MotorMap(num_nodes=nn),
+            MotorMap(num_nodes=nn, motor_model=motor_model),
             promotes_inputs=[
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 Aircraft.Engine.SCALE_FACTOR,
@@ -81,7 +83,7 @@ class MotorMission(om.Group):
         # these two groups are the same as those above
         motor_group_max.add_subsystem(
             'motor_map_max',
-            MotorMap(num_nodes=nn),
+            MotorMap(num_nodes=nn, motor_model=motor_model),
             promotes_inputs=[
                 (Dynamic.Vehicle.Propulsion.THROTTLE, 'max_throttle'),
                 Aircraft.Engine.SCALE_FACTOR,

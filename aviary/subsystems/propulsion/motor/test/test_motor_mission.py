@@ -11,12 +11,12 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class TestMotorMission(unittest.TestCase):
     @use_tempdirs
-    def test_motor_map(self):
+    def test_motor_mission(self):
         nn = 3
 
         prob = om.Problem()
 
-        prob.model.add_subsystem('motor_map', MotorMission(num_nodes=nn), promotes=['*'])
+        prob.model.add_subsystem('motor_map', MotorMission(num_nodes=nn, motor_model='aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 

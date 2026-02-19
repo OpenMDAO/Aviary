@@ -8,6 +8,7 @@ class MotorPreMission(om.Group):
 
     def initialize(self):
         self.name = 'motor_premission'
+        self.options.declare('motor_model', types=str)
 
     def setup(self):
         # Determine max torque of scaled motor
@@ -28,7 +29,7 @@ class MotorPreMission(om.Group):
 
         self.add_subsystem(
             'motor_map',
-            MotorMap(num_nodes=1),
+            MotorMap(num_nodes=1, motor_model=self.options['motor_model']),
             promotes_inputs=[
                 Aircraft.Engine.SCALE_FACTOR,
                 (Dynamic.Vehicle.Propulsion.THROTTLE, 'max_throttle'),

@@ -2392,8 +2392,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='Thrust-based scaling factor used to scale engine performance data during '
-    'mission analysis',
+    desc='A scaling factor used to scale engine performance data during mission analysis.',
     default_value=1.0,
     multivalue=True,
 )

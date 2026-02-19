@@ -16,7 +16,7 @@ class TestGearbox(unittest.TestCase):
 
         prob = om.Problem()
 
-        prob.model.add_subsystem('motor_map', MotorMap(num_nodes=3), promotes=['*'])
+        prob.model.add_subsystem('motor_map', MotorMap(num_nodes=3, motor_model='aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
