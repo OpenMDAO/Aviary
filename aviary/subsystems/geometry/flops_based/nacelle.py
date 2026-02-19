@@ -62,20 +62,20 @@ class Nacelles(om.ExplicitComponent):
         # how many unique engine types are there (int)
         num_engine_type = len(num_engines)
 
-        avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
-        avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
+        ref_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
+        ref_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.WETTED_AREA_SCALER]
 
         engine_scale = inputs[Aircraft.Engine.SCALE_FACTOR]
 
-        wetted_area = np.zeros(num_engine_type, dtype=avg_diam.dtype)
+        wetted_area = np.zeros(num_engine_type, dtype=ref_diam.dtype)
 
         calc_idx = np.where(num_engines >= 1)
         wetted_area[calc_idx] = (
             scaler[calc_idx]
             * 2.8
-            * avg_diam[calc_idx]
-            * avg_length[calc_idx]
+            * ref_diam[calc_idx]
+            * ref_length[calc_idx]
             * engine_scale[calc_idx]
         )
 
@@ -88,25 +88,25 @@ class Nacelles(om.ExplicitComponent):
     def compute_partials(self, inputs, J, discrete_inputs=None):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
-        avg_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
+        ref_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
+        ref_length = inputs[Aircraft.Nacelle.AVG_LENGTH]
         scaler = inputs[Aircraft.Nacelle.WETTED_AREA_SCALER]
 
         engine_scale = inputs[Aircraft.Engine.SCALE_FACTOR]
 
-        deriv_area_len = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_area_diam = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_area_scaler = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_area_thrust = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_total_len = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_total_diam = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_total_scaler = np.zeros(len(num_engines), dtype=avg_diam.dtype)
-        deriv_total_thrust = np.zeros(len(num_engines), dtype=avg_diam.dtype)
+        deriv_area_len = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_area_diam = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_area_scaler = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_area_thrust = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_total_len = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_total_diam = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_total_scaler = np.zeros(len(num_engines), dtype=ref_diam.dtype)
+        deriv_total_thrust = np.zeros(len(num_engines), dtype=ref_diam.dtype)
 
-        area_to_length = 2.8 * avg_diam * engine_scale
-        area_to_diam = 2.8 * avg_length * engine_scale
-        area_to_scaler = 2.8 * avg_diam * avg_length * engine_scale
-        area_to_engine_scale = 2.8 * avg_diam * avg_length
+        area_to_length = 2.8 * ref_diam * engine_scale
+        area_to_diam = 2.8 * ref_length * engine_scale
+        area_to_scaler = 2.8 * ref_diam * ref_length * engine_scale
+        area_to_engine_scale = 2.8 * ref_diam * ref_length
 
         calc_idx = np.where(num_engines >= 1)
         deriv_area_len[calc_idx] = scaler[calc_idx] * area_to_length[calc_idx]

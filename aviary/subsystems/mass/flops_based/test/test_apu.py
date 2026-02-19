@@ -17,15 +17,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class APUMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -45,6 +43,7 @@ class APUMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.APU.MASS_SCALER, Aircraft.Fuselage.PLANFORM_AREA],
             output_keys=Aircraft.APU.MASS,
+            version=Version.TRANSPORT_and_BWB,
             tol=5.0e-4,
         )
 
@@ -83,42 +82,5 @@ class APUMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class BWBAPUMassTest(unittest.TestCase):
-    """Test APU mass calculation for BWB data."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    # @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(
-        self,
-    ):
-        case_name = 'BWBsimpleFLOPS'
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'apu',
-            TransportAPUMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[Aircraft.APU.MASS_SCALER, Aircraft.Fuselage.PLANFORM_AREA],
-            output_keys=Aircraft.APU.MASS,
-            version=Version.BWB,
-            tol=5.0e-4,
-        )
-
-
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBAPUMassTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()

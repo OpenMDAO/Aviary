@@ -35,9 +35,8 @@ aircraft:engine:scaled_sls_thrust,70000,lbf
 aircraft:fins:area,184.89,ft**2
 aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
-aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
-aircraft:fuel:wing_fuel_fraction,0.688354956933531,unitless
+aircraft:fuel:wing_fuel_fraction,0.6883549569366508,unitless
 aircraft:furnishings:mass_scaler,1,unitless
 aircraft:fuselage:height_to_width_ratio,0.11,unitless
 aircraft:fuselage:length,137.5,ft
@@ -50,6 +49,7 @@ aircraft:fuselage:wetted_area_scaler,1,unitless
 aircraft:horizontal_tail:area,0,ft**2
 aircraft:horizontal_tail:aspect_ratio,0,unitless
 aircraft:horizontal_tail:mass_scaler,1,unitless
+aircraft:horizontal_tail:sweep,0,deg
 aircraft:horizontal_tail:taper_ratio,0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:hydraulics:mass_scaler,1,unitless
@@ -59,8 +59,11 @@ aircraft:landing_gear:nose_gear_oleo_length,87,inch
 aircraft:nacelle:avg_diameter,12.608,ft
 aircraft:nacelle:avg_length,17.433,ft
 aircraft:propulsion:misc_mass_scaler,0,unitless
+aircraft:vertical_tail:aspect_ratio,0.0,unitless
 aircraft:vertical_tail:mass_scaler,1,unitless
 aircraft:vertical_tail:num_tails,0,unitless
+aircraft:vertical_tail:sweep,0,deg
+aircraft:vertical_tail:taper_ratio,0,unitless
 aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0,unitless

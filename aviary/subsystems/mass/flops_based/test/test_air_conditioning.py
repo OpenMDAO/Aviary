@@ -16,15 +16,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class TransportAirCondMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -35,7 +33,7 @@ class TransportAirCondMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model_options['*'] = get_flops_options(case_name)
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -50,7 +48,7 @@ class TransportAirCondMassTest(unittest.TestCase):
             ],
             output_keys=Aircraft.AirConditioning.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.Design.NUM_PASSENGERS],
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             tol=3.0e-4,
             atol=1e-11,
         )
@@ -164,46 +162,6 @@ class AltAirCondMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class BWBTransportAirCondMassTest(unittest.TestCase):
-    """Test air conditioning mass calculation for BWB data."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        """Test TransportAirCondMass component for BWB"""
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'air_cond',
-            TransportAirCondMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[
-                Aircraft.AirConditioning.MASS_SCALER,
-                Aircraft.Avionics.MASS,
-                Aircraft.Fuselage.MAX_HEIGHT,
-                Aircraft.Fuselage.PLANFORM_AREA,
-            ],
-            output_keys=Aircraft.AirConditioning.MASS,
-            aviary_option_keys=[Aircraft.CrewPayload.Design.NUM_PASSENGERS],
-            version=Version.BWB,
-            tol=3.0e-4,
-            atol=1e-11,
-        )
 
 
 if __name__ == '__main__':

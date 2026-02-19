@@ -12,7 +12,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import get_keys
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
-from aviary.variable_info.enums import LegacyCode, ProblemType, Verbosity
+from aviary.variable_info.enums import AircraftTypes, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -45,7 +45,6 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
 
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
-    preprocess_Engines(aviary_options, verbosity)
 
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
@@ -403,7 +402,10 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     # Process FLOPS based crew variables
     if mass_method == LegacyCode.FLOPS:
         # Check flight attendants
-        if Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options:
+        if (
+            Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options
+            or aviary_options.get_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS) < 0
+        ):
             flight_attendants_count = 0  # assume no passengers
 
             if 0 < design_pax:
@@ -417,8 +419,11 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, flight_attendants_count
             )
 
-        if Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options:
-            galley_crew_count = 0  # assume no passengers
+        if (
+            Aircraft.CrewPayload.NUM_GALLEY_CREW not in aviary_options
+            or aviary_options.get_val(Aircraft.CrewPayload.NUM_GALLEY_CREW) < 0
+        ):
+            galley_crew_count = 0  # assume no galley_crew
 
             if 150 < design_pax:
                 galley_crew_count = design_pax // 250 + 1
@@ -449,24 +454,54 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 )
                 aviary_options.set_val(Aircraft.CrewPayload.NUM_CABIN_CREW, cabin_crew_calc)
 
-        if (
-            Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options
-            and Mission.Design.RANGE in aviary_options
-        ):
-            design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
+        if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options:
+            baggage_mass_per_pax = 35.0
+            if Mission.Design.RANGE in aviary_options:
+                design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
 
-            if design_range <= 900.0:
-                baggage_mass_per_pax = 35.0
-            elif design_range <= 2900.0:
-                baggage_mass_per_pax = 40.0
-            else:
-                baggage_mass_per_pax = 44.0
+                if design_range <= 900.0:
+                    baggage_mass_per_pax = 35.0
+                elif design_range <= 2900.0:
+                    baggage_mass_per_pax = 40.0
+                else:
+                    baggage_mass_per_pax = 44.0
 
             aviary_options.set_val(
                 Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
                 val=baggage_mass_per_pax,
                 units='lbm',
             )
+
+        if Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options:
+            num_fulselage_engines = aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)
+            if isinstance(num_fulselage_engines, (list, np.ndarray)):
+                num_fulselage_engines = num_fulselage_engines[0]
+
+        if (
+            Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
+            and num_fulselage_engines > 1
+            and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
+        ):
+            HHT = 1
+            warnings.warn(
+                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified and '
+                'Aircraft.Engine.NUM_FUSELAGE_ENGINES = '
+                f'{aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)}'
+                ' assume T-Tail configuration. Setting '
+                ' Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 1'
+            )
+        else:
+            HHT = 0
+            warnings.warn(
+                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified '
+                'assume conventional tail configuration. Setting '
+                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0'
+            )
+        aviary_options.set_val(
+            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+            val=HHT,
+            units='unitless',
+        )
 
     return aviary_options
 
@@ -548,63 +583,6 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
                     f' + Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY ({fuselage_capacity}) + Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity})'
                     f' = {capacity_check}'
                 )
-
-    return aviary_options
-
-
-def preprocess_Engines(aviary_options: AviaryValues, verbosity=None):
-    """
-    Preprocesses the AviaryValues object to ensure the number of engines is
-    the sum of wing engines and body engines.
-
-    Parameters
-    ----------
-    aviary_options : AviaryValues
-        Options to be updated
-
-    """
-    if verbosity is not None:
-        # compatibility with being passed int for verbosity
-        verbosity = Verbosity(verbosity)
-    else:
-        verbosity = aviary_options.get_val(Settings.VERBOSITY)
-
-    if Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options:
-        num_fuselage_engines = aviary_options.get_val(
-            Aircraft.Engine.NUM_FUSELAGE_ENGINES, 'unitless'
-        )
-        if isinstance(num_fuselage_engines, np.ndarray) or isinstance(num_fuselage_engines, list):
-            num_fuselage_engines = num_fuselage_engines[0]
-        else:
-            num_fuselage_engines = int(num_fuselage_engines)
-    else:
-        num_fuselage_engines = 0
-
-    if Aircraft.Engine.NUM_WING_ENGINES in aviary_options:
-        num_wing_engines = aviary_options.get_val(Aircraft.Engine.NUM_WING_ENGINES, 'unitless')
-        if isinstance(num_wing_engines, np.ndarray) or isinstance(num_wing_engines, list):
-            num_wing_engines = num_wing_engines[0]
-        else:
-            num_wing_engines = int(num_wing_engines)
-    else:
-        num_wing_engines = 0
-    sum_engines = num_fuselage_engines + num_wing_engines
-
-    if Aircraft.Engine.NUM_ENGINES in aviary_options:
-        num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
-        if isinstance(num_engines, np.ndarray) or isinstance(num_engines, list):
-            num_engines = num_engines[0]
-        else:
-            num_engines = int(num_engines)
-        if num_engines != sum_engines:
-            if verbosity >= Verbosity.BRIEF:
-                print(
-                    'Your total number of engines is not the same as '
-                    'the sum of wing engines and fuselage engines.'
-                )
-    else:
-        num_engines = sum_engines
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([num_engines]))
 
     return aviary_options
 
