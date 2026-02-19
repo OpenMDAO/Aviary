@@ -882,7 +882,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # Geometry
         # BWBComputeDetailedWingDist
         assert_near_equal(prob[Aircraft.Wing.SPAN], 253.720756, tol)
-        # BWBSimpleCabinLayout
+        # DetailedCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 78.61013558, tol)
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 4697.33181006, tol)
@@ -1221,6 +1221,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # TODO: test some aero variables
 
 
+@use_tempdirs
 class BWB300PreMissionGroupCSVTest(unittest.TestCase):
     """
     testing using bwb_detailed_FLOPS.csv
@@ -1259,8 +1260,8 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # Geometry
         # BWBComputeDetailedWingDist
         assert_near_equal(prob[Aircraft.Wing.SPAN], 186.3, tol)
-        # BWBSimpleCabinLayout
-        assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 78.61013558, tol)
+        # DetailedCabinLayout
+        assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 81.43, tol)
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 4697.33181006, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 12.35302131, tol)
