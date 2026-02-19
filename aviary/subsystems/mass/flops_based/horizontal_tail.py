@@ -35,8 +35,8 @@ class HorizontalTailMass(om.ExplicitComponent):
 
         if num_tails == 1:
             outputs[Aircraft.HorizontalTail.MASS] = (
-                scaler * 0.530 * area * gross_weight**0.20 * (taper_ratio + 0.50)
-            ) / GRAV_ENGLISH_LBM
+                scaler * 0.53 * area * gross_weight**0.20 * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
+            )
         elif num_tails == 0:
             outputs[Aircraft.HorizontalTail.MASS] = 0.0
         else:
