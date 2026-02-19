@@ -13,6 +13,7 @@ from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
+import aviary.api as av
 
 
 @use_tempdirs
@@ -134,6 +135,24 @@ class TestReports(unittest.TestCase):
 
         # no need to run this model, just generate the report.
         prob.final_setup()
+
+    @set_env_vars(TESTFLO_RUNNING='0')
+    def test_multiple_off_design_report_directories(self):
+        prob = av.AviaryProblem(verbosity=0)
+        prob.load_inputs(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+        )
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+        prob.add_driver('SLSQP', max_iter=50)
+        prob.add_design_variables()
+        prob.add_objective()
+        prob.setup()
+        prob.run_aviary_problem()
+        prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
+        prob.run_off_design_mission(problem_type='alternate', mission_range=1250)
+        assert Path('testflo_off_design_1_out').is_dir()
+        assert Path('testflo_off_design_out').is_dir()
 
 
 if __name__ == '__main__':

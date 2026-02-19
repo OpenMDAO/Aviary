@@ -7,6 +7,7 @@ from copy import deepcopy
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from itertools import count
 
 import dymos as dm
 import numpy as np
@@ -1366,7 +1367,14 @@ class AviaryProblem(om.Problem):
             )
 
         if name is None:
-            name = name = self._name + '_off_design'
+            # increment the name if the output directory already exists
+            #    to avoid overwriting previous off-design runs
+            base_name = self._name + '_off_design'
+            for design_number in count(0):
+                name = base_name if design_number == 0 else f'{base_name}_{design_number}'
+                output_path = Path(f'{name}_out')
+                if not output_path.is_dir():
+                    break
         off_design_prob = AviaryProblem(name=name)
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
