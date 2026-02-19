@@ -147,7 +147,7 @@ class PropulsionMission(om.Group):
                     src_indices=om.slicer[:, i],
                 )
 
-                # NOTE if only some engine use hybrid throttle, source vector will have an
+                # NOTE if only some engines use hybrid throttle, source vector will have an
                 #      index for that engine that is unused, will this confuse optimizer?
                 if engine.use_hybrid_throttle:
                     self.promotes(
@@ -283,7 +283,7 @@ class PropulsionMission(om.Group):
         # Handle checking each EngineModel for compatible outputs with
         # vectorize_performance component and connecting those outputs
 
-        # Can't make this list dynamic this way because it must perfectly match the
+        # Can't make supported_outputs list dynamic this way because it must perfectly match the
         # "vectorize_performance" comp, and we don't have enough info to dynamically filter inputs
         # from the list. Can only have engine outputs sent to "vectorize_performance"
 

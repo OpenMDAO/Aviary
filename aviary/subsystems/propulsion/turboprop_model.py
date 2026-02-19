@@ -330,7 +330,6 @@ class TurbopropMission(om.Group):
         except (AttributeError, KeyError):
             propeller_kwargs = {}
 
-        # propeller_group = om.Group()
         propeller_model_mission = propeller_model.build_mission(
             num_nodes, aviary_inputs, **propeller_kwargs
         )

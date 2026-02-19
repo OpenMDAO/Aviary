@@ -1102,14 +1102,13 @@ class EngineDeck(EngineModel):
             if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
                 engine_group.add_subsystem(
                     'fixed_max_throttles',
-                    fixed_throttles,  # , promotes_outputs=['*']
+                    fixed_throttles,
                 )
             else:
                 engine_group.add_subsystem(
                     'interp_max_throttles',
                     interp_throttles,
                     promotes_inputs=['*'],
-                    # promotes_outputs=['*'],
                 )
 
             engine_group.add_subsystem(
@@ -1118,7 +1117,7 @@ class EngineDeck(EngineModel):
                 promotes_inputs=[
                     Dynamic.Atmosphere.MACH,
                     Dynamic.Mission.ALTITUDE,
-                ],  # , promotes_inputs=['*']
+                ],
             )
 
             # manually connect max throttles - do not promote them out of group

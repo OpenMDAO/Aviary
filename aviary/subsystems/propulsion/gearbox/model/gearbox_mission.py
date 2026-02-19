@@ -67,6 +67,8 @@ class GearboxMission(om.Group):
             'torque_comp.rpm_out',
         )
 
+        # TODO figure out a way to re-implement this without calculating max shaft power here,
+        #      or add this component back in
         # Determine the maximum power available at this flight condition
         # this is used for excess power constraints
         # self.add_subsystem(

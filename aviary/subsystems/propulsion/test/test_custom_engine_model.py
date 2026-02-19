@@ -60,12 +60,6 @@ class SimpleEngine(om.ExplicitComponent):
             units='lbf',
             desc='Current net thrust produced (scaled)',
         )
-        # self.add_output(
-        #     Dynamic.Vehicle.Propulsion.THRUST_MAX,
-        #     shape=nn,
-        #     units='lbf',
-        #     desc='Current net thrust produced (scaled)',
-        # )
         self.add_output(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             shape=nn,
@@ -100,7 +94,6 @@ class SimpleEngine(om.ExplicitComponent):
 
         # calculate outputs
         outputs[Dynamic.Vehicle.Propulsion.THRUST] = 10000.0 * combined_throttle
-        # outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX] = 10000.0
         outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = -10.0 * combined_throttle
         outputs[Dynamic.Vehicle.Propulsion.TEMPERATURE_T4] = 2800.0
 
