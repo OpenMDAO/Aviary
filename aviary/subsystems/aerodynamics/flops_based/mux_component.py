@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, get_units
 from aviary.variable_info.variables import Aircraft
 
@@ -40,11 +39,8 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, units='unitless')
 
         # Horizontal Tail
-        design_type = self.options[Aircraft.Design.TYPE]
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            num = 0
-        else:
-            num = 1
+        num = self.options[Aircraft.VerticalTail.NUM_TAILS]
+
         self.num_h_tails = num
         if num > 0:
             add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA, units='ft**2')
