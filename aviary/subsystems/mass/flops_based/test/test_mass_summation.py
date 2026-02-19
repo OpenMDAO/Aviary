@@ -27,15 +27,13 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class TotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -102,7 +100,7 @@ class TotalSummationTest(unittest.TestCase):
                 Mission.Summary.ZERO_FUEL_MASS,
                 Mission.Summary.FUEL_MASS,
             ],
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             atol=1e-10,
         )
         om.n2(prob, show_browser=False)
@@ -247,89 +245,5 @@ class StructureMassTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-6, rtol=1e-6)
 
 
-@use_tempdirs
-class BWBTotalSummationTest(unittest.TestCase):
-    """Tests total summation mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'tot',
-            MassSummation(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([3], 'unitless')})
-        )
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[
-                Aircraft.AirConditioning.MASS,
-                Aircraft.AntiIcing.MASS,
-                Aircraft.APU.MASS,
-                Aircraft.Avionics.MASS,
-                Aircraft.Canard.MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
-                Aircraft.CrewPayload.BAGGAGE_MASS,
-                Aircraft.CrewPayload.CARGO_MASS,
-                Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
-                Aircraft.CrewPayload.CABIN_CREW_MASS,
-                Aircraft.CrewPayload.FLIGHT_CREW_MASS,
-                Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
-                Aircraft.Electrical.MASS,
-                Aircraft.Fins.MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS,
-                Aircraft.Fuel.FUEL_SYSTEM_MASS,
-                Aircraft.Furnishings.MASS,
-                Aircraft.Fuselage.MASS,
-                Aircraft.HorizontalTail.MASS,
-                Aircraft.Hydraulics.MASS,
-                Aircraft.Instruments.MASS,
-                Aircraft.LandingGear.TOTAL_MASS,
-                Aircraft.Nacelle.MASS,
-                Aircraft.Paint.MASS,
-                Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
-                Aircraft.Wing.SURFACE_CONTROL_MASS,
-                Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
-                Aircraft.Fuel.UNUSABLE_FUEL_MASS,
-                Aircraft.VerticalTail.MASS,
-                Aircraft.Wing.MASS,
-                Mission.Design.GROSS_MASS,
-                Aircraft.Propulsion.TOTAL_ENGINE_MASS,
-                Aircraft.Propulsion.TOTAL_MISC_MASS,
-            ],
-            output_keys=[
-                Aircraft.Design.EMPTY_MASS_MARGIN,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Aircraft.Design.EMPENNAGE_MASS,
-                Aircraft.Design.EMPTY_MASS,
-                Mission.Summary.USEFUL_LOAD,
-                Mission.Summary.OPERATING_MASS,
-                Mission.Summary.ZERO_FUEL_MASS,
-                Mission.Summary.FUEL_MASS,
-            ],
-            version=Version.TRANSPORT,
-            atol=1e-10,
-        )
-
-
 if __name__ == '__main__':
     unittest.main()
-    # test = AltTotalSummationTest()
-    # test = TotalSummationTest()
-    # test.setUp()
-    # test.test_case_multiengine()
-    # test.test_case('LargeSingleAisle2FLOPSalt')

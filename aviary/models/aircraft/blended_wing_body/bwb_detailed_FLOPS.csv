@@ -15,7 +15,7 @@ aircraft:crew_and_payload:baggage_mass_per_passenger,44.0,lbm
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,100,unitless
 aircraft:crew_and_payload:design:num_first_class,28,unitless
-aircraft:crew_and_payload:design:num_passengers,468,unitless
+# aircraft:crew_and_payload:design:num_passengers,468,unitless
 aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_business,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
@@ -27,12 +27,12 @@ aircraft:crew_and_payload:design:seat_pitch_economy,32,inch
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
-aircraft:crew_and_payload:num_business_class,100,unitless
-aircraft:crew_and_payload:num_first_class,28,unitless
 aircraft:crew_and_payload:num_flight_attendants,22,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,2,unitless
-aircraft:crew_and_payload:num_passengers,468,unitless
+aircraft:crew_and_payload:num_business_class,100,unitless
+aircraft:crew_and_payload:num_first_class,28,unitless
+# aircraft:crew_and_payload:num_passengers,468,unitless
 aircraft:crew_and_payload:num_economy_class,340,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
@@ -59,7 +59,7 @@ aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1,unitless
-aircraft:engine:num_engines,3,unitless
+# aircraft:engine:num_engines,3,unitless
 aircraft:engine:num_fuselage_engines,3,unitless
 aircraft:engine:num_wing_engines,0,unitless
 aircraft:engine:reference_mass,22017.0,lbm
@@ -99,8 +99,8 @@ aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
-aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:hydraulics:mass_scaler,1.0,unitless
+aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:instruments:mass_scaler,1.0,unitless
 aircraft:landing_gear:main_gear_oleo_length,85.0,inch
 aircraft:landing_gear:main_gear_mass_scaler,1.0,unitless
@@ -153,7 +153,6 @@ aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
 mission:design:gross_mass,874099,lbm
-mission:design:lift_coefficient,-1.0,unitless
 mission:design:range,7750,NM
 mission:design:thrust_takeoff_per_eng,0.25,lbf
 mission:landing:initial_velocity,140,ft/s
