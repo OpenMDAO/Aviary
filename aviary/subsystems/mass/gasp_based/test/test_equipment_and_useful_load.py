@@ -56,7 +56,7 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_EQUIPMENT_MASS], 22792.3165722, tol)
+        assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 22792.3165722, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -148,7 +148,7 @@ class UsefulMassTestCase1(unittest.TestCase):
             Aircraft.CrewPayload.FLIGHT_CREW_MASS, val=492.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, val=800.0, units='lbm'
+            Aircraft.CrewPayload.CABIN_CREW_MASS, val=800.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=342.6, units='lbm'
@@ -174,7 +174,7 @@ class UsefulMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.FIXED_USEFUL_LOAD], 5341.36, tol)
+        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5341.36, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -224,7 +224,7 @@ class UsefulMassGroupTest(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 165.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 800.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2872.0, tol)
         assert_near_equal(self.prob[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS], 115.0, tol)
@@ -291,7 +291,6 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.SCALED_SLS_THRUST, val=29500, units='lbf'
         )
@@ -318,7 +317,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Instruments.MASS], 547.41157631, tol)
         assert_near_equal(self.prob[Aircraft.OxygenSystem.MASS], 50.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 165.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 800.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2872.0, tol)
         assert_near_equal(self.prob[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS], 115.0, tol)
@@ -415,7 +414,7 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
             Aircraft.CrewPayload.FLIGHT_CREW_MASS, val=446.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, val=631.0, units='lbm'
+            Aircraft.CrewPayload.CABIN_CREW_MASS, val=631.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, val=235.5, units='lbm'
@@ -523,7 +522,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Instruments.MASS], 917.20099314, tol)
         assert_near_equal(self.prob[Aircraft.OxygenSystem.MASS], 50.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 165.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 600.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 600.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2148.0, tol)
         assert_near_equal(self.prob[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS], 90.0, tol)

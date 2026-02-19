@@ -23,7 +23,7 @@ class HydraulicsMass(om.ExplicitComponent):
         )
         add_aviary_input(self, Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Controls.TOTAL_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Controls.MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Hydraulics.MASS, units='lbm')
 
@@ -34,7 +34,7 @@ class HydraulicsMass(om.ExplicitComponent):
         landing_gear_fixed = self.options[Aircraft.LandingGear.FIXED_GEAR]
 
         flight_control_mass_coeff = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]
-        control_mass = inputs[Aircraft.Controls.TOTAL_MASS]
+        control_mass = inputs[Aircraft.Controls.MASS]
         landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
         gear_mass_coeff = inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT]
 
@@ -45,14 +45,14 @@ class HydraulicsMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         landing_gear_wt = inputs[Aircraft.LandingGear.TOTAL_MASS]
-        control_wt = inputs[Aircraft.Controls.TOTAL_MASS]
+        control_wt = inputs[Aircraft.Controls.MASS]
         flight_control_mass_coeff = inputs[Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT]
         gear_mass_coeff = inputs[Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT]
 
         gear_val = not self.options[Aircraft.LandingGear.FIXED_GEAR]
 
         J[Aircraft.Hydraulics.MASS, Aircraft.LandingGear.TOTAL_MASS] = gear_mass_coeff * gear_val
-        J[Aircraft.Hydraulics.MASS, Aircraft.Controls.TOTAL_MASS] = flight_control_mass_coeff
+        J[Aircraft.Hydraulics.MASS, Aircraft.Controls.MASS] = flight_control_mass_coeff
         J[Aircraft.Hydraulics.MASS, Aircraft.Hydraulics.FLIGHT_CONTROL_MASS_COEFFICIENT] = (
             control_wt
         )

@@ -3,7 +3,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 from aviary.subsystems.mass.gasp_based.air_conditioning import ACMass, BWBACMass
 from aviary.subsystems.mass.gasp_based.anti_icing import AntiIcingMass
 from aviary.subsystems.mass.gasp_based.apu import APUMass
@@ -35,9 +35,9 @@ class EquipMassSum(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.OxygenSystem.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, units='lbm')
 
-        add_aviary_output(self, Aircraft.Design.FIXED_EQUIPMENT_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
 
-        self.declare_partials(Aircraft.Design.FIXED_EQUIPMENT_MASS, '*')
+        self.declare_partials(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, '*')
 
     def compute(self, inputs, outputs):
         air_conditioning_mass = inputs[Aircraft.AirConditioning.MASS]
@@ -64,19 +64,19 @@ class EquipMassSum(om.ExplicitComponent):
             + subsystems_wt
         )
 
-        outputs[Aircraft.Design.FIXED_EQUIPMENT_MASS] = equip_mass_sum
+        outputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = equip_mass_sum
 
     def compute_partials(self, inputs, J):
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.AirConditioning.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Furnishings.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.APU.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Instruments.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Hydraulics.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Electrical.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Avionics.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.AntiIcing.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.OxygenSystem.MASS] = 1
-        J[Aircraft.Design.FIXED_EQUIPMENT_MASS, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.AirConditioning.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Furnishings.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.APU.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Instruments.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Hydraulics.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Electrical.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Avionics.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.AntiIcing.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.OxygenSystem.MASS] = 1
+        J[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS] = 1
 
 
 class EquipMassGroup(om.Group):
@@ -144,7 +144,7 @@ class UsefulLoadMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.FLIGHT_CREW_MASS)
-        add_aviary_input(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS)
+        add_aviary_input(self, Aircraft.CrewPayload.CABIN_CREW_MASS)
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS)
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS)
         add_aviary_input(self, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
@@ -157,7 +157,7 @@ class UsefulLoadMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         pilot_wt = inputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS]
-        flight_attendant_wt = inputs[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS]
+        flight_attendant_wt = inputs[Aircraft.CrewPayload.CABIN_CREW_MASS]
         oil_wt = inputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS]
         service_wt = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         emergency_wt = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS]
@@ -177,13 +177,13 @@ class UsefulLoadMass(om.ExplicitComponent):
         outputs[Mission.Summary.USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.FLIGHT_CREW_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS] = 1
-        J[Aircraft.Design.FIXED_USEFUL_LOAD, Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.FLIGHT_CREW_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.CABIN_CREW_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS] = 1
+        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = 1
 
 
 class UsefulLoadMassGroup(om.Group):

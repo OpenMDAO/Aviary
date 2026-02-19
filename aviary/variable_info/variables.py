@@ -399,7 +399,7 @@ class Aircraft:
 
     class OxygenSystem:
         MASS = 'aircraft:oxygen_system:mass'
-        MASS_SCALAR = 'aircraft:oxygen_system:mass_scaler'
+        MASS_SCALER = 'aircraft:oxygen_system:mass_scaler'
 
     class Paint:
         MASS = 'aircraft:paint:mass'

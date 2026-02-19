@@ -4607,11 +4607,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.OxygenSystem.MASS_SCALAR,
+    Aircraft.OxygenSystem.MASS_SCALER,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='Mass Scalar for the Passenger Oxygen System',
+    desc='Mass Scaler for the Passenger Oxygen System',
     default_value=0.0,
 )
 

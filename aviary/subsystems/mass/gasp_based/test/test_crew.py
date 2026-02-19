@@ -48,7 +48,7 @@ class CrewTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 800.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -101,7 +101,7 @@ class CrewTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 800.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -145,7 +145,7 @@ class CrewTestCase3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS], 600.0, tol)
+        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 600.0, tol)
         assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')

@@ -36,7 +36,7 @@ class HydraulicsTestCase1(unittest.TestCase):
             Aircraft.LandingGear.TOTAL_MASS, val=7511.0, units='lbm'
         )  # Pulled from old equipment and useful load test
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.TOTAL_MASS, val=3895.0, units='lbm'
+            Aircraft.Controls.MASS, val=3895.0, units='lbm'
         )  # Pulled from old equipment and useful load test
 
         setup_model_options(self.prob, options)
@@ -79,7 +79,7 @@ class HydraulicsTestCase2(unittest.TestCase):
             Aircraft.LandingGear.TOTAL_MASS, val=7800.0, units='lbm'
         )  # Pulled from old equipment and useful load test
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.TOTAL_MASS, val=2115.19946, units='lbm'
+            Aircraft.Controls.MASS, val=2115.19946, units='lbm'
         )  # Pulled from old equipment and useful load test
 
         setup_model_options(self.prob, options)

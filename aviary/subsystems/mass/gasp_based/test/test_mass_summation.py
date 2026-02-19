@@ -39,7 +39,14 @@ class MassSummationTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        for key, (val, units) in get_items(V3_bug_fixed_options):
+        input_options = V3_bug_fixed_options.deepcopy()
+        input_options.delete(Aircraft.AntiIcing.MASS)
+        input_options.delete(Aircraft.APU.MASS)
+        input_options.delete(Aircraft.Avionics.MASS)
+        input_options.delete(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
+        input_options.delete(Aircraft.Furnishings.MASS)
+
+        for key, (val, units) in get_items(input_options):
             if not is_option(key):
                 self.prob.model.set_input_defaults(key, val=val, units=units)
 
@@ -59,7 +66,7 @@ class MassSummationTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1069.0, units='ft**2')
 
-        setup_model_options(self.prob, V3_bug_fixed_options)
+        setup_model_options(self.prob, input_options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -329,7 +336,7 @@ class MassSummationTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -339,21 +346,21 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
         )
@@ -681,7 +688,7 @@ class MassSummationTestCase3(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -691,21 +698,21 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
         )
@@ -1030,7 +1037,7 @@ class MassSummationTestCase4(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -1040,21 +1047,21 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
         )
@@ -1387,7 +1394,7 @@ class MassSummationTestCase5(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -1397,21 +1404,21 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
         )
@@ -1739,7 +1746,7 @@ class MassSummationTestCase6(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -1749,21 +1756,21 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=551.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=11192.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=50.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=7.6, units='lbm'
         )
@@ -2095,7 +2102,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=1014.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=1014.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -2105,21 +2112,21 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1504.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1504.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=126.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=9114.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=126.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=9114.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units='lbm'
         )
@@ -2371,7 +2378,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=1014.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=1014.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -2381,21 +2388,21 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1504.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1504.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=126.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=9114.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=126.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=9114.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units='lbm'
         )
@@ -2749,7 +2756,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
         )
 
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=1014.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=1014.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, val=0.0736, units='unitless'
         )
@@ -2759,21 +2766,21 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.105, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1504.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1504.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=126.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=9114.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=126.0, units='lbm')
+        # self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=9114.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, val=5.0, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, val=3.0, units='lbm'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units='lbm'
-        )
+        # self.prob.model.set_input_defaults(
+        #    Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, val=0.0, units='lbm'
+        # )
         self.prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, val=10.0, units='lbm'
         )
@@ -3174,11 +3181,11 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.AirConditioning.MASS_COEFFICIENT, 1.155, units='unitless'
         )
         # prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Furnishings.MASS, 9114.0, units='lbm')
+        # prob.model.set_input_defaults(Aircraft.Furnishings.MASS, 9114.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_PER_PASSENGER, 6.0, units='lbm'
         )
-        prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
+        # prob.model.set_input_defaults(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS, 100.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.CATERING_ITEMS_MASS_PER_PASSENGER, 5.0, units='lbm'
         )
@@ -3275,7 +3282,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_SPAN_RATIO, 0.61, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.CLEARANCE_RATIO, 0.2, units='unitless')
 
-        prob.model.set_input_defaults(Aircraft.APU.MASS, 710.0, units='lbm')
+        # prob.model.set_input_defaults(Aircraft.APU.MASS, 710.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.Instruments.MASS_COEFFICIENT, 0.116, units='unitless'
         )
@@ -3285,8 +3292,8 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
         )
-        prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
+        # prob.model.set_input_defaults(Aircraft.Avionics.MASS, 3225.0, units='lbm')
+        # prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, 236.0, units='lbm')
         prob.model.set_input_defaults(
             Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT, 3.0, units='lbm'
         )
@@ -3321,6 +3328,22 @@ class BWBMassSummationTestCase(unittest.TestCase):
         )
         prob.model.set_input_defaults(
             Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA, 5.0, units='lbm/ft**2'
+        )
+
+        # Inputs for equipment_and_useful_load (arbitrary inputs to keep output at 20876.477)
+        self.prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS, val=1324.0561, units='lbm'
+        )
+        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=683.46852785, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=13266.56, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Instruments.MASS, val=862.45194435, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Hydraulics.MASS, val=1487.78, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Electrical.MASS, val=2231.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.OxygenSystem.MASS, val=50, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.0, units='lbm'
         )
 
         setup_model_options(prob, options)
@@ -3466,4 +3489,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBMassSummationTestCase()
+    test.setUp()
+    test.test_case1()

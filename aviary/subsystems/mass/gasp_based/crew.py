@@ -21,7 +21,7 @@ class NonFlightCrewMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT)
 
-        add_aviary_output(self, Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS, units='lbm')
+        add_aviary_output(self, Aircraft.CrewPayload.CABIN_CREW_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -64,7 +64,7 @@ class NonFlightCrewMass(om.ExplicitComponent):
         if PAX > 19.0:
             water_mass = water_mass_per_occupant * (num_flight_attendants)
 
-        outputs[Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS] = (
+        outputs[Aircraft.CrewPayload.CABIN_CREW_MASS] = (
             flight_attendant_wt + non_crew_bag_wt
         ) / GRAV_ENGLISH_LBM + water_mass
 
@@ -86,12 +86,12 @@ class NonFlightCrewMass(om.ExplicitComponent):
 
         if PAX > 19.0:
             J[
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT,
             ] = num_flight_attendants
         else:
             J[
-                Aircraft.CrewPayload.NON_FLIGHT_CREW_MASS,
+                Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.WATER_MASS_PER_OCCUPANT,
             ] = 0
 
