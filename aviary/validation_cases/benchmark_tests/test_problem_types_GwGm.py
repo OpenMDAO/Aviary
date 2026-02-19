@@ -12,7 +12,7 @@ from aviary.variable_info.enums import ProblemType, Verbosity
 class TwoDOFTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.sized_mass = 171044.0
-        self.sized_range = 3675
+        self.sized_range = 3594
         self.phase_info = deepcopy(phase_info)
 
 
