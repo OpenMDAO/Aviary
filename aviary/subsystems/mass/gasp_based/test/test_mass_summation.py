@@ -3330,22 +3330,6 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA, 5.0, units='lbm/ft**2'
         )
 
-        # Inputs for equipment_and_useful_load (arbitrary inputs to keep output at 20876.477)
-        self.prob.model.set_input_defaults(
-            Aircraft.AirConditioning.MASS, val=1324.0561, units='lbm'
-        )
-        self.prob.model.set_input_defaults(Aircraft.APU.MASS, val=928.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Avionics.MASS, val=1959.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.AntiIcing.MASS, val=683.46852785, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Furnishings.MASS, val=13266.56, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Instruments.MASS, val=862.45194435, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Hydraulics.MASS, val=1487.78, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Electrical.MASS, val=2231.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.OxygenSystem.MASS, val=50, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.0, units='lbm'
-        )
-
         setup_model_options(prob, options)
 
         prob.setup(check=False, force_alloc_complex=True)

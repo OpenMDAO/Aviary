@@ -26,18 +26,6 @@ class PreMissionGroupTest(unittest.TestCase):
         self.gasp_inputs.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Controls.MASS, val=3895.0, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.AREA, val=375.9, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, val=469.3, units='ft**2')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, val=1068.96, units='ft**2')
-        self.prob.model.set_input_defaults(
-            Aircraft.Furnishings.MASS_SCALER, val=40.0, units='unitless'
-        )
         prob.check_and_preprocess_inputs()
 
     def test_case1(self):
@@ -103,8 +91,8 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3682.099, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7489.8343, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6366.3591, tol)
-        # assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21078.3911, tol)
-        # assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5341.4317956, tol)
+        assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21078.3911, tol)
+        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5341.4317956, tol)
 
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 850.90095, tol)
         assert_near_equal(prob[Aircraft.Wing.MASS], 16206.8122, tol)
@@ -117,24 +105,6 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 848.5301, tol)
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 96954.6194, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
-
-        # Equipment and Useful Load Group outputs
-        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1324.05614369, tol)
-        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 13266.53964608, tol)
-        assert_near_equal(self.prob[Aircraft.AntiIcing.MASS], 683.4685279, tol)
-        assert_near_equal(self.prob[Aircraft.APU.MASS], 1077.969377, tol)
-        assert_near_equal(self.prob[Aircraft.Avionics.MASS], 1514.0, tol)
-        assert_near_equal(self.prob[Aircraft.Electrical.MASS], 170.0, tol)
-        assert_near_equal(self.prob[Aircraft.Hydraulics.MASS], 1487.78, tol)
-        assert_near_equal(self.prob[Aircraft.Instruments.MASS], 547.41157631, tol)
-        assert_near_equal(self.prob[Aircraft.OxygenSystem.MASS], 50.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 165.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2872.0, tol)
-        assert_near_equal(self.prob[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS], 115.0, tol)
-        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS], 342.6, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 619.82896954, tol)
 
     def test_case2(self):
         """premission: propulsion + geometry + aerodynamics + mass"""
@@ -203,8 +173,8 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 3682.099, tol)
         assert_near_equal(prob[Aircraft.LandingGear.TOTAL_MASS], 7489.8343, tol)
         assert_near_equal(prob[Aircraft.LandingGear.MAIN_GEAR_MASS], 6366.3591, tol)
-        # assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21078.3911, tol)
-        # assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5332.684, tol)
+        assert_near_equal(self.prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21078.3911, tol)
+        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5332.684, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 827.5372, tol)
         assert_near_equal(prob[Aircraft.Wing.MASS], 15651.64198957, tol)
         assert_near_equal(prob[Aircraft.Fuel.FUEL_SYSTEM_MASS], 1779.06667944, tol)
@@ -216,24 +186,6 @@ class PreMissionGroupTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 867.4514906, tol)
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 96008.12976964, tol)
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
-
-        # Equipment and Useful Load Group outputs
-        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1324.05614369, tol)
-        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 13266.53964608, tol)
-        assert_near_equal(self.prob[Aircraft.AntiIcing.MASS], 683.4685279, tol)
-        assert_near_equal(self.prob[Aircraft.APU.MASS], 1077.969377, tol)
-        assert_near_equal(self.prob[Aircraft.Avionics.MASS], 1514.0, tol)
-        assert_near_equal(self.prob[Aircraft.Electrical.MASS], 170.0, tol)
-        assert_near_equal(self.prob[Aircraft.Hydraulics.MASS], 1487.78, tol)
-        assert_near_equal(self.prob[Aircraft.Instruments.MASS], 547.41157631, tol)
-        assert_near_equal(self.prob[Aircraft.OxygenSystem.MASS], 50.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CARGO_CONTAINER_MASS], 165.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.CABIN_CREW_MASS], 800.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.FLIGHT_CREW_MASS], 492.0, tol)
-        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS], 2872.0, tol)
-        assert_near_equal(self.prob[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS], 115.0, tol)
-        assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS], 342.6, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 619.82896954, tol)
 
 
 @use_tempdirs
