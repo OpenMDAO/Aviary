@@ -691,7 +691,7 @@ class _BWBWing(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Wing.SPAN must be positive.')
+                raise ValueError('Aircraft.Wing.SPAN must be positive.')
         rate_span = (wingspan - width) / wingspan
 
         # This part is repeated in BWBWingPrelim()

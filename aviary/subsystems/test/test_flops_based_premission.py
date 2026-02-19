@@ -426,7 +426,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        preprocess_options(flops_inputs)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
+
         default_premission_subsystems = get_geom_and_mass_subsystems('FLOPS')[0:1]
 
         prob = self.prob

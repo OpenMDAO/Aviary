@@ -20,8 +20,7 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-omit_cases = ['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle', 'BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+omit_cases = ['LargeSingleAisle1FLOPS', 'AdvancedSingleAisle']
 
 
 @use_tempdirs
@@ -54,6 +53,7 @@ class ThrustReverserMassTest(unittest.TestCase):
                 Aircraft.Engine.THRUST_REVERSERS_MASS,
                 Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
             ],
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_case_multiengine(self):
@@ -146,42 +146,6 @@ class ThrustReverserMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class BWBThrustReverserMassTest(unittest.TestCase):
-    """Tests thrust reverser mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        inputs = get_flops_inputs(case_name, preprocess=True)
-
-        options = {
-            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-        }
-
-        prob.model.add_subsystem('thrust_rev', ThrustReverserMass(**options), promotes=['*'])
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[
-                Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER,
-                Aircraft.Engine.SCALED_SLS_THRUST,
-            ],
-            output_keys=[
-                Aircraft.Engine.THRUST_REVERSERS_MASS,
-                Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
-            ],
-            version=Version.BWB,
-        )
 
 
 if __name__ == '__main__':
