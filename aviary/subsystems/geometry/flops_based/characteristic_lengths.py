@@ -3,7 +3,6 @@ import openmdao.api as om
 
 from aviary.subsystems.geometry.flops_based.utils import Names
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
@@ -415,12 +414,12 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
     """
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Design.TYPE)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
 
     def setup(self):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_tails > 0:
             add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
             add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
             # add_aviary_input(self, Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
@@ -431,9 +430,9 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.HorizontalTail.FINENESS, units='unitless')
 
     def setup_partials(self):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_tails > 0:
             self.declare_partials(
                 Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
                 [
@@ -447,12 +446,11 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
         length = 0.0
 
-        # If horizontal tail is needed for BWB, user must provide a new equation
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_tails > 0:
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
             if 0.0 < aspect_ratio:
@@ -466,11 +464,11 @@ class HorizontalTailCharacteristicLength(om.ExplicitComponent):
         outputs[Aircraft.HorizontalTail.FINENESS] = thickness_to_chord
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
         da = dr = 0.0
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_tails > 0:
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
             if 0.0 < aspect_ratio:
