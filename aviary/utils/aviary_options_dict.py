@@ -2,6 +2,7 @@ import openmdao.api as om
 from openmdao.core.constants import _UNDEFINED
 
 from aviary.utils.utils import wrapped_convert_units
+from aviary.variable_info.enums import PhaseType
 
 
 def units_setter(opt_meta, value):
@@ -46,6 +47,18 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
     def __init__(self, data=None, parent_name=None):
         super().__init__(parent_name)
+
+        # This one needs to be in all phase_builder dictionaries.
+        self.declare(
+            name='phase_builder',
+            types=PhaseType,
+            default=PhaseType.DEFAULT,
+            desc='The phase builder to use for this phase. This is an experimental feature that '
+            'currently allows a limited ability to select the equations of motion in certain '
+            'cases. \n'
+            'Currently, if you have a steady cruise phase in a two-dof mission, you can select '
+            '"BREGUET_RANGE" or "SIMPLE_CRUISE".',
+        )
 
         self.declare_options()
 

@@ -64,7 +64,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
-            energy_phase_info,
+            phase_info,
         )
         prob.load_external_subsystems([electroprop])
 

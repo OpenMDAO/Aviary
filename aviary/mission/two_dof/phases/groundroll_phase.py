@@ -54,15 +54,6 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
         }
         self.add_state_options('velocity', units='kn', defaults=defaults)
 
-        # The options below have not yet been revamped.
-
-        self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
 
 class GroundrollPhase(PhaseBuilder):
     """
