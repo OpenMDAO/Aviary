@@ -21,7 +21,6 @@ from aviary.models.missions.two_dof_default import (
 )
 from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
-from aviary.mission.phase_builder import phase_info_to_builder
 from aviary.variable_info.variables import Mission
 
 
@@ -63,7 +62,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         assert_near_equal(
             prob.get_val('traj.groundroll.timeseries.input_values:mass', units='lbm')[0], 120000.0
         )
-        assert_near_equal(prob.get_val('traj.cruise.rhs.mach')[0], 0.6)
+        assert_near_equal(prob.get_val('traj.cruise.timeseries.mach')[0], 0.6)
 
     def test_phase_info_parameterization_height_energy(self):
         phase_info = deepcopy(ph_in_height_energy)

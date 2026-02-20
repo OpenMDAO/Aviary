@@ -4,14 +4,14 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.mission.two_dof.ode.ascent_eom import AscentEOM
+from aviary.mission.solved_two_dof.ode.groundroll_eom import GroundrollEOM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class AscentEOMTestCase(unittest.TestCase):
+class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', AscentEOM(num_nodes=2), promotes=['*'])
+        self.prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
         )
@@ -41,35 +41,36 @@ class AscentEOMTestCase(unittest.TestCase):
 
         assert_near_equal(
             self.prob[Dynamic.Mission.VELOCITY_RATE],
-            np.array([2.202965, 2.202965]),
+            np.array([1.5597, 1.5597]),
             tol,
         )
         assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE],
-            np.array([-3.216328, -3.216328]),
-            tol,
+            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE], np.array([0.0, 0.0]), tol
         )
-
+        assert_near_equal(self.prob[Dynamic.Mission.ALTITUDE_RATE], np.array([0.0, 0.0]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE_RATE], np.array([10.0, 10.0]), tol)
+        assert_near_equal(self.prob['normal_force'], np.array([175200.0, 175200.0]), tol)
+        assert_near_equal(self.prob['fuselage_pitch'], np.array([0.0, 0.0]), tol)
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class AscentEOMTestCase2(unittest.TestCase):
+class GroundrollEOMTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.two_dof.ode.ascent_eom as ascent
+        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
 
-        ascent.GRAV_ENGLISH_LBM = 1.1
+        gr.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.two_dof.ode.ascent_eom as ascent
+        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
 
-        ascent.GRAV_ENGLISH_LBM = 1.0
+        gr.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('group', AscentEOM(num_nodes=2), promotes=['*'])
+        prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
@@ -80,6 +81,7 @@ class AscentEOMTestCase2(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
+        prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
         prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
         prob.setup(check=False, force_alloc_complex=True)
 

@@ -109,7 +109,7 @@ class TestExternalSubsystems(unittest.TestCase):
         # NOTE currently 2DOF ODEs do not use the solver subsystem
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs,
+                prob.model.traj.phases.cruise.rhs_all,
                 'solve_me',
             )
         )
@@ -135,7 +135,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs,
+                prob.model.traj.phases.cruise.rhs_all,
                 'do_not_solve_me',
             )
         )

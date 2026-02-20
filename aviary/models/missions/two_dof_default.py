@@ -1,4 +1,4 @@
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import PhaseType, SpeedType
 from aviary.variable_info.variables import Mission
 
 # defaults for 2DOF based phases
@@ -8,6 +8,8 @@ phase_info = {
     'groundroll': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'ground_roll': True,
             'num_segments': 1,
             'order': 3,
             'time_initial': (0.0, 's'),
@@ -34,6 +36,8 @@ phase_info = {
     'rotation': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'rotation': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 100), 's'),
@@ -63,10 +67,12 @@ phase_info = {
     'ascent': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
             'velocity_ref': (200, 'kn'),
+            'time_duration_ref': (10, 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -101,6 +107,7 @@ phase_info = {
     'accel': {
         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
@@ -180,16 +187,17 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
+            'mass_bounds': ((0, None), 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([171481.0, -35000], 'lbm'),
-            'initial_distance': (200.0e3, 'ft'),
-            'initial_time': (1516.0, 's'),
-            'altitude': (37.5e3, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'mass': ([171481.0, 135000], 'lbm'),
+            'time': ([1516.0, 26500.0], 's'),
         },
     },
     'desc1': {
@@ -295,11 +303,11 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         range_scale = range_cruise / old_range_cruise
 
     # Altitude
-    old_alt_cruise = phase_info['climb2']['user_options']['altitude_final'][0]
+    old_alt_cruise = phase_info['cruise']['user_options']['alt_cruise'][0]
     if alt_cruise != old_alt_cruise:
         phase_info['climb2']['user_options']['altitude_final'] = (alt_cruise, 'ft')
         phase_info['climb2']['initial_guesses']['altitude'] = ([10.0e3, alt_cruise], 'ft')
-        phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
+        phase_info['cruise']['user_options']['alt_cruise'] = (alt_cruise, 'ft')
         phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.0e3], 'ft')
 
         # TODO - Could adjust time guesses/bounds in climb2 and desc2.
@@ -323,8 +331,8 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         phase_info['desc2']['initial_guesses']['mass'] = (end_mass, 'lbm')
 
     # Mach
-    old_mach_cruise = phase_info['cruise']['initial_guesses']['mach'][0]
+    old_mach_cruise = phase_info['cruise']['user_options']['mach_cruise']
     if mach_cruise != old_mach_cruise:
-        phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
+        phase_info['cruise']['user_options']['mach_cruise'] = (mach_cruise, 'unitless')
 
     return phase_info, post_mission_info

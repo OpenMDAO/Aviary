@@ -1,4 +1,4 @@
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import PhaseType, SpeedType
 
 # Energy method
 energy_phase_info = {
@@ -77,6 +77,8 @@ energy_phase_info = {
 two_dof_phase_info = {
     'groundroll': {
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'ground_roll': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_ref': (50.0, 's'),
@@ -101,6 +103,8 @@ two_dof_phase_info = {
     },
     'rotation': {
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'rotation': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 100), 's'),
@@ -130,11 +134,13 @@ two_dof_phase_info = {
     },
     'ascent': {
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
             'velocity_ref': (200, 'kn'),
             'velocity_ref0': (0, 'kn'),
+            'time_duration_ref': (10, 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -167,6 +173,7 @@ two_dof_phase_info = {
     },
     'accel': {
         'user_options': {
+            'phase_builder': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
@@ -245,16 +252,17 @@ two_dof_phase_info = {
     },
     'cruise': {
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
+            'mass_bounds': ((0, None), 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([150_000.0, -35_000], 'lbm'),
-            'initial_distance': (100.0e3, 'ft'),
-            'initial_time': (1_000.0, 's'),
-            'altitude': (21_000, 'ft'),
-            'mach': (0.475, 'unitless'),
+            'mass': ([150_000.0, 115000], 'lbm'),
+            'time': ([1516.0, 2100.0], 's'),
         },
     },
     'desc1': {

@@ -1,7 +1,4 @@
-from aviary.mission.two_dof.ode.breguet_cruise_ode import (
-    BreguetCruiseODE,
-    ElectricBreguetCruiseODE,
-)
+from aviary.mission.two_dof.ode.simple_cruise_ode import SimpleCruiseODE
 from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariable, InitialGuessState
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.phase_utils import add_subsystem_variables_to_phase
@@ -10,18 +7,36 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
 
 
-class CruisePhaseOptions(AviaryOptionsDictionary):
+class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
     def declare_options(self):
+        self.declare(
+            name='num_segments',
+            types=int,
+            default=5,
+            desc='The number of segments in transcription creation in Dymos. '
+            'While this phase is usually an analytic phase, this option is '
+            'needed if an external subsystem requires a dynamic transcription.',
+        )
+
+        self.declare(
+            name='order',
+            types=int,
+            default=3,
+            desc='The order of polynomials for interpolation in the transcription '
+            'created in Dymos. While this phase is usually an analytic phase, this option is '
+            'needed if an external subsystem requires a dynamic transcription.',
+        )
+
+        defaults = {
+            'mass_bounds': (0.0, None),
+        }
+        self.add_state_options('mass', units='lbm', defaults=defaults)
+
+        self.add_time_options(units='s')
+
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
         self.declare(name='mach_cruise', default=0.0, desc='Cruise Mach number.')
-
-        self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
 
         self.declare(
             'reserve',
@@ -67,9 +82,9 @@ class CruisePhaseOptions(AviaryOptionsDictionary):
         )
 
 
-class CruisePhase(PhaseBuilder):
+class SimpleCruisePhase(PhaseBuilder):
     """
-    A phase builder for a climb phase in a mission simulation.
+    A phase builder for a cruise phase in a mission simulation.
 
     This class extends the PhaseBuilder class, providing specific implementations for
     the cruise phase of a flight mission.
@@ -84,9 +99,9 @@ class CruisePhase(PhaseBuilder):
     Additional method overrides and new methods specific to the cruise phase are included.
     """
 
-    default_name = 'cruise_phase'
-    default_ode_class = BreguetCruiseODE
-    default_options_class = CruisePhaseOptions
+    default_name = 'simple_cruise_phase'
+    default_ode_class = SimpleCruiseODE
+    default_options_class = SimpleCruisePhaseOptions
 
     _initial_guesses_meta_data_ = {}
 
@@ -110,14 +125,13 @@ class CruisePhase(PhaseBuilder):
             transcription=transcription,
             subsystems=subsystems,
             meta_data=meta_data,
-            is_analytic_phase=True,
         )
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """
         Return a new cruise phase for analysis using these constraints.
 
-        If ode_class is None, BreguetCruiseODE is used as the default.
+        If ode_class is None, SimpleCruiseODE is used as the default.
 
         Parameters
         ----------
@@ -128,11 +142,19 @@ class CruisePhase(PhaseBuilder):
         -------
         dymos.Phase
         """
-        phase = super().build_phase(aviary_options)
+        phase = self.phase = super().build_phase(aviary_options)
 
         # Custom configurations for the climb phase
         user_options = self.user_options
 
+        # Add states
+        self.add_state(
+            'mass',
+            Dynamic.Vehicle.MASS,
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+        )
+
+        # These are constant.
         mach_cruise = user_options.get_val('mach_cruise')
         alt_cruise, alt_units = user_options['alt_cruise']
 
@@ -140,38 +162,58 @@ class CruisePhase(PhaseBuilder):
 
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, val=alt_cruise, units=alt_units)
         phase.add_parameter(Dynamic.Atmosphere.MACH, opt=False, val=mach_cruise)
-        phase.add_parameter('initial_distance', opt=False, val=0.0, units='NM', static_target=True)
-        phase.add_parameter('initial_time', opt=False, val=0.0, units='s', static_target=True)
+        phase.add_parameter(
+            'initial_distance',
+            opt=True,
+            val=0.0,
+            units='nmi',
+            static_target=True,
+        )
 
-        phase.add_timeseries_output('time', units='s', output_name='time')
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
+        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE, units=alt_units)
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
+
+        phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+        )
+        phase.add_timeseries_output(
+            Dynamic.Mission.VELOCITY,
+            output_name=Dynamic.Mission.VELOCITY,
+            units='kn',
+        )
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            units='deg',
+        )
+        phase.add_timeseries_output(
+            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            units='lbf',
+        )
+        # TODO: These should be promoted in the 2dof mission outputs.
+        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
+        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
 
         return phase
 
 
-CruisePhase._add_initial_guess_meta_data(
+SimpleCruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple',
 )
 
-CruisePhase._add_initial_guess_meta_data(InitialGuessState('mass'), desc='initial guess for mass')
+SimpleCruisePhase._add_initial_guess_meta_data(
+    InitialGuessState('mass'), desc='initial guess for mass'
+)
 
-CruisePhase._add_initial_guess_meta_data(
+SimpleCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_distance'), desc='initial guess for initial_distance'
 )
 
-CruisePhase._add_initial_guess_meta_data(
+SimpleCruisePhase._add_initial_guess_meta_data(
     InitialGuessState('initial_time'), desc='initial guess for initial_time'
 )
-
-CruisePhase._add_initial_guess_meta_data(
-    InitialGuessState('altitude'), desc='initial guess for altitude'
-)
-
-CruisePhase._add_initial_guess_meta_data(InitialGuessState('mach'), desc='initial guess for mach')
-
-
-class ElectricCruisePhase(CruisePhase):
-    default_name = 'electric_cruise_phase'
-    default_ode_class = ElectricBreguetCruiseODE

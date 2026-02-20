@@ -1,11 +1,12 @@
-from aviary.variable_info.enums import SpeedType
-
+from aviary.variable_info.enums import PhaseType, SpeedType
 
 # 2DOF
 phase_info = {
     'groundroll': {
         'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'ground_roll': True,
             'num_segments': 1,
             'order': 3,
             'time_initial': (0.0, 's'),
@@ -32,6 +33,8 @@ phase_info = {
     'rotation': {
         'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'rotation': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 50), 's'),
@@ -60,10 +63,12 @@ phase_info = {
     'ascent': {
         'subsystem_options': {'core_aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 300), 'kn'),
             'velocity_ref': (200, 'kn'),
+            'time_duration_ref': (10, 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -98,6 +103,7 @@ phase_info = {
     'accel': {
         'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
@@ -174,16 +180,16 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (41_000, 'ft'),
             'mach_cruise': 0.8,
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([140_000.0, -35_000], 'lbm'),
-            'initial_distance': (100.0e3, 'ft'),
-            'initial_time': (1_000.0, 's'),
-            'altitude': (41_000, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'mass': ([140_000.0, 105000], 'lbm'),
+            'time': ([1000.0, 28000.0], 's'),
         },
     },
     'desc1': {

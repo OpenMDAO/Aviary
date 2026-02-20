@@ -112,12 +112,9 @@ from aviary.mission.height_energy.phases.simplified_landing import (
 )
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.two_dof.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
-from aviary.mission.two_dof.ode.ascent_ode import AscentODE as TwoDOFAscentODE
 from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE
 from aviary.mission.two_dof.ode.flight_ode import FlightODE as TwoDOFFlightODE
-from aviary.mission.two_dof.ode.flight_path_ode import FlightPathODE as TwoDOFFlightPathODE
-from aviary.mission.two_dof.ode.groundroll_ode import GroundrollODE as TwoDOFGroundrollODE
-from aviary.mission.two_dof.ode.rotation_ode import RotationODE as TwoDOFRotationODE
+from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE as TwoDOFTakeOffODE
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment as TwoDOFSimplifiedLanding
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 
@@ -161,12 +158,8 @@ from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
 
 # Phase builders
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase as TwoDOFAccelerationPhase
-from aviary.mission.two_dof.phases.ascent_phase import AscentPhase as TwoDOFAscentPhase
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase as TwoDOFFlightPhase
-from aviary.mission.two_dof.phases.groundroll_phase import (
-    GroundrollPhase as TwoDOFGroundrollPhase,
-)
-from aviary.mission.two_dof.phases.rotation_phase import RotationPhase as TwoDOFRotationPhase
+from aviary.mission.two_dof.phases.takeoff_phase import TakeoffPhase as TwoDOFTakeoffPhase
 
 # Trajectory builders
 from aviary.mission.height_energy.phases.detailed_landing_phases import (

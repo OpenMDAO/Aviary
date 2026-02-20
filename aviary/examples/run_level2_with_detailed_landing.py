@@ -147,60 +147,61 @@ phase_info = {
     },
 }
 
-prob = av.AviaryProblem()
+if __name__ == '__main__':
+    prob = av.AviaryProblem()
 
-# Load aircraft and options data from user
-# Allow for user overrides here
-prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
+    # Load aircraft and options data from user
+    # Allow for user overrides here
+    prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_solved2dof.csv', phase_info)
 
-prob.check_and_preprocess_inputs()
+    prob.check_and_preprocess_inputs()
 
-prob.build_model()
+    prob.build_model()
 
-prob.add_driver('SLSQP', max_iter=100)
+    prob.add_driver('SLSQP', max_iter=100)
 
-prob.add_design_variables()
+    prob.add_design_variables()
 
-# Load optimization problem formulation
-# Detail which variables the optimizer can control
-prob.add_objective('mass')
+    # Load optimization problem formulation
+    # Detail which variables the optimizer can control
+    prob.add_objective('mass')
 
-prob.setup()
+    prob.setup()
 
-prob.run_aviary_problem()
+    prob.run_aviary_problem()
 
-try:
-    loc = prob.get_outputs_dir()
-    cr = om.CaseReader(f'{loc}/problem_history.db')
-except:
-    cr = om.CaseReader('problem_history.db')
+    try:
+        loc = prob.get_outputs_dir()
+        cr = om.CaseReader(f'{loc}/problem_history.db')
+    except:
+        cr = om.CaseReader('problem_history.db')
 
-cases = cr.get_cases('problem')
-case = cases[0]
+    cases = cr.get_cases('problem')
+    case = cases[0]
 
-output_data = {}
+    output_data = {}
 
-point_name = 'P3'
-phase_name = 'GH'
-output_data[point_name] = {}
-output_data[point_name]['thrust_fraction'] = (
-    case.get_val(f'traj.{phase_name}.rhs_all.thrust_net', units='N')[-1][0]
-    / case.get_val(f'traj.{phase_name}.rhs_all.thrust_net_max', units='N')[-1][0]
-)
-output_data[point_name]['true_airspeed'] = case.get_val(
-    f'traj.{phase_name}.timeseries.velocity', units='kn'
-)[-1][0]
-output_data[point_name]['angle_of_attack'] = case.get_val(
-    f'traj.{phase_name}.timeseries.angle_of_attack', units='deg'
-)[-1][0]
-output_data[point_name]['flight_path_angle'] = case.get_val(
-    f'traj.{phase_name}.timeseries.flight_path_angle', units='deg'
-)[-1][0]
-output_data[point_name]['altitude'] = case.get_val(
-    f'traj.{phase_name}.timeseries.altitude', units='ft'
-)[-1][0]
-output_data[point_name]['distance'] = case.get_val(
-    f'traj.{phase_name}.timeseries.distance', units='ft'
-)[-1][0]
+    point_name = 'P3'
+    phase_name = 'GH'
+    output_data[point_name] = {}
+    output_data[point_name]['thrust_fraction'] = (
+        case.get_val(f'traj.{phase_name}.rhs_all.thrust_net', units='N')[-1][0]
+        / case.get_val(f'traj.{phase_name}.rhs_all.thrust_net_max', units='N')[-1][0]
+    )
+    output_data[point_name]['true_airspeed'] = case.get_val(
+        f'traj.{phase_name}.timeseries.velocity', units='kn'
+    )[-1][0]
+    output_data[point_name]['angle_of_attack'] = case.get_val(
+        f'traj.{phase_name}.timeseries.angle_of_attack', units='deg'
+    )[-1][0]
+    output_data[point_name]['flight_path_angle'] = case.get_val(
+        f'traj.{phase_name}.timeseries.flight_path_angle', units='deg'
+    )[-1][0]
+    output_data[point_name]['altitude'] = case.get_val(
+        f'traj.{phase_name}.timeseries.altitude', units='ft'
+    )[-1][0]
+    output_data[point_name]['distance'] = case.get_val(
+        f'traj.{phase_name}.timeseries.distance', units='ft'
+    )[-1][0]
 
-print(output_data)
+    print(output_data)
