@@ -44,10 +44,7 @@ class SimpleCruiseODE(TwoDOFODE):
                 kwargs = subsystem_options[subsystem.name]
             if isinstance(subsystem, AerodynamicsBuilder):
                 # set default options for Aero if not specified by user
-                base_kwargs = {
-                    'method': 'cruise',
-                    'output_alpha': True
-                }
+                base_kwargs = {'method': 'cruise', 'output_alpha': True}
                 kwargs.update(base_kwargs)
 
             system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
