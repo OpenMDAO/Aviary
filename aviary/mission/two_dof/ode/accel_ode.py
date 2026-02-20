@@ -2,7 +2,6 @@ import numpy as np
 
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
 from aviary.mission.two_dof.ode.params import ParamPort
-
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.variables import Dynamic

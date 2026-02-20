@@ -6,9 +6,9 @@ from copy import deepcopy
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
-from aviary.interface.methods_for_level2 import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft
 

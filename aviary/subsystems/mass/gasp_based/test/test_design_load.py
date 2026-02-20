@@ -5,16 +5,14 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.design_load import (
+    BWBDesignLoadGroup,
+    BWBLoadFactors,
+    BWBLoadSpeeds,
     DesignLoadGroup,
     LiftCurveSlopeAtCruise,
     LoadFactors,
     LoadParameters,
     LoadSpeeds,
-)
-from aviary.subsystems.mass.gasp_based.design_load import (
-    BWBDesignLoadGroup,
-    BWBLoadFactors,
-    BWBLoadSpeeds,
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults

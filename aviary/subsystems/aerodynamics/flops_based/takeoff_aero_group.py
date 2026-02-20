@@ -9,8 +9,8 @@ import scipy.constants as _units
 from aviary.subsystems.aerodynamics.flops_based.ground_effect import GroundEffect
 from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffAeroGroup(om.Group):

@@ -9,6 +9,11 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     AeroGeom,
+    BWBAeroSetup,
+    BWBBodyLiftCurveSlope,
+    BWBFormFactorAndSIWB,
+    BWBLiftCoeff,
+    BWBLiftCoeffClean,
     CruiseAero,
     DragCoef,
     DragCoefClean,
@@ -18,13 +23,8 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     LiftCoeffClean,
     LowSpeedAero,
     UFac,
-    Xlifts,
     WingTailRatios,
-    BWBBodyLiftCurveSlope,
-    BWBFormFactorAndSIWB,
-    BWBLiftCoeff,
-    BWBLiftCoeffClean,
-    BWBAeroSetup,
+    Xlifts,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options

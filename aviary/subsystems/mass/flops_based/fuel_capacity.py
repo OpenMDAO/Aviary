@@ -1,8 +1,8 @@
 import openmdao.api as om
+from openmdao.utils.units import convert_units
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
-from openmdao.utils.units import convert_units
 
 
 class FuelCapacityGroup(om.Group):

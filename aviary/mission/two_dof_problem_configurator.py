@@ -1,6 +1,7 @@
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
+from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
@@ -11,7 +12,6 @@ from aviary.mission.two_dof.phases.flight_phase import FlightPhase
 from aviary.mission.two_dof.phases.groundroll_phase import GroundrollPhase
 from aviary.mission.two_dof.phases.rotation_phase import RotationPhase
 from aviary.mission.two_dof.polynomial_fit import PolynomialFit
-from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.utils import process_guess_var
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.process_input_decks import initialization_guessing, update_GASP_options

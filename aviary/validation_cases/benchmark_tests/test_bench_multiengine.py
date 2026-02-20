@@ -7,13 +7,13 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.models.missions.height_energy_default import phase_info
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
     inputs,
 )
+from aviary.models.missions.height_energy_default import phase_info
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.variable_info.enums import ThrottleAllocation
 from aviary.variable_info.variables import Aircraft

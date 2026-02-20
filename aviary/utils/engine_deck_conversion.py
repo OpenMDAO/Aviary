@@ -17,7 +17,6 @@ from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import EngineDeckType
 from aviary.variable_info.variables import Dynamic
 
-
 MACH = EngineModelVariables.MACH
 ALTITUDE = EngineModelVariables.ALTITUDE
 THROTTLE = EngineModelVariables.THROTTLE
@@ -725,7 +724,7 @@ class AtmosCalc(om.ExplicitComponent):
 
 
 if __name__ == '__main__':
-    from aviary.utils.engine_deck_conversion_cmd import setup_EDC, _setup_EDC_parser
+    from aviary.utils.engine_deck_conversion_cmd import _setup_EDC_parser, setup_EDC
 
     parser = argparse.ArgumentParser()
     _setup_EDC_parser(parser)
