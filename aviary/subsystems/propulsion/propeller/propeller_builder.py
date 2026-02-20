@@ -73,7 +73,7 @@ class PropellerBuilder(SubsystemBuilder):
         }
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
         """
         Parameters are only tested to see if they exist in mission.
         The value doesn't change throughout the mission.
@@ -119,7 +119,7 @@ class PropellerBuilder(SubsystemBuilder):
     # def get_mass_names(self):
     #     return []
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',

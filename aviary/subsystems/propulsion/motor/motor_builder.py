@@ -74,7 +74,7 @@ class MotorBuilder(SubsystemBuilder):
     def build_mission(self, num_nodes, aviary_inputs):
         return MotorMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
 
-    # def get_constraints(self):
+    # def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
     #     if self.include_constraints:
     #         constraints = {
     #             Dynamic.Mission.Motor.TORQUE_CON: {'upper': 0.0, 'type': 'path'}
@@ -95,7 +95,7 @@ class MotorBuilder(SubsystemBuilder):
 
         return DVs
 
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
                 'val': 1.0,
@@ -105,7 +105,7 @@ class MotorBuilder(SubsystemBuilder):
         }
         return params
 
-    # def get_initial_guesses(self):
+    # def get_initial_guesses(self, aviary_inputs=None, phase_info=None, phase_name=None):
     #     initial_guess_dict = {
     #         Aircraft.Motor.RPM: {
     #             'units': 'rpm',
@@ -127,7 +127,7 @@ class MotorBuilder(SubsystemBuilder):
         """
         return [Aircraft.Engine.Motor.MASS, Aircraft.Engine.Gearbox.MASS]
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
         """
         Return a list of output names for the motor subsystem.
 

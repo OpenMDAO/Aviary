@@ -60,13 +60,14 @@ class UnsteadyControlIterGroup(om.Group):
         for subsystem in subsystems:
             system = subsystem.build_mission(**kwargs)
             if system is not None:
+                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
+                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
                 self.add_subsystem(
                     subsystem.name,
                     system,
-                    promotes_inputs=subsystem.mission_inputs(**kwargs),
-                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
                 )
-
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
         self.add_subsystem(

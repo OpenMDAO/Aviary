@@ -2,10 +2,6 @@ import dymos as dm
 import numpy as np
 
 from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.mission.phase_utils import (
-    add_subsystem_variables_to_phase,
-    get_initial,
-)
 from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessControl,
@@ -230,7 +226,7 @@ class FlightPhaseBase(PhaseBuilder):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        phase = add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
+        phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
         ################
         # Add Controls #

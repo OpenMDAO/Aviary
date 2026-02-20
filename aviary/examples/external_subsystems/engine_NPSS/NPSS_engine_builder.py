@@ -35,7 +35,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         Builds an OpenMDAO system for the mission computations of the subsystem.
     get_pre_mission_bus_variables(self) -> dict:
         Transfer training data from pre-mission to mission.
-    get_controls(self, phase_name) -> dict:
+    get_controls(self, aviary_inputs, phase_info, phase_name) -> dict:
         Builds dictionary of controls for engine off-design.
     get_design_vars(self) -> dict:
         Builds dictionary of design variables for Engine off-design.
@@ -179,7 +179,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         """Transfer training data from pre-mission to mission"""
         return vars_to_connect
 
-    def get_controls(self, phase_name):
+    def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
         """
         Builds dictionary of controls for engine off-design.
 

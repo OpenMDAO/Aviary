@@ -178,8 +178,10 @@ class UnsteadySolvedODE(TwoDOFODE):
                 kwargs.update(subsystem_options[subsystem.name])
             system = subsystem.build_mission(**kwargs)
             if system is not None:
+                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
+                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
                 if isinstance(subsystem, AerodynamicsBuilder):
-                    mission_inputs = subsystem.mission_inputs(**kwargs)
+                    mission_inputs = mission_in.copy()
                     if (
                         subsystem.code_origin is LegacyCode.FLOPS
                         and 'angle_of_attack' in mission_inputs
@@ -196,15 +198,15 @@ class UnsteadySolvedODE(TwoDOFODE):
                     throttle_balance_group.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
                 else:
                     self.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)

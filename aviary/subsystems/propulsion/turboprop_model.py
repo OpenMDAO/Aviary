@@ -174,14 +174,37 @@ class TurbopropModel(EngineModel):
 
         return turboprop_group
 
-    def get_parameters(self):
-        params = super().get_parameters()  # calls from EngineModel
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
+        params = super().get_parameters(
+            aviary_inputs=aviary_inputs,
+            phase_info=phase_info,
+            **kwargs,
+        )  # calls from EngineModel
+
         if self.shaft_power_model is not None:
-            params.update(self.shaft_power_model.get_parameters())
+            extra_params = self.shaft_power_model.get_parameters(
+                aviary_inputs=aviary_inputs,
+                phase_info=phase_info,
+                **kwargs,
+            )
+            params.update(extra_params)
+
         if self.gearbox_model is not None:
-            params.update(self.gearbox_model.get_parameters())
+            extra_params = self.gearbox_model.get_parameters(
+                aviary_inputs=aviary_inputs,
+                phase_info=phase_info,
+                **kwargs,
+            )
+            params.update(extra_params)
+
         if self.propeller_model is not None:
-            params.update(self.propeller_model.get_parameters())
+            extra_params = self.propeller_model.get_parameters(
+                aviary_inputs=aviary_inputs,
+                phase_info=phase_info,
+                **kwargs,
+            )
+            params.update(extra_params)
+
         return params
 
     def get_design_vars(self):

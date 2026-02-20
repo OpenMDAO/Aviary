@@ -184,20 +184,17 @@ class FlightODE(TwoDOFODE):
             system = subsystem.build_mission(**kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilder):
-                    lift_balance_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = lift_balance_group
                 else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
-
+                    target = self
+                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
+                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
+                target.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,

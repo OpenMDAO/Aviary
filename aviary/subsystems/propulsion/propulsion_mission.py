@@ -52,7 +52,8 @@ class PropulsionMission(om.Group):
             # save parameters for use in configure()
             parameters = self.parameters = set()
             for engine in engine_models:
-                eng_params = engine.get_parameters()
+                eng_params = engine.get_parameters(
+                )
                 param_dict.update(eng_params)
 
             parameters.update(param_dict.keys())
@@ -106,7 +107,9 @@ class PropulsionMission(om.Group):
                 )
 
                 # loop through params and slice as needed
-                params = engine.get_parameters()
+                params = engine.get_parameters(
+                    aviary_inputs=options,
+                )
                 for param in params:
                     self.promotes(
                         engine.name,
