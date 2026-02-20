@@ -37,6 +37,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.TYPE)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
 
@@ -51,15 +52,12 @@ class SkinFrictionDrag(om.ExplicitComponent):
         nn = self.options['num_nodes']
         design_type = self.options[Aircraft.Design.TYPE]
 
+        nhtail = self.options[Aircraft.HorizontalTail.NUM_TAILS]
         nvtail = self.options[Aircraft.VerticalTail.NUM_TAILS]
         nfuse = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            # No horizontal tail for BWB
-            self.nc = nc = 1 + nvtail + nfuse + int(sum(num_engines))
-        else:
-            self.nc = nc = 2 + nvtail + nfuse + int(sum(num_engines))
+        self.nc = nc = 1 + nhtail + nvtail + nfuse + int(sum(num_engines))
 
         # Computed by other components in drag group.
         self.add_input('skin_friction_coeff', np.zeros((nn, nc)), units='unitless')
