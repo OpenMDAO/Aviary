@@ -398,6 +398,10 @@ class Aircraft:
         WETTED_AREA = 'aircraft:nacelle:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:nacelle:wetted_area_scaler'
 
+    class OxygenSystem:
+        MASS = 'aircraft:oxygen_system:mass'
+        MASS_SCALER = 'aircraft:oxygen_system:mass_scaler'
+
     class Paint:
         MASS = 'aircraft:paint:mass'
         MASS_PER_UNIT_AREA = 'aircraft:paint:mass_per_unit_area'

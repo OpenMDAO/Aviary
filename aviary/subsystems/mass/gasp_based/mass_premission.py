@@ -1,7 +1,11 @@
 import openmdao.api as om
 
 from aviary.subsystems.mass.gasp_based.design_load import DesignLoadGroup, BWBDesignLoadGroup
-from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import EquipAndUsefulLoadMassGroup
+from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
+    EquipAndUsefulLoadMassGroup,
+    EquipMassSum,
+    UsefulLoadMass,
+)
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, BWBWingMassGroup
@@ -81,6 +85,14 @@ class MassPremission(om.Group):
             EquipAndUsefulLoadMassGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'equip_mass', EquipMassSum(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+        self.add_subsystem(
+            'useful_load', UsefulLoadMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
