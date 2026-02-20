@@ -3929,6 +3929,17 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.HorizontalTail.NUM_TAILS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='number of horizontal tails',
+    types=int,
+    option=True,
+    default_value=1,
+)
+
+add_meta_data(
     Aircraft.HorizontalTail.ROOT_CHORD,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CRCLHT', 'FLOPS': None, 'LEAPS1': None},

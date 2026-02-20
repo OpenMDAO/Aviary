@@ -100,6 +100,7 @@ aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,0.0,ft**2
 aircraft:horizontal_tail:aspect_ratio,0.1,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
+aircraft:horizontal_tail:num_tails,0,unitless
 aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
 aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
