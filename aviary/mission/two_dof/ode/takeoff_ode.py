@@ -4,6 +4,7 @@ import openmdao.api as om
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -137,20 +138,23 @@ class TakeOffODE(TwoDOFODE):
 
         for subsystem in subsystems:
             name = subsystem.name
+            kwargs = {}
 
-            kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'low_speed'}
-            if self.options['clean']:
-                kwargs['method'] = 'cruise'
-                kwargs['output_alpha'] = False
+            if isinstance(subsystem, AerodynamicsBuilder):
+                kwargs = {'method': 'low_speed'}
+                if self.options['clean']:
+                    kwargs['method'] = 'cruise'
+                    kwargs['output_alpha'] = False
 
-            if not (ground_roll or rotation):
-                kwargs['retract_gear'] = True
-                kwargs['retract_flaps'] = True
+                if not (ground_roll or rotation):
+                    kwargs['retract_gear'] = True
+                    kwargs['retract_flaps'] = True
 
             if name in subsystem_options:
                 kwargs.update(subsystem_options[name])
 
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
                     self.add_subsystem(
