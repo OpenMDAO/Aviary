@@ -65,8 +65,8 @@ $(function () {
   }
 
   /**
-   * Converts the input element to a string representation intelligently. 
-   * 
+   * Converts the input element to a string representation intelligently.
+   *
    * @param {any} element - The element to be converted to a string. Can be of any type.
    * @returns {string} The string representation of the input element.
    */
@@ -212,9 +212,9 @@ $(function () {
     return resultString;
   }
 
-  // The Tabulator formatter function used to include a button to copy the 
+  // The Tabulator formatter function used to include a button to copy the
   // value in the cell
-  function copyButtonFormatter(cell, formatterParams, onRendered) {
+function copyButtonFormatter(cell, formatterParams, onRendered) {
     var cellContent = document.createElement("span");
     var cellValue = cell.getValue();
     if (cellValue.length === 0) {
@@ -230,7 +230,9 @@ $(function () {
 
     var text = document.createElement("value");
 
-    text.textContent = intelligentStringify(cellValue);
+    // Use smart number formatting for display if requested, otherwise plain stringify
+    var useSmartFormat = formatterParams && formatterParams.useSmartFormat;
+    text.textContent = useSmartFormat ? valToCopyString(cellValue) : intelligentStringify(cellValue);
     cellContent.appendChild(text);
 
     onRendered(function () {
@@ -239,8 +241,7 @@ $(function () {
         copiedCellValue = valToCopyString(cellValue);
         navigator.clipboard.writeText(copiedCellValue);
       });
-    }
-    );
+    });
 
     return cellContent;
   }
@@ -284,7 +285,8 @@ $(function () {
           tooltip: function (e, cell) {
             return cell.getValue();
           },
-          formatter: copyButtonFormatter
+          formatter: copyButtonFormatter,
+          formatterParams: { useSmartFormat: true }  // <-- add this line
         },
         {
           title: "Units",

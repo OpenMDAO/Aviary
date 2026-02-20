@@ -23,6 +23,7 @@ from bokeh.models import (
     Range1d,
     TextInput,
 )
+from bokeh.models.widgets.tables import ScientificFormatter
 from bokeh.palettes import Category20, d3
 from bokeh.plotting import figure
 from openmdao.utils.general_utils import env_truthy, make_serializable
@@ -174,6 +175,10 @@ def create_csv_frame(documentation, csv_filepath):
     """
     if os.path.isfile(csv_filepath):
         df = pd.read_csv(csv_filepath)
+        formatters = {
+            c: ScientificFormatter(precision=3) for c in df.columns if df[c].dtype == np.float64
+        }
+
         df_pane = pn.widgets.Tabulator(
             df,
             show_index=False,
@@ -181,6 +186,8 @@ def create_csv_frame(documentation, csv_filepath):
             layout='fit_data_stretch',
             max_height=600,
             sizing_mode='scale_both',
+            disabled=True,  # disables editing of the table
+            formatters=formatters,
         )
         report_pane = pn.Column(
             pn.pane.HTML(
