@@ -1,0 +1,1902 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Level 2</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/onboarding_level2';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Level 3" href="onboarding_level3.html" />
+    <link rel="prev" title="Level 1" href="onboarding_level1.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="onboarding.html">Onboarding Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/getting_started/onboarding_level2.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fgetting_started/onboarding_level2.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/getting_started/onboarding_level2.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Level 2</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-level-2-for-the-same-aircraft-for-bench-gwgm-model">Build level 2 for the same <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dissection-of-level-2-for-the-same-aircraft-for-bench-gwgm-model">Dissection of level 2 for the same <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-2-another-example">Level 2: Another example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="level-2">
+<h1>Level 2<a class="headerlink" href="#level-2" title="Link to this heading">#</a></h1>
+<p>We have discussed <a class="reference internal" href="onboarding_level1.html"><span class="doc std std-doc">Level 1</span></a> in great detail. As we have seen, Level 1 is relatively simple.</p>
+<p>In Level 2, we see more flexibility and additional choices. You will be exposed to some simple Python code and see how Aviary establishes a problem from beginning to end. Each step is built upon the capabilities of <a class="reference internal" href="onboarding_level3.html"><span class="doc std std-doc">Level 3</span></a>. Users will be led to Level 3 in a natural way.</p>
+<p>Level 2 is defined in the <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/interface/methods_for_level1.py">aviary/interface/methods_for_level1.py file</a> and it has a method <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> with a few arguments. If you examine <code class="docutils literal notranslate"><span class="pre">interface/methods_for_level1.py</span></code> you see that Level 1 prepares those arguments and then call <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code>. For <code class="docutils literal notranslate"><span class="pre">aviary</span> <span class="pre">run_mission</span> <span class="pre">models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv</span></code> examples, those arguments and their values are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aircraft_data</span></code>: <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm.csv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase_info</span></code>: not provided (and will be loaded from <code class="docutils literal notranslate"><span class="pre">aviary/models/missions/two_dof_default.py</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">optimizer</span></code>: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">objective_type</span></code>: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">restart_filename</span></code>: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_iter</span></code>: <code class="docutils literal notranslate"><span class="pre">50</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_driver</span></code>: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make_plots</span></code>: <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase_info_parameterization</span></code>: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: <code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+</ul>
+<p>All the above arguments are straightforward except <code class="docutils literal notranslate"><span class="pre">objective_type</span></code>. Even though <code class="docutils literal notranslate"><span class="pre">objective_type</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, it is not treated as <code class="docutils literal notranslate"><span class="pre">None</span></code>. In this scenario, the objective is set based on <code class="docutils literal notranslate"><span class="pre">problem_type</span></code> when using the <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> mission method. There are three options for <code class="docutils literal notranslate"><span class="pre">problem_type</span></code> which is set to <code class="docutils literal notranslate"><span class="pre">SIZING</span></code> as default when aircraft is created. Aviary has the following mapping when user does not set <code class="docutils literal notranslate"><span class="pre">objective_type</span></code> but set <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> to <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> (in .csv file):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">problem_type</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">objective</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SIZING</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mission.Objectives.FUEL</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ALTERNATE</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mission.Objectives.FUEL</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FALLOUT</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mission.Objectives.RANGE</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MULTI_MISSION</span></code></p></td>
+<td><p>No Default, user specified</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In Aviary, <code class="docutils literal notranslate"><span class="pre">problem_type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">SIZING</span></code> when it creates a vehicle (see <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/utils/UI.py">create_vehicle</a>). As you can see, since <code class="docutils literal notranslate"><span class="pre">problem_type</span></code> is <code class="docutils literal notranslate"><span class="pre">SIZING</span></code> by default in our case and we don’t manually alter this setting, Aviary set objective to <code class="docutils literal notranslate"><span class="pre">Mission.Objectives.FUEL</span></code>. We will discuss more options of <code class="docutils literal notranslate"><span class="pre">objective_type</span></code> later on.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you want to use a custom objective function, you can set any arbitrary variable to be the objective by directly calling the OpenMDAO <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/features/core_features/adding_desvars_cons_objs/adding_objective.html#adding-an-objective"><code class="docutils literal notranslate"><span class="pre">add_objective</span></code> method</a> instead of using Aviary’s built-in <code class="docutils literal notranslate"><span class="pre">add_objective()</span></code> method.</p>
+</div>
+<p>In our onboarding runs, we want to limit the number of iterations to 1 so that they all run faster. As a result, we will not consider whether the optimization converges. So, we will have</p>
+<p><code class="docutils literal notranslate"><span class="pre">max_iter</span></code>: 1</p>
+<p>Level 2 cannot be run via <code class="docutils literal notranslate"><span class="pre">aviary</span></code> command on the command line. Users must develop level 2 Python code. The good news is that the Python code is pretty small. You can follow the following steps in order (we do not include function arguments for simplicity):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">prob</span> <span class="pre">=</span> <span class="pre">AviaryProblem()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">load_inputs()</span></code></p></li>
+<li><p>modify the aviary values dictionary if needed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">check_and_preprocess_inputs()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">build_model()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_pre_mission_systems()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_phases()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_post_mission_systems()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">link_phases()</span></code></p></li>
+<li><p>Add custom promotions, connections if needed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_driver()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_design_variables()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add_objective()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setup()</span></code></p></li>
+<li><p>Set custom starting values using set_val if needed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_aviary_problem()</span></code></p></li>
+</ul>
+<p>In the rest of this page, we will show a few examples to demonstrate how level 2 runs these steps. We start from rebuilding <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> model in great details.</p>
+<section id="build-level-2-for-the-same-aircraft-for-bench-gwgm-model">
+<h2>Build level 2 for the same <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> Model<a class="headerlink" href="#build-level-2-for-the-same-aircraft-for-bench-gwgm-model" title="Link to this heading">#</a></h2>
+<p>We create a level 2 Python script to reproduce the <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> model run that was used as an example in the level 1 document (this time we won’t use the level 1 functionality). The methods listed above are defined in level 3 (namely, <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/interface/methods_for_level2.py">interface/methods_for_level2.py</a>). You can run the code as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="c1"># inputs that run_aviary() requires</span>
+<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv&#39;</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">phase_info</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">default_2DOF_phase_info</span><span class="p">)</span>
+
+<span class="c1"># Build problem</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="c1"># Load aircraft and options data from user</span>
+<span class="c1"># Allow for user overrides here</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_data</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+<span class="c1"># check the aircraft_data and phase_info for errors</span>
+
+<span class="c1"># adds a pre-mission group (propulsion, geometry, aerodynamics, and mass)</span>
+<span class="c1"># adds a sequence of core mission phases.</span>
+<span class="c1"># adds a landing phase</span>
+<span class="c1"># Link phases and variables</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="c1"># adds an optimizer to the driver</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+
+<span class="c1"># adds relevant design variables</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="c1"># Load optimization problem formulation</span>
+<span class="c1"># Detail which variables the optimizer can control</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">objective_type</span><span class="o">=</span><span class="n">objective_type</span><span class="p">)</span>
+
+<span class="c1"># setup the problem and set initial guesses of states and controls variables</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="c1"># run the problem we just set up</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">(</span><span class="n">restart_filename</span><span class="o">=</span><span class="n">restart_filename</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+pre_mission.core_subsystems.aerodynamics.flaps_landing
+pre_mission.core_subsystems.aerodynamics.flaps_takeoff
+pre_mission.core_subsystems.aerodynamics.flaps_up
+pre_mission.core_subsystems.mass.fuel_mass
+traj.phases.accel
+traj.phases.ascent
+traj.phases.climb1
+traj.phases.climb2
+traj.phases.cruise.rhs.prop_group
+traj.phases.desc1
+traj.phases.desc2
+traj.phases.rotation
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      210
+                     variables with only lower bounds:        2
+                variables with lower and upper bounds:      208
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      205
+Total number of inequality constraints...............:       35
+        inequality constraints with only lower bounds:        2
+   inequality constraints with lower and upper bounds:       32
+        inequality constraints with only upper bounds:        0
+
+
+Number of Iterations....: 0
+
+                                   (scaled)                 (unscaled)
+Objective...............:   5.2731333333333330e+00    5.2731333333333330e+00
+Dual infeasibility......:   1.6500000000000000e+01    1.6500000000000000e+01
+Constraint violation....:   8.8081681383747163e+00    1.7364599999999916e+03
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   7.1428571428571420e+15    7.1428571428571420e+15
+Overall NLP error.......:   7.1428571428571420e+15    7.1428571428571420e+15
+
+
+Number of objective function evaluations             = 1
+Number of objective gradient evaluations             = 1
+Number of equality constraint evaluations            = 1
+Number of inequality constraint evaluations          = 1
+Number of equality constraint Jacobian evaluations   = 1
+Number of inequality constraint Jacobian evaluations = 1
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 1.340
+
+EXIT: Maximum Number of Iterations Exceeded.
+
+
+Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     5.273133E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                                      Type      Lower Bound            Value      Upper Bound     Status
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                                        Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+          1  h_fit.h_init_gear                                                              e   1.000000E+00    2.000000E+00    1.000000E+00         E    9.00000E+100
+          2  h_fit.h_init_flaps                                                             e   1.000000E+00    1.125000E+00    1.000000E+00         E    9.00000E+100
+          3  groundroll_boundary.velocity                                                   e   0.000000E+00   -2.177847E-02    0.000000E+00         E    9.00000E+100
+          5  mission:constraints:mass_residual                                              e   0.000000E+00    1.008430E-02    0.000000E+00         E    9.00000E+100
+          6  taxi_groundroll_mass_constraint.mass                                           e   0.000000E+00   -1.545558E-01    0.000000E+00         E    9.00000E+100
+         12  traj.linkages.climb1:mass_final|climb2:mass_initial                            e   0.000000E+00    1.736460E+03    0.000000E+00         E    9.00000E+100
+         13  traj.linkages.climb2:mass_final|cruise:mass_initial                            e   0.000000E+00    4.285400E-03    0.000000E+00         E    9.00000E+100
+         15  traj.linkages.cruise:mass_final|desc1:mass_initial                             e   0.000000E+00    4.810000E-03    0.000000E+00         E    9.00000E+100
+         18  traj.accel.EAS[final]                                                          e   1.000000E+00    9.926972E-01    1.000000E+00         E    9.00000E+100
+         19  traj.accel.collocation_constraint.defects:velocity                             e   0.000000E+00    5.734972E-02    0.000000E+00         E    9.00000E+100
+         20  traj.accel.collocation_constraint.defects:velocity                             e   0.000000E+00    5.769089E-02    0.000000E+00         E    9.00000E+100
+         21  traj.accel.collocation_constraint.defects:velocity                             e   0.000000E+00    6.028007E-02    0.000000E+00         E    9.00000E+100
+         22  traj.accel.collocation_constraint.defects:mass                                 e   0.000000E+00    1.596699E-04    0.000000E+00         E    9.00000E+100
+         23  traj.accel.collocation_constraint.defects:mass                                 e   0.000000E+00    1.608992E-04    0.000000E+00         E    9.00000E+100
+         24  traj.accel.collocation_constraint.defects:mass                                 e   0.000000E+00    1.626505E-04    0.000000E+00         E    9.00000E+100
+         25  traj.accel.collocation_constraint.defects:distance                             e   0.000000E+00    9.777328E-02    0.000000E+00         E    9.00000E+100
+         26  traj.accel.collocation_constraint.defects:distance                             e   0.000000E+00    8.943944E-02    0.000000E+00         E    9.00000E+100
+         27  traj.accel.collocation_constraint.defects:distance                             e   0.000000E+00    7.794045E-02    0.000000E+00         E    9.00000E+100
+         29  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.190631E-01    0.000000E+00         E    9.00000E+100
+         30  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.167670E-01    0.000000E+00         E    9.00000E+100
+         31  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.053523E-01    0.000000E+00         E    9.00000E+100
+         32  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.015540E-01    0.000000E+00         E    9.00000E+100
+         33  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.929477E-01    0.000000E+00         E    9.00000E+100
+         34  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.814527E-01    0.000000E+00         E    9.00000E+100
+         35  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.779262E-01    0.000000E+00         E    9.00000E+100
+         36  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.700498E-01    0.000000E+00         E    9.00000E+100
+         37  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.596202E-01    0.000000E+00         E    9.00000E+100
+         38  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.564216E-01    0.000000E+00         E    9.00000E+100
+         39  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    1.492766E-01    0.000000E+00         E    9.00000E+100
+         40  traj.ascent.collocation_constraint.defects:flight_path_angle                   e   0.000000E+00    2.073687E-01    0.000000E+00         E    9.00000E+100
+         41  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    6.250000E-02    0.000000E+00         E    9.00000E+100
+         42  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    5.249183E-02    0.000000E+00         E    9.00000E+100
+         43  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    3.801869E-02    0.000000E+00         E    9.00000E+100
+         44  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    3.327824E-02    0.000000E+00         E    9.00000E+100
+         45  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    2.213497E-02    0.000000E+00         E    9.00000E+100
+         46  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    6.104057E-03    0.000000E+00         E    9.00000E+100
+         47  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00    8.727384E-04    0.000000E+00         E    9.00000E+100
+         48  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.139040E-02    0.000000E+00         E    9.00000E+100
+         49  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -2.895648E-02    0.000000E+00         E    9.00000E+100
+         50  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -3.467113E-02    0.000000E+00         E    9.00000E+100
+         51  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -4.803617E-02    0.000000E+00         E    9.00000E+100
+         52  traj.ascent.collocation_constraint.defects:altitude                            e   0.000000E+00   -6.711102E-02    0.000000E+00         E    9.00000E+100
+         53  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -3.146447E-02    0.000000E+00         E    9.00000E+100
+         54  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -2.563122E-02    0.000000E+00         E    9.00000E+100
+         55  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.928123E-02    0.000000E+00         E    9.00000E+100
+         56  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.739893E-02    0.000000E+00         E    9.00000E+100
+         57  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.571017E-02    0.000000E+00         E    9.00000E+100
+         58  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.288197E-02    0.000000E+00         E    9.00000E+100
+         59  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.106308E-02    0.000000E+00         E    9.00000E+100
+         60  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -6.855655E-03    0.000000E+00         E    9.00000E+100
+         61  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00   -1.051753E-03    0.000000E+00         E    9.00000E+100
+         62  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00    7.831747E-04    0.000000E+00         E    9.00000E+100
+         63  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00    4.980980E-03    0.000000E+00         E    9.00000E+100
+         64  traj.ascent.collocation_constraint.defects:velocity                            e   0.000000E+00    9.563995E-03    0.000000E+00         E    9.00000E+100
+         65  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.682188E-05    0.000000E+00         E    9.00000E+100
+         66  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.682491E-05    0.000000E+00         E    9.00000E+100
+         67  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.681942E-05    0.000000E+00         E    9.00000E+100
+         68  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.681535E-05    0.000000E+00         E    9.00000E+100
+         69  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.680179E-05    0.000000E+00         E    9.00000E+100
+         70  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.677957E-05    0.000000E+00         E    9.00000E+100
+         71  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.677839E-05    0.000000E+00         E    9.00000E+100
+         72  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.677572E-05    0.000000E+00         E    9.00000E+100
+         73  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.677218E-05    0.000000E+00         E    9.00000E+100
+         74  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.677108E-05    0.000000E+00         E    9.00000E+100
+         75  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.676863E-05    0.000000E+00         E    9.00000E+100
+         76  traj.ascent.collocation_constraint.defects:mass                                e   0.000000E+00    7.676537E-05    0.000000E+00         E    9.00000E+100
+         77  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -4.116087E-03    0.000000E+00         E    9.00000E+100
+         78  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -5.748483E-03    0.000000E+00         E    9.00000E+100
+         79  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -7.979510E-03    0.000000E+00         E    9.00000E+100
+         80  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -8.680185E-03    0.000000E+00         E    9.00000E+100
+         81  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.027431E-02    0.000000E+00         E    9.00000E+100
+         82  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.244906E-02    0.000000E+00         E    9.00000E+100
+         83  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.313109E-02    0.000000E+00         E    9.00000E+100
+         84  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.468101E-02    0.000000E+00         E    9.00000E+100
+         85  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.679134E-02    0.000000E+00         E    9.00000E+100
+         86  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.745215E-02    0.000000E+00         E    9.00000E+100
+         87  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -1.895200E-02    0.000000E+00         E    9.00000E+100
+         88  traj.ascent.collocation_constraint.defects:distance                            e   0.000000E+00   -2.098984E-02    0.000000E+00         E    9.00000E+100
+         96  traj.climb1.collocation_constraint.defects:altitude                            e   0.000000E+00    1.209444E-01    0.000000E+00         E    9.00000E+100
+         97  traj.climb1.collocation_constraint.defects:altitude                            e   0.000000E+00    1.259938E-01    0.000000E+00         E    9.00000E+100
+         98  traj.climb1.collocation_constraint.defects:altitude                            e   0.000000E+00    1.521378E-01    0.000000E+00         E    9.00000E+100
+         99  traj.climb1.collocation_constraint.defects:mass                                e   0.000000E+00    1.507399E-03    0.000000E+00         E    9.00000E+100
+        100  traj.climb1.collocation_constraint.defects:mass                                e   0.000000E+00    1.426384E-03    0.000000E+00         E    9.00000E+100
+        101  traj.climb1.collocation_constraint.defects:mass                                e   0.000000E+00    1.317016E-03    0.000000E+00         E    9.00000E+100
+        102  traj.climb1.collocation_constraint.defects:distance                            e   0.000000E+00    2.426479E-01    0.000000E+00         E    9.00000E+100
+        103  traj.climb1.collocation_constraint.defects:distance                            e   0.000000E+00    2.207757E-01    0.000000E+00         E    9.00000E+100
+        104  traj.climb1.collocation_constraint.defects:distance                            e   0.000000E+00    1.874982E-01    0.000000E+00         E    9.00000E+100
+        106  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -2.437515E-01    0.000000E+00         E    9.00000E+100
+        107  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -2.126997E-01    0.000000E+00         E    9.00000E+100
+        108  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.683966E-01    0.000000E+00         E    9.00000E+100
+        109  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.557272E-01    0.000000E+00         E    9.00000E+100
+        110  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.208763E-01    0.000000E+00         E    9.00000E+100
+        111  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -6.874118E-02    0.000000E+00         E    9.00000E+100
+        112  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -5.371885E-02    0.000000E+00         E    9.00000E+100
+        113  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00   -1.579520E-02    0.000000E+00         E    9.00000E+100
+        114  traj.climb2.collocation_constraint.defects:altitude                            e   0.000000E+00    6.598799E-02    0.000000E+00         E    9.00000E+100
+        115  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    4.673865E-03    0.000000E+00         E    9.00000E+100
+        116  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    4.368480E-03    0.000000E+00         E    9.00000E+100
+        117  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.963058E-03    0.000000E+00         E    9.00000E+100
+        118  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.870631E-03    0.000000E+00         E    9.00000E+100
+        119  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.616411E-03    0.000000E+00         E    9.00000E+100
+        120  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.282178E-03    0.000000E+00         E    9.00000E+100
+        121  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    3.186647E-03    0.000000E+00         E    9.00000E+100
+        122  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    2.959568E-03    0.000000E+00         E    9.00000E+100
+        123  traj.climb2.collocation_constraint.defects:mass                                e   0.000000E+00    2.544683E-03    0.000000E+00         E    9.00000E+100
+        124  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.212736E-02    0.000000E+00         E    9.00000E+100
+        125  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.417321E-02    0.000000E+00         E    9.00000E+100
+        126  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.725390E-02    0.000000E+00         E    9.00000E+100
+        127  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -3.829657E-02    0.000000E+00         E    9.00000E+100
+        128  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.082577E-02    0.000000E+00         E    9.00000E+100
+        129  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.466659E-02    0.000000E+00         E    9.00000E+100
+        130  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.597533E-02    0.000000E+00         E    9.00000E+100
+        131  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.916311E-02    0.000000E+00         E    9.00000E+100
+        132  traj.climb2.collocation_constraint.defects:distance                            e   0.000000E+00   -4.974737E-02    0.000000E+00         E    9.00000E+100
+        134  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -4.922862E-02    0.000000E+00         E    9.00000E+100
+        135  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -4.623920E-02    0.000000E+00         E    9.00000E+100
+        136  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -3.663195E-02    0.000000E+00         E    9.00000E+100
+        137  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -3.261694E-02    0.000000E+00         E    9.00000E+100
+        138  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -2.166361E-02    0.000000E+00         E    9.00000E+100
+        139  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -7.070285E-03    0.000000E+00         E    9.00000E+100
+        140  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -1.092049E-02    0.000000E+00         E    9.00000E+100
+        141  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -1.936133E-02    0.000000E+00         E    9.00000E+100
+        142  traj.desc1.collocation_constraint.defects:altitude                             e   0.000000E+00   -3.026283E-02    0.000000E+00         E    9.00000E+100
+        143  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    7.138790E-05    0.000000E+00         E    9.00000E+100
+        144  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    8.259714E-05    0.000000E+00         E    9.00000E+100
+        145  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    9.953403E-05    0.000000E+00         E    9.00000E+100
+        146  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.055697E-04    0.000000E+00         E    9.00000E+100
+        147  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.202051E-04    0.000000E+00         E    9.00000E+100
+        148  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.417625E-04    0.000000E+00         E    9.00000E+100
+        149  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.468367E-04    0.000000E+00         E    9.00000E+100
+        150  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.592095E-04    0.000000E+00         E    9.00000E+100
+        151  traj.desc1.collocation_constraint.defects:mass                                 e   0.000000E+00    1.786359E-04    0.000000E+00         E    9.00000E+100
+        152  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00   -9.687662E+00    0.000000E+00         E    9.00000E+100
+        153  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00   -1.931861E+00    0.000000E+00         E    9.00000E+100
+        154  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    6.335040E-01    0.000000E+00         E    9.00000E+100
+        155  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.352340E-01    0.000000E+00         E    9.00000E+100
+        156  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.337493E-01    0.000000E+00         E    9.00000E+100
+        157  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.331610E-01    0.000000E+00         E    9.00000E+100
+        158  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.358160E-01    0.000000E+00         E    9.00000E+100
+        159  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.415581E-01    0.000000E+00         E    9.00000E+100
+        160  traj.desc1.collocation_constraint.defects:distance                             e   0.000000E+00    1.487800E-01    0.000000E+00         E    9.00000E+100
+        162  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    8.587055E-02    0.000000E+00         E    9.00000E+100
+        163  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    7.849119E-02    0.000000E+00         E    9.00000E+100
+        164  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    6.262783E-02    0.000000E+00         E    9.00000E+100
+        165  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    4.221779E-02    0.000000E+00         E    9.00000E+100
+        166  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    2.126671E-02    0.000000E+00         E    9.00000E+100
+        167  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00    4.017352E-03    0.000000E+00         E    9.00000E+100
+        168  traj.desc2.collocation_constraint.defects:altitude                             e   0.000000E+00   -6.649533E-03    0.000000E+00         E    9.00000E+100
+        169  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    4.639460E-04    0.000000E+00         E    9.00000E+100
+        170  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    4.729853E-04    0.000000E+00         E    9.00000E+100
+        171  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    4.942397E-04    0.000000E+00         E    9.00000E+100
+        172  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    5.229727E-04    0.000000E+00         E    9.00000E+100
+        173  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    5.557324E-04    0.000000E+00         E    9.00000E+100
+        174  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    5.846390E-04    0.000000E+00         E    9.00000E+100
+        175  traj.desc2.collocation_constraint.defects:mass                                 e   0.000000E+00    6.038423E-04    0.000000E+00         E    9.00000E+100
+        176  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.331809E-01    0.000000E+00         E    9.00000E+100
+        177  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.352466E-01    0.000000E+00         E    9.00000E+100
+        178  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.396016E-01    0.000000E+00         E    9.00000E+100
+        179  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.452024E-01    0.000000E+00         E    9.00000E+100
+        180  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.508484E-01    0.000000E+00         E    9.00000E+100
+        181  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.554674E-01    0.000000E+00         E    9.00000E+100
+        182  traj.desc2.collocation_constraint.defects:distance                             e   0.000000E+00    5.582849E-01    0.000000E+00         E    9.00000E+100
+        183  traj.groundroll.collocation_constraint.defects:velocity                        e   0.000000E+00   -1.689732E-01    0.000000E+00         E    9.00000E+100
+        184  traj.groundroll.collocation_constraint.defects:velocity                        e   0.000000E+00   -1.068389E-01    0.000000E+00         E    9.00000E+100
+        185  traj.groundroll.collocation_constraint.defects:velocity                        e   0.000000E+00    5.486448E-04    0.000000E+00         E    9.00000E+100
+        186  traj.groundroll.collocation_constraint.defects:mass                            e   0.000000E+00    4.765251E-04    0.000000E+00         E    9.00000E+100
+        187  traj.groundroll.collocation_constraint.defects:mass                            e   0.000000E+00    4.811614E-04    0.000000E+00         E    9.00000E+100
+        188  traj.groundroll.collocation_constraint.defects:mass                            e   0.000000E+00    4.875877E-04    0.000000E+00         E    9.00000E+100
+        189  traj.groundroll.collocation_constraint.defects:distance                        e   0.000000E+00    1.659240E-01    0.000000E+00         E    9.00000E+100
+        190  traj.groundroll.collocation_constraint.defects:distance                        e   0.000000E+00   -4.055050E-01    0.000000E+00         E    9.00000E+100
+        191  traj.groundroll.collocation_constraint.defects:distance                        e   0.000000E+00   -1.193960E+00    0.000000E+00         E    9.00000E+100
+        192  traj.rotation.normal_force[final]                                              e   0.000000E+00    8.808168E+00    0.000000E+00         E    9.00000E+100
+        193  traj.rotation.collocation_constraint.defects:angle_of_attack                   e   0.000000E+00   -5.895833E-01    0.000000E+00         E    9.00000E+100
+        194  traj.rotation.collocation_constraint.defects:angle_of_attack                   e   0.000000E+00   -5.895833E-01    0.000000E+00         E    9.00000E+100
+        195  traj.rotation.collocation_constraint.defects:angle_of_attack                   e   0.000000E+00   -5.895833E-01    0.000000E+00         E    9.00000E+100
+        196  traj.rotation.collocation_constraint.defects:velocity                          e   0.000000E+00   -3.326466E-02    0.000000E+00         E    9.00000E+100
+        197  traj.rotation.collocation_constraint.defects:velocity                          e   0.000000E+00   -3.157344E-02    0.000000E+00         E    9.00000E+100
+        198  traj.rotation.collocation_constraint.defects:velocity                          e   0.000000E+00   -3.048521E-02    0.000000E+00         E    9.00000E+100
+        199  traj.rotation.collocation_constraint.defects:mass                              e   0.000000E+00    6.133042E-05    0.000000E+00         E    9.00000E+100
+        200  traj.rotation.collocation_constraint.defects:mass                              e   0.000000E+00    6.137435E-05    0.000000E+00         E    9.00000E+100
+        201  traj.rotation.collocation_constraint.defects:mass                              e   0.000000E+00    6.143751E-05    0.000000E+00         E    9.00000E+100
+        202  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00    1.251386E+00    0.000000E+00         E    9.00000E+100
+        203  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00    1.914830E-01    0.000000E+00         E    9.00000E+100
+        204  traj.rotation.collocation_constraint.defects:distance                          e   0.000000E+00   -1.615733E-01    0.000000E+00         E    9.00000E+100
+        205  mission:constraints:excess_fuel_capacity                                       i   0.000000E+00   -1.008430E-02    1.000000E+30         L    9.00000E+100
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
+Aviary run failed. See the dashboard for more details.
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<p>In this code, you do the same import as <code class="docutils literal notranslate"><span class="pre">methods_for_level1.py</span></code> does and set the values of all the arguments in <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code>. Now we will go through each line in detail to explain each step:</p>
+</section>
+<section id="dissection-of-level-2-for-the-same-aircraft-for-bench-gwgm-model">
+<h2>Dissection of level 2 for the same <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> model<a class="headerlink" href="#dissection-of-level-2-for-the-same-aircraft-for-bench-gwgm-model" title="Link to this heading">#</a></h2>
+<p>All the methods of <code class="docutils literal notranslate"><span class="pre">prob</span></code> object (including its creation) are defined in level 2 (<code class="docutils literal notranslate"><span class="pre">methods_for_level2.py</span></code>). We now look at each of them.</p>
+<p>We add other inputs that <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> requires:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv&#39;</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Several objects are initialized in this step:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">AviaryGroup</span><span class="p">()</span>
+<span class="c1"># This causes problems where aviary_inputs are stored in different places for</span>
+<span class="c1"># multi-mission vs. standard mission</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">aviary_inputs</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">aviary_groups_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="bp">self</span><span class="o">.</span><span class="n">meta_data</span> <span class="o">=</span> <span class="n">meta_data</span>
+
+<span class="c1"># TODO try and find a better solution than a new custom flag - the issue is multimission</span>
+<span class="c1">#      problems don&#39;t have a consistent variable path to check the inputs later on</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">generate_payload_range</span> <span class="o">=</span> <span class="kc">False</span>
+
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">phase_info</span></code> is a user defined dictionary (in a Python file) that controls the profile of the mission to be simulated (e.g. climb, cruise, descent segments etc). The line</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">default_2DOF_phase_info</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_data</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>is a function that has a few tasks:</p>
+<ul class="simple">
+<li><p>Read aircraft deck file <code class="docutils literal notranslate"><span class="pre">aircraft_data</span></code></p></li>
+<li><p>Read phase info file <code class="docutils literal notranslate"><span class="pre">phase_info</span></code></p></li>
+<li><p>Build core subsystems</p></li>
+<li><p>Check and preprocess all inputs</p></li>
+</ul>
+<p>We have seen <code class="docutils literal notranslate"><span class="pre">aircraft_data</span></code> file (a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file) in our level 1 examples. In <a class="reference internal" href="onboarding_level1.html"><span class="doc std std-doc">level 1</span></a>, we simply called it input file. An aircraft model can also be directly defined in Python, by setting up an <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object with the desired inputs and options normally found in an input file. That object can be provided in the place of <code class="docutils literal notranslate"><span class="pre">aircraft_data</span></code>.</p>
+<p>Engines are built by using the input data aircraft:engine:data_file in the .csv file. For example in <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm.csv</span></code> file, we see:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aircraft</span><span class="p">:</span><span class="n">engine</span><span class="p">:</span><span class="n">data_file</span><span class="p">,</span><span class="n">models</span><span class="o">/</span><span class="n">engines</span><span class="o">/</span><span class="n">turbofan_23k_1</span><span class="o">.</span><span class="n">csv</span><span class="p">,</span><span class="n">unitless</span>
+</pre></div>
+</div>
+<p>So, aircraft:engine:data_file has value models/engines/turbofan_23k_1.csv,unitless. We follow this path and open that file. The top rows of engine deck file are:</p>
+<figure class="align-default" id="tbl-df">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Mach Number (input)</th>
+      <th>Altitude (ft</th>
+      <th>input)</th>
+      <th>Throttle (input)</th>
+      <th>Gross Thrust (lbf</th>
+      <th>output)</th>
+      <th>Ram Drag (lbf</th>
+      <th>output).1</th>
+      <th>Fuel Flow (lb/h</th>
+      <th>output).2</th>
+      <th>NOx Rate (lb/h</th>
+      <th>output).3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>21.0</td>
+      <td>1446.4</td>
+      <td>0.0</td>
+      <td>842.2</td>
+      <td>4.7876</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>22.0</td>
+      <td>2314.3</td>
+      <td>0.0</td>
+      <td>976.0</td>
+      <td>5.1926</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>24.0</td>
+      <td>4049.9</td>
+      <td>0.0</td>
+      <td>1281.0</td>
+      <td>6.6532</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>26.0</td>
+      <td>5785.6</td>
+      <td>0.0</td>
+      <td>1659.9</td>
+      <td>8.2234</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>30.0</td>
+      <td>9642.7</td>
+      <td>0.0</td>
+      <td>2621.6</td>
+      <td>12.0950</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></figure>
+<p>Users can provide an <code class="docutils literal notranslate"><span class="pre">EngineModel</span></code> instance of their own to use in Aviary’s propulsion systems.</p>
+<p>Other subsystems, including mass, geometry, and aerodynamics, are set up according to which legacy code options the user has specified in their input file, using <code class="docutils literal notranslate"><span class="pre">settings:equations_of_motion</span></code> and <code class="docutils literal notranslate"><span class="pre">settings:mass_method</span></code>. Aerodynamics is set up to match the selected equations of motion, while geometry will use either GASP, FLOPS, or both methods as required to calculate all values needed by other subsystems.</p>
+<p>Next we check the user-provided inputs. The <code class="docutils literal notranslate"><span class="pre">prob.check_and_preprocess_inputs</span></code> method checks the user-supplied input values for any potential problems. These problems include variable names that are not recognized in Aviary, conflicting options or values, or units mismatching. You only want to check and pre-process your inputs once so after loading your inputs, make sure to update anything you need to before you check the values.</p>
+<p>Next, we use <code class="docutils literal notranslate"><span class="pre">build_model</span></code> to build the model which includes: adding pre-mission systems including propulsion, geometry, aerodynamics, and mass subsystems. Then a sequence of core mission phases is added. In addition, if <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> is <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> and <code class="docutils literal notranslate"><span class="pre">ascent</span></code> is a phase, it adds an equality constraint to the problem to ensure that the velocity at the end of the groundroll phase is equal to the rotation velocity at the start of the rotation phase (<code class="docutils literal notranslate"><span class="pre">_add_groundroll_eq_constraint()</span></code>). If <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> is <code class="docutils literal notranslate"><span class="pre">height_energy</span></code>, it sets up trajectory parameters by calling <code class="docutils literal notranslate"><span class="pre">setup_trajectory_params()</span></code>. If <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> is <code class="docutils literal notranslate"><span class="pre">solved_2DOF</span></code>, it has a block of code to make sure that the trajectory is smooth by applying boundary constraints between phases (e.g. fuselage pitch angle or true airspeed).</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">height_energy</span></code> missions, aviary currently models FLOPS’ “simplified” takeoff as defined in <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/mission/height_energy/phases/simplified_takeoff.py">mission/height_energy/phases/simplified_takeoff.py</a>.</p>
+<p>It follows by adding post-mission subsystems which includes landing phase if <code class="docutils literal notranslate"><span class="pre">include_landing</span></code> key of <code class="docutils literal notranslate"><span class="pre">post_mission</span></code> has value of <code class="docutils literal notranslate"><span class="pre">True</span></code>. If the user chooses to define a <code class="docutils literal notranslate"><span class="pre">post_mission</span></code>, it will override the default. For <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> missions, landing is defined in <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/mission/gasp_based/ode/landing_ode.py">mission/two_dof/ode/landing_ode.py</a>.</p>
+<p>Following this, the phases are linked together. This is important for allowing each phase of flight to pass to the next without discontinuities in the parameters. Consider Dymos’ <a class="reference external" href="https://openmdao.github.io/dymos/examples/balanced_field/balanced_field.html">Aircraft Balanced Field Length Calculation</a> example. In that example, we see separate nonlinear boundary constraints, nonlinear path constraints, and phase continuity constraints between phases. We don’t want to go deeper in this function call, but just point out that each individual link can be set via dymos function <code class="docutils literal notranslate"><span class="pre">link_phases()</span></code>. See <a class="reference external" href="https://openmdao.github.io/dymos/api/trajectory_api.html">dymos API</a> for more details. The links are set up based on physical principals (e.g. you can’t have instantaneous changes in mass, velocity, position etc.). Special care is required if the user selects a different or unusual set of phases.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">prob.build_model</span></code> can be broken out into four separate commands if finer control to each step is desired. These commands should be executed in order and are:
+<code class="docutils literal notranslate"><span class="pre">prob.add_pre_mission_systems</span></code>
+<code class="docutils literal notranslate"><span class="pre">prob.add_phases</span></code>
+<code class="docutils literal notranslate"><span class="pre">prob.add_post_mission_systems</span></code>
+<code class="docutils literal notranslate"><span class="pre">prob.link_phases</span></code></p>
+</div>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, our aircraft and the mission are fully defined. We are ready to define an optimization problem. This is achieved by adding an optimization driver, adding design variables, and an objective.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">add_driver()</span></code> function, we accept its argument <code class="docutils literal notranslate"><span class="pre">use_coloring=None</span></code>. Coloring is a technique that OpenMDAO uses to compute partial derivatives efficiently. This will become important later.</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Available drivers for use in Aviary are <code class="docutils literal notranslate"><span class="pre">SLSQP</span></code>, <code class="docutils literal notranslate"><span class="pre">SNOPT</span></code>, and <code class="docutils literal notranslate"><span class="pre">IPOPT</span></code>. The table below summarizes the basic setting along with sample values (the settings are options required by each optimizer):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Optimizers</strong></p></th>
+<th class="head"><p><strong>Drivers</strong></p></th>
+<th class="head"><p><strong>Settings</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SNOPT</span></code></p></td>
+<td><p>om.pyOptSparseDriver()</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Major</span> <span class="pre">iterations</span> <span class="pre">limit</span></code>: 50<BR/><code class="docutils literal notranslate"><span class="pre">Major</span> <span class="pre">optimality</span> <span class="pre">tolerance</span></code>: 1e-4<BR/><code class="docutils literal notranslate"><span class="pre">Major</span> <span class="pre">feasibility</span> <span class="pre">tolerance</span></code>: 1e-6<BR/><code class="docutils literal notranslate"><span class="pre">iSumm</span></code>: 6</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IPOPT</span></code></p></td>
+<td><p>om.pyOptSparseDriver()</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tol</span></code>: 1e-9<BR/><code class="docutils literal notranslate"><span class="pre">mu_init</span></code>: 1e-5<BR/><code class="docutils literal notranslate"><span class="pre">max_iter</span></code>: 50<BR/><code class="docutils literal notranslate"><span class="pre">print_level</span></code>: 5</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SLSQP</span></code></p></td>
+<td><p>om.ScipyOptimizeDriver()</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tol</span></code>: 1.0E-9<BR/><code class="docutils literal notranslate"><span class="pre">maxiter</span></code>: 50<BR/><code class="docutils literal notranslate"><span class="pre">disp</span></code>: True</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">SLSQP</span></code> is freely available, but its performance is not as good as <code class="docutils literal notranslate"><span class="pre">SNOPT</span></code> and <code class="docutils literal notranslate"><span class="pre">IPOPT</span></code> sometimes. <code class="docutils literal notranslate"><span class="pre">SNOPT</span></code> is a commercial optimizer, and it is free for academic use. <code class="docutils literal notranslate"><span class="pre">IPOPT</span></code> is an open-source optimizer and it is free for all users.</p>
+<p>Design variables (and constraints) are set in the line <code class="docutils literal notranslate"><span class="pre">prob.add_design_variables()</span></code>:</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The details of the design variables and constraints are in the source code of <code class="docutils literal notranslate"><span class="pre">add_design_variables()</span></code>. Let us summarize the data below:</p>
+<p>For default <code class="docutils literal notranslate"><span class="pre">height_energy</span></code> mission model, it is relatively simple:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Design Variables</strong></p></th>
+<th class="head"><p><strong>Lower Bound</strong></p></th>
+<th class="head"><p><strong>Upper Bound</strong></p></th>
+<th class="head"><p><strong>Reference Value</strong></p></th>
+<th class="head"><p><strong>Units</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Mission.Design.GROSS_MASS</p></td>
+<td><p>10</p></td>
+<td><p>900.e3</p></td>
+<td><p>175.e3</p></td>
+<td><p>lbm</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For default <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> mission model, the design variables and constraints depend on the type of problems (<code class="docutils literal notranslate"><span class="pre">SIZING</span></code>, <code class="docutils literal notranslate"><span class="pre">ALTERNATE</span></code>, or <code class="docutils literal notranslate"><span class="pre">FALLOUT</span></code>, see <code class="docutils literal notranslate"><span class="pre">ProblemType</span></code> class in <code class="docutils literal notranslate"><span class="pre">aviary/variable_info/enums.py</span></code> for details). First, there are four common design variables and two common constraints. There are two more design variables and two constraints for sizing problems.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Problem Type</strong></p></th>
+<th class="head"><p><strong>Design Variables</strong></p></th>
+<th class="head"><p><strong>Lower Bound</strong></p></th>
+<th class="head"><p><strong>Upper Bound</strong></p></th>
+<th class="head"><p><strong>Reference Value</strong></p></th>
+<th class="head"><p><strong>Units</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Any</p></td>
+<td><p>Mission.Takeoff.ASCENT_T_INITIAL</p></td>
+<td><p>0</p></td>
+<td><p>100</p></td>
+<td><p>30.0</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>Any</p></td>
+<td><p>Mission.Takeoff.ASCENT_DURATION</p></td>
+<td><p>1</p></td>
+<td><p>1000</p></td>
+<td><p>10.0</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Any</p></td>
+<td><p>tau_gear</p></td>
+<td><p>0.01</p></td>
+<td><p>1.0</p></td>
+<td><p>1</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>Any</p></td>
+<td><p>tau_flaps</p></td>
+<td><p>0.01</p></td>
+<td><p>1.0</p></td>
+<td><p>1</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>SIZING</p></td>
+<td><p>Mission.Design.GROSS_MASS</p></td>
+<td><p>10.</p></td>
+<td><p>None</p></td>
+<td><p>175_000</p></td>
+<td><p>lbm</p></td>
+</tr>
+<tr class="row-odd"><td><p>SIZING</p></td>
+<td><p>Mission.Summary.GROSS_MASS</p></td>
+<td><p>10.</p></td>
+<td><p>None</p></td>
+<td><p>175_000</p></td>
+<td><p>lbm</p></td>
+</tr>
+<tr class="row-even"><td><p>ALTERNATE</p></td>
+<td><p>Mission.Summary.GROSS_MASS</p></td>
+<td><p>0</p></td>
+<td><p>infinite</p></td>
+<td><p>175_000</p></td>
+<td><p>lbm</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Problem Type</strong></p></td>
+<td><p><strong>Constraint</strong></p></td>
+<td><p><strong>Relation</strong></p></td>
+<td><p><strong>Value</strong></p></td>
+<td><p><strong>Reference Value</strong></p></td>
+<td><p><strong>Units</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Any</p></td>
+<td><p>h_fit.h_init_gear</p></td>
+<td><p>=</p></td>
+<td><p>50.0</p></td>
+<td><p>50.0</p></td>
+<td><p>ft</p></td>
+</tr>
+<tr class="row-odd"><td><p>Any</p></td>
+<td><p>h_fit.h_init_flaps</p></td>
+<td><p>=</p></td>
+<td><p>400.0</p></td>
+<td><p>400.0</p></td>
+<td><p>ft</p></td>
+</tr>
+<tr class="row-even"><td><p>SIZING</p></td>
+<td><p>Mission.Constraints.RANGE_RESIDUAL</p></td>
+<td><p>=</p></td>
+<td><p>0</p></td>
+<td><p>10</p></td>
+<td><p>unitless</p></td>
+</tr>
+<tr class="row-odd"><td><p>ALTERNATE</p></td>
+<td><p>Mission.Constraints.RANGE_RESIDUAL</p></td>
+<td><p>=</p></td>
+<td><p>0</p></td>
+<td><p>10</p></td>
+<td><p>lbm</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In the above table, there are two hard-coded design variables: <code class="docutils literal notranslate"><span class="pre">tau_gear</span></code> and <code class="docutils literal notranslate"><span class="pre">tau_flaps</span></code>. They represent fractions of ascent time to start gear retraction and flaps retraction. There are two hard-coded constraints: <code class="docutils literal notranslate"><span class="pre">h_fit.h_init_gear</span></code> and <code class="docutils literal notranslate"><span class="pre">h_fit.h_init_flaps</span></code>. They are the altitudes of initial gear retraction and initial flaps retraction. The underscore in number ‘175_000’ is for readability only.</p>
+<p>There are other constraints using OpenMDAO’s <code class="docutils literal notranslate"><span class="pre">EQConstraintComp</span></code> component. We will not go into the details as this part is complicated and needs special attention. Note that each subsystem (for example engine model) might have their own design variables (think, for example, sizing the engine). Aviary goes through all subsystems and adds appropriate design variables.</p>
+<p>You can override all the functions in level 3. So, you can set up your constraints in level 3 if the above ones do not meet your requirements.</p>
+<p>The optimization objective is added to the problem by this line:</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">objective_type</span><span class="o">=</span><span class="n">objective_type</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The selection of objective is a little complicated.</p>
+<p>Earlier in this page, we have discussed the objective when <code class="docutils literal notranslate"><span class="pre">objective_type=None</span></code> and <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> is <code class="docutils literal notranslate"><span class="pre">2DOF</span></code>. Let us discuss the other situations.</p>
+<p>There are several objective types that users can choose: <code class="docutils literal notranslate"><span class="pre">mass</span></code>, <code class="docutils literal notranslate"><span class="pre">hybrid_objective</span></code>, <code class="docutils literal notranslate"><span class="pre">fuel_burned</span></code>, and <code class="docutils literal notranslate"><span class="pre">fuel</span></code>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>objective_type</p></th>
+<th class="head"><p>objective</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>mass</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dynamic.Vehicle.MASS</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>hybrid_objective</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-final_mass</span> <span class="pre">/</span> <span class="pre">{takeoff_mass}</span> <span class="pre">+</span> <span class="pre">final_time</span> <span class="pre">/</span> <span class="pre">5.</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>fuel_burned</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">initial_mass</span> <span class="pre">-</span> <span class="pre">mass_final</span></code> (for <code class="docutils literal notranslate"><span class="pre">height_energy</span></code> mission only)</p></td>
+</tr>
+<tr class="row-odd"><td><p>fuel</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mission.Objectives.FUEL</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As listed in the above, if <code class="docutils literal notranslate"><span class="pre">objective_type=&quot;mass&quot;</span></code>, the objective is the final value of <code class="docutils literal notranslate"><span class="pre">Dynamic.Vehicle.MASS</span></code> at the end of the mission.
+If <code class="docutils literal notranslate"><span class="pre">objective_type=&quot;fuel&quot;</span></code>, the objective is the <code class="docutils literal notranslate"><span class="pre">Mission.Objectives.FUEL</span></code>.
+There is a special objective type: <code class="docutils literal notranslate"><span class="pre">hybrid_objective</span></code>. When <code class="docutils literal notranslate"><span class="pre">objective_type='hybrid_objective'</span></code>, the objective is a mix of minimizing fuel burn and minimizing the mission duration:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">obj</span> <span class="o">=</span> <span class="o">-</span><span class="n">final_mass</span> <span class="o">/</span> <span class="p">{</span><span class="n">takeoff_mass</span><span class="p">}</span> <span class="o">+</span> <span class="n">final_time</span> <span class="o">/</span> <span class="mf">5.</span>
+</pre></div>
+</div>
+<p>This is because if we just minimized fuel burn then the optimizer would probably fly the plane slowly to save fuel, but we actually care about some mix of minimizing fuel burn while providing a reasonable travel time for the passengers. This leads to the <code class="docutils literal notranslate"><span class="pre">hybrid_objective</span></code> which seeks to minimize a combination of those two objectives. <code class="docutils literal notranslate"><span class="pre">final_time</span></code> is the duration of the full mission and is usually in the range of hours. So, the denominator <code class="docutils literal notranslate"><span class="pre">5.</span></code> means <code class="docutils literal notranslate"><span class="pre">5</span> <span class="pre">hours</span></code>. That’s just a value to scale the final_time variable. Since it’s a composite objective we didn’t want to have OpenMDAO do the scaling because the two variables in the objective are of a different order of magnitude.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">objective_type=None</span></code> for a <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> mission, Aviary will choose the objective based on <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> and <code class="docutils literal notranslate"><span class="pre">problem_type</span></code>. We have discussed this case earlier in this page.</p>
+<p><strong>Note:</strong>  Aviary variable <code class="docutils literal notranslate"><span class="pre">Mission.Objectives.FUEL</span></code> when using the <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> mission is actually a hybrid objective defined as</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>      <span class="n">reg_objective</span> <span class="o">=</span> <span class="n">overall_fuel</span><span class="o">/</span><span class="mi">10000</span> <span class="o">+</span> <span class="n">ascent_duration</span><span class="o">/</span><span class="mf">30.</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">overall_fuel</span></code> has the unit of <code class="docutils literal notranslate"><span class="pre">lbm</span></code> and <code class="docutils literal notranslate"><span class="pre">ascent_duration</span></code> has the unit of seconds. In our case, <code class="docutils literal notranslate"><span class="pre">settings:equations_of_motion</span> <span class="pre">=</span> <span class="pre">2DOF</span></code>, the final value of objective is <code class="docutils literal notranslate"><span class="pre">[5.27313333]</span></code>, with <code class="docutils literal notranslate"><span class="pre">ref:</span> <span class="pre">1.0</span></code> and <code class="docutils literal notranslate"><span class="pre">units:</span> <span class="pre">blank</span></code>. The units should be interpreted as <code class="docutils literal notranslate"><span class="pre">unitless</span></code>.</p>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">ref</span></code> is the reference value. For different objectives, the range may vary significantly different. We want to normalize the value. Ideally, users should choose <code class="docutils literal notranslate"><span class="pre">ref</span></code> such that the objective is in the range of <code class="docutils literal notranslate"><span class="pre">(0,1)</span></code>. This is required by optimizer.</p>
+<p><strong>Note:</strong>  Unfortunately, not all <code class="docutils literal notranslate"><span class="pre">objective_type</span></code> and <code class="docutils literal notranslate"><span class="pre">mission_method</span></code> combinations work.</p>
+<p>Next is a line to call</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This is a lightly wrapped OpenMDAO <code class="docutils literal notranslate"><span class="pre">setup()</span></code> and  <code class="docutils literal notranslate"><span class="pre">prob.set_initial_guesses</span></code> method for the problem. It allows us to do <code class="docutils literal notranslate"><span class="pre">pre-</span></code> and <code class="docutils literal notranslate"><span class="pre">post-setup</span></code> changes, like adding calls to <code class="docutils literal notranslate"><span class="pre">set_input_defaults</span></code> and do some simple <code class="docutils literal notranslate"><span class="pre">set_vals</span></code> if needed as well as setting initial guesses.</p>
+<p>If we look at the signature of <code class="docutils literal notranslate"><span class="pre">setup()</span></code> in OpenMDAO’s <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/core/problem.html">Problem</a> class, we find that the available kwargs are: <code class="docutils literal notranslate"><span class="pre">check</span></code>, <code class="docutils literal notranslate"><span class="pre">logger</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span></code>, <code class="docutils literal notranslate"><span class="pre">force_alloc_complex</span></code>, <code class="docutils literal notranslate"><span class="pre">distributed_vector_class</span></code>, <code class="docutils literal notranslate"><span class="pre">local_vector_class</span></code>, and <code class="docutils literal notranslate"><span class="pre">derivatives</span></code>. The ones that Aviary uses are <code class="docutils literal notranslate"><span class="pre">check</span></code> and <code class="docutils literal notranslate"><span class="pre">force_alloc_complex</span></code>. Argument <code class="docutils literal notranslate"><span class="pre">check</span></code> is a flag to determine default checks are performed. <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/theory_manual/setup_stack.html">Default checks</a> are: ‘auto_ivc_warnings’, comp_has_no_outputs’, ‘dup_inputs’, ‘missing_recorders’, ‘out_of_order’, ‘solvers’, ‘system’, ‘unserializable_options’.</p>
+<p>If <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/advanced_user_guide/complex_step.html">force_alloc_complex</a> is true, sufficient memory will be allocated to allow nonlinear vectors to store complex values while operating under complex step. For our example, we don’t use any of them.</p>
+<p>For optimization problems, initial guesses are important. <code class="docutils literal notranslate"><span class="pre">prob.setup</span></code> does setup initial guesses as well.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">solved_2DOF</span></code> and <code class="docutils literal notranslate"><span class="pre">2DOF</span></code> missions, the <code class="docutils literal notranslate"><span class="pre">prob.set_initial_guesses</span></code> method performs several calls to <code class="docutils literal notranslate"><span class="pre">set_val</span></code> on the trajectory for states and controls to seed the problem with reasonable initial guesses using <code class="docutils literal notranslate"><span class="pre">initial_guesses</span></code> within corresponding phases (e.g. <code class="docutils literal notranslate"><span class="pre">height_energy.py</span></code> and <code class="docutils literal notranslate"><span class="pre">two_dof.py</span></code>). For <code class="docutils literal notranslate"><span class="pre">solved_2DOF</span></code> missions, it performs similar tasks but for hard-coded state parameters. This is reasonable because a <code class="docutils literal notranslate"><span class="pre">solved_2DOF</span></code> mission is actually a level 3 Aviary approach. We will cover it in <a class="reference internal" href="onboarding_level3.html"><span class="doc std std-doc">level 3 onboarding doc</span></a> in the next page. Note that initial guesses for all phases are especially important for collocation methods.</p>
+<p>The last line is to run the problem we just set up:</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<details class="admonition hide below-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+pre_mission.core_subsystems.aerodynamics.flaps_landing
+pre_mission.core_subsystems.aerodynamics.flaps_takeoff
+pre_mission.core_subsystems.aerodynamics.flaps_up
+pre_mission.core_subsystems.mass.fuel_mass
+traj.phases.accel
+traj.phases.ascent
+traj.phases.climb1
+traj.phases.climb2
+traj.phases.cruise.rhs.prop_group
+traj.phases.desc1
+traj.phases.desc2
+traj.phases.rotation
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem3_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</details>
+</div>
+<p>This is a simple wrapper of Dymos’ <a class="reference external" href="https://openmdao.github.io/dymos/api/run_problem_function.html">run_problem()</a> function. It allows the users to provide, <code class="docutils literal notranslate"><span class="pre">restart_filename</span></code>, <code class="docutils literal notranslate"><span class="pre">suppress_solver_print</span></code>, and <code class="docutils literal notranslate"><span class="pre">run_driver</span></code>. In our case, <code class="docutils literal notranslate"><span class="pre">restart_filename</span></code> is set to <code class="docutils literal notranslate"><span class="pre">None</span></code>. The rest of the arguments take default values. If a restart file name is provided, aviary (or dymos) will load the states, controls, and parameters as given in the provided case as the initial guess for the next run. We have discussed the <code class="docutils literal notranslate"><span class="pre">.db</span></code> file in <a class="reference internal" href="onboarding_level1.html"><span class="doc std std-doc">level 1 onboarding doc</span></a> and will discuss how to use it to generate useful output in <a class="reference internal" href="onboarding_level3.html"><span class="doc std std-doc">level 3 onboarding doc</span></a>.</p>
+<p>Finally, we can add a few print statements for the variables that we are interested:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission.Objectives.FUEL&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Objectives</span><span class="o">.</span><span class="n">FUEL</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission.Summary.FUEL_MASS&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Mission.Summary.FUEL_MASS_REQUIRED&#39;</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_MASS_REQUIRED</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission.Summary.TOTAL_FUEL_MASS&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">TOTAL_FUEL_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Mission.Summary.GROSS_MASS (takeoff_mass)&#39;</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">GROSS_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Mission.Landing.TOUCHDOWN_MASS (final_mass)&#39;</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Mission</span><span class="o">.</span><span class="n">Landing</span><span class="o">.</span><span class="n">TOUCHDOWN_MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Groundroll Final Mass (lbm)&#39;</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.groundroll.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rotation Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.rotation.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ascent Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.ascent.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accel Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.accel.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Climb1 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.climb1.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Climb2 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.climb2.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s1">&#39;Cruise Final Mass (lbm)&#39;</span><span class="p">,</span>
+    <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.phases.cruise.rhs.calc_weight.mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Desc1 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.desc1.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Desc2 Final Mass (lbm)&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.desc2.states:mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mission.Objectives.FUEL [5.27313333]
+Mission.Summary.FUEL_MASS [43389.56971538]
+Mission.Summary.FUEL_MASS_REQUIRED [43389.56971538]
+Mission.Summary.TOTAL_FUEL_MASS [44398.]
+Mission.Summary.GROSS_MASS (takeoff_mass) [175400.]
+Mission.Landing.TOUCHDOWN_MASS (final_mass) [136000.]
+
+Groundroll Final Mass (lbm) [173646.]
+Rotation Final Mass (lbm) [173646.]
+Ascent Final Mass (lbm) [173646.]
+Accel Final Mass (lbm) [173646.]
+Climb1 Final Mass (lbm) [173646.]
+Climb2 Final Mass (lbm) [171909.54]
+Cruise Final Mass (lbm) 136481.0
+Desc1 Final Mass (lbm) [136000.]
+Desc2 Final Mass (lbm) [136000.]
+done
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will cover user customized outputs in <a class="reference internal" href="onboarding_level3.html"><span class="doc std std-doc">level 3</span></a>.</p>
+</section>
+<section id="level-2-another-example">
+<h2>Level 2: Another example<a class="headerlink" href="#level-2-another-example" title="Link to this heading">#</a></h2>
+<p>We now use a similar aircraft, a large single aisle commercial transport aircraft, but with a different mass estimation and mission method. Let us run Aviary using this input deck in level 1 first.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>aviary<span class="w"> </span>run_mission<span class="w"> </span>models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv<span class="w"> </span>--max_iter<span class="w"> </span><span class="m">0</span><span class="w"> </span>--optimizer<span class="w"> </span>IPOPT
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loaded default phase_info for height_energy equations of motion.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent.rhs_all.solver_sub
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
+                     variables with only lower bounds:        2
+                variables with lower and upper bounds:       94
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       94
+Total number of inequality constraints...............:       61
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       60
+        inequality constraints with only upper bounds:        0
+
+
+Number of Iterations....: 0
+
+                                   (scaled)                 (unscaled)
+Objective...............:   2.9999999999999999e-01    2.9999999999999999e-01
+Dual infeasibility......:   2.1752898492508721e-02    2.1752898492508721e-02
+Constraint violation....:   1.9006004373650107e+00    1.9006004373650107e+00
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   1.0000000000000000e+17    1.0000000000000000e+17
+Overall NLP error.......:   1.0000000000000000e+17    1.0000000000000000e+17
+
+
+Number of objective function evaluations             = 1
+Number of objective gradient evaluations             = 1
+Number of equality constraint evaluations            = 1
+Number of inequality constraint evaluations          = 1
+Number of equality constraint Jacobian evaluations   = 1
+Number of inequality constraint Jacobian evaluations = 1
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 1.119
+
+EXIT: Maximum Number of Iterations Exceeded.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     3.000000E-01
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                              Type      Lower Bound            Value      Upper Bound     Status
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                 Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+          0  mission:constraints:range_residual                      e   0.000000E+00    1.900600E+00    0.000000E+00         E    9.00000E+100
+          3  mission:constraints:mass_residual                       e   0.000000E+00   -3.680088E-01    0.000000E+00         E    9.00000E+100
+          4  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.026367E-02    0.000000E+00         E    9.00000E+100
+          5  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.663005E-02    0.000000E+00         E    9.00000E+100
+          6  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    2.331054E-02    0.000000E+00         E    9.00000E+100
+          7  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.602228E-02    0.000000E+00         E    9.00000E+100
+          8  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.084083E-02    0.000000E+00         E    9.00000E+100
+          9  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.715334E-02    0.000000E+00         E    9.00000E+100
+         10  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.345159E-02    0.000000E+00         E    9.00000E+100
+         11  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.236604E-02    0.000000E+00         E    9.00000E+100
+         12  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    4.230777E-02    0.000000E+00         E    9.00000E+100
+         13  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.567265E-02    0.000000E+00         E    9.00000E+100
+         14  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.600060E-02    0.000000E+00         E    9.00000E+100
+         15  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    3.663467E-02    0.000000E+00         E    9.00000E+100
+         16  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.804258E-02    0.000000E+00         E    9.00000E+100
+         17  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.815162E-02    0.000000E+00         E    9.00000E+100
+         18  traj.climb.collocation_constraint.defects:mass          e   0.000000E+00    1.838084E-02    0.000000E+00         E    9.00000E+100
+         19  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00    9.352009E-03    0.000000E+00         E    9.00000E+100
+         20  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -1.199896E-02    0.000000E+00         E    9.00000E+100
+         21  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -2.073751E-02    0.000000E+00         E    9.00000E+100
+         22  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.118018E-02    0.000000E+00         E    9.00000E+100
+         23  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.770609E-02    0.000000E+00         E    9.00000E+100
+         24  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -5.647907E-02    0.000000E+00         E    9.00000E+100
+         25  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.038182E-02    0.000000E+00         E    9.00000E+100
+         26  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.901923E-02    0.000000E+00         E    9.00000E+100
+         27  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -9.053058E-02    0.000000E+00         E    9.00000E+100
+         28  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -7.912678E-02    0.000000E+00         E    9.00000E+100
+         29  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -8.475119E-02    0.000000E+00         E    9.00000E+100
+         30  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -9.225696E-02    0.000000E+00         E    9.00000E+100
+         31  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.630597E-02    0.000000E+00         E    9.00000E+100
+         32  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.755807E-02    0.000000E+00         E    9.00000E+100
+         33  traj.climb.collocation_constraint.defects:distance      e   0.000000E+00   -4.925457E-02    0.000000E+00         E    9.00000E+100
+         34  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.303364E-02    0.000000E+00         E    9.00000E+100
+         35  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.302416E-02    0.000000E+00         E    9.00000E+100
+         36  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.300884E-02    0.000000E+00         E    9.00000E+100
+         37  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.655737E-02    0.000000E+00         E    9.00000E+100
+         38  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.650989E-02    0.000000E+00         E    9.00000E+100
+         39  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.644713E-02    0.000000E+00         E    9.00000E+100
+         40  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    3.142020E-02    0.000000E+00         E    9.00000E+100
+         41  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    3.136000E-02    0.000000E+00         E    9.00000E+100
+         42  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    3.128155E-02    0.000000E+00         E    9.00000E+100
+         43  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.629136E-02    0.000000E+00         E    9.00000E+100
+         44  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.625419E-02    0.000000E+00         E    9.00000E+100
+         45  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    2.620562E-02    0.000000E+00         E    9.00000E+100
+         46  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.282432E-02    0.000000E+00         E    9.00000E+100
+         47  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.281577E-02    0.000000E+00         E    9.00000E+100
+         48  traj.cruise.collocation_constraint.defects:mass         e   0.000000E+00    1.280398E-02    0.000000E+00         E    9.00000E+100
+         49  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.445041E-02    0.000000E+00         E    9.00000E+100
+         50  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.443412E-02    0.000000E+00         E    9.00000E+100
+         51  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.441163E-02    0.000000E+00         E    9.00000E+100
+         52  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.068664E-02    0.000000E+00         E    9.00000E+100
+         53  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.061862E-02    0.000000E+00         E    9.00000E+100
+         54  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.052468E-02    0.000000E+00         E    9.00000E+100
+         55  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.075895E-01    0.000000E+00         E    9.00000E+100
+         56  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.074932E-01    0.000000E+00         E    9.00000E+100
+         57  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -1.073601E-01    0.000000E+00         E    9.00000E+100
+         58  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.026649E-02    0.000000E+00         E    9.00000E+100
+         59  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.019816E-02    0.000000E+00         E    9.00000E+100
+         60  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -9.010380E-02    0.000000E+00         E    9.00000E+100
+         61  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.410449E-02    0.000000E+00         E    9.00000E+100
+         62  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.408808E-02    0.000000E+00         E    9.00000E+100
+         63  traj.cruise.collocation_constraint.defects:distance     e   0.000000E+00   -4.406542E-02    0.000000E+00         E    9.00000E+100
+         64  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.874820E-03    0.000000E+00         E    9.00000E+100
+         65  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.850166E-03    0.000000E+00         E    9.00000E+100
+         66  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.808649E-03    0.000000E+00         E    9.00000E+100
+         67  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.705025E-03    0.000000E+00         E    9.00000E+100
+         68  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.600882E-03    0.000000E+00         E    9.00000E+100
+         69  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.406382E-03    0.000000E+00         E    9.00000E+100
+         70  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    6.339200E-03    0.000000E+00         E    9.00000E+100
+         71  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    6.070678E-03    0.000000E+00         E    9.00000E+100
+         72  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    5.550291E-03    0.000000E+00         E    9.00000E+100
+         73  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    4.496487E-03    0.000000E+00         E    9.00000E+100
+         74  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    4.187001E-03    0.000000E+00         E    9.00000E+100
+         75  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    4.024107E-03    0.000000E+00         E    9.00000E+100
+         76  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.964933E-03    0.000000E+00         E    9.00000E+100
+         77  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    1.979995E-03    0.000000E+00         E    9.00000E+100
+         78  traj.descent.collocation_constraint.defects:mass        e   0.000000E+00    2.020933E-03    0.000000E+00         E    9.00000E+100
+         79  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.235276E-02    0.000000E+00         E    9.00000E+100
+         80  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.202264E-02    0.000000E+00         E    9.00000E+100
+         81  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.155630E-02    0.000000E+00         E    9.00000E+100
+         82  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.371736E-02    0.000000E+00         E    9.00000E+100
+         83  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.224947E-02    0.000000E+00         E    9.00000E+100
+         84  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.013522E-02    0.000000E+00         E    9.00000E+100
+         85  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.689618E-02    0.000000E+00         E    9.00000E+100
+         86  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.460210E-02    0.000000E+00         E    9.00000E+100
+         87  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -4.129551E-02    0.000000E+00         E    9.00000E+100
+         88  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.382579E-02    0.000000E+00         E    9.00000E+100
+         89  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -3.203869E-02    0.000000E+00         E    9.00000E+100
+         90  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -2.949307E-02    0.000000E+00         E    9.00000E+100
+         91  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.403741E-02    0.000000E+00         E    9.00000E+100
+         92  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.357940E-02    0.000000E+00         E    9.00000E+100
+         93  traj.descent.collocation_constraint.defects:distance    e   0.000000E+00   -1.293836E-02    0.000000E+00         E    9.00000E+100
+        152  traj.descent.throttle[path]                             i   0.000000E+00   -6.780986E-03    1.000000E+00         L    9.00000E+100
+        153  traj.descent.throttle[path]                             i   0.000000E+00   -2.190516E-02    1.000000E+00         L    9.00000E+100
+        154  traj.descent.throttle[path]                             i   0.000000E+00   -2.643273E-02    1.000000E+00         L    9.00000E+100
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
+Aviary run failed. See the dashboard for more details.
+</pre></div>
+</div>
+</div>
+</div>
+<p>Once again, to convert it to a level 2 model, we need to set all the arguments in level 1 manually.</p>
+<p>By running a model in level 2 directly, we have the flexibility to modify the input parameters (e.g. <code class="docutils literal notranslate"><span class="pre">phase_info</span></code>). Let us continue to make modifications and obtain a different run script shown below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">35000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">23000.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c1"># inputs that run_aviary() requires</span>
+<span class="n">aircraft_data</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">mission_method</span> <span class="o">=</span> <span class="s1">&#39;height_energy&#39;</span>
+<span class="n">mass_method</span> <span class="o">=</span> <span class="s1">&#39;FLOPS&#39;</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;SLSQP&#39;</span>
+<span class="n">objective_type</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">restart_filename</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># Build problem</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="c1"># Load aircraft and options data from user</span>
+<span class="c1"># Allow for user overrides here</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_data</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="c1"># Load optimization problem formulation</span>
+<span class="c1"># Detail which variables the optimizer can control</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="n">objective_type</span><span class="o">=</span><span class="n">objective_type</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.cruise.rhs_all.solver_sub
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/driver.py:700: DriverWarning:The following design variable initial conditions are out of their specified bounds:
+  traj.cruise.t_duration
+    val: [1800.]
+    lower: 600.0
+    upper: 1799.9999999999998
+Set the initial value of the design variable to a valid value or set the driver option[&#39;invalid_desvar_behavior&#39;] to &#39;ignore&#39;.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/total_jac.py:1698: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.cruise.t_initial, inds=[0]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Iteration limit reached    (Exit mode 9)
+            Current function value: 0.3
+            Iterations: 0
+            Function evaluations: 1
+            Gradient evaluations: 1
+Optimization FAILED.
+Iteration limit reached
+-----------------------------------
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
+Aviary run failed. See the dashboard for more details.
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem4_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>done
+</pre></div>
+</div>
+</div>
+</div>
+<p>As you see, there is a single phase <code class="docutils literal notranslate"><span class="pre">cruise</span></code>, no takeoff, no landing. Note that we must set <code class="docutils literal notranslate"><span class="pre">include_takeoff</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> because Aviary internally tries to connect takeoff to climb phase which we don’t provide. There should be a check to see if both takeoff and climb phase exist first. Aviary still has many things to be improved.</p>
+<p>We will see more details for what users can do in <a class="reference internal" href="onboarding_level3.html"><span class="doc std std-doc">level 3</span></a>.</p>
+<p>Level 2 is where you can integrate user-defined <a class="reference internal" href="../user_guide/subsystems.html"><span class="doc std std-doc">external subsystems</span></a>, which is one of the main features of the Aviary tool. <a class="reference internal" href="../user_guide/using_external_subsystems.html"><span class="doc std std-doc">Examples</span></a> of external subsystems are: acoustics, battery modeling, etc.
+Assume that you already have an external subsystem that you want to incorporate it into your model. We show how to add external subsystems via the optional <code class="docutils literal notranslate"><span class="pre">load_external_subsystems()</span></code> method of the <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code>.</p>
+<p>We will cover external subsystems in details in <a class="reference internal" href="onboarding_ext_subsystem.html"><span class="doc std std-doc">Models with External Subsystems</span></a> page.</p>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>As you see, level 2 is more flexible than level 1. In level 2, you can:</p>
+<ul class="simple">
+<li><p>add/remove pre-defined mission phases (via <code class="docutils literal notranslate"><span class="pre">phase_info</span></code>, see example above);</p></li>
+<li><p>scale design variables (via reference value in <code class="docutils literal notranslate"><span class="pre">phase_info</span></code>)</p></li>
+<li><p>import additional files (e.g. <code class="docutils literal notranslate"><span class="pre">aero_data</span></code>)</p></li>
+<li><p>set pre-defined objective (e.g. <code class="docutils literal notranslate"><span class="pre">hybrid_objective</span></code>)</p></li>
+<li><p>add external subsystems</p></li>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">use_coloring</span></code> (see example above).</p></li>
+</ul>
+<p>Most Aviary users should be well-served by Level 2; we have purposefully constructed it to be capable of most all use cases, even those on the forefront of research in aircraft design.</p>
+<p>That being said, there are some cases where Level 2 is not sufficient and you may need additional flexibility. We are ready to move on to <a class="reference internal" href="onboarding_level3.html"><span class="doc std std-doc">Level 3</span></a>.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./getting_started"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="onboarding_level1.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Level 1</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="onboarding_level3.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Level 3</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#build-level-2-for-the-same-aircraft-for-bench-gwgm-model">Build level 2 for the same <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dissection-of-level-2-for-the-same-aircraft-for-bench-gwgm-model">Dissection of level 2 for the same <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_GwGm</span></code> model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#level-2-another-example">Level 2: Another example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

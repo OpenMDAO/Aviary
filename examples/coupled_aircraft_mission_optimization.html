@@ -1,0 +1,1577 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Coupled Aircraft-Mission Optimization</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/coupled_aircraft_mission_optimization';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Mission Optimization with Many Phases for a Commercial Aircraft" href="additional_flight_phases.html" />
+    <link rel="prev" title="Optimizing the Mission Profile of a Conventional Aircraft" href="more_advanced_example.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/examples/coupled_aircraft_mission_optimization.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fexamples/coupled_aircraft_mission_optimization.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/examples/coupled_aircraft_mission_optimization.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Coupled Aircraft-Mission Optimization</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-definition-and-explanation">Problem Definition and Explanation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-mission-profile-fixed-aircraft-wing-aspect-ratio">Fixed Mission Profile, Fixed Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-mission-profile-optimized-aircraft-wing-aspect-ratio">Fixed Mission Profile, Optimized Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimized-mission-profile-fixed-aircraft-wing-aspect-ratio">Optimized Mission Profile, Fixed Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimized-mission-profile-optimized-aircraft-wing-aspect-ratio">Optimized Mission Profile, Optimized Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-and-takeaways">Summary and Takeaways</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="coupled-aircraft-mission-optimization">
+<h1>Coupled Aircraft-Mission Optimization<a class="headerlink" href="#coupled-aircraft-mission-optimization" title="Link to this heading">#</a></h1>
+<p>One of the most exciting features of Aviary is the ability to formulate and solve coupled aircraft-mission design optimization problems.
+Here, we mean that we are finding the optimal aircraft design parameters while simultaneously finding the optimal mission trajectory.
+The reason why this is so valuable is that it enables exploration of a larger design space much more efficiently.</p>
+<p>Solving coupled design-mission problems leads to optimal designs that would not be findable without simultaneously designing the aircraft and the trajectory.
+This is especially useful for unconventional aircraft designs, operations with complex missions, and many more future-focused studies than what is commonly flying today.</p>
+<p>This doc page builds up a coupled design problem and explains what we’re doing along the way.
+This process is relatively straightforward in Aviary.
+We will briefly discuss the optimal results, but that is not necessarily the focus here.
+Instead, we want to showcase how to do a simple coupled design study in Aviary.</p>
+<p>You can use this as a starting point for your own exciting aircraft and mission design studies.</p>
+<section id="problem-definition-and-explanation">
+<h2>Problem Definition and Explanation<a class="headerlink" href="#problem-definition-and-explanation" title="Link to this heading">#</a></h2>
+<p>We will use a conventional single-aisle commercial aircraft design as our starting point.
+For all of these examples we allow the aircraft to be sized by the optimizer.
+This means the gross takeoff weight is controlled to meet a mass balance.</p>
+<p>We will perform four different optimization cases as part of this study:</p>
+<ul class="simple">
+<li><p>fixed mission profile, fixed aircraft wing aspect ratio</p></li>
+<li><p>fixed mission profile, optimized aircraft wing aspect ratio</p></li>
+<li><p>optimized mission profile, fixed aircraft wing aspect ratio</p></li>
+<li><p>optimized mission profile, optimized aircraft wing aspect ratio</p></li>
+</ul>
+<p>We’ll provide more detail individually for each case.</p>
+<p>When we call Aviary, we will use a common <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> object that we modify for each optimization case shown here:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s1">&#39;climb_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">33000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">35.0</span><span class="p">,</span> <span class="mf">105.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.80</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">36000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">32000.0</span><span class="p">,</span> <span class="mf">36500.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">35.0</span><span class="p">,</span> <span class="mf">105.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">91.5</span><span class="p">,</span> <span class="mf">274.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">70</span><span class="p">,</span> <span class="mi">183</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;descent_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.21</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.19</span><span class="p">,</span> <span class="mf">0.84</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">36000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">36500.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">126.5</span><span class="p">,</span> <span class="mf">379.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">253</span><span class="p">,</span> <span class="mi">50</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;constrain_range&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now, let us explain each case, formulate the Aviary problem, and optimize.
+We’ll discuss the results from each case and explain why they vary.</p>
+</section>
+<section id="fixed-mission-profile-fixed-aircraft-wing-aspect-ratio">
+<h2>Fixed Mission Profile, Fixed Aircraft Wing Aspect Ratio<a class="headerlink" href="#fixed-mission-profile-fixed-aircraft-wing-aspect-ratio" title="Link to this heading">#</a></h2>
+<p>First, let us run Aviary with a simple setup: fly a prescribed mission profile with an unchanged wing design.
+Here we are varying the durations of each of the phases (climb, cruise, and descent) to minimize fuel burn across the mission.
+The altitude and Mach profiles of the mission are fixed because <code class="docutils literal notranslate"><span class="pre">altitude_optimize</span> <span class="pre">=</span> <span class="pre">False</span></code> and <code class="docutils literal notranslate"><span class="pre">mach_optimize</span> <span class="pre">=</span> <span class="pre">False</span></code> for each of the phases in the <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+
+<span class="n">aircraft_filename</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;IPOPT&#39;</span>
+<span class="n">make_plots</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
+    <span class="n">aircraft_filename</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="n">make_plots</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following issues were detected in your phase_info options.
+  Constraint mismatch across phase boundary:
+    cruise mach_final: (0.8, &#39;unitless&#39;)
+    descent_1 mach_initial: (0.72, &#39;unitless&#39;)
+ 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb_1.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent_1.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/total_jac.py:1698: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       96
+                     variables with only lower bounds:        2
+                variables with lower and upper bounds:       94
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       94
+Total number of inequality constraints...............:       43
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       42
+        inequality constraints with only upper bounds:        0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     2.623130E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                                Type      Lower Bound            Value      Upper Bound     Status
+          2  traj.climb_1.t_initial_0               c     0.000000E+00     0.000000E+00     0.000000E+00         lu
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                   Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+        114  traj.climb_1.throttle[path]                               i   0.000000E+00    9.999997E-01    1.000000E+00         u    9.00000E+100
+
+
+Number of Iterations....: 20
+
+                                   (scaled)                 (unscaled)
+Objective...............:   2.6231304732948892e+00    2.6231304732948892e+00
+Dual infeasibility......:   6.0886601984922198e-07    6.0886601984922198e-07
+Constraint violation....:   7.3821741684401942e-14    7.3821741684401942e-14
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   9.4560909422913912e-08    9.4560909422913912e-08
+Overall NLP error.......:   6.0886601984922198e-07    6.0886601984922198e-07
+
+
+Number of objective function evaluations             = 32
+Number of objective gradient evaluations             = 18
+Number of equality constraint evaluations            = 32
+Number of inequality constraint evaluations          = 32
+Number of equality constraint Jacobian evaluations   = 22
+Number of inequality constraint Jacobian evaluations = 22
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 10.138
+
+EXIT: Optimal Solution Found.
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="aircraft_for_bench_FwFm_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<p>Now that we’ve run the case successfully, let’s save and print out the fuel burn value:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fixed_mission_fixed_wing_fuel_burn</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_BURNED</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fixed_mission_fixed_wing_aspect_ratio</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission fuel burn, kg:&#39;</span><span class="p">,</span> <span class="n">fixed_mission_fixed_wing_fuel_burn</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aspect ratio:&#39;</span><span class="p">,</span> <span class="n">fixed_mission_fixed_wing_aspect_ratio</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mission fuel burn, kg: 10537.542572010505
+Aspect ratio: 11.22091
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="fixed-mission-profile-optimized-aircraft-wing-aspect-ratio">
+<h2>Fixed Mission Profile, Optimized Aircraft Wing Aspect Ratio<a class="headerlink" href="#fixed-mission-profile-optimized-aircraft-wing-aspect-ratio" title="Link to this heading">#</a></h2>
+<p>Now we will use the exact same <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> object but set up our Aviary problem such that the aspect ratio of the wing is a design variable.
+This means that Aviary is optimizing the wing aspect ratio while flying the same mission profile as above.
+We would expect that by varying the wing aspect ratio, Aviary could find a lower fuel burn value.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All of the realistic design tradeoffs associated with varying the wing aspect ratio are not necessarily captured in this problem, e.g. the wing structure would need to change. We are simply using this as an example of an aircraft design variable available in Aviary.</p>
+</div>
+<p>When we want to add an aircraft design variable to the Aviary problem, we need to use the Level 2 interface for Aviary.
+This means we can no longer use the all-inclusive <code class="docutils literal notranslate"><span class="pre">run_aviary</span></code> function and instead need to call its constituent methods individually.
+This allows us to insert a line adding the wing aspect ratio as a design variable as shown below.
+This line is highlighted with an in-line comment.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="c1"># Load aircraft and options data from user</span>
+<span class="c1"># Allow for user overrides here</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_filename</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="c1"># The following line is an example of how to add a design variable for the aspect ratio of the wing</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">14.0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">12.0</span><span class="p">)</span>
+
+<span class="c1"># Load optimization problem formulation</span>
+<span class="c1"># Detail which variables the optimizer can control</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">(</span><span class="n">make_plots</span><span class="o">=</span><span class="n">make_plots</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following issues were detected in your phase_info options.
+  Constraint mismatch across phase boundary:
+    cruise mach_final: (0.8, &#39;unitless&#39;)
+    descent_1 mach_initial: (0.72, &#39;unitless&#39;)
+ 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb_1.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent_1.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/total_jac.py:1698: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:       97
+                     variables with only lower bounds:        2
+                variables with lower and upper bounds:       95
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       94
+Total number of inequality constraints...............:       43
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       42
+        inequality constraints with only upper bounds:        0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     2.462655E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                                Type      Lower Bound            Value      Upper Bound     Status
+          2  aircraft:wing:aspect_ratio_0           c     8.333333E-01     1.166666E+00     1.166667E+00          u
+          3  traj.climb_1.t_initial_0               c     0.000000E+00     0.000000E+00     0.000000E+00         lu
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                   Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+        114  traj.climb_1.throttle[path]                               i   0.000000E+00    9.999994E-01    1.000000E+00         u    9.00000E+100
+        134  traj.descent_1.throttle[path]                             i   0.000000E+00    7.724427E-07    1.000000E+00         l    9.00000E+100
+
+
+Number of Iterations....: 20
+
+                                   (scaled)                 (unscaled)
+Objective...............:   2.4626553430833971e+00    2.4626553430833971e+00
+Dual infeasibility......:   9.4746294138081666e-07    9.4746294138081666e-07
+Constraint violation....:   4.1803872415037174e-13    4.1803872415037174e-13
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   9.1196539780746215e-08    9.1196539780746215e-08
+Overall NLP error.......:   9.4746294138081666e-07    9.4746294138081666e-07
+
+
+Number of objective function evaluations             = 23
+Number of objective gradient evaluations             = 18
+Number of equality constraint evaluations            = 23
+Number of inequality constraint evaluations          = 23
+Number of equality constraint Jacobian evaluations   = 22
+Number of inequality constraint Jacobian evaluations = 22
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 6.479
+
+EXIT: Optimal Solution Found.
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fixed_mission_optimized_wing_fuel_burn</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_BURNED</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">fixed_mission_optimized_wing_aspect_ratio</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission fuel burn, kg:&#39;</span><span class="p">,</span> <span class="n">fixed_mission_optimized_wing_fuel_burn</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aspect ratio:&#39;</span><span class="p">,</span> <span class="n">fixed_mission_optimized_wing_aspect_ratio</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mission fuel burn, kg: 9809.639625623611
+Aspect ratio: 13.9999976149414
+</pre></div>
+</div>
+</div>
+</div>
+<p>As expected, the optimal fuel burn value is lower for this case.
+We’ll discuss this in more detail after running two more cases.</p>
+</section>
+<section id="optimized-mission-profile-fixed-aircraft-wing-aspect-ratio">
+<h2>Optimized Mission Profile, Fixed Aircraft Wing Aspect Ratio<a class="headerlink" href="#optimized-mission-profile-fixed-aircraft-wing-aspect-ratio" title="Link to this heading">#</a></h2>
+<p>We just investigated giving the optimizer flexibility with the aircraft design while not varying the mission.
+Let’s now look at the results when we optimize the mission but keep the wing aspect ratio unchanged.</p>
+<p>To do this, we will allow the optimizer to control the Mach and altitude profiles by modifying the <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;altitude_optimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;cruise&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;cruise&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;altitude_optimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;descent_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;mach_optimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;descent_1&#39;</span><span class="p">][</span><span class="s1">&#39;user_options&#39;</span><span class="p">][</span><span class="s1">&#39;altitude_optimize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">run_aviary</span><span class="p">(</span>
+    <span class="n">aircraft_filename</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="n">make_plots</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following issues were detected in your phase_info options.
+  Constraint mismatch across phase boundary:
+    cruise mach_final: (0.8, &#39;unitless&#39;)
+    descent_1 mach_initial: (0.72, &#39;unitless&#39;)
+ 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb_1.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent_1.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     0.000000E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                                 Type      Lower Bound            Value      Upper Bound     Status
+          2  traj.climb_1.t_initial_0                c     0.000000E+00     0.000000E+00     0.000000E+00         lu
+         20  traj.climb_1.states:distance_0          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         21  traj.climb_1.states:distance_1          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         22  traj.climb_1.states:distance_2          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         23  traj.climb_1.states:distance_3          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         24  traj.climb_1.states:distance_4          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         25  traj.climb_1.states:distance_5          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         26  traj.climb_1.states:distance_6          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         27  traj.climb_1.states:distance_7          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         28  traj.climb_1.states:distance_8          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         29  traj.climb_1.states:distance_9          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         30  traj.climb_1.states:distance_10         c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         31  traj.climb_1.states:distance_11         c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         32  traj.climb_1.states:distance_12         c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         33  traj.climb_1.states:distance_13         c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         34  traj.climb_1.states:distance_14         c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         37  traj.climb_1.controls:altitude_0        c     0.000000E+00     0.000000E+00     1.000000E+00          l
+         55  traj.cruise.states:distance_0           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         56  traj.cruise.states:distance_1           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         57  traj.cruise.states:distance_2           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         58  traj.cruise.states:distance_3           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         59  traj.cruise.states:distance_4           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         60  traj.cruise.states:distance_5           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         61  traj.cruise.states:distance_6           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         62  traj.cruise.states:distance_7           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         63  traj.cruise.states:distance_8           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         64  traj.cruise.states:distance_9           c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         65  traj.cruise.states:distance_10          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         66  traj.cruise.states:distance_11          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         67  traj.cruise.states:distance_12          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         68  traj.cruise.states:distance_13          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         69  traj.cruise.states:distance_14          c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         90  traj.descent_1.states:distance_0        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         91  traj.descent_1.states:distance_1        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         92  traj.descent_1.states:distance_2        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         93  traj.descent_1.states:distance_3        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         94  traj.descent_1.states:distance_4        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         95  traj.descent_1.states:distance_5        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         96  traj.descent_1.states:distance_6        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         97  traj.descent_1.states:distance_7        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         98  traj.descent_1.states:distance_8        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+         99  traj.descent_1.states:distance_9        c     0.000000E+00     1.000000E-06     1.000000E+15          l
+        100  traj.descent_1.states:distance_10       c     0.000000E+00     1.000000E-06     1.000000E+15          l
+        101  traj.descent_1.states:distance_11       c     0.000000E+00     1.000000E-06     1.000000E+15          l
+        102  traj.descent_1.states:distance_12       c     0.000000E+00     1.000000E-06     1.000000E+15          l
+        103  traj.descent_1.states:distance_13       c     0.000000E+00     1.000000E-06     1.000000E+15          l
+        104  traj.descent_1.states:distance_14       c     0.000000E+00     1.000000E-06     1.000000E+15          l
+        108  traj.descent_1.controls:altitude_1      c     0.000000E+00     0.000000E+00     1.000000E+00          l
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                           Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+          0  mission:constraints:range_residual                                e   0.000000E+00    2.079999E+00    0.000000E+00         E    9.00000E+100
+          3  mission:constraints:mass_residual                                 e   0.000000E+00   -3.680088E-01    0.000000E+00         E    9.00000E+100
+          7  traj.linkages.cruise:mach_final|descent_1:mach_initial            e   0.000000E+00    8.000000E-02    0.000000E+00         E    9.00000E+100
+         12  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    3.200965E-02    0.000000E+00         E    9.00000E+100
+         13  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    2.815721E-02    0.000000E+00         E    9.00000E+100
+         14  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    2.465301E-02    0.000000E+00         E    9.00000E+100
+         15  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    4.866983E-02    0.000000E+00         E    9.00000E+100
+         16  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    4.318622E-02    0.000000E+00         E    9.00000E+100
+         17  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    3.928317E-02    0.000000E+00         E    9.00000E+100
+         18  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    4.593506E-02    0.000000E+00         E    9.00000E+100
+         19  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    4.475034E-02    0.000000E+00         E    9.00000E+100
+         20  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    4.465574E-02    0.000000E+00         E    9.00000E+100
+         21  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    3.766239E-02    0.000000E+00         E    9.00000E+100
+         22  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    3.798231E-02    0.000000E+00         E    9.00000E+100
+         23  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    3.864450E-02    0.000000E+00         E    9.00000E+100
+         24  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    1.902424E-02    0.000000E+00         E    9.00000E+100
+         25  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    1.914273E-02    0.000000E+00         E    9.00000E+100
+         26  traj.climb_1.collocation_constraint.defects:mass                  e   0.000000E+00    1.939751E-02    0.000000E+00         E    9.00000E+100
+         27  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -1.677785E-02    0.000000E+00         E    9.00000E+100
+         28  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -1.851241E-02    0.000000E+00         E    9.00000E+100
+         29  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -2.087681E-02    0.000000E+00         E    9.00000E+100
+         30  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -4.415034E-02    0.000000E+00         E    9.00000E+100
+         31  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -5.113836E-02    0.000000E+00         E    9.00000E+100
+         32  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -6.052822E-02    0.000000E+00         E    9.00000E+100
+         33  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -7.542192E-02    0.000000E+00         E    9.00000E+100
+         34  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -8.465974E-02    0.000000E+00         E    9.00000E+100
+         35  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -9.696262E-02    0.000000E+00         E    9.00000E+100
+         36  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -8.473990E-02    0.000000E+00         E    9.00000E+100
+         37  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -9.074477E-02    0.000000E+00         E    9.00000E+100
+         38  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -9.875207E-02    0.000000E+00         E    9.00000E+100
+         39  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -4.956117E-02    0.000000E+00         E    9.00000E+100
+         40  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -5.089560E-02    0.000000E+00         E    9.00000E+100
+         41  traj.climb_1.collocation_constraint.defects:distance              e   0.000000E+00   -5.270280E-02    0.000000E+00         E    9.00000E+100
+         46  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    4.062271E-02    0.000000E+00         E    9.00000E+100
+         47  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    4.070015E-02    0.000000E+00         E    9.00000E+100
+         48  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    4.081144E-02    0.000000E+00         E    9.00000E+100
+         49  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    8.342279E-02    0.000000E+00         E    9.00000E+100
+         50  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    8.378186E-02    0.000000E+00         E    9.00000E+100
+         51  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    8.430072E-02    0.000000E+00         E    9.00000E+100
+         52  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    1.004139E-01    0.000000E+00         E    9.00000E+100
+         53  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    1.009479E-01    0.000000E+00         E    9.00000E+100
+         54  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    1.015200E-01    0.000000E+00         E    9.00000E+100
+         55  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    8.558606E-02    0.000000E+00         E    9.00000E+100
+         56  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    8.615219E-02    0.000000E+00         E    9.00000E+100
+         57  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    8.671886E-02    0.000000E+00         E    9.00000E+100
+         58  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    4.264874E-02    0.000000E+00         E    9.00000E+100
+         59  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    4.293983E-02    0.000000E+00         E    9.00000E+100
+         60  traj.cruise.collocation_constraint.defects:mass                   e   0.000000E+00    4.347951E-02    0.000000E+00         E    9.00000E+100
+         61  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -1.392621E-01    0.000000E+00         E    9.00000E+100
+         62  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -1.398174E-01    0.000000E+00         E    9.00000E+100
+         63  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -1.405820E-01    0.000000E+00         E    9.00000E+100
+         64  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -2.876020E-01    0.000000E+00         E    9.00000E+100
+         65  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -2.899056E-01    0.000000E+00         E    9.00000E+100
+         66  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -2.930716E-01    0.000000E+00         E    9.00000E+100
+         67  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -3.496208E-01    0.000000E+00         E    9.00000E+100
+         68  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -3.528455E-01    0.000000E+00         E    9.00000E+100
+         69  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -3.572738E-01    0.000000E+00         E    9.00000E+100
+         70  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -3.016822E-01    0.000000E+00         E    9.00000E+100
+         71  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -3.039387E-01    0.000000E+00         E    9.00000E+100
+         72  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -3.070395E-01    0.000000E+00         E    9.00000E+100
+         73  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -1.508202E-01    0.000000E+00         E    9.00000E+100
+         74  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -1.513565E-01    0.000000E+00         E    9.00000E+100
+         75  traj.cruise.collocation_constraint.defects:distance               e   0.000000E+00   -1.520949E-01    0.000000E+00         E    9.00000E+100
+         80  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    6.642602E-03    0.000000E+00         E    9.00000E+100
+         81  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    6.493199E-03    0.000000E+00         E    9.00000E+100
+         82  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    6.348673E-03    0.000000E+00         E    9.00000E+100
+         83  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.285869E-02    0.000000E+00         E    9.00000E+100
+         84  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.234531E-02    0.000000E+00         E    9.00000E+100
+         85  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.168373E-02    0.000000E+00         E    9.00000E+100
+         86  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.369661E-02    0.000000E+00         E    9.00000E+100
+         87  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.307726E-02    0.000000E+00         E    9.00000E+100
+         88  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.236243E-02    0.000000E+00         E    9.00000E+100
+         89  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.028422E-02    0.000000E+00         E    9.00000E+100
+         90  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.028126E-02    0.000000E+00         E    9.00000E+100
+         91  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    1.139901E-02    0.000000E+00         E    9.00000E+100
+         92  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    5.970710E-03    0.000000E+00         E    9.00000E+100
+         93  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    6.591984E-03    0.000000E+00         E    9.00000E+100
+         94  traj.descent_1.collocation_constraint.defects:mass                e   0.000000E+00    7.984327E-03    0.000000E+00         E    9.00000E+100
+         95  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -3.745208E-02    0.000000E+00         E    9.00000E+100
+         96  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -3.659300E-02    0.000000E+00         E    9.00000E+100
+         97  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -3.538013E-02    0.000000E+00         E    9.00000E+100
+         98  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -7.145896E-02    0.000000E+00         E    9.00000E+100
+         99  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -6.764622E-02    0.000000E+00         E    9.00000E+100
+        100  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -6.216224E-02    0.000000E+00         E    9.00000E+100
+        101  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -7.177833E-02    0.000000E+00         E    9.00000E+100
+        102  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -6.583897E-02    0.000000E+00         E    9.00000E+100
+        103  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -5.729027E-02    0.000000E+00         E    9.00000E+100
+        104  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -4.584141E-02    0.000000E+00         E    9.00000E+100
+        105  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -4.122882E-02    0.000000E+00         E    9.00000E+100
+        106  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -3.466483E-02    0.000000E+00         E    9.00000E+100
+        107  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -1.593303E-02    0.000000E+00         E    9.00000E+100
+        108  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -1.475316E-02    0.000000E+00         E    9.00000E+100
+        109  traj.descent_1.collocation_constraint.defects:distance            e   0.000000E+00   -1.310240E-02    0.000000E+00         E    9.00000E+100
+
+Exception of type: TOO_FEW_DOF in file &quot;../../src/Interfaces/IpIpoptApplication.cpp&quot; at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: Too few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/total_jac.py:1698: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
+Aviary run failed. See the dashboard for more details.
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="aircraft_for_bench_FwFm_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<p>Now, let’s see the fuel burn:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimized_mission_fixed_wing_fuel_burn</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_BURNED</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">optimized_mission_fixed_wing_aspect_ratio</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission fuel burn, kg:&#39;</span><span class="p">,</span> <span class="n">optimized_mission_fixed_wing_fuel_burn</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aspect ratio:&#39;</span><span class="p">,</span> <span class="n">optimized_mission_fixed_wing_aspect_ratio</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mission fuel burn, kg: 0.0
+Aspect ratio: 11.22091
+</pre></div>
+</div>
+</div>
+</div>
+<p>Optimizing the mission did not have nearly as large of an impact on the fuel burn as optimizing the aspect ratio did.
+However, the fuel burn still decreased.
+Let us now look at the fully coupled case.</p>
+</section>
+<section id="optimized-mission-profile-optimized-aircraft-wing-aspect-ratio">
+<h2>Optimized Mission Profile, Optimized Aircraft Wing Aspect Ratio<a class="headerlink" href="#optimized-mission-profile-optimized-aircraft-wing-aspect-ratio" title="Link to this heading">#</a></h2>
+<p>Remember we have already modified the <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> object so that the Mach and altitude profiles are optimized.
+Now we return to the Level 2 way of running the problem with the wing aspect ratio as a design variable.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="c1"># Load aircraft and options data from user</span>
+<span class="c1"># Allow for user overrides here</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_filename</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="c1"># prob.model.add_design_var(av.Aircraft.Engine.SCALED_SLS_THRUST, lower=25.e3, upper=30.e3, units=&#39;lbf&#39;, ref=28.e3)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">14.0</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mf">12.0</span><span class="p">)</span>
+
+<span class="c1"># Load optimization problem formulation</span>
+<span class="c1"># Detail which variables the optimizer can control</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">(</span><span class="n">make_plots</span><span class="o">=</span><span class="n">make_plots</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following issues were detected in your phase_info options.
+  Constraint mismatch across phase boundary:
+    cruise mach_final: (0.8, &#39;unitless&#39;)
+    descent_1 mach_initial: (0.72, &#39;unitless&#39;)
+ 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb_1.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent_1.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/total_jac.py:1698: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  traj.climb_1.t_initial, inds=[0]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of variables............................:      110
+                     variables with only lower bounds:        2
+                variables with lower and upper bounds:      108
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:      110
+Total number of inequality constraints...............:       43
+        inequality constraints with only lower bounds:        1
+   inequality constraints with lower and upper bounds:       42
+        inequality constraints with only upper bounds:        0
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization Problem -- Optimization using pyOpt_sparse
+================================================================================
+    Objective Function: _objfunc
+
+
+   Objectives
+      Index  Name                               Value
+          0  mission:objectives:fuel     2.487538E+00
+
+   Variables (c - continuous, i - integer, d - discrete)
+      Index  Name                                 Type      Lower Bound            Value      Upper Bound     Status
+          3  traj.climb_1.t_initial_0                c     0.000000E+00     0.000000E+00     0.000000E+00         lu
+         38  traj.climb_1.controls:altitude_0        c     0.000000E+00     3.076706E-10     1.000000E+00          l
+        109  traj.descent_1.controls:altitude_1      c     0.000000E+00     3.071205E-10     1.000000E+00          l
+
+   Constraints (i - inequality, e - equality)
+      Index  Name                                                           Type          Lower           Value           Upper    Status  Lagrange Multiplier (N/A)
+          7  traj.linkages.cruise:mach_final|descent_1:mach_initial            e   0.000000E+00    8.000000E-02    0.000000E+00         E    9.00000E+100
+
+
+Number of Iterations....: 31
+
+                                   (scaled)                 (unscaled)
+Objective...............:   2.4875375835395244e+00    2.4875375835395244e+00
+Dual infeasibility......:   2.2046324282176921e+00    2.2046324282176921e+00
+Constraint violation....:   7.9999998942176909e-02    7.9999998942176909e-02
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   7.9340750771807114e-07    7.9340750771807114e-07
+Overall NLP error.......:   2.2046324282176921e+00    2.2046324282176921e+00
+
+
+Number of objective function evaluations             = 35
+Number of objective gradient evaluations             = 6
+Number of equality constraint evaluations            = 35
+Number of inequality constraint evaluations          = 35
+Number of equality constraint Jacobian evaluations   = 34
+Number of inequality constraint Jacobian evaluations = 34
+Number of Lagrangian Hessian evaluations             = 0
+Total seconds in IPOPT                               = 10.362
+
+EXIT: Converged to a point of local infeasibility. Problem may be infeasible.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: 
+Aviary run failed. See the dashboard for more details.
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<p>All right, let’s check out this final case’s fuel burn value:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">optimized_mission_optimized_wing_fuel_burn</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">Mission</span><span class="o">.</span><span class="n">Summary</span><span class="o">.</span><span class="n">FUEL_BURNED</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span>
+<span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">optimized_mission_optimized_wing_aspect_ratio</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">ASPECT_RATIO</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mission fuel burn, kg:&#39;</span><span class="p">,</span> <span class="n">optimized_mission_optimized_wing_fuel_burn</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Aspect ratio:&#39;</span><span class="p">,</span> <span class="n">optimized_mission_optimized_wing_aspect_ratio</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mission fuel burn, kg: 9922.503569817658
+Aspect ratio: 13.990002071145215
+</pre></div>
+</div>
+</div>
+</div>
+<p>Cool, it’s the lowest yet!
+Let’s discuss these results in more detail now.</p>
+</section>
+<section id="summary-and-takeaways">
+<h2>Summary and Takeaways<a class="headerlink" href="#summary-and-takeaways" title="Link to this heading">#</a></h2>
+<p>We have showcased one of Aviary’s most powerful capabilities here – the ability to simultaneously design an aircraft and optimal trajectory.
+By building up problem complexity, we can see how optimizing different parts of the problem lead to optimization objective improvements.</p>
+<p>Here is a summary table of the results:</p>
+<div class="cell tag_hide-input docutils container">
+<details class="admonition hide above-input">
+<summary aria-label="Toggle hidden content">
+<p class="collapsed admonition-title">Show code cell source</p>
+<p class="expanded admonition-title">Hide code cell source</p>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="c1"># Create a dictionary with the data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Case&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s1">&#39;Fixed Mission, Fixed Wing&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Fixed Mission, Optimized Wing&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Optimized Mission, Fixed Wing&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;Optimized Mission, Optimized Wing&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;Optimize Mission&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;✓&#39;</span><span class="p">,</span> <span class="s1">&#39;✓&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Optimize Wing&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;✓&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;✓&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;Aspect Ratio&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">fixed_mission_fixed_wing_aspect_ratio</span><span class="p">,</span>
+        <span class="n">fixed_mission_optimized_wing_aspect_ratio</span><span class="p">,</span>
+        <span class="n">optimized_mission_fixed_wing_aspect_ratio</span><span class="p">,</span>
+        <span class="n">optimized_mission_optimized_wing_aspect_ratio</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;Fuel Burn Value&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">fixed_mission_fixed_wing_fuel_burn</span><span class="p">,</span>
+        <span class="n">fixed_mission_optimized_wing_fuel_burn</span><span class="p">,</span>
+        <span class="n">optimized_mission_fixed_wing_fuel_burn</span><span class="p">,</span>
+        <span class="n">optimized_mission_optimized_wing_fuel_burn</span><span class="p">,</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+
+<span class="c1"># Create a DataFrame from the dictionary</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Display the DataFrame</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Case</th>
+      <th>Optimize Mission</th>
+      <th>Optimize Wing</th>
+      <th>Aspect Ratio</th>
+      <th>Fuel Burn Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Fixed Mission, Fixed Wing</td>
+      <td>-</td>
+      <td>-</td>
+      <td>11.22</td>
+      <td>10537.54</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Fixed Mission, Optimized Wing</td>
+      <td>-</td>
+      <td>✓</td>
+      <td>14.00</td>
+      <td>9809.64</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Optimized Mission, Fixed Wing</td>
+      <td>✓</td>
+      <td>-</td>
+      <td>11.22</td>
+      <td>0.00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Optimized Mission, Optimized Wing</td>
+      <td>✓</td>
+      <td>✓</td>
+      <td>13.99</td>
+      <td>9922.50</td>
+    </tr>
+  </tbody>
+</table>
+</div></div></div>
+</div>
+<p>We see that the fully coupled case finds the lowest fuel burn value, as expected.
+In both cases where the wing aspect ratio is optimized, it moves to the higher bound.</p>
+<p>If we didn’t simultaneously design the aircraft and the mission, you would have to manually iterate by first optimizing the aircraft, then the mission, then the aircraft again, etc.
+This cumbersome process is known as sequential optimization and can lead to non-optimal results for coupled systems, as detailed in Section 13.1 of the <a class="reference external" href="https://flowlab.groups.et.byu.net/mdobook.pdf">Engineering Design Optimization textbook</a> (available for free).</p>
+<p>Aviary is unique in its ability to solve these coupled systems using efficient gradient-based optimization.</p>
+<p>This doc page contains a simple example, but the true power of coupled multidisciplinary optimization lies in solving more complex design problems.
+We hope that you can effectively use Aviary to optimally design the next generation of exciting aircraft!</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./examples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="more_advanced_example.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Optimizing the Mission Profile of a Conventional Aircraft</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="additional_flight_phases.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Mission Optimization with Many Phases for a Commercial Aircraft</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-definition-and-explanation">Problem Definition and Explanation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-mission-profile-fixed-aircraft-wing-aspect-ratio">Fixed Mission Profile, Fixed Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-mission-profile-optimized-aircraft-wing-aspect-ratio">Fixed Mission Profile, Optimized Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimized-mission-profile-fixed-aircraft-wing-aspect-ratio">Optimized Mission Profile, Fixed Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optimized-mission-profile-optimized-aircraft-wing-aspect-ratio">Optimized Mission Profile, Optimized Aircraft Wing Aspect Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-and-takeaways">Summary and Takeaways</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

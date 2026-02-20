@@ -1,0 +1,1489 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>In-depth look at the battery subsystem as an example</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/battery_subsystem_example';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Overriding Variables" href="features/overriding.html" />
+    <link rel="prev" title="Step-by-step guide for creating, testing, and using external subsystems" href="step_by_step_external_guide.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="features_and_functionalities.html">Features and Functionalities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/battery_subsystem_example.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/battery_subsystem_example.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/user_guide/battery_subsystem_example.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>In-depth look at the battery subsystem as an example</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examining-the-battery-as-an-example-case">Examining the battery as an example case</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-builder-object">Defining the builder object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-variables-of-interest-states-controls-constraints-etc">Defining the variables of interest: states, controls, constraints, etc</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-openmdao-systems-needed">Defining the OpenMDAO systems needed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-helper-methods-like-preprocessing-initial-guessing-and-linking">Defining helper methods, like preprocessing, initial guessing, and linking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-the-variable-hierarchy">Extending the variable hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-your-implementation">Testing your implementation</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="in-depth-look-at-the-battery-subsystem-as-an-example">
+<h1>In-depth look at the battery subsystem as an example<a class="headerlink" href="#in-depth-look-at-the-battery-subsystem-as-an-example" title="Link to this heading">#</a></h1>
+<section id="examining-the-battery-as-an-example-case">
+<h2>Examining the battery as an example case<a class="headerlink" href="#examining-the-battery-as-an-example-case" title="Link to this heading">#</a></h2>
+<p>Let’s take a look at how to integrate an external subsystem into Aviary using the example of a battery model.
+This battery model and builder are provided in the <code class="docutils literal notranslate"><span class="pre">aviary/examples/external_subsystems/battery</span></code> folder.</p>
+<p>We’ll show you how to define the builder object, how to specify the pre-mission and mission models, and how to implement the interface methods.
+In each of these methods, we’ve removed the initial docstring to increase readability on this page.
+The <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/examples/external_subsystems/battery/battery_builder.py"><code class="docutils literal notranslate"><span class="pre">battery_builder.py</span></code></a> file contains the original methods and docstrings.
+Please see that file if you want to examine this example builder in its entirety as one file.</p>
+<p>You can define these methods in any order you want within your subsystem builder and Aviary will use them at the appropriate times during analysis and optimization.
+All of these methods must be defined by the subsystem builder creator, if that’s you or one of your collaborators.</p>
+<p>This battery example is just that – a singular example of the types of external subsystems that Aviary can include.
+We don’t expect the full complexity of all disciplines’ systems to be reflected in this example, so please keep that in mind when viewing these example methods.</p>
+</section>
+<section id="defining-the-builder-object">
+<h2>Defining the builder object<a class="headerlink" href="#defining-the-builder-object" title="Link to this heading">#</a></h2>
+<p>The first step is to define a builder object for your external subsystem.
+This class extends the <code class="docutils literal notranslate"><span class="pre">SubsystemBuilder</span></code> class and provides implementations for all of the interface methods that Aviary requires.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Throughout this doc page we add methods to the builder class in different sections.
+This is just for readability on this page and you could easily define all of these methods in one place in your builder class.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.battery_variable_meta_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtendedMetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.battery_variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span><span class="p">,</span> <span class="n">Dynamic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.model.battery_mission</span><span class="w"> </span><span class="kn">import</span> <span class="n">BatteryMission</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.model.battery_premission</span><span class="w"> </span><span class="kn">import</span> <span class="n">BatteryPreMission</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">SubsystemBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="n">include_constraints</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_constraints</span> <span class="o">=</span> <span class="n">include_constraints</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">meta_data</span><span class="o">=</span><span class="n">ExtendedMetaData</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="defining-the-variables-of-interest-states-controls-constraints-etc">
+<h2>Defining the variables of interest: states, controls, constraints, etc<a class="headerlink" href="#defining-the-variables-of-interest-states-controls-constraints-etc" title="Link to this heading">#</a></h2>
+<p>First, we’ll cover how to tell Aviary which variables are states that you want to integrate throughout the mission.
+The battery subsystem has two states: SOC (state of charge) and Thevenin voltage.
+Both of these states are described below using their variable hierarchy name, then a dictionary that tells Aviary any arguments that are passed to the Dymos <a class="reference external" href="https://openmdao.github.io/dymos/api/phase_api.html#add-state"><code class="docutils literal notranslate"><span class="pre">add_state</span></code> command</a>.
+You can use any arguments that the <code class="docutils literal notranslate"><span class="pre">add_state</span></code> command accepts here, including <code class="docutils literal notranslate"><span class="pre">ref</span></code>s, <code class="docutils literal notranslate"><span class="pre">bound</span></code>s, <code class="docutils literal notranslate"><span class="pre">solve_segments</span></code>, and more.
+Please see the <a class="reference external" href="https://openmdao.github.io/dymos/features/phases/variables.html#states">Dymos docs for states</a> for a table of all the available input args.</p>
+<p>Within the subsystem builder, we will now define the states of the battery model using the <code class="docutils literal notranslate"><span class="pre">get_states()</span></code> method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">states_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;rate_source&#39;</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE_RATE</span><span class="p">,</span>
+                <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;rate_source&#39;</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN_RATE</span><span class="p">,</span>
+                <span class="s1">&#39;defect_ref&#39;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
+                <span class="s1">&#39;ref&#39;</span><span class="p">:</span> <span class="mf">1.0e5</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">states_dict</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have similar methods for each of constraints, parameters, and design variables.</p>
+<p>For the constraints, you provide the name of the variable you want to constrain as the key in a dictionary.
+Then the values for each one of these keys is a dictionary of kwargs that can be passed to the <a class="reference external" href="https://openmdao.github.io/dymos/features/phases/constraints.html#constraints">Dymos <code class="docutils literal notranslate"><span class="pre">add_constraint()</span></code> method</a>.
+The example for the battery shows that we have a final boundary constraint on the state of charge being above 0.2 as well as a path constraint on the Thevenin voltage.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The constraint dicts used in Aviary require one additional kwarg on top of those needed by Dymos: the <code class="docutils literal notranslate"><span class="pre">type</span></code> argument. You must specify your constraint as either a <code class="docutils literal notranslate"><span class="pre">boundary</span></code> or <code class="docutils literal notranslate"><span class="pre">path</span></code> constraint.</p>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_constraints</span><span class="p">:</span>
+            <span class="n">constraints</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;loc&#39;</span><span class="p">:</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">constraints</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">constraints</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next up we have any parameters added to the phase from the external subsystem.
+<a class="reference external" href="https://openmdao.github.io/dymos/features/phases/variables.html#parameters">Parameters in the Dymos sense</a> are non-time-varying inputs since they typically involve fixed-value variables within a phase which define a system.
+These are fixed across a phase or trajectory, but can be controlled by the optimizer.
+For the simple battery case here we’re setting the operating temperature of the battery to be fixed at a certain value.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">parameters_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">25.0</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degC&#39;</span><span class="p">},</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">CURRENT</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">3.25</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">parameters_dict</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you want to add high-level design variables to your external subsystem that are not exposed at the phase level, you can do so by creating a method that describes your desired design variables.
+This method is called <code class="docutils literal notranslate"><span class="pre">get_design_vars()</span></code>.
+There might be calculations at the pre-mission level that necessitate using this method to allow the optimizer to control high-level sizing variables.
+In the simple battery case, we allow the optimizer to control the energy capacity of the battery, effectively sizing it.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_design_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">DVs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Aircraft</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">Cell</span><span class="o">.</span><span class="n">DISCHARGE_RATE</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;A&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="s1">&#39;upper&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">DVs</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="defining-the-openmdao-systems-needed">
+<h2>Defining the OpenMDAO systems needed<a class="headerlink" href="#defining-the-openmdao-systems-needed" title="Link to this heading">#</a></h2>
+<p>Next up, we have the two methods for getting the mission and pre-mission models, <code class="docutils literal notranslate"><span class="pre">build_mission()</span></code> and <code class="docutils literal notranslate"><span class="pre">build_pre_mission()</span></code>, respectively.
+When you define these methods they should return OpenMDAO Systems (<a class="reference external" href="https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/core/group.html">groups</a> or <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/_srcdocs/packages/core/component.html">components</a>) that represent the mission and pre-mission subsystems of the external model.
+Please see the <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/basic_user_guide/single_disciplinary_optimization/first_analysis.html">OpenMDAO docs on creating a simple component</a> for more information on how to create OpenMDAO systems.
+In short, an OpenMDAO System takes in input variables, does some calculations, and returns output variables.
+If you have an analysis or design code, you can wrap it in an OpenMDAO System even if it’s not Python-based; <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/other_useful_docs/file_wrap.html">this doc page</a> goes into more detail about that.</p>
+<p>In the case of the battery model, the pre-mission System is very simple – it’s just a single component with no special setup or arguments.
+As such, the method definition looks like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_pre_mission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">BatteryPreMission</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>That’s pretty straightforward.
+The <code class="docutils literal notranslate"><span class="pre">build_pre_mission()</span></code> method requires the <code class="docutils literal notranslate"><span class="pre">aviary_inputs</span></code> object (an instantiation of an <code class="docutils literal notranslate"><span class="pre">AviaryValues</span></code> object).
+This battery example does not use any information from <code class="docutils literal notranslate"><span class="pre">aviary_inputs</span></code>.
+The pre-mission builder can then use the data and options within the <code class="docutils literal notranslate"><span class="pre">aviary_inputs</span></code> object to construct the OpenMDAO System using user-specified logic.</p>
+<p>Now we’ll discuss arguably the most important method needed when making external subsystems (though they’re all important): <code class="docutils literal notranslate"><span class="pre">build_mission()</span></code>.
+This method returns an OpenMDAO System that provides all computations needed during the mission.
+This includes computing state rates so that the mission integration code can compute the state values and obtain the corresponding performance of the aircraft.</p>
+<p>For the battery case, we have a nicely packaged <code class="docutils literal notranslate"><span class="pre">BatteryMission</span></code> System, so our method looks like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_mission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">BatteryMission</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">aviary_inputs</span><span class="o">=</span><span class="n">aviary_inputs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">build_mission()</span></code> requires both <code class="docutils literal notranslate"><span class="pre">num_nodes</span></code> and <code class="docutils literal notranslate"><span class="pre">aviary_inputs</span></code> as arguments.
+<code class="docutils literal notranslate"><span class="pre">num_nodes</span></code> is needed to correctly set up all the vectors within your mission subsystem, whereas <code class="docutils literal notranslate"><span class="pre">aviary_inputs</span></code> helps provide necessary options for the subsystem.</p>
+</section>
+<section id="defining-helper-methods-like-preprocessing-initial-guessing-and-linking">
+<h2>Defining helper methods, like preprocessing, initial guessing, and linking<a class="headerlink" href="#defining-helper-methods-like-preprocessing-initial-guessing-and-linking" title="Link to this heading">#</a></h2>
+<p>Next up we have some helper methods that allow us to preprocess the user-provided inputs, link different phases’ variables, and provide initial guesses.</p>
+<p>Let’s talk about preprocessing your inputs.
+You might want to have some logic that sets different values in your problem based on user-provided options.
+<code class="docutils literal notranslate"><span class="pre">preprocess_inputs()</span></code> allows you to do this.
+It occurs between <code class="docutils literal notranslate"><span class="pre">load_inputs()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_pre_mission_systems()</span></code> in the Aviary stack, so after the initial data inputs are loaded but before they’re used to instantiate any OpenMDAO models.
+This is a great place to set any values you need for variables within your subsystem.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For both users and developers: <code class="docutils literal notranslate"><span class="pre">preprocess_inputs()</span></code> happens <strong>once</strong> per analysis or optimization run, just like loading the inputs. It does not occur as part of an OpenMDAO system, so it does not get iterated over during the optimization process.</p>
+</div>
+<p>You can have calculations or checks you need in this method based on user inputs.</p>
+<p>Now you may want to link some variables between phases.
+States, for example, are usually great candidates for linking.
+In the case of the battery example, if we have a climb and then a cruise phase, we’d want to connect the state-of-charge and voltage states so the end of climb is equal to the beginning of cruise.
+Thus, our <code class="docutils literal notranslate"><span class="pre">get_linked_variables()</span></code> method looks like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_linked_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the list of linked variables for the battery subsystem; in this case</span>
+<span class="sd">        it&#39;s our two state variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">,</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The last method we’ll discuss here is <code class="docutils literal notranslate"><span class="pre">get_initial_guesses()</span></code>.
+This method allows you to return info for any variable you want to provide an initial guess for.
+Depending on the integration method you’re using, initial guesses may greatly help convergence of your optimization problem.
+Collocation methods especially benefit from good initial guesses.</p>
+<p>For this battery example we simply define some initial guesses for the state variables.
+If we wanted to give other initial guesses we could specify their <code class="docutils literal notranslate"><span class="pre">type</span></code> in the dictionary accordingly.
+These values apply to all nodes across the mission, e.g. each node gets the same value guess.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_initial_guesses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">initial_guess_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+                <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;V&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">initial_guess_dict</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="extending-the-variable-hierarchy">
+<h2>Extending the variable hierarchy<a class="headerlink" href="#extending-the-variable-hierarchy" title="Link to this heading">#</a></h2>
+<p>You might’ve noticed throughout this battery example that we’ve extended the core variable hierarchy included in Aviary to add variables needed for the battery system.
+To handle additional variables not already defined in Aviary, you can define an extension to the available variables.
+By following the same naming convention present through Aviary, specifically that variables start with <code class="docutils literal notranslate"><span class="pre">aircraft</span></code> and <code class="docutils literal notranslate"><span class="pre">mission</span></code>, these can be correctly handled by the Aviary tool.</p>
+<!-- TODO: This section needs much more verbosity and detail! --></section>
+<section id="testing-your-implementation">
+<h2>Testing your implementation<a class="headerlink" href="#testing-your-implementation" title="Link to this heading">#</a></h2>
+<p>Once you have written your external subsystem code and built your own subsystem class, you can test your implementation using a built-in tool.
+We provide a set of unit tests that accept a user-defined subsystem and check that the outputs from the methods match what Aviary expects.
+If the user-defined methods do not return the correct form of the data, the test raises appropriate exceptions and explains which arguments are missing.</p>
+<p>By running these tests on their own subsystem, users can ensure that their code meets the requirements and standards set by the aviary package.
+Specifically, the tests can help users check that their subsystem’s inputs and outputs are correct and consistent with the expected format, even before running an Aviary mission.</p>
+<p>This test works by inheriting from a base class that loops through each of the methods and tests the outputs.
+All you’d have to do is provide your builder object as well as the <code class="docutils literal notranslate"><span class="pre">aviary_inputs</span></code> object needed to for the methods in the builder object.</p>
+<p>Here’s an example of the full code that you would write to test the battery builder.
+Although there are no unit tests explicitly shown in this file, they are contained in the <code class="docutils literal notranslate"><span class="pre">TestSubsystemBuilder</span></code> class, so you only need these few lines to test your subsystem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">unittest</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestBattery</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">TestSubsystemBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsystem_builder</span> <span class="o">=</span> <span class="n">BatteryBuilder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aviary_values</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>For instance, if you saved this class in a file called <code class="docutils literal notranslate"><span class="pre">test_battery.py</span></code>, you could then run <code class="docutils literal notranslate"><span class="pre">testflo</span> <span class="pre">test_battery.py</span></code> to verify that all the methods do what Aviary expects.
+If everything is good with your model you’ll see output in your terminal like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>dev<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>testflo<span class="w"> </span>test_battery.py
+......................................
+
+OK
+
+Passed:<span class="w">  </span><span class="m">40</span>
+Failed:<span class="w">  </span><span class="m">0</span>
+Skipped:<span class="w"> </span><span class="m">0</span>
+
+
+Ran<span class="w"> </span><span class="m">40</span><span class="w"> </span>tests<span class="w"> </span>using<span class="w"> </span><span class="m">192</span><span class="w"> </span>processes
+Wall<span class="w"> </span>clock<span class="w"> </span>time:<span class="w">   </span><span class="m">00</span>:00:15.20
+</pre></div>
+</div>
+<p>If you just want to run the code in this notebook, you can run the following:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_build_mission (__main__.TestBattery.test_build_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_build_post_mission (__main__.TestBattery.test_build_post_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_build_pre_mission (__main__.TestBattery.test_build_pre_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_constraints (__main__.TestBattery.test_check_constraints) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_design_variables (__main__.TestBattery.test_check_design_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_initial_guesses (__main__.TestBattery.test_check_initial_guesses) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_parameters (__main__.TestBattery.test_check_parameters) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ERROR
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_pre_mission (__main__.TestBattery.test_check_pre_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_state_variables (__main__.TestBattery.test_check_state_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_define_order (__main__.TestBattery.test_define_order) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_constraints (__main__.TestBattery.test_get_constraints) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_design_vars (__main__.TestBattery.test_get_design_vars) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_initial_guesses (__main__.TestBattery.test_get_initial_guesses) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_linked_variables (__main__.TestBattery.test_get_linked_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_mass_names (__main__.TestBattery.test_get_mass_names) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_parameters (__main__.TestBattery.test_get_parameters) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ERROR
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_pre_mission_bus_variables (__main__.TestBattery.test_get_pre_mission_bus_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_states (__main__.TestBattery.test_get_states) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_timeseries (__main__.TestBattery.test_get_timeseries) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_preprocess_inputs (__main__.TestBattery.test_preprocess_inputs) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_build_mission (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_build_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_build_post_mission (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_build_post_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_build_pre_mission (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_build_pre_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_constraints (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_check_constraints) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_design_variables (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_check_design_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_initial_guesses (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_check_initial_guesses) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_parameters (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_check_parameters) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_pre_mission (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_check_pre_mission) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_check_state_variables (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_check_state_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_define_order (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_define_order) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_constraints (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_constraints) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_design_vars (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_design_vars) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_initial_guesses (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_initial_guesses) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_linked_variables (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_linked_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_mass_names (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_mass_names) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_parameters (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_parameters) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_pre_mission_bus_variables (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_pre_mission_bus_variables) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_states (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_states) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_get_timeseries (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_get_timeseries) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>test_preprocess_inputs (aviary.subsystems.test.subsystem_tester.TestSubsystemBuilder.test_preprocess_inputs) ... 
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ok
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+ERROR: test_check_parameters (__main__.TestBattery.test_check_parameters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 357, in test_check_parameters
+    parameters = self.subsystem_builder.get_parameters(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: BatteryBuilder.get_parameters() got an unexpected keyword argument &#39;aviary_inputs&#39;
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+ERROR: test_get_parameters (__main__.TestBattery.test_get_parameters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 179, in test_get_parameters
+    parameters = self.subsystem_builder.get_parameters(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: BatteryBuilder.get_parameters() got an unexpected keyword argument &#39;aviary_inputs&#39;
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----------------------------------------------------------------------
+Ran 40 tests in 0.600s
+
+FAILED (errors=2)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f5c390aaf00&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>If something’s wrong with your builder, this test should tell you which method is out of spec and how you can fix it.
+For example, here I’ve purposefully made the battery builder have some incorrect behavior and reran the test.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_constraints</span><span class="p">:</span>
+            <span class="n">constraints</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+                    <span class="s1">&#39;loc&#39;</span><span class="p">:</span> <span class="s1">&#39;final&#39;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">VOLTAGE_THEVENIN</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;lower&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">constraints</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">constraints</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BatteryBuilder</span><span class="p">(</span><span class="n">BatteryBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_states</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">states_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;rate_source&#39;</span><span class="p">:</span> <span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE_RATE</span><span class="p">,</span>
+                <span class="s1">&#39;fix_initial&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;amps&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">states_dict</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestBattery</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">TestSubsystemBuilder</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsystem_builder</span> <span class="o">=</span> <span class="n">BatteryBuilder</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aviary_values</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryValues</span><span class="p">()</span>
+
+
+<span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">argv</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span> <span class="n">exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>E
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>E
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>F
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+ERROR: test_check_parameters (__main__.TestBattery.test_check_parameters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 357, in test_check_parameters
+    parameters = self.subsystem_builder.get_parameters(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: BatteryBuilder.get_parameters() got an unexpected keyword argument &#39;aviary_inputs&#39;
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+ERROR: test_get_parameters (__main__.TestBattery.test_get_parameters)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 179, in test_get_parameters
+    parameters = self.subsystem_builder.get_parameters(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: BatteryBuilder.get_parameters() got an unexpected keyword argument &#39;aviary_inputs&#39;
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+FAIL: test_check_state_variables (__main__.TestBattery.test_check_state_variables)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 320, in test_check_state_variables
+    self.assertTrue(state_var_exists, f&quot;State variable &#39;{key}&#39; not found in the model.&quot;)
+AssertionError: False is not true : State variable &#39;amps&#39; not found in the model.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+FAIL: test_get_constraints (__main__.TestBattery.test_get_constraints)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 128, in test_get_constraints
+    self.assertIn(&#39;type&#39;, values.keys(), f&#39;Constraint &quot;{name}&quot; is missing the &quot;type&quot; key&#39;)
+AssertionError: &#39;type&#39; not found in dict_keys([&#39;lower&#39;, &#39;loc&#39;]) : Constraint &quot;dynamic:battery:state_of_charge&quot; is missing the &quot;type&quot; key
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>======================================================================
+FAIL: test_get_states (__main__.TestBattery.test_get_states)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;/home/runner/work/Aviary/Aviary/aviary/subsystems/test/subsystem_tester.py&quot;, line 48, in test_get_states
+    self.assertIsInstance(value, dict, msg=f&quot;the value for &#39;{key}&#39; should be a dictionary&quot;)
+AssertionError: 6 is not an instance of &lt;class &#39;dict&#39;&gt; : the value for &#39;amps&#39; should be a dictionary
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>----------------------------------------------------------------------
+Ran 40 tests in 0.356s
+
+FAILED (failures=3, errors=2)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;unittest.main.TestProgram at 0x7f5c37526150&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<p>The output is a bit verbose, but tells you which methods are incorrect and why.
+For example, here the <code class="docutils literal notranslate"><span class="pre">get_states()</span></code> method returned a dict that included a key (<code class="docutils literal notranslate"><span class="pre">'amps'</span></code>) with a value of 6 instead of being a dictionary as expected.
+In the <code class="docutils literal notranslate"><span class="pre">get_constraints()</span></code> method, a constraint was added to the dictionary but did not include a <code class="docutils literal notranslate"><span class="pre">type</span></code> key, which is required as stated by the error message.</p>
+<p>If you encounter an error when using your subsystem, but the test here did not find it, please let the Aviary dev team know!
+We’d love to hear from you on the <a class="reference external" href="https://github.com/OpenMDAO/Aviary/issues">GitHub issues page</a> so we can help everyone write great external subsystems.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="step_by_step_external_guide.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Step-by-step guide for creating, testing, and using external subsystems</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="features/overriding.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Overriding Variables</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examining-the-battery-as-an-example-case">Examining the battery as an example case</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-builder-object">Defining the builder object</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-variables-of-interest-states-controls-constraints-etc">Defining the variables of interest: states, controls, constraints, etc</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-openmdao-systems-needed">Defining the OpenMDAO systems needed</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-helper-methods-like-preprocessing-initial-guessing-and-linking">Defining helper methods, like preprocessing, initial guessing, and linking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-the-variable-hierarchy">Extending the variable hierarchy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-your-implementation">Testing your implementation</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

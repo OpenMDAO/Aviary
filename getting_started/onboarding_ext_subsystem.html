@@ -1,0 +1,1510 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Models with External Subsystems</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/onboarding_ext_subsystem';</script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Vehicle Input .csv File and Phase_info Dictionary" href="input_csv_phase_info.html" />
+    <link rel="prev" title="Level 3" href="onboarding_level3.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="onboarding.html">Onboarding Guide</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/features_and_functionalities.html">Features and Functionalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/features/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/getting_started/onboarding_ext_subsystem.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fgetting_started/onboarding_ext_subsystem.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/getting_started/onboarding_ext_subsystem.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Models with External Subsystems</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Models with External Subsystems</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-of-aviary-examples">Installation of Aviary examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-subsystems">Adding Subsystems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-battery-subsystem">Adding battery subsystem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checking-in-the-setup-function-call">Checking in the setup function call</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-on-outputs">More on outputs</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#level-3">Level 3</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-on-objectives">More on objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-check-partials-function">The check_partials function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-an-openaerostruct-wingbox-external-subsystem">Adding an OpenAeroStruct wingbox external subsystem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-of-openaerostruct">Installation of OpenAeroStruct</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-openaerostruct-example">Understanding the OpenAeroStruct Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-openaerostruct-example">Running the OpenAeroStruct Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="models-with-external-subsystems">
+<h1>Models with External Subsystems<a class="headerlink" href="#models-with-external-subsystems" title="Link to this heading">#</a></h1>
+<p>In level 2, we have given simple examples of defining external subsystems in <code class="docutils literal notranslate"><span class="pre">mission_info</span></code>. The subsystems that we gave were all dummy subsystems and are not really used in simulation. Assume you have an external subsystem and you want to use it. Let us show you how to achieve this goal.</p>
+<section id="installation-of-aviary-examples">
+<h2>Installation of Aviary examples<a class="headerlink" href="#installation-of-aviary-examples" title="Link to this heading">#</a></h2>
+<p>The Aviary team has provided a few external subsystems for you to use.
+These are included in the <code class="docutils literal notranslate"><span class="pre">aviary/examples/external_subsystems</span></code> directory.
+We’ll now discuss them here and show you how to use them.</p>
+</section>
+<section id="adding-subsystems">
+<h2>Adding Subsystems<a class="headerlink" href="#adding-subsystems" title="Link to this heading">#</a></h2>
+<p>Currently, there are a couple of examples: <code class="docutils literal notranslate"><span class="pre">battery</span></code> and <code class="docutils literal notranslate"><span class="pre">custom_mass</span></code>. Let us take a look at <code class="docutils literal notranslate"><span class="pre">custom_mass</span></code> first. As shown in this example, this is a simplified example of a component that computes a weight for the wing and horizontal tail. It does not provide realistic computations but rough estimates to <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.MASS</span></code> and <code class="docutils literal notranslate"><span class="pre">Aircraft.HorizontalTail.MASS</span></code>. When this external subsystem is added to your pre-mission phase, Aviary will compute these weights in its core subsystem as usual, but then the wing mass and tail mass values will be overridden by this external subsytem.</p>
+<p>In <a class="reference internal" href="onboarding_level2.html"><span class="doc std std-doc">level 2</span></a>, we have briefly covered how to add external subsystems in <code class="docutils literal notranslate"><span class="pre">mission_info</span></code>. Alternatively, external subsystems (and any other new keys) can be added after a <code class="docutils literal notranslate"><span class="pre">mission_info</span></code> is loaded. Let us see how it works using the <code class="docutils literal notranslate"><span class="pre">aircraft_for_bench_FwFm.csv</span></code> model. First, we import this particular external subsystem.</p>
+<p>Then add this external subsystem to <code class="docutils literal notranslate"><span class="pre">pre_mission</span></code>.
+That is all you need to do in addition to our traditional level 2 examples. Here is the complete run script,</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.custom_mass.custom_mass_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">WingMassBuilder</span>
+
+<span class="c1"># Max iterations set to 1 to reduce runtime of example</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">phase_info</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">default_height_energy_phase_info</span><span class="p">)</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="c1"># Load aircraft and options data from user</span>
+<span class="c1"># Allow for user overrides here</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span>
+    <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span>
+    <span class="n">phase_info</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">([</span><span class="n">WingMassBuilder</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;wing_external&#39;</span><span class="p">)])</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">(</span><span class="n">suppress_solver_print</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Engine Mass&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wing Mass&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Horizontal Tail Mass&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization terminated successfully    (Exit mode 0)
+            Current function value: 2.4619806408004865
+            Iterations: 10
+            Function evaluations: 10
+            Gradient evaluations: 10
+Optimization Complete
+-----------------------------------
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Engine Mass [7400.]
+Wing Mass [11100.]
+Horizontal Tail Mass [5180.]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Ignore the intermediate warning messages and you see the outputs at the end.
+Since this is a height_energy mission and no objective is provided, we know that the objective is <code class="docutils literal notranslate"><span class="pre">fuel_burned</span></code>.</p>
+<p>To see the outputs without external subsystem add-on, let us comment out the line that adds the wing weight builder and run the modified script:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Max iterations set to 1 to reduce runtime of example</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="c1"># Load aircraft and options data from user</span>
+<span class="c1"># Allow for user overrides here</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span>
+    <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span>
+    <span class="n">av</span><span class="o">.</span><span class="n">default_height_energy_phase_info</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">([</span><span class="n">WingMassBuilder</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;wing_external&#39;</span><span class="p">)])</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">(</span><span class="n">suppress_solver_print</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Engine Mass&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Wing Mass&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Horizontal Tail Mass&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">HorizontalTail</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.cruise.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization terminated successfully    (Exit mode 0)
+            Current function value: 2.4619806408004865
+            Iterations: 10
+            Function evaluations: 10
+            Gradient evaluations: 10
+Optimization Complete
+-----------------------------------
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem2_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Engine Mass [7400.]
+Wing Mass [11100.]
+Horizontal Tail Mass [5180.]
+</pre></div>
+</div>
+</div>
+</div>
+<p>As we see, the engine mass is not altered but wing mass and tail mass are changed dramatically. This is not surprising because our <code class="docutils literal notranslate"><span class="pre">custom_mass</span></code> subsystem is quite simple. Later on, we will show you a more realistic wing weight external subsystem.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.methods_for_level2</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.height_energy_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_class_functions</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="c1"># Get all functions of class AviaryProblem</span>
+<span class="n">glue_class_functions</span><span class="p">(</span><span class="n">AviaryProblem</span><span class="p">,</span> <span class="p">[],</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Retrieve all top-level keys of phase_info</span>
+<span class="n">top_level_keys_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">phase_info</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;pre_mission&#39;</span><span class="p">,</span> <span class="s1">&#39;post_mission&#39;</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">top_level_keys_list</span><span class="p">:</span>
+    <span class="n">glue_variable</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-battery-subsystem">
+<h2>Adding battery subsystem<a class="headerlink" href="#adding-battery-subsystem" title="Link to this heading">#</a></h2>
+<p>In the above example, there is no new Aviary variable added to Aviary and the external subsystem is added to pre-mission only. So, the subsystem is not very involved. We will see a more complicated example now. Before we move on, let us recall the steps in Aviary model building:</p>
+<ul class="simple">
+<li><p><strong><strong>init</strong>()</strong></p></li>
+<li><p><strong>load_inputs()</strong></p></li>
+<li><p><strong>load_external_subsystems()</strong> (optional)</p></li>
+<li><p><strong>build_model()</strong></p></li>
+<li><p><strong>check_and_preprocess_inputs()</strong></p></li>
+<li><p>add_driver()</p></li>
+<li><p><strong>add_design_variables()</strong></p></li>
+<li><p><strong>add_objective()</strong></p></li>
+<li><p>setup()</p></li>
+<li><p>run_aviary_problem()</p></li>
+</ul>
+<p>The steps in bold are related specifically to subsystems. So, almost all of the steps involve subsystems. As long as your external subsystem is built based on the guidelines, Aviary will take care of your subsystem.</p>
+<p>The next example is the <a class="reference external" href="https://github.com/OpenMDAO/Aviary/blob/main/aviary/docs/user_guide/battery_subsystem_example">battery subsystem</a>. The battery subsystem provides methods to define the battery subsystem’s states, design variables, fixed values, initial guesses, and mass names. It also provides methods to build OpenMDAO systems for the pre-mission and mission computations of the subsystem, to get the constraints for the subsystem, and to preprocess the inputs for the subsystem. This subsystem has its own set of variables. We will build an Aviary model with full phases (namely, climb, cruise and descent) and maximize the final total mass: <code class="docutils literal notranslate"><span class="pre">Dynamic.Vehicle.MASS</span></code>.</p>
+<p>We also need <code class="docutils literal notranslate"><span class="pre">BatteryBuilder</span></code> along with battery related aircraft variables and build a new battery object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.battery_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">BatteryBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.battery_variable_meta_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtendedMetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.battery.battery_variables</span><span class="w"> </span><span class="kn">import</span> <span class="n">Aircraft</span>
+
+<span class="n">battery_builder</span> <span class="o">=</span> <span class="n">BatteryBuilder</span><span class="p">(</span><span class="n">include_constraints</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Start an Aviary problem and load in an aircraft input deck as well as our new battery builder object:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span>
+    <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span>
+    <span class="n">phase_info</span><span class="p">,</span>
+    <span class="n">meta_data</span><span class="o">=</span><span class="n">ExtendedMetaData</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">([</span><span class="n">battery_builder</span><span class="p">])</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since this example contains new variables in the aircraft hierarchy, the metadata for those variables was added to an extended metadata dictionary. We need to pass that into load_inputs so that it can load susbsystem-specific inputs from the csv file.</p>
+<p>The inputs are then checked by calling check_and_preprocess_inputs.</p>
+<p>In the battery subsystem, the type of battery cell we use is <code class="docutils literal notranslate"><span class="pre">18650</span></code>. This type of battery information is set in <code class="docutils literal notranslate"><span class="pre">preprocess_inputs()</span></code> within <code class="docutils literal notranslate"><span class="pre">examples/external_subsystems/batterybattery_builder.py</span></code>.</p>
+<section id="checking-in-the-setup-function-call">
+<h3>Checking in the setup function call<a class="headerlink" href="#checking-in-the-setup-function-call" title="Link to this heading">#</a></h3>
+<p>The OpenMDAO Function setup() can have an argument <code class="docutils literal notranslate"><span class="pre">check</span></code> with default value <code class="docutils literal notranslate"><span class="pre">None</span></code> (see <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/features/core_features/running_your_models/setup.html">here</a>). If we set it to <code class="docutils literal notranslate"><span class="pre">True</span></code>, it will cause a default set of checks to be run. So, instead of a simple setup() call, let us call it with <code class="docutils literal notranslate"><span class="pre">check=True</span></code>.</p>
+<p>The following are a few check points printed on the command line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span><span class="p">:</span> <span class="n">checking</span> <span class="n">out_of_order</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="n">checking</span> <span class="n">system</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="n">checking</span> <span class="n">solvers</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="n">checking</span> <span class="n">dup_inputs</span>
+<span class="n">INFO</span><span class="p">:</span> <span class="n">checking</span> <span class="n">missing_recorders</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">set_initial_guesses</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+
+<span class="c1"># user defined outputs</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Battery MASS&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cell Max&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">Cell</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+<span class="n">masses_descent</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.descent.timeseries.mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Final Descent Mass: </span><span class="si">{</span><span class="n">masses_descent</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb.rhs_all.solver_sub
+traj.phases.cruise.rhs_all.solver_sub
+traj.phases.descent.rhs_all.solver_sub
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking out_of_order...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: The following systems are executed out-of-order:
+   In System &#39;pre_mission&#39;, subsystem &#39;core_subsystems&#39; executes out-of-order with respect to its source systems [&#39;battery&#39;, &#39;external_comp_sum&#39;]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     out_of_order check complete (0.005521 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking system...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     system check complete (0.000256 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking solvers...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: The following groups contain sub-cycles. Performance and/or convergence may improve
+if these sub-cycles are solved separately in their own group.
+
+&#39;traj.phases.climb.rhs_all.solver_sub&#39; (Group)  NL: NewtonSolver (maxiter=10), LN: DirectSolver (maxiter=1):
+   Cycle 0: [&#39;mission_EOM&#39;, &#39;propulsion&#39;, &#39;throttle_balance&#39;]
+   Number of non-cycle subsystems: 2
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     solvers check complete (0.002438 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking dup_inputs...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     dup_inputs check complete (0.001182 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking missing_recorders...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     missing_recorders check complete (0.000002 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking unserializable_options...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     unserializable_options check complete (0.023026 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking comp_has_no_outputs...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     comp_has_no_outputs check complete (0.000607 sec).
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO: checking auto_ivc_warnings...
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: Groups &#39;traj.phases.climb.rhs_all.solver_sub.aerodynamics&#39; and &#39;traj.phases.climb.rhs_all.solver_sub.aerodynamics.Drag&#39; called set_input_defaults for the input &#39;aircraft:wing:area&#39; with conflicting &#39;val&#39;. The value (0.0) from &#39;traj.phases.climb.rhs_all.solver_sub.aerodynamics&#39; will be used.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: Groups &#39;traj.phases.cruise.rhs_all.solver_sub.aerodynamics&#39; and &#39;traj.phases.cruise.rhs_all.solver_sub.aerodynamics.Drag&#39; called set_input_defaults for the input &#39;aircraft:wing:area&#39; with conflicting &#39;val&#39;. The value (0.0) from &#39;traj.phases.cruise.rhs_all.solver_sub.aerodynamics&#39; will be used.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>WARNING: Groups &#39;traj.phases.descent.rhs_all.solver_sub.aerodynamics&#39; and &#39;traj.phases.descent.rhs_all.solver_sub.aerodynamics.Drag&#39; called set_input_defaults for the input &#39;aircraft:wing:area&#39; with conflicting &#39;val&#39;. The value (0.0) from &#39;traj.phases.descent.rhs_all.solver_sub.aerodynamics&#39; will be used.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>INFO:     auto_ivc_warnings check complete (0.001268 sec).
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/error_checking/check_config.py:116: SetupWarning:Need to attach NonlinearBlockJac, NewtonSolver, or BroydenSolver to &#39;phases&#39; when connecting components inside parallel groups
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/core/total_jac.py:1698: DerivativesWarning:The following design variables have no impact on the constraints or objective at the current design point:
+  aircraft:battery:cell:discharge_rate, inds=[0]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization terminated successfully    (Exit mode 0)
+            Current function value: -1.2479237737633355
+            Iterations: 16
+            Function evaluations: 16
+            Gradient evaluations: 16
+Optimization Complete
+-----------------------------------
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem3_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Battery MASS [0.10086207]
+Cell Max [0.045]
+Final Descent Mass: [62396.18868817]
+done
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="more-on-outputs">
+<h2>More on outputs<a class="headerlink" href="#more-on-outputs" title="Link to this heading">#</a></h2>
+<p>We are done with our model. For our current example, let us add a few more lines after the aviary run:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Battery MASS&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Cell Max&#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">Cell</span><span class="o">.</span><span class="n">MASS</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Battery MASS [0.10086207]
+Cell Max [0.045]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since our objective is <code class="docutils literal notranslate"><span class="pre">mass</span></code>, we want to print the value of <code class="docutils literal notranslate"><span class="pre">Dynamic.Vehicle.MASS</span></code>. Remember, we have imported Dynamic from aviary.variable_info.variables for this purpose.</p>
+<p>So, we have to print the final mass in a different way. Keep in mind that we have three phases in the mission and that final mass is our objective. So, we can get the final mass of the descent phase instead. Let us try this approach. Let us comment out the print statement of final mass (and the import of Dynamic), then add the following lines:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">masses_descent</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="s1">&#39;traj.descent.timeseries.mass&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;kg&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Final Descent Mass: </span><span class="si">{</span><span class="n">masses_descent</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Final Descent Mass: [62396.18868817]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="level-3">
+<h1>Level 3<a class="headerlink" href="#level-3" title="Link to this heading">#</a></h1>
+<p>Level 3 represents the highest level of user control and customization in Aviary’s user interface.
+At this level, users have full access to Python and OpenMDAO methods that Aviary calls.
+They can use the complete set of Aviary’s methods, functionalities, and classes to construct and fine-tune their aircraft models.
+Level 3 enables users to have supreme control over every aspect of the model, including subsystems, connections, and advanced optimization techniques.</p>
+<p>Level 3 is the most complex but specific methods defined at this level are used in levels 1 and 2, hopefully reducing user activation energy when learning more about Aviary.
+This progressive approach helps users gradually enhance their analysis capabilities and adapt to more complex modeling requirements as they gain proficiency and experience.</p>
+<section id="more-on-objectives">
+<h2>More on objectives<a class="headerlink" href="#more-on-objectives" title="Link to this heading">#</a></h2>
+<p>Now, let us change our objective to battery state of charge after the climb phase. So, comment out <code class="docutils literal notranslate"><span class="pre">prob.add_objective('mass')</span></code> and add the following line right after:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_objective</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s1">&#39;traj.climb.states:</span><span class="si">{</span><span class="n">Dynamic</span><span class="o">.</span><span class="n">Battery</span><span class="o">.</span><span class="n">STATE_OF_CHARGE</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ref</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the above, <code class="docutils literal notranslate"><span class="pre">index=-1</span></code> means the end of climb phase and <code class="docutils literal notranslate"><span class="pre">ref=-1</span></code> means that we want to maximize the state of charge at the end of climb phase. Once again, we are unable to print battery state of charge as we did with battery mass and battery cell mass. We will use the same approach to get mass. In fact, we have prepared for this purpose by setting up time series of climb and cruise phases as well. All we need to do is to add the following lines:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">soc_cruise</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span>
+    <span class="s1">&#39;traj.climb.timeseries.dynamic:battery:state_of_charge&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;State of Charge: </span><span class="si">{</span><span class="n">soc_cruise</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now you get a new output:</p>
+<p>State of Charge: [0.91333333]</p>
+</section>
+<section id="the-check-partials-function">
+<h2>The check_partials function<a class="headerlink" href="#the-check-partials-function" title="Link to this heading">#</a></h2>
+<p>In order to make sure that your model computes all the derivatives correctly, OpenMDAO provides a <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/features/core_features/working_with_derivatives/basic_check_partials.html">method called <code class="docutils literal notranslate"><span class="pre">check_partials</span></code></a> which checks partial derivatives comprehensively for all Components in your model.
+You should check your partial derivatives before integrating your external subsystem.
+This is a good practice to ensure that your model is working correctly and can be used in an optimization context.</p>
+</section>
+<section id="adding-an-openaerostruct-wingbox-external-subsystem">
+<h2>Adding an OpenAeroStruct wingbox external subsystem<a class="headerlink" href="#adding-an-openaerostruct-wingbox-external-subsystem" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://github.com/mdolab/OpenAerostruct/">OpenAeroStruct</a> (OAS) is a lightweight tool that performs aerostructural optimization using OpenMDAO. This is an example that shows you how to use an existing external package with Aviary.</p>
+<section id="installation-of-openaerostruct">
+<h3>Installation of OpenAeroStruct<a class="headerlink" href="#installation-of-openaerostruct" title="Link to this heading">#</a></h3>
+<p>We would like to have easy access to the examples and source code. So we install OpenAeroStruct by cloning the OpenAeroStruct repository. We show you how to do the installation on Linux. Assume you want to install it at <code class="docutils literal notranslate"><span class="pre">~/$USER/workspace</span></code>. Do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd ~/$USER/workspace
+git clone https://github.com/mdolab/OpenAeroStruct.git
+~/$USER/workspace/OpenAeroStruct
+pip install -e .
+</pre></div>
+</div>
+<p>If everything runs smoothly, you should see something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Successfully</span> <span class="n">installed</span> <span class="n">openaerostruct</span>
+</pre></div>
+</div>
+<p>Most of the packages that OpenAeroStruct depends on are installed already (see <a class="reference external" href="https://mdolab-openaerostruct.readthedocs-hosted.com/en/latest/installation.html">here</a>). For our example, we need <a class="reference external" href="https://pypi.org/project/ambiance/">ambiance</a> and an optional package: <a class="reference external" href="http://openvsp.org/">OpenVSP</a>.</p>
+<p>To install <code class="docutils literal notranslate"><span class="pre">ambiance</span></code>, do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ambiance</span>
+</pre></div>
+</div>
+<p>You should see something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Installing</span> <span class="n">collected</span> <span class="n">packages</span><span class="p">:</span> <span class="n">ambiance</span>
+<span class="n">Successfully</span> <span class="n">installed</span> <span class="n">ambiance</span><span class="o">-</span><span class="mf">1.3.1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You must ensure that the Python version in your environment matches the Python used to compile OpenVSP. You must <a class="reference external" href="https://openvsp.org/wiki/doku.php?id=install">install OpenVSP</a> on your Linux box yourself.</p>
+</div>
+<p>To check your installation of OpenVSP is successful, please run</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(av1)$ python openaerostruct/tests/test_vsp_aero_analysis.py
+</pre></div>
+</div>
+<p>Windows users should visit <a class="reference external" href="http://openvsp.org/download.php">OpenVSP</a> and follow the instruction there.</p>
+</section>
+<section id="understanding-the-openaerostruct-example">
+<h3>Understanding the OpenAeroStruct Example<a class="headerlink" href="#understanding-the-openaerostruct-example" title="Link to this heading">#</a></h3>
+<p>The OpenAeroStruct example is explained in detail in <a class="reference internal" href="../examples/OAS_subsystem.html"><span class="doc std std-doc">Using Aviary and OpenAeroStruct Together</span></a>.</p>
+<div class="cell tag_remove-output docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_builder</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OASWingMassBuilder</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_variable</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">OASWingMassBuilder</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="running-the-openaerostruct-example">
+<h3>Running the OpenAeroStruct Example<a class="headerlink" href="#running-the-openaerostruct-example" title="Link to this heading">#</a></h3>
+<p>We are ready to run this example. First, we create an <code class="docutils literal notranslate"><span class="pre">OASWingMassBuilder</span></code> instance.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">openmdao.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">om</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_builder</span><span class="w"> </span><span class="kn">import</span> <span class="n">OASWingMassBuilder</span>
+
+<span class="n">wing_weight_builder</span> <span class="o">=</span> <span class="n">OASWingMassBuilder</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s add a few phases in the mission.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the phase_info and other common setup tasks</span>
+<span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;climb_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;distance_solve_segments&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">34000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;climb_2&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">32000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">34000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">23000.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;boundary_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">64.0</span><span class="p">,</span> <span class="mf">192.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">56.5</span><span class="p">,</span> <span class="mf">169.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">128</span><span class="p">,</span> <span class="mi">113</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;descent_1&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;aerodynamics&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span> <span class="s1">&#39;computed&#39;</span><span class="p">}},</span>
+        <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;num_segments&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;order&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s1">&#39;mach_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;mach_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mach_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.72</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.36</span><span class="p">,</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;mach_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.74</span><span class="p">),</span> <span class="s1">&#39;unitless&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_optimize&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_polynomial_order&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;altitude_initial&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">34000.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_final&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">500.0</span><span class="p">,</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;altitude_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">38000.0</span><span class="p">),</span> <span class="s1">&#39;ft&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;throttle_enforcement&#39;</span><span class="p">:</span> <span class="s1">&#39;path_constraint&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;time_initial_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">120.5</span><span class="p">,</span> <span class="mf">361.5</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;time_duration_bounds&#39;</span><span class="p">:</span> <span class="p">((</span><span class="mf">29.0</span><span class="p">,</span> <span class="mf">87.0</span><span class="p">),</span> <span class="s1">&#39;min&#39;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;initial_guesses&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">([</span><span class="mi">241</span><span class="p">,</span> <span class="mi">58</span><span class="p">],</span> <span class="s1">&#39;min&#39;</span><span class="p">)},</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;include_landing&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s1">&#39;constrain_range&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;target_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1800.0</span><span class="p">,</span> <span class="s1">&#39;nmi&#39;</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;pre_mission&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;include_takeoff&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;optimize_mass&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can now create an Aviary problem, load in an aircraft input deck, our external subsystem, and do routine input checks:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">aircraft_definition_file</span> <span class="o">=</span> <span class="s1">&#39;models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv&#39;</span>
+<span class="n">make_plots</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">max_iter</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="s1">&#39;SNOPT&#39;</span>
+
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">()</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">aircraft_definition_file</span><span class="p">,</span> <span class="n">phase_info</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_external_subsystems</span><span class="p">([</span><span class="n">wing_weight_builder</span><span class="p">])</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified assume conventional tail configuration. Setting Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next we select the driver and call setup on the problem:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">driver</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">om</span><span class="o">.</span><span class="n">pyOptSparseDriver</span><span class="p">()</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">optimizer</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">declare_coloring</span><span class="p">()</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Major iterations limit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_iter</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Major optimality tolerance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;Major feasibility tolerance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-5</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">opt_settings</span><span class="p">[</span><span class="s1">&#39;iSumm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we need to set some OpenAeroStruct-specific parameters before running Aviary:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">OAS_sys</span> <span class="o">=</span> <span class="s1">&#39;pre_mission.wing_mass.aerostructures.&#39;</span>
+<span class="c1"># fmt: off</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+    <span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;box_upper_x&#39;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.19</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span>
+            <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.26</span><span class="p">,</span> <span class="mf">0.27</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">,</span> <span class="mf">0.29</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.31</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.36</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.38</span><span class="p">,</span> <span class="mf">0.39</span><span class="p">,</span>
+            <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.41</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.43</span><span class="p">,</span> <span class="mf">0.44</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.46</span><span class="p">,</span> <span class="mf">0.47</span><span class="p">,</span> <span class="mf">0.48</span><span class="p">,</span> <span class="mf">0.49</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">0.53</span><span class="p">,</span> <span class="mf">0.54</span><span class="p">,</span>
+            <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.56</span><span class="p">,</span> <span class="mf">0.57</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+    <span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;box_lower_x&#39;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.13</span><span class="p">,</span> <span class="mf">0.14</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">,</span> <span class="mf">0.17</span><span class="p">,</span> <span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.19</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.21</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mf">0.23</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span>
+            <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.26</span><span class="p">,</span> <span class="mf">0.27</span><span class="p">,</span> <span class="mf">0.28</span><span class="p">,</span> <span class="mf">0.29</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.31</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">,</span> <span class="mf">0.33</span><span class="p">,</span> <span class="mf">0.34</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.36</span><span class="p">,</span> <span class="mf">0.37</span><span class="p">,</span> <span class="mf">0.38</span><span class="p">,</span> <span class="mf">0.39</span><span class="p">,</span>
+            <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.41</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.43</span><span class="p">,</span> <span class="mf">0.44</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">,</span> <span class="mf">0.46</span><span class="p">,</span> <span class="mf">0.47</span><span class="p">,</span> <span class="mf">0.48</span><span class="p">,</span> <span class="mf">0.49</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.51</span><span class="p">,</span> <span class="mf">0.52</span><span class="p">,</span> <span class="mf">0.53</span><span class="p">,</span> <span class="mf">0.54</span><span class="p">,</span>
+            <span class="mf">0.55</span><span class="p">,</span> <span class="mf">0.56</span><span class="p">,</span> <span class="mf">0.57</span><span class="p">,</span> <span class="mf">0.58</span><span class="p">,</span> <span class="mf">0.59</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+    <span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;box_upper_y&#39;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="mf">0.0447</span><span class="p">,</span> <span class="mf">0.046</span><span class="p">,</span> <span class="mf">0.0472</span><span class="p">,</span> <span class="mf">0.0484</span><span class="p">,</span> <span class="mf">0.0495</span><span class="p">,</span> <span class="mf">0.0505</span><span class="p">,</span> <span class="mf">0.0514</span><span class="p">,</span> <span class="mf">0.0523</span><span class="p">,</span> <span class="mf">0.0531</span><span class="p">,</span> <span class="mf">0.0538</span><span class="p">,</span> <span class="mf">0.0545</span><span class="p">,</span>
+            <span class="mf">0.0551</span><span class="p">,</span> <span class="mf">0.0557</span><span class="p">,</span> <span class="mf">0.0563</span><span class="p">,</span> <span class="mf">0.0568</span><span class="p">,</span> <span class="mf">0.0573</span><span class="p">,</span> <span class="mf">0.0577</span><span class="p">,</span> <span class="mf">0.0581</span><span class="p">,</span> <span class="mf">0.0585</span><span class="p">,</span> <span class="mf">0.0588</span><span class="p">,</span> <span class="mf">0.0591</span><span class="p">,</span> <span class="mf">0.0593</span><span class="p">,</span>
+            <span class="mf">0.0595</span><span class="p">,</span> <span class="mf">0.0597</span><span class="p">,</span> <span class="mf">0.0599</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.0601</span><span class="p">,</span> <span class="mf">0.0602</span><span class="p">,</span> <span class="mf">0.0602</span><span class="p">,</span> <span class="mf">0.0602</span><span class="p">,</span> <span class="mf">0.0602</span><span class="p">,</span> <span class="mf">0.0602</span><span class="p">,</span> <span class="mf">0.0601</span><span class="p">,</span>
+            <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.0599</span><span class="p">,</span> <span class="mf">0.0598</span><span class="p">,</span> <span class="mf">0.0596</span><span class="p">,</span> <span class="mf">0.0594</span><span class="p">,</span> <span class="mf">0.0592</span><span class="p">,</span> <span class="mf">0.0589</span><span class="p">,</span> <span class="mf">0.0586</span><span class="p">,</span> <span class="mf">0.0583</span><span class="p">,</span> <span class="mf">0.058</span><span class="p">,</span> <span class="mf">0.0576</span><span class="p">,</span>
+            <span class="mf">0.0572</span><span class="p">,</span> <span class="mf">0.0568</span><span class="p">,</span> <span class="mf">0.0563</span><span class="p">,</span> <span class="mf">0.0558</span><span class="p">,</span> <span class="mf">0.0553</span><span class="p">,</span> <span class="mf">0.0547</span><span class="p">,</span> <span class="mf">0.0541</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span>
+    <span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;box_lower_y&#39;</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="o">-</span><span class="mf">0.0447</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.046</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0473</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0485</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0496</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0506</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0515</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0524</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0532</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.054</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.0547</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0554</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.056</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0565</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.057</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0575</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0579</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0583</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0586</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0589</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.0592</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0594</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0595</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0596</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0597</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0598</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0598</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0598</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0598</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.0597</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0596</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0594</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0592</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0589</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0586</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0582</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0578</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0573</span><span class="p">,</span>
+            <span class="o">-</span><span class="mf">0.0567</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0561</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0554</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0546</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0538</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0529</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0519</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0509</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0497</span><span class="p">,</span> 
+            <span class="o">-</span><span class="mf">0.0485</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0472</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0458</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0444</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">),</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># fmt: on</span>
+
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;twist_cp&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">6.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;spar_thickness_cp&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.004</span><span class="p">,</span> <span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.008</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]),</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;skin_thickness_cp&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.005</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.015</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">]),</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;t_over_c_cp&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">]),</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;airfoil_t_over_c&#39;</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;fuel&#39;</span><span class="p">,</span> <span class="mf">40044.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;fuel_reserve&#39;</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;CD0&#39;</span><span class="p">,</span> <span class="mf">0.0078</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;cruise_Mach&#39;</span><span class="p">,</span> <span class="mf">0.785</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;unitless&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;cruise_altitude&#39;</span><span class="p">,</span> <span class="mf">11303.682962301647</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;cruise_range&#39;</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;nmi&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;cruise_SFC&#39;</span><span class="p">,</span> <span class="mf">0.53</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;1/s&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;engine_mass&#39;</span><span class="p">,</span> <span class="mi">7400</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">set_val</span><span class="p">(</span><span class="n">OAS_sys</span> <span class="o">+</span> <span class="s1">&#39;engine_location&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">25</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]),</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are now ready to run Aviary on this model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">(</span><span class="s1">&#39;oas_solution.db&#39;</span><span class="p">,</span> <span class="n">run_driver</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">make_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/utils/relevance.py:1295: OpenMDAOWarning:The following groups have a nonlinear solver that computes gradients and will be treated as atomic for the purposes of determining which systems are included in the optimization iteration: 
+traj.phases.climb_1.rhs_all.solver_sub
+traj.phases.climb_2.rhs_all.solver_sub
+traj.phases.descent_1.rhs_all.solver_sub
+
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.climb_2.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+/usr/share/miniconda/envs/test/lib/python3.12/site-packages/openmdao/solvers/linear/linear_rhs_checker.py:175: SolverWarning:DirectSolver in &#39;traj.phases.descent_1.indep_states&#39; &lt;class StateIndependentsComp&gt;: &#39;rhs_checking&#39; is active but no redundant adjoint dependencies were found, so caching has been disabled.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Casting complex values to real discards the imaginary part
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Optimization terminated successfully    (Exit mode 0)
+            Current function value: 0.16173167259392424
+            Iterations: 130
+            Function evaluations: 131
+            Gradient evaluations: 130
+Optimization Complete
+-----------------------------------
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Structures OAS Compute End --- execution time 00:00:38.474
+</pre></div>
+</div>
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem5_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<p>Note that there are multiple numbers of optimization loops that are output from this run even though we have set <code class="docutils literal notranslate"><span class="pre">max_iter</span></code> to 0.
+This is because OpenAeroStruct has an optimization process internally. In order to shorten the runtime, we have set <code class="docutils literal notranslate"><span class="pre">run_driver</span> <span class="pre">=</span> <span class="pre">False</span></code>. This means that we will not run optimization but <a class="reference external" href="https://openmdao.org/newdocs/versions/latest/features/core_features/running_your_models/run_model.html">run model</a>.</p>
+<p>Finally, we print the newly computed wing mass:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;wing mass = &#39;</span><span class="p">,</span> <span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbm&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>wing mass =  [15028.70111918]
+</pre></div>
+</div>
+</div>
+</div>
+<p>The result is comparable to the output without OpenAeroStruct external subsystem.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./getting_started"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="onboarding_level3.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Level 3</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="input_csv_phase_info.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Vehicle Input .csv File and Phase_info Dictionary</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Models with External Subsystems</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-of-aviary-examples">Installation of Aviary examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-subsystems">Adding Subsystems</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-battery-subsystem">Adding battery subsystem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#checking-in-the-setup-function-call">Checking in the setup function call</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-on-outputs">More on outputs</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#level-3">Level 3</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#more-on-objectives">More on objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-check-partials-function">The check_partials function</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-an-openaerostruct-wingbox-external-subsystem">Adding an OpenAeroStruct wingbox external subsystem</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-of-openaerostruct">Installation of OpenAeroStruct</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-openaerostruct-example">Understanding the OpenAeroStruct Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-the-openaerostruct-example">Running the OpenAeroStruct Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,841 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>FLOPS Based Blended Wing Body Modeling</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e4d2302c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=1ae7504c"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/features/blended_wing_body_FLOPS';</script>
+    <link rel="icon" href="../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Troubleshooting" href="../troubleshooting.html" />
+    <link rel="prev" title="GASP Based Blended Wing Body Modeling" href="blended_wing_body_GASP.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <script>document.write(`<img src="../../_static/aviary.png" class="logo__image only-dark" alt=" - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Aviary Documentation
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/what_aviary_does.html">What Aviary Does</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/tools_that_aviary_uses.html">Tools That Aviary is Built Upon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../getting_started/onboarding.html">Onboarding Guide</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/onboarding_level1.html">Level 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/onboarding_level2.html">Level 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/onboarding_level3.html">Level 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/onboarding_ext_subsystem.html">Models with External Subsystems</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../../getting_started/input_csv_phase_info.html">Vehicle Input .csv File and Phase_info Dictionary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/now_what.html">Now What?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_interface.html">Aviary User Interface</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../UI_Levels.html">User Interface Levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../input_files.html">Input Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_info.html">The <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../postprocessing_and_visualizing_results.html">Postprocessing and Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../features_and_functionalities.html">Features and Functionalities</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../aerodynamics.html">Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external_aero.html">Externally Computed Polars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../mass.html">Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../subsystems.html">SubsystemBuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../using_external_subsystems.html">Using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overriding.html">Overriding Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../examples/intro.html">Discussing the Aviary Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/simple_mission_example.html">Conventional Aircraft and Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/coupled_aircraft_mission_optimization.html">Coupled Aircraft-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/additional_flight_phases.html">Mission Optimization with Many Phases for a Commercial Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/reserve_missions.html">Reserve Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/off_design_example.html">Off-Design Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/level_2_detailed_takeoff_and_landing.html">Level 2 Detailed Takeoff and Landing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/modeling_exercise.html">Modeling Exercise for the Usability Study</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/externally_supported_subsystems.html">Externally Supported Subsystems</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../misc_resources/feature_comparison.html">Feature Comparison with Legacy Codes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../misc_resources/comparison_to_flops.html">Comparison to FLOPS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/planned_future_features.html">Planned Future Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/features/blended_wing_body_FLOPS.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/features/blended_wing_body_FLOPS.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/user_guide/features/blended_wing_body_FLOPS.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>FLOPS Based Blended Wing Body Modeling</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flops-based-geometry">FLOPS Based Geometry</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuselage-layout">Fuselage Layout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wings">Wings</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-wings">Detailed Wings</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-wings">Simple Wings</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuselage-and-wing">Fuselage and Wing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuselage-cross-section-and-wetted-area">Fuselage Cross Section and Wetted Area</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#characteristics">Characteristics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flops-based-mass">FLOPS Based Mass</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flops-based-aerodynamics">FLOPS Based Aerodynamics</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="flops-based-blended-wing-body-modeling">
+<h1>FLOPS Based Blended Wing Body Modeling<a class="headerlink" href="#flops-based-blended-wing-body-modeling" title="Link to this heading">#</a></h1>
+<p>The blended wing body aircraft is modeled following the FLOPS implementation. It is important to point out that the Aviary implementation is limited to certain assumptions. To model a special model, the user must read this document carefully to see it is within the scope of the Aviary implementation.</p>
+<section id="flops-based-geometry">
+<h2>FLOPS Based Geometry<a class="headerlink" href="#flops-based-geometry" title="Link to this heading">#</a></h2>
+<p>The FLOPS based geometry subsystems are shown in the following table. The left column is for the conventional aircraft and the right column is for BWB aircraft. In both case, users can choose a simple layout or a detailed layout.</p>
+<p><strong>Comparision of Conventional Aircraft and BWB Aircraft</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tube+Wing</p></th>
+<th class="head"><p>BWB</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SimpleCabinLayout</span></code> or <code class="docutils literal notranslate"><span class="pre">DetailedCabinLayout</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BWBSimpleCabinLayout</span></code> or <code class="docutils literal notranslate"><span class="pre">{glue:md}BWBDetailedCabinLayout</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BWBUpdateDetailedWingDist</span></code> or <code class="docutils literal notranslate"><span class="pre">BWBComputeDetailedWingDist</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FuselagePrelim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BWBFuselagePrelim</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">WingPrelim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BWBWingPrelim</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_Prelim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_Prelim</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_Wing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_BWBWing</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_Tail</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_Tail</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_Fuselage</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_BWBFuselage</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_FuselageRatios</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_FuselageRatios</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Nacelles</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Nacelles</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Canard</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Canard</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">WingCharacteristicLength</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BWBWingCharacteristicLength</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NacelleCharacteristicLength</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NacelleCharacteristicLength</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">OtherCharacteristicLengths</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OtherCharacteristicLengths</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TotalWettedArea</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TotalWettedArea</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As we see in the above table, some geometrical components have no special code in the BWB case (e.g. <code class="docutils literal notranslate"><span class="pre">Nacelles</span></code> and <code class="docutils literal notranslate"><span class="pre">_Tail</span></code>). So, the new implementation of BWB geometry uses the same components in conventional aircraft.</p>
+<p>Comparing to traditional tube and wing model, Blended wing body (BWB) modeling has two major new changes in geometry subsystems:</p>
+<ul class="simple">
+<li><p>Wings always have detailed wing data,</p></li>
+<li><p>Fuselage layout is computed using a special algorithm.</p></li>
+</ul>
+<p>We will explain some details of each feature in this document.</p>
+<section id="fuselage-layout">
+<h3>Fuselage Layout<a class="headerlink" href="#fuselage-layout" title="Link to this heading">#</a></h3>
+<p>There are two options: simple layout and detailed layout. For simple layout, you are given fuselage length, width and leading edge angle (as well as the rear spar percent chord at fuselage centerline, default to 70%), Aviary computes passenger compartment length, wing root chord, cabin area. This is shown in the following image:</p>
+<p><img alt="Fuselage size" src="../../_images/BWB_FLOPS_Fuselage_Simple_Geom.png" /></p>
+<p>Variable <code class="docutils literal notranslate"><span class="pre">Rear_spar_percent_chord</span></code> serves as the ratio of fuselage length and compartment length. It says that the rear spar is mounted at the side of fuselage which is 70% (default) of fuselage length from the leading edge. <code class="docutils literal notranslate"><span class="pre">Rear_spar_percent_chord</span></code> is hard coded for now, but can be easily converted to an Aviary variable.</p>
+<p>The detailed layout involves more details like the number of passengers, seat pitch and seat abreast. Fuselage length and width are no longer inputs but outputs. If you have those data, it is a better choice.</p>
+<p>For BWB, there is a new concept: the number of passenger cabin bays (or <code class="docutils literal notranslate"><span class="pre">Aircraft.BWB.NUM_BAYS</span></code>). It is a discrete, pressurized structural compartment within the BWB center body that contains passenger seating and is bounded by primary load-carrying frames, ribs, and pressure bulkheads. In Aviary, we determine the number of bays as how many blocks can be fit within the fuselage cabin width, assuming each block has a 12-foot width (hard coded). Note that it is not a layout term and bays are not separated by aisles even though the number of bays is computed here in fuselage layout components. The following is an example of six bays.</p>
+<p><img alt="Fuselage size" src="../../_images/BWB_FLOPS_fuselage_3_Bays.png" /></p>
+<p>Finally, fuselage height is computed from the width and height-to-width ratio.</p>
+<p>To choose detailed layout or simple layout, the user can set up a flag <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuselage.SIMPLE_LAYOUT</span></code>. If it is true, Aviary assumes a simple layout. Otherwise, it is a detailed layout.</p>
+</section>
+<section id="wings">
+<h3>Wings<a class="headerlink" href="#wings" title="Link to this heading">#</a></h3>
+<section id="detailed-wings">
+<h4>Detailed Wings<a class="headerlink" href="#detailed-wings" title="Link to this heading">#</a></h4>
+<p>For the BWB, the wing weight is always calculated with detailed wing geometry. The wing station distribution is either given (<code class="docutils literal notranslate"><span class="pre">BWBUpdateDetailedWingDist</span></code>) or created (<code class="docutils literal notranslate"><span class="pre">BWBComputeDetailedWingDist</span></code>). This means that number of input wing stations is always positive. If input wing stations are not provided, FLOPS adds three points. We call this case the simple wing case. Otherwise, we say that we have a detailed wing case.</p>
+<p>Let’s assume the detailed wing data is given. That means we are given the following arrays:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.CHORD_PER_SEMISPAN_DIST</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.THICKNESS_TO_CHORD_DIST</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.LOAD_PATH_SWEEP_DIST</span></code></p></li>
+</ul>
+<p>These data are used to define an outboard wing panel to be added to the side of the cabin. In FLOPS, data start from the wing root to the wing tip. For transporter aircraft, it is good enough. But for BWB aircraft, we need to add one additional wing station at the body centerline. So, if you obtain the data from a FLOPS data set. You need to add one entry at the beginning of the lists.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST</span></code> is the input station distribution (an Aviary option). Each entry is a location of an input station, either as a fraction from wing root to wing tip (when value &lt; 1.0), or the absolute location. If you obtain the data from a FLOPS input data, add a 0.0 at the beginning.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.CHORD_PER_SEMISPAN_DIST</span></code> is the chord length, either as a fraction of semispan or actual chord. If you obtain the data from a FLOPS input data, add a -1.0 at the beginning. It will be updated during the run.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.THICKNESS_TO_CHORD_DIST</span></code> is the thickness to chord ratios at the input station distribution. If you obtain the data from a FLOPS input data, add a -1.0 at the beginning. It will be updated during the run.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.LOAD_PATH_SWEEP_DIST</span></code> is the load path sweep angle between two adjacent input station. f you obtain the data from a FLOPS input data, add a 0.0 at the beginning. Note that this list should have one fewer entry than the other three lists.</p>
+<p>When Aviary runs, <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.CHORD_PER_SEMISPAN_DIST</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.THICKNESS_TO_CHORD_DIST</span></code>, and <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.LOAD_PATH_SWEEP_DIST</span></code> are updated and output to local variabls <code class="docutils literal notranslate"><span class="pre">BWB_THICKNESS_TO_CHORD_DIST</span></code>, <code class="docutils literal notranslate"><span class="pre">BWB_THICKNESS_TO_CHORD_DIST</span></code>, and <code class="docutils literal notranslate"><span class="pre">BWB_LOAD_PATH_SWEEP_DIST</span></code>.</p>
+</section>
+<section id="simple-wings">
+<h4>Simple Wings<a class="headerlink" href="#simple-wings" title="Link to this heading">#</a></h4>
+<p>Keep in mind that the BWB aircraft always have detailed wings, but users do not have to provide the data as above. In this case, the user should provide (0.0, 0.5, 1.0) as <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST</span></code>. Here, <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST[0]</span> <span class="pre">=</span> <span class="pre">0.0</span></code> means that the first station is at the fuselage center line （at 0.0%). <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST[2]</span> <span class="pre">=</span> <span class="pre">1.0</span></code> means that the last station is at the tip (namely 100% place). <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST[1]</span> <span class="pre">=</span> <span class="pre">0.5</span></code> is a temporary place holder. When Aviary runs, <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.INPUT_STATION_DIST[1]</span></code> is updated to the location of root chord (note that this is the actual location, not the percentage). The same three local variables  <code class="docutils literal notranslate"><span class="pre">BWB_THICKNESS_TO_CHORD_DIST</span></code> (dimension 3), <code class="docutils literal notranslate"><span class="pre">BWB_THICKNESS_TO_CHORD_DIST</span></code> (dimension 3), and <code class="docutils literal notranslate"><span class="pre">BWB_LOAD_PATH_SWEEP_DIST</span></code> (dimension 2) are updated accordingly. See <code class="docutils literal notranslate"><span class="pre">BWBComputeDetailedWingDist</span></code> component for details.</p>
+</section>
+</section>
+<section id="fuselage-and-wing">
+<h3>Fuselage and Wing<a class="headerlink" href="#fuselage-and-wing" title="Link to this heading">#</a></h3>
+<p>As summary, the geometry subsystem for BWB aircraft is very similar to that of transporter aircraft. See the diagram below:</p>
+<p><img alt="Fuselage size" src="../../_images/BWB_FLOPS_geom.png" /></p>
+<p>To choose between simple fuselage layout or detailed fuselage layout, the user sets <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuselage.SIMPLE_LAYOUT</span></code> to True or False. For BWB, to choose between providing detailed wing or letting Aviary to create a detailed wing, the user sets <code class="docutils literal notranslate"><span class="pre">Aircraft.BWB.DETAILED_WING_PROVIDED</span></code> to True or False.</p>
+<p>Comparing the two cases （transporter and BWB), we see that <code class="docutils literal notranslate"><span class="pre">BWBComputeDetailedWingDist</span></code> and <code class="docutils literal notranslate"><span class="pre">BWBUpdateDetailedWingDist</span></code> are new. This is because we must update <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.CHORD_PER_SEMISPAN_DIST</span></code>, <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.THICKNESS_TO_CHORD_DIST</span></code>, and <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.LOAD_PATH_SWEEP_DIST</span></code> in the case of BWB.</p>
+<p>This feature is explained in the following diagram (in the case of detailed wing provided):</p>
+<p><img alt="Fuselage size" src="../../_images/BWB_FLOPS_Geom_fus_wing.png" /></p>
+</section>
+<section id="fuselage-cross-section-and-wetted-area">
+<h3>Fuselage Cross Section and Wetted Area<a class="headerlink" href="#fuselage-cross-section-and-wetted-area" title="Link to this heading">#</a></h3>
+<p>Because of the nature of blended wing body, we ignore the fuselage wetted area. There, both <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuselage.CROSS_SECTION</span></code> and <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuselage.WETTED_AREA</span></code> are set to 0.0.</p>
+<p>This is implemented in <code class="docutils literal notranslate"><span class="pre">_BWBFuselage</span></code>.</p>
+</section>
+<section id="characteristics">
+<h3>Characteristics<a class="headerlink" href="#characteristics" title="Link to this heading">#</a></h3>
+<p>The FLOPS based BWB aircraft does not have horizontal and vertical tails. Once again ,we simply set both <code class="docutils literal notranslate"><span class="pre">Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH</span></code> and <code class="docutils literal notranslate"><span class="pre">Aircraft.VerticalTail.CHARACTERISTIC_LENGTH</span></code> to 0.0.</p>
+<p>This is because the FLOPS algorithm does not apply to non-horizontal and non-vertical tails scenarios. If users want to add them, their mass equations must be provided separately. See <code class="docutils literal notranslate"><span class="pre">HorizontalTailCharacteristicLength</span></code> and <code class="docutils literal notranslate"><span class="pre">VerticalTailCharacteristicLength</span></code> classes for details.</p>
+</section>
+</section>
+<section id="flops-based-mass">
+<h2>FLOPS Based Mass<a class="headerlink" href="#flops-based-mass" title="Link to this heading">#</a></h2>
+<p>Aviary computes masses of indiviual components and then sum them up. For BWB aircrafts, most of them share the same code with transporters. There are a few exceptions, however. They are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BWBFurnishingsGroupMass</span></code> (computation of <code class="docutils literal notranslate"><span class="pre">Aircraft.Furnishings.MASS</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BWBFuselageMass</span></code> (computation of <code class="docutils literal notranslate"><span class="pre">Aircraft.Fuselage.MASS</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BWBAftBodyMass</span></code> (computation of <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.BWB_AFTBODY_MASS</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BWBWingMiscMass</span></code> (computation of <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.MISC_MASS</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BWBDetailedWingBendingFact</span></code> (computation of <code class="docutils literal notranslate"><span class="pre">Aircraft.Wing.BENDING_MATERIAL_FACTOR</span></code>)</p></li>
+</ul>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">BWBAftBodyMass</span></code> is a new component for BWB. This area starts from the rear span and backward.</p>
+<p>Because the wing is always a detailed wing for BWB aircraft, we must compute the wing bending material factor with sweep adjustment. This is done in <code class="docutils literal notranslate"><span class="pre">BWBDetailedWingBendingFact</span></code>.</p>
+</section>
+<section id="flops-based-aerodynamics">
+<h2>FLOPS Based Aerodynamics<a class="headerlink" href="#flops-based-aerodynamics" title="Link to this heading">#</a></h2>
+<p>There is no special implementation of aerodynamics subsystem in FLOPS. It is likely that users need to provide their own aero tables for their design.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide/features"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="blended_wing_body_GASP.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">GASP Based Blended Wing Body Modeling</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../troubleshooting.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Troubleshooting</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flops-based-geometry">FLOPS Based Geometry</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuselage-layout">Fuselage Layout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wings">Wings</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-wings">Detailed Wings</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-wings">Simple Wings</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuselage-and-wing">Fuselage and Wing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fuselage-cross-section-and-wetted-area">Fuselage Cross Section and Wetted Area</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#characteristics">Characteristics</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flops-based-mass">FLOPS Based Mass</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#flops-based-aerodynamics">FLOPS Based Aerodynamics</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
