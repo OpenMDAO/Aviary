@@ -6600,12 +6600,11 @@ add_meta_data(
     Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
     meta_data=_MetaData,
     historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},
-    units='ft**2/s',
+    units='lbf*s/ft**2',
     desc="Atmospheric dynamic viscosity at the vehicle's current flight condition",
     default_value=0.0,
     multivalue=True,
 )
-
 
 add_meta_data(
     Dynamic.Atmosphere.KINEMATIC_VISCOSITY,
@@ -6737,6 +6736,15 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='rad/s',
     desc='Current rate at which flight path angle is changing',
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Mission.REYNOLDS_NUMBER_PER_UNIT_LENGTH,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='1/ft',
+    desc='Reynolds number per unit length at current flight condition',
     multivalue=True,
 )
 

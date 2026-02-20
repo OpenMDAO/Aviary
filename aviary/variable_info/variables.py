@@ -594,6 +594,7 @@ class Dynamic:
         DISTANCE_RATE = 'distance_rate'
         FLIGHT_PATH_ANGLE = 'flight_path_angle'
         FLIGHT_PATH_ANGLE_RATE = 'flight_path_angle_rate'
+        REYNOLDS_NUMBER_PER_UNIT_LENGTH = "reynolds_number_per_unit_length"
         SPECIFIC_ENERGY = 'specific_energy'
         SPECIFIC_ENERGY_RATE = 'specific_energy_rate'
         SPECIFIC_ENERGY_RATE_EXCESS = 'specific_energy_rate_excess'
