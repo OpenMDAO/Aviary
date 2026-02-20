@@ -21,15 +21,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class NacelleMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -58,6 +56,7 @@ class NacelleMassTest(unittest.TestCase):
                 Aircraft.Engine.SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.Nacelle.MASS,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_IO(self):
@@ -173,46 +172,6 @@ class NacelleMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class BWBNacelleMassTest(unittest.TestCase):
-    """Tests nacelle mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        inputs = get_flops_inputs(case_name, preprocess=True)
-
-        options = {
-            Aircraft.Engine.NUM_ENGINES: inputs.get_val(Aircraft.Engine.NUM_ENGINES),
-        }
-
-        prob.model.add_subsystem(
-            'nacelle',
-            NacelleMass(**options),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            self.prob,
-            case_name,
-            input_keys=[
-                Aircraft.Nacelle.AVG_DIAMETER,
-                Aircraft.Nacelle.AVG_LENGTH,
-                Aircraft.Nacelle.MASS_SCALER,
-                Aircraft.Engine.SCALED_SLS_THRUST,
-            ],
-            output_keys=Aircraft.Nacelle.MASS,
-            version=Version.BWB,
-        )
 
 
 if __name__ == '__main__':

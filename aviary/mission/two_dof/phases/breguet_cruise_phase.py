@@ -93,11 +93,13 @@ class BreguetCruisePhase(PhaseBuilder):
         transcription=None,
         subsystems=None,
         meta_data=None,
-        is_analytic_phase=True,
     ):
-        if is_analytic_phase is not True:
-            msg = 'The Breguet Cruise phase does not support dynamic variables in its subsystems.'
-            raise AttributeError(msg)
+        for sub in subsystems:
+            states = sub.get_states()
+            if len(states) > 0:
+                raise AttributeError(
+                    'The Breguet Cruise phase does not support dynamic variables in its subsystems.'
+                )
 
         super().__init__(
             name=name,
@@ -108,7 +110,7 @@ class BreguetCruisePhase(PhaseBuilder):
             transcription=transcription,
             subsystems=subsystems,
             meta_data=meta_data,
-            is_analytic_phase=is_analytic_phase,
+            is_analytic_phase=True,
         )
 
     def build_phase(self, aviary_options: AviaryValues = None):

@@ -21,15 +21,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 @use_tempdirs
 class LandingGearMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -53,7 +51,7 @@ class LandingGearMassTest(unittest.TestCase):
                 Aircraft.Design.TOUCHDOWN_MASS,
             ],
             output_keys=[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS],
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             atol=1e-11,
         )
 
@@ -198,42 +196,6 @@ class LandingGearLengthTest(unittest.TestCase):
 
     def test_IO(self):
         assert_match_varnames(self.prob.model)
-
-
-@use_tempdirs
-class BWBLandingGearMassTest(unittest.TestCase):
-    """Tests landing gear mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        prob.model.add_subsystem(
-            'landing_gear',
-            LandingGearMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            self.prob,
-            case_name,
-            input_keys=[
-                Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
-                Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
-                Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Aircraft.Design.TOUCHDOWN_MASS,
-            ],
-            output_keys=[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS],
-            version=Version.BWB,
-            atol=1e-11,
-        )
 
 
 if __name__ == '__main__':

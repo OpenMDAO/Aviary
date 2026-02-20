@@ -115,7 +115,6 @@ class SimpleCruisePhase(PhaseBuilder):
         transcription=None,
         subsystems=None,
         meta_data=None,
-        is_analytic_phase=False,
     ):
         super().__init__(
             name=name,
@@ -126,7 +125,6 @@ class SimpleCruisePhase(PhaseBuilder):
             transcription=transcription,
             subsystems=subsystems,
             meta_data=meta_data,
-            is_analytic_phase=is_analytic_phase,
         )
 
     def build_phase(self, aviary_options: AviaryValues = None):
