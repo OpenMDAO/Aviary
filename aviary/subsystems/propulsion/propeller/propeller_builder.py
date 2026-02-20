@@ -37,10 +37,30 @@ class PropellerBuilder(SubsystemBuilder):
             num_nodes=num_nodes, aviary_options=aviary_inputs, propeller_data=self.data
         )
 
+    def mission_inputs(self, **kwargs):
+        inputs = [
+            Dynamic.Atmosphere.MACH,
+            Aircraft.Engine.Propeller.TIP_SPEED_MAX,
+            Aircraft.Engine.Propeller.TIP_MACH_MAX,
+            Dynamic.Atmosphere.DENSITY,
+            Dynamic.Mission.VELOCITY,
+            Aircraft.Engine.Propeller.DIAMETER,
+            Aircraft.Engine.Propeller.ACTIVITY_FACTOR,
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
+            Aircraft.Nacelle.AVG_DIAMETER,
+            Dynamic.Atmosphere.SPEED_OF_SOUND,
+            Dynamic.Vehicle.Propulsion.RPM,
+        ]
+        return inputs
+
+    def mission_outputs(self, **kwargs):
+        outputs = [Dynamic.Vehicle.Propulsion.THRUST]
+        return outputs
+
     def get_design_vars(self):
         """
         Design vars are only tested to see if they exist in pre_mission
-        Returns a dictionary of design variables for the gearbox subsystem, where the keys are the
+        Returns a dictionary of design variables for the propeller subsystem, where the keys are the
         names of the design variables, and the values are dictionaries that contain the units for
         the design variable, the lower and upper bounds for the design variable, and any
         additional keyword arguments required by OpenMDAO for the design variable.
@@ -116,14 +136,14 @@ class PropellerBuilder(SubsystemBuilder):
 
         return parameters
 
-    # def get_mass_names(self):
-    #     return []
+    def get_mass_names(self):
+        return []
 
     def get_timeseries(self):
         return [
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
-            Dynamic.Vehicle.Propulsion.RPM + '_out',
-            Dynamic.Vehicle.Propulsion.TORQUE + '_out',
-            Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            Dynamic.Vehicle.Propulsion.RPM,
+            Dynamic.Vehicle.Propulsion.TORQUE,
+            # Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]

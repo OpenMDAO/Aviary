@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class EngineModelVariables(Enum):
-    """Define constants that map to supported variable names in an engine model."""
+    """Define constants that map to supported variable names in an engine deck."""
 
     MACH = Dynamic.Atmosphere.MACH
     ALTITUDE = Dynamic.Mission.ALTITUDE
