@@ -8,6 +8,10 @@ Aviary can also be used as a framework, where users can bring their own tools an
 A key goal of Aviary is flexibility and extensibility.
 Aviary has a large number of options that allow users to change how their aircraft is modeled and what kind of problem is being solved.
 
+```{attention}
+The Aviary documentation is currently in the middle of a complete review and overhaul. Many sections beyond the basic introductions are only loosely organized, and there may be some repetition of material in older pages. Some content in these older pages may also be slightly out-of-date to the 1.0 release. Thank you for your patience as we revamp the docs to be more concise and accurate!
+```
+
 ## Core Features
 
 ### Aircraft Design
@@ -23,7 +27,7 @@ What kind of aircraft you are modeling (regional jet, general aviation, blended-
 
 As a framework, Aviary is able to integrate external tools and methods into the design loop. We refer to these user-provided models as "external subsystems".
 This is extremely powerful and can help designers capture the effects of interacting (or "coupled") systems during optimization.
-Please see the [external subsystems doc pages](./user_guide/subsystems) for more information on how to add your own subsystems to an Aviary model.
+Please see the [external subsystems doc pages](../user_guide_unreviewed/using_external_subsystems.md) for more information on how to add your own subsystems to an Aviary model.
 
 
 ### Included Methods
