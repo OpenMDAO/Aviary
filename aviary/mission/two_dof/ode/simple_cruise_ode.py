@@ -6,6 +6,7 @@ from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
@@ -35,17 +36,22 @@ class SimpleCruiseODE(TwoDOFODE):
 
         prop_group = om.Group()
 
-        kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
-            'method': 'cruise',
-            'output_alpha': True,
-        }
         for subsystem in subsystems:
+            kwargs = {}
+
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
-                kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(**kwargs)
+                kwargs = subsystem_options[subsystem.name]
+            if isinstance(subsystem, AerodynamicsBuilder):
+                # set default options for Aero if not specified by user
+                base_kwargs = {
+                    'method': 'cruise',
+                    'output_alpha': True
+                }
+                kwargs.update(base_kwargs)
+
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
