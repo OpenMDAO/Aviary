@@ -1263,11 +1263,12 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # BWBComputeDetailedWingDist
         assert_near_equal(prob[Aircraft.Wing.SPAN], 186.3, tol)
         # DetailedCabinLayout
-        assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 81.43, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.MAX_WIDTH], 49.77182929, tolerance=1e-9)
+        assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 81.60326742, tol)
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 4697.33181006, tol)
-        assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 12.35302131, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 7.0, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 2988.879661796, tol)
+        assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 12.82337059, tol)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 4.0, tol)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 46.2868886894979, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 6710.4740143724875, tol)
