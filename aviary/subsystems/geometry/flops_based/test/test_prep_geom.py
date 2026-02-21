@@ -749,6 +749,35 @@ class BWBWingTest(unittest.TestCase):
         exp1 = 17683.7562096
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
+    def test_case2(self):
+        """Provided detailed wing case for bwb300_baseline"""
+        prob = self.prob
+        self.aviary_options = AviaryValues()
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DIST,
+            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            units='unitless',
+        )
+        prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DIST',
+            val=[116.57609631, 55.0, 33.2, 18.97, 14.19, 10.2, 2.36127568],
+        )
+        prob.set_val(
+            'BWB_THICKNESS_TO_CHORD_DIST',
+            val=[0.1792, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06],
+        )
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=49.77182929)
+        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=1230.5)
+        prob.set_val(Aircraft.Wing.SPAN, val=186.631829293424)
+        prob.run_model()
+
+        out1 = prob.get_val(Aircraft.Wing.WETTED_AREA)
+        exp1 = 17302.04910213
+        assert_near_equal(out1, exp1, tolerance=1e-8)
+
 
 @use_tempdirs
 class BWBSimplePrepGeomTest(unittest.TestCase):
@@ -1300,4 +1329,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBWingTest()
+    test.setUp()
+    test.test_case2()

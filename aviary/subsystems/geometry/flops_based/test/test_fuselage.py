@@ -249,7 +249,4 @@ class BWBFuselagePrelimTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBDetailedCabinLayoutTest()
-    test.setUp()
-    test.test_case2()
+    unittest.main()
