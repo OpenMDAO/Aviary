@@ -12,6 +12,7 @@ from aviary.variable_info.variables import Aircraft
 class Canard(om.ExplicitComponent):
     """Calculate the wetted area of canard."""
 
+    # TODO: what is it for?
     def initialize(self):
         self.options.declare(
             'aviary_options',

@@ -507,7 +507,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)

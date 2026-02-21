@@ -477,8 +477,8 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        num_bays = int(0.5 + max_width.real / bay_width_max.real)
-        if num_bays > num_bays_max and num_bays_max > 0:
+        num_bays = int(0.5 + max_width / bay_width_max)
+        if num_bays.real > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
         outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
@@ -654,27 +654,30 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            z = 0.5 + max_width / bay_width_max
-            z = z[0]
-            num_bays = int(z.real)
-            if num_bays > num_bays_max and num_bays_max > 0:
+            num_bays_tmp = 0.5 + max_width / bay_width_max
+            if num_bays_tmp[0].real > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
+            else:
+                num_bays = int(num_bays_tmp[0].real)
 
             # Enforce maximum bay width
             bay_width = max_width / num_bays
             if bay_width > bay_width_max:
                 bay_width = bay_width_max
-                num_bays = int(0.999 + max_width / bay_width)
-                if num_bays > num_bays_max and num_bays_max > 0:
+                num_bays_tmp = 0.999 + max_width / bay_width
+                if num_bays_tmp.real > num_bays_max and num_bays_max > 0:
                     num_bays = num_bays_max
                     max_width = bay_width_max * bay_width
                     pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0
                     root_chord = pax_compart_length - tan_sweep * max_width / 2.0
+                else:
+                    num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
+
             # If number of bays has changed, recalculate cabin area
 
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
-        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
+        outputs[Aircraft.BWB.NUM_BAYS] = num_bays
 
         outputs[Aircraft.Fuselage.LENGTH] = length
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length

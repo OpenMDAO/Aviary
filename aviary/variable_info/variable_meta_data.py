@@ -3698,6 +3698,7 @@ add_meta_data(
     Aircraft.Fuselage.SIMPLE_LAYOUT,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    types=bool,
     units='unitless',
     desc='carry out simple or detailed layout of fuselage (for FLOPS based geometry).',
     option=True,

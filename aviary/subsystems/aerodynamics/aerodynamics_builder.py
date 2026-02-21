@@ -494,7 +494,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
             if method == 'computed':
-                for var in COMPUTED_CORE_INPUTS:
+                try:
+                    design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+                except:
+                    design_type = AircraftTypes.TRANSPORT
+                if design_type is AircraftTypes.BLENDED_WING_BODY:
+                    core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                else:
+                    core_inputs_computed = COMPUTED_CORE_INPUTS
+                for var in core_inputs_computed:
                     meta = _MetaData[var]
 
                     val = meta['default_value']
@@ -622,7 +630,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
 
-            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            try:
+                design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            except:
+                design_type = AircraftTypes.TRANSPORT
 
             if design_type is AircraftTypes.BLENDED_WING_BODY:
                 all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
@@ -712,6 +723,37 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
     Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
     Aircraft.VerticalTail.WETTED_AREA,
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.CHARACTERISTIC_LENGTH,
+    Aircraft.Wing.FINENESS,
+    Aircraft.Wing.LAMINAR_FLOW_LOWER,
+    Aircraft.Wing.LAMINAR_FLOW_UPPER,
+    Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
+    Aircraft.Wing.SWEEP,
+    Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD,
+    Aircraft.Wing.WETTED_AREA,
+    # Mission.Summary.GROSS_MASS,
+    Mission.Design.LIFT_COEFFICIENT,
+    Mission.Design.MACH,
+]
+
+COMPUTED_CORE_INPUTS_BWB = [
+    Aircraft.Design.BASE_AREA,
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
+    Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+    Aircraft.Fuselage.CROSS_SECTION,
+    Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+    Aircraft.Fuselage.FINENESS,
+    Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
+    Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
+    Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+    Aircraft.Fuselage.WETTED_AREA,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CHARACTERISTIC_LENGTH,
