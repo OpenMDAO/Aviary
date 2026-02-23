@@ -48,15 +48,13 @@ class GroundrollODE(TwoDOFODE):
         )
 
         kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
             'method': 'low_speed',
         }
         for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
             if system is not None:
                 mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
                 mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)

@@ -48,7 +48,7 @@ class FlightPathODE(TwoDOFODE):
 
         print_level = 0
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'low_speed'}
+        kwargs = {'method': 'low_speed'}
         if self.options['clean']:
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
@@ -114,7 +114,7 @@ class FlightPathODE(TwoDOFODE):
             )
 
         for subsystem in subsystems:
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
             if system is not None:
                 mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
                 mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)

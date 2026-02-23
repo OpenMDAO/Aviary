@@ -36,8 +36,6 @@ class BreguetCruiseODE(TwoDOFODE):
         prop_group = om.Group()
 
         kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
             'method': 'cruise',
             'output_alpha': True,
         }
@@ -45,7 +43,7 @@ class BreguetCruiseODE(TwoDOFODE):
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(nn, aviary_inputs=aviary_options, **kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
                     target = prop_group
@@ -174,28 +172,24 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
         prop_group = om.Group()
 
         kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
             'method': 'cruise',
             'output_alpha': True,
         }
         for subsystem in subsystems:
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
-                    prop_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = prop_group
                 else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = self
+                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
+                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
+                target.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,

@@ -175,13 +175,13 @@ class FlightODE(TwoDOFODE):
             promotes_outputs=['theta', 'TAS_violation'],
         )
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'cruise'}
+        kwargs = {'method': 'cruise'}
         # collect the propulsion group names for later use
         for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilder):
                     target = lift_balance_group

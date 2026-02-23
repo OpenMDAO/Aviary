@@ -50,7 +50,7 @@ class UnsteadyControlIterGroup(om.Group):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options}
+        kwargs = {}
 
         if clean:
             kwargs['method'] = 'low_speed'
@@ -58,7 +58,7 @@ class UnsteadyControlIterGroup(om.Group):
             kwargs['method'] = 'cruise'
 
         for subsystem in subsystems:
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
             if system is not None:
                 mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
                 mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
