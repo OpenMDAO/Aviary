@@ -1,12 +1,16 @@
 """Example mission using the a detailed battery model."""
 
 from aviary.api import default_height_energy_phase_info as phase_info
-from aviary.examples.external_subsystems.battery.battery_builder import BatteryBuilder
-from aviary.examples.external_subsystems.battery.battery_variable_meta_data import ExtendedMetaData
 from aviary.core.aviary_problem import AviaryProblem
+from aviary.models.external_subsystems.detailed_battery.battery_variable_meta_data import (
+    ExtendedMetaData,
+)
+from aviary.models.external_subsystems.detailed_battery.detailed_battery_builder import (
+    DetailedBatteryBuilder,
+)
 from aviary.utils.functions import get_aviary_resource_path
 
-battery_builder = BatteryBuilder(include_constraints=False)
+battery_builder = DetailedBatteryBuilder(include_constraints=False)
 
 prob = AviaryProblem()
 

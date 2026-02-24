@@ -3,7 +3,7 @@
 from copy import deepcopy
 
 import aviary.api as av
-from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
+from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 
 phase_info = deepcopy(av.default_height_energy_phase_info)
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
     )
 
-    prob.load_external_subsystems([CustomAeroBuilder()])
+    prob.load_external_subsystems([SimpleAeroBuilder()])
 
     prob.check_and_preprocess_inputs()
 

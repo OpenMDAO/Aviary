@@ -1,15 +1,13 @@
 """Builder for a simple drag calculation that replaces Aviary's calculation."""
 
-from aviary.examples.external_subsystems.custom_aero.simple_drag import SimpleAeroGroup
+from aviary.examples.external_subsystems.simple_aero.simple_drag import SimpleAeroGroup
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class CustomAeroBuilder(SubsystemBuilder):
+class SimpleAeroBuilder(SubsystemBuilder):
     """
-    Prototype of a subsystem that overrides an aviary internally computed var.
-
-    It also provides a method to build OpenMDAO systems for the pre-mission and mission computations of the subsystem.
+    A basic subsystem that provides a simplified equation for drag computation.
 
     Attributes
     ----------
@@ -26,11 +24,10 @@ class CustomAeroBuilder(SubsystemBuilder):
 
         Returns
         -------
-        mission_sys : openmdao.core.System
-            An OpenMDAO system containing all computations that need to happen
-            during the mission. This includes time-dependent states that are
-            being integrated as well as any other variables that vary during
-            the mission.
+        aero_group : openmdao.core.System
+            An OpenMDAO system containing all computations that need to happen during the mission.
+            This includes time-dependent states that are being integrated as well as any other
+            variables that vary during the mission.
         """
         aero_group = SimpleAeroGroup(
             num_nodes=num_nodes,
@@ -61,11 +58,11 @@ class CustomAeroBuilder(SubsystemBuilder):
 
         Used in the phase builders (e.g. cruise_phase.py) when other parameters are added to the phase.
 
-        This is distinct from `get_design_vars` in a nuanced way. Design variables
-        are variables that are optimized by the problem that are not at the phase level.
-        An example would be something that occurs in the pre-mission level of the problem.
-        Parameters are fixed values that are held constant throughout a phase, but if
-        `opt=True`, they are able to change during the optimization.
+        This is distinct from `get_design_vars` in a nuanced way. Design variables are variables
+        that are optimized by the problem that are not at the phase level. An example would be
+        something that occurs in the pre-mission level of the problem. Parameters are fixed values
+        that are held constant throughout a phase, but if `opt=True`, they are able to change during
+        the optimization.
 
         Parameters
         ----------
