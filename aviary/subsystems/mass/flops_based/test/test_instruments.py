@@ -16,14 +16,12 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
-
 
 class TransportInstrumentsMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -58,6 +56,7 @@ class TransportInstrumentsMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
             output_keys=Aircraft.Instruments.MASS,
+            version=Version.TRANSPORT_and_BWB,
             tol=1e-3,
         )
 
@@ -109,53 +108,6 @@ class TransportInstrumentsMassTest2(unittest.TestCase):
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-@use_tempdirs
-class BWBTransportInstrumentsMassTest(unittest.TestCase):
-    """Tests instrument mass calculation for BWB."""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
-        prob = self.prob
-
-        inputs = get_flops_inputs(case_name, preprocess=True)
-
-        options = {
-            Aircraft.CrewPayload.NUM_FLIGHT_CREW: inputs.get_val(
-                Aircraft.CrewPayload.NUM_FLIGHT_CREW
-            ),
-            Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES
-            ),
-            Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
-                Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
-            ),
-            Mission.Constraints.MAX_MACH: inputs.get_val(Mission.Constraints.MAX_MACH),
-        }
-
-        prob.model.add_subsystem(
-            'instruments_tests',
-            TransportInstrumentMass(**options),
-            promotes_outputs=[
-                Aircraft.Instruments.MASS,
-            ],
-            promotes_inputs=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
-        )
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-        flops_validation_test(
-            prob,
-            case_name,
-            input_keys=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
-            output_keys=Aircraft.Instruments.MASS,
-            version=Version.BWB,
-            tol=1e-3,
-        )
 
 
 if __name__ == '__main__':
