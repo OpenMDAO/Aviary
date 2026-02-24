@@ -329,7 +329,7 @@ if __name__ == '__main__':
 
     # Load optimization problem formulation
     # Detail which variables the optimizer can control
-    prob.add_objective('mass')
+    prob.add_objective('mass')  # maximize final mass (i.e. minimize fuel burn)
 
     prob.setup()
 
