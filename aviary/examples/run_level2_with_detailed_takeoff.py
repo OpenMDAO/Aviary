@@ -27,6 +27,7 @@ subsystem_options = {
 
 mach_optimize = True
 altitude_optimize = True
+optimizer = 'SLSQP'
 num_segments = 3
 
 phase_info = {
