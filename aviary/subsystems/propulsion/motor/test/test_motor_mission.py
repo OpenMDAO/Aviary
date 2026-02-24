@@ -7,16 +7,21 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.variable_info.variables import Aircraft, Dynamic
-
+from aviary.utils.aviary_values import AviaryValues
+import aviary.api as av
 
 class TestMotorMission(unittest.TestCase):
     @use_tempdirs
     def test_motor_mission(self):
         nn = 3
 
+        filename = 'electric_motor_1800Nm_6000rpm.csv'
+        options = AviaryValues()
+        options.set_val(av.Aircraft.Engine.Motor.DATA_FILE, av.get_path(filename))
+
         prob = om.Problem()
 
-        prob.model.add_subsystem('motor_map', MotorMission(num_nodes=nn, motor_model='aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'), promotes=['*'])
+        prob.model.add_subsystem('motor_map', MotorMission(num_nodes=nn, aviary_inputs=options), promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 

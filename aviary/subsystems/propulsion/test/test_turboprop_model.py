@@ -27,10 +27,21 @@ class TurbopropMissionTest(unittest.TestCase):
     def prepare_model(
         self, test_points=[(0, 0, 0), (0, 0, 1)], shp_model=None, prop_model=None, **kwargs
     ):
+        # allow the user to indicate file input is an electric motor model
+        electric_motor = kwargs.get('electric_motor', False) # default = false
+
         options = get_option_defaults()
+
         if isinstance(shp_model, Path):
-            options.set_val(Aircraft.Engine.DATA_FILE, shp_model)
-            shp_model = None
+            if electric_motor:
+                # This is an electric motor data file
+                options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_model)
+                shp_model = MotorBuilder(options=options)
+            else:
+                # This is a regular engine data file
+                options.set_val(Aircraft.Engine.DATA_FILE, shp_model)
+                shp_model = None
+
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -259,9 +270,9 @@ class TurbopropMissionTest(unittest.TestCase):
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         num_nodes = len(test_points)
 
-        motor_model = MotorBuilder()
+        motor_model = get_path('electric_motor_1800Nm_6000rpm.csv')
 
-        self.prepare_model(test_points, motor_model, input_rpm=True)
+        self.prepare_model(test_points, motor_model, input_rpm=True, electric_motor=True)
         self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')

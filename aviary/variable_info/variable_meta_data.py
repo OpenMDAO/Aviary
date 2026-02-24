@@ -2611,6 +2611,18 @@ add_meta_data(
 # ================================
 
 add_meta_data(
+    Aircraft.Engine.Motor.DATA_FILE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'None', 'LEAPS1': None},
+    units='unitless',
+    types=str,
+    default_value=None,
+    option=True,
+    desc='filepath to data file containing motor performance tables',
+    multivalue=True,
+)
+
+add_meta_data(
     Aircraft.Engine.Motor.MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'WMOTOR', 'FLOPS': None, 'LEAPS1': None},

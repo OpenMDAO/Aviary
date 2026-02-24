@@ -2,7 +2,7 @@ from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
-
+from aviary.utils.aviary_values import AviaryValues
 
 class MotorBuilder(SubsystemBuilder):
     """
@@ -64,15 +64,18 @@ class MotorBuilder(SubsystemBuilder):
         No preprocessing needed for the motor subsystem.
     """
 
-    def __init__(self, name='motor'):  # , include_constraints=True):
+    def __init__(self, 
+                 options: AviaryValues,
+                 name='motor',
+                 ):  # , include_constraints=True):
         # self.include_constraints = include_constraints
-        super().__init__(name)
+        super().__init__(name, options)
 
-    def build_pre_mission(self, aviary_inputs):
-        return MotorPreMission(aviary_inputs=aviary_inputs)  # , simple_mass=True)
+    def build_pre_mission(self, options):
+        return MotorPreMission(aviary_inputs=options)
 
-    def build_mission(self, num_nodes, aviary_inputs):
-        return MotorMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
+    def build_mission(self, num_nodes, options):
+        return MotorMission(num_nodes=num_nodes, aviary_inputs=options)
 
     # def get_constraints(self):
     #     if self.include_constraints:
