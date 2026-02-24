@@ -61,15 +61,16 @@ parts:
 
 - caption: Examples
   chapters:
-    - file: examples/simple_mission_example
-    - file: examples/more_advanced_example
-    - file: examples/coupled_aircraft_mission_optimization
-    - file: examples/additional_flight_phases
-    - file: examples/reserve_missions
-    - file: examples/multi_mission
-    - file: examples/off_design_example
-    - file: examples/OAS_subsystem
-    - file: examples/level_2_detailed_takeoff_and_landing
+    - file: examples/simple_mission
+    - file: examples/custom_optimization
+    - file: examples/reserve_mission
+    - file: examples_unreviewed/more_advanced_example
+    - file: examples_unreviewed/coupled_aircraft_mission_optimization
+    - file: examples_unreviewed/additional_flight_phases
+    - file: examples_unreviewed/multi_mission
+    - file: examples_unreviewed/off_design_example
+    - file: examples_unreviewed/OAS_subsystem
+    - file: examples_unreviewed/level_2_detailed_takeoff_and_landing
 
 - caption: Theory Guide
   chapters:
