@@ -260,25 +260,25 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
         first_flight_phase = aviary_group.traj._phases[first_flight_phase_name]
         first_flight_phase.set_state_options(
-                Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
-            )
+            Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+        )
 
         # connect summary mass to the initial guess of mass in the first phase
         eq = aviary_group.add_subsystem(
-                f'link_{first_flight_phase_name}_mass',
-                om.EQConstraintComp(),
-                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
-            )
+            f'link_{first_flight_phase_name}_mass',
+            om.EQConstraintComp(),
+            promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+        )
 
         # TODO: replace hard_coded ref for this constraint.
         eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True)
 
         aviary_group.connect(
-                f'traj.{first_flight_phase_name}.states:mass',
-                f'link_{first_flight_phase_name}_mass.lhs:mass',
-                src_indices=[0],
-                flat_src_indices=True,
-            )
+            f'traj.{first_flight_phase_name}.states:mass',
+            f'link_{first_flight_phase_name}_mass.lhs:mass',
+            src_indices=[0],
+            flat_src_indices=True,
+        )
 
     def set_phase_initial_guesses(
         self, aviary_group, phase_name, phase, guesses, target_prob, parent_prefix
