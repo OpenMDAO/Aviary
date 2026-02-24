@@ -157,7 +157,7 @@ prob.check_and_preprocess_inputs()
 
 prob.build_model()
 
-prob.add_driver('SLSQP', max_iter=100)
+prob.add_driver('SNOPT', max_iter=100)
 
 prob.add_design_variables()
 
@@ -166,6 +166,9 @@ prob.add_design_variables()
 prob.add_objective('mass')
 
 prob.setup()
+
+# set the start-of-landing mass to mission:summary:gross_mass
+prob.set_val('mission:summary:gross_mass', 175000, units='lbm')
 
 prob.run_aviary_problem()
 
