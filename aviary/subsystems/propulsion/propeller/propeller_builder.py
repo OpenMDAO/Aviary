@@ -116,7 +116,7 @@ class PropellerBuilder(SubsystemBuilder):
 
         return parameters
 
-    # def get_mass_names(self):
+    # def get_mass_names(self, aviary_inputs=None):
     #     return []
 
     def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):

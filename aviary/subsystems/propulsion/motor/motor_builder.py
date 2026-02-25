@@ -116,7 +116,7 @@ class MotorBuilder(SubsystemBuilder):
 
     # return initial_guess_dict
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """
         Return a list of names for the motor subsystem.
 

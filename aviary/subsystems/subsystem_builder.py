@@ -181,11 +181,14 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         """
         Return a list of variable names that will be linked between phases.
 
-        Optional
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------
@@ -330,9 +333,14 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """
         Return a list of names of the mass variables for the subsystem.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------
@@ -341,7 +349,7 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def preprocess_inputs(self, aviary_inputs):
+    def preprocess_inputs(self, aviary_inputs=None):
         """
         Preprocess the inputs to the subsystem, returning a modified AviaryValues object.
 

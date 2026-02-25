@@ -33,7 +33,7 @@ class BatteryBuilder(SubsystemBuilder):
     def build_pre_mission(self, aviary_inputs=None):
         return SizeBattery(aviary_inputs=aviary_inputs)
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         return [Aircraft.Battery.MASS]
 
     def build_mission(self, num_nodes, aviary_inputs=None, **kwargs) -> om.Group:
@@ -116,6 +116,6 @@ class BatteryBuilder(SubsystemBuilder):
         }
         return params
 
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         # link cumulative electric energy between phases
         return [Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED]

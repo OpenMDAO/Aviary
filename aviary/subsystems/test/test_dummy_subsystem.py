@@ -230,7 +230,7 @@ class PreOnlyBuilder(SubsystemBuilder):
     def build_pre_mission(self, aviary_inputs):
         return DummyComp()
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         return [Aircraft.Dummy.VARIABLE_OUT]
 
 

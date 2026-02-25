@@ -198,11 +198,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return constraints
 
     # NOTE no unittests!
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         linked_vars = {}
         for engine in self.engine_models:
-            engine_linked_vars = engine.get_linked_variables()
+            engine_linked_vars = engine.get_linked_variables(aviary_inputs=aviary_inputs)
             linked_vars.update(engine_linked_vars)
 
         return linked_vars
@@ -247,21 +247,21 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return initial_guesses
 
     # NOTE no unittests!
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """Call get_mass_names() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
-            engine_mass_names = engine.get_mass_names()
+            engine_mass_names = engine.get_mass_names(aviary_inputs=aviary_inputs)
             mass_names.update(engine_mass_names)
 
         return mass_names
 
     # NOTE no unittests!
-    def preprocess_inputs(self):
+    def preprocess_inputs(self, aviary_inputs=None):
         """Call get_mass_names() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
-            engine_mass_names = engine.get_mass_names()
+            engine_mass_names = engine.get_mass_names(aviary_inputs=aviary_inputs)
             mass_names.update(engine_mass_names)
 
         return mass_names

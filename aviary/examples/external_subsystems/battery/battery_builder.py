@@ -82,7 +82,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return states_dict
 
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         """
         Return the list of linked variables for the battery subsystem; in this case
         it's our two state variables.
@@ -242,7 +242,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return initial_guess_dict
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """
         Return a list of names for the battery subsystem.
 

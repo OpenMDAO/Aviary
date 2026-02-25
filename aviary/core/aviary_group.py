@@ -585,7 +585,7 @@ class AviaryGroup(om.Group):
         # Loop through all the phases in this subsystem.
         for external_subsystem in self.external_subsystems:
             # Get all the subsystem builders for this phase.
-            mass_names.extend(external_subsystem.get_mass_names())
+            mass_names.extend(external_subsystem.get_mass_names(aviary_inputs=self.aviary_inputs))
 
         if mass_names:
             formatted_names = []
@@ -1106,7 +1106,9 @@ class AviaryGroup(om.Group):
         for idx, phase_name in enumerate(self.mission_info):
             lists_to_link.append([])
             for external_subsystem in self.external_subsystems:
-                lists_to_link[idx].extend(external_subsystem.get_linked_variables())
+                lists_to_link[idx].extend(
+                    external_subsystem.get_linked_variables(aviary_inputs=self.aviary_inputs)
+                )
 
         # get unique variable names from lists_to_link
         unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
