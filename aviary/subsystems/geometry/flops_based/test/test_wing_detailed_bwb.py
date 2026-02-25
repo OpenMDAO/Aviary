@@ -136,6 +136,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
     def test_case2(self):
+        """bwb300_baseline"""
         prob = self.prob
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
