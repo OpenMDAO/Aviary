@@ -383,7 +383,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         Optional, used if subsystems have fixed values.
 
-        Used in the phase builders (e.g. cruise_phase.py) when other parameters are
+        Used in the phase builders (e.g. breguet_cruise_phase.py) when other parameters are
         added to the phase.
 
         This is distinct from `get_design_vars` in a nuanced way. Design variables
