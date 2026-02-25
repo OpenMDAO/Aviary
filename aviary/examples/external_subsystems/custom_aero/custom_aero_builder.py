@@ -59,7 +59,7 @@ class CustomAeroBuilder(SubsystemBuilder):
 
         Optional, used if subsystems have fixed values.
 
-        Used in the phase builders (e.g. cruise_phase.py) when other parameters are added to the phase.
+        Used in the phase builders when other parameters are added to the phase.
 
         This is distinct from `get_design_vars` in a nuanced way. Design variables
         are variables that are optimized by the problem that are not at the phase level.
