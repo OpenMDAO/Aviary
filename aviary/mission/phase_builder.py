@@ -587,6 +587,7 @@ class PhaseBuilder(ABC):
                     )
         return phase
 
+
 _registered_phase_builder_types = []
 
 
