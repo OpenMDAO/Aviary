@@ -1493,7 +1493,7 @@ class AviaryGroup(om.Group):
             initial_guesses = subsystem.get_initial_guesses(
                 aviary_inputs=self.aviary_inputs,
                 phase_info=self.mission_info[phase_name],
-                phase_name=phase_name
+                phase_name=phase_name,
             )
 
             # Loop over each guess

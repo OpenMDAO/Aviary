@@ -546,9 +546,7 @@ class PhaseBuilder(ABC):
         for subsystem in subsystems:
             # Fetch the states from the current subsystem
             subsystem_states = subsystem.get_states(
-                aviary_inputs=aviary_inputs,
-                phase_info=self.user_options,
-                phase_name=phase_name
+                aviary_inputs=aviary_inputs, phase_info=self.user_options, phase_name=phase_name
             )
 
             # Add each state and its corresponding arguments to the phase
@@ -564,9 +562,7 @@ class PhaseBuilder(ABC):
                 phase.add_state(state_name, **kwargs)
 
             controls = subsystem.get_controls(
-                aviary_inputs=aviary_inputs,
-                phase_info=self.user_options,
-                phase_name=phase_name
+                aviary_inputs=aviary_inputs, phase_info=self.user_options, phase_name=phase_name
             )
 
             for control_name in controls:
@@ -574,9 +570,7 @@ class PhaseBuilder(ABC):
                 phase.add_control(control_name, **kwargs)
 
             constraints = subsystem.get_constraints(
-                aviary_inputs=aviary_inputs,
-                phase_info=self.user_options,
-                phase_name=phase_name
+                aviary_inputs=aviary_inputs, phase_info=self.user_options, phase_name=phase_name
             )
 
             # Add each constraint and its corresponding arguments to the phase
@@ -588,7 +582,9 @@ class PhaseBuilder(ABC):
                 elif con_type == 'path':
                     phase.add_path_constraint(constraint_name, **con_args)
                 else:
-                    raise ValueError(f'Invalid type "{con_type}" in builder for {subsystem.pathname}.')
+                    raise ValueError(
+                        f'Invalid type "{con_type}" in builder for {subsystem.pathname}.'
+                    )
         return phase
 
 _registered_phase_builder_types = []

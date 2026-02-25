@@ -120,9 +120,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
         states = {}
         for engine in self.engine_models:
             engine_states = engine.get_states(
-                aviary_inputs=aviary_inputs,
-                phase_info=phase_info,
-                phase_name=phase_name
+                aviary_inputs=aviary_inputs, phase_info=phase_info, phase_name=phase_name
             )
             states.update(engine_states)
 
@@ -189,9 +187,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
         constraints = {}
         for engine in self.engine_models:
             engine_constraints = engine.get_constraints(
-                aviary_inputs=aviary_inputs,
-                phase_info=phase_info,
-                phase_name=phase_name
+                aviary_inputs=aviary_inputs, phase_info=phase_info, phase_name=phase_name
             )
             constraints.update(engine_constraints)
 
