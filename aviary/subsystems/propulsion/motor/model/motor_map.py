@@ -8,17 +8,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 class MotorMap(om.Group):
     """
-    This function takes in 0-1 values for electric motor throttle,
-    scales those values into 0 to max_torque on the motor map
-    this also allows us to solve for motor efficiency
-    then we scale the torque up based on the actual scale factor of the motor.
-    This avoids the need to rescale the map values, and still allows for the motor scale to be optimized.
-    Scaling only effects torque (and therefore shaft power production, and electric power consumption).
-    RPM is not scaled and is assumed to be maxed at 6,000 rpm.
-    The original maps were put together for a 746kw (1,000 hp) electric motor published in the TTBW paper:
-    https://ntrs.nasa.gov/api/citations/20230016987/downloads/TTBW_SciTech_2024_Final_12_5_2023.pdf
-    The map is shown in Figure 4.
-
     Inputs
     ----------
     Dynamic.Vehicle.Propulsion.THROTTLE : float (unitless) (0 to 1)

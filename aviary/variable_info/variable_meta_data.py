@@ -6887,7 +6887,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='kW',
-    desc='Current electric power consumption of each engine',
+    desc='The electric power consumption of each engine during the mission.',
     multivalue=True,
 )
 
