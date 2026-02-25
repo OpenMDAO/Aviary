@@ -58,7 +58,7 @@ class SubsystemBuilder(ABC):
 
     def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
         """
-        Return a dictionary of dynamic states defined by this subsystem.
+        Return a dictionary of dynamic states defined by this subsystem. (Optional)
 
         Required for subsystems with mission-based dynamics.
 
@@ -92,50 +92,7 @@ class SubsystemBuilder(ABC):
 
     def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
         """
-<<<<<<< HEAD
         Return a dictionary of control variables for the subsystem. (Optional)
-=======
-        Return a dictionary of control variables for the subsystem.
-
-        Parameters
-        ----------
-        phase_name : str, optional
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
-
-        Notes
-        -----
-        This method is optional, used if subsystems have control variables.
-        Used in the phase builders when other controls are added to the phase.
-
-        Returns
-        -------
-        controls : dict
-            A dictionary where the keys are the names of the control variables
-            and the values are dictionaries with the following keys:
-
-            - 'units': str
-                The units for the control variable.
-            - any additional keyword arguments required by OpenMDAO for the control variable.
-        """
-        return {}
-
-    def get_parameters(self, aviary_inputs=None, **kwargs):
-        """
-        Return a dictionary of fixed values for the subsystem.
-
-        Optional, used if subsystems have fixed values.
-
-        Used in the phase builders when other parameters are added to the
-        phase.
-
-        This is distinct from `get_design_vars` in a nuanced way. Design variables are variables
-        that are optimized by the problem that are not at the phase level. An example would be
-        something that occurs in the pre-mission level of the problem. Parameters are fixed values
-        that are held constant throughout a phase, but if `opt=True`, they are able to change during
-        the optimization.
->>>>>>> ed95ab922a74c0c2a09c2b693b8ccd7b0ad2b154
 
         Parameters
         ----------
@@ -200,7 +157,6 @@ class SubsystemBuilder(ABC):
 
         Optional, used if subsystems have path or boundary constraints.
 
-<<<<<<< HEAD
         Parameters
         ----------
         aviary_inputs : dict
@@ -211,10 +167,6 @@ class SubsystemBuilder(ABC):
             Name of the flight phase. This allows for different control variables to be used in
             different flight phases. You can add branching logic however you want based on the
             phase_name within a builder.
-=======
-        Used in the phase builders when other constraints are added to the
-        phase.
->>>>>>> ed95ab922a74c0c2a09c2b693b8ccd7b0ad2b154
 
         Returns
         -------
