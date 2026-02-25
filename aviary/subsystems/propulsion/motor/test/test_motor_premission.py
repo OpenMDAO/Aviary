@@ -9,6 +9,7 @@ from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
 import aviary.api as av
 
+
 class TestGearbox(unittest.TestCase):
     @use_tempdirs
     def test_motor_premission(self):

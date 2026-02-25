@@ -24,7 +24,9 @@ class MotorMap(om.Group):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.options.declare('motor_model', types=str) # default='aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'
+        self.options.declare(
+            'motor_model', types=str
+        )  # default='aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'
 
     def setup(self):
         n = self.options['num_nodes']
@@ -32,7 +34,11 @@ class MotorMap(om.Group):
 
         # Read the CSV file
         # Data must be on a regular, structured, grid
-        read_data, _, _, = read_data_file(motor_model)
+        (
+            read_data,
+            _,
+            _,
+        ) = read_data_file(motor_model)
 
         # Extract data with units using get_items
         data_dict = {}
@@ -43,7 +49,7 @@ class MotorMap(om.Group):
 
         # Reshape to 2D array
         rpm_vals = np.unique(data_dict['rpm_vals'])
-        rpm_units= units_dict['rpm_vals']
+        rpm_units = units_dict['rpm_vals']
         torque_vals = np.unique(data_dict['torque_vals'])
         torque_units = units_dict['torque_vals']
         efficiency = data_dict['efficiency'].reshape(len(torque_vals), len(rpm_vals)).T
@@ -74,7 +80,10 @@ class MotorMap(om.Group):
             om.ExecComp(
                 'torque_unscaled = torque_max * throttle',
                 torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                torque_max={'val': torque_vals[-1], 'units': 'N*m'}, # only used as input because we need to dynamically assign the last value of torque as the max torque
+                torque_max={
+                    'val': torque_vals[-1],
+                    'units': 'N*m',
+                },  # only used as input because we need to dynamically assign the last value of torque as the max torque
                 throttle={'val': np.ones(n), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
@@ -97,7 +106,11 @@ class MotorMap(om.Group):
                 'torque = torque_unscaled * scale_factor',
                 torque={'val': np.ones(n), 'units': 'N*m'},
                 torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                scale_factor={'val': 1.0, 'units': 'unitless', 'desc':'Scales the motor by increasing or decreasing the maximum torque value.'},
+                scale_factor={
+                    'val': 1.0,
+                    'units': 'unitless',
+                    'desc': 'Scales the motor by increasing or decreasing the maximum torque value.',
+                },
                 has_diag_partials=True,
             ),
             promotes=[

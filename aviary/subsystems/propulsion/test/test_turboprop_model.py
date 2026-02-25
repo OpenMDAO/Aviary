@@ -28,7 +28,7 @@ class TurbopropMissionTest(unittest.TestCase):
         self, test_points=[(0, 0, 0), (0, 0, 1)], shp_model=None, prop_model=None, **kwargs
     ):
         # allow the user to indicate file input is an electric motor model
-        electric_motor = kwargs.get('electric_motor', False) # default = false
+        electric_motor = kwargs.get('electric_motor', False)  # default = false
 
         options = get_option_defaults()
 

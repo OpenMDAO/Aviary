@@ -4,6 +4,7 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
+
 class MotorBuilder(SubsystemBuilder):
     """
     Define the builder for a single motor subsystem that provides methods to define the
@@ -64,10 +65,11 @@ class MotorBuilder(SubsystemBuilder):
         No preprocessing needed for the motor subsystem.
     """
 
-    def __init__(self, 
-                 options: AviaryValues,
-                 name='motor',
-                 ):  # , include_constraints=True):
+    def __init__(
+        self,
+        options: AviaryValues,
+        name='motor',
+    ):  # , include_constraints=True):
         # self.include_constraints = include_constraints
         super().__init__(name, options)
 

@@ -4,6 +4,7 @@ from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
+
 class MotorPreMission(om.Group):
     """Calculate electric motor mass for a single motor."""
 

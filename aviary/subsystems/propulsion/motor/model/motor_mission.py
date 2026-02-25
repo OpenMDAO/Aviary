@@ -5,6 +5,7 @@ from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
+
 class MotorMission(om.Group):
     """Calculates the mission performance (ODE) of a single electric motor."""
 

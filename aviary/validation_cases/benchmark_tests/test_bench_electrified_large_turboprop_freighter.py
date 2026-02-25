@@ -56,7 +56,9 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )
         options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
 
-        options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv'))
+        options.set_val(
+            Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv')
+        )
 
         motor = MotorBuilder(
             options=options,
