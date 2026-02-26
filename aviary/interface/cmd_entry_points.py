@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 
-from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
@@ -115,12 +114,6 @@ _command_map = {
         _setup_flight_profile_parser,
         _exec_flight_profile,
         'Open the mission profile drawing GUI.',
-    ),
-    'hangar': (
-        _setup_hangar_parser,
-        _exec_hangar,
-        'Copy aircraft and engine models included with Aviary to specified folder. Allows users '
-        'who did not install Aviary locally to still access model files.',
     ),
     'plot_drag_polar': (
         _setup_plot_drag_polar_parser,
