@@ -612,6 +612,10 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         debugging easier.
         In BNDMAT(), AR is computed locally but is not passed back. So, we call it "calc_ar" in
         our algorithm.
+        In FLOPS, given CHD = [48.25, 33.20, 18.97, 14.19, 10.20, 3.220] as bwb300_baseline,
+        subroutin DEFINE() will update it to CHD = [116.576, 55, 33.2, 18.97, 14.19, 10.2, 2.361]
+        Then in subroutin WWGHT(), right before calling BNDMAT(), it updates CHD to
+        C = [1.249, 0.589, 0.356, 0.203, 0.152, 0.109, 2.361] which is used in BNDMAT(). Is it right?
         """
         prob = self.prob
 
