@@ -38,7 +38,7 @@ class WettedAreaGroup(om.Group):
             )
         else:
             self.add_subsystem(
-                'wing_swet', Wing_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+                'wing_swet', Wing_SWet(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
         if design_type is AircraftTypes.TRANSPORT:
@@ -47,9 +47,7 @@ class WettedAreaGroup(om.Group):
             self.connect(f'prelim_swet.{Names.XDX}', f'wing_swet.{Names.XDX}')
             self.connect(f'prelim_swet.{Names.XMULT}', f'wing_swet.{Names.XMULT}')
 
-        self.add_subsystem(
-            'tail', Tail_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-        )
+        self.add_subsystem('tail', Tail_SWet(), promotes_inputs=['*'], promotes_outputs=['*'])
 
         self.connect(f'prelim_swet.{Names.XMULTH}', f'tail.{Names.XMULTH}')
         self.connect(f'prelim_swet.{Names.XMULTV}', f'tail.{Names.XMULTV}')
@@ -58,7 +56,7 @@ class WettedAreaGroup(om.Group):
             self.add_subsystem('fuselage', BWBFuselage_SWet(), promotes_outputs=['*'])
         elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
-                'fuselage', Fuselage_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+                'fuselage', Fuselage_SWet(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
         if design_type is AircraftTypes.TRANSPORT:
@@ -67,11 +65,11 @@ class WettedAreaGroup(om.Group):
             self.connect(f'prelim_swet.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
 
         self.add_subsystem(
-            'nacelles_swet', Nacelles_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            'nacelles_swet', Nacelles_SWet(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
-            'canard_swet', Canard_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            'canard_swet', Canard_SWet(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
