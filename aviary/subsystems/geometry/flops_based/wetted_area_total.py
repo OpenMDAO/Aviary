@@ -55,16 +55,16 @@ class WettedAreaGroup(om.Group):
         self.connect(f'prelim_swet.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem('fus_swet', BWBFuselage_SWet(), promotes_outputs=['*'])
+            self.add_subsystem('fuselage', BWBFuselage_SWet(), promotes_outputs=['*'])
         elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
-                'fus_swet', Fuselage_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+                'fuselage', Fuselage_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
 
         if design_type is AircraftTypes.TRANSPORT:
-            self.connect(f'prelim_swet.{Names.CROOTB}', f'fus_swet.{Names.CROOTB}')
-            self.connect(f'prelim_swet.{Names.CROTVT}', f'fus_swet.{Names.CROTVT}')
-            self.connect(f'prelim_swet.{Names.CRTHTB}', f'fus_swet.{Names.CRTHTB}')
+            self.connect(f'prelim_swet.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
+            self.connect(f'prelim_swet.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
+            self.connect(f'prelim_swet.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
 
         self.add_subsystem(
             'nacelles_swet', Nacelles_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
