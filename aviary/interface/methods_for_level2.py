@@ -1214,12 +1214,11 @@ class AviaryProblem(om.Problem):
             verbosity = self.verbosity  # defaults to BRIEF
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
+            recorder = om.SqliteRecorder('optimization_history.db')
+            self.driver.add_recorder(recorder)
             self.final_setup()
             with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
-
-            recorder = om.SqliteRecorder('optimization_history.db')
-            self.driver.add_recorder(recorder)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)

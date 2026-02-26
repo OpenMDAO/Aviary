@@ -1,7 +1,9 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
 from importlib.util import spec_from_file_location, module_from_spec
+import os
 from pathlib import Path
+import subprocess
 import sys
 
 from aviary.utils.functions import get_path
@@ -20,6 +22,7 @@ def run_aviary(
     make_plots=True,
     phase_info_parameterization=None,
     verbosity=None,
+    rt=False,
 ):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
@@ -118,13 +121,13 @@ def run_aviary(
 
 
 def run_level_1(
-    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF
+    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF, rt=False
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
     usage: aviary run_mission [input_deck] [opt_args].
     """
-    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity)}
+    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity), 'rt': rt}
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
@@ -167,6 +170,11 @@ def _setup_level1_parser(parser):
         help='verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug',
         choices=(0, 1, 2, 3),
     )
+    parser.add_argument(
+        '--rt',
+        action='store_true',
+        help='Enable realtime plotting option',
+    )
 
 
 def _exec_level1(args, user_args):
@@ -177,10 +185,53 @@ def _exec_level1(args, user_args):
     if isinstance(args.input_deck, list):
         args.input_deck = args.input_deck[0]
 
+
+
+    def _view_realtime_plot_hook(problem):
+        driver = problem.driver
+        if not driver:
+            raise RuntimeError(
+                'Unable to run realtime optimization progress plot because no Driver'
+            )
+        if len(problem.driver._rec_mgr._recorders) == 0:
+            raise RuntimeError(
+                'Unable to run realtime optimization progress plot '
+                'because no case recorder attached to Driver'
+            )
+
+        case_recorder_file = str(problem.driver._rec_mgr._recorders[0]._filepath)
+
+        cmd = ['openmdao', 'realtime_plot', '--pid', str(os.getpid()), case_recorder_file]
+        cp = subprocess.Popen(cmd)  # nosec: trusted input
+
+        # Do a quick non-blocking check to see if it immediately failed
+        # This will catch immediate failures but won't wait for the process to finish
+        quick_check = cp.poll()
+        if quick_check is not None and quick_check != 0:
+            # Process already terminated with an error
+            stderr = cp.stderr.read().decode()
+            raise RuntimeError(
+                f'Failed to start up the realtime plot server with code {quick_check}: {stderr}.'
+            )
+
+    # register the hook
+    if args.rt:
+        import openmdao.utils.hooks as hooks
+
+        hooks._register_hook('_setup_recording', 'Problem', post=_view_realtime_plot_hook, ncalls=1)
+
+
+
+
+
+
+
+
     run_level_1(
         input_deck=args.input_deck,
         optimizer=args.optimizer,
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
+        rt=args.rt,
     )
