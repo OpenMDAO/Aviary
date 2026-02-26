@@ -62,6 +62,7 @@ class TurbopropMissionTest(unittest.TestCase):
         engine = TurbopropModel(
             options=options, shaft_power_model=shp_model, propeller_model=prop_model
         )
+        
         preprocess_propulsion(options, [engine])
 
         machs, alts, throttles = zip(*test_points)
@@ -264,12 +265,13 @@ class TurbopropMissionTest(unittest.TestCase):
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         num_nodes = len(test_points)
 
-        shp_file = 'electric_motor_1800Nm_6000rpm.csv'
-
         options = get_option_defaults()
-        options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(shp_file))
 
-        self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
+        shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
+        options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
+
+        self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True) 
+
         self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')

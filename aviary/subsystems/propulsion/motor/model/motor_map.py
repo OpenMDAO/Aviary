@@ -4,7 +4,7 @@ from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.named_values import get_items
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
-
+from aviary.utils.functions import get_path
 
 class MotorMap(om.Group):
     """
@@ -28,7 +28,7 @@ class MotorMap(om.Group):
 
     def setup(self):
         n = self.options['num_nodes']
-        motor_model = self.options[Aircraft.Engine.Motor.DATA_FILE]
+        motor_model = get_path(self.options[Aircraft.Engine.Motor.DATA_FILE])
 
         # Read the CSV file
         # Data must be on a regular, structured, grid
