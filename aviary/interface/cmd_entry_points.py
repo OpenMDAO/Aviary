@@ -86,7 +86,7 @@ def _exec_convert(options, user_args):
     """Execute the appropriate conversion command based on sub-sub-command."""
     if not hasattr(options, 'executor'):
         # No sub-sub-command was specified, show help
-        print("Error: Please specify a conversion type (aero_table, engine, fortran_to_aviary, or prop_table)")
+        print("Error: Please specify a conversion type (aero_table, engine_deck, fortran_to_aviary, or propeller_table)")
         print("Use 'aviary convert -h' for more information.")
         sys.exit(1)
 
@@ -103,7 +103,7 @@ _command_map = {
     'convert': (
         _setup_convert_parser,
         _exec_convert,
-        'Convert legacy formatted data files (aero_table, engine, fortran_to_aviary, prop_table) to Aviary format.',
+        'Convert legacy formatted data files (aero_table, engine_deck, fortran_to_aviary, propeller_table) to Aviary format.',
     ),
     'dashboard': (
         _dashboard_setup_parser,
