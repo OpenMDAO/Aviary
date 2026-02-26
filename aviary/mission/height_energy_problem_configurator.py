@@ -394,7 +394,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             )
 
         if aviary_group.post_mission_info['include_landing']:
-            self._add_landing_systems(aviary_group)
+            if 'aircraft:wing:area' in aviary_group.aviary_inputs:
+                self._add_landing_systems(aviary_group)
+            else:
+                print('Aircraft.Wing.AREA is not given. Set include_landing = False')
+                aviary_group.post_mission_info['include_landing'] = False
 
         aviary_group.add_subsystem(
             'range_constraint',

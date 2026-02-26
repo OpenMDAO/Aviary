@@ -29,7 +29,7 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(omit=bwb_cases), name_func=print_case)
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -65,7 +65,7 @@ class TransportHydraulicsGroupMassTest(unittest.TestCase):
                 Aircraft.Wing.VAR_SWEEP_MASS_PENALTY,
             ],
             output_keys=Aircraft.Hydraulics.MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             tol=4.0e-4,
         )
 
@@ -187,7 +187,7 @@ class BWBTransportHydraulicsGroupMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case(self, case_name):
+    def testsdg_case(self, case_name):
         prob = self.prob
 
         inputs = get_flops_inputs(case_name, preprocess=True)
