@@ -4,8 +4,8 @@ import sys
 
 from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
-from aviary.interface.run_aviary import _exec_level1, _setup_level1_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
+from aviary.interface.run_aviary import _exec_run_aviary, _setup_run_aviary_parser
 from aviary.interface.test_installation import _exec_installation_test, _setup_installation_test
 from aviary.utils.aero_table_conversion_cmd import _exec_ATC, _setup_ATC_parser
 from aviary.utils.engine_deck_conversion_cmd import _exec_EDC, _setup_EDC_parser
@@ -54,7 +54,11 @@ _command_map = {
         _exec_F2A,
         'Convert legacy Fortran (FLOPS OR GASP) input file to Aviary input file.',
     ),
-    'run_mission': (_setup_level1_parser, _exec_level1, 'Run Aviary using a provided input deck.'),
+    'run_mission': (
+        _setup_run_aviary_parser,
+        _exec_run_aviary,
+        'Run Aviary using a provided input deck.',
+    ),
     'draw_mission': (
         _setup_flight_profile_parser,
         _exec_flight_profile,

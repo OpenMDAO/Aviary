@@ -9,7 +9,7 @@ from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
 from aviary.models.missions.height_energy_default import phase_info
 from aviary.interface.run_aviary import run_aviary
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.interface.aviary_problem import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
