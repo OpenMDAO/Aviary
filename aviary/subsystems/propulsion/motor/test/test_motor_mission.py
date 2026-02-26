@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 import aviary.api as av
-
+from aviary.variable_info.functions import setup_model_options
 
 class TestMotorMission(unittest.TestCase):
     @use_tempdirs
@@ -23,8 +23,10 @@ class TestMotorMission(unittest.TestCase):
         prob = om.Problem()
 
         prob.model.add_subsystem(
-            'motor_map', MotorMission(num_nodes=nn, aviary_inputs=options), promotes=['*']
+            'motor_map', MotorMission(num_nodes=nn), promotes=['*']
         )
+
+        setup_model_options(prob, options)
 
         prob.setup(force_alloc_complex=True)
 
