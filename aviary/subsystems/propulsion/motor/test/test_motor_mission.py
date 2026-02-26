@@ -8,9 +8,8 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
-import aviary.api as av
 from aviary.variable_info.functions import setup_model_options
-
+from aviary.utils.functions import get_path
 class TestMotorMission(unittest.TestCase):
     @use_tempdirs
     def test_motor_mission(self):
@@ -18,7 +17,7 @@ class TestMotorMission(unittest.TestCase):
 
         filename = 'electric_motor_1800Nm_6000rpm.csv'
         options = AviaryValues()
-        options.set_val(av.Aircraft.Engine.Motor.DATA_FILE, av.get_path(filename))
+        options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(filename))
 
         prob = om.Problem()
 

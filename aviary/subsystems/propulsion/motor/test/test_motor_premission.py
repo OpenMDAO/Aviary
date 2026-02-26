@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.variable_info.variables import Aircraft
 from aviary.utils.aviary_values import AviaryValues
-import aviary.api as av
+from aviary.utils.functions import get_path
 from aviary.variable_info.functions import setup_model_options
 
 class TestGearbox(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestGearbox(unittest.TestCase):
 
         filename = 'electric_motor_1800Nm_6000rpm.csv'
         options = AviaryValues()
-        options.set_val(av.Aircraft.Engine.Motor.DATA_FILE, av.get_path(filename))
+        options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(filename))
 
         prob.model.add_subsystem(
             'motor_map', MotorPreMission(), promotes=['*']
