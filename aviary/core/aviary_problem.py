@@ -54,6 +54,7 @@ class AviaryProblem(om.Problem):
             'run_status',
             'sizing_results',
             'input_checks',
+            'overridden_variables',
         ]
         for report in new_reports:
             if report not in _default_reports:
@@ -74,6 +75,8 @@ class AviaryProblem(om.Problem):
             self.model = om.Group()
         else:
             self.model = AviaryGroup()
+            # This causes problems where aviary_inputs are stored in different places for
+            # multi-mission vs. standard mission
             self.aviary_inputs = None
 
         self.aviary_groups_dict = {}
@@ -1258,7 +1261,7 @@ class AviaryProblem(om.Problem):
         problem_configurator=None,
         num_first_class=None,
         num_business=None,
-        num_tourist=None,
+        num_economy=None,
         num_pax=None,
         wing_cargo=None,
         misc_cargo=None,
@@ -1293,8 +1296,8 @@ class AviaryProblem(om.Problem):
             [FLOPS mass only] Number of first-class passengers flying on the off-design mission.
         num_business : int, optional
             [FLOPS mass only] Number of business-class passengers flying on the off-design mission.
-        num_tourist : int, optional
-            [FLOPS mass only] Number of tourist-class passengers flying on the off-design mission.
+        num_economy : int, optional
+            [FLOPS mass only] Number of economy-class passengers flying on the off-design mission.
         num_pax : int, optional
             Total number of passengers flying on the off-design mission. Optional if using
             FLOPS-based mass and passengers per class are defined instead.
@@ -1385,9 +1388,9 @@ class AviaryProblem(om.Problem):
         if (
             mass_method is FLOPS
             and num_pax is None
-            and not any((num_tourist, num_business, num_first_class))
+            and not any((num_economy, num_business, num_first_class))
         ):
-            num_pax = sum(filter(None, [num_tourist, num_business, num_first_class]))
+            num_pax = sum(filter(None, [num_economy, num_business, num_first_class]))
 
         # only FLOPS cares about seat class or specific cargo categories
         if mass_method == LegacyCode.FLOPS:
@@ -1395,8 +1398,8 @@ class AviaryProblem(om.Problem):
                 inputs.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, num_first_class)
             if num_business is not None:
                 inputs.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, num_business)
-            if num_tourist is not None:
-                inputs.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, num_tourist)
+            if num_economy is not None:
+                inputs.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, num_economy)
 
             if wing_cargo is not None:
                 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, wing_cargo, 'lbm')
@@ -1644,8 +1647,8 @@ class AviaryProblem(om.Problem):
                     self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
                     * payload_frac
                 )
-                economic_mission_num_tourist = int(
-                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS)
+                economic_mission_num_economy = int(
+                    self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
                     * payload_frac
                 )
 
@@ -1657,7 +1660,7 @@ class AviaryProblem(om.Problem):
                     phase_info=phase_info,
                     num_first_class=economic_mission_num_first,
                     num_business=economic_mission_num_bus,
-                    num_tourist=economic_mission_num_tourist,
+                    num_economy=economic_mission_num_economy,
                     wing_cargo=economic_mission_wing_cargo,
                     misc_cargo=economic_mission_misc_cargo,
                     name=self._name + '_max_economic_range',
@@ -1692,7 +1695,7 @@ class AviaryProblem(om.Problem):
                 phase_info=phase_info,
                 num_first_class=0,
                 num_business=0,
-                num_tourist=0,
+                num_economy=0,
                 wing_cargo=0,
                 misc_cargo=0,
                 cargo_mass=ferry_cargo_mass,

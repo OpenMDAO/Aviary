@@ -10,6 +10,7 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
+from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 
 
 class AscentPhaseOptions(AviaryOptionsDictionary):
@@ -93,13 +94,6 @@ class AscentPhaseOptions(AviaryOptionsDictionary):
         # The options below have not yet been revamped.
 
         self.declare(
-            'analytic',
-            types=bool,
-            default=False,
-            desc='When set to True, this is an analytic phase.',
-        )
-
-        self.declare(
             name='pitch_constraint_bounds',
             default=(0.0, 15.0),
             types=tuple,
@@ -162,6 +156,8 @@ class AscentPhase(PhaseBuilder):
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
+
+        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         self.add_control(
             'angle_of_attack',

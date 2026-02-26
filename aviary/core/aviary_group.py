@@ -34,7 +34,13 @@ from aviary.utils.process_input_decks import (
     update_GASP_options,
 )
 from aviary.utils.utils import wrapped_convert_units
-from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
+from aviary.variable_info.enums import (
+    EquationsOfMotion,
+    LegacyCode,
+    PhaseType,
+    ProblemType,
+    Verbosity,
+)
 from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
@@ -69,6 +75,7 @@ class AviaryGroup(om.Group):
         self.engine_models = []
         self.regular_phases = []
         self.reserve_phases = []
+        self.subsystems = []
 
         self.aviary_inputs = None
         self.meta_data = None
@@ -128,7 +135,8 @@ class AviaryGroup(om.Group):
         mission_method = aviary_options.get_val(Settings.EQUATIONS_OF_MOTION)
 
         # Temporarily add extra stuff here, probably patched soon
-        if mission_method is HEIGHT_ENERGY:
+        # add a check for traj using hasattr for pre-mission tests.
+        if mission_method is HEIGHT_ENERGY and hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -156,7 +164,9 @@ class AviaryGroup(om.Group):
 
                 phase.nonlinear_solver = om.NonlinearRunOnce()
                 phase.linear_solver = om.LinearRunOnce()
-                if isinstance(phase.indep_states, om.ImplicitComponent):
+                if hasattr(phase, 'indep_states') and isinstance(
+                    phase.indep_states, om.ImplicitComponent
+                ):
                     phase.indep_states.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
                     phase.indep_states.linear_solver = om.DirectSolver(rhs_checking=True)
 
@@ -341,19 +351,6 @@ class AviaryGroup(om.Group):
         # Sets duration_bounds, initial_guesses, and fixed_duration
         for phase_name, phase in self.mission_info.items():
             if 'user_options' in phase:
-                analytic = False
-                if self.mission_method is EquationsOfMotion.TWO_DEGREES_OF_FREEDOM:
-                    try:
-                        # if the user provided an option, use it
-                        analytic = phase['user_options']['analytic']
-                    except KeyError:
-                        # if it isn't specified, only the default 2DOF cruise for
-                        # collocation is analytic
-                        if 'cruise' in phase_name:
-                            analytic = phase['user_options']['analytic'] = True
-                        else:
-                            analytic = phase['user_options']['analytic'] = False
-
                 if 'time_duration' in phase['user_options']:
                     time_duration, units = phase['user_options']['time_duration']
 
@@ -730,7 +727,7 @@ class AviaryGroup(om.Group):
                     aviary_inputs=self.aviary_inputs,
                     **kwargs,
                 )
-                for parameter in parameter_dict:
+                for parameter in sorted(parameter_dict):
                     external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
         traj = setup_trajectory_params(
@@ -948,9 +945,9 @@ class AviaryGroup(om.Group):
             # this is only used for analytic phases with a target duration
             time_duration = user_options.get('time_duration', (None, 'min'))
             time_duration = wrapped_convert_units(time_duration, 'min')
-            analytic = user_options.get('analytic', False)
+            integrates_mass = user_options['phase_builder'] is PhaseType.BREGUET_RANGE
 
-            if analytic and time_duration is not None:
+            if integrates_mass and time_duration is not None:
                 post_mission.add_subsystem(
                     f'{phase_name}_duration_constraint',
                     om.ExecComp(
@@ -1119,7 +1116,22 @@ class AviaryGroup(om.Group):
                     phases_to_link.append(phase_name)
 
             if len(phases_to_link) > 1:  # TODO: hack
-                self.traj.link_phases(phases=phases_to_link, vars=[var], connected=True)
+                # go phase by phase and either directly link if two standard phases, or use linkage
+                # constraint if either are analytic
+                # TODO need more unified way to handle this instead of splitting between AviaryGroup
+                #      and configurators
+                for ii in range(len(phases) - 1):
+                    phase1, phase2 = phases[ii : ii + 2]
+                    opt1 = self.mission_info[phase1]['user_options']
+                    opt2 = self.mission_info[phase2]['user_options']
+                    integrates_mass1 = opt1['phase_builder'] is PhaseType.BREGUET_RANGE
+                    integrates_mass2 = opt2['phase_builder'] is PhaseType.BREGUET_RANGE
+
+                    if integrates_mass1 or integrates_mass2:
+                        # TODO need ref value for these linkage constraints
+                        self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
+                    else:
+                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
 
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
 

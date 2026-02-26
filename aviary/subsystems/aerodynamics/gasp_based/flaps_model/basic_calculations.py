@@ -5,8 +5,11 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
-class BasicFlapsCalculations(om.ExplicitComponent):
-    """Intermediate calculations for flaps model of GASP-based aerodynamics."""
+class BasicFlapsGeometry(om.ExplicitComponent):
+    """Intermediate calculations for flaps model of GASP-based aerodynamics.
+
+    These calculations are independent of deflection.
+    """
 
     def setup(self):
         # inputs
@@ -20,19 +23,6 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Wing.SLAT_CHORD_RATIO, units='unitless')
-        self.add_input(
-            'slat_defl',
-            val=10.0,
-            units='deg',
-            desc='DELLED: leading edge slat deflection',
-        )
-        add_aviary_input(self, Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION, units='deg')
-        self.add_input(
-            'flap_defl',
-            val=10.0,
-            units='deg',
-            desc='DFLPTO | DFLPLD: takeoff or landing flap deflection',
-        )
         add_aviary_input(self, Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, units='deg')
         add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -63,18 +53,6 @@ class BasicFlapsCalculations(om.ExplicitComponent):
             val=0.9975,
             units='unitless',
             desc='VLAM9: sensitivity of slat clean wing maximum lift coefficient to slat chord',
-        )
-        self.add_output(
-            'slat_defl_ratio',
-            val=0.5,
-            units='unitless',
-            desc='RDELL: ratio of leading edge slat deflection to optimum deflection angle',
-        )
-        self.add_output(
-            'flap_defl_ratio',
-            val=0.5,
-            units='unitless',
-            desc='RDELF: ratio of trailing edge flap deflection to optimum deflection angle',
         )
         add_aviary_output(self, Aircraft.Wing.SLAT_SPAN_RATIO, units='unitless')
         self.add_output(
@@ -129,16 +107,6 @@ class BasicFlapsCalculations(om.ExplicitComponent):
             'VLAM9', [Aircraft.Wing.SLAT_CHORD_RATIO], dependent=True, method='cs', step=1e-8
         )
         self.declare_partials(
-            'slat_defl_ratio',
-            ['slat_defl', Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION],
-            dependent=True,
-            method='cs',
-            step=1e-8,
-        )
-        self.declare_partials(
-            'flap_defl_ratio', ['flap_defl', Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION], method='cs'
-        )
-        self.declare_partials(
             Aircraft.Wing.SLAT_SPAN_RATIO,
             [
                 Aircraft.Wing.SPAN,
@@ -187,10 +155,6 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
         wingspan = inputs[Aircraft.Wing.SPAN]
         slat_chord_ratio = inputs[Aircraft.Wing.SLAT_CHORD_RATIO]
-        slat_defl = inputs['slat_defl']
-        optimum_slat_defl = inputs[Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION]
-        flap_defl = inputs['flap_defl']
-        optimum_flap_defl = inputs[Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION]
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         sweep_LE = inputs[Aircraft.Wing.LEADING_EDGE_SWEEP]
@@ -216,8 +180,66 @@ class BasicFlapsCalculations(om.ExplicitComponent):
         outputs['VDEL4'] = np.cos(SWPFHL)
         outputs['VDEL5'] = 1.0 - body_to_span_ratio
         outputs['VLAM9'] = 6.65 * slat_chord_ratio
-        outputs['slat_defl_ratio'] = slat_defl / optimum_slat_defl
-        outputs['flap_defl_ratio'] = flap_defl / optimum_flap_defl
         outputs[Aircraft.Wing.SLAT_SPAN_RATIO] = 0.99 - DBALE / wingspan
         outputs['chord_to_body_ratio'] = root_chord / fus_len
         outputs['VLAM12'] = (np.cos(SWPL12)) ** 3
+
+
+class FlapsDeflectionRatios(om.ExplicitComponent):
+    """Compute the deflection ratios for the current state of deflection."""
+
+    def setup(self):
+        # inputs
+
+        self.add_input(
+            'slat_defl',
+            val=10.0,
+            units='deg',
+            desc='DELLED: leading edge slat deflection',
+        )
+        add_aviary_input(self, Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION, units='deg')
+        self.add_input(
+            'flap_defl',
+            val=10.0,
+            units='deg',
+            desc='DFLPTO | DFLPLD: takeoff or landing flap deflection',
+        )
+        add_aviary_input(self, Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION, units='deg')
+
+        # outputs
+
+        self.add_output(
+            'slat_defl_ratio',
+            val=0.5,
+            units='unitless',
+            desc='RDELL: ratio of leading edge slat deflection to optimum deflection angle',
+        )
+        self.add_output(
+            'flap_defl_ratio',
+            val=0.5,
+            units='unitless',
+            desc='RDELF: ratio of trailing edge flap deflection to optimum deflection angle',
+        )
+
+    def setup_partials(self):
+        # output partials
+        self.declare_partials(
+            'slat_defl_ratio',
+            ['slat_defl', Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION],
+            dependent=True,
+            method='cs',
+            step=1e-8,
+        )
+        self.declare_partials(
+            'flap_defl_ratio', ['flap_defl', Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION], method='cs'
+        )
+
+    def compute(self, inputs, outputs):
+        slat_defl = inputs['slat_defl']
+        optimum_slat_defl = inputs[Aircraft.Wing.OPTIMUM_SLAT_DEFLECTION]
+        flap_defl = inputs['flap_defl']
+        optimum_flap_defl = inputs[Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION]
+
+        # outputs equations
+        outputs['slat_defl_ratio'] = slat_defl / optimum_slat_defl
+        outputs['flap_defl_ratio'] = flap_defl / optimum_flap_defl

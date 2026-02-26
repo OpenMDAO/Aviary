@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.instruments import TransportInstrumentMass
@@ -11,6 +12,7 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_inputs,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -54,6 +56,7 @@ class TransportInstrumentsMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Fuselage.PLANFORM_AREA, Aircraft.Instruments.MASS_SCALER],
             output_keys=Aircraft.Instruments.MASS,
+            version=Version.TRANSPORT_and_BWB,
             tol=1e-3,
         )
 

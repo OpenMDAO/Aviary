@@ -3,7 +3,7 @@ import unittest
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.functions import get_path
-from aviary.utils.process_input_decks import create_vehicle
+from aviary.utils.process_input_decks import create_vehicle, parse_inputs
 
 
 @use_tempdirs
@@ -43,6 +43,22 @@ class TestCreateVehicle(unittest.TestCase):
         aircraft_values, initialization_guesses = create_vehicle(modified_file_path)
         self.assertIsNotNone(aircraft_values)
         self.assertIsNotNone(initialization_guesses)
+
+    def test_whitespace(self):
+        """
+        Test that trailing and leading whitespace is properly removed from each entry without
+        affecting filepaths.
+        """
+        data, _ = parse_inputs(get_path('utils/test/data/csv_input_test.csv'))
+
+        expected_data = [
+            ('aircraft:wing:mass', (1, 'lbm')),
+            ('aircraft:instruments:mass', (5, 'lbm')),
+            ('aircraft:engine:data_file', (['folder/folder with space/filename.txt'], 'unitless')),
+        ]
+
+        for i, item in enumerate(data):
+            self.assertEqual(item, expected_data[i])
 
 
 if __name__ == '__main__':

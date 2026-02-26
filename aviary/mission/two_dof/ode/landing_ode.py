@@ -7,7 +7,7 @@ from aviary.mission.two_dof.ode.landing_eom import (
 )
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
-from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodyanmicsBuilder
+from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import SpeedType
@@ -46,15 +46,15 @@ class LandingSegment(TwoDOFODE):
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
                 Dynamic.Atmosphere.TEMPERATURE,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
-                'viscosity',
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
         )
 
         # collect the propulsion group names for later use with
         for subsystem in subsystems:
-            if isinstance(subsystem, AerodyanmicsBuilder):
-                kwargs = {'method': 'low_speed'}
+            if isinstance(subsystem, AerodynamicsBuilder):
+                kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
                     num_nodes=1, aviary_inputs=aviary_options, **kwargs
@@ -70,7 +70,7 @@ class LandingSegment(TwoDOFODE):
                         ),
                         Dynamic.Atmosphere.DENSITY,
                         Dynamic.Atmosphere.SPEED_OF_SOUND,
-                        'viscosity',
+                        Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
                         ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                         Dynamic.Atmosphere.DYNAMIC_PRESSURE,
@@ -99,6 +99,7 @@ class LandingSegment(TwoDOFODE):
                     propulsion_system,
                     promotes_inputs=[
                         '*',
+                        (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                     ],
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
@@ -138,14 +139,14 @@ class LandingSegment(TwoDOFODE):
             name='atmosphere_td',
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
-                Dynamic.Mission.ALTITUDE,
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Mission.VELOCITY, 'TAS_touchdown'),
             ],
             promotes_outputs=[
                 (Dynamic.Atmosphere.DENSITY, 'rho_td'),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, 'sos_td'),
                 (Dynamic.Atmosphere.TEMPERATURE, 'T_td'),
-                ('viscosity', 'viscosity_td'),
+                (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'viscosity_td'),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'q_td'),
                 (Dynamic.Atmosphere.MACH, 'mach_td'),
             ],
@@ -158,10 +159,10 @@ class LandingSegment(TwoDOFODE):
             aero_builder.build_mission(num_nodes=1, aviary_inputs=aviary_options, **kwargs),
             promotes_inputs=[
                 '*',
-                Dynamic.Mission.ALTITUDE,
+                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.DENSITY, 'rho_td'),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, 'sos_td'),
-                ('viscosity', 'viscosity_td'),
+                (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'viscosity_td'),
                 ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.MACH, 'mach_td'),
                 (Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'q_td'),
@@ -223,7 +224,6 @@ class LandingSegment(TwoDOFODE):
         self.set_input_defaults('aero_ramps.gear_factor:initial_val', val=0.0)
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, units='ft')
 
         # Throttle Idle
         num_engine_types = len(aviary_options.get_val(Aircraft.Engine.NUM_ENGINES))

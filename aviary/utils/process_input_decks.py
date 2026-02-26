@@ -86,7 +86,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
     # these are used in initialization_guessing()
     aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
-    aircraft_values.set_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, val=0, units='lbm')
+    aircraft_values.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=0, units='lbm')
 
     initialization_guesses = {
         # initialization_guesses is a dictionary that contains values used to initialize the trajectory
@@ -166,13 +166,11 @@ def parse_inputs(
             tmp = [*line.split('#', 1), '']
             line, comment = tmp[0], tmp[1]  # anything after the first # is a comment
 
-            data = ''.join(line.rstrip(',').split())  # remove all white space
-
-            if len(data) == 0:
-                continue  # skip line it contained only commas
-
             # remove any elements that are empty (caused by trailing commas or extra commas)
-            data_list = [dat for dat in data.split(',') if dat != '']
+            data_list = [dat.strip() for dat in line.split(',') if dat.strip() != '']
+
+            if len(data_list) == 0:
+                continue  # skip line it contained only commas
 
             # continue if there's no data in the line but there are commas
             # this might occur if someone edits a .csv file in Excel
@@ -379,7 +377,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 + (
                     num_pax
                     * aircraft_values.get_val(
-                        Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm'
+                        Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm'
                     )
                 )
                 + fuel_mass
@@ -398,7 +396,9 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         cruise_mass_final = (
             initialization_guesses['operating_empty_mass']
             + num_pax
-            * aircraft_values.get_val(Aircraft.CrewPayload.PASSENGER_MASS_WITH_BAGS, units='lbm')
+            * aircraft_values.get_val(
+                Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, units='lbm'
+            )
             + reserves
         )
     # fraction of takeoff mass

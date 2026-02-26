@@ -56,7 +56,8 @@ parts:
       - file: user_guide_unreviewed/multi_mission
       - file: user_guide_unreviewed/off_design_missions
       - file: user_guide_unreviewed/payload_range_functionality
-      - file: user_guide_unreviewed/features/blended_wing_body
+      - file: user_guide_unreviewed/features/blended_wing_body_GASP
+      - file: user_guide_unreviewed/features/blended_wing_body_FLOPS
     - file: user_guide_unreviewed/troubleshooting
 
 - caption: Examples

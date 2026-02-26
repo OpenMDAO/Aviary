@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.cargo_containers import TransportCargoContainersMass
@@ -11,10 +12,12 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class CargoContainerMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -43,6 +46,7 @@ class CargoContainerMassTest(unittest.TestCase):
                 Aircraft.CrewPayload.BAGGAGE_MASS,
             ],
             output_keys=Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
+            version=Version.TRANSPORT_and_BWB,
             rtol=1e-10,
         )
 
@@ -50,6 +54,7 @@ class CargoContainerMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class CargoContainerMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 

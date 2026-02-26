@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.landing_mass import LandingMass
@@ -9,10 +10,12 @@ from aviary.validation_cases.validation_tests import (
     flops_validation_test,
     get_flops_case_names,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class LandingMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -29,6 +32,7 @@ class LandingMassTest(unittest.TestCase):
             case_name,
             input_keys=[Mission.Design.GROSS_MASS, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO],
             output_keys=Aircraft.Design.TOUCHDOWN_MASS,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_IO(self):

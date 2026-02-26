@@ -182,6 +182,8 @@ class ComputedAeroGroup(om.Group):
         self.connect('CompressibilityDrag.compress_drag_coeff', 'Drag.compress_drag_coeff')
         self.connect('SkinFrictionDrag.skin_friction_drag_coeff', 'Drag.skin_friction_drag_coeff')
 
+        self.set_input_defaults(Aircraft.Wing.AREA, units='ft**2', val=0.0)
+
 
 class ComputedDrag(om.Group):
     """FLOPS-based computed drag group."""

@@ -16,12 +16,11 @@ from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import (
 from aviary.variable_info.functions import extract_options
 from aviary.variable_info.variables import Aircraft
 
-Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB'])
+Version = Enum('Version', ['ALL', 'TRANSPORT', 'ALTERNATE', 'BWB', 'TRANSPORT_and_BWB'])
 
 
 def do_validation_test(
     prob: om.Problem,
-    case_name: str,
     input_validation_data: AviaryValues,
     output_validation_data: AviaryValues,
     input_keys: list,
@@ -183,8 +182,7 @@ def flops_validation_test(
         will be listed.
     version: Version
         If this is a FLOPS-based mass analysis test, version specifies which
-        version of the mass equations being tested. Currently, there is no
-        BWB validation data so output values will not be checked.
+        version of the mass equations being tested.
         Default is ALL.
     tol : float
         Relative tolerance for comparing problem outputs against
@@ -231,23 +229,15 @@ def flops_validation_test(
         flops_outputs = flops_data['outputs'].deepcopy()
 
     if (
-        version is Version.TRANSPORT
+        version in [Version.TRANSPORT, Version.BWB, Version.TRANSPORT_and_BWB]
         and flops_inputs.get_val(Aircraft.Design.USE_ALT_MASS)
         or version is Version.ALTERNATE
         and not flops_inputs.get_val(Aircraft.Design.USE_ALT_MASS)
     ):
         return
 
-    # TODO: Currently no BWB validation data.
-    # For BWBs, skip the validation test, but do check the partials.
-    check_values_in = check_values
-    check_values = check_values and version is not Version.BWB
-    if not check_values and check_values_in:
-        warnings.warn('Not checking values because validation data not available.')
-
     do_validation_test(
         prob=prob,
-        case_name=case_name,
         input_validation_data=flops_inputs,
         output_validation_data=flops_outputs,
         input_keys=input_keys,

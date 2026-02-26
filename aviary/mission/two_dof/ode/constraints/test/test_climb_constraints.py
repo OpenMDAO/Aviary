@@ -15,7 +15,7 @@ class SpeedConstraintTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            SpeedConstraints(num_nodes=3, EAS_target=229, mach_cruise=0.8),
+            SpeedConstraints(num_nodes=3, EAS_target=229, mach_target=0.8),
             promotes=['*'],
         )
 
@@ -47,7 +47,7 @@ class SpeedConstraintTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            SpeedConstraints(num_nodes=3, EAS_target=229, mach_cruise=0.8),
+            SpeedConstraints(num_nodes=3, EAS_target=229, mach_target=0.8),
             promotes=['*'],
         )
 

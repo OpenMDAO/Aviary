@@ -235,7 +235,7 @@ class PreOnlyBuilder(SubsystemBuilder):
 
 
 class PostOnlyBuilder(SubsystemBuilder):
-    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths):
+    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
         group = om.Group()
         group.add_subsystem(
             'comp',
@@ -254,7 +254,7 @@ class FailingSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return om.ExecComp('y = x**2')
 
 
@@ -262,10 +262,10 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
     def __init__(self, name='array_guess'):
         super().__init__(name, meta_data=ExtendedMetaData)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, **kwargs):
         return DummyComp()
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return DummyMissionComp(num_nodes=num_nodes)
 
     def get_initial_guesses(self):
@@ -288,7 +288,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
     def get_controls(self, **kwargs):
         return {}
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
         return {Aircraft.Dummy.PARAMETER: {'val': 2.0, 'units': 'm'}}
 
 
@@ -333,10 +333,10 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
     def __init__(self, name='additional_array_guess'):
         super().__init__(name, meta_data=AdditionalMetaData)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, **kwargs):
         return DummyWingspanComp()
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return DummyFlightDurationComp(num_nodes=num_nodes)
 
     # def mission_outputs(self, **kwargs):
@@ -359,7 +359,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def get_controls(self, phase_name=None):
+    def get_controls(self, phase_name=None, **kwargs):
         if phase_name == 'cruise':
             controls_dict = {
                 MoreMission.Dummy.DUMMY_CONTROL: {

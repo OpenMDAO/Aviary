@@ -1,7 +1,9 @@
 import unittest
 
+import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.apu import TransportAPUMass
@@ -11,10 +13,12 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class APUMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -39,6 +43,7 @@ class APUMassTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.APU.MASS_SCALER, Aircraft.Fuselage.PLANFORM_AREA],
             output_keys=Aircraft.APU.MASS,
+            version=Version.TRANSPORT_and_BWB,
             tol=5.0e-4,
         )
 

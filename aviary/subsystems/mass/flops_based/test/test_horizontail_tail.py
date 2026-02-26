@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.horizontal_tail import (
@@ -10,14 +11,15 @@ from aviary.subsystems.mass.flops_based.horizontal_tail import (
 )
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
-    Version,
     flops_validation_test,
     get_flops_case_names,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class ExplicitHorizontalTailMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -45,7 +47,7 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
                 Aircraft.HorizontalTail.MASS_SCALER,
             ],
             output_keys=Aircraft.HorizontalTail.MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             tol=2.0e-4,
         )
 
@@ -83,6 +85,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()

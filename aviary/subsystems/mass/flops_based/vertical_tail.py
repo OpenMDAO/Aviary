@@ -55,15 +55,18 @@ class VerticalTailMass(om.ExplicitComponent):
         area_exp = area**0.85
         num_tails_exp = num_tails**0.7
 
-        J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = (
-            scaler
-            * 0.272
-            * gross_weight_exp
-            * (taper_ratio + 0.50)
-            * area**-0.15
-            * num_tails_exp
-            / GRAV_ENGLISH_LBM
-        )
+        if area > 0.0:
+            J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = (
+                scaler
+                * 0.272
+                * gross_weight_exp
+                * (taper_ratio + 0.50)
+                * area**-0.15
+                * num_tails_exp
+                / GRAV_ENGLISH_LBM
+            )
+        else:
+            J[Aircraft.VerticalTail.MASS, Aircraft.VerticalTail.AREA] = 0.0
 
         J[Aircraft.VerticalTail.MASS, Mission.Design.GROSS_MASS] = (
             scaler * 0.096 * gross_weight**-0.70 * (taper_ratio + 0.50) * area_exp * num_tails_exp

@@ -1,4 +1,4 @@
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import PhaseType, SpeedType
 from aviary.variable_info.variables import Mission
 
 # defaults for 2DOF based phases
@@ -130,8 +130,7 @@ phase_info = {
             'num_segments': 1,
             'order': 3,
             'EAS_target': (250, 'kn'),
-            'mach_cruise': 0.8,
-            'target_mach': False,
+            'mach_target': 0.8,
             'time_duration_bounds': ((30, 300), 's'),
             'time_duration_ref': (1000, 's'),
             'altitude_initial': (500.0, 'ft'),
@@ -157,8 +156,7 @@ phase_info = {
             'num_segments': 3,
             'order': 3,
             'EAS_target': (270, 'kn'),
-            'mach_cruise': 0.8,
-            'target_mach': True,
+            'mach_target': 0.8,
             'required_available_climb_rate': (0.1, 'ft/min'),
             'time_duration_bounds': ((200, 17_000), 's'),
             'time_duration_ref': (5000, 's'),
@@ -182,16 +180,17 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
+            'mass_bounds': ((0, None), 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([171481.0, -35000], 'lbm'),
-            'initial_distance': (200.0e3, 'ft'),
-            'initial_time': (1516.0, 's'),
-            'altitude': (37.5e3, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'mass': ([171481.0, 135000], 'lbm'),
+            'time': ([1516.0, 26500.0], 's'),
         },
     },
     'desc1': {
@@ -199,8 +198,8 @@ phase_info = {
         'user_options': {
             'num_segments': 3,
             'order': 3,
-            'EAS_limit': (350, 'kn'),
-            'mach_cruise': 0.8,
+            'EAS_target': (350, 'kn'),
+            'mach_target': 0.8,
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 900.0), 's'),
             'time_duration_ref': (1000, 's'),
@@ -228,8 +227,8 @@ phase_info = {
         'user_options': {
             'num_segments': 1,
             'order': 7,
-            'EAS_limit': (250, 'kn'),
-            'mach_cruise': 0.80,
+            'EAS_target': (250, 'kn'),
+            'mach_target': 0.80,
             'input_speed_type': SpeedType.EAS,
             'time_duration_bounds': ((100.0, 5000), 's'),
             'time_duration_ref': (500, 's'),
@@ -297,11 +296,11 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         range_scale = range_cruise / old_range_cruise
 
     # Altitude
-    old_alt_cruise = phase_info['climb2']['user_options']['altitude_final'][0]
+    old_alt_cruise = phase_info['cruise']['user_options']['alt_cruise'][0]
     if alt_cruise != old_alt_cruise:
         phase_info['climb2']['user_options']['altitude_final'] = (alt_cruise, 'ft')
         phase_info['climb2']['initial_guesses']['altitude'] = ([10.0e3, alt_cruise], 'ft')
-        phase_info['cruise']['initial_guesses']['altitude'] = (alt_cruise, 'ft')
+        phase_info['cruise']['user_options']['alt_cruise'] = (alt_cruise, 'ft')
         phase_info['desc1']['initial_guesses']['altitude'] = ([alt_cruise, 10.0e3], 'ft')
 
         # TODO - Could adjust time guesses/bounds in climb2 and desc2.
@@ -325,8 +324,8 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         phase_info['desc2']['initial_guesses']['mass'] = (end_mass, 'lbm')
 
     # Mach
-    old_mach_cruise = phase_info['cruise']['initial_guesses']['mach'][0]
+    old_mach_cruise = phase_info['cruise']['user_options']['mach_cruise']
     if mach_cruise != old_mach_cruise:
-        phase_info['cruise']['initial_guesses']['mach'] = (mach_cruise, 'unitless')
+        phase_info['cruise']['user_options']['mach_cruise'] = (mach_cruise, 'unitless')
 
     return phase_info, post_mission_info

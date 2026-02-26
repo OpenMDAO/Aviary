@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fuel_system import (
@@ -10,15 +11,16 @@ from aviary.subsystems.mass.flops_based.fuel_system import (
 )
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
-    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class AltFuelSystemTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -89,6 +91,7 @@ class AltFuelSystemTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class TransportFuelSystemTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -120,7 +123,7 @@ class TransportFuelSystemTest(unittest.TestCase):
             case_name,
             input_keys=[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, Aircraft.Fuel.TOTAL_CAPACITY],
             output_keys=Aircraft.Fuel.FUEL_SYSTEM_MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             tol=8.0e-4,
         )
 

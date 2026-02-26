@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.empty_margin import EmptyMassMargin
@@ -10,10 +11,12 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class EmptyMassMarginTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -39,10 +42,11 @@ class EmptyMassMarginTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_EQUIP_MASS,
+                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPTY_MASS_MARGIN_SCALER,
             ],
             output_keys=Aircraft.Design.EMPTY_MASS_MARGIN,
+            version=Version.TRANSPORT_and_BWB,
             tol=1e-3,
             atol=2e-11,
         )

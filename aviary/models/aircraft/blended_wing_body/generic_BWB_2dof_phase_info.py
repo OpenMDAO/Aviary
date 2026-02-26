@@ -1,5 +1,4 @@
-from aviary.variable_info.enums import SpeedType
-
+from aviary.variable_info.enums import PhaseType, SpeedType
 
 # 2DOF
 phase_info = {
@@ -126,8 +125,7 @@ phase_info = {
             'num_segments': 2,
             'order': 3,
             'EAS_target': (250, 'kn'),
-            'mach_cruise': 0.8,
-            'target_mach': False,
+            'mach_target': 0.8,
             'time_duration_bounds': ((100, 1000), 's'),
             'time_duration_ref': (200, 's'),
             'altitude_initial': (500.0, 'ft'),
@@ -152,8 +150,7 @@ phase_info = {
             'num_segments': 3,
             'order': 3,
             'EAS_target': (270, 'kn'),
-            'mach_cruise': 0.8,
-            'target_mach': True,
+            'mach_target': 0.8,
             'required_available_climb_rate': (0.1, 'ft/min'),
             'time_duration_bounds': ((200, 12_000), 's'),
             'time_duration_ref': (4000, 's'),
@@ -176,16 +173,16 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'core_aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (41_000, 'ft'),
             'mach_cruise': 0.8,
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([140_000.0, -35_000], 'lbm'),
-            'initial_distance': (100.0e3, 'ft'),
-            'initial_time': (1_000.0, 's'),
-            'altitude': (41_000, 'ft'),
-            'mach': (0.8, 'unitless'),
+            'mass': ([140_000.0, 105000], 'lbm'),
+            'time': ([1000.0, 28000.0], 's'),
         },
     },
     'desc1': {
@@ -193,8 +190,8 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'EAS_limit': (160, 'kn'),
-            'mach_cruise': 0.8,
+            'EAS_target': (160, 'kn'),
+            'mach_target': 0.8,
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 2200.0), 's'),
             'time_duration_ref': (2000, 's'),
@@ -222,8 +219,8 @@ phase_info = {
         'user_options': {
             'num_segments': 1,
             'order': 7,
-            'EAS_limit': (250, 'kn'),
-            'mach_cruise': 0.80,
+            'EAS_target': (250, 'kn'),
+            'mach_target': 0.80,
             'input_speed_type': SpeedType.EAS,
             'time_duration_bounds': ((100.0, 5000), 's'),
             'time_duration_ref': (500, 's'),
