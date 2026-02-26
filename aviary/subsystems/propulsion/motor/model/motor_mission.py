@@ -3,7 +3,6 @@ import openmdao.api as om
 
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
 from aviary.variable_info.variables import Aircraft, Dynamic
-from aviary.variable_info.functions import add_aviary_option
 
 class MotorMission(om.Group):
     """Calculates the mission performance (ODE) of a single electric motor."""
@@ -11,11 +10,8 @@ class MotorMission(om.Group):
     def initialize(self):
         self.options.declare('num_nodes', types=int)
         self.name = 'motor_mission'
-        add_aviary_option(self, Aircraft.Engine.Motor.DATA_FILE)
 
     def setup(self):
-        # pull the motor model from aviary options
-        motor_model = self.options[Aircraft.Engine.Motor.DATA_FILE]
 
         nn = self.options['num_nodes']
 
@@ -28,7 +24,7 @@ class MotorMission(om.Group):
 
         motor_group.add_subsystem(
             'motor_map',
-            MotorMap(num_nodes=nn, motor_model=motor_model),
+            MotorMap(num_nodes=nn),
             promotes_inputs=[
                 Dynamic.Vehicle.Propulsion.THROTTLE,
                 Aircraft.Engine.SCALE_FACTOR,
@@ -85,7 +81,7 @@ class MotorMission(om.Group):
         # these two groups are the same as those above
         motor_group_max.add_subsystem(
             'motor_map_max',
-            MotorMap(num_nodes=nn, motor_model=motor_model),
+            MotorMap(num_nodes=nn),
             promotes_inputs=[
                 (Dynamic.Vehicle.Propulsion.THROTTLE, 'max_throttle'),
                 Aircraft.Engine.SCALE_FACTOR,
