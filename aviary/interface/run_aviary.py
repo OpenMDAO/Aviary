@@ -74,7 +74,7 @@ def run_aviary(
     else:
         name = None
 
-    from aviary.interface.aviary_problem import AviaryProblem
+    from aviary.core.aviary_problem import AviaryProblem
 
     # Build problem
     prob = AviaryProblem(name=name, verbosity=verbosity)

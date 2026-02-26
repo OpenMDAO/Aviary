@@ -4,7 +4,7 @@ import unittest
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.aviary_problem import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 
 
 @use_tempdirs

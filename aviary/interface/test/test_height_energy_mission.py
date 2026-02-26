@@ -11,7 +11,7 @@ from openmdao.utils.reports_system import clear_reports
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.run_aviary import run_aviary
-from aviary.interface.aviary_problem import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
