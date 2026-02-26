@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
+from aviary.subsystems.geometry.flops_based.prep_geom import WettedAreaGroup
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
@@ -33,7 +33,7 @@ class CombinedGeometry(om.Group):
         )
 
         self.add_subsystem(
-            'flops_based_geom', PrepGeom(), promotes_inputs=['*'], promotes_outputs=['*']
+            'flops_based_geom', WettedAreaGroup(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
     def configure(self):
