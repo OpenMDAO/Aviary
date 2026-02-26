@@ -12,7 +12,9 @@ compared.
 import numpy as np
 
 import aviary.api as av
-from aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_builder import OASWingMassBuilder
+from aviary.models.external_subsystems.open_aero_struct.OAS_wing_mass_builder import (
+    OASWingMassBuilder,
+)
 
 # This problem can take a while to run - use the most performant optimizer installed
 optimizer = 'SLSQP'

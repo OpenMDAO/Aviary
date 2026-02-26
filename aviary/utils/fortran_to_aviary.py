@@ -951,17 +951,25 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
         # BWB always have detailed wing.
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
-        if Aircraft.Wing.INPUT_STATION_DIST in input_values:
-            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DIST)
+        if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
+            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
             input_station_dist = [0.0] + input_station_dist
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, input_station_dist)
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, input_station_dist)
             n_dist = len(input_station_dist)
-            chord_per_semispan_dist = input_values.get_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST)
+            chord_per_semispan_dist = input_values.get_val(
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
+            )
             chord_per_semispan_dist = [-1.0] + chord_per_semispan_dist[0 : n_dist - 1]
-            input_values.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, chord_per_semispan_dist)
-            load_path_sweep_dist = input_values.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, 'deg')
+            input_values.set_val(
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION, chord_per_semispan_dist
+            )
+            load_path_sweep_dist = input_values.get_val(
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, 'deg'
+            )
             load_path_sweep_dist = [0.0] + load_path_sweep_dist[0 : n_dist - 2]
-            input_values.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, load_path_sweep_dist, 'deg')
+            input_values.set_val(
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, load_path_sweep_dist, 'deg'
+            )
             thickness_to_chord_dist = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST)
             thickness_to_chord_dist = [-1.0] + thickness_to_chord_dist[0 : n_dist - 1]
             input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
@@ -969,7 +977,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         else:
             # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.0, 0.5, 1.0])
 
         if (
             Aircraft.Fuselage.LENGTH in input_values

@@ -806,7 +806,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:chord_per_semispan_dist",
+        "aircraft:wing:chord_per_semispan_distribution",
         [
             0.31,
             0.23,

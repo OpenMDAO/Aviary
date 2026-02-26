@@ -17,9 +17,9 @@ Tarun Huria, Massimo Ceraolo, Javier Gazzarri, Robyn Jackey
 
 from openmdao.api import Group
 
-from aviary.examples.external_subsystems.battery.battery_variables import Aircraft, Dynamic
-from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
-from aviary.examples.external_subsystems.battery.model.reg_thevenin_interp_group import (
+from aviary.models.external_subsystems.detailed_battery.battery_variables import Aircraft, Dynamic
+from aviary.models.external_subsystems.detailed_battery.model.cell_comp import CellComp
+from aviary.models.external_subsystems.detailed_battery.model.reg_thevenin_interp_group import (
     RegTheveninInterpGroup,
 )
 from aviary.utils.aviary_values import AviaryValues

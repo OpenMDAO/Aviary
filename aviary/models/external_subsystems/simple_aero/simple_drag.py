@@ -7,7 +7,7 @@ from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class SimplestDragCoeff(om.ExplicitComponent):
+class SimpleDragCoeff(om.ExplicitComponent):
     """
     Simple representation of aircraft drag as CD = CD_zero + k * CL**2.
 
@@ -83,7 +83,7 @@ class SimpleAeroGroup(om.Group):
 
         self.add_subsystem(
             'SimpleDragCoeff',
-            SimplestDragCoeff(num_nodes=nn),
+            SimpleDragCoeff(num_nodes=nn),
             promotes_inputs=['cl'],
             promotes_outputs=['CD'],
         )

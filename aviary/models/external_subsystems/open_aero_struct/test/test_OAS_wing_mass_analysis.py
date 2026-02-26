@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_analysis import OAStructures
+from aviary.models.external_subsystems.open_aero_struct.OAS_wing_mass_analysis import OAStructures
 
 
 class Test_OAStructures(unittest.TestCase):

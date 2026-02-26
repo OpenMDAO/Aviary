@@ -43,7 +43,7 @@ Some examples of disciplines that would fall under the "external subsystem" cate
 - sensor packages
 - and many more!
 
-More detailed instructions on creating an external subsystem and integrating it into Aviary can be found [here](./step_by_step_external_guide). Wrapping external models in OpenMDAO and creating builders for them can be challenging. To help alleviate this burden on users, the Aviary team is continually developing and sharing external subsystems in the `aviary/examples/external_subsystems` folder.
+More detailed instructions on creating an external subsystem and integrating it into Aviary can be found [here](./step_by_step_external_guide). Wrapping external models in OpenMDAO and creating builders for them can be challenging. To help alleviate this burden on users, the Aviary team is continually developing and sharing external subsystems in the `aviary/models/external_subsystems` folder.
 
 ## Clarifying subsystems in Aviary and their fidelity levels
 

@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.file_wrap import FileParser
 
-from aviary.examples.external_subsystems.engine_NPSS.NPSS_variables import Aircraft
+from aviary.models.external_subsystems.engine_NPSS.NPSS_variables import Aircraft
 from aviary.utils.functions import get_path
 
 
@@ -42,19 +42,17 @@ class NPSSExternalCodeComp(om.ExternalCodeComp):
         )
 
         self.input_file = get_path(
-            './examples/external_subsystems/engine_NPSS/NPSS_Model/Design_files/input.int'
+            './models/external_subsystems/engine_NPSS/NPSS_Model/Design_files/input.int'
         )
         self.output_file = get_path(
-            './examples/external_subsystems/engine_NPSS/NPSS_Model/Design_files/output.int'
+            './models/external_subsystems/engine_NPSS/NPSS_Model/Design_files/output.int'
         )
 
         self.options['external_input_files'] = [self.input_file]
         self.options['external_output_files'] = [self.output_file]
 
-        run_location = get_path(
-            './examples/external_subsystems/engine_NPSS/NPSS_Model/turbojet.run'
-        )
-        engine_location = get_path('./examples/external_subsystems/engine_NPSS/NPSS_Model/')
+        run_location = get_path('./models/external_subsystems/engine_NPSS/NPSS_Model/turbojet.run')
+        engine_location = get_path('./models/external_subsystems/engine_NPSS/NPSS_Model/')
         engine_location = str(engine_location)
 
         run_command = ['runnpss', run_location, '-D ENG_PATH=' + engine_location]

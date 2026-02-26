@@ -16,7 +16,7 @@ def skipIfMissingDependencies(builder):
 
 class TestSubsystemBuilder(unittest.TestCase):
     @staticmethod
-    def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
+    def import_builder(path_to_builder: str, base_package='aviary.models.external_subsystems'):
         """
         Import a subsystem builder.
 

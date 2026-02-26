@@ -3,7 +3,7 @@ import unittest
 from openmdao.api import Group, Problem
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.examples.external_subsystems.battery.model.cell_comp import CellComp
+from aviary.models.external_subsystems.detailed_battery.model.cell_comp import CellComp
 
 
 class Test_cell_comp(unittest.TestCase):

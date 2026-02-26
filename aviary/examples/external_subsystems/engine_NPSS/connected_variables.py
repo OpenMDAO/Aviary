@@ -1,4 +1,4 @@
-from aviary.examples.external_subsystems.engine_NPSS.NPSS_variables import Dynamic
+from aviary.models.external_subsystems.engine_NPSS.NPSS_variables import Dynamic
 
 vars_to_connect = {
     'Fn_train': {

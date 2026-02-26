@@ -1,7 +1,7 @@
 import openmdao.api as om
 
 import aviary.api as av
-from aviary.examples.external_subsystems.OAS_mass.OAS_wing_mass_analysis import OAStructures
+from aviary.models.external_subsystems.open_aero_struct.OAS_wing_mass_analysis import OAStructures
 
 
 class OASWingMassBuilder(av.SubsystemBuilder):

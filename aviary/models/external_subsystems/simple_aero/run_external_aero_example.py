@@ -3,7 +3,7 @@
 from copy import deepcopy
 
 import aviary.api as av
-from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
+from aviary.models.external_subsystems.simple_aero.simple_drag_builder import SimpleAeroBuilder
 
 phase_info = deepcopy(av.default_height_energy_phase_info)
 

@@ -1,6 +1,6 @@
 """Builder for a simple drag calculation that replaces Aviary's calculation."""
 
-from aviary.examples.external_subsystems.simple_aero.simple_drag import SimpleAeroGroup
+from aviary.models.external_subsystems.simple_aero.simple_drag import SimpleAeroGroup
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
