@@ -16,7 +16,7 @@ def _setup_EDC_parser(parser):
     )
     parser.add_argument(
         '-f',
-        '--data_format',
+        '--format',
         type=EngineDeckType,
         choices=list(EngineDeckType),
         help='data format used by input_file',

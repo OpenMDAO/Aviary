@@ -1296,8 +1296,8 @@ def _setup_F2A_parser(parser):
         help='Filename for converted input deck, including partial or complete path.',
     )
     parser.add_argument(
-        '-l',
-        '--legacy_code',
+        '-f',
+        '--format',
         type=LegacyCode,
         help='Name of the legacy code the deck originated from',
         choices=set(LegacyCode),

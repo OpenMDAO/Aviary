@@ -49,7 +49,7 @@ _convert_command_map = {
         _exec_ATC,
         'Convert FLOPS- or GASP-formatted aero data files into Aviary csv format.',
     ),
-    'engine': (
+    'engine_deck': (
         _setup_EDC_parser,
         _exec_EDC,
         'Convert FLOPS- or GASP-formatted engine decks into Aviary csv format.',
@@ -59,7 +59,7 @@ _convert_command_map = {
         _exec_F2A,
         'Convert legacy Fortran (FLOPS or GASP) input file to Aviary input file.',
     ),
-    'prop_table': (
+    'propeller_table': (
         _setup_PMC_parser,
         _exec_PMC,
         'Convert GASP-formatted propeller map file into Aviary csv format.',
