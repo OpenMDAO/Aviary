@@ -4,7 +4,7 @@ from copy import deepcopy
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
-from aviary.interface.methods_for_level2 import reload_aviary_problem
+from aviary.core.aviary_problem import reload_aviary_problem
 from aviary.models.missions.height_energy_default import phase_info, phase_info_parameterization
 from aviary.utils.functions import get_path
 
