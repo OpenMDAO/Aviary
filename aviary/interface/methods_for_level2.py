@@ -1366,7 +1366,9 @@ class AviaryProblem(om.Problem):
             )
 
         if name is None:
-            name = name = self._name + '_off_design'
+            name = self._name + '_' + str(problem_type.value)
+            curr_time = datetime.now().strftime('%m%d%y%H%M%S')
+            name += '_' + curr_time
         off_design_prob = AviaryProblem(name=name)
 
         # Set up problem for mission, such as equations of motion, configurators, etc.
