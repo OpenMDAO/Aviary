@@ -2,8 +2,8 @@ import numpy as np
 import openmdao.api as om
 from numpy import pi
 
-from aviary.subsystems.geometry.flops_based.canard import Canard
-from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
+from aviary.subsystems.geometry.flops_based.canard import Canard_SWet
+from aviary.subsystems.geometry.flops_based.nacelle import Nacelles_SWet
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
     calc_fuselage_adjustment,
@@ -27,47 +27,51 @@ class WettedAreaGroup(om.Group):
         design_type = self.options[Aircraft.Design.TYPE]
 
         self.add_subsystem(
-            'prelim',
-            _Prelim(),
+            'prelim_swet',
+            Prelim_SWet(),
             promotes_inputs=['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem('wing', _BWBWing(), promotes_inputs=['*'], promotes_outputs=['*'])
+            self.add_subsystem(
+                'wing_swet', BWBWing_SWet(), promotes_inputs=['*'], promotes_outputs=['*']
+            )
         else:
             self.add_subsystem(
-                'wing', _Wing(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+                'wing_swet', Wing_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
 
         if design_type is AircraftTypes.TRANSPORT:
-            self.connect(f'prelim.{Names.CROOT}', f'wing.{Names.CROOT}')
-            self.connect(f'prelim.{Names.CROOTB}', f'wing.{Names.CROOTB}')
-            self.connect(f'prelim.{Names.XDX}', f'wing.{Names.XDX}')
-            self.connect(f'prelim.{Names.XMULT}', f'wing.{Names.XMULT}')
-
-        self.add_subsystem('tail', _Tail(), promotes_inputs=['aircraft*'], promotes_outputs=['*'])
-
-        self.connect(f'prelim.{Names.XMULTH}', f'tail.{Names.XMULTH}')
-        self.connect(f'prelim.{Names.XMULTV}', f'tail.{Names.XMULTV}')
-
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem('fuselage', _BWBFuselage(), promotes_outputs=['*'])
-        elif design_type is AircraftTypes.TRANSPORT:
-            self.add_subsystem(
-                'fuselage', _Fuselage(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
-            )
-
-        if design_type is AircraftTypes.TRANSPORT:
-            self.connect(f'prelim.{Names.CROOTB}', f'fuselage.{Names.CROOTB}')
-            self.connect(f'prelim.{Names.CROTVT}', f'fuselage.{Names.CROTVT}')
-            self.connect(f'prelim.{Names.CRTHTB}', f'fuselage.{Names.CRTHTB}')
+            self.connect(f'prelim_swet.{Names.CROOT}', f'wing_swet.{Names.CROOT}')
+            self.connect(f'prelim_swet.{Names.CROOTB}', f'wing_swet.{Names.CROOTB}')
+            self.connect(f'prelim_swet.{Names.XDX}', f'wing_swet.{Names.XDX}')
+            self.connect(f'prelim_swet.{Names.XMULT}', f'wing_swet.{Names.XMULT}')
 
         self.add_subsystem(
-            'nacelles', Nacelles(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            'tail', Tail_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+        )
+
+        self.connect(f'prelim_swet.{Names.XMULTH}', f'tail.{Names.XMULTH}')
+        self.connect(f'prelim_swet.{Names.XMULTV}', f'tail.{Names.XMULTV}')
+
+        if design_type is AircraftTypes.BLENDED_WING_BODY:
+            self.add_subsystem('fus_swet', BWBFuselage_SWet(), promotes_outputs=['*'])
+        elif design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'fus_swet', Fuselage_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            )
+
+        if design_type is AircraftTypes.TRANSPORT:
+            self.connect(f'prelim_swet.{Names.CROOTB}', f'fus_swet.{Names.CROOTB}')
+            self.connect(f'prelim_swet.{Names.CROTVT}', f'fus_swet.{Names.CROTVT}')
+            self.connect(f'prelim_swet.{Names.CRTHTB}', f'fus_swet.{Names.CRTHTB}')
+
+        self.add_subsystem(
+            'nacelles_swet', Nacelles_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
-            'canard', Canard(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            'canard_swet', Canard_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
         self.add_subsystem(
@@ -75,7 +79,7 @@ class WettedAreaGroup(om.Group):
         )
 
 
-class _Prelim(om.ExplicitComponent):
+class Prelim_SWet(om.ExplicitComponent):
     """Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
@@ -460,7 +464,7 @@ class _Prelim(om.ExplicitComponent):
         return value
 
 
-class _Wing(om.ExplicitComponent):
+class Wing_SWet(om.ExplicitComponent):
     """Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
@@ -533,7 +537,7 @@ class _Wing(om.ExplicitComponent):
         )
 
 
-class _BWBWing(om.ExplicitComponent):
+class BWBWing_SWet(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
@@ -606,7 +610,7 @@ class _BWBWing(om.ExplicitComponent):
         outputs[Aircraft.Wing.WETTED_AREA] = ssmw
 
 
-class _Tail(om.ExplicitComponent):
+class Tail_SWet(om.ExplicitComponent):
     """
     Calculate horizontal wing and vertical wing wetted areas of aircraft geometry
     for FLOPS-based aerodynamics analysis.
@@ -742,7 +746,7 @@ class _Tail(om.ExplicitComponent):
         )
 
 
-class _BWBFuselage(om.ExplicitComponent):
+class BWBFuselage_SWet(om.ExplicitComponent):
     """
     Set BWB fuselage cross sectional area, and fuselage wetted area to zero
     for FLOPS-based aerodynamics analysis when BWB has detailed wings.
@@ -757,7 +761,7 @@ class _BWBFuselage(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.WETTED_AREA] = 0.0
 
 
-class _Fuselage(om.ExplicitComponent):
+class Fuselage_SWet(om.ExplicitComponent):
     """
     Calculate fuselage cross sectional area, and fuselage wetted area of aircraft geometry
     for FLOPS-based aerodynamics analysis.
