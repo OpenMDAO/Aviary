@@ -83,14 +83,17 @@ class TurbopropMissionTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.add_subsystem(
+        # Put it all in an outer group called "propulsion" so that model structure looks like
+        # aviary for model options.
+        propulsion_group = self.prob.model.add_subsystem('propulsion', om.Group(), promotes=['*'])
+        propulsion_group.add_subsystem(
             engine.name,
             subsys=engine.build_mission(num_nodes=num_nodes, aviary_inputs=options, **kwargs),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
 
-        setup_model_options(self.prob, options)
+        setup_model_options(self.prob, options, engine_models=[engine])
 
         self.prob.setup(force_alloc_complex=False)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
