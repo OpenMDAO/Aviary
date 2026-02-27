@@ -1957,6 +1957,9 @@ def reload_aviary_problem(
     filename : str, Path
         User specified name and relative path of json file containing the sized aircraft data
 
+    phase_info : dict, Path
+        phase_info dictionary used by the original problem
+
     metadata : dict (optional)
         Custom metadata if needed to read all variables present in the json output file
 
