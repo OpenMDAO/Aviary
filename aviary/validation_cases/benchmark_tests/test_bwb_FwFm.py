@@ -184,7 +184,6 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             prob.get_val(Mission.Summary.RANGE, units='NM'), 0.00053996, tolerance=rtol
         )
 
-
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_bwb_FwFm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
