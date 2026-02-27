@@ -10,6 +10,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.variable_info.functions import setup_model_options
 
+
 class TestGearbox(unittest.TestCase):
     @use_tempdirs
     def test_motor_premission(self):
@@ -19,9 +20,7 @@ class TestGearbox(unittest.TestCase):
         options = AviaryValues()
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(filename))
 
-        prob.model.add_subsystem(
-            'motor_map', MotorPreMission(), promotes=['*']
-        )
+        prob.model.add_subsystem('motor_map', MotorPreMission(), promotes=['*'])
 
         setup_model_options(prob, options)
 

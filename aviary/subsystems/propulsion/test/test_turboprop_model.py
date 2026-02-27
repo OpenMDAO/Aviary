@@ -19,15 +19,20 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.aviary_values import AviaryValues
 
+
 @use_tempdirs
 class TurbopropMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
     def prepare_model(
-        self, options: AviaryValues, test_points=[(0, 0, 0), (0, 0, 1)], shp_model=None, prop_model=None, **kwargs
+        self,
+        options: AviaryValues,
+        test_points=[(0, 0, 0), (0, 0, 1)],
+        shp_model=None,
+        prop_model=None,
+        **kwargs,
     ):
-
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -62,7 +67,7 @@ class TurbopropMissionTest(unittest.TestCase):
         engine = TurbopropModel(
             options=options, shaft_power_model=shp_model, propeller_model=prop_model
         )
-        
+
         preprocess_propulsion(options, [engine])
 
         machs, alts, throttles = zip(*test_points)
@@ -270,7 +275,7 @@ class TurbopropMissionTest(unittest.TestCase):
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
 
-        self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True) 
+        self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
 
         self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
 

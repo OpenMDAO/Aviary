@@ -4,6 +4,7 @@ import openmdao.api as om
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
 from aviary.variable_info.variables import Aircraft, Dynamic
 
+
 class MotorMission(om.Group):
     """Calculates the mission performance (ODE) of a single electric motor."""
 
@@ -12,7 +13,6 @@ class MotorMission(om.Group):
         self.name = 'motor_mission'
 
     def setup(self):
-
         nn = self.options['num_nodes']
 
         ivc = om.IndepVarComp()

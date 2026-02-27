@@ -6,6 +6,7 @@ from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.functions import get_path
 
+
 class MotorMap(om.Group):
     """
     Inputs
