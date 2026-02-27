@@ -180,7 +180,9 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 0.00053996, tolerance=rtol)
+        assert_near_equal(
+            prob.get_val(Mission.Summary.RANGE, units='NM'), 0.00053996, tolerance=rtol
+        )
 
 
 if __name__ == '__main__':
