@@ -7,11 +7,11 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 
 import aviary.api as av
-from aviary.models.external_subsystems.engine_NPSS.NPSS_engine_builder import (
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_engine_builder import (
     NPSSTabularEngineBuilder,
 )
 
-from aviary.models.external_subsystems.engine_NPSS.NPSS_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_variable_meta_data import ExtendedMetaData
 
 
 class AviaryNPSSTestCase(unittest.TestCase):
