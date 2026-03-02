@@ -228,7 +228,7 @@ def d_smooth_int_tanh(x, mu=10.0):
     Smooth approximation of int(x) using tanh.
     Returns (y, dy_dx).
     """
-    f = np.floor(x) + x.imag * 1j
+    f = np.floor(x.real) + x.imag * 1j
     frac = x - f
     t = np.tanh(mu * (frac - 0.5))
     dy_dx = 0.5 * mu * (1 - t**2)
