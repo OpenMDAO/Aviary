@@ -82,6 +82,7 @@ class LiftDependentDrag(om.ExplicitComponent):
             )
         )
 
+        # TODO: comparing to the return types of inner_interp(), this seems to be wrong
         return FCDP, dFCDP_dDEL[:, 0], dFCDP_dDEL[:, 1], dFCDP_dA
 
     def inner_interp(
