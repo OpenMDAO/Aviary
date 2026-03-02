@@ -175,4 +175,4 @@ if __name__ == '__main__':
     # unittest.main()
     test = BWBProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_bwb_FwFm_IPOPT()
+    test.test_bench_bwb_FwFm_SNOPT()
