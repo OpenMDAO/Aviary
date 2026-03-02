@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -36,17 +37,21 @@ class SkinFriction(om.ImplicitComponent):
             desc='The number of points at which the cross product is computed.',
         )
 
+        add_aviary_option(self, Aircraft.Design.TYPE)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
         nn = self.options['num_nodes']
+        design_type = self.options[Aircraft.Design.TYPE]
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_fuselages = self.options[Aircraft.Fuselage.NUM_FUSELAGES]
-        num_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
+        num_h_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
+        num_v_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
-        self.nc = nc = 2 + num_tails + num_fuselages + int(sum(num_engines))
+        self.nc = nc = 1 + num_h_tails + num_v_tails + num_fuselages + int(sum(num_engines))
 
         # Simulation inputs
         add_aviary_input(self, Dynamic.Atmosphere.TEMPERATURE, shape=nn, units='degR')

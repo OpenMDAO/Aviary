@@ -96,7 +96,7 @@ class DocTAPETests(unittest.TestCase):
         glue_keys({'d1': {'d2': 2}}, display=False)
 
     def test_glue_class_functions(self):
-        from aviary.interface.methods_for_level2 import AviaryProblem
+        from aviary.core.aviary_problem import AviaryProblem
 
         curr_glued = []
         glue_class_functions(AviaryProblem, curr_glued, prefix='zz')

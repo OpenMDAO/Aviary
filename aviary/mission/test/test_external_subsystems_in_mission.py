@@ -8,7 +8,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft
 
@@ -109,7 +109,7 @@ class TestExternalSubsystems(unittest.TestCase):
         # NOTE currently 2DOF ODEs do not use the solver subsystem
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs,
+                prob.model.traj.phases.cruise.rhs_all,
                 'solve_me',
             )
         )
@@ -135,7 +135,7 @@ class TestExternalSubsystems(unittest.TestCase):
 
         self.assertTrue(
             hasattr(
-                prob.model.traj.phases.cruise.rhs,
+                prob.model.traj.phases.cruise.rhs_all,
                 'do_not_solve_me',
             )
         )

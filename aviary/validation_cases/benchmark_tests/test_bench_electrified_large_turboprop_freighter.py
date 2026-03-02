@@ -5,7 +5,7 @@ from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.large_turboprop_freighter.electrified_phase_info import (
     energy_phase_info,
     two_dof_phase_info,
@@ -64,7 +64,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
-            energy_phase_info,
+            phase_info,
         )
         prob.load_external_subsystems([electroprop])
 
