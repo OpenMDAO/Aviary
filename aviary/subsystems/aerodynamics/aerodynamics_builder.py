@@ -496,7 +496,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             if method == 'computed':
                 try:
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
-                except:
+                except KeyError:
                     design_type = AircraftTypes.TRANSPORT
                 if design_type is AircraftTypes.BLENDED_WING_BODY:
                     core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
@@ -632,7 +632,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
             try:
                 design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
-            except:
+            except KeyError:
                 design_type = AircraftTypes.TRANSPORT
 
             if design_type is AircraftTypes.BLENDED_WING_BODY:
