@@ -271,9 +271,9 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
     This is basically the same as DetailedWingBendingFact except the following:
 
-      - Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION is replaced by BWB_LOAD_PATH_SWEEP_DIST
-      - Aircraft.Wing.THICKNESS_TO_CHORD_DIST is replaced by BWB_THICKNESS_TO_CHORD_DIST
-      - Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DIST
+      - Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION is replaced by BWB_LOAD_PATH_SWEEP_DISTRIBUTION
+      - Aircraft.Wing.THICKNESS_TO_CHORD_DIST is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
+      - Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
     """
 
     # Basically, Engine.WING_LOCATIONS is ignored if there are one or fewer wing engines
@@ -293,9 +293,15 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        self.add_input('BWB_LOAD_PATH_SWEEP_DIST', shape=num_input_stations - 1, units='deg')
-        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_input_stations, units='unitless')
-        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_input_stations, units='unitless')
+        self.add_input(
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations - 1, units='deg'
+        )
+        self.add_input(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
+        )
+        self.add_input(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
+        )
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
@@ -366,12 +372,12 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         # 2.0-3.0 : blend of elliptical and rectangular
         load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
 
-        load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DIST']
+        load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION']
         load_path_sweep_mod = np.array(load_path_sweep[1:])
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
-        chord = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
+        chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
         for x in chord:
             if x > 5.0:
@@ -388,7 +394,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
 
-        thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DIST']
+        thickness_to_chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
         thickness_to_chord_mod = []

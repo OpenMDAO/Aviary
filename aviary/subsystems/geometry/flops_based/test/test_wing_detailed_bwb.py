@@ -89,7 +89,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
         prob.run_model()
 
-        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
         exp1 = [
             112.300194,
             55.0000000,
@@ -109,7 +109,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         ]
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
-        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
+        out2 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
         exp2 = [
             0.11,
             0.11,
@@ -129,7 +129,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         ]
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
-        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
         exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
@@ -172,15 +172,15 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()
 
-        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
         exp1 = [137.5, 91.37142857, 14.2848]
         assert_near_equal(out1, exp1, tolerance=1e-10)
 
-        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
+        out2 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
         exp2 = [0.11, 0.11, 0.11]
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
-        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
         exp3 = [0.0, 15.33732285330093]
         assert_near_equal(out3, exp3, tolerance=1e-10)
 
@@ -216,7 +216,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         prob.set_val(Aircraft.Wing.SPAN, val=238.08)
         prob.set_val(
-            'BWB_CHORD_PER_SEMISPAN_DIST',
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
             val=[137.5, 91.37142857, 14.2848],
         )
         prob.run_model()
@@ -249,7 +249,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=121.05)
         prob.set_val(Aircraft.Wing.SPAN, val=253.720756)
         prob.set_val(
-            'BWB_CHORD_PER_SEMISPAN_DIST',
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
             val=[
                 112.3001936860821,
                 55,
