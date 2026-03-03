@@ -258,13 +258,13 @@ class BWBAftBodyMass(om.ExplicitComponent):
 
         if rear_spar_percent_chord <= 0.0 or rear_spar_percent_chord >= 1.0:
             if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord must be within 0 and 1.')
+                raise ValueError('Rear_spar_percent_chord must be within 0 and 1.')
         if rear_spar_percent_chord_centerline <= 0.0 or rear_spar_percent_chord_centerline >= 1.0:
             if verbosity > Verbosity.BRIEF:
-                print('Rear_spar_percent_chord_centerline must be within 0 and 1.')
+                raise ValueError('Rear_spar_percent_chord_centerline must be within 0 and 1.')
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Fuselage.LENGTH must be positive.')
+                raise ValueError('Aircraft.Fuselage.LENGTH must be positive.')
 
         aftbody_area = fuse_area - cabin_area
         aftbody_tr = ((1.0 - rear_spar_percent_chord) * root_chord / rear_spar_percent_chord) / (
