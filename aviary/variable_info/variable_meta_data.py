@@ -5506,7 +5506,7 @@ add_meta_data(
 
 add_meta_data(
     # see also: station_chord_lengths (of LEAPS1)
-    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+    Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -5860,7 +5860,7 @@ add_meta_data(
 add_meta_data(
     # see also: station_locations
     # NOTE required for blended-wing-body type aircraft
-    Aircraft.Wing.INPUT_STATION_DIST,
+    Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -5938,7 +5938,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+    Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,

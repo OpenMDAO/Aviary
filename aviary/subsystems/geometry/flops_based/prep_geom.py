@@ -669,11 +669,11 @@ class _BWBWing(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
@@ -695,9 +695,9 @@ class _BWBWing(om.ExplicitComponent):
         rate_span = (wingspan - width) / wingspan
 
         # This part is repeated in BWBWingPrelim()
-        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
         )
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,

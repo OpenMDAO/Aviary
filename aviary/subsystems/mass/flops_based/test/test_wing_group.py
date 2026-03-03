@@ -24,7 +24,7 @@ class BWBWingGroupTest(unittest.TestCase):
             Aircraft.Wing.DETAILED_WING,
             Aircraft.Engine.NUM_WING_ENGINES,
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
             Aircraft.Wing.NUM_INTEGRATION_STATIONS,
             Aircraft.Engine.NUM_FUSELAGE_ENGINES,
