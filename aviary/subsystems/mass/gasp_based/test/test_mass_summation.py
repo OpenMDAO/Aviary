@@ -3466,7 +3466,10 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 80987.12286499, tol)
         # BodyTankCalculations
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 4954.00837132, tol)
-        assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 40216.88550633, tol)
+
+        total_cap = prob[Aircraft.Fuel.TOTAL_CAPACITY]
+        unusable = prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
+        assert_near_equal(total_cap - unusable, 40216.88550633, tol)
         assert_near_equal(prob['extra_fuel_volume'], 169.53050054, tol)
         assert_near_equal(prob['max_extra_fuel_mass'], 8480.29608482, tol)
         assert_near_equal(prob['wingfuel_mass_min'], 11782.58105019, tol)
