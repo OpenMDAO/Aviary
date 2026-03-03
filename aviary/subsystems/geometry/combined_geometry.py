@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.subsystems.geometry.flops_based.prep_geom import WettedAreaGroup
+from aviary.subsystems.geometry.flops_based.prep_geom import PrepGeom
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
@@ -33,7 +33,7 @@ class CombinedGeometry(om.Group):
         )
 
         self.add_subsystem(
-            'flops_based_geom', WettedAreaGroup(), promotes_inputs=['*'], promotes_outputs=['*']
+            'flops_based_geom', PrepGeom(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
     def configure(self):
@@ -43,7 +43,9 @@ class CombinedGeometry(om.Group):
         # These are outputs that are computed by both flops_based and gasp_based
         # geometry subsystems.
         flops_geom_pathname = self.flops_based_geom.pathname
-        flops_fus_area_path = flops_geom_pathname + '.fuselage.' + Aircraft.Fuselage.WETTED_AREA
+        flops_fus_area_path = (
+            flops_geom_pathname + '.wetted_area.fuselage.' + Aircraft.Fuselage.WETTED_AREA
+        )
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
 
@@ -52,7 +54,7 @@ class CombinedGeometry(om.Group):
 
             name = Aircraft.Fuselage.WETTED_AREA
             outs = [(name, f'CODE_ORIGIN_OVERRIDE:{name}')]
-            self.flops_based_geom.promotes('fuselage', outputs=outs)
+            self.flops_based_geom.promotes('wetted_area', outputs=outs)
 
         elif prioritize_origin is FLOPS:
             override = [gasp_fus_area_path]
