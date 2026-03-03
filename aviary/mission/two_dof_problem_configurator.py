@@ -213,8 +213,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Phase builder for requested phase.
         """
         # TODO: Move this to aviary_group and let other EOM use them.
-        if 'phase_builder' in phase_options['user_options']:
-            builder = phase_options['user_options']['phase_builder']
+        if 'phase_type' in phase_options['user_options']:
+            builder = phase_options['user_options']['phase_type']
 
             if builder is PhaseType.BREGUET_RANGE:
                 # TODO: This is the only one currently accessed by name string, to preserve
@@ -263,7 +263,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         comm : MPI.Comm or <FakeComm>
             MPI Communicator from OpenMDAO problem.
         """
-        phase_builder = user_options['phase_builder']
+        phase_builder = user_options['phase_type']
         if phase_builder is PhaseType.BREGUET_RANGE:
             # The Breguet Range Cruise phase integrates over mass instead of time.
             # We rely on mass being monotonically non-increasing across the phase.
@@ -373,8 +373,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             phase1, phase2 = phases[ii : ii + 2]
             info1 = aviary_group.mission_info[phase1]
             info2 = aviary_group.mission_info[phase2]
-            phase_builder1 = info1['user_options']['phase_builder']
-            phase_builder2 = info2['user_options']['phase_builder']
+            phase_builder1 = info1['user_options']['phase_type']
+            phase_builder2 = info2['user_options']['phase_type']
 
             integrate_mass1 = phase_builder1 is PhaseType.BREGUET_RANGE
             integrate_mass2 = phase_builder2 is PhaseType.BREGUET_RANGE
@@ -695,7 +695,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Location of this trajectory in the hierarchy.
         """
         # Breguet cruise integrates mass, so initial guesses are different.
-        phase_type = aviary_group.mission_info[phase_name]['user_options']['phase_builder']
+        phase_type = aviary_group.mission_info[phase_name]['user_options']['phase_type']
         if phase_type is PhaseType.BREGUET_RANGE:
             for guess_key, guess_data in guesses.items():
                 val, units = guess_data

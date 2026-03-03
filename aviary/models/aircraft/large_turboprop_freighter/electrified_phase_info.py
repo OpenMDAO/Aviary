@@ -80,7 +80,7 @@ energy_phase_info = {
 two_dof_phase_info = {
     'groundroll': {
         'user_options': {
-            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'ground_roll': True,
             'num_segments': 1,
             'order': 3,
@@ -106,7 +106,7 @@ two_dof_phase_info = {
     },
     'rotation': {
         'user_options': {
-            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'rotation': True,
             'num_segments': 1,
             'order': 3,
@@ -137,7 +137,7 @@ two_dof_phase_info = {
     },
     'ascent': {
         'user_options': {
-            'phase_builder': PhaseType.TWO_DOF_TAKEOFF,
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
@@ -176,7 +176,7 @@ two_dof_phase_info = {
     },
     'accel': {
         'user_options': {
-            'phase_builder': PhaseType.ACCEL,
+            'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
@@ -255,7 +255,7 @@ two_dof_phase_info = {
     },
     'electric_cruise': {
         'user_options': {
-            'phase_builder': PhaseType.BREGUET_RANGE,
+            'phase_type': PhaseType.BREGUET_RANGE,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
         },
