@@ -226,7 +226,8 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0]
+            == f'geometry.flops_based_geom.wetted_area.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -304,7 +305,8 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0]
+            == f'geometry.flops_based_geom.wetted_area.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' not in outs[0][1]['prom_name'])
 
