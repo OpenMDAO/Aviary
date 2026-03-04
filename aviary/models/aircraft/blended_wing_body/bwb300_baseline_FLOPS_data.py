@@ -16,8 +16,6 @@ inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)  # EWMARG
 inputs.set_val(
     Mission.Design.GROSS_MASS, 600000.0, 'lbm'
 )  # DGW, value taken from GW which is not in Aviary
-inputs.set_val(Mission.Design.LIFT_COEFFICIENT, -1.0)  # FCLDES
-inputs.set_val(Mission.Design.MACH, -1)  # FMDES
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
@@ -71,10 +69,10 @@ inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, 'inch')  # T
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 23500.0, 'lbm')  # WCON
-inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, -1)  # NSTU
+inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 8)  # NSTU
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)  # WFLCRB
-inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, -1)  # NGALC
+inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 2)  # NGALC
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')  # CARGOF
 inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)  # WSRV
@@ -105,7 +103,6 @@ inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6883549569366508, 'unitless')
 inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY, 0.0, 'lbm')  # FUELRF
-inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_AREA, -1)  # FSWREF
 inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, 0.0)  # FUSCLA
 inputs.set_val(Aircraft.Fuel.WING_REF_CAPACITY_TERM_B, 0.0)  # FUSCLB
 
@@ -131,7 +128,7 @@ inputs.set_val(Aircraft.HorizontalTail.AREA, 700.0, 'ft**2')  # SHT
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 1.0)  # ARHT
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.7140)  # TRHT
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1)  # TCHT
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, -100.0)  # HHT
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # FRHT
 inputs.set_val(Aircraft.HorizontalTail.NUM_TAILS, 1)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)  # SWETH

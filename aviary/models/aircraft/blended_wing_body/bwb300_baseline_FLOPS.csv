@@ -35,9 +35,9 @@ aircraft:crew_and_payload:misc_cargo,0.0,lbm
 aircraft:crew_and_payload:num_business_class,76,unitless
 aircraft:crew_and_payload:num_economy_class,200,unitless
 aircraft:crew_and_payload:num_first_class,24,unitless
-aircraft:crew_and_payload:num_flight_attendants,-1,unitless
+aircraft:crew_and_payload:num_flight_attendants,8,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
-aircraft:crew_and_payload:num_galley_crew,-1,unitless
+aircraft:crew_and_payload:num_galley_crew,2,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
@@ -87,7 +87,6 @@ aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6883549569366508,unitless
 aircraft:fuel:wing_ref_capacity,0.0,lbm
-aircraft:fuel:wing_ref_capacity_area,-1.0,unitless
 aircraft:fuel:wing_ref_capacity_term_a,0.0,unitless
 aircraft:fuel:wing_ref_capacity_term_b,0.0,unitless
 aircraft:furnishings:mass_scaler,1.118,unitless
@@ -110,7 +109,7 @@ aircraft:horizontal_tail:num_tails,1,unitless
 aircraft:horizontal_tail:sweep,0.0,deg
 aircraft:horizontal_tail:taper_ratio,0.714,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.1,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,-100.0,unitless
+aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
@@ -179,8 +178,6 @@ aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,0.61,unitless
 mission:constraints:max_mach,0.9,unitless
 mission:design:gross_mass,600000.0,lbm
-mission:design:lift_coefficient,-1.0,unitless
-mission:design:mach,-1.0,unitless
 mission:design:range,7500.0,NM
 mission:design:thrust_takeoff_per_eng,0.0,lbf
 mission:landing:drag_coefficient_min,0.0,unitless
