@@ -498,8 +498,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
                 except KeyError:
                     design_type = AircraftTypes.TRANSPORT
-                num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
-                num_vertical_tails = aviary_inputs.get_val(Aircraft.VerticalTail.NUM_TAILS)
+                try:
+                    num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
+                except KeyError:
+                    num_horizontal_tails = 1
+                try:
+                    num_vertical_tails = aviary_inputs.get_val(Aircraft.VerticalTail.NUM_TAILS)
+                except KeyError:
+                    num_vertical_tails = 1
                 if design_type is AircraftTypes.BLENDED_WING_BODY:
                     if num_horizontal_tails == 0 and num_vertical_tails == 0:
                         core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
