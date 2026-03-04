@@ -2,7 +2,6 @@ import unittest
 from copy import deepcopy
 
 from numpy.testing import assert_almost_equal
-from openmdao.utils.testing_utils import use_tempdirs
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem

@@ -1,11 +1,8 @@
-from aviary.variable_info.enums import SpeedType, ThrottleAllocation
+from aviary.variable_info.enums import PhaseType, SpeedType
 
 # Energy method
 energy_phase_info = {
-    'pre_mission': {
-        'include_takeoff': False,
-        'optimize_mass': True,
-    },
+    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
         'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
         'user_options': {
@@ -246,18 +243,19 @@ two_dof_phase_info = {
             'throttle': ([0.956, 0.956], 'unitless'),
         },
     },
-    'electric_cruise': {
+    'cruise': {
         'user_options': {
+            'phase_builder': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
+            'mass_bounds': ((0, None), 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([150_000.0, -35_000], 'lbm'),
-            'initial_distance': (100.0e3, 'ft'),
-            'initial_time': (1_000.0, 's'),
-            'altitude': (21_000, 'ft'),
-            'mach': (0.475, 'unitless'),
+            'mass': ([150_000.0, 115000], 'lbm'),
+            'time': ([1516.0, 2100.0], 's'),
         },
     },
     'desc1': {
@@ -269,7 +267,7 @@ two_dof_phase_info = {
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 1800.0), 's'),
             'time_duration_ref': (1000, 's'),
-            'altitude_initial': (21_000, 'ft'),
+            # 'altitude_initial': (21_000, 'ft'),
             'altitude_final': (10_000, 'ft'),
             'altitude_bounds': ((10000.0, 21_000.0), 'ft'),
             'altitude_ref': (20_000, 'ft'),
