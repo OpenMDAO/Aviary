@@ -74,10 +74,6 @@ class WettedAreaGroup(om.Group):
             'canard_swet', Canard_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
-        self.add_subsystem(
-            'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
-        )
-
 
 class Prelim_SWet(om.ExplicitComponent):
     """Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis."""

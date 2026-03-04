@@ -25,6 +25,7 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     SimpleCabinLayout,
 )
 from aviary.subsystems.geometry.flops_based.wetted_area_total import WettedAreaGroup
+from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
 from aviary.subsystems.geometry.flops_based.wing_detailed_bwb import (
     BWBUpdateDetailedWingDist,
@@ -156,6 +157,10 @@ class PrepGeom(om.Group):
         )
 
         # self.connect(f'prelim.{Names.CROOT}', f'other_characteristic_lengths.{Names.CROOT}')
+
+        self.add_subsystem(
+            'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
 
 
 class _FuselageRatios(om.ExplicitComponent):
