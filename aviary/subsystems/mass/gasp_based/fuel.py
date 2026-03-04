@@ -47,6 +47,9 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Mission.Summary.FUEL_MASS, units='lbm')
         add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
+        # GASP total capacity didn't include the unusable mass, but Aviary total capacity does.
+        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
+
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
         add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
         self.add_output(
@@ -108,6 +111,7 @@ class BodyTankCalculations(om.ExplicitComponent):
                 Mission.Summary.OPERATING_MASS,
             ],
         )
+        self.declare_partials(Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.UNUSABLE_FUEL_MASS, val=1.0)
 
     def compute(self, inputs, outputs):
         design_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_DESIGN]
@@ -123,6 +127,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Summary.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
+        unusable_fuel = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS] * GRAV_ENGLISH_LBM
 
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         mu = self.options['mu']
@@ -197,7 +202,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         # pass back to FuelSysAndFullFuselageMass
         outputs['wingfuel_mass_min'] = wingfuel_wt_min / GRAV_ENGLISH_LBM
         # pass back to FuelAndOEMOutputs
-        outputs[Aircraft.Fuel.TOTAL_CAPACITY] = max_fuel_avail / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Fuel.TOTAL_CAPACITY] = (max_fuel_avail + unusable_fuel) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         design_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_DESIGN]
@@ -513,6 +518,9 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
+        # GASP total capacity didn't include the unusable mass, but Aviary total capacity does.
+        add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
+
         self.add_output(
             'OEM_wingfuel_mass',
             val=0,
@@ -595,8 +603,9 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Mission.Summary.USEFUL_LOAD,
             ],
-            val=-1,
+            val=-1.0,
         )
+        self.declare_partials('payload_mass_max_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS, val=1.0)
         self.declare_partials(
             'volume_wingfuel_mass', [Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, Aircraft.Fuel.DENSITY]
         )
@@ -641,7 +650,10 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         req_fuel_wt = inputs[Mission.Summary.FUEL_MASS_REQUIRED] * GRAV_ENGLISH_LBM
         geometric_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
         fuel_margin = inputs[Aircraft.Fuel.FUEL_MARGIN]
-        max_fuel_avail = inputs[Aircraft.Fuel.TOTAL_CAPACITY] * GRAV_ENGLISH_LBM
+
+        total_fuel = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
+        unusable_fuel = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
+        max_fuel_avail = (total_fuel - unusable_fuel) * GRAV_ENGLISH_LBM
 
         OEM_wingfuel_wt = (
             gross_wt_initial - propulsion_wt - control_wt - struct_wt - fixed_equip_wt - useful_wt
