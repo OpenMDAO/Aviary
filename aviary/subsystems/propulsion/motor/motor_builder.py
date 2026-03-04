@@ -84,16 +84,16 @@ class MotorBuilder(SubsystemBuilder):
 
     #     return constraints
 
-    def get_design_vars(self):
-        DVs = {
-            Aircraft.Engine.SCALE_FACTOR: {
-                'units': 'unitless',
-                'lower': 0.001,
-                'upper': None,
-            },
-        }
+    # def get_design_vars(self):
+    #     DVs = {
+    #         Aircraft.Engine.SCALE_FACTOR: {
+    #             'units': 'unitless',
+    #             'lower': 0.001,
+    #             'upper': None,
+    #         },
+    #     }
 
-        return DVs
+    #     return DVs
 
     def get_parameters(self):
         params = {

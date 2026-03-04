@@ -261,7 +261,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
         motor_model = MotorBuilder()
 
-        self.prepare_model(test_points, motor_model, input_rpm=True)
+        self.prepare_model(test_points, motor_model)
         self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
