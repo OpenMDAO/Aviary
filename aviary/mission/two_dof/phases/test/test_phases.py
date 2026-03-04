@@ -32,7 +32,7 @@ class TestTwoDOFPhases(unittest.TestCase):
         local_phase_info['cruise'] = {
             'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
             'user_options': {
-                'phase_builder': PhaseType.BREGUET_RANGE,
+                'phase_type': PhaseType.BREGUET_RANGE,
                 'alt_cruise': (37.5e3, 'ft'),
                 'mach_cruise': 10.8,
             },
