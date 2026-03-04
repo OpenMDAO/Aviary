@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.mission.height_energy.phases.groundroll_phase import (
+from aviary.mission.solved_two_dof.phases.groundroll_phase import (
     GroundrollPhase as GroundrollPhaseVelocityIntegrated,
 )
 from aviary.mission.solved_two_dof.phases.solved_twodof_phase import SolvedTwoDOFPhase

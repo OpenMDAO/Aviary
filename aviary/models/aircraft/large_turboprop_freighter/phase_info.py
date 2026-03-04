@@ -77,6 +77,8 @@ energy_phase_info = {
 two_dof_phase_info = {
     'groundroll': {
         'user_options': {
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
+            'ground_roll': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_ref': (50.0, 's'),
@@ -101,6 +103,8 @@ two_dof_phase_info = {
     },
     'rotation': {
         'user_options': {
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
+            'rotation': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 100), 's'),
@@ -130,11 +134,13 @@ two_dof_phase_info = {
     },
     'ascent': {
         'user_options': {
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
             'velocity_ref': (200, 'kn'),
             'velocity_ref0': (0, 'kn'),
+            'time_duration_ref': (10, 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -167,6 +173,7 @@ two_dof_phase_info = {
     },
     'accel': {
         'user_options': {
+            'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
@@ -245,7 +252,7 @@ two_dof_phase_info = {
     },
     'cruise': {
         'user_options': {
-            'phase_builder': PhaseType.SIMPLE_CRUISE,
+            'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
             'mass_bounds': ((0, None), 'lbm'),
