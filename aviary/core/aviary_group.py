@@ -949,7 +949,7 @@ class AviaryGroup(om.Group):
             # this is only used for analytic phases with a target duration
             time_duration = user_options.get('time_duration', (None, 'min'))
             time_duration = wrapped_convert_units(time_duration, 'min')
-            integrates_mass = user_options['phase_builder'] is PhaseType.BREGUET_RANGE
+            integrates_mass = user_options['phase_type'] is PhaseType.BREGUET_RANGE
 
             if integrates_mass and time_duration is not None:
                 post_mission.add_subsystem(
@@ -1130,8 +1130,8 @@ class AviaryGroup(om.Group):
                     phase1, phase2 = phases[ii : ii + 2]
                     opt1 = self.mission_info[phase1]['user_options']
                     opt2 = self.mission_info[phase2]['user_options']
-                    integrates_mass1 = opt1['phase_builder'] is PhaseType.BREGUET_RANGE
-                    integrates_mass2 = opt2['phase_builder'] is PhaseType.BREGUET_RANGE
+                    integrates_mass1 = opt1['phase_type'] is PhaseType.BREGUET_RANGE
+                    integrates_mass2 = opt2['phase_type'] is PhaseType.BREGUET_RANGE
 
                     if integrates_mass1 or integrates_mass2:
                         # TODO need ref value for these linkage constraints

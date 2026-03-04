@@ -4,7 +4,7 @@ from copy import deepcopy
 from numpy.testing import assert_almost_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.large_turboprop_freighter.phase_info import (
     energy_phase_info,
     two_dof_phase_info,

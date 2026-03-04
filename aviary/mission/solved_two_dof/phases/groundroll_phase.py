@@ -1,12 +1,12 @@
 import dymos as dm
 
-from aviary.mission.two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessIntegrationVariable,
     InitialGuessPolynomialControl,
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder, register
+from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -68,7 +68,11 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class GroundrollPhase(PhaseBuilder):
-    """A phase builder for a two degree of freedom (2DOF) phase."""
+    """
+    A phase builder for a two degree of freedom (2DOF) ground roll phase.
+
+    This is used exclusively by the Solved 2DOF Phase Builder.
+    """
 
     __slots__ = ('subsystems', 'meta_data')
 

@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.models.missions.two_dof_default import phase_info
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.run_aviary import run_aviary
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.enums import PhaseType
 
@@ -89,7 +89,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info['cruise'] = {
             'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
             'user_options': {
-                'phase_builder': PhaseType.BREGUET_RANGE,
+                'phase_type': PhaseType.BREGUET_RANGE,
                 'alt_cruise': (37.5e3, 'ft'),
                 'mach_cruise': 10.8,
             },
