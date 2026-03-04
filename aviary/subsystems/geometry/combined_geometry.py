@@ -44,7 +44,7 @@ class CombinedGeometry(om.Group):
         # geometry subsystems.
         flops_geom_pathname = self.flops_based_geom.pathname
         flops_fus_area_path = (
-            flops_geom_pathname + '.wetted_area.fuselage.' + Aircraft.Fuselage.WETTED_AREA
+            flops_geom_pathname + '.wetted_area.fus_swet.' + Aircraft.Fuselage.WETTED_AREA
         )
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
