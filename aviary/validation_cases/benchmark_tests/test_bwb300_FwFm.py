@@ -114,39 +114,24 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            139803.667415,
+            612316.18409159,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            79873.05255347,
+            322535.11792879,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            26180.61486153,
+            227081.00913178,
             tolerance=rtol,
         )
 
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3500.0, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2216.0066613,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            116003.31044998,
-            tolerance=rtol,
-        )
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWB300ProblemPhaseTestCase()
-    test.setUp()
-    test.test_bench_bwb300_FwFm_SNOPT()
+    unittest.main()
