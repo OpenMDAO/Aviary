@@ -498,10 +498,22 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
                 except KeyError:
                     design_type = AircraftTypes.TRANSPORT
+                num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
+                num_vertical_tails = aviary_inputs.get_val(Aircraft.VerticalTail.NUM_TAILS)
                 if design_type is AircraftTypes.BLENDED_WING_BODY:
-                    core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                    if num_horizontal_tails == 0 and num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                    elif num_horizontal_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB + VERTICAL_TAIL_INPUTS
+                    else:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB + HORIZONTAL_TAIL_INPUTS
                 else:
-                    core_inputs_computed = COMPUTED_CORE_INPUTS
+                    if num_horizontal_tails == 0 and num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS
+                    elif num_horizontal_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS + VERTICAL_TAIL_INPUTS
+                    else:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS + HORIZONTAL_TAIL_INPUTS
                 for var in core_inputs_computed:
                     meta = _MetaData[var]
 
@@ -769,6 +781,22 @@ COMPUTED_CORE_INPUTS_BWB = [
     # Mission.Summary.GROSS_MASS,
     Mission.Design.LIFT_COEFFICIENT,
     Mission.Design.MACH,
+]
+
+HORIZONTAL_TAIL_INPUTS = [
+    Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+    Aircraft.HorizontalTail.FINENESS,
+    Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+    Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+    Aircraft.HorizontalTail.WETTED_AREA,
+]
+
+VERTICAL_TAIL_INPUTS = [
+    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+    Aircraft.VerticalTail.FINENESS,
+    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
+    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
+    Aircraft.VerticalTail.WETTED_AREA,
 ]
 
 TABULAR_CORE_INPUTS = [
