@@ -282,7 +282,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     def test_custom_phase_builder(self):
         local_phase_info = self.phase_info.copy()
-        local_phase_info['climb']['phase_builder'] = EnergyPhase
+        local_phase_info['climb']['phase_type'] = EnergyPhase
 
         run_aviary(
             self.aircraft_definition_file,
@@ -294,7 +294,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
     def test_custom_phase_builder_error(self):
         local_phase_info = self.phase_info.copy()
-        local_phase_info['climb']['phase_builder'] = 'fake phase object'
+        local_phase_info['climb']['phase_type'] = 'fake phase object'
 
         with self.assertRaises(TypeError):
             run_aviary(
