@@ -33,7 +33,7 @@ get_value recursively get a value from a dict of dicts
 glue_variable glue a variable for later use in markdown cells of notebooks (can auto format for code)
 glue_keys recursively glue all of the keys from a dict of dicts
 glue_actions glue all Aviary CLI options for a given command
-glue_class_functions glue all class functions for a gen class
+glue_class_methods glue all class methods for a given class
 glue_function_arguments glue all function arguments and default values for a given function
 glue_class_options glue all class options for a given class
 get_previous_line returns the previous n line(s) of code as a string
@@ -548,7 +548,7 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
                         curr_glued.append(str(choice))
 
 
-def glue_class_functions(obj, curr_glued=None, prefix=None, md_code=True):
+def glue_class_methods(obj, curr_glued=None, prefix=None, md_code=True):
     """
     Glue all class functions.
 

@@ -51,7 +51,6 @@ from aviary.models.missions.two_dof_default import phase_info as default_2DOF_ph
 from aviary.models.missions.height_energy_default import (
     phase_info as default_height_energy_phase_info,
 )
-from aviary.interface.run_aviary import run_aviary_cmd
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem, reload_aviary_problem
 from aviary.utils.engine_deck_conversion import convert_engine_deck

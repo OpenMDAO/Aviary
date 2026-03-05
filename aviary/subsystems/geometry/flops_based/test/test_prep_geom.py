@@ -701,7 +701,7 @@ class BWBWingTest(unittest.TestCase):
         prob = self.prob
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
@@ -709,7 +709,7 @@ class BWBWingTest(unittest.TestCase):
         setup_model_options(self.prob, self.aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(
-            'BWB_CHORD_PER_SEMISPAN_DIST',
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
             val=[
                 137.5,
                 11.0145643,
@@ -729,7 +729,7 @@ class BWBWingTest(unittest.TestCase):
             ],
         )
         prob.set_val(
-            'BWB_THICKNESS_TO_CHORD_DIST',
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
             val=[
                 0.11,
                 0.11,
@@ -771,7 +771,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, val=False, units='unitless')
-        options.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0], units='unitless')
+        options.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.0, 0.5, 1.0], units='unitless')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
@@ -843,10 +843,10 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         Aircraft.Wing.ROOT_CHORD -- XLW = 63.960195184412598
         Aircraft.Fuselage.CABIN_AREA -- ACABIN = 5173.1872025046832
         Aircraft.Fuselage.MAX_HEIGHT -- DF = 15.125
-        Aircraft.Wing.INPUT_STATION_DIST -- ETAW = [0, 32.29, 1]
-        BWB_CHORD_PER_SEMISPAN_DIST -- CHD = [137.5, 91.371707406303713, 14.284802944808163]
-        BWB_THICKNESS_TO_CHORD_DIST -- TOC = [0.11, 0.11, 0.11]
-        BWB_LOAD_PATH_SWEEP_DIST -- SWL = [0, 15.337244816188816, 15.337244816188816]
+        Aircraft.Wing.INPUT_STATION_DISTRIBUTION -- ETAW = [0, 32.29, 1]
+        BWB_CHORD_PER_SEMISPAN_DISTRIBUTION -- CHD = [137.5, 91.371707406303713, 14.284802944808163]
+        BWB_THICKNESS_TO_CHORD_DISTRIBUTION -- TOC = [0.11, 0.11, 0.11]
+        BWB_LOAD_PATH_SWEEP_DISTRIBUTION -- SWL = [0, 15.337244816188816, 15.337244816188816]
         Aircraft.Fuselage.REF_DIAMETER -- XD = 39.8525
         Aircraft.Fuselage.PLANFORM_AREA -- FPAREA = 7390.267432149546
         Aircraft.Wing.AREA -- XW = 16555.972297926455
@@ -892,15 +892,15 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(fuselage_height, 15.125, tolerance=1e-8)
 
         # BWBComputeDetailedWingDist
-        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
         exp1 = [137.5, 91.37170741, 14.2848]
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
-        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
         exp2 = [0.11, 0.11, 0.11]
         assert_near_equal(out2, exp2, tolerance=1e-8)
 
-        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
         exp3 = [0.0, 15.33723721]
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
@@ -994,7 +994,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
     """
     Test computation of derived values of aircraft geometry for aerodynamics analysis.
     In this test, we assume detailed wing is provided and we assume fuselage has a detailed layout.
-    Note options Aircraft.Engine.NUM_ENGINES and Aircraft.Wing.INPUT_STATION_DIST are updated.
+    Note options Aircraft.Engine.NUM_ENGINES and Aircraft.Wing.INPUT_STATION_DISTRIBUTION are updated.
     """
 
     def setUp(self):
@@ -1014,7 +1014,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Wing.DETAILED_WING, val=True, units='unitless')
         options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
@@ -1036,7 +1036,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         # BWBUpdateDetailedWingDist
         prob.set_val(
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             val=[
                 -1.0,
                 58.03,
@@ -1076,7 +1076,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             ],
         )
         prob.set_val(
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
@@ -1185,7 +1185,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
 
         # BWBUpdateDetailedWingDist
-        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DIST')
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
         exp1 = [
             112.3001936861,
             55.0,
@@ -1205,7 +1205,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         ]
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
-        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DIST')
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
         exp2 = [
             0.11,
             0.11,
@@ -1225,7 +1225,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         ]
         assert_near_equal(out2, exp2, tolerance=1e-8)
 
-        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DIST')
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
         exp3 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]
         assert_near_equal(out3, exp3, tolerance=1e-8)
 
