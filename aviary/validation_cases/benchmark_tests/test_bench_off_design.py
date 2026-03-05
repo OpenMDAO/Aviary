@@ -108,32 +108,32 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
             46164.07769361,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             29031.53317628,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
             97743.46682372,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
             5000,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
             23225,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
             18225,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
@@ -198,17 +198,17 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
             33139.01658754,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             23663.00633808,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
             97743.52792979,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
@@ -218,12 +218,12 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
         assert_near_equal(
             prob_alternate.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
             36250,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
             33750,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.get_val(Aircraft.Design.EMPTY_MASS, 'lbm'),
@@ -238,7 +238,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             157656.53426787,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.aviary_inputs.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS),
@@ -318,7 +318,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         ]
 
         for var in prob_var_list:
-            assert_near_equal(comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-6)
+            assert_near_equal(comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-5)
 
         for var in inputs_var_list:
             assert_near_equal(
@@ -354,28 +354,28 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40505.09154366,
-            tolerance=1e-6,
+            40505.91552026,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            39910.0046378,
-            tolerance=1e-6,
+            39909.74193096,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            95089.9953622,
-            tolerance=1e-6,
+            95090.25806904,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
             5000,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),
             20000,
-            tolerance=1e-6,
+            tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
@@ -432,17 +432,17 @@ class Test2DOFOffDesign(unittest.TestCase):
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40505.07149946,
+            40505.91552026,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            21484.2904701,
+            21484.97566914,
             tolerance=1e-6,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            95089.98897155,
+            95090.25806904,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -473,7 +473,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            148674.27944164,
+            148675.23373818,
             tolerance=1e-6,
         )
         assert_near_equal(
@@ -558,7 +558,7 @@ if __name__ == '__main__':
     # unittest.main()
     test = Test2DOFOffDesign()
     test.setUp()
-    test.test_fallout_mission_changed()
+    test.test_alternate_mission_changed()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()

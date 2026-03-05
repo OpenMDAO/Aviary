@@ -2805,7 +2805,7 @@ class TakeoffTrajectory:
     trajectory.
     """
 
-    MappedPhase = namedtuple('MappedPhase', ('phase', 'phase_builder'))
+    MappedPhase = namedtuple('MappedPhase', ('phase', 'phase_type'))
 
     default_name = 'detailed_takeoff'
 

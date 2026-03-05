@@ -50,7 +50,7 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
 
         # This one needs to be in all phase_builder dictionaries.
         self.declare(
-            name='phase_builder',
+            name='phase_type',
             types=PhaseType,
             default=PhaseType.DEFAULT,
             desc='The phase builder to use for this phase. This is an experimental feature that '
