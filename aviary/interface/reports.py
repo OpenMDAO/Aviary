@@ -9,7 +9,7 @@ import pandas as pd
 from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import register_report
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.interface.utils import write_markdown_variable_table
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
@@ -676,7 +676,11 @@ def _overridden_variables_group_report(prob, group, mission_name, f):
         f.write('| ------ |-------| ----- |\n')
         non_external_overridden_variables.sort(key=lambda x: x[0])
         for aircraft_variable_name, val, units in non_external_overridden_variables:
-            f.write(f'| {aircraft_variable_name} | {val} | {units} |\n')
+            if isinstance(val, np.ndarray):
+                valstring = np.array2string(val, formatter={'float_kind': lambda x: f'{x:.3g}'})
+            else:
+                valstring = f'{val:.3g}'
+            f.write(f'| {aircraft_variable_name} | {valstring} | {units} |\n')
         f.write('\n')
     else:
         f.write('No internal overrides found.\n')
