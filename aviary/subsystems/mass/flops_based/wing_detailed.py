@@ -380,7 +380,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
-        chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
+        chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
         for x in chord:
             if x > 5.0:
@@ -397,7 +397,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
 
-        thickness_to_chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
         thickness_to_chord_mod = []
