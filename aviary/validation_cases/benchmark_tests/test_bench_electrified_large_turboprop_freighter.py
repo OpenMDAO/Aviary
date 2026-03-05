@@ -40,18 +40,18 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # set up electric propulsion
         # TODO make separate input file for electroprop freighter?
-        scale_factor = 17.77  # target is ~32 kN*m torque
+        # scale_factor = 17.77  # target is ~32 kN*m torque
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
         options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        options.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)  # 11.87)
-        options.set_val(
-            Aircraft.Engine.SCALED_SLS_THRUST,
-            options.get_val(Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf') * scale_factor,
-            'lbf',
-        )
+        # options.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)  # 11.87)
+        # options.set_val(
+        #     Aircraft.Engine.REFERENCE_SLS_THRUST,
+        #     options.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') / scale_factor,
+        #     'lbf',
+        # )
         options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
 
         motor = MotorBuilder(
@@ -86,21 +86,23 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
+        prob.add_driver('SNOPT', verbosity=0)
         prob.add_design_variables()
-        # prob.model.add_design_var(
-        #     Aircraft.Engine.SCALE_FACTOR,
-        #     units='unitless',
-        #     lower=1,
-        #     upper=25,
-        #     ref=10,
-        # )
+        prob.model.add_design_var(
+            Aircraft.Engine.SCALE_FACTOR,
+            units='unitless',
+            lower=0.25,
+            upper=2,
+            ref=1,
+        )
+        prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=0, upper=10000)
         prob.add_objective()
 
         prob.setup()
 
-        prob.run_aviary_problem()
         self.assertTrue(prob.result.success)
+
+        prob.run_aviary_problem()
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
     def test_bench_2DOF(self):
