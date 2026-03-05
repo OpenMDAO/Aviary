@@ -682,7 +682,7 @@ class _BWBWing(om.ExplicitComponent):
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
         )
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations, units='unitless'
         )
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
@@ -712,26 +712,26 @@ class _BWBWing(om.ExplicitComponent):
         bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
-        BWB_CHORD_PER_SEMISPAN_DISTRIBUTION = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
-        BWB_CHORD_PER_SEMISPAN_DISTRIBUTION = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        bwb_chord_per_semispan_distribution = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        bwb_thickness_to_chord_distribution = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
 
-        if BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[0] <= 5.0:
-            C1 = BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[0] * wingspan / 2.0
+        if bwb_chord_per_semispan_distribution[0] <= 5.0:
+            C1 = bwb_chord_per_semispan_distribution[0] * wingspan / 2.0
         else:
-            C1 = BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[0]
+            C1 = bwb_chord_per_semispan_distribution[0]
         if bwb_input_station_dist[0] <= 1.1:
             Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
         for n in range(1, num_inp_stations):
             avg_toc = (
-                BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[n - 1] + BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[n]
+                bwb_thickness_to_chord_distribution[n - 1] + bwb_thickness_to_chord_distribution[n]
             ) / 2.0
             ckt = 2.0 + 0.387 * avg_toc
-            if BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[n] <= 5.0:
-                C2 = BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[n] * wingspan / 2.0
+            if bwb_chord_per_semispan_distribution[n] <= 5.0:
+                C2 = bwb_chord_per_semispan_distribution[n] * wingspan / 2.0
             else:
-                C2 = BWB_CHORD_PER_SEMISPAN_DISTRIBUTION[n]
+                C2 = bwb_chord_per_semispan_distribution[n]
             if bwb_input_station_dist[n] <= 1.1:
                 Y2 = bwb_input_station_dist[n] * wingspan / 2.0
             else:

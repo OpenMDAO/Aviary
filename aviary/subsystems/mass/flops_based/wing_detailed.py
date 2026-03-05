@@ -275,7 +275,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     This is basically the same as DetailedWingBendingFact except the following:
 
       - Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION is replaced by BWB_LOAD_PATH_SWEEP_DISTRIBUTION
-      - Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
+      - Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION is replaced by BWB_THICKNESS_TO_CHORD_DISTRIBUTION
       - Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
     """
 
@@ -300,7 +300,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations - 1, units='deg'
         )
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations, units='unitless'
         )
         self.add_input(
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
@@ -380,7 +380,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
-        chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         chord_mod = []
         for x in chord:
             if x > 5.0:

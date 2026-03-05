@@ -47,7 +47,7 @@ class BWBWingGroupTest(unittest.TestCase):
             'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', [0.0, 15.337244816], units='deg'
         )
         prob.model.set_input_defaults(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', [0.11, 0.11, 0.11], units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', [0.11, 0.11, 0.11], units='unitless'
         )
         prob.model.set_input_defaults(
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', [137.5, 91.3717, 14.2848], units='unitless'

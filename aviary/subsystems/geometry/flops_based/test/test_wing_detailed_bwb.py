@@ -109,7 +109,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         ]
         assert_near_equal(out1, exp1, tolerance=1e-8)
 
-        out2 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
         exp2 = [
             0.11,
             0.11,
@@ -176,7 +176,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         exp1 = [137.5, 91.37142857, 14.2848]
         assert_near_equal(out1, exp1, tolerance=1e-10)
 
-        out2 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
         exp2 = [0.11, 0.11, 0.11]
         assert_near_equal(out2, exp2, tolerance=1e-10)
 
