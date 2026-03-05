@@ -258,13 +258,18 @@ class PropellerPerformanceTest(unittest.TestCase):
 
         for case_idx in range(case_idx_begin, case_idx_end):
             idx = case_idx - case_idx_begin
-            assert_near_equal(cthr[idx], CT[case_idx], tolerance=tol)
-            assert_near_equal(ctlf[idx], XFT[case_idx], tolerance=tol)
-            assert_near_equal(tccl[idx], CTX[case_idx], tolerance=tol)
-            assert_near_equal(thrt[idx], thrust[case_idx], tolerance=tol)
-            assert_near_equal(peff[idx], prop_eff[case_idx], tolerance=tol)
-            assert_near_equal(lfac[idx], install_loss[case_idx], tolerance=tol)
-            assert_near_equal(ieff[idx], install_eff[case_idx], tolerance=tol)
+            expected_values = {
+                'thrust_coefficient': (cthr[idx], CT[case_idx]),
+                'comp_tip_loss_factor': (ctlf[idx], XFT[case_idx]),
+                'thrust_coefficient_comp_loss': (tccl[idx], CTX[case_idx]),
+                'thrust': (thrt[idx], thrust[case_idx]),
+                'propeller_efficiency': (peff[idx], prop_eff[case_idx]),
+                'install_loss_factor': (lfac[idx], install_loss[case_idx]),
+                'install_efficiency': (ieff[idx], install_eff[case_idx]),
+            }
+            for var_name, (actual, expected) in expected_values.items():
+                with self.subTest(case_idx=case_idx, var=var_name):
+                    assert_near_equal(actual, expected, tolerance=tol)
 
     def test_case_0_1_2(self):
         # Case 0, 1, 2, to test installation loss factor computation.
