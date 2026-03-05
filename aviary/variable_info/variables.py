@@ -550,7 +550,7 @@ class Aircraft:
         SWEEP = 'aircraft:wing:sweep'
         TAPER_RATIO = 'aircraft:wing:taper_ratio'
         THICKNESS_TO_CHORD = 'aircraft:wing:thickness_to_chord'
-        THICKNESS_TO_CHORD_DIST = 'aircraft:wing:thickness_to_chord_dist'
+        THICKNESS_TO_CHORD_DISTRIBUTION = 'aircraft:wing:thickness_to_chord_distribution'
         THICKNESS_TO_CHORD_REFERENCE = 'aircraft:wing:thickness_to_chord_reference'
         THICKNESS_TO_CHORD_ROOT = 'aircraft:wing:thickness_to_chord_root'
         THICKNESS_TO_CHORD_TIP = 'aircraft:wing:thickness_to_chord_tip'

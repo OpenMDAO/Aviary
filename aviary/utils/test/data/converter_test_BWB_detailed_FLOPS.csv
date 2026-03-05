@@ -83,7 +83,7 @@ aircraft:wing:strut_bracing_factor,0,unitless
 aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
-aircraft:wing:thickness_to_chord_dist,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
+aircraft:wing:thickness_to_chord_distribution,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
 mission:constraints:max_mach,0.85,unitless

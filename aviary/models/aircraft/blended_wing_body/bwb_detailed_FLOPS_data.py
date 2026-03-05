@@ -252,7 +252,7 @@ inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11)  # TCA
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11)  # TCREF
 
 inputs.set_val(
-    Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+    Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
     np.array(
         [
             -1.0,

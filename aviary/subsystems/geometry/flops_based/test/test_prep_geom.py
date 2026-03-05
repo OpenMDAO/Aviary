@@ -1048,7 +1048,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
             ],
         )
         prob.set_val(
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             val=[
                 -1.0,
                 0.15,

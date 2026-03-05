@@ -943,7 +943,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:thickness_to_chord_dist",
+        "aircraft:wing:thickness_to_chord_distribution",
         [
             0.145,
             0.115,

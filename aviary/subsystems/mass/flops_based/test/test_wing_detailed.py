@@ -71,7 +71,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-                Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
                 Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
                 Mission.Design.GROSS_MASS,
                 Aircraft.Engine.POD_MASS,
@@ -137,7 +137,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         input_keys = [
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
@@ -227,7 +227,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         input_keys = [
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
@@ -310,7 +310,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         input_keys = [
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
@@ -388,7 +388,7 @@ class DetailedWingBendingTest(unittest.TestCase):
 
         input_keys = [
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             Mission.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,

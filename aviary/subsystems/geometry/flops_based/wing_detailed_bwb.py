@@ -26,7 +26,10 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             units='unitless',
         )
         add_aviary_input(
-            self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST, shape=num_inp_stations, units='unitless'
+            self,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            shape=num_inp_stations,
+            units='unitless',
         )
         add_aviary_input(
             self,
@@ -79,7 +82,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         self.declare_partials(
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
             [
-                Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
             ],
         )
@@ -117,7 +120,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = tc
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = tc
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][2:] = inputs[
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
         ][2:]
 
         outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][:] = inputs[
@@ -144,11 +147,15 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][2:] = 0.0
 
         diag2_matrix = np.identity(num_stations)
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DIST] = (
+        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION] = (
             diag2_matrix
         )
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][0] = 0.0
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DIST][1] = 0.0
+        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION][
+            0
+        ] = 0.0
+        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION][
+            1
+        ] = 0.0
 
         diag2_matrix = np.identity(num_stations - 1)
         J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION] = (

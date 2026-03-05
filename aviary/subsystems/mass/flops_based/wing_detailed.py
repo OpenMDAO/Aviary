@@ -38,7 +38,10 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             units='deg',
         )
         add_aviary_input(
-            self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST, shape=num_input_stations, units='unitless'
+            self,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            shape=num_input_stations,
+            units='unitless',
         )
         add_aviary_input(
             self,
@@ -90,7 +93,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
 
         load_path_sweep = inputs[Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION]
-        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DIST]
+        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION]
         chord = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION]
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
         gross_mass = inputs[Mission.Design.GROSS_MASS]
@@ -272,7 +275,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     This is basically the same as DetailedWingBendingFact except the following:
 
       - Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION is replaced by BWB_LOAD_PATH_SWEEP_DISTRIBUTION
-      - Aircraft.Wing.THICKNESS_TO_CHORD_DIST is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
+      - Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
       - Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
     """
 

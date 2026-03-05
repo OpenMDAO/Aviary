@@ -6419,7 +6419,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+    Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
