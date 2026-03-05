@@ -1455,10 +1455,8 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
         tol = 1e-4
         # Design
-        assert_near_equal(prob['AIRCRAFT_DATA_OVERRIDE:mission:design:mach'], 0.89939238, tol)
-        assert_near_equal(
-            prob['AIRCRAFT_DATA_OVERRIDE:mission:design:lift_coefficient'], 0.40810915, tol
-        )
+        assert_near_equal(prob[Mission.Design.MACH], 0.89939238, tol)
+        assert_near_equal(prob[Mission.Design.LIFT_COEFFICIENT], 0.40810915, tol)
 
 
 if __name__ == '__main__':
