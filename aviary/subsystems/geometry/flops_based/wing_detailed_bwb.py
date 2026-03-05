@@ -54,7 +54,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
         )
         self.add_output(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations, units='unitless'
         )
         self.add_output('BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_inp_stations - 1, units='deg')
 
@@ -80,7 +80,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             method='cs',
         )
         self.declare_partials(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
             [
                 Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
@@ -117,9 +117,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = length
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = xl_out
 
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = tc
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = tc
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][2:] = inputs[
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][0] = tc
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][1] = tc
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][2:] = inputs[
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
         ][2:]
 
@@ -142,9 +142,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
 
         num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
 
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][0] = 1.0
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][1] = 1.0
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][2:] = 0.0
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][0] = 1.0
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][1] = 1.0
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][2:] = 0.0
 
         diag2_matrix = np.identity(num_stations)
         J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION] = (
@@ -190,7 +190,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
 
         self.add_output(Aircraft.Wing.SPAN, units='ft')
         self.add_output('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=3, units='unitless')
-        self.add_output('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=3, units='unitless')
+        self.add_output('BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=3, units='unitless')
         self.add_output('BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=2, units='deg')
 
     def setup_partials(self):
@@ -262,9 +262,9 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = xl_out
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][2] = wing_tip_chord
 
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = tc
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = tc
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][2] = tc
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][0] = tc
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][1] = tc
+        outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][2] = tc
 
         outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][0] = 0.0
         outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][1] = swp_ld_path
@@ -301,7 +301,7 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
             0.0,
         ]
 
-        J['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD] = 1
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD] = 1
 
         dswp_ld_path_dsweep = 1 / (1 + angle**2) / np.cos(sweep / 57.2958) ** 2
         J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Wing.SWEEP] = [
