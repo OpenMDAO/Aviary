@@ -5,10 +5,10 @@ using the default Aviary method. The engine model was developed using NPSS v3.2.
 """
 
 import aviary.api as av
-from aviary.models.external_subsystems.engine_NPSS.NPSS_engine_builder import (
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_engine_builder import (
     NPSSTabularEngineBuilder,
 )
-from aviary.models.external_subsystems.engine_NPSS.NPSS_variable_meta_data import ExtendedMetaData
+from aviary.examples.external_subsystems.engine_NPSS.NPSS_variable_meta_data import ExtendedMetaData
 
 """Build NPSS model in Aviary."""
 phase_info = av.default_height_energy_phase_info
