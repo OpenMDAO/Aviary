@@ -4,19 +4,25 @@ import numpy as np
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.subsystems.propulsion.propulsion_mission import PropulsionMission, PropulsionSum
+from aviary.subsystems.propulsion.test.test_custom_engine_model import SimpleTestEngine
+from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.validation_cases.validation_tests import get_flops_inputs
+from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
+@use_tempdirs
 class PropulsionMissionTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -49,10 +55,6 @@ class PropulsionMissionTest(unittest.TestCase):
         engine = EngineDeck(options=options)
         preprocess_propulsion(options, [engine])
 
-        self.prob.model = PropulsionMission(
-            num_nodes=nn, aviary_options=options, engine_models=[engine]
-        )
-
         IVC = om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.8, nn), units='unitless')
         IVC.add_output(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft')
         IVC.add_output(
@@ -61,6 +63,12 @@ class PropulsionMissionTest(unittest.TestCase):
             units='unitless',
         )
         self.prob.model.add_subsystem('IVC', IVC, promotes=['*'])
+
+        self.prob.model.add_subsystem(
+            'propulsion',
+            PropulsionMission(num_nodes=nn, aviary_options=options, engine_models=[engine]),
+            promotes=['*'],
+        )
 
         setup_model_options(self.prob, options)
 
@@ -206,26 +214,20 @@ class PropulsionMissionTest(unittest.TestCase):
         preprocess_propulsion(options, engine_models=engine_models)
 
         model = self.prob.model
-        prop = PropulsionMission(
-            num_nodes=20,
-            aviary_options=options,
-            engine_models=engine_models,
-        )
-        model.add_subsystem('propulsion', prop, promotes=['*'])
 
-        self.prob.model.add_subsystem(
+        model.add_subsystem(
             Dynamic.Atmosphere.MACH,
             om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.85, nn), units='unitless'),
             promotes=['*'],
         )
 
-        self.prob.model.add_subsystem(
+        model.add_subsystem(
             Dynamic.Mission.ALTITUDE,
             om.IndepVarComp(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'),
             promotes=['*'],
         )
         throttle = np.linspace(1.0, 0.6, nn)
-        self.prob.model.add_subsystem(
+        model.add_subsystem(
             Dynamic.Vehicle.Propulsion.THROTTLE,
             om.IndepVarComp(
                 Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -234,6 +236,13 @@ class PropulsionMissionTest(unittest.TestCase):
             ),
             promotes=['*'],
         )
+
+        prop = PropulsionMission(
+            num_nodes=nn,
+            aviary_options=options,
+            engine_models=engine_models,
+        )
+        model.add_subsystem('propulsion', prop, promotes=['*'])
 
         setup_model_options(self.prob, options, engine_models=engine_models)
 
@@ -284,6 +293,215 @@ class PropulsionMissionTest(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-10, rtol=1e-10)
 
+    def test_case_no_max_thrust(self):
+        # replaces the engine model with a fake one that does not compute maximum thrust
+        nn = 5
+
+        options = get_flops_inputs('LargeSingleAisle2FLOPS')
+        options.set_val(Settings.VERBOSITY, 0)
+
+        engine = SimpleTestEngine()
+        preprocess_propulsion(options, engine_models=[engine])
+
+        model = self.prob.model
+
+        model.add_subsystem(
+            Dynamic.Atmosphere.MACH,
+            om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.85, nn), units='unitless'),
+            promotes=['*'],
+        )
+
+        model.add_subsystem(
+            Dynamic.Mission.ALTITUDE,
+            om.IndepVarComp(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'),
+            promotes=['*'],
+        )
+
+        model.add_subsystem(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            om.IndepVarComp(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                np.linspace(1.0, 0.6, nn),
+                units='unitless',
+            ),
+            promotes=['*'],
+        )
+
+        prop = PropulsionMission(
+            num_nodes=nn,
+            aviary_options=options,
+            engine_models=[engine],
+        )
+        model.add_subsystem('propulsion', prop, promotes=['*'])
+
+        setup_model_options(self.prob, options, engine_models=[engine])
+
+        self.prob.setup(force_alloc_complex=True)
+
+        self.prob.run_model()
+
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
+
+        expected_thrust = np.array([40000, 38000, 36000, 34000, 32000])
+
+        expected_max_thrust = np.array([40000, 40000, 40000, 40000, 40000])
+
+        assert_near_equal(thrust, expected_thrust, tolerance=1e-10)
+        assert_near_equal(max_thrust, expected_max_thrust, tolerance=1e-10)
+
+    def test_case_no_max_thrust_multiengine(self):
+        # Takes the multiengine test case and replaces an engine with one that does not compute max
+        # thrust
+        nn = 5
+
+        options = get_flops_inputs('LargeSingleAisle2FLOPS')
+        options.set_val(Settings.VERBOSITY, 0)
+        options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+
+        engine = build_engine_deck(options)
+
+        engine2 = SimpleTestEngine()
+        engine2.name = 'engine2'
+        engine_models = [engine, engine2]
+        preprocess_propulsion(options, engine_models=engine_models)
+
+        model = self.prob.model
+
+        model.add_subsystem(
+            Dynamic.Atmosphere.MACH,
+            om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.85, nn), units='unitless'),
+            promotes=['*'],
+        )
+
+        model.add_subsystem(
+            Dynamic.Mission.ALTITUDE,
+            om.IndepVarComp(Dynamic.Mission.ALTITUDE, np.linspace(0, 40000, nn), units='ft'),
+            promotes=['*'],
+        )
+        throttle = np.linspace(1.0, 0.6, nn)
+        model.add_subsystem(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            om.IndepVarComp(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                np.vstack((throttle, throttle)).transpose(),
+                units='unitless',
+            ),
+            promotes=['*'],
+        )
+
+        prop = PropulsionMission(
+            num_nodes=nn,
+            aviary_options=options,
+            engine_models=engine_models,
+        )
+        model.add_subsystem('propulsion', prop, promotes=['*'])
+
+        setup_model_options(self.prob, options, engine_models=engine_models)
+
+        self.prob.setup(force_alloc_complex=True)
+        self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, [0.975, 0.975], units='unitless')
+
+        self.prob.run_model()
+
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
+
+        expected_thrust = np.array(
+            [91795.1077032, 66538.67800773, 49882.20467434, 42078.10820403, 34897.24086484]
+        )
+        expected_max_thrust = np.array(
+            [91795.1077032, 75448.88753979, 62863.25377679, 56217.19584678, 50659.15299758]
+        )
+
+        assert_near_equal(thrust, expected_thrust, tolerance=1e-10)
+        assert_near_equal(max_thrust, expected_max_thrust, tolerance=1e-10)
+
+    def test_case_no_max_thrust_turboprop(self):
+        # replaces the engine with a turboprop
+        nn = 5
+
+        options = get_flops_inputs('LargeSingleAisle2FLOPS')
+        options.set_val(Settings.VERBOSITY, 0)
+
+        options.set_val(Aircraft.Engine.FIXED_RPM, 1455.13090827, units='rpm')
+        options.set_val(
+            Aircraft.Engine.Propeller.COMPUTE_INSTALLATION_LOSS,
+            val=True,
+            units='unitless',
+        )
+        options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
+
+        # turboprop using turboshaft engine deck and hamilton standard propeller model
+        engine = TurbopropModel(options=options, shaft_power_model=None, propeller_model=None)
+        preprocess_propulsion(options, [engine])
+        preprocess_propulsion(options, engine_models=[engine])
+
+        model = self.prob.model
+
+        model.add_subsystem(
+            Dynamic.Atmosphere.MACH,
+            om.IndepVarComp(Dynamic.Atmosphere.MACH, np.linspace(0, 0.55, nn), units='unitless'),
+            promotes=['*'],
+        )
+
+        model.add_subsystem(
+            Dynamic.Mission.ALTITUDE,
+            om.IndepVarComp(Dynamic.Mission.ALTITUDE, np.linspace(0, 20000, nn), units='ft'),
+            promotes=['*'],
+        )
+
+        model.add_subsystem(
+            'atmosphere', Atmosphere(num_nodes=nn, input_speed_type=SpeedType.MACH), promotes=['*']
+        )
+
+        model.add_subsystem(
+            Dynamic.Vehicle.Propulsion.THROTTLE,
+            om.IndepVarComp(
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+                np.linspace(1.0, 0.6, nn),
+                units='unitless',
+            ),
+            promotes=['*'],
+        )
+
+        prop = PropulsionMission(
+            num_nodes=nn,
+            aviary_options=options,
+            engine_models=[engine],
+        )
+        model.add_subsystem('propulsion', prop, promotes=['*'])
+
+        setup_model_options(self.prob, options, engine_models=[engine])
+
+        self.prob.setup(force_alloc_complex=True)
+
+        self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
+        self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
+        self.prob.set_val(
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units='unitless'
+        )
+        self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units='ft/s')
+
+        self.prob.run_model()
+
+        thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
+
+        expected_thrust = np.array(
+            [42629.8926234, 34593.95599731, 20003.65216215, 12039.90789131, 8385.52777847]
+        )
+
+        expected_max_thrust = np.array(
+            [42629.8926234, 41028.5558649, 29561.74, 22590.025, 20411.435]
+        )
+
+        assert_near_equal(thrust, expected_thrust, tolerance=1e-10)
+        assert_near_equal(max_thrust, expected_max_thrust, tolerance=1e-10)
+
 
 if __name__ == '__main__':
     unittest.main()
+    # test = PropulsionMissionTest()
+    # test.setUp()
+    # test.test_case_no_max_thrust_turboprop()
