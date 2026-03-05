@@ -4,14 +4,14 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.mission.two_dof.ode.rotation_eom import RotationEOM
+from aviary.mission.solved_two_dof.ode.groundroll_eom import GroundrollEOM
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class RotationEOMTestCase(unittest.TestCase):
+class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group', RotationEOM(num_nodes=2), promotes=['*'])
+        self.prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
         )
@@ -56,22 +56,22 @@ class RotationEOMTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
-class RotationEOMTestCase2(unittest.TestCase):
+class GroundrollEOMTestCase2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.two_dof.ode.rotation_eom as rotation
+        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
 
-        rotation.GRAV_ENGLISH_LBM = 1.1
+        gr.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.two_dof.ode.rotation_eom as rotation
+        import aviary.mission.solved_two_dof.ode.groundroll_eom as gr
 
-        rotation.GRAV_ENGLISH_LBM = 1.0
+        gr.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('group', RotationEOM(num_nodes=2), promotes=['*'])
+        prob.model.add_subsystem('group', GroundrollEOM(num_nodes=2), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'

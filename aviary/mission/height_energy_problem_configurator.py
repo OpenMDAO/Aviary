@@ -145,8 +145,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilder
             Phase builder for requested phase.
         """
-        if 'phase_builder' in phase_options:
-            phase_builder = phase_options['phase_builder']
+        if 'phase_type' in phase_options:
+            phase_builder = phase_options['phase_type']
             if not issubclass(phase_builder, PhaseBuilder):
                 raise TypeError(
                     'phase_builder for the phase called {phase_name} must be a PhaseBuilder object.'
