@@ -72,14 +72,18 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
         ]
 
         for var in prob_var_list:
-            assert_near_equal(comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-6)
+            with self.subTest(var=var):
+                assert_near_equal(
+                    comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-6
+                )
 
         for var in inputs_var_list:
-            assert_near_equal(
-                comparison_prob.aviary_inputs.get_val(var),
-                self.prob.aviary_inputs.get_val(var),
-                tolerance=1e-12,
-            )
+            with self.subTest(var=var):
+                assert_near_equal(
+                    comparison_prob.aviary_inputs.get_val(var),
+                    self.prob.aviary_inputs.get_val(var),
+                    tolerance=1e-12,
+                )
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_fallout_mission_match(self):
@@ -318,14 +322,18 @@ class Test2DOFOffDesign(unittest.TestCase):
         ]
 
         for var in prob_var_list:
-            assert_near_equal(comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-5)
+            with self.subTest(var=var):
+                assert_near_equal(
+                    comparison_prob.get_val(var), self.prob.get_val(var), tolerance=1e-5
+                )
 
         for var in inputs_var_list:
-            assert_near_equal(
-                comparison_prob.aviary_inputs.get_val(var[0], var[1]),
-                self.prob.aviary_inputs.get_val(var[0], var[1]),
-                tolerance=1e-12,
-            )
+            with self.subTest(var=var[0]):
+                assert_near_equal(
+                    comparison_prob.aviary_inputs.get_val(var[0], var[1]),
+                    self.prob.aviary_inputs.get_val(var[0], var[1]),
+                    tolerance=1e-12,
+                )
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_fallout_mission_match(self):
