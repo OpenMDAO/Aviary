@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-
 from openmdao.utils.units import convert_units
 
 from aviary.constants import GRAV_ENGLISH_LBM
@@ -111,7 +110,9 @@ class BodyTankCalculations(om.ExplicitComponent):
                 Mission.Summary.OPERATING_MASS,
             ],
         )
-        self.declare_partials(Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.UNUSABLE_FUEL_MASS, val=1.0)
+        self.declare_partials(
+            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.UNUSABLE_FUEL_MASS, val=1.0
+        )
 
     def compute(self, inputs, outputs):
         design_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_DESIGN]
