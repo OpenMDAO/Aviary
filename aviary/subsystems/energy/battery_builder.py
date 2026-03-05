@@ -33,7 +33,7 @@ class BatteryBuilder(SubsystemBuilder):
     def build_pre_mission(self, aviary_inputs=None):
         return SizeBattery(aviary_inputs=aviary_inputs)
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         return [Aircraft.Battery.MASS]
 
     def build_mission(self, num_nodes, aviary_inputs=None, **kwargs) -> om.Group:
@@ -64,17 +64,17 @@ class BatteryBuilder(SubsystemBuilder):
 
         return battery_group
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, **kwargs):
         return [
             Aircraft.Battery.ENERGY_CAPACITY,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             Aircraft.Battery.EFFICIENCY,
         ]
 
-    def mission_outputs(self, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, **kwargs):
         return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
 
-    def get_states(self):
+    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
         state_dict = {
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED: {
                 'fix_initial': True,
@@ -91,7 +91,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return state_dict
 
-    def get_constraints(self):
+    def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
         constraint_dict = {
             # Can add constraints here; state of charge is a common one in many
             # battery applications
@@ -103,7 +103,7 @@ class BatteryBuilder(SubsystemBuilder):
         }
         return constraint_dict
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
         params = {
             Aircraft.Battery.ENERGY_CAPACITY: {
                 'val': 0.0,
@@ -116,6 +116,6 @@ class BatteryBuilder(SubsystemBuilder):
         }
         return params
 
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         # link cumulative electric energy between phases
         return [Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED]

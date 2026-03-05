@@ -1181,7 +1181,7 @@ class EngineDeck(EngineModel):
 
         return engine_group
 
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
                 'val': 1.0,

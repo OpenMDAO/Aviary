@@ -6,7 +6,6 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder
-from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -202,7 +201,7 @@ class TakeoffPhase(PhaseBuilder):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
+        phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
         # Add controls
         if not (ground_roll or rotation):

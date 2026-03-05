@@ -1,4 +1,3 @@
-import inspect
 import sys
 import warnings
 from importlib.util import module_from_spec, spec_from_file_location
@@ -579,7 +578,7 @@ class AviaryGroup(om.Group):
         # Loop through all the phases in this subsystem.
         for external_subsystem in self.external_subsystems:
             # Get all the subsystem builders for this phase.
-            mass_names.extend(external_subsystem.get_mass_names())
+            mass_names.extend(external_subsystem.get_mass_names(aviary_inputs=self.aviary_inputs))
 
         if mass_names:
             formatted_names = []
@@ -630,11 +629,12 @@ class AviaryGroup(om.Group):
         # loop through all_subsystems and call `get_controls` on each subsystem
         for subsystem in all_subsystems:
             # add the controls from the subsystems to each phase
-            arg_spec = inspect.getfullargspec(subsystem.get_controls)
-            if 'phase_name' in arg_spec.args:
-                control_dicts = subsystem.get_controls(phase_name=phase_name)
-            else:
-                control_dicts = subsystem.get_controls(phase_name=phase_name)
+            control_dicts = subsystem.get_controls(
+                aviary_inputs=self.aviary_inputs,
+                phase_info=phase_options,
+                phase_name=phase_name,
+            )
+
             for control_name, control_dict in control_dicts.items():
                 phase.add_control(control_name, **control_dict)
 
@@ -689,7 +689,11 @@ class AviaryGroup(om.Group):
         def add_subsystem_timeseries_outputs(phase, phase_name):
             all_subsystems = self.subsystems
             for subsystem in all_subsystems:
-                timeseries_to_add = subsystem.get_timeseries()
+                timeseries_to_add = subsystem.get_timeseries(
+                    aviary_inputs=self.aviary_inputs,
+                    phase_info=self.mission_info[phase_name],
+                    phase_name=phase_name,
+                )
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
                 mbvars = subsystem.get_post_mission_bus_variables(
@@ -1095,7 +1099,9 @@ class AviaryGroup(om.Group):
         for idx, phase_name in enumerate(self.mission_info):
             lists_to_link.append([])
             for external_subsystem in self.external_subsystems:
-                lists_to_link[idx].extend(external_subsystem.get_linked_variables())
+                lists_to_link[idx].extend(
+                    external_subsystem.get_linked_variables(aviary_inputs=self.aviary_inputs)
+                )
 
         # get unique variable names from lists_to_link
         unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
@@ -1484,7 +1490,11 @@ class AviaryGroup(om.Group):
         # Loop over each subsystem
         for subsystem in all_subsystems:
             # Fetch the initial guesses for the subsystem
-            initial_guesses = subsystem.get_initial_guesses()
+            initial_guesses = subsystem.get_initial_guesses(
+                aviary_inputs=self.aviary_inputs,
+                phase_info=self.mission_info[phase_name],
+                phase_name=phase_name,
+            )
 
             # Loop over each guess
             for key, val_dict in initial_guesses.items():

@@ -95,11 +95,13 @@ class BaseODE(om.Group):
                     target = solver_group
                     use_mission_solver = True
 
+                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
+                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
                 target.add_subsystem(
                     subsystem.name,
                     subsystem_mission,
-                    promotes_inputs=subsystem.mission_inputs(**kwargs),
-                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
                 )
 
         return use_mission_solver

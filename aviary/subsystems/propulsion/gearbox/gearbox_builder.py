@@ -57,7 +57,7 @@ class GearboxBuilder(SubsystemBuilder):
         }
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
         """
         Parameters are only tested to see if they exist in mission.
         The value doesn't change throughout the mission.
@@ -91,10 +91,10 @@ class GearboxBuilder(SubsystemBuilder):
 
         return parameters
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         return [Aircraft.Engine.Gearbox.MASS]
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
@@ -103,7 +103,7 @@ class GearboxBuilder(SubsystemBuilder):
             Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 
-    def get_constraints(self):
+    def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
         if self.include_constraints:
             constraints = {
                 Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {

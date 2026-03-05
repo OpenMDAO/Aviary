@@ -106,7 +106,9 @@ class PropulsionMission(om.Group):
                 )
 
                 # loop through params and slice as needed
-                params = engine.get_parameters()
+                params = engine.get_parameters(
+                    aviary_inputs=options,
+                )
                 for param in params:
                     self.promotes(
                         engine.name,

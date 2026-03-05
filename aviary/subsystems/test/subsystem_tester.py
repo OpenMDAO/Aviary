@@ -271,15 +271,6 @@ class TestSubsystemBuilder(unittest.TestCase):
                 post_mission_sys, System, msg='post_mission_sys is not an OpenMDAO System.'
             )
 
-    def test_define_order(self):
-        order = self.subsystem_builder.define_order()
-        self.assertIsInstance(order, list, 'define_order should return a list')
-
-        for subsystem_name in order:
-            self.assertIsInstance(
-                subsystem_name, str, 'Each subsystem name in the list should be a string'
-            )
-
     def test_get_timeseries(self):
         outputs = self.subsystem_builder.get_timeseries()
         self.assertIsInstance(outputs, list, 'get_timeseries should return a list')

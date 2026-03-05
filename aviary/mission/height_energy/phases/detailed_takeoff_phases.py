@@ -2998,7 +2998,7 @@ class TakeoffTrajectory:
 
             kwargs = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, **kwargs)
+            params = aero.get_parameters(aviary_inputs=aviary_options, **kwargs)
 
             # takeoff introduces this one.
             params[Mission.Takeoff.LIFT_COEFFICIENT_MAX] = {
