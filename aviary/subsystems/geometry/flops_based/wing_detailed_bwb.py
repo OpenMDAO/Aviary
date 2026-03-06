@@ -311,7 +311,9 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
 
         J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD] = [0.0, 0.0, 1.0]
 
-        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = [1.0, 1.0, 0.0]
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = [
+            1.0, 1.0, 0.0
+        ]
 
         dswp_ld_path_dsweep = 1 / (1 + angle**2) / np.cos(sweep / 57.2958) ** 2
         J['BWB_LOAD_PATH_SWEEP_DISTRIBUTION', Aircraft.Wing.SWEEP] = [
