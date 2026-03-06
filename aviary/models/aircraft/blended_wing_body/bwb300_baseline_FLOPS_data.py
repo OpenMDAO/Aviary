@@ -220,7 +220,7 @@ inputs.set_val(Aircraft.Wing.SPAN, 186.631829293424, 'ft')  # SPAN
 inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)  # PCTL
 
 inputs.set_val(
-    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+    Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     np.array([-1.0, 48.25, 33.20, 18.97, 14.19, 10.20, 3.220]),
 )  # CHD
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.85)  # FCOMP
@@ -231,14 +231,14 @@ inputs.set_val(
 )  # GLOV, it was 0.0 as input and computed
 
 inputs.set_val(
-    Aircraft.Wing.INPUT_STATION_DIST,
+    Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
     np.array([0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0]),  # ETAW
 )
 
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 
 inputs.set_val(
-    Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+    Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
     np.array([0.0, 0.0, 0.0, 17.0, 17.0, 17.0]),
     'deg',  # SWL
 )
@@ -256,7 +256,7 @@ inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11)  # TCA
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.0)  # TCREF
 
 inputs.set_val(
-    Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+    Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
     np.array([-1.0, 0.125, 0.125, 0.076, 0.076, 0.076, 0.06]),  # TOC
 )
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)  # ULF
