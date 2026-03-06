@@ -39,6 +39,10 @@ class EngineModel(SubsystemBuilder):
     """
 
     default_name = 'engine_model'
+    # Flag that sets if this engine computes maximum values (e.g. max thrust, shaft power) for a
+    # given flight condition. If False, during mission Aviary will create a duplicate copy of the
+    # engine that is given max throttle and hybrid throttle (1.0) to compute max values.
+    compute_max_values = False
 
     def __init__(
         self, name: str = None, options: AviaryValues = None, meta_data: dict = None, **kwargs

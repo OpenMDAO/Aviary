@@ -199,7 +199,7 @@ inputs.set_val(Aircraft.Wing.AIRFOIL_TECHNOLOGY, 2.0)  # AITEK
 inputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0)  # FRWI1
 
 inputs.set_val(
-    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+    Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     np.array(
         [
             -1.0,
@@ -226,14 +226,14 @@ inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 121.05, 'ft**2')  # GLOV
 
 inputs.set_val(
-    Aircraft.Wing.INPUT_STATION_DIST,
+    Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
     np.array([0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1]),
 )  # ETAW
 
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 
 inputs.set_val(
-    Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+    Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
     np.array([0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9]),
     'deg',
 )  # SWL
@@ -252,7 +252,7 @@ inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11)  # TCA
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11)  # TCREF
 
 inputs.set_val(
-    Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+    Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
     np.array(
         [
             -1.0,

@@ -204,7 +204,7 @@ inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR
 inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 121.05, 'ft**2')  # GLOV
 
-inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.5, 1.0]))  # ETAW
+inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.0, 0.5, 1.0]))  # ETAW
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)  # PDIST
 inputs.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 2.0)  # CAM
 inputs.set_val(Aircraft.Wing.MISC_MASS_SCALER, 1.0)  # FRWI3

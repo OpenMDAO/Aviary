@@ -180,7 +180,7 @@ class SubsystemBuilder(ABC):
     def get_pre_mission_bus_variables(self, aviary_inputs=None):
         """
         Return a dictionary of variables that will be passed from the pre-mission
-        to mission systems.
+        to mission and post-mission systems.
 
         Parameters
         ----------
