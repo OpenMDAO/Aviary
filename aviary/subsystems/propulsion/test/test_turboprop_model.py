@@ -17,6 +17,7 @@ from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.utils.aviary_values import AviaryValues
 
 
 @use_tempdirs
@@ -25,12 +26,13 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob = om.Problem()
 
     def prepare_model(
-        self, test_points=[(0, 0, 0), (0, 0, 1)], shp_model=None, prop_model=None, **kwargs
+        self,
+        options: AviaryValues,
+        test_points=[(0, 0, 0), (0, 0, 1)],
+        shp_model=None,
+        prop_model=None,
+        **kwargs,
     ):
-        options = get_option_defaults()
-        if isinstance(shp_model, Path):
-            options.set_val(Aircraft.Engine.DATA_FILE, shp_model)
-            shp_model = None
         options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
         options.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -65,6 +67,7 @@ class TurbopropMissionTest(unittest.TestCase):
         engine = TurbopropModel(
             options=options, shaft_power_model=shp_model, propeller_model=prop_model
         )
+
         preprocess_propulsion(options, [engine])
 
         machs, alts, throttles = zip(*test_points)
@@ -80,14 +83,17 @@ class TurbopropMissionTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.add_subsystem(
+        # Put it all in an outer group called "propulsion" so that model structure looks like
+        # aviary for model options.
+        propulsion_group = self.prob.model.add_subsystem('propulsion', om.Group(), promotes=['*'])
+        propulsion_group.add_subsystem(
             engine.name,
             subsys=engine.build_mission(num_nodes=num_nodes, aviary_inputs=options, **kwargs),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
 
-        setup_model_options(self.prob, options)
+        setup_model_options(self.prob, options, engine_models=[engine])
 
         self.prob.setup(force_alloc_complex=False)
         self.prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1, units='unitless')
@@ -160,7 +166,9 @@ class TurbopropMissionTest(unittest.TestCase):
 
         prop_group = ExamplePropModel('custom_prop_model')
 
-        self.prepare_model(test_points, filename, prop_group)
+        options.set_val(Aircraft.Engine.DATA_FILE, filename)
+
+        self.prepare_model(options, test_points, prop_model=prop_group)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
@@ -214,7 +222,10 @@ class TurbopropMissionTest(unittest.TestCase):
             ),
         ]
 
-        self.prepare_model(test_points, filename)
+        options = get_option_defaults()
+        options.set_val(Aircraft.Engine.DATA_FILE, filename)
+
+        self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
@@ -268,7 +279,10 @@ class TurbopropMissionTest(unittest.TestCase):
             ),
         ]
 
-        self.prepare_model(test_points, filename)
+        options = get_option_defaults()
+        options.set_val(Aircraft.Engine.DATA_FILE, filename)
+
+        self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
@@ -294,9 +308,13 @@ class TurbopropMissionTest(unittest.TestCase):
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
         num_nodes = len(test_points)
 
-        motor_model = MotorBuilder()
+        options = get_option_defaults()
 
-        self.prepare_model(test_points, motor_model, input_rpm=True)
+        shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
+        options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
+
+        self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
+
         self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')

@@ -42,7 +42,8 @@ parts:
       - file: user_guide/propulsion
         sections:
           - file: user_guide/creating_a_turboprop_engine.ipynb
-      - file: user_guide/hamilton_standard
+          - file: user_guide/hamilton_standard
+          - file: user_guide/motor_electric
       - file: user_guide/mass
       - file: user_guide/subsystems
       - file: user_guide/using_external_subsystems
