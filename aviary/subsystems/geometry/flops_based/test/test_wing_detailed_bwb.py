@@ -141,7 +141,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         options = self.aviary_options = AviaryValues()
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
         options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )  # ETAW
@@ -151,15 +151,15 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             val=[-1.0, 48.25, 33.20, 18.97, 14.19, 10.20, 3.220],
         )  # CHD
         prob.set_val(
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             val=[-1.0, 0.125, 0.125, 0.076, 0.076, 0.076, 0.06],
         )  # TOC
         prob.set_val(
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             val=[0.0, 0.0, 0.0, 17.0, 17.0, 17.0],
         )  # SWL
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=49.77182929)
@@ -334,7 +334,7 @@ class BWBWingPrelimTest(unittest.TestCase):
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
