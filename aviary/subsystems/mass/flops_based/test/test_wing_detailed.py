@@ -670,17 +670,17 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_location)
 
         prob.set_val(
-            'BWB_CHORD_PER_SEMISPAN_DIST',
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
             [116.57609631, 55.0, 33.2, 18.97, 14.19, 10.2, 2.36127568],
             units='unitless',
         )
         prob.set_val(
-            'BWB_THICKNESS_TO_CHORD_DIST',
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
             [0.1792, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06],
             units='unitless',
         )
         prob.set_val(
-            'BWB_LOAD_PATH_SWEEP_DIST',
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
             [0.0, 0.0, 0.0, 17.0, 17.0, 17.0],
             units='deg',
         )
