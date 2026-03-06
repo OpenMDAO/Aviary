@@ -537,17 +537,17 @@ class BWBWing_SWet(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
-        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_inp_stations, units='unitless')
+        self.add_input('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless')
+        self.add_input('BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations, units='unitless')
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 
@@ -563,9 +563,9 @@ class BWBWing_SWet(om.ExplicitComponent):
         rate_span = (wingspan - width) / wingspan
 
         # This part is repeated in BWBWingPrelim()
-        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
         )
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
@@ -576,8 +576,8 @@ class BWBWing_SWet(om.ExplicitComponent):
         bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
-        bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
-        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DIST']
+        bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
 
         if bwb_chord_per_semispan_dist[0] <= 5.0:
             C1 = bwb_chord_per_semispan_dist[0] * wingspan / 2.0
