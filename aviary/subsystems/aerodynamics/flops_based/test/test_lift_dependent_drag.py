@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.flops_based.lift_dependent_drag import LiftDependentDrag
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class LiftDependentDragTest(unittest.TestCase):
     def test_derivs_edge_interp(self):
         # Pressure in lbf/in**2 at 41000 ft.
