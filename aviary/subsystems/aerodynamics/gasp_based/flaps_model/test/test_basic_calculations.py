@@ -44,41 +44,22 @@ class BasicFlapsCalculationsTestCase(unittest.TestCase):
         self.prob.run_model()
         tol = 2.1e-4
 
-        reg_data = 0.74444
-        ans = self.prob['VLAM8']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'VLAM8': 0.74444,
+            'VDEL4': 0.93578,
+            'VDEL5': 0.90761,
+            'VLAM9': 0.9975,
+            'slat_defl_ratio': 0.5,
+            Aircraft.Wing.SLAT_SPAN_RATIO: 0.89761,
+            'body_to_span_ratio': 0.09239,
+            'chord_to_body_ratio': 0.12679,
+            'VLAM12': 0.79208,
+        }
 
-        reg_data = 0.93578
-        ans = self.prob['VDEL4']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.90761
-        ans = self.prob['VDEL5']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.9975
-        ans = self.prob['VLAM9']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.5
-        ans = self.prob['slat_defl_ratio']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.89761
-        ans = self.prob[Aircraft.Wing.SLAT_SPAN_RATIO]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.09239
-        ans = self.prob['body_to_span_ratio']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.12679
-        ans = self.prob['chord_to_body_ratio']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.79208
-        ans = self.prob['VLAM12']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(out_stream=None, method='fd')
         assert_check_partials(data, atol=1e-6, rtol=4e-6)
