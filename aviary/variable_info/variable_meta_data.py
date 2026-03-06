@@ -2170,6 +2170,7 @@ add_meta_data(
     multivalue=True,
 )
 
+# TODO if altitude is more robust, then we can modify how EngineDeck sorts things
 add_meta_data(
     Aircraft.Engine.INTERPOLATION_SORT,
     meta_data=_MetaData,
@@ -4609,6 +4610,34 @@ add_meta_data(
     multivalue=True,
 )
 
+#   ____                                             _____                 _
+#  / __ \                                           / ____|               | |
+# | |  | | __  __  _   _    __ _    ___   _ __     | (___    _   _   ___  | |_    ___   _ __ ___
+# | |  | | \ \/ / | | | |  / _` |  / _ \ | '_ \     \___ \  | | | | / __| | __|  / _ \ | '_ ` _ \
+# | |__| |  >  <  | |_| | | (_| | |  __/ | | | |    ____) | | |_| | \__ \ | |_  |  __/ | | | | | |
+#  \____/  /_/\_\  \__, |  \__, |  \___| |_| |_|   |_____/   \__, | |___/  \__|  \___| |_| |_| |_|
+#                   __/ |   __/ |                             __/ |
+#                  |___/   |___/                             |___/
+# ================================================================================================
+
+add_meta_data(
+    Aircraft.OxygenSystem.MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Mass of passenger oxygen system',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.OxygenSystem.MASS_SCALER,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Mass Scaler for the Passenger Oxygen System',
+    default_value=0.0,
+)
+
 #  _____            _           _
 # |  __ \          (_)         | |
 # | |__) |   __ _   _   _ __   | |_
@@ -5517,7 +5546,7 @@ add_meta_data(
 
 add_meta_data(
     # see also: station_chord_lengths (of LEAPS1)
-    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+    Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -5871,7 +5900,7 @@ add_meta_data(
 add_meta_data(
     # see also: station_locations
     # NOTE required for blended-wing-body type aircraft
-    Aircraft.Wing.INPUT_STATION_DIST,
+    Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -5949,7 +5978,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+    Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -6430,7 +6459,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
+    Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -6611,7 +6640,7 @@ add_meta_data(
     Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
     meta_data=_MetaData,
     historical_name={'GASP': 'XKV', 'FLOPS': None, 'LEAPS1': None},
-    units='ft**2/s',
+    units='lbf*s/ft**2',
     desc="Atmospheric dynamic viscosity at the vehicle's current flight condition",
     default_value=0.0,
     multivalue=True,

@@ -24,7 +24,7 @@ class BWBWingGroupTest(unittest.TestCase):
             Aircraft.Wing.DETAILED_WING,
             Aircraft.Engine.NUM_WING_ENGINES,
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES,
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL,
             Aircraft.Wing.NUM_INTEGRATION_STATIONS,
             Aircraft.Engine.NUM_FUSELAGE_ENGINES,
@@ -43,12 +43,14 @@ class BWBWingGroupTest(unittest.TestCase):
         )
         prob.model_options['*'] = model_options
 
-        prob.model.set_input_defaults('BWB_LOAD_PATH_SWEEP_DIST', [0.0, 15.337244816], units='deg')
         prob.model.set_input_defaults(
-            'BWB_THICKNESS_TO_CHORD_DIST', [0.11, 0.11, 0.11], units='unitless'
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', [0.0, 15.337244816], units='deg'
         )
         prob.model.set_input_defaults(
-            'BWB_CHORD_PER_SEMISPAN_DIST', [137.5, 91.3717, 14.2848], units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', [0.11, 0.11, 0.11], units='unitless'
+        )
+        prob.model.set_input_defaults(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', [137.5, 91.3717, 14.2848], units='unitless'
         )
         prob.model.set_input_defaults('Rear_spar_percent_chord', 0.7, units='unitless')
         prob.model.set_input_defaults('Rear_spar_percent_chord_centerline', 0.7, units='unitless')
@@ -56,6 +58,7 @@ class BWBWingGroupTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             self.prob,
             case_name,
             input_keys=[
