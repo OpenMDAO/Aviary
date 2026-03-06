@@ -23,9 +23,9 @@ phase_info = {
             'altitude_bounds': ((500.0, 35000.0), 'ft'),
             'no_descent': True,
             'mass_ref': (875000, 'lbm'),
-            'throttle_enforcement': 'control',
+            'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((0.0, 0.0), 'min'),
-            'time_duration_bounds': ((24.0, 90.0), 'min'),
+            'time_duration_bounds': ((24.0, 120.0), 'min'),
         },
         'initial_guesses': {
             'altitude': ([500.5, 35000.0], 'ft'),
@@ -45,9 +45,9 @@ phase_info = {
             'altitude_bounds': ((35000.0, 43000.0), 'ft'),
             'mass_ref': (875000, 'lbm'),
             'distance_ref': (7750, 'nmi'),
-            'throttle_enforcement': 'control',
+            'throttle_enforcement': 'path_constraint',
             'time_initial_bounds': ((24.0, 180.0), 'min'),
-            'time_duration_bounds': ((10.0, 19.0), 'h'),
+            'time_duration_bounds': ((9.0, 19.0), 'h'),
         },
         'initial_guesses': {
             'altitude': ([35000, 42000.0], 'ft'),
@@ -70,7 +70,7 @@ phase_info = {
             'mass_ref': (875000, 'lbm'),
             'distance_ref': (7750, 'nmi'),
             'no_climb': True,
-            'throttle_enforcement': 'control',
+            'throttle_enforcement': 'boundary_constraint',
             'time_initial_bounds': ((10, 19.0), 'h'),
             'time_duration_bounds': ((0.15, 1.0), 'h'),
         },
@@ -104,71 +104,64 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             verbosity=1,
             max_iter=60,
         )
-        # prob.model.list_vars(units=True, print_arrays=True)
-        # prob.list_indep_vars()
-        # prob.list_problem_vars()
-        # prob.model.list_outputs()
 
         rtol = 1e-3
 
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            789473.7,
+            782430.3,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            446218.2,
+            445429.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            245443.5,
+            239188.4,
             tolerance=rtol,
         )
 
         assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
-    # @require_pyoptsparse(optimizer='IPOPT')
-    # def test_bench_bwb_FwFm_IPOPT(self):
-    # local_phase_info = deepcopy(phase_info)
-    # prob = run_aviary(
-    # 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
-    # local_phase_info,
-    # optimizer='IPOPT',
-    # verbosity=1,
-    # max_iter=60,
-    # )
-    # # prob.model.list_vars(units=True, print_arrays=True)
-    # # prob.list_indep_vars()
-    # # prob.list_problem_vars()
-    # # prob.model.list_outputs()
+    #@require_pyoptsparse(optimizer='IPOPT')
+    #def test_bench_bwb_FwFm_IPOPT(self):
+        #local_phase_info = deepcopy(phase_info)
 
-    # rtol = 1e-3
+        #prob = run_aviary(
+        #'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv',
+        #local_phase_info,
+        #optimizer='IPOPT',
+        #verbosity=1,
+        #max_iter=60,
+        #)
 
-    # # There are no truth values for these.
-    # assert_near_equal(
-    # prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-    # 789473.7,
-    # tolerance=rtol,
-    # )
+        #rtol = 1e-3
 
-    # assert_near_equal(
-    # prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-    # 446218.2,
-    # tolerance=rtol,
-    # )
+        ## There are no truth values for these.
+        #assert_near_equal(
+            #prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+            #782430.3,
+            #tolerance=rtol,
+        #)
 
-    # assert_near_equal(
-    # prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-    # 245443.5,
-    # tolerance=rtol,
-    # )
+        #assert_near_equal(
+            #prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+            #445429.9,
+            #tolerance=rtol,
+        #)
 
-    # assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
+        #assert_near_equal(
+            #prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+            #239188.4,
+            #tolerance=rtol,
+        #)
+
+        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
 if __name__ == '__main__':
