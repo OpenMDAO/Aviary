@@ -83,7 +83,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
             [
                 Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
-                Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
             ],
         )
         self.declare_partials(
@@ -142,9 +142,9 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
 
         num_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
 
-        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][0] = 1.0
-        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][1] = 1.0
-        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD][2:] = 0.0
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][0] = 1.0
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][1] = 1.0
+        J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO][2:] = 0.0
 
         diag2_matrix = np.identity(num_stations)
         J['BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION] = (
@@ -218,9 +218,6 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
             ],
-        )
-        self.declare_partials(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', Aircraft.Wing.THICKNESS_TO_CHORD
         )
         self.declare_partials(
             'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
