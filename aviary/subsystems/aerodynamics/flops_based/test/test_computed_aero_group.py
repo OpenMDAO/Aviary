@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -14,6 +15,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
+@use_tempdirs
 class MissionDragTest(unittest.TestCase):
     def test_basic_large_single_aisle_1(self):
         flops_inputs = get_flops_inputs('LargeSingleAisle1FLOPS')
