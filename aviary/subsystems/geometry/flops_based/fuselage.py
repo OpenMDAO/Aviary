@@ -456,7 +456,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
-        bay_width_max = 12.0  # ft
+        bay_width_nom = 12.0  # ft
 
         if length <= 0.0:
             raise ValueError(
@@ -477,7 +477,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        num_bays = int(0.5 + max_width / bay_width_max)
+        num_bays = int(0.5 + max_width / bay_width_nom)
         if num_bays.real > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
         outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
@@ -563,7 +563,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
         tan_sweep = np.tan(sweep / 57.296)
 
-        bay_width_max = 12.0  # ft
+        bay_width_nom = 12.0  # ft
+        # Do not set max bay width for now. Later can create an Aviary variable for BAYWMX
+        bay_width_max = 0.0
         num_bays = 0
         num_bays_loc = num_bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
@@ -600,9 +602,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             seat_pitch_economy = 32.0  # inch
 
         # Determine unit seat areas for each type of passenger
-        area_seat_business = bay_width_max * seat_pitch_business / 12.0 / num_seat_abreast_business
-        area_seat_first = bay_width_max * seat_pitch_first / 12.0 / num_seat_abreast_first
-        area_seat_economy = bay_width_max * seat_pitch_economy / 12.0 / num_seat_abreast_economy
+        area_seat_business = bay_width_nom * seat_pitch_business / 12.0 / num_seat_abreast_business
+        area_seat_first = bay_width_nom * seat_pitch_first / 12.0 / num_seat_abreast_first
+        area_seat_economy = bay_width_nom * seat_pitch_economy / 12.0 / num_seat_abreast_economy
 
         # Find the number of lavatories, galleys and closets based on the
         # number of passengers for each class and the area for each
@@ -617,9 +619,9 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         num_galleys = int(0.99 + 0.6 * num_lavas)
         num_closets = int(0.99 + 0.4 * num_lavas)
 
-        area_lava = (bay_width_max / 2.0) * (width_lava / 12.0)
-        area_galley = (bay_width_max / 2.0) * (width_galley / 12.0)
-        area_closet = (bay_width_max / 2.0) * (width_closet / 12.0)
+        area_lava = (bay_width_nom / 2.0) * (width_lava / 12.0)
+        area_galley = (bay_width_nom / 2.0) * (width_galley / 12.0)
+        area_closet = (bay_width_nom / 2.0) * (width_closet / 12.0)
 
         # Calculate area required for passengers and services
         area_seats = (
@@ -637,11 +639,11 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         while num_bays_loc != num_bays:
             num_bays_loc = num_bays
             # Cabin area wasted due to slanted  != side wall
-            area_waste = num_bays * tan_sweep * (bay_width_max / 2.0) ** 2
+            area_waste = num_bays * tan_sweep * (bay_width_nom / 2.0) ** 2
 
             # Aisle area for horseshoe (5'), cross (2') and rear (3') aisles
             # Aisles only go to center of outboard bays, hence num_bays-1
-            area_aisle = 10.0 * (num_bays - 1) * bay_width_max
+            area_aisle = 10.0 * (num_bays - 1) * bay_width_nom
 
             # Total pressurized cabin area
             area_cabin = area_seats + area_service + area_waste + area_aisle
@@ -654,7 +656,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays_tmp = 0.5 + max_width / bay_width_max
+            num_bays_tmp = 0.5 + max_width / bay_width_nom
             if num_bays_tmp[0].real > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
             else:
@@ -662,7 +664,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
             # Enforce maximum bay width
             bay_width = max_width / num_bays
-            if bay_width > bay_width_max:
+            if bay_width > bay_width_max and bay_width_max > 0.0:
                 bay_width = bay_width_max
                 num_bays_tmp = 0.999 + max_width / bay_width
                 if num_bays_tmp.real > num_bays_max and num_bays_max > 0:

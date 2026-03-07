@@ -380,6 +380,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
+        if arref[0] == 0:
+            arref[0] = ar[0]
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
         for x in chord:
@@ -400,6 +402,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
+        if tcref == 0.0:
+            tcref = tc
         thickness_to_chord_mod = []
         for x in thickness_to_chord:
             thickness_to_chord_mod.append(x * tc[0] / tcref[0])
@@ -484,7 +488,9 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         tc_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
         )
-        tc_int_stations = tc_interp.evaluate_spline(thickness_to_chord, compute_derivative=False)
+        tc_int_stations = tc_interp.evaluate_spline(
+            thickness_to_chord_mod, compute_derivative=False
+        )
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
 
