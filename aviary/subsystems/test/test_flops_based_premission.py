@@ -281,15 +281,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.ASPECT_RATIO_REFERENCE,
                 Aircraft.Wing.LOAD_FRACTION,
-                # _BWBWing
+                # BWBWing_SWet
                 Aircraft.Wing.WETTED_AREA,
-                # _Tail
+                # Tail_SWet
                 Aircraft.HorizontalTail.WETTED_AREA,
                 Aircraft.VerticalTail.WETTED_AREA,
                 # _FuselageRatios
                 Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
                 Aircraft.Fuselage.LENGTH_TO_DIAMETER,
-                # Nacelles
+                # Nacelles_SWet
                 Aircraft.Nacelle.TOTAL_WETTED_AREA,
                 Aircraft.Nacelle.WETTED_AREA,
                 # Canard
@@ -521,15 +521,15 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
-        # _BWBWing
+        # BWBWing_SWet
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
-        # _Tail
+        # Tail_SWet
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.16739117852998228, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 3.4502226961922089, tol)
-        # Nacelles
+        # Nacelles_SWet
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -718,15 +718,15 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
-        # _BWBWing
+        # BWBWing_SWet
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
-        # _Tail
+        # Tail_SWet
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.16739117852998228, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 3.4502226961922089, tol)
-        # Nacelles
+        # Nacelles_SWet
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -903,15 +903,15 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
-        # _BWBWing
+        # BWBWing_SWet
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
-        # _Tail
+        # Tail_SWet
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.18243240878599712, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 2.4261771932742167, tol)
-        # Nacelles
+        # Nacelles_SWet
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -1098,15 +1098,15 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
-        # _BWBWing
+        # BWBWing_SWet
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
-        # _Tail
+        # Tail_SWet
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.18243240878599712, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 2.4261771932742167, tol)
-        # Nacelles
+        # Nacelles_SWet
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
