@@ -26,6 +26,7 @@ from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.functions import (
     add_aviary_input,
     add_aviary_output,
+    add_aviary_option,
     get_units,
     override_aviary_vars,
     setup_model_options,

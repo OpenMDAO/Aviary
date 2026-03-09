@@ -403,7 +403,7 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     return dict_of_dicts
 
 
-def glue_variable(name: str, val=None, md_code=False, display=True):
+def glue_variable(name: str, val=None, md_code=False, display=False):
     """
     Glue a variable for later use in markdown cells of notebooks.
 
@@ -418,8 +418,10 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
         The name the value will be glued to
     val : any
         The value to be displayed in the markdown cell (default is the value of name)
-    md_code : Bool
+    md_code : bool
         Whether to wrap the value in markdown code formatting (e.g. `code`)
+    display: bool
+        If True, writes glued variable to stdout
     """
     # local import so myst isn't required unless glue is being used
     from IPython.display import Markdown
