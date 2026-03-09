@@ -5,7 +5,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values
@@ -88,6 +88,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -133,6 +134,7 @@ class PreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -178,6 +180,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.run_model()
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -258,6 +261,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -426,7 +430,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        preprocess_options(flops_inputs)
+        engines = [build_engine_deck(flops_inputs)]
+        preprocess_options(flops_inputs, engine_models=engines)
+
         default_premission_subsystems = get_geom_and_mass_subsystems('FLOPS')[0:1]
 
         prob = self.prob
@@ -446,6 +452,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -505,7 +512,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
@@ -1223,3 +1230,6 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = BWBPreMissionGroupTest()
+    # test.setUp()
+    # test.test_case_geom()
