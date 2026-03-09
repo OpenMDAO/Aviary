@@ -6,17 +6,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class SimpleAeroBuilder(SubsystemBuilder):
-    """
-    A basic subsystem that provides a simplified equation for drag computation.
+    """A basic subsystem that provides a simplified equation for drag computation."""
 
-    Attributes
-    ----------
-    name : str ('simple_aero')
-        object label
-    """
-
-    def __init__(self, name='simple_aero'):
-        super().__init__(name)
+    _default_name = 'simple_aero'
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         """

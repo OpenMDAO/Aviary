@@ -32,8 +32,7 @@ class WingMassBuilder(SubsystemBuilder):
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     """
 
-    def __init__(self, name='wing_mass'):
-        super().__init__(name)
+    _default_name = 'wing_mass'
 
     def build_pre_mission(self, aviary_inputs):
         """

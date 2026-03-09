@@ -310,8 +310,10 @@ class FakeDragPolarBuilder(SubsystemBuilder):
         List of angles of attack in ascending order. (Optional)
     """
 
-    def __init__(self, name='aero', altitude=None, mach=None, alpha=None):
-        super().__init__(name)
+    _default_name = 'aero'
+
+    def __init__(self, altitude=None, mach=None, alpha=None):
+        super().__init__()
         self.altitude = np.unique(altitude)
         self.mach = np.unique(mach)
         self.alpha = np.unique(alpha)

@@ -38,7 +38,7 @@ class EngineModel(SubsystemBuilder):
     update
     """
 
-    default_name = 'engine_model'
+    _default_name = 'engine_model'
 
     def __init__(
         self, name: str = None, options: AviaryValues = None, meta_data: dict = None, **kwargs

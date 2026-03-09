@@ -50,9 +50,12 @@ class DetailedBatteryBuilder(SubsystemBuilder):
         preprocesses the inputs for the battery subsystem, setting the values for battery performance based on the battery cell type.
     """
 
-    def __init__(self, name='battery', include_constraints=True):
+    _default_name = 'detailed_battery'
+    _default_metadata = ExtendedMetaData
+
+    def __init__(self, name=None, meta_data=None, include_constraints=True):
         self.include_constraints = include_constraints
-        super().__init__(name, meta_data=ExtendedMetaData)
+        super().__init__(name, meta_data)
 
     def get_states(self):
         """

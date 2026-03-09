@@ -64,9 +64,11 @@ class MotorBuilder(SubsystemBuilder):
         No preprocessing needed for the motor subsystem.
     """
 
-    def __init__(self, name='motor'):  # , include_constraints=True):
-        # self.include_constraints = include_constraints
-        super().__init__(name)
+    _default_name = 'motor'
+
+    # def __init__(self, name=None, meta_data=None):  # , include_constraints=True):
+    # self.include_constraints = include_constraints
+    # super().__init__(name, meta_data)
 
     def build_pre_mission(self, aviary_inputs):
         return MotorPreMission(aviary_inputs=aviary_inputs)  # , simple_mass=True)

@@ -35,8 +35,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'aerodynamics'
-
 
 class AerodynamicsBuilder(SubsystemBuilder):
     """
@@ -46,23 +44,9 @@ class AerodynamicsBuilder(SubsystemBuilder):
     -------
     __init__(self, name=None, meta_data=None):
         Initializes the AerodynamicsBuilder object with a given name.
-    mission_inputs(self, **kwargs) -> list:
-        Return mission inputs.
-    mission_outputs(self, **kwargs) -> list:
-        Return mission outputs.
     """
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
-
-        super().__init__(name=name, meta_data=meta_data)
-
-    def mission_inputs(self, **kwargs):
-        return ['*']
-
-    def mission_outputs(self, **kwargs):
-        return ['*']
+    _default_name = 'aerodynamics'
 
 
 class CoreAerodynamicsBuilder(AerodynamicsBuilder):
@@ -86,9 +70,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
     """
 
     def __init__(self, name=None, meta_data=None, code_origin=None, tabular=False):
-        if name is None:
-            name = 'aerodynamics'
-
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
@@ -100,7 +81,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
     def build_pre_mission(self, aviary_inputs, **kwargs):
         # pre-mission is not required when exclusively using tabular aero
         if self.tabular:
-            return
+            return None
 
         code_origin = self.code_origin
         try:

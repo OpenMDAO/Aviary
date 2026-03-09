@@ -8,24 +8,20 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class SimpleDragCoeff(om.ExplicitComponent):
-    """
-    Simple representation of aircraft drag as CD = CD_zero + k * CL**2.
-
-    Values are fictional. Typically, some higher fidelity method will go here instead.
-    """
+    """Simple representation of aircraft drag as parabolic equation CD = CD_zero + k * CL**2."""
 
     def initialize(self):
         self.options.declare(
             'num_nodes', default=1, types=int, desc='Number of nodes along mission segment'
         )
 
-        self.options.declare('CD_zero', default=0.01)
-        self.options.declare('k', default=0.04)
+        self.options.declare('CD_zero', default=0.01, desc='Zero-lift drag coefficient')
+        self.options.declare('k', default=0.04, desc='Induced drag factor')
 
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input('cl', val=np.zeros(nn), units='unitless')
+        self.add_input('CL', val=np.zeros(nn), units='unitless')
 
         self.add_output('CD', val=np.zeros(nn), units='unitless')
 
@@ -33,22 +29,22 @@ class SimpleDragCoeff(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
 
-        self.declare_partials('CD', 'cl', rows=arange, cols=arange)
+        self.declare_partials('CD', 'CL', rows=arange, cols=arange)
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         CD_zero = self.options['CD_zero']
         k = self.options['k']
 
-        cl = inputs['cl']
+        cl = inputs['CL']
 
         outputs['CD'] = CD_zero + k * cl**2
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         k = self.options['k']
 
-        cl = inputs['cl']
+        cl = inputs['CL']
 
-        partials['CD', 'cl'] = 2.0 * k * cl
+        partials['CD', 'CL'] = 2.0 * k * cl
 
 
 class SimpleAeroGroup(om.Group):
@@ -84,7 +80,7 @@ class SimpleAeroGroup(om.Group):
         self.add_subsystem(
             'SimpleDragCoeff',
             SimpleDragCoeff(num_nodes=nn),
-            promotes_inputs=['cl'],
+            promotes_inputs=[('CL', 'cl')],
             promotes_outputs=['CD'],
         )
 
