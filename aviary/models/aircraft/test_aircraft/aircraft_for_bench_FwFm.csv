@@ -136,7 +136,7 @@ aircraft:wing:strut_bracing_factor,0.0,unitless
 aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:sweep,25.0,deg
 aircraft:wing:taper_ratio,0.278,unitless
-aircraft:wing:thickness_to_chord_dist,0.145,0.115,0.104,unitless
+aircraft:wing:thickness_to_chord_distribution,0.145,0.115,0.104,unitless
 aircraft:wing:thickness_to_chord,0.13,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless

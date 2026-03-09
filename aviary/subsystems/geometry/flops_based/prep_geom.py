@@ -711,24 +711,26 @@ class _BWBWing(om.ExplicitComponent):
         bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
-        bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
-        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
+        bwb_chord_per_semispan_distribution = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        bwb_thickness_to_chord_distribution = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
 
-        if bwb_chord_per_semispan_dist[0] <= 5.0:
-            C1 = bwb_chord_per_semispan_dist[0] * wingspan / 2.0
+        if bwb_chord_per_semispan_distribution[0] <= 5.0:
+            C1 = bwb_chord_per_semispan_distribution[0] * wingspan / 2.0
         else:
-            C1 = bwb_chord_per_semispan_dist[0]
+            C1 = bwb_chord_per_semispan_distribution[0]
         if bwb_input_station_dist[0] <= 1.1:
             Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
         for n in range(1, num_inp_stations):
-            avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
+            avg_toc = (
+                bwb_thickness_to_chord_distribution[n - 1] + bwb_thickness_to_chord_distribution[n]
+            ) / 2.0
             ckt = 2.0 + 0.387 * avg_toc
-            if bwb_chord_per_semispan_dist[n] <= 5.0:
-                C2 = bwb_chord_per_semispan_dist[n] * wingspan / 2.0
+            if bwb_chord_per_semispan_distribution[n] <= 5.0:
+                C2 = bwb_chord_per_semispan_distribution[n] * wingspan / 2.0
             else:
-                C2 = bwb_chord_per_semispan_dist[n]
+                C2 = bwb_chord_per_semispan_distribution[n]
             if bwb_input_station_dist[n] <= 1.1:
                 Y2 = bwb_input_station_dist[n] * wingspan / 2.0
             else:

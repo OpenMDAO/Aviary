@@ -952,27 +952,39 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         # BWB always have detailed wing.
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
         if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
-            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
-            input_station_dist = [0.0] + input_station_dist
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, input_station_dist)
-            n_dist = len(input_station_dist)
-            chord_per_semispan_dist = input_values.get_val(
+            input_station_distribution = input_values.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
+            )
+            input_station_distribution = [0.0] + input_station_distribution
+            input_values.set_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION, input_station_distribution
+            )
+            n_dist = len(input_station_distribution)
+            chord_per_semispan_distribution = input_values.get_val(
                 Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
             )
-            chord_per_semispan_dist = [-1.0] + chord_per_semispan_dist[0 : n_dist - 1]
+            chord_per_semispan_distribution = [-1.0] + chord_per_semispan_distribution[
+                0 : n_dist - 1
+            ]
             input_values.set_val(
-                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION, chord_per_semispan_dist
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION, chord_per_semispan_distribution
             )
-            load_path_sweep_dist = input_values.get_val(
+            load_path_sweep_distribution = input_values.get_val(
                 Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, 'deg'
             )
-            load_path_sweep_dist = [0.0] + load_path_sweep_dist[0 : n_dist - 2]
+            load_path_sweep_distribution = [0.0] + load_path_sweep_distribution[0 : n_dist - 2]
             input_values.set_val(
-                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, load_path_sweep_dist, 'deg'
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, load_path_sweep_distribution, 'deg'
             )
-            thickness_to_chord_dist = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST)
-            thickness_to_chord_dist = [-1.0] + thickness_to_chord_dist[0 : n_dist - 1]
-            input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
+            thickness_to_chord_distribution = input_values.get_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
+            )
+            thickness_to_chord_distribution = [-1.0] + thickness_to_chord_distribution[
+                0 : n_dist - 1
+            ]
+            input_values.set_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION, thickness_to_chord_distribution
+            )
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
         else:
             # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.

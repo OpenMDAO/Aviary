@@ -41,6 +41,12 @@ aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
+# TODO: Needed to reduce the drag so that engine wasn't full throttle in cruise.
+# There must be something about drag that still isn't working for BWB.
+aircraft:design:subsonic_drag_coeff_factor,0.7,unitless
+# aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
@@ -147,7 +153,7 @@ aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
 aircraft:wing:thickness_to_chord_reference,0.11,unitless
-aircraft:wing:thickness_to_chord_dist,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
+aircraft:wing:thickness_to_chord_distribution,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless

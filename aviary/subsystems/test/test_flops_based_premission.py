@@ -88,6 +88,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -133,6 +134,7 @@ class PreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -178,6 +180,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.run_model()
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -258,6 +261,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -448,6 +452,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -507,7 +512,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)

@@ -26,8 +26,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
 
     def setup(self):
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        num_input_stations = len(input_station_dist)
+        input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        num_input_stations = len(input_station_distribution)
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
@@ -38,7 +38,10 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             units='deg',
         )
         add_aviary_input(
-            self, Aircraft.Wing.THICKNESS_TO_CHORD_DIST, shape=num_input_stations, units='unitless'
+            self,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            shape=num_input_stations,
+            units='unitless',
         )
         add_aviary_input(
             self,
@@ -74,8 +77,8 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        inp_stations = np.array(input_station_dist)
+        input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        inp_stations = np.array(input_station_distribution)
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
         num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
         num_engine_type = len(num_wing_engines)
@@ -90,7 +93,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
 
         load_path_sweep = inputs[Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION]
-        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DIST]
+        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION]
         chord = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION]
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
         gross_mass = inputs[Mission.Design.GROSS_MASS]
@@ -272,7 +275,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
     This is basically the same as DetailedWingBendingFact except the following:
 
       - Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION is replaced by BWB_LOAD_PATH_SWEEP_DISTRIBUTION
-      - Aircraft.Wing.THICKNESS_TO_CHORD_DIST is replaced by BWB_THICKNESS_TO_CHORD_DISTRIBUTION
+      - Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION is replaced by BWB_THICKNESS_TO_CHORD_DISTRIBUTION
       - Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION is replaced by BWB_CHORD_PER_SEMISPAN_DISTRIBUTION
     """
 
@@ -288,8 +291,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
 
     def setup(self):
-        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        num_input_stations = len(input_station_dist)
+        input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        num_input_stations = len(input_station_distribution)
         total_num_wing_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES]
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 

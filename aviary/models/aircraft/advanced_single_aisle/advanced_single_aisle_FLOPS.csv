@@ -158,7 +158,7 @@ aircraft:wing:surface_control_mass_scaler,1.77696,unitless
 aircraft:wing:sweep,23.6286942529271,deg
 aircraft:wing:taper_ratio,0.265189599754917,unitless
 aircraft:wing:thickness_to_chord,0.12233,unitless
-aircraft:wing:thickness_to_chord_dist,0.14233,0.12233,0.1108,0.1058,unitless
+aircraft:wing:thickness_to_chord_distribution,0.14233,0.12233,0.1108,0.1058,unitless
 aircraft:wing:thickness_to_chord_reference,0.116565,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
