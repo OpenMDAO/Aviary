@@ -32,6 +32,13 @@ class GearboxBuilder(SubsystemBuilder):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return GearboxMission(num_nodes=num_nodes)
 
+    def mission_inputs(self, **kwargs):
+        inputs = [Aircraft.Engine.Gearbox.GEAR_RATIO, Aircraft.Engine.Gearbox.EFFICIENCY]
+        return inputs
+
+    def mission_outputs(self, **kwargs):
+        return []
+
     def get_design_vars(self):
         """
         Design vars are only tested to see if they exist in pre_mission
@@ -57,7 +64,7 @@ class GearboxBuilder(SubsystemBuilder):
         }
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
         """
         Parameters are only tested to see if they exist in mission.
         The value doesn't change throughout the mission.
@@ -82,11 +89,11 @@ class GearboxBuilder(SubsystemBuilder):
                 'units': 'unitless',
                 'static_target': True,
             },
-            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                'val': 1.0,
-                'units': 'kW',
-                'static_target': True,
-            },
+            # Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+            #     'val': 1.0,
+            #     'units': 'kW',
+            #     'static_target': True,
+            # },
         }
 
         return parameters
@@ -97,21 +104,22 @@ class GearboxBuilder(SubsystemBuilder):
     def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
             Dynamic.Vehicle.Propulsion.RPM + '_out',
             Dynamic.Vehicle.Propulsion.TORQUE + '_out',
-            Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+            # Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 
     def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
         if self.include_constraints:
-            constraints = {
-                Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
-                    'lower': 0.0,
-                    'type': 'path',
-                    'units': 'kW',
-                }
-            }
+            constraints = {}
+            # constraints = {
+            #     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
+            #         'lower': 0.0,
+            #         'type': 'path',
+            #         'units': 'kW',
+            #     }
+            # }
         else:
             constraints = {}
         return constraints

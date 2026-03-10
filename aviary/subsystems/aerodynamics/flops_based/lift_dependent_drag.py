@@ -82,7 +82,7 @@ class LiftDependentDrag(om.ExplicitComponent):
             )
         )
 
-        return FCDP, dFCDP_dDEL[:, 0], dFCDP_dDEL[:, 1], dFCDP_dA
+        return FCDP[0], dFCDP_dDEL[:, 0][0], dFCDP_dDEL[:, 1][0], dFCDP_dA[0]
 
     def inner_interp(
         self, arrA, FCDP1, FCDP2, FCDP3, FCDP4, FCDP5, dFCDP1, dFCDP2, dFCDP3, dFCDP4, dFCDP5, A

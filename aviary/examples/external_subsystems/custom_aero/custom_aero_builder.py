@@ -53,7 +53,7 @@ class CustomAeroBuilder(SubsystemBuilder):
         ]
         return promotes
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
         """
         Return a dictionary of parameters for the subsystem. (Optional)
 
@@ -68,8 +68,8 @@ class CustomAeroBuilder(SubsystemBuilder):
             A dictionary containing the inputs to the subsystem.
         phase_info : dict
             The phase_info subdict for this phase.
-        **kwargs : dict
-            Dictionary of optional arguments.
+        subsystem_options : dict or None
+            Dictionary of optional arguments for this subsystem.
 
         Returns
         -------

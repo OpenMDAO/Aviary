@@ -140,7 +140,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return controls
 
     # NOTE no unittests!
-    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
         """
         Set expected shape of all variables that need to be vectorized for multiple
         engine types.
@@ -153,7 +153,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
             engine_params = engine.get_parameters(
                 aviary_inputs=aviary_inputs,
                 phase_info=phase_info,
-                **kwargs,
+                subsystem_options=subsystem_options,
             )
             # for param in engine_params:
             #     # For any parameters that need to be vectorized for multiple engines,

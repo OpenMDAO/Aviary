@@ -55,8 +55,6 @@ class CoreGeometryBuilder(GeometryBuilder):
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
         Builds an OpenMDAO system for the mission computations of the subsystem.
-    get_parameters(self, aviary_inputs=None, phase_info=None):
-        Returns a dictionary of fixed values for the Nacelle.
     report(self, prob, reports_folder, **kwargs):
         Generate the report for Aviary core geometry analysis.
     """

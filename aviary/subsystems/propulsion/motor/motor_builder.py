@@ -95,7 +95,7 @@ class MotorBuilder(SubsystemBuilder):
 
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
                 'val': 1.0,

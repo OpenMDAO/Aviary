@@ -377,7 +377,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         return promotes
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, **kwargs):
+    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
         """
         Return a dictionary of parameters for the subsystem. (Optional)
 
@@ -392,8 +392,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             A dictionary containing the inputs to the subsystem.
         phase_info : dict
             The phase_info subdict for this phase.
-        **kwargs : dict
-            Dictionary of optional arguments.
+        subsystem_options : dict or None
+            Dictionary of optional arguments for this subsystem.
 
         Returns
         -------
@@ -407,8 +407,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 The units for the fixed value (optional).
             - any additional keyword arguments required by OpenMDAO for the fixed variable.
         """
+        if subsystem_options is None:
+            subsystem_options = {}
+
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
 
@@ -416,7 +419,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             return super().get_parameters(
                 aviary_inputs=aviary_inputs,
                 phase_info=phase_info,
-                **kwargs,
+                subsystem_options=subsystem_options,
             )
 
         num_engine_type = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
@@ -426,10 +429,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             # FLOPS default is 'computed'
             if method is None:
                 method = 'computed'
-            if kwargs != {}:
+            if subsystem_options != {}:
                 # Only some methods have connectable training inputs.
                 if method == 'tabular':
-                    CD0_data = kwargs['CD0_data']
+                    CD0_data = subsystem_options['CD0_data']
 
                     if isinstance(CD0_data, NamedValues):
                         altitude = CD0_data.get_item('altitude')[0]
@@ -461,7 +464,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
                         params[Aircraft.Design.LIFT_INDEPENDENT_DRAG_POLAR] = opts
 
-                    CDI_data = kwargs['CDI_data']
+                    CDI_data = subsystem_options['CDI_data']
 
                     if isinstance(CDI_data, NamedValues):
                         mach = CDI_data.get_item('mach')[0]
@@ -494,7 +497,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
             if method == 'computed':
-                for var in COMPUTED_CORE_INPUTS:
+                try:
+                    design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+                except KeyError:
+                    design_type = AircraftTypes.TRANSPORT
+                if design_type is AircraftTypes.BLENDED_WING_BODY:
+                    core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                else:
+                    core_inputs_computed = COMPUTED_CORE_INPUTS
+                for var in core_inputs_computed:
                     meta = _MetaData[var]
 
                     val = meta['default_value']
@@ -563,12 +574,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 # GASP default is 'cruise'
                 method = 'cruise'
             try:
-                solve_alpha = kwargs['solve_alpha']
+                solve_alpha = subsystem_options['solve_alpha']
             except KeyError:
                 solve_alpha = False
 
             if solve_alpha and 'tabular' in method:
-                aero_data = kwargs['aero_data']
+                aero_data = subsystem_options['aero_data']
 
                 if isinstance(aero_data, NamedValues):
                     altitude = aero_data.get_item('altitude')[0]
@@ -622,7 +633,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
 
-            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            try:
+                design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            except KeyError:
+                design_type = AircraftTypes.TRANSPORT
 
             if design_type is AircraftTypes.BLENDED_WING_BODY:
                 all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
@@ -712,6 +726,37 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
     Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
     Aircraft.VerticalTail.WETTED_AREA,
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.CHARACTERISTIC_LENGTH,
+    Aircraft.Wing.FINENESS,
+    Aircraft.Wing.LAMINAR_FLOW_LOWER,
+    Aircraft.Wing.LAMINAR_FLOW_UPPER,
+    Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
+    Aircraft.Wing.SWEEP,
+    Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD,
+    Aircraft.Wing.WETTED_AREA,
+    # Mission.Summary.GROSS_MASS,
+    Mission.Design.LIFT_COEFFICIENT,
+    Mission.Design.MACH,
+]
+
+COMPUTED_CORE_INPUTS_BWB = [
+    Aircraft.Design.BASE_AREA,
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
+    Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+    Aircraft.Fuselage.CROSS_SECTION,
+    Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+    Aircraft.Fuselage.FINENESS,
+    Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
+    Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
+    Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+    Aircraft.Fuselage.WETTED_AREA,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CHARACTERISTIC_LENGTH,
