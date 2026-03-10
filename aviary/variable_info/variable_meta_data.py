@@ -2930,9 +2930,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'WTIN.IFUFU', 'LEAPS1': None},
     units='unitless',
-    desc='Flag to control enforcement of fuel_capacity constraint. '
-    'If False (default) Aviary will add the excess fuel constraint and only converge if there is enough fuel capacity to complete the mission.'
-    'If set True Aviary will ignore this constraint, and allow mission fuel > total_fuel_capacity. Use carefully!',
+    desc='Flag to control enforcement of Mission.Constraints.EXCESS_FUEL_CAPACITY. '
+    'If False (default) Aviary will add Mission.Constraints.EXCESS_FUEL_CAPACITY and only converge if there is enough fuel capacity to complete the mission.'
+    'If set True Aviary will ignore Mission.Constraints.EXCESS_FUEL_CAPACITY, and allow mission fuel > total_fuel_capacity. Use carefully!',
     default_value=False,
     types=bool,
 )
@@ -7142,8 +7142,10 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Difference between the usable fuel capacity on the aircraft and the total fuel (including reserve) required for the mission. '
-    'Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission',
+    desc='A constraint used to ensure that Mission.Summary.TOTAL_FUEL_MASS is less than Aircraft.Fuel.TOTAL_CAPACITY minus Aircraft.Fuel.UNUSABLE_FUEL_MASS. '
+         'Must be >= 0 to ensure that the aircraft has enough fuel to complete the mission'
+         'If this value is zero. That means the only fuel left in the tanks at the end of the mission is UNUSABLE_FUEL_MASS.'
+         'This constraint can be disabled by setting Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT=True',
 )
 
 add_meta_data(
