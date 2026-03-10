@@ -2833,7 +2833,7 @@ add_meta_data(
         'LEAPS1': 'aircraft.inputs.L0_fuel.aux_capacity',
     },
     units='lbm',
-    desc='fuel capacity of the auxiliary tank',
+    desc='fuel capacity of the auxiliary tank. Unusable fuel is bookept separately as a single item for all fuel tanks in Aircraft.Fuel.UNUSABLE_FUEL_MASS.',
     default_value=0.0,
 )
 
@@ -2921,7 +2921,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='fuel capacity of the fuselage',
+    desc='fuel capacity of the fuselage. Unusable fuel is bookept separately as a single item for all fuel tanks in Aircraft.Fuel.UNUSABLE_FUEL_MASS.',
     default_value=0.0,
 )
 
@@ -3040,7 +3040,7 @@ add_meta_data(
         'LEAPS1': 'aircraft.inputs.L0_fuel.wing_capacity',
     },
     units='lbm',
-    desc='fuel capacity of the auxiliary tank',
+    desc='fuel capacity of the wing tanks. Unusable fuel is bookept separately as a single item for all fuel tanks in Aircraft.Fuel.UNUSABLE_FUEL_MASS.',
     default_value=0.0,
 )
 
