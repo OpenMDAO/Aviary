@@ -2970,23 +2970,24 @@ add_meta_data(
     default_value=0.0,
 )
 
-add_meta_data(
-    Aircraft.Fuel.TOTAL_VOLUME,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,  # '~WEIGHT.ZFEQ',
-        'LEAPS1': [
-            '(WeightABC)self._total_fuel_vol',
-            '~WeightABC.calc_unusable_fuel.total_fuel_vol',
-            '~WeightABC._pre_unusable_fuel.total_fuel_vol',
-            '~BasicTransportWeight._pre_unusable_fuel.total_fuel_vol',
-        ],
-    },
-    units='galUS',  # need to check this
-    desc='Total fuel volume',
-    default_value=0.0,
-)
+# No longer used or calculated
+# add_meta_data(
+#     Aircraft.Fuel.TOTAL_VOLUME,
+#     meta_data=_MetaData,
+#     historical_name={
+#         'GASP': None,
+#         'FLOPS': None,  # '~WEIGHT.ZFEQ',
+#         'LEAPS1': [
+#             '(WeightABC)self._total_fuel_vol',
+#             '~WeightABC.calc_unusable_fuel.total_fuel_vol',
+#             '~WeightABC._pre_unusable_fuel.total_fuel_vol',
+#             '~BasicTransportWeight._pre_unusable_fuel.total_fuel_vol',
+#         ],
+#     },
+#     units='galUS',  # need to check this
+#     desc='Total fuel volume',
+#     default_value=0.0,
+# )
 
 add_meta_data(
     # Note user override
