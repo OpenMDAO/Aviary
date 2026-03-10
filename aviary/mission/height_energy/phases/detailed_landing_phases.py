@@ -1349,11 +1349,11 @@ class LandingTrajectory:
 
     MappedPhase = _TakeoffTrajectory.MappedPhase
 
-    default_name = 'detailed_landing'
+    _default_name = 'detailed_landing'
 
     def __init__(self, name=None):
         if name is None:
-            name = self.default_name
+            name = self._default_name
 
         self.name = name
 

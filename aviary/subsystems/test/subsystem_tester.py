@@ -405,7 +405,7 @@ class TestSubsystemBuilder(unittest.TestCase):
 
         inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
         outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
-        name = self.subsystem_builder.default_name
+        name = self.subsystem_builder._default_name
 
         for key, value in constraints.items():
             # Check constraint existence
