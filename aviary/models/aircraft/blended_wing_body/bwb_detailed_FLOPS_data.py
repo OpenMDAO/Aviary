@@ -298,7 +298,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf')  # THROFF
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------

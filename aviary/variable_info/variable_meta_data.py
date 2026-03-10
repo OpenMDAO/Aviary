@@ -7622,7 +7622,7 @@ add_meta_data(
     desc='computed mass of aircraft for landing, is only '
     'required to be equal to Aircraft.Design.TOUCHDOWN_MASS '
     'when the design case is being run '
-    'for HEIGHT_ENERGY missions this is the mass at the end of the last regular phase (non-reserve phase)',
+    'for ENERGY_STATE missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )
 
 add_meta_data(

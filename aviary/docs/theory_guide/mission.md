@@ -1,6 +1,6 @@
 # Mission Analysis
 
-This page will detail all of the mission implementation and theory details for different ODEs, including HeightEnergy and 2DOF.
+This page will detail all of the mission implementation and theory details for different ODEs, including EnergyState and 2DOF.
 
 ## What is a mission in Aviary?
 

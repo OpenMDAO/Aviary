@@ -1587,7 +1587,7 @@ class AviaryProblem(om.Problem):
         # Off-design missions are not tested with 2DOF missions.
         mass_method = self.model.aviary_inputs.get_val(Settings.MASS_METHOD)
         equations_of_motion = self.model.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
-        if equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY:
+        if equations_of_motion is EquationsOfMotion.ENERGY_STATE:
             # make a copy of the phase_info to avoid modifying the original.
             phase_info = self.model.mission_info.copy()
             phase_info['pre_mission'] = self.model.pre_mission_info.copy()

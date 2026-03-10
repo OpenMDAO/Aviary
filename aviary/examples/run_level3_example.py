@@ -1,7 +1,7 @@
 """
 This is an example of running a coupled aircraft design-mission optimization in Aviary without using the lower level APIs.
 It runs the same aircraft and mission as the `level1_example.py` and 'level2_example.py' scripts.
-The aircraft is loaded from .csv and the default height energy phase_info dictionary is imported from the file.
+The aircraft is loaded from .csv and the default Energy State phase_info dictionary is imported from the file.
 
 This script unwraps the subsystem and trajectory builders, exposing how Aviary interacts with openMDAO and Dymos.
 It is divided into sections separated by '####' with the level2 api calls commented out so you can see what happens in each level2 method.
@@ -16,8 +16,8 @@ import openmdao.api as om
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.mission.energy_state.ode.energy_ODE import EnergyODE
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params

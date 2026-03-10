@@ -5,7 +5,7 @@ from copy import deepcopy
 import aviary.api as av
 from aviary.examples.external_subsystems.custom_mass.custom_mass_builder import WingMassBuilder
 
-phase_info = deepcopy(av.default_height_energy_phase_info)
+phase_info = deepcopy(av.default_energy_state_phase_info)
 
 if __name__ == '__main__':
     prob = av.AviaryProblem()
