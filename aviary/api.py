@@ -100,7 +100,7 @@ from aviary.utils.process_input_decks import create_vehicle
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP
 from aviary.mission.base_ode import BaseODE
-from aviary.mission.energy_state.ode.energy_ODE import EnergyODE
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.mission.energy_state.ode.landing_ode import LandingODE as DetailedLandingODE
 from aviary.mission.energy_state.ode.landing_ode import FlareODE as DetailedFlareODE
 from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE

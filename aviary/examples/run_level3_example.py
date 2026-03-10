@@ -16,7 +16,7 @@ import openmdao.api as om
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.energy_state.ode.energy_ODE import EnergyODE
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -177,7 +177,7 @@ for phase_idx, phase_name in enumerate(phase_list):
     # phase: dm.Phase = super().build_phase(aviary_options)
     # For L3 we need to do this without the builder
 
-    ode_class = EnergyODE
+    ode_class = EnergyStateODE
     user_options = FlightPhaseOptions(user_options)
     num_segments = user_options['num_segments']
     order = user_options['order']

@@ -1,7 +1,7 @@
 import dymos as dm
 import numpy as np
 
-from aviary.mission.energy_state.ode.energy_ODE import EnergyODE
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.mission.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
@@ -177,7 +177,7 @@ class FlightPhaseBase(PhaseBuilder):
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
-    default_ode_class = EnergyODE
+    default_ode_class = EnergyStateODE
     default_options_class = FlightPhaseOptions
 
     default_meta_data = _MetaData

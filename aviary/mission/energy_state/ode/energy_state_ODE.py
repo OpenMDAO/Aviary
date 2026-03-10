@@ -9,7 +9,7 @@ from aviary.variable_info.enums import SpeedType, ThrottleAllocation
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class EnergyODE(_BaseODE):
+class EnergyStateODE(_BaseODE):
     """The base class for all energy method ODE components."""
 
     def initialize(self):
