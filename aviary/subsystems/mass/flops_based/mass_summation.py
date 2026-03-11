@@ -439,14 +439,14 @@ class FuelMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.Summary.ZERO_FUEL_MASS, units='lbm')
 
-        add_aviary_output(self, Mission.Summary.FUEL_MASS, units='lbm')
+        add_aviary_output(self, Mission.Summary.FUEL_MASS, units='lbm') # doesn't include unusable fuel b/c it's accounted for in ZERO_FUEL_MASS
 
     def setup_partials(self):
         self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Design.GROSS_MASS, val=1)
         self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Summary.ZERO_FUEL_MASS, val=-1)
 
     def compute(self, inputs, outputs):
-        zero_fuel_mass = inputs[Mission.Summary.ZERO_FUEL_MASS]
+        zero_fuel_mass = inputs[Mission.Summary.ZERO_FUEL_MASS] # Includes unusable fuel 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
 
         outputs[Mission.Summary.FUEL_MASS] = gross_mass - zero_fuel_mass
