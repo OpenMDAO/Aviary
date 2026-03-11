@@ -28,17 +28,17 @@ class WettedAreaGroup(om.Group):
 
         self.add_subsystem(
             'prelim_swet',
-            Prelim_SWet(),
+            PrelimWettedArea(),
             promotes_inputs=['*'],
         )
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
-                'wing_swet', BWBWing_SWet(), promotes_inputs=['*'], promotes_outputs=['*']
+                'wing_swet', BWBWingWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
             )
         else:
             self.add_subsystem(
-                'wing_swet', Wing_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+                'wing_swet', WingWettedArea(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
             )
 
         if design_type is AircraftTypes.TRANSPORT:
@@ -48,17 +48,20 @@ class WettedAreaGroup(om.Group):
             self.connect(f'prelim_swet.{Names.XMULT}', f'wing_swet.{Names.XMULT}')
 
         self.add_subsystem(
-            'tail', Tail_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+            'tail', TailWettedArea(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
         )
 
         self.connect(f'prelim_swet.{Names.XMULTH}', f'tail.{Names.XMULTH}')
         self.connect(f'prelim_swet.{Names.XMULTV}', f'tail.{Names.XMULTV}')
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem('fus_swet', BWBFuselage_SWet(), promotes_outputs=['*'])
+            self.add_subsystem('fus_swet', BWBFuselageWettedArea(), promotes_outputs=['*'])
         elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
-                'fus_swet', Fuselage_SWet(), promotes_inputs=['aircraft*'], promotes_outputs=['*']
+                'fus_swet',
+                FuselagWettedArea(),
+                promotes_inputs=['aircraft*'],
+                promotes_outputs=['*'],
             )
 
         if design_type is AircraftTypes.TRANSPORT:
@@ -75,7 +78,7 @@ class WettedAreaGroup(om.Group):
         )
 
 
-class Prelim_SWet(om.ExplicitComponent):
+class PrelimWettedArea(om.ExplicitComponent):
     """Calculate internal derived values of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
@@ -460,7 +463,7 @@ class Prelim_SWet(om.ExplicitComponent):
         return value
 
 
-class Wing_SWet(om.ExplicitComponent):
+class WingWettedArea(om.ExplicitComponent):
     """Calculate wing wetted area of aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
@@ -533,7 +536,7 @@ class Wing_SWet(om.ExplicitComponent):
         )
 
 
-class BWBWing_SWet(om.ExplicitComponent):
+class BWBWingWettedArea(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
@@ -610,7 +613,7 @@ class BWBWing_SWet(om.ExplicitComponent):
         outputs[Aircraft.Wing.WETTED_AREA] = ssmw
 
 
-class Tail_SWet(om.ExplicitComponent):
+class TailWettedArea(om.ExplicitComponent):
     """
     Calculate horizontal wing and vertical wing wetted areas of aircraft geometry
     for FLOPS-based aerodynamics analysis.
@@ -746,7 +749,7 @@ class Tail_SWet(om.ExplicitComponent):
         )
 
 
-class BWBFuselage_SWet(om.ExplicitComponent):
+class BWBFuselageWettedArea(om.ExplicitComponent):
     """
     Set BWB fuselage cross sectional area, and fuselage wetted area to zero
     for FLOPS-based aerodynamics analysis when BWB has detailed wings.
@@ -761,7 +764,7 @@ class BWBFuselage_SWet(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.WETTED_AREA] = 0.0
 
 
-class Fuselage_SWet(om.ExplicitComponent):
+class FuselagWettedArea(om.ExplicitComponent):
     """
     Calculate fuselage cross sectional area, and fuselage wetted area of aircraft geometry
     for FLOPS-based aerodynamics analysis.
