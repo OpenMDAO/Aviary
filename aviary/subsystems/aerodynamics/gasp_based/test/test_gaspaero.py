@@ -157,14 +157,32 @@ class GASPAeroTest(unittest.TestCase):
         prob.model.add_subsystem(
             'lift_from_aoa',
             LowSpeedAero(),
-            promotes_inputs=['*', (Dynamic.Vehicle.ANGLE_OF_ATTACK, 'alpha_in')],
+            promotes_inputs=[
+                'aircraft:*',
+                'mission:*',
+                'airport_alt',
+                '*_area',
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Mission.ALTITUDE,
+                (Dynamic.Vehicle.ANGLE_OF_ATTACK, 'alpha_in'),
+            ],
             promotes_outputs=[(Dynamic.Vehicle.LIFT, 'lift_req')],
         )
 
         prob.model.add_subsystem(
             'lift_required',
             LowSpeedAero(lift_required=True),
-            promotes_inputs=['*', 'lift_req'],
+            promotes_inputs=[
+                'aircraft:*',
+                'mission:*',
+                'airport_alt',
+                '*_area',
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Mission.ALTITUDE,
+                'lift_req',
+            ],
         )
 
         setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))

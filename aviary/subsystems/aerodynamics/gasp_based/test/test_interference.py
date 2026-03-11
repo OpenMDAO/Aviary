@@ -1,7 +1,7 @@
 import unittest
 
 import openmdao.api as om
-from dymos.models.atmosphere.atmos_1976 import USatm1976Comp
+from aviary.subsystems.atmosphere.atmosphere import AtmosphereComp
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
@@ -47,8 +47,14 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val('ZW_RF'), [-0.8], tol)
-        assert_near_equal(prob.get_val('wtofd'), [0.144], tol)
+        expected_values = {
+            'ZW_RF': [-0.8],
+            'wtofd': [0.144],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -84,8 +90,14 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val('TCBODYWF'), [0.11957627], tol)
-        assert_near_equal(prob.get_val('CBODYWF'), [11.974576], tol)
+        expected_values = {
+            'TCBODYWF': [0.11957627],
+            'CBODYWF': [11.974576],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -105,10 +117,14 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(
-            prob.get_val('interference_independent_of_shielded_area'), [0.05654201], tol
-        )
-        assert_near_equal(prob.get_val('drag_loss_due_to_shielded_wing_area'), [30], tol)
+        expected_values = {
+            'interference_independent_of_shielded_area': [0.05654201],
+            'drag_loss_due_to_shielded_wing_area': [30],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -139,10 +155,14 @@ class TestPreMission(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(
-            prob.get_val('interference_independent_of_shielded_area'), [0.35794891], tol
-        )
-        assert_near_equal(prob.get_val('drag_loss_due_to_shielded_wing_area'), [83.53366], tol)
+        expected_values = {
+            'interference_independent_of_shielded_area': [0.35794891],
+            'drag_loss_due_to_shielded_wing_area': [83.53366],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -154,9 +174,13 @@ class TestMission(unittest.TestCase):
         prob = om.Problem()
         prob.model.add_subsystem(
             'atmos',
-            USatm1976Comp(num_nodes=nn),
-            promotes_inputs=[('h', Dynamic.Mission.ALTITUDE)],
-            promotes_outputs=['rho', 'viscosity', ('temp', Dynamic.Atmosphere.TEMPERATURE)],
+            AtmosphereComp(num_nodes=nn),
+            promotes_inputs=[Dynamic.Mission.ALTITUDE],
+            promotes_outputs=[
+                Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                Dynamic.Atmosphere.TEMPERATURE,
+                Dynamic.Atmosphere.DENSITY,
+            ],
         )
         prob.model.add_subsystem(
             'kin_visc',
@@ -167,7 +191,11 @@ class TestMission(unittest.TestCase):
                 nu={'units': 'ft**2/s', 'shape': nn},
                 has_diag_partials=True,
             ),
-            promotes=['*', ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY)],
+            promotes=[
+                ('nu', Dynamic.Atmosphere.KINEMATIC_VISCOSITY),
+                ('viscosity', Dynamic.Atmosphere.DYNAMIC_VISCOSITY),
+                ('rho', Dynamic.Atmosphere.DENSITY),
+            ],
         )
         prob.model.add_subsystem(
             'comp', WingFuselageInterferenceMission(num_nodes=nn), promotes=['*']
@@ -185,7 +213,7 @@ class TestMission(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val('wing_fuselage_interference_flat_plate_equivalent'),
-            [83.53249732, 83.53251792],
+            [83.53163832, 83.53167992],
             tol,
         )
 

@@ -144,6 +144,8 @@ aviary/reports/
 
 #VSCode user settings
 .vscode/
+#VSCode extensions
+.continue/
 
 # Built docs
 _build/
@@ -161,3 +163,6 @@ output_list.txt
 
 # Windows downloads
 *:Zone.Identifier
+
+# NFS temp files
+.nfs*

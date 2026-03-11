@@ -51,11 +51,11 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Settings.VERBOSITY, 1, units='unitless')
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 158, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 158, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, units='unitless')
-        # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='unitless')
-        # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, units='unitless')
+        # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
 
         prob.model.add_subsystem(
@@ -63,7 +63,6 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         )
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Aircraft.Fuselage.LENGTH, val=125.0, units='ft')
         prob.run_model()
 
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
@@ -127,13 +126,13 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
 
         options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 100, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 28, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_TOURIST_CLASS, 340, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 340, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 4, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4, units='unitless')
-        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_TOURIST, 6, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 39.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 61.0, units='inch')
-        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_TOURIST, 32.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
 
         prob.model.add_subsystem(
@@ -191,8 +190,8 @@ class BWBFuselagePrelimTest(unittest.TestCase):
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 
-        avg_diameter = prob.get_val(Aircraft.Fuselage.AVG_DIAMETER)
-        assert_near_equal(avg_diameter, 40.79, tolerance=1e-9)
+        ref_diameter = prob.get_val(Aircraft.Fuselage.REF_DIAMETER)
+        assert_near_equal(ref_diameter, 40.79, tolerance=1e-9)
         planform_area = prob.get_val(Aircraft.Fuselage.PLANFORM_AREA)
         assert_near_equal(planform_area, 4391.90128571, tolerance=1e-9)
 

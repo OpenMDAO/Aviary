@@ -200,7 +200,7 @@ class AviaryMissionEditor(tk.Tk):
             'labels': ['Time', 'Altitude', 'Mach'],
             'units': ['min', 'ft', 'unitless'],
             'limits': [400, 50e3, 1.0],
-            'rounding': [0, 0, 2],
+            'rounding': [3, 3, 3],
         }
 
         self.advanced_options = {
@@ -813,7 +813,9 @@ class AviaryMissionEditor(tk.Tk):
         """Returns a rounded value based on which variable the value belongs to.
         Uses rounding amount specified in data_info.
         """
-        return format(value, '.' + str(int(self.data_info['rounding'][col].get()) + extra) + 'f')
+        precision = int(self.data_info['rounding'][col].get()) + extra
+        width = 8
+        return f'{value:{width}.{precision}g}'
 
     # ----------------------
     # Popup related functions
@@ -1631,7 +1633,7 @@ def create_phase_info(
         phase_name = f'{phase_type}_{phase_count}'
 
         phase_info[phase_name] = {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'num_segments': num_segments,
                 'order': orders[i],

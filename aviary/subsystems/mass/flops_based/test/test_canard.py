@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.canard import CanardMass
@@ -24,6 +25,7 @@ canard_test_data['1'] = AviaryValues(
 canard_data_sets = [key for key in canard_test_data]
 
 
+@use_tempdirs
 class CanardMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -44,8 +46,8 @@ class CanardMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[

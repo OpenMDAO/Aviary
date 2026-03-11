@@ -4,14 +4,14 @@ import unittest
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 
 
 @use_tempdirs
 class AircraftMissionTestSuite(unittest.TestCase):
     def setUp(self):
         cruise_dict = {
-            'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+            'subsystem_options': {'aerodynamics': {'method': 'computed'}},
             'user_options': {
                 'num_segments': 5,
                 'order': 3,
@@ -48,7 +48,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         self.phase_info = {
             'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
             'climb': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,
@@ -73,7 +73,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
             'cruise3': cruise_dicts[3],
             'cruise4': cruise_dicts[4],
             'descent': {
-                'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+                'subsystem_options': {'aerodynamics': {'method': 'computed'}},
                 'user_options': {
                     'num_segments': 5,
                     'order': 3,

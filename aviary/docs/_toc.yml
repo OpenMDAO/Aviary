@@ -38,6 +38,7 @@ parts:
       sections:
       - file: user_guide/aerodynamics
       - file: user_guide/external_aero
+      - file: user_guide/atmosphere
       - file: user_guide/propulsion
         sections:
           - file: user_guide/creating_a_turboprop_engine.ipynb
@@ -53,7 +54,8 @@ parts:
       - file: user_guide/multi_mission
       - file: user_guide/off_design_missions
       - file: user_guide/payload_range_functionality
-      - file: user_guide/features/blended_wing_body
+      - file: user_guide/features/blended_wing_body_GASP
+      - file: user_guide/features/blended_wing_body_FLOPS
     - file: user_guide/troubleshooting
 
 - caption: Examples

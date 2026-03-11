@@ -7,13 +7,13 @@ EngineDeck : the interface for an engine deck builder.
 
 Aliases
 -------
-accepted_headers : dict
+aliases : dict
     The strings that are accepted as valid header names after converted to all lowercase
     with all whitespace removed, mapped to the enum EngineModelVariables.
 
 default_required_variables : set
     Variables that must be present in an EngineDeck's DATA_FILE (Mach, altitude, etc.).
-    Can be replaced by user-provided list.
+    Can be replaced by user-provided set.
 
 required_options : tuple
     Options that must be present in an EngineDeck's options attribute.
@@ -145,6 +145,12 @@ class EngineDeck(EngineModel):
     update
     """
 
+    # EngineDecks using GLOBAL_THROTTLE = False will have unique maximum throttle levels per flight
+    # condition (not always 1) - max engine values must be handled manually inside this component
+    # TODO this can be updated so that if GLOBAL_THROTTLE = True, the max engine components in
+    # build_mission() are skipped, and this flag is set to False.
+    compute_max_values = True
+
     def __init__(
         self,
         name='engine_deck',
@@ -183,6 +189,7 @@ class EngineDeck(EngineModel):
         self.hybrid_throttle_max = 1.0
 
         # absolute tolerance for how far apart two points must be to be counted as unique
+        # TODO these never get converted to units actually used by engine deck
         self.mach_tol = 0.01
         self.alt_tol = 10.0  # ft
         self.thrust_tol = 1  # lbf
@@ -335,12 +342,12 @@ class EngineDeck(EngineModel):
     def _setup(self, data):
         """
         Read in and process engine data.
-        - Check data consistency.
-        - Convert altitudes to geometric.
-        - Sort and pack data.
-        - Determine reference thrust.
-        - Normalize throttles & hybrid throttles.
-        - Fill flight idle points if requested.
+        - Check data consistency
+        - Convert altitudes to geometric (optional)
+        - Sort and pack data
+        - Determine reference thrust (optional)
+        - Normalize throttles & hybrid throttles
+        - Fill flight idle points (optional)
         """
         self._read_data(data)
 
@@ -640,9 +647,11 @@ class EngineDeck(EngineModel):
         # Throttle is already normalized from 0 to 1. Set flight idle to -0.1, which will
         # get re-normalized to 0
         # -0.1 is chosen to avoid stretching out the data range while at the same time
-        # avoiding "discontinuities" in engine data from arbitrarily small negative
-        # throttle (e.g. -1e-6). Basically, this is an arbitrary number
+        # avoiding "discontinuities" in engine data from very small negative throttles
+        # (e.g. a jump from -1e-6 to 0). Basically, this is an arbitrary number
         throttle_idle = -0.1
+        # Hybrid throttle idle MUST be zero by definition. Any lower (negative) and generated power
+        # is increased. Any higher (positive) and consumed power is increased.
         hybrid_throttle_idle = 0
 
         idle_points = {key: np.empty(0) for key in packed_data}
@@ -656,18 +665,25 @@ class EngineDeck(EngineModel):
         if self.use_hybrid_throttle:
             num_points = 3
             # How far apart the "fake" points should be from the actual idle point
-            # This time, we want an arbitrarily small number
+            # This time, we want a small number
             h_tol = 1e-4
 
         for M in range(mach_max_count):
             for A in range(alt_max_count):
+                skip = False
                 # if no data at this Mach, alt index combination, skip
                 if data_indices[M, A] == 0:
-                    continue
+                    skip = True
 
                 # don't generate flight idle points if thrust is already zero or negative
                 # at lowest index
-                if packed_data[THRUST][M, A, 0] <= self.thrust_tol:
+                # NOTE reusing thrust_tol to apply to shaft power, results in shaft power
+                #      tol being much tighter if both in same unit system
+                for var in direct_calc_vars:
+                    if packed_data[var][M, A, 0] <= self.thrust_tol:
+                        skip = True
+
+                if skip:
                     continue
 
                 # define known data for idle point (independent variables)
@@ -904,7 +920,7 @@ class EngineDeck(EngineModel):
         #      reduced data set?
         if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
-                # create IndepVarComp to pass maximum throttle is to max thrust interpolator
+                # create IndepVarComp to pass maximum throttle to max thrust interpolator
                 fixed_throttles = om.IndepVarComp()
                 if self.global_throttle:
                     fixed_throttles.add_output(
@@ -985,7 +1001,7 @@ class EngineDeck(EngineModel):
             max_thrust_engine = om.MetaModelSemiStructuredComp(
                 method=interp_method, extrapolate=False, vec_size=num_nodes
             )
-
+            # TODO engine could have other inputs!! Don't hardcode these
             if interp_sort == 'altitude':
                 max_thrust_engine.add_input(
                     Dynamic.Mission.ALTITUDE,
@@ -1085,22 +1101,36 @@ class EngineDeck(EngineModel):
         if self.use_thrust or self.use_shaft_power:
             if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
                 engine_group.add_subsystem(
-                    'fixed_max_throttles', fixed_throttles, promotes_outputs=['*']
+                    'fixed_max_throttles',
+                    fixed_throttles,
                 )
-
-            if not (
-                self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle)
-            ):
+            else:
                 engine_group.add_subsystem(
                     'interp_max_throttles',
                     interp_throttles,
                     promotes_inputs=['*'],
-                    promotes_outputs=['*'],
                 )
 
             engine_group.add_subsystem(
-                'max_interpolation', max_thrust_engine, promotes_inputs=['*']
+                'max_interpolation',
+                max_thrust_engine,
+                promotes_inputs=[
+                    Dynamic.Atmosphere.MACH,
+                    Dynamic.Mission.ALTITUDE,
+                ],
             )
+
+            # manually connect max throttles - do not promote them out of group
+            if self.global_throttle or (self.global_hybrid_throttle and self.use_hybrid_throttle):
+                engine_group.connect(
+                    'fixed_max_throttles.throttle_max',
+                    'max_interpolation.throttle_max',
+                )
+            else:
+                engine_group.connect(
+                    'interp_max_throttles.throttle_max',
+                    'max_interpolation.throttle_max',
+                )
 
             if uncorrect_shp:
                 engine_group.add_subsystem(
@@ -1170,6 +1200,14 @@ class EngineDeck(EngineModel):
             )
 
         return engine_group
+
+    def mission_inputs(self, **kwargs):
+        inputs = [inp.value for inp in self.inputs]
+        return inputs
+
+    def mission_outputs(self, **kwargs):
+        outputs = [out.value for out in self.outputs]
+        return outputs
 
     def get_parameters(self):
         params = {

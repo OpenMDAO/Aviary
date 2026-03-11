@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.passenger_service import (
@@ -10,15 +11,16 @@ from aviary.subsystems.mass.flops_based.passenger_service import (
 )
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
-    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class PassengerServiceMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -39,11 +41,12 @@ class PassengerServiceMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, Mission.Design.RANGE],
             output_keys=Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
             tol=2e-4,
         )
 
@@ -82,6 +85,7 @@ class PassengerServiceMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AlternatePassengerServiceMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -102,6 +106,7 @@ class AlternatePassengerServiceMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,
@@ -113,6 +118,7 @@ class AlternatePassengerServiceMassTest(unittest.TestCase):
         assert_match_varnames(self.prob.model)
 
 
+@use_tempdirs
 class AlternatePassengerServiceMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 

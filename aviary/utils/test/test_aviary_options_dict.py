@@ -106,7 +106,6 @@ class TestAviaryOptionsDict(unittest.TestCase):
             'ref0',
             'polynomial_order',
             'optimize',
-            'rate_constraint',
         ]
         for stem in stems:
             self.assertTrue(f'zzz_{stem}' in opts)

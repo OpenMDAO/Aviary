@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.misc_engine import EngineMiscMass
@@ -16,10 +17,12 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_inputs,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Settings
 
 
+@use_tempdirs
 class MiscEngineMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -41,6 +44,7 @@ class MiscEngineMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -50,6 +54,7 @@ class MiscEngineMassTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_STARTER_MASS,
             ],
             output_keys=Aircraft.Propulsion.TOTAL_MISC_MASS,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_IO(self):

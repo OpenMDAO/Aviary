@@ -2,20 +2,24 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.electrical import AltElectricalMass, ElectricalMass
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
-    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
+
+@use_tempdirs
 class ElectricMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -42,6 +46,7 @@ class ElectricMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             self.prob,
             case_name,
             input_keys=[
@@ -50,7 +55,7 @@ class ElectricMassTest(unittest.TestCase):
                 Aircraft.Electrical.MASS_SCALER,
             ],
             output_keys=Aircraft.Electrical.MASS,
-            version=Version.TRANSPORT,
+            version=Version.TRANSPORT_and_BWB,
         )
 
     def test_IO(self):
@@ -82,6 +87,7 @@ class ElectricMassTest0(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             self.prob,
             'AdvancedSingleAisle',
             input_keys=[
@@ -133,6 +139,7 @@ class ElectricMassTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AltElectricMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -155,6 +162,7 @@ class AltElectricMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             self.prob,
             case_name,
             input_keys=Aircraft.Electrical.MASS_SCALER,

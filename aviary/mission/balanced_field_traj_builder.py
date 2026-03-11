@@ -3,7 +3,7 @@ Define utilities for building phases.
 
 Classes
 -------
-PhaseBuilderBase : the interface for a phase builder
+PhaseBuilder : the interface for a phase builder
 """
 
 from abc import ABC
@@ -14,14 +14,14 @@ import numpy as np
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.flops_based.ode.takeoff_ode import TakeoffODE
-from aviary.mission.flops_based.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
+from aviary.mission.height_energy.ode.takeoff_ode import TakeoffODE
+from aviary.mission.height_energy.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.functions import setup_trajectory_params
 
-from aviary.mission.phase_builder_base import PhaseBuilderBase
+from aviary.mission.phase_builder import PhaseBuilder
 
 
 _require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
@@ -536,7 +536,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
     def apply_initial_guesses(self, prob: om.Problem, traj_name):  # , phase: dm.Phase):
         """Apply any stored initial guesses; return a list of guesses not applied."""
         not_applied = {}
-        phase_builder: PhaseBuilderBase = None
+        phase_builder: PhaseBuilder = None
 
         for phase, phase_builder in self._phases.values():
             tmp = phase_builder.apply_initial_guesses(prob, traj_name, phase)
@@ -550,7 +550,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
         """Return extra kwargs required for initializing the ODE."""
         return {}
 
-    def _add_phase(self, phase_builder: PhaseBuilderBase, aviary_options: AviaryValues):
+    def _add_phase(self, phase_builder: PhaseBuilder, aviary_options: AviaryValues):
         name = phase_builder.name
         phase = phase_builder.build_phase(aviary_options)
 

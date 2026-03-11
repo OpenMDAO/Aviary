@@ -4,8 +4,8 @@ from pathlib import Path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.download_models import get_model, save_file
-from aviary.utils.functions import get_aviary_resource_path
+from aviary.interface.download_models import save_file
+from aviary.utils.functions import get_aviary_resource_path, get_model
 
 
 @use_tempdirs

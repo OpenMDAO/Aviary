@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.models.aircraft.blended_wing_body.generic_BWB_2dof_phase_info import phase_info
 
-from aviary.interface.methods_for_level1 import run_aviary
+from aviary.interface.run_aviary import run_aviary
 from aviary.variable_info.variables import Mission
 
 
@@ -53,7 +53,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         assert_near_equal(
             prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            26180.61486153,
+            26154.38155505,
             tolerance=rtol,
         )
 

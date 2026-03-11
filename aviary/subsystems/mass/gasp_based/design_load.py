@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.functions import sigmoidX, dSigmoidXdx
+from aviary.utils.math import sigmoidX, dSigmoidXdx
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings

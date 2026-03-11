@@ -44,35 +44,21 @@ class CombinedGeometry(om.Group):
         # geometry subsystems.
         flops_geom_pathname = self.flops_based_geom.pathname
         flops_fus_area_path = flops_geom_pathname + '.fuselage.' + Aircraft.Fuselage.WETTED_AREA
-        flops_fus_diam_path = (
-            flops_geom_pathname + '.fuselage_prelim.' + Aircraft.Fuselage.AVG_DIAMETER
-        )
         gasp_geom_pathname = self.gasp_based_geom.pathname
         gasp_fus_area_path = gasp_geom_pathname + '.fuselage.size.' + Aircraft.Fuselage.WETTED_AREA
-        gasp_fus_diam_path = (
-            gasp_geom_pathname + '.fuselage.parameters.' + Aircraft.Fuselage.AVG_DIAMETER
-        )
 
         if prioritize_origin is GASP:
-            override = [flops_fus_area_path, flops_fus_diam_path]
+            override = [flops_fus_area_path]
 
             name = Aircraft.Fuselage.WETTED_AREA
             outs = [(name, f'CODE_ORIGIN_OVERRIDE:{name}')]
             self.flops_based_geom.promotes('fuselage', outputs=outs)
 
-            name = Aircraft.Fuselage.AVG_DIAMETER
-            outs = [(name, f'CODE_ORIGIN_OVERRIDE:{name}')]
-            self.flops_based_geom.promotes('fuselage_prelim', outputs=outs)
-
         elif prioritize_origin is FLOPS:
-            override = [gasp_fus_area_path, gasp_fus_diam_path]
+            override = [gasp_fus_area_path]
 
             name = Aircraft.Fuselage.WETTED_AREA
             outs = [(name, f'CODE_ORIGIN_OVERRIDE:{name}')]
             self.gasp_based_geom.fuselage.promotes('size', outputs=outs)
-
-            name = Aircraft.Fuselage.AVG_DIAMETER
-            outs = [(name, f'CODE_ORIGIN_OVERRIDE:{name}')]
-            self.gasp_based_geom.fuselage.promotes('parameters', outputs=outs)
 
         self.code_origin_overrides = override

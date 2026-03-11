@@ -1,9 +1,6 @@
 #!/usr/bin/python
 import argparse
-import getpass
 from copy import deepcopy
-from datetime import datetime
-from enum import Enum
 
 import numpy as np
 import openmdao.api as om
@@ -17,16 +14,8 @@ from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_path
 from aviary.utils.named_values import NamedValues
+from aviary.variable_info.enums import EngineDeckType
 from aviary.variable_info.variables import Dynamic
-
-
-class EngineDeckType(Enum):
-    FLOPS = 'FLOPS'
-    GASP = 'GASP'
-    GASP_TS = 'GASP_TS'
-
-    def __str__(self):
-        return self.value
 
 
 MACH = EngineModelVariables.MACH
@@ -735,34 +724,9 @@ class AtmosCalc(om.ExplicitComponent):
         outputs['p2'] = p2
 
 
-def _setup_EDC_parser(parser):
-    parser.add_argument('input_file', type=str, help='path to engine deck file to be converted')
-    parser.add_argument(
-        'output_file',
-        type=str,
-        nargs='?',
-        help='path to file where new converted data will be written',
-    )
-    parser.add_argument(
-        '-f',
-        '--data_format',
-        type=EngineDeckType,
-        choices=list(EngineDeckType),
-        help='data format used by input_file',
-    )
-    parser.add_argument('--round', action='store_true', help='round data to improve readability')
-
-
-def _exec_EDC(args, user_args):
-    convert_engine_deck(
-        input_file=args.input_file,
-        output_file=args.output_file,
-        data_format=args.data_format,
-        round_data=args.round,
-    )
-
-
 if __name__ == '__main__':
+    from aviary.utils.engine_deck_conversion_cmd import setup_EDC, _setup_EDC_parser
+
     parser = argparse.ArgumentParser()
     _setup_EDC_parser(parser)
     args = parser.parse_args()

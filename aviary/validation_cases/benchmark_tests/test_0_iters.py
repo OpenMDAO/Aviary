@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
 from aviary.models.missions.height_energy_default import phase_info as height_energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info

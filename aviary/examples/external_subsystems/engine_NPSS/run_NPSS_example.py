@@ -23,9 +23,10 @@ prob.options['group_by_pre_opt_post'] = True
 prob.load_inputs(
     'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
     phase_info,
-    engine_builders=[NPSSTabularEngineBuilder()],
     meta_data=ExtendedMetaData,
 )
+
+prob.load_external_subsystems([NPSSTabularEngineBuilder()])
 
 prob.check_and_preprocess_inputs()
 

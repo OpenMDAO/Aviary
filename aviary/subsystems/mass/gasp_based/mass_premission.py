@@ -1,7 +1,11 @@
 import openmdao.api as om
 
 from aviary.subsystems.mass.gasp_based.design_load import DesignLoadGroup, BWBDesignLoadGroup
-from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import EquipAndUsefulLoadMassGroup
+from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
+    EquipAndUsefulLoadMassGroup,
+    EquipMassSum,
+    UsefulLoadMass,
+)
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, BWBWingMassGroup
@@ -49,7 +53,7 @@ class MassPremission(om.Group):
 
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             fuel_mass_inputs = fuel_mass_fixed_mass_values
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             fuel_mass_inputs = fuel_mass_design_load_values + fuel_mass_fixed_mass_values
 
         # create the instances of the groups
@@ -61,7 +65,7 @@ class MassPremission(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'design_load',
                 DesignLoadGroup(),
@@ -83,6 +87,14 @@ class MassPremission(om.Group):
             promotes_outputs=['*'],
         )
 
+        self.add_subsystem(
+            'equip_mass', EquipMassSum(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+        self.add_subsystem(
+            'useful_load', UsefulLoadMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'wing_mass',
@@ -90,7 +102,7 @@ class MassPremission(om.Group):
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
-        else:
+        elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'wing_mass',
                 WingMassGroup(),

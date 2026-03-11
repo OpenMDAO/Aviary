@@ -6,7 +6,8 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class CorePreMission(om.Group):
-    """Group that contains all pre-mission groups of core Aviary subsystems:
+    """
+    Group that contains all pre-mission groups of core Aviary subsystems:
     (geometry, mass, propulsion, aerodynamics, performance).
     """
 
@@ -16,7 +17,7 @@ class CorePreMission(om.Group):
             types=AviaryValues,
             desc='collection of Aircraft/Mission specific options',
         )
-        self.options.declare('subsystems', desc='list of core subsystem builders')
+        self.options.declare('subsystems', desc='list of subsystem builders')
         self.options.declare('meta_data', desc='problem metadata', default=_MetaData)
 
         # NOTE this flag is only needed for tests - in AviaryProblem it should always be False
@@ -24,8 +25,8 @@ class CorePreMission(om.Group):
             'process_overrides',
             types=bool,
             default=True,
-            desc='When True, overrides are handled here, otherwise, '
-            'they are handled in the parent system.',
+            desc='When True, overrides are handled here, otherwise, they are handled in the parent '
+            'system.',
         )
 
     def setup(self, **kwargs):
@@ -33,9 +34,9 @@ class CorePreMission(om.Group):
         self.options['auto_order'] = True
 
         aviary_options = self.options['aviary_options']
-        core_subsystems = self.options['subsystems']
+        subsystems = self.options['subsystems']
 
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             pre_mission_system = subsystem.build_pre_mission(aviary_options)
             if pre_mission_system is not None:
                 self.add_subsystem(

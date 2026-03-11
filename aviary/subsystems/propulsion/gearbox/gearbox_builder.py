@@ -1,10 +1,10 @@
 from aviary.subsystems.propulsion.gearbox.model.gearbox_mission import GearboxMission
 from aviary.subsystems.propulsion.gearbox.model.gearbox_premission import GearboxPreMission
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class GearboxBuilder(SubsystemBuilderBase):
+class GearboxBuilder(SubsystemBuilder):
     """
     Define the builder for a single gearbox subsystem that provides methods
     to define the gearbox subsystem's states, design variables, fixed values,
@@ -32,6 +32,13 @@ class GearboxBuilder(SubsystemBuilderBase):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return GearboxMission(num_nodes=num_nodes)
 
+    def mission_inputs(self, **kwargs):
+        inputs = [Aircraft.Engine.Gearbox.GEAR_RATIO, Aircraft.Engine.Gearbox.EFFICIENCY]
+        return inputs
+
+    def mission_outputs(self, **kwargs):
+        return []
+
     def get_design_vars(self):
         """
         Design vars are only tested to see if they exist in pre_mission
@@ -41,19 +48,19 @@ class GearboxBuilder(SubsystemBuilderBase):
         additional keyword arguments required by OpenMDAO for the design variable.
         """
         DVs = {
-            Aircraft.Engine.Gearbox.GEAR_RATIO: {
-                'units': 'unitless',
-                'lower': 1.0,
-                'upper': 20.0,
-                # 'val':  10  # initial value
-            },
+            # Aircraft.Engine.Gearbox.GEAR_RATIO: {
+            #     'units': 'unitless',
+            #     'lower': 1.0,
+            #     'upper': 20.0,
+            #     # 'val':  10  # initial value
+            # },
             # This var appears in both mission and pre-mission
-            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                # 'val': 10000,
-                'units': 'kW',
-                'lower': 1.0,
-                'upper': None,
-            },
+            # Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+            #     # 'val': 10000,
+            #     'units': 'kW',
+            #     'lower': 1.0,
+            #     'upper': None,
+            # },
         }
         return DVs
 
@@ -82,11 +89,11 @@ class GearboxBuilder(SubsystemBuilderBase):
                 'units': 'unitless',
                 'static_target': True,
             },
-            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                'val': 1.0,
-                'units': 'kW',
-                'static_target': True,
-            },
+            # Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+            #     'val': 1.0,
+            #     'units': 'kW',
+            #     'static_target': True,
+            # },
         }
 
         return parameters
@@ -94,24 +101,25 @@ class GearboxBuilder(SubsystemBuilderBase):
     def get_mass_names(self):
         return [Aircraft.Engine.Gearbox.MASS]
 
-    def get_outputs(self):
+    def get_timeseries(self):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
             Dynamic.Vehicle.Propulsion.RPM + '_out',
             Dynamic.Vehicle.Propulsion.TORQUE + '_out',
-            Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+            # Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 
     def get_constraints(self):
         if self.include_constraints:
-            constraints = {
-                Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
-                    'lower': 0.0,
-                    'type': 'path',
-                    'units': 'kW',
-                }
-            }
+            constraints = {}
+            # constraints = {
+            #     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
+            #         'lower': 0.0,
+            #         'type': 'path',
+            #         'units': 'kW',
+            #     }
+            # }
         else:
             constraints = {}
         return constraints

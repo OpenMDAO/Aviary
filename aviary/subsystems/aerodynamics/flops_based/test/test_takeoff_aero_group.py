@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     N3CC,
@@ -18,6 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.preprocessors import preprocess_options
 
 
+@use_tempdirs
 class TestTakeoffAeroGroup(unittest.TestCase):
     def test_takeoff_aero_group(self):
         prob: om.Problem = make_problem(takeoff_subsystem_options)
@@ -108,12 +110,12 @@ def make_problem(subsystem_options={}):
     aero_builder = CoreAerodynamicsBuilder(code_origin=LegacyCode.FLOPS)
 
     prob.model.add_subsystem(
-        name='core_aerodynamics',
+        name='aerodynamics',
         subsys=aero_builder.build_mission(
-            num_nodes=nn, aviary_inputs=aviary_inputs, **subsystem_options['core_aerodynamics']
+            num_nodes=nn, aviary_inputs=aviary_inputs, **subsystem_options['aerodynamics']
         ),
-        promotes_inputs=aero_builder.mission_inputs(**subsystem_options['core_aerodynamics']),
-        promotes_outputs=aero_builder.mission_outputs(**subsystem_options['core_aerodynamics']),
+        promotes_inputs=aero_builder.mission_inputs(**subsystem_options['aerodynamics']),
+        promotes_outputs=aero_builder.mission_outputs(**subsystem_options['aerodynamics']),
     )
 
     prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')

@@ -3,10 +3,11 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.functions import set_aviary_initial_values
+from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.validation_cases.validation_tests import get_flops_inputs, get_flops_outputs
@@ -14,6 +15,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
+@use_tempdirs
 class MissionDragTest(unittest.TestCase):
     def test_basic_large_single_aisle_1(self):
         flops_inputs = get_flops_inputs('LargeSingleAisle1FLOPS')
@@ -79,6 +81,16 @@ class MissionDragTest(unittest.TestCase):
             aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
             promotes=['*'],
         )
+
+        varnames = [
+            Aircraft.Fuselage.WETTED_AREA,
+            Aircraft.HorizontalTail.WETTED_AREA,
+            Aircraft.VerticalTail.WETTED_AREA,
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.WETTED_AREA,
+        ]
+        set_aviary_input_defaults(prob.model, varnames, flops_inputs)
 
         # Set all options
         setup_model_options(prob, flops_inputs)
@@ -221,6 +233,16 @@ class MissionDragTest(unittest.TestCase):
             promotes=['*'],
         )
 
+        varnames = [
+            Aircraft.Fuselage.WETTED_AREA,
+            Aircraft.HorizontalTail.WETTED_AREA,
+            Aircraft.VerticalTail.WETTED_AREA,
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.WETTED_AREA,
+        ]
+        set_aviary_input_defaults(prob.model, varnames, flops_inputs)
+
         # Set all options
         setup_model_options(prob, flops_inputs)
 
@@ -357,6 +379,16 @@ class MissionDragTest(unittest.TestCase):
             aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
             promotes=['*'],
         )
+
+        varnames = [
+            Aircraft.Fuselage.WETTED_AREA,
+            Aircraft.HorizontalTail.WETTED_AREA,
+            Aircraft.VerticalTail.WETTED_AREA,
+            Aircraft.Wing.AREA,
+            Aircraft.Wing.ASPECT_RATIO,
+            Aircraft.Wing.WETTED_AREA,
+        ]
+        set_aviary_input_defaults(prob.model, varnames, flops_inputs)
 
         # Set all options
         setup_model_options(prob, flops_inputs)

@@ -1,11 +1,11 @@
 """Builder for a simple drag calculation that replaces Aviary's calculation."""
 
 from aviary.examples.external_subsystems.custom_aero.simple_drag import SimpleAeroGroup
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
-class CustomAeroBuilder(SubsystemBuilderBase):
+class CustomAeroBuilder(SubsystemBuilder):
     """
     Prototype of a subsystem that overrides an aviary internally computed var.
 
@@ -59,7 +59,7 @@ class CustomAeroBuilder(SubsystemBuilderBase):
 
         Optional, used if subsystems have fixed values.
 
-        Used in the phase builders (e.g. cruise_phase.py) when other parameters are added to the phase.
+        Used in the phase builders when other parameters are added to the phase.
 
         This is distinct from `get_design_vars` in a nuanced way. Design variables
         are variables that are optimized by the problem that are not at the phase level.

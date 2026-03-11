@@ -7,12 +7,8 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.api import top_dir
-from aviary.utils.functions import (
-    add_opts2vals,
-    convert_strings_to_data,
-    create_opts2vals,
-    get_path,
-)
+from aviary.utils.functions import convert_strings_to_data, get_path
+from aviary.utils.option_to_var import add_opts2vals, create_opts2vals
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
 

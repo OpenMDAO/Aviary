@@ -14,7 +14,7 @@ aircraft:design:subsonic_drag_coeff_factor, 1.447, unitless
 # Design
 aircraft:design:cg_delta, 0.25, unitless
 aircraft:design:cockpit_control_mass_coefficient, 20, unitless
-aircraft:design:drag_coeff_increment, 0.0015, unitless
+aircraft:design:drag_coefficient_increment, 0.0015, unitless
 aircraft:design:emergency_equipment_mass, 25, lbm
 aircraft:design:max_structural_speed, 320, mi/h
 aircraft:design:part25_structural_category, 3, unitless
@@ -40,10 +40,10 @@ aircraft:instruments:mass_coefficient, 0.0416, unitless
 # Crew and Payload
 aircraft:crew_and_payload:cargo_mass, 31273, lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger, 0, lbm
-aircraft:crew_and_payload:design:num_seats_abreast_tourist, 6, unitless
-aircraft:crew_and_payload:design:seat_pitch_tourist, 41.24, inch
+aircraft:crew_and_payload:design:num_seats_abreast_economy, 6, unitless
+aircraft:crew_and_payload:design:seat_pitch_economy, 41.24, inch
 aircraft:crew_and_payload:num_passengers, 60, unitless
-aircraft:crew_and_payload:passenger_mass_with_bags, 190, lbm
+aircraft:crew_and_payload:mass_per_passenger_with_bags, 190, lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger, 0, lbm
 aircraft:crew_and_payload:water_mass_per_occupant, 0, lbm
 
@@ -55,7 +55,9 @@ aircraft:engine:data_file, models/engines/turboshaft_4465hp.csv
 aircraft:engine:mass_scaler, 1, unitless
 aircraft:engine:mass_specific, 0.37026, lbm/lbf
 aircraft:engine:num_engines, 4, unitless
+aircraft:engine:num_wing_engines, 4, unitless
 aircraft:engine:propeller:num_blades, 4, unitless
+aircraft:engine:scale_factor, 1, unitless
 aircraft:engine:pod_mass_scaler, 1, unitless
 aircraft:engine:propeller:activity_factor, 167, unitless
 aircraft:engine:propeller:diameter, 13.5, ft

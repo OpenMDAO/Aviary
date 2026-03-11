@@ -38,7 +38,7 @@ def multi_mission_example():
     # aviary_inputs_deadhead.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 4077, 'lbm')
 
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, 1, 'unitless')
-    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_TOURIST_CLASS, 1, 'unitless')
+    aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, 1, 'unitless')
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS, 0, 'unitless')
     aviary_inputs_mission2.set_val(Aircraft.CrewPayload.NUM_FIRST_CLASS, 0, 'unitless')
 
@@ -49,12 +49,16 @@ def multi_mission_example():
     # set constraints in the background. Currently works with every objective type except Range.
     # can accept meta_data = merged_meta_data
 
-    prob.add_aviary_group('mission1', aircraft=aviary_inputs_mission1, mission=phase_info_mission1)
+    prob.add_aviary_group(
+        'mission1', aircraft=aviary_inputs_mission1, phase_info=phase_info_mission1
+    )
     # This method calls load_inputs(), check_and_preprocess_inputs(), and combines meta data.
-    # This can only accept an AviaryValues, .csv are not accepted. You can pass engine_builders
-    # and problem_configurator as inputs.
+    # This can only accept an AviaryValues, .csv are not accepted. You can pass problem_configurator
+    # as an input.
 
-    prob.add_aviary_group('mission2', aircraft=aviary_inputs_mission2, mission=phase_info_mission2)
+    prob.add_aviary_group(
+        'mission2', aircraft=aviary_inputs_mission2, phase_info=phase_info_mission2
+    )
     # Load aircraft in second configuration for same mission
 
     prob.build_model()
@@ -151,7 +155,7 @@ if __name__ == '__main__':
         (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
         (Mission.Summary.GROSS_MASS, 'lbm'),
         (Mission.Summary.FUEL_BURNED, 'lbm'),
-        (Aircraft.CrewPayload.PASSENGER_MASS, 'lbm'),
+        (Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
         (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
         (Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 'lbm'),

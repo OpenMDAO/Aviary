@@ -1,8 +1,8 @@
 import dymos as dm
 import numpy as np
 
-from aviary.mission.flops_based.ode.energy_ODE import EnergyODE
-from aviary.mission.flops_based.phases.phase_utils import (
+from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
+from aviary.mission.phase_utils import (
     add_subsystem_variables_to_phase,
     get_initial,
 )
@@ -10,10 +10,10 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessControl,
 )
-from aviary.mission.phase_builder_base import PhaseBuilderBase, register
+from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation
+from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation, Transcription
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
@@ -157,16 +157,23 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
             'can be used to prevent unexpected descent during a climb phase.',
         )
 
+        self.declare(
+            name='transcription',
+            default=Transcription.COLLOCATION,
+            desc='Set the dymos transcription for the phase. Currently only Collocation and PicardShooting are supported. default = Collocation for backwards compatibility.',
+        )
+
 
 @register
-class FlightPhaseBase(PhaseBuilderBase):
+class FlightPhaseBase(PhaseBuilder):
     """
     The base class for flight phase.
 
-    This houses parts of the build_phase process that are commmon to EnergyPhase and TwoDOFPhase.
+    This houses parts of the build_phase process that are common to EnergyPhase and
+    SolvedTwoDOFPhase.
     """
 
-    __slots__ = ('external_subsystems', 'meta_data')
+    __slots__ = ('subsystems', 'meta_data')
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
@@ -223,7 +230,7 @@ class FlightPhaseBase(PhaseBuilderBase):
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        phase = add_subsystem_variables_to_phase(phase, self.name, self.external_subsystems)
+        phase = add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
 
         ################
         # Add Controls #
@@ -410,22 +417,37 @@ class FlightPhaseBase(PhaseBuilderBase):
         num_segments = user_options['num_segments']
         order = user_options['order']
 
-        seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+        transcription_type = user_options['transcription']
 
-        transcription = dm.Radau(
-            num_segments=num_segments,
-            order=order,
-            compressed=True,
-            segment_ends=seg_ends,
-        )
+        if transcription_type == Transcription.COLLOCATION:
+            seg_ends, _ = dm.utils.lgl.lgl(num_segments + 1)
+
+            transcription = dm.Radau(
+                num_segments=num_segments,
+                order=order,
+                compressed=True,
+                segment_ends=seg_ends,
+            )
+
+        elif transcription_type == Transcription.PICARDSHOOTING:
+            nodes_per_seg = order * num_segments  # get approximately same number of nodes as radau
+            transcription = dm.PicardShooting(
+                num_segments=1, nodes_per_seg=nodes_per_seg, solve_segments='forward'
+            )
+
+        else:
+            raise UserWarning(
+                f"Unable to add dymos transcription for phase '{self.name}': transcription = '{transcription_type}' is not supported. "
+                f"Check phase_info definition for phase '{self.name}' and set transcription using variable enum"
+            )
 
         return transcription
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
-        # TODO: support external_subsystems and meta_data in the base class
+        # TODO: support subsystems and meta_data in the base class
         return {
-            'external_subsystems': self.external_subsystems,
+            'subsystems': self.subsystems,
             'meta_data': self.meta_data,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],

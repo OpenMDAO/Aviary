@@ -9,11 +9,10 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.height_energy_default import phase_info as ph_in
-from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Dynamic
-
 
 ExtendedMetaData = av.CoreMetaData
 
@@ -48,12 +47,14 @@ class PreMissionComp(om.ExplicitComponent):
         self.add_output('for_climb', np.ones(shape), units='ft')
         self.add_output('for_cruise', np.ones(shape), units='ft')
         self.add_output('for_descent', np.ones(shape), units='ft')
+        self.add_output('for_post', np.ones((2, 3)), units='rad')
 
     def compute(self, inputs, outputs):
         shape = self.options['shape']
         outputs['for_climb'] = np.random.random(shape)
         outputs['for_cruise'] = np.random.random(shape)
         outputs['for_descent'] = np.random.random(shape)
+        outputs['for_post'] = np.random.random((2, 3))
 
 
 class MissionComp(om.ExplicitComponent):
@@ -84,6 +85,8 @@ class PostMissionComp(om.ExplicitComponent):
         shape = self.options['shape']
         num_nodes = self.options['num_nodes']
         self.add_input('xx', shape=shape, units='ft')
+        self.add_input('from_pre', shape=(2, 3), units='deg')
+
         if self.options['do_the_zz_thing']:
             self.add_input('zz', shape=num_nodes, units='ft')
             self.add_input('velocity', shape=num_nodes, units='ft/s')
@@ -95,7 +98,7 @@ class PostMissionComp(om.ExplicitComponent):
             outputs['zzz'] *= np.sum(inputs['zz'] * inputs['velocity'])
 
 
-class CustomBuilder(SubsystemBuilderBase):
+class CustomBuilder(SubsystemBuilder):
     def __init__(self, name, mangle_names=False):
         self.mangle_names = mangle_names
         super().__init__(name)
@@ -155,21 +158,21 @@ class CustomBuilder(SubsystemBuilderBase):
         if self.mangle_names:
             vars_to_connect = {
                 f'{name}.{name}_for_climb': {
-                    'mission_name': [f'{name}.{name}_xx'],
+                    'mission_name': [f'{name}_xx'],
                     'post_mission_name': f'{name}.climb_{name}_xx',
                     'units': 'ft',
                     'shape': shape,
                     'phases': ['climb'],
                 },
                 f'{name}.{name}_for_cruise': {
-                    'mission_name': [f'{name}.{name}_xx'],
+                    'mission_name': [f'{name}_xx'],
                     'post_mission_name': f'{name}.cruise_{name}_xx',
                     'units': 'ft',
                     'shape': shape,
                     'phases': ['cruise'],
                 },
                 f'{name}.{name}_for_descent': {
-                    'mission_name': [f'{name}.{name}_xx'],
+                    'mission_name': [f'{name}_xx'],
                     'post_mission_name': [f'{name}.descent_{name}_xx'],
                     'units': 'ft',
                     'shape': shape,
@@ -179,25 +182,30 @@ class CustomBuilder(SubsystemBuilderBase):
         else:
             vars_to_connect = {
                 f'{name}.for_climb': {
-                    'mission_name': [f'{name}.xx'],
+                    'mission_name': ['xx'],
                     'post_mission_name': f'{name}.climb_xx',
                     'units': 'ft',
                     'shape': shape,
                     'phases': ['climb'],
                 },
                 f'{name}.for_cruise': {
-                    'mission_name': [f'{name}.xx'],
+                    'mission_name': ['xx'],
                     'post_mission_name': f'{name}.cruise_xx',
                     'units': 'ft',
                     'shape': shape,
                     'phases': ['cruise'],
                 },
                 f'{name}.for_descent': {
-                    'mission_name': [f'{name}.xx'],
+                    'mission_name': ['xx'],
                     'post_mission_name': [f'{name}.descent_xx'],
                     'units': 'ft',
                     'shape': shape,
                     'phases': ['descent'],
+                },
+                f'{name}.for_post': {
+                    'post_mission_name': [
+                        f'{name}.climb_post_mission.from_pre',
+                    ],
                 },
             }
         return vars_to_connect
@@ -209,14 +217,12 @@ class CustomBuilder(SubsystemBuilderBase):
             phase_d = {}
             if phase_data.get('do_the_zz_thing', False):
                 if self.mangle_names:
-                    phase_d[f'{name}.{name}_zz'] = {
-                        'post_mission_name': f'{name}.{phase_name}_{name}_zz'
-                    }
+                    phase_d[f'{name}_zz'] = {'post_mission_name': f'{name}.{phase_name}_{name}_zz'}
                     phase_d[Dynamic.Mission.VELOCITY] = {
                         'post_mission_name': f'{name}.{phase_name}_{name}_velocity'
                     }
                 else:
-                    phase_d[f'{name}.zz'] = {'post_mission_name': f'{name}.{phase_name}_zz'}
+                    phase_d['zz'] = {'post_mission_name': f'{name}.{phase_name}_zz'}
                     phase_d[Dynamic.Mission.VELOCITY] = {
                         'post_mission_name': f'{name}.{phase_name}_velocity'
                     }
@@ -258,27 +264,6 @@ class CustomBuilder(SubsystemBuilderBase):
 class TestExternalSubsystemBus(unittest.TestCase):
     def test_external_subsystem_bus(self):
         phase_info = deepcopy(ph_in)
-        # Adding two `CustomBuilder` external subsystems will test that we can request `Dynamic.Mission.VELOCITY` be a mission bus variable twice.
-        phase_info['pre_mission']['external_subsystems'] = [
-            CustomBuilder(name='test'),
-            CustomBuilder(name='test2', mangle_names=True),
-        ]
-        phase_info['climb']['external_subsystems'] = [
-            CustomBuilder(name='test'),
-            CustomBuilder(name='test2', mangle_names=True),
-        ]
-        phase_info['cruise']['external_subsystems'] = [
-            CustomBuilder(name='test'),
-            CustomBuilder(name='test2', mangle_names=True),
-        ]
-        phase_info['descent']['external_subsystems'] = [
-            CustomBuilder(name='test'),
-            CustomBuilder(name='test2', mangle_names=True),
-        ]
-        phase_info['post_mission']['external_subsystems'] = [
-            CustomBuilder(name='test'),
-            CustomBuilder(name='test2', mangle_names=True),
-        ]
 
         phase_info['climb']['do_the_zz_thing'] = True
         phase_info['descent']['do_the_zz_thing'] = False
@@ -289,6 +274,13 @@ class TestExternalSubsystemBus(unittest.TestCase):
         prob.load_inputs(csv_path, phase_info)
         prob.aviary_inputs.set_val('the_shape_for_the_thing_dim0', 3, meta_data=ExtendedMetaData)
         prob.aviary_inputs.set_val('the_shape_for_the_thing_dim1', 4, meta_data=ExtendedMetaData)
+        # Adding two `CustomBuilder` external subsystems will test that we can request `Dynamic.Mission.VELOCITY` be a mission bus variable twice.
+        prob.load_external_subsystems(
+            [
+                CustomBuilder(name='test'),
+                CustomBuilder(name='test2', mangle_names=True),
+            ]
+        )
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
@@ -299,43 +291,43 @@ class TestExternalSubsystemBus(unittest.TestCase):
         prob.run_model()
 
         # Make sure the values are correct.
-        yy_actual = prob.model.get_val('traj.climb.rhs_all.test.yy')
+        yy_actual = prob.model.get_val('traj.climb.rhs_all.yy')
         xx = prob.model.get_val('pre_mission.test.for_climb')
         yy_expected = 2.0 * np.sum(xx) * range(len(yy_actual))
         assert_near_equal(yy_actual, yy_expected)
-        zz_actual = prob.model.get_val('traj.climb.rhs_all.test.zz')
+        zz_actual = prob.model.get_val('traj.climb.rhs_all.zz')
         zz_expected = 3.0 * np.sum(xx) * range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
-        yy_actual = prob.model.get_val('traj.climb.rhs_all.test2.test2_yy')
+        yy_actual = prob.model.get_val('traj.climb.rhs_all.test2_yy')
         xx = prob.model.get_val('pre_mission.test2.test2_for_climb')
         yy_expected = 2.0 * np.sum(xx) * range(len(yy_actual))
         assert_near_equal(yy_actual, yy_expected)
-        zz_actual = prob.model.get_val('traj.climb.rhs_all.test2.test2_zz')
+        zz_actual = prob.model.get_val('traj.climb.rhs_all.test2_zz')
         zz_expected = 3.0 * np.sum(xx) * range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
-        yy_actual = prob.model.get_val('traj.cruise.rhs_all.test.yy')
+        yy_actual = prob.model.get_val('traj.cruise.rhs_all.yy')
         xx = prob.model.get_val('pre_mission.test.for_cruise')
         yy_expected = 2.0 * np.sum(xx) * range(len(yy_actual))
         assert_near_equal(yy_actual, yy_expected)
-        zz_actual = prob.model.get_val('traj.cruise.rhs_all.test.zz')
+        zz_actual = prob.model.get_val('traj.cruise.rhs_all.zz')
         zz_expected = 3.0 * np.sum(xx) * range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
-        yy_actual = prob.model.get_val('traj.cruise.rhs_all.test2.test2_yy')
+        yy_actual = prob.model.get_val('traj.cruise.rhs_all.test2_yy')
         xx = prob.model.get_val('pre_mission.test2.test2_for_cruise')
         yy_expected = 2.0 * np.sum(xx) * range(len(yy_actual))
         assert_near_equal(yy_actual, yy_expected)
-        zz_actual = prob.model.get_val('traj.cruise.rhs_all.test2.test2_zz')
+        zz_actual = prob.model.get_val('traj.cruise.rhs_all.test2_zz')
         zz_expected = 3.0 * np.sum(xx) * range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
-        yy_actual = prob.model.get_val('traj.descent.rhs_all.test.yy')
+        yy_actual = prob.model.get_val('traj.descent.rhs_all.yy')
         xx = prob.model.get_val('pre_mission.test.for_descent')
         yy_expected = 2.0 * np.sum(xx) * range(len(yy_actual))
         assert_near_equal(yy_actual, yy_expected)
-        zz_actual = prob.model.get_val('traj.descent.rhs_all.test.zz')
+        zz_actual = prob.model.get_val('traj.descent.rhs_all.zz')
         zz_expected = 3.0 * np.sum(xx) * range(len(zz_actual))
         assert_near_equal(zz_actual, zz_expected)
 
@@ -376,4 +368,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestExternalSubsystemBus()
+    test.setUp()
+    test.test_external_subsystem_bus()

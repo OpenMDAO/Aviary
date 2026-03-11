@@ -5,7 +5,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.core.system import System
 
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 
@@ -14,7 +14,7 @@ def skipIfMissingDependencies(builder):
     return unittest.skipIf(type(builder) is str, builder)
 
 
-class TestSubsystemBuilderBase(unittest.TestCase):
+class TestSubsystemBuilder(unittest.TestCase):
     @staticmethod
     def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
         """
@@ -37,7 +37,7 @@ class TestSubsystemBuilderBase(unittest.TestCase):
         return builder
 
     def setUp(self):
-        self.subsystem_builder = SubsystemBuilderBase()
+        self.subsystem_builder = SubsystemBuilder()
         self.aviary_values = AviaryValues()
 
     def test_get_states(self):
@@ -280,9 +280,9 @@ class TestSubsystemBuilderBase(unittest.TestCase):
                 subsystem_name, str, 'Each subsystem name in the list should be a string'
             )
 
-    def test_get_outputs(self):
-        outputs = self.subsystem_builder.get_outputs()
-        self.assertIsInstance(outputs, list, 'get_outputs should return a list')
+    def test_get_timeseries(self):
+        outputs = self.subsystem_builder.get_timeseries()
+        self.assertIsInstance(outputs, list, 'get_timeseries should return a list')
 
         for output_name in outputs:
             self.assertIsInstance(

@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.engine_pod import EnginePodMass
@@ -12,10 +13,14 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_inputs,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft
 
+omit_cases = ['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']
 
+
+@use_tempdirs
 class EnginePodMassTest(unittest.TestCase):
     """Tests the engine pod mass needed for the detailed wing calculation."""
 
@@ -23,10 +28,7 @@ class EnginePodMassTest(unittest.TestCase):
         self.prob = om.Problem()
 
     # Only cases that use detailed wing weight.
-    @parameterized.expand(
-        get_flops_case_names(omit=['LargeSingleAisle2FLOPS', 'LargeSingleAisle2FLOPSalt']),
-        name_func=print_case,
-    )
+    @parameterized.expand(get_flops_case_names(omit=omit_cases), name_func=print_case)
     def test_case(self, case_name):
         prob = self.prob
 
@@ -47,6 +49,7 @@ class EnginePodMassTest(unittest.TestCase):
         # Tol not that tight, but it is unclear where the pod mass values in files come from,
         # since they aren't printed in the FLOPS output.
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -63,6 +66,7 @@ class EnginePodMassTest(unittest.TestCase):
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
             ],
             output_keys=Aircraft.Engine.POD_MASS,
+            version=Version.TRANSPORT_and_BWB,
             tol=3e-3,
         )
 
@@ -102,6 +106,3 @@ class EnginePodMassTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = EnginePodMassTest()
-    # test.setUp()
-    # test.test_case_multiengine()

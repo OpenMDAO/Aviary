@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.avionics import TransportAvionicsMass
@@ -11,10 +12,12 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     get_flops_options,
     print_case,
+    Version,
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class TransportAvionicsMassTest(unittest.TestCase):
     """Tests transport/GA avionics mass calculation."""
 
@@ -37,6 +40,7 @@ class TransportAvionicsMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -46,6 +50,7 @@ class TransportAvionicsMassTest(unittest.TestCase):
             ],
             output_keys=Aircraft.Avionics.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.NUM_FLIGHT_CREW],
+            version=Version.TRANSPORT_and_BWB,
             tol=2.0e-4,
         )
 

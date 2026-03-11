@@ -11,7 +11,7 @@ from aviary.subsystems.propulsion.propeller.hamilton_standard import (
 )
 from aviary.subsystems.propulsion.propeller.propeller_map import PropellerMap
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.functions import d_smooth_min, smooth_min
+from aviary.utils.math import d_smooth_min, smooth_min
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic

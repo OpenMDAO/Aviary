@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.fuel_capacity import (
@@ -23,6 +24,7 @@ from aviary.variable_info.functions import override_aviary_vars
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class FuelCapacityGroupTest(unittest.TestCase):
     @parameterized.expand(get_flops_case_names(only=['AdvancedSingleAisle']), name_func=print_case)
     def test_case(self, case_name):
@@ -57,6 +59,7 @@ class FuelCapacityGroupTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -119,8 +122,8 @@ class WingFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
@@ -165,8 +168,8 @@ class FuselageFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_CAPACITY],
@@ -189,6 +192,7 @@ aux_capacity_data['1'] = AviaryValues(
 aux_capacity_cases = [key for key in aux_capacity_data]
 
 
+@use_tempdirs
 class AuxFuelCapacityTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -203,8 +207,8 @@ class AuxFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
@@ -248,8 +252,8 @@ class TotalFuelCapacityTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
-            case_name,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
