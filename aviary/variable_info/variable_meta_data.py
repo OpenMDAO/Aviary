@@ -7857,7 +7857,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, and cargo.',
+    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, cargo, and unusable fuel.',
     default_value=0.0,
 )
 
