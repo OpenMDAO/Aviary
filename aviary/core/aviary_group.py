@@ -824,7 +824,9 @@ class AviaryGroup(om.Group):
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',  # TODO: Fix to be difference in cumulative fuel burn
+            'fuel_burned = initial_mass - mass_final',  
+            # TODO: Fix to include any payloads dropped off during the mission
+            # We execute a similar calculaton a second time when calculating Aircraft.Design.RESERVE_FUEL_FRACTION
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
