@@ -856,7 +856,7 @@ class AviaryGroup(om.Group):
             f'traj.{self.regular_phases[-1]}.timeseries.mass',
             'fuel_burned.mass_final',
             src_indices=[-1],
-        )
+        ) # TODO: Is this the same as Mission.Landing.TOUCHDOWN_MASS? If so replace it with that.
 
         # Fuel burn in reserve phases
         if self.reserve_phases:
