@@ -7,7 +7,9 @@ import numpy as np
 
 import openmdao.api as om
 
-from aviary.examples.external_subsystems.balanced_field.balanced_field_builder import BalancedFieldBuilder
+from aviary.examples.external_subsystems.balanced_field.balanced_field_builder import {
+    BalancedFieldBuilder
+}
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.variable_info.variables import Mission
@@ -18,7 +20,8 @@ local_phase_info = deepcopy(phase_info)
 # Second is automated. You can turn balanced-field on with a single switch.
 # Note: Aero is still hardcoded in this directory. Initial guesses are also hardcoded,
 # but it is unclear which ones need to be tuned by the user.
-#local_phase_info['post_mission']['external_subsystems'] = [BalancedFieldBuilder()]
+
+# local_phase_info['post_mission']['external_subsystems'] = [BalancedFieldBuilder()]
 local_phase_info['post_mission']['balanced_field'] = True
 
 prob = AviaryProblem()
@@ -49,5 +52,3 @@ prob.setup()
 
 # TODO: N3CC optimization does not return success.
 prob.run_aviary_problem()
-
-#prob.model.list_vars(units=True, print_arrays=True)

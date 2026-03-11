@@ -9,7 +9,6 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
 class BalancedFieldBuilder(SubsystemBuilder):
-
     def __init__(self, name=None, meta_data=None):
         if name is None:
             name = 'balanced_field_length'

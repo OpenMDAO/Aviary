@@ -1,6 +1,7 @@
 """
 Group containing a submodel component with detailed landing.
 """
+
 import warnings
 
 import openmdao.api as om
@@ -22,7 +23,10 @@ def create_balance_field_subprob(aviary_inputs, use_spoiler=False):
             Aircraft.Wing.SPAN,
             Mission.Takeoff.DRAG_COEFFICIENT_MIN,
             Mission.Takeoff.LIFT_COEFFICIENT_MAX,
-            ('traj.takeoff_brake_release_to_engine_failure.initial_states:mass', Mission.Summary.GROSS_MASS),
+            (
+                'traj.takeoff_brake_release_to_engine_failure.initial_states:mass',
+                Mission.Summary.GROSS_MASS
+            ),
         ],
         outputs=[
             ('traj.takeoff_climb_gradient_to_obstacle.final_states:distance', 'distance_obstacle'),
@@ -125,7 +129,6 @@ class AviarySubmodelComp(om.SubmodelComp):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', om.PromotionWarning)
             super().setup()
-
 
         sub = self._subprob
         av.set_aviary_initial_values(sub, sub.aviary_inputs)

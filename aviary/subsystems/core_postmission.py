@@ -6,8 +6,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 
 
 class CorePostMission(om.Group):
-    """Group that contains all post-mission groups of core Aviary subsystems: (performance).
-    """
+    """Group that contains all post-mission groups of core Aviary subsystems: (performance)."""
 
     def initialize(self):
         self.options.declare(

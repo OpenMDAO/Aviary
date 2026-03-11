@@ -131,8 +131,8 @@ class DetailedTakeoffPhaseOptions(AviaryOptionsDictionary):
             name='pitch_control',
             values=['ALPHA_FIXED', 'ALPHA_RATE_FIXED', 'GAMMA_FIXED'],
             default='ALPHA_FIXED',
-            desc='Specifies how alpha is controlled - Alpha can be a fixed parameter, specified via a fixed rate parameter, ' \
-            'or whether the climb gradient is constant',
+            desc='Specifies how alpha is controlled - Alpha can be a fixed parameter, '
+            'specified via a fixed rate parameter, or whether the climb gradient is constant',
         )
 
         self.declare(
@@ -618,7 +618,8 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilder):
         )
 
         # Define velocity to go based on definition of terminal speed, if applicable.
-        terminal_speed = user_options['terminal_speed']
+        terminal_speed = user_options['terminal_condition']
+        v_to_go_calc = False
         if terminal_speed == 'V1':
             # Propagate until speed is the decision speed.
             # In balanced field applications, dV1 will be
@@ -3703,14 +3704,28 @@ class TakeoffTrajectory:
         climb_gradient_name = self._climb_gradient_to_obstacle.name
 
         traj.link_phases(
-            [brake_release_name, decision_speed_name, rotate_name, liftoff_name, climb_gradient_name],
+            [
+                brake_release_name,
+                decision_speed_name,
+                rotate_name,
+                liftoff_name,
+                climb_gradient_name
+            ],
             vars=['time', 'distance', 'velocity', 'mass'],
             connected=True,
         )
 
-        traj.link_phases([rotate_name, liftoff_name], vars=['angle_of_attack',], connected=True)
+        traj.link_phases(
+            [rotate_name, liftoff_name],
+            vars=['angle_of_attack',],
+            connected=True
+        )
 
-        traj.link_phases([liftoff_name, climb_gradient_name], vars=['flight_path_angle', 'altitude'], connected=True)
+        traj.link_phases(
+            [liftoff_name, climb_gradient_name],
+            vars=['flight_path_angle', 'altitude'],
+            connected=True
+        )
 
         # ext_vars = basic_vars + ['angle_of_attack']
 
