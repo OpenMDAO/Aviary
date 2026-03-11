@@ -952,7 +952,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # TailWettedArea
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8)
-        # BWBFuselagWettedArea
+        # BWBFuselageWettedArea
         # _FuselageRatios
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN), 0.167391212, tolerance=1e-8
@@ -1112,7 +1112,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.WETTED_AREA_SCALER, val=1.0)
-        # BWBFuselagWettedArea
+        # BWBFuselageWettedArea
         # skip
         # _FuselageRatios
         # Nacelles_SWet
@@ -1279,7 +1279,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # TailWettedArea
         assert_near_equal(prob.get_val(Aircraft.HorizontalTail.WETTED_AREA), 0.0, tolerance=1e-8)
         assert_near_equal(prob.get_val(Aircraft.VerticalTail.WETTED_AREA), 0.0, tolerance=1e-8)
-        # BWBFuselagWettedArea
+        # BWBFuselageWettedArea
         # skip
         # _FuselageRatios
         assert_near_equal(

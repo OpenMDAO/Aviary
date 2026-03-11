@@ -59,7 +59,7 @@ class WettedAreaGroup(om.Group):
         elif design_type is AircraftTypes.TRANSPORT:
             self.add_subsystem(
                 'fus_swet',
-                FuselagWettedArea(),
+                FuselageWettedArea(),
                 promotes_inputs=['aircraft*'],
                 promotes_outputs=['*'],
             )
@@ -764,7 +764,7 @@ class BWBFuselageWettedArea(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.WETTED_AREA] = 0.0
 
 
-class FuselagWettedArea(om.ExplicitComponent):
+class FuselageWettedArea(om.ExplicitComponent):
     """
     Calculate fuselage cross sectional area, and fuselage wetted area of aircraft geometry
     for FLOPS-based aerodynamics analysis.
