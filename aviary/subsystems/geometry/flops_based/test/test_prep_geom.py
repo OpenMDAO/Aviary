@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.subsystems.geometry.flops_based.canard import Canard_SWet
+from aviary.subsystems.geometry.flops_based.canard import CanardWettedArea
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     CanardCharacteristicLength,
     FuselageCharacteristicLengths,
@@ -16,7 +16,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
-from aviary.subsystems.geometry.flops_based.nacelle import Nacelles_SWet
+from aviary.subsystems.geometry.flops_based.nacelle import NacellesWettedArea
 from aviary.subsystems.geometry.flops_based.prep_geom import _FuselageRatios, PrepGeom
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     BWBWingWettedArea,
@@ -458,7 +458,7 @@ class NacellesTest(unittest.TestCase):
             options[key] = flops_inputs.get_item(key)[0]
         options[Aircraft.Engine.NUM_ENGINES] = np.array([2])
 
-        prob.model.add_subsystem('nacelles', Nacelles_SWet(**options), promotes=['*'])
+        prob.model.add_subsystem('nacelles', NacellesWettedArea(**options), promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -489,7 +489,7 @@ class CanardTest(unittest.TestCase):
     def test_case(self):
         prob = self.prob
 
-        prob.model.add_subsystem('canard', Canard_SWet(), promotes=['*'])
+        prob.model.add_subsystem('canard', CanardWettedArea(), promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -817,7 +817,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # BWBFuselageWettedArea
         # skip
         # _FuselageRatios
-        # Nacelles_SWet
+        # NacellesWettedArea
         # DNAC = 12.608, XNAC = 17.433 originally. It is then scaled down by
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
@@ -827,7 +827,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Nacelle.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]))
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
-        # Canard_SWet
+        # CanardWettedArea
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
         prob.set_val(Aircraft.Canard.WETTED_AREA_SCALER, val=0.0)
@@ -960,12 +960,12 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER), 3.4502227, tolerance=1e-8
         )
-        # Nacelles_SWet
+        # NacellesWettedArea
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80466199, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26822066, tolerance=1e-8)
-        # Canard_SWet
+        # CanardWettedArea
         assert_near_equal(prob.get_val(Aircraft.Canard.WETTED_AREA), 0.0, tolerance=1e-8)
         # BWBWingCharacteristicLength
         assert_near_equal(
@@ -1115,7 +1115,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # BWBFuselageWettedArea
         # skip
         # _FuselageRatios
-        # Nacelles_SWet
+        # NacellesWettedArea
         # DNAC = 12.608, XNAC = 17.433 originally. It is then scaled down by
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
@@ -1126,7 +1126,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.SCALED_SLS_THRUST, val=np.array([70000.0]), units='lbf')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 0.8096304384)
 
-        # Canard_SWet
+        # CanardWettedArea
         prob.set_val(Aircraft.Canard.AREA, val=0.0)
         prob.set_val(Aircraft.Canard.THICKNESS_TO_CHORD, val=0.0)
         prob.set_val(Aircraft.Canard.WETTED_AREA_SCALER, val=0.0)
@@ -1290,12 +1290,12 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER), 2.42617719, tolerance=1e-8
         )
-        # Nacelles_SWet
+        # NacellesWettedArea
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80466199, tolerance=1e-8
         )
         assert_near_equal(prob.get_val(Aircraft.Nacelle.WETTED_AREA), 498.26822066, tolerance=1e-8)
-        # Canard_SWet
+        # CanardWettedArea
         assert_near_equal(prob.get_val(Aircraft.Canard.WETTED_AREA), 0.0, tolerance=1e-8)
         # BWBWingCharacteristicLength
         assert_near_equal(
