@@ -1526,22 +1526,20 @@ class AviaryGroup(om.Group):
         )
         if RESERVE_FUEL_FRACTION != 0:
             reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
+                'reserve_fuel_frac_mass = reserve_fuel_fraction * (fuel_burned)',
                 reserve_fuel_frac_mass={'units': 'lbm'},
                 reserve_fuel_fraction={
                     'units': 'unitless',
                     'val': RESERVE_FUEL_FRACTION,
                 },
-                final_mass={'units': 'lbm'},
-                takeoff_mass={'units': 'lbm'},
+                fuel_burned={'units': 'lbm'},
             )
 
             reserve_calc_location.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
                 promotes_inputs=[
-                    ('takeoff_mass', Mission.Summary.GROSS_MASS),
-                    ('final_mass', Mission.Landing.TOUCHDOWN_MASS),
+                    ('fuel_burn', Mission.Summary.FUEL_BURNED), # This will work even if touchdown = false.
                     ('reserve_fuel_fraction', Aircraft.Design.RESERVE_FUEL_FRACTION),
                 ],
                 promotes_outputs=['reserve_fuel_frac_mass'],
