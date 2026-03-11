@@ -7839,7 +7839,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    desc='Useful load group. Includes CABIN_CREW_MASS, FLIGHT_CREW_MASS, TOTAL_ENGINE_OIL_MASS, PASSENGER_SERVICE_MASS, and UNUSABLE_FUEL_MASS.',
     default_value=0.0,
 )
 
