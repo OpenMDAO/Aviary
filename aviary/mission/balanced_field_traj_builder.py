@@ -38,7 +38,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
     name : str ('_unknown phase_')
         object label
 
-    core_subsystems : (None)
+    subsystems : (None)
         list of SubsystemBuilderBase objects that will be added to the phase ODE
 
     user_options : OptionsDictionary (<empty>)
@@ -85,7 +85,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
     __slots__ = (
         'name',
-        'core_subsystems',
+        'subsystems',
         'external_subsystems',
         'subsystem_options',
         'user_options',
@@ -114,7 +114,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
     def __init__(
         self,
         name=None,
-        core_subsystems=None,
+        subsystems=None,
         external_subsystems=None,
         user_options=None,
         initial_guesses=None,
@@ -128,12 +128,12 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         self.name = name
 
-        if core_subsystems is None:
-            core_subsystems = []
+        if subsystems is None:
+            subsystems = []
         if external_subsystems is None:
             external_subsystems = []
 
-        self.core_subsystems = core_subsystems
+        self.subsystems = subsystems
         self.external_subsystems = external_subsystems
 
         if subsystem_options is None:
@@ -244,7 +244,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
         initial_guesses.set_val('dVEF', 1.0, 'kn')
         takeoff_brake_release_to_engine_failure_builder = BalancedFieldPhaseBuilder(
             'takeoff_brake_release_to_engine_failure',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -268,7 +268,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         takeoff_engine_failure_to_v1_builder = BalancedFieldPhaseBuilder(
             'takeoff_engine_failure_to_v1',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -293,7 +293,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         takeoff_v1_to_roll_stop = BalancedFieldPhaseBuilder(
             'takeoff_v1_to_roll_stop',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -315,7 +315,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         takeoff_v1_to_vr = BalancedFieldPhaseBuilder(
             'takeoff_v1_to_vr',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -339,7 +339,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         takeoff_vr_to_liftoff = BalancedFieldPhaseBuilder(
             'takeoff_vr_to_liftoff',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -366,7 +366,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         takeoff_liftoff_to_climb_gradient = BalancedFieldPhaseBuilder(
             'takeoff_liftoff_to_climb_gradient',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -391,7 +391,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
         takeoff_climb_gradient_to_obstacle = BalancedFieldPhaseBuilder(
             'takeoff_climb_gradient_to_obstacle',
-            core_subsystems=self.core_subsystems,
+            subsystems=self.subsystems,
             subsystem_options=self.subsystem_options,
             user_options=user_options,
             initial_guesses=initial_guesses,
@@ -513,7 +513,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
 
             # TODO: Why is get_parameters different for different subsystems?
             # Do without blindly indexing.
-            aero_builder = self.core_subsystems[0]
+            aero_builder = self.subsystems[0]
 
             params = aero_builder.get_parameters(aviary_options, **kwargs)
 

@@ -8,7 +8,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.examples.external_subsystems.balanced_field.balanced_field_builder import BalancedFieldBuilder
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.variable_info.variables import Mission
 

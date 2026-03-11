@@ -78,7 +78,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_premission_su
 from aviary.variable_info.functions import setup_model_options
 
 takeoff_trajectory_builder = av.BalancedFieldTrajectoryBuilder('balanced_field_traj',
-                                                               core_subsystems=[aero_builder, prop_builder],
+                                                               subsystems=[aero_builder, prop_builder],
                                                                subsystem_options=takeoff_subsystem_options,
                                                                user_options=balanced_field_user_options)
 
@@ -89,7 +89,7 @@ default_premission_subsystems = get_default_premission_subsystems('FLOPS', engin
 
 # Upstream pre-mission analysis for aero
 test_problem.model.add_subsystem(
-    'core_subsystems',
+    'subsystems',
     av.CorePreMission(
         aviary_options=aviary_options,
         subsystems=default_premission_subsystems,

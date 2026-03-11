@@ -70,7 +70,7 @@ geometry = av.CoreGeometryBuilder(code_origin=av.LegacyCode('FLOPS'))
 mass = av.CoreMassBuilder(code_origin=av.LegacyCode('FLOPS'))
 propulsion = av.CorePropulsionBuilder(engine_models=engine)
 
-prob.model.subsystems = {
+prob.model.core_subsystems = {
     'propulsion': propulsion,
     'geometry': geometry,
     'mass': mass,
@@ -99,19 +99,19 @@ prob.model.pre_mission.add_subsystem(
     promotes_inputs=['*'],
     promotes_outputs=['*'],
 )
-prob.model.pre_mission.subsystems.add_subsystem(
+prob.model.pre_mission.core_subsystems.add_subsystem(
     'core_geometry',
     geometry.build_pre_mission(aviary_inputs),
     promotes_inputs=['*'],
     promotes_outputs=['*'],
 )
-prob.model.pre_mission.subsystems.add_subsystem(
+prob.model.pre_mission.core_subsystems.add_subsystem(
     'core_aerodynamics',
     aerodynamics.build_pre_mission(aviary_inputs),
     promotes_inputs=['*'],
     promotes_outputs=['*'],
 )
-prob.model.pre_mission.subsystems.add_subsystem(
+prob.model.pre_mission.core_subsystems.add_subsystem(
     'core_mass',
     mass.build_pre_mission(aviary_inputs),
     promotes_inputs=['*'],
@@ -123,8 +123,8 @@ prob.model.pre_mission.subsystems.add_subsystem(
 phase_list = ['climb', 'cruise', 'descent']
 prob.traj = prob.model.add_subsystem('traj', dm.Trajectory())
 default_mission_subsystems = [
-    prob.model.subsystems['aerodynamics'],
-    prob.model.subsystems['propulsion'],
+    prob.model.core_subsystems['aerodynamics'],
+    prob.model.core_subsystems['propulsion'],
 ]
 phases = {}
 for phase_idx, phase_name in enumerate(phase_list):
@@ -525,7 +525,7 @@ prob.model.add_constraint(Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, uni
 # prob.link_phases()
 
 all_subsystems = []
-all_subsystems.append(prob.model.subsystems['propulsion'])
+all_subsystems.append(prob.model.core_subsystems['propulsion'])
 
 prob.traj.link_phases(phase_list, ['time'], ref=None, connected=True)
 prob.traj.link_phases(phase_list, [Dynamic.Vehicle.MASS], ref=None, connected=True)

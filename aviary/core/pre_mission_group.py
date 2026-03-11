@@ -26,7 +26,7 @@ class PreMissionGroup(om.Group):
         """
         external_outputs = promote_aircraft_and_mission_vars(self)
 
-        pre_mission = self.subsystems
+        pre_mission = self.core_subsystems
         override_aviary_vars(
             pre_mission,
             pre_mission.options['aviary_options'],

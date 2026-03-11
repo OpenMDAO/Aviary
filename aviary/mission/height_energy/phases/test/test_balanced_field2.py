@@ -66,7 +66,7 @@ class TestBalancedField(unittest.TestCase):
         from aviary.variable_info.functions import setup_model_options
 
         takeoff_trajectory_builder = av.BalancedFieldTrajectoryBuilder('balanced_field_traj',
-                                                                       core_subsystems=[aero_builder, prop_builder],
+                                                                       subsystems=[aero_builder, prop_builder],
                                                                        subsystem_options=takeoff_subsystem_options,
                                                                        user_options=balanced_field_user_options)
 

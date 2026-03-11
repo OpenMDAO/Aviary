@@ -44,9 +44,9 @@ class CorePostMission(om.Group):
         phase_info = self.options['phase_info']
         phase_mission_bus_lengths = self.options['phase_mission_bus_lengths']
         post_mission_info = self.options['post_mission_info']
-        core_subsystems = self.options['subsystems']
+        subsystems = self.options['subsystems']
 
-        for subsystem in core_subsystems:
+        for subsystem in subsystems:
             pre_mission_system = subsystem.build_post_mission(
                 aviary_options,
                 phase_info,

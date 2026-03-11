@@ -93,7 +93,7 @@ def create_prob(aviary_inputs, use_spoiler=False):
     balanced_field_user_options = AviaryValues()
 
     dto_build = BalancedFieldTrajectoryBuilder('balanced_field_traj',
-                                               core_subsystems=[aero_builder, prop_builder],
+                                               subsystems=[aero_builder, prop_builder],
                                                subsystem_options=takeoff_subsystem_options,
                                                user_options=balanced_field_user_options)
 

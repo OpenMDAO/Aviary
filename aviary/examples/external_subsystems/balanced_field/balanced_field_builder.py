@@ -5,10 +5,10 @@ from aviary.api import Mission
 from aviary.examples.external_subsystems.balanced_field.balanced_field_submodel import (
     create_balance_field_subprob,
 )
-from aviary.subsystems.subsystem_builder_base import SubsystemBuilderBase
+from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
-class BalancedFieldBuilder(SubsystemBuilderBase):
+class BalancedFieldBuilder(SubsystemBuilder):
 
     def __init__(self, name=None, meta_data=None):
         if name is None:

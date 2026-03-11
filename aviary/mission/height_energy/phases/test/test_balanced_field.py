@@ -89,7 +89,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         takeoff_brake_release_to_decision_speed_builder = av.DetailedTakeoffPhaseBuilder(
             'takeoff_brake_release_to_decision_speed',
-            core_subsystems=[aero_builder, prop_builder],
+            subsystems=[aero_builder, prop_builder],
             subsystem_options=takeoff_subsystem_options,
             user_options=takeoff_brake_release_user_options,
             initial_guesses=takeoff_v1_to_vr_initial_guesses,
@@ -126,7 +126,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         takeoff_decision_speed_to_rotate_builder = av.DetailedTakeoffPhaseBuilder(
             'takeoff_decision_speed_to_rotate',
-            core_subsystems=[aero_builder, prop_builder],
+            subsystems=[aero_builder, prop_builder],
             subsystem_options=takeoff_subsystem_options,
             user_options=takeoff_v1_to_vr_user_options,
             initial_guesses=takeoff_v1_to_vr_initial_guesses,
@@ -165,7 +165,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         vr_to_liftoff_builder = av.DetailedTakeoffPhaseBuilder(
             'takeoff_rotate_to_liftoff',
-            core_subsystems=[aero_builder, prop_builder],
+            subsystems=[aero_builder, prop_builder],
             subsystem_options=takeoff_subsystem_options,
             user_options=vr_to_liftoff_user_options,
             initial_guesses=vr_to_liftoff_initial_guesses,
@@ -206,7 +206,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         liftoff_to_climb_gradient_builder = av.DetailedTakeoffPhaseBuilder(
             'takeoff_liftoff_to_climb_gradient',
-            core_subsystems=[aero_builder, prop_builder],
+            subsystems=[aero_builder, prop_builder],
             subsystem_options=takeoff_subsystem_options,
             user_options=liftoff_to_climb_gradient_user_options,
             initial_guesses=liftoff_to_climb_gradient_initial_guesses,
@@ -245,7 +245,7 @@ class TestTakeoffToEngineFailureTest(unittest.TestCase):
 
         climb_gradient_to_obstacle_builder = av.DetailedTakeoffPhaseBuilder(
             'takeoff_climb_gradient_to_obstacle',
-            core_subsystems=[aero_builder, prop_builder],
+            subsystems=[aero_builder, prop_builder],
             subsystem_options=takeoff_subsystem_options,
             user_options=climb_gradient_to_obstacle_user_options,
             initial_guesses=climb_gradient_to_obstacle_initial_guesses,
