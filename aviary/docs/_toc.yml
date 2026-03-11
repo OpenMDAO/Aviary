@@ -18,46 +18,43 @@ parts:
       sections:
         - file: user_guide/variables
         - file: user_guide/input_files
-        - file: user_guide/aircraft_definition
-        - file: user_guide/mission_definition
-        - file: user_guide/data_files
+          sections:
+            - file: user_guide/aircraft_definition
+            - file: user_guide/mission_definition
+            - file: user_guide/data_files
+        - file: user_guide_unreviewed/outputs
         # - file: user_guide/user_interface
-    # - file: user_guide/beginners_guide
-    #   sections:
-    #     - file: user_guide/run_basic_aviary_example # CMD line
-    #     - file: user_guide/run_basic_aviary_script # CMD line, level 1 script
-    #     - file: user_guide/postprocessing_and_visualizing_results
-      sections:
-      - file: user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels
-      - file: user_guide_unreviewed/aviary_commands
-      - file: user_guide_unreviewed/phase_info
-      - file: user_guide_unreviewed/phase_info_detailed
+        # - file: new file with recommended examples to view next
+    - file: user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels
+    - file: user_guide_unreviewed/aviary_commands
     - file: user_guide_unreviewed/drawing_and_running_simple_missions
     - file: user_guide_unreviewed/pre_mission_and_mission
     - file: user_guide_unreviewed/postprocessing_and_visualizing_results
-    - file: user_guide_unreviewed/variable_metadata
     - file: user_guide_unreviewed/features_and_functionalities
+    - file: user_guide_unreviewed/custom_variable_hierarchies
+    - file: user_guide_unreviewed/subsystems/subsystems
       sections:
-      - file: user_guide_unreviewed/aerodynamics
-      - file: user_guide_unreviewed/external_aero
-      - file: user_guide_unreviewed/atmosphere
-      - file: user_guide_unreviewed/propulsion
-        sections:
-          - file: user_guide_unreviewed/creating_a_turboprop_engine
-      - file: user_guide_unreviewed/hamilton_standard
-      - file: user_guide_unreviewed/mass
-      - file: user_guide_unreviewed/subsystems
-      - file: user_guide_unreviewed/using_external_subsystems
-      - file: user_guide_unreviewed/step_by_step_external_guide
-      - file: user_guide_unreviewed/battery_subsystem_example
-      - file: user_guide_unreviewed/features/overriding
-      - file: user_guide_unreviewed/FLOPS_based_detailed_takeoff_and_landing
-      - file: user_guide_unreviewed/reserve_missions
-      - file: user_guide_unreviewed/multi_mission
-      - file: user_guide_unreviewed/off_design_missions
-      - file: user_guide_unreviewed/payload_range_functionality
-      - file: user_guide_unreviewed/features/blended_wing_body_GASP
-      - file: user_guide_unreviewed/features/blended_wing_body_FLOPS
+        - file: user_guide_unreviewed/subsystems/aerodynamics
+          sections:
+            - file: user_guide_unreviewed/subsystems/external_aero
+        - file: user_guide_unreviewed/subsystems/atmosphere
+        - file: user_guide_unreviewed/subsystems/propulsion
+          sections:
+            - file: user_guide_unreviewed/subsystems/hamilton_standard
+            - file: user_guide_unreviewed/creating_a_turboprop_engine
+        - file: user_guide_unreviewed/subsystems/mass
+          sections:
+            - file: user_guide_unreviewed/features/blended_wing_body_GASP
+            - file: user_guide_unreviewed/features/blended_wing_body_FLOPS
+        - file: user_guide_unreviewed/subsystems/using_external_subsystems
+        - file: user_guide_unreviewed/subsystems/step_by_step_external_guide
+        - file: user_guide_unreviewed/subsystems/battery_subsystem_example
+    - file: user_guide_unreviewed/features/overriding
+    - file: user_guide_unreviewed/FLOPS_based_detailed_takeoff_and_landing
+    - file: user_guide_unreviewed/reserve_missions
+    - file: user_guide_unreviewed/multi_mission
+    - file: user_guide_unreviewed/off_design_missions
+    - file: user_guide_unreviewed/payload_range_functionality
     - file: user_guide_unreviewed/troubleshooting
 
 - caption: Examples
@@ -66,12 +63,11 @@ parts:
     - file: examples/custom_optimization
     - file: examples/reserve_mission
     - file: examples_unreviewed/more_advanced_example
-    - file: examples_unreviewed/coupled_aircraft_mission_optimization
-    - file: examples_unreviewed/additional_flight_phases
+    - file: examples/off_design_missions
+    - file: examples_unreviewed/detailed_takeoff_landing
     - file: examples_unreviewed/multi_mission
-    - file: examples_unreviewed/off_design_example
     - file: examples_unreviewed/OAS_subsystem
-    - file: examples_unreviewed/level_2_detailed_takeoff_and_landing
+    - file: examples_unreviewed/deconstructed_example
 
 - caption: Theory Guide
   chapters:
@@ -107,11 +103,11 @@ parts:
 - caption: Source Docs
   chapters:
     - file: source_docs/variable_metadata
+    - file: source_docs/phase_info_detailed
     - file: _srcdocs/index
 
 - caption: Miscellaneous Resources
   chapters:
     - file: misc_resources/FAQ
     - file: misc_resources/resources
-    - file: misc_resources/feature_comparison
     - file: misc_resources/phase_info_conversion

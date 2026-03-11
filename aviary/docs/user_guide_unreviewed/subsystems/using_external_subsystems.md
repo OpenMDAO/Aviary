@@ -15,7 +15,7 @@ Throughout the process of using external subsystems, we will reference a few of 
 Specifically, the pre-mission, mission, and post-mission systems within Aviary are important to understand when using external subsystems.
 You can add OpenMDAO systems (groups or components) to any of the three main systems within Aviary, as shown in the graphic below.
 
-![Aviary process](images/aviary_process.png)
+![Aviary process](./images/aviary_process.png)
 
 ## What do we mean by external subsystems?
 
@@ -57,4 +57,4 @@ This graphic is notional and is not meant to be exhaustive or exact.
 Specifically, any arbitrary disciplinary subsystem can be added to Aviary; it is not limited to those shown here.
 Additionally, there are many more types of analyses that could be included on this graph, at all sorts of different fidelity levels.
 
-![fidelity levels](images/subsystems.png)
+![fidelity levels](./images/subsystems.png)

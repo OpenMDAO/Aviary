@@ -42,7 +42,7 @@ This progressive approach helps users gradually enhance their analysis capabilit
 If you're a visual person, the following figure might be helpful to describe how users are expected to interface with Aviary and how that data is fed in to the tool.
 This figure is only nominal; many of the details aren't included in this view.
 
-![the API levels feed into Aviary](images/more_levels.png)
+![the API levels feed into Aviary](./images/more_levels.png)
 
 ## Explain how to define an aircraft and mission
 
