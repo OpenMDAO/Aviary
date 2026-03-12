@@ -856,7 +856,7 @@ class AviaryGroup(om.Group):
             f'traj.{self.regular_phases[-1]}.timeseries.mass',
             'fuel_burned.mass_final',
             src_indices=[-1],
-        ) # TODO: Is this the same as Mission.Landing.TOUCHDOWN_MASS? If so replace it with that.
+        )
 
         # Fuel burn in reserve phases
         if self.reserve_phases:
@@ -1525,24 +1525,47 @@ class AviaryGroup(om.Group):
             Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
         )
         if RESERVE_FUEL_FRACTION != 0:
+            # Originally tried to reference Mission.Summary.FUEL_BURNED for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_frac_mass = reserve_fuel_fraction * (fuel_burned)',
+                'reserve_fuel_frac_mass = reserve_fuel_fraction * (initial_mass - final_mass)',
                 reserve_fuel_frac_mass={'units': 'lbm'},
                 reserve_fuel_fraction={
                     'units': 'unitless',
                     'val': RESERVE_FUEL_FRACTION,
                 },
-                fuel_burned={'units': 'lbm'},
+                initial_mass={'units': 'lbm'},
+                final_mass={'units': 'lbm'},
             )
 
             reserve_calc_location.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
-                promotes_inputs=[
-                    ('fuel_burn', Mission.Summary.FUEL_BURNED), # This will work even if touchdown = false.
+                promotes=[ # we switch to promotes as opposed to promote_inputs and promote_outputs here because we have to use promotes later on as well
                     ('reserve_fuel_fraction', Aircraft.Design.RESERVE_FUEL_FRACTION),
+                    'reserve_fuel_frac_mass',
                 ],
-                promotes_outputs=['reserve_fuel_frac_mass'],
+            )
+
+            # Connect inicial mass correctly
+            if self.pre_mission_info['include_takeoff']:
+                reserve_calc_location.promotes(
+                    'reserve_fuel_frac',
+                    [('initial_mass', Mission.Summary.GROSS_MASS)],
+                )
+            else:
+                # timeseries has to be used because Breguet cruise phases don't have
+                # states
+                self.connect(
+                    f'traj.{self.regular_phases[0]}.timeseries.mass',
+                    'reserve_fuel_frac.initial_mass',
+                    src_indices=[0],
+                )
+            # connect final mass
+
+            self.connect(
+                f'traj.{self.regular_phases[-1]}.timeseries.mass',
+                'reserve_fuel_frac.final_mass',
+                src_indices=[-1],
             )
 
         RESERVE_FUEL_ADDITIONAL = self.aviary_inputs.get_val(
