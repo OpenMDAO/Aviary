@@ -7751,32 +7751,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Summary.FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.WFADES',
-        'FLOPS': None,  # ['WSP(38, 2)', '~WEIGHT.FUELM', '~INERT.FUELM'],
-        'LEAPS1': [
-            '(WeightABC)self._fuel_weight',
-            'aircraft.outputs.L0_weights_summary.fuel_weight',
-        ],
-    },
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the mission',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.FUEL_MASS_REQUIRED,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
-    'mission',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Summary.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},

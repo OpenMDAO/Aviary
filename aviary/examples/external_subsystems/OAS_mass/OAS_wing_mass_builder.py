@@ -49,10 +49,7 @@ class OASWingMassBuilder(av.SubsystemBuilder):
                 num_box_cp=51,
             ),
             promotes_inputs=[
-                ('fuel', av.Mission.Summary.FUEL_MASS), 
-                # TODO: Mission.Summary.FUEL_MASS is not a good representation of the amount of fuel in the wing. 
-                # That would be something more like Aircraft.Fuel.WING_FUEL_CAPACITY which is the max amount of fuel that can 
-                # go into the wing, not including unusable fuel mass.
+                ('fuel', av.Aircraft.Fuel.WING_FUEL_CAPACITY), 
             ],
             promotes_outputs=[('wing_mass', av.Aircraft.Wing.MASS)],
         )
