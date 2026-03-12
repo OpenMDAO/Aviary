@@ -36,14 +36,12 @@ class BodyTankCalculations(om.ExplicitComponent):
             units='lbm',
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )
-        add_aviary_input(
-            self, 'fuel_mass_required', units='lbm', desc='WFAREQ: no margin'
-        )
+        self.add_input('fuel_mass_required', units='lbm', desc='WFAREQ: no margin')
         self.add_input('max_wingfuel_mass', val=6, units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, 'fuel_mass', units='lbm')
+        self.add_input('fuel_mass', units='lbm', desc='WFADES')
         add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
         # GASP total capacity didn't include the unusable mass, but Aviary total capacity does.
@@ -514,7 +512,7 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
         add_aviary_input(self, Mission.Summary.USEFUL_LOAD, units='lbm')
-        add_aviary_input(self, 'fuel_mass_required', units='lbm')
+        self.add_input('fuel_mass_required', units='lbm', desc='WFAREQ: no margin')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
@@ -883,7 +881,7 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
-        add_aviary_input(self, 'fuel_mass', units='lbm')
+        self.add_input('fuel_mass', units='lbm', desc='WFADES')
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
         self.add_input(
             'wingfuel_mass_min', val=32850, units='lbm', desc='WFWMIN: minimum wing fuel mass'
@@ -1412,9 +1410,9 @@ class FuelMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuel.FUEL_MARGIN, units='unitless')
 
-        add_aviary_output(self, 'fuel_mass', units='lbm', desc='WFADES')
+        self.add_output('fuel_mass', units='lbm', desc='WFADES')
         add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm', desc='WP')
-        add_aviary_output(self, 'fuel_mass_required', units='lbm', desc='WFAREQ')
+        self.add_output('fuel_mass_required', units='lbm', desc='WFAREQ')
         self.add_output(
             'fuel_mass_min',
             val=0,

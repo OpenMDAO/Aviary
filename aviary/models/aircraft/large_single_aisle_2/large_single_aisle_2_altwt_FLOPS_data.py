@@ -276,7 +276,6 @@ outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, sys_equip_mass, sys_
 outputs.set_val(Mission.Summary.USEFUL_LOAD, 10071.93, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 142837.0, 'lbm')
-outputs.set_val(Mission.Summary.FUEL_MASS, 31363.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 4212.0, 'lbm')
 

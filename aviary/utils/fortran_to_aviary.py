@@ -683,6 +683,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
 
     ## Fuel ##
+    # if reserve_fuel_additional < 0 then this is a fuel fraction,
+    # if reserve_fuel_additional 0 - 10 then this is a weight of fuel required to fly a mission in multiples of 45 minutes
+    # if reserve_fuel_additional > 10 then this is a weight of reserve fuel
     reserve_fuel_additional = input_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
     )[0]
