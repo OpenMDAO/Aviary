@@ -60,9 +60,9 @@ class NacelleTest(unittest.TestCase):
         prob = self.prob
 
         options = get_flops_options('BWBsimpleFLOPS')
-        # options = {
-        #    Aircraft.Engine.NUM_ENGINES: np.array([3]),
-        # }
+        options = {
+            Aircraft.Engine.NUM_ENGINES: np.array([3]),
+        }
 
         prob.model.add_subsystem(
             'nacelles', Nacelles(), promotes_outputs=['*'], promotes_inputs=['*']

@@ -6,7 +6,7 @@ from dymos.transcriptions.transcription_base import TranscriptionBase
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.interface.methods_for_level2 import AviaryProblem
+from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Dynamic
@@ -61,12 +61,6 @@ class SimpleEngine(om.ExplicitComponent):
             desc='Current net thrust produced (scaled)',
         )
         self.add_output(
-            Dynamic.Vehicle.Propulsion.THRUST_MAX,
-            shape=nn,
-            units='lbf',
-            desc='Current net thrust produced (scaled)',
-        )
-        self.add_output(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
             shape=nn,
             units='lbm/s',
@@ -100,7 +94,6 @@ class SimpleEngine(om.ExplicitComponent):
 
         # calculate outputs
         outputs[Dynamic.Vehicle.Propulsion.THRUST] = 10000.0 * combined_throttle
-        outputs[Dynamic.Vehicle.Propulsion.THRUST_MAX] = 10000.0
         outputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE] = -10.0 * combined_throttle
         outputs[Dynamic.Vehicle.Propulsion.TEMPERATURE_T4] = 2800.0
 

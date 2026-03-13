@@ -145,8 +145,8 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         PhaseBuilder
             Phase builder for requested phase.
         """
-        if 'phase_builder' in phase_options:
-            phase_builder = phase_options['phase_builder']
+        if 'phase_type' in phase_options:
+            phase_builder = phase_options['phase_type']
             if not issubclass(phase_builder, PhaseBuilder):
                 raise TypeError(
                     'phase_builder for the phase called {phase_name} must be a PhaseBuilder object.'
@@ -394,7 +394,11 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             )
 
         if aviary_group.post_mission_info['include_landing']:
-            self._add_landing_systems(aviary_group)
+            if 'aircraft:wing:area' in aviary_group.aviary_inputs:
+                self._add_landing_systems(aviary_group)
+            else:
+                print('Aircraft.Wing.AREA is not given. Set include_landing = False')
+                aviary_group.post_mission_info['include_landing'] = False
 
         aviary_group.add_subsystem(
             'range_constraint',

@@ -47,8 +47,14 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val('ZW_RF'), [-0.8], tol)
-        assert_near_equal(prob.get_val('wtofd'), [0.144], tol)
+        expected_values = {
+            'ZW_RF': [-0.8],
+            'wtofd': [0.144],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -84,8 +90,14 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(prob.get_val('TCBODYWF'), [0.11957627], tol)
-        assert_near_equal(prob.get_val('CBODYWF'), [11.974576], tol)
+        expected_values = {
+            'TCBODYWF': [0.11957627],
+            'CBODYWF': [11.974576],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -105,10 +117,14 @@ class TestPreMissionSubComponents(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(
-            prob.get_val('interference_independent_of_shielded_area'), [0.05654201], tol
-        )
-        assert_near_equal(prob.get_val('drag_loss_due_to_shielded_wing_area'), [30], tol)
+        expected_values = {
+            'interference_independent_of_shielded_area': [0.05654201],
+            'drag_loss_due_to_shielded_wing_area': [30],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)
@@ -139,10 +155,14 @@ class TestPreMission(unittest.TestCase):
 
         prob.run_model()
 
-        assert_near_equal(
-            prob.get_val('interference_independent_of_shielded_area'), [0.35794891], tol
-        )
-        assert_near_equal(prob.get_val('drag_loss_due_to_shielded_wing_area'), [83.53366], tol)
+        expected_values = {
+            'interference_independent_of_shielded_area': [0.35794891],
+            'drag_loss_due_to_shielded_wing_area': [83.53366],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data, tol)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-14)

@@ -216,13 +216,13 @@ class _Prelim(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
 
     def setup(self):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         add_aviary_input(self, Aircraft.Fuselage.REF_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
             add_aviary_input(self, Aircraft.HorizontalTail.ASPECT_RATIO, units='unitless')
             add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
@@ -258,7 +258,7 @@ class _Prelim(om.ExplicitComponent):
         self.add_output(Names.XMULT, 1.0, units='unitless')
 
     def setup_partials(self):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         fuselage_var = self.fuselage_var
@@ -279,7 +279,7 @@ class _Prelim(om.ExplicitComponent):
             Names.XMULTV, Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=thickness_to_chord_scaler
         )
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             self.declare_partials(
                 Names.SPANHT,
                 [
@@ -347,7 +347,7 @@ class _Prelim(om.ExplicitComponent):
             )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         w_tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
@@ -363,7 +363,7 @@ class _Prelim(om.ExplicitComponent):
         fuselage_var = self.fuselage_var
         XDX = outputs[Names.XDX] = inputs[fuselage_var]
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
             area = inputs[Aircraft.HorizontalTail.AREA]
             span = outputs[Names.SPANHT] = (aspect_ratio * area) ** 0.5
@@ -416,13 +416,13 @@ class _Prelim(om.ExplicitComponent):
         outputs[Names.CROTVT] = CROTVT
 
     def compute_partials(self, inputs, J, discrete_inputs=None):
-        design_type = self.options[Aircraft.Design.TYPE]
+        num_horizontal_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
         num_vertical_tails = self.options[Aircraft.VerticalTail.NUM_TAILS]
 
         fuselage_var = self.fuselage_var
 
         XDX = inputs[fuselage_var]
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             area = inputs[Aircraft.HorizontalTail.AREA]
             aspect_ratio = inputs[Aircraft.HorizontalTail.ASPECT_RATIO]
 
@@ -435,7 +435,7 @@ class _Prelim(om.ExplicitComponent):
 
         da = dr = dt = dx = 0.0
 
-        if design_type is not AircraftTypes.BLENDED_WING_BODY:
+        if num_horizontal_tails > 0:
             if 0.0 < span:
                 # b = (a * ar)**0.5
                 #
@@ -669,17 +669,21 @@ class _BWBWing(om.ExplicitComponent):
     """Calculate wing wetted area of BWB aircraft geometry for FLOPS-based aerodynamics analysis."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DIST)
+        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
 
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        self.add_input('BWB_CHORD_PER_SEMISPAN_DIST', shape=num_inp_stations, units='unitless')
-        self.add_input('BWB_THICKNESS_TO_CHORD_DIST', shape=num_inp_stations, units='unitless')
+        self.add_input(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
+        )
+        self.add_input(
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations, units='unitless'
+        )
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
 
@@ -691,13 +695,13 @@ class _BWBWing(om.ExplicitComponent):
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Wing.SPAN must be positive.')
+                raise ValueError('Aircraft.Wing.SPAN must be positive.')
         rate_span = (wingspan - width) / wingspan
 
         # This part is repeated in BWBWingPrelim()
-        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DIST])
+        num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DIST], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
         )
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
@@ -708,24 +712,26 @@ class _BWBWing(om.ExplicitComponent):
         bwb_input_station_dist[1] = width / 2.0
 
         ssmw = 0.0
-        bwb_chord_per_semispan_dist = inputs['BWB_CHORD_PER_SEMISPAN_DIST']
-        bwb_thickness_to_chord_dist = inputs['BWB_THICKNESS_TO_CHORD_DIST']
+        bwb_chord_per_semispan_distribution = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
+        bwb_thickness_to_chord_distribution = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
 
-        if bwb_chord_per_semispan_dist[0] <= 5.0:
-            C1 = bwb_chord_per_semispan_dist[0] * wingspan / 2.0
+        if bwb_chord_per_semispan_distribution[0] <= 5.0:
+            C1 = bwb_chord_per_semispan_distribution[0] * wingspan / 2.0
         else:
-            C1 = bwb_chord_per_semispan_dist[0]
+            C1 = bwb_chord_per_semispan_distribution[0]
         if bwb_input_station_dist[0] <= 1.1:
             Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
         for n in range(1, num_inp_stations):
-            avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
+            avg_toc = (
+                bwb_thickness_to_chord_distribution[n - 1] + bwb_thickness_to_chord_distribution[n]
+            ) / 2.0
             ckt = 2.0 + 0.387 * avg_toc
-            if bwb_chord_per_semispan_dist[n] <= 5.0:
-                C2 = bwb_chord_per_semispan_dist[n] * wingspan / 2.0
+            if bwb_chord_per_semispan_distribution[n] <= 5.0:
+                C2 = bwb_chord_per_semispan_distribution[n] * wingspan / 2.0
             else:
-                C2 = bwb_chord_per_semispan_dist[n]
+                C2 = bwb_chord_per_semispan_distribution[n]
             if bwb_input_station_dist[n] <= 1.1:
                 Y2 = bwb_input_station_dist[n] * wingspan / 2.0
             else:

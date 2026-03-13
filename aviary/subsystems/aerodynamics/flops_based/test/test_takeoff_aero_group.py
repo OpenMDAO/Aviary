@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     N3CC,
@@ -18,6 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.preprocessors import preprocess_options
 
 
+@use_tempdirs
 class TestTakeoffAeroGroup(unittest.TestCase):
     def test_takeoff_aero_group(self):
         prob: om.Problem = make_problem(takeoff_subsystem_options)
