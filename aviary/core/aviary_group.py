@@ -669,11 +669,6 @@ class AviaryGroup(om.Group):
 
         self.phase_objects = []
 
-        # Create and add phases.
-        # This also expands mission_info to include all keys.
-        for phase_idx, phase_name in enumerate(mission_info):
-            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
-
         # Get all post_mission bus vars once.
         # TODO: This method returns a dictionary keyed by phase name, but our
         # philosophy is moving away from this.
@@ -687,7 +682,11 @@ class AviaryGroup(om.Group):
 
         # Process all subsystems for all phases.
         external_parameters = {}
-        for phase_name, phase_info in mission_info.items():
+        for phase_idx, phase_name in enumerate(mission_info):
+            # Create and add phases.
+            # This also expands mission_info to include all keys.
+            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
+
             phase_info = mission_info[phase_name]
             external_parameters[phase_name] = {}
             user_options = phase_info.get('user_options', {})
