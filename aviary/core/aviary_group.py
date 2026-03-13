@@ -669,17 +669,19 @@ class AviaryGroup(om.Group):
 
         self.phase_objects = []
 
+        # Create and add phases.
+        # This also expands mission_info to include all keys.
+        for phase_idx, phase_name in enumerate(mission_info):
+            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
+
         # Process all subsystems for all phases.
         external_parameters = {}
         all_subsystems = self.subsystems
-        for phase_idx, phase_name in enumerate(mission_info):
+        for phase_idx, phase_info in mission_info.items():
             phase_info = mission_info[phase_name]
             external_parameters[phase_name] = {}
             user_options = phase_info.get('user_options', {})
             all_subsystem_options = phase_info.get('subsystem_options', {})
-
-            # Create phase
-            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
 
             for subsystem in all_subsystems:
                 if subsystem.name in all_subsystem_options:
