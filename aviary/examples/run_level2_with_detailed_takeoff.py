@@ -28,12 +28,13 @@ subsystem_options = {
 mach_optimize = True
 altitude_optimize = True
 optimizer = 'SLSQP'
+num_segments = 3
 
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': False},
     'AB': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'ground_roll': True,
             'time_duration_ref': (100.0, 'kn'),
@@ -50,7 +51,7 @@ phase_info = {
     },
     'rotate': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'ground_roll': True,
             'clean': False,
@@ -60,6 +61,7 @@ phase_info = {
             'time_duration_bounds': ((200.0, 2.0e3), 'ft'),
             'throttle_enforcement': 'boundary_constraint',
             'rotation': True,
+            'mass_ref': (170000, 'lbm'),
             'mach_optimize': mach_optimize,
             'mach_polynomial_order': 1,
             'mach_bounds': ((0.18, 0.2), 'unitless'),
@@ -73,7 +75,7 @@ phase_info = {
                     'loc': 'final',
                     'units': 'lbf',
                     'type': 'boundary',
-                    'ref': 10.0e5,
+                    'ref': 1.0e5,
                 },
             },
         },
@@ -88,7 +90,7 @@ phase_info = {
     },
     'BC': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -100,7 +102,9 @@ phase_info = {
             'mach_bounds': ((0.2, 0.22), 'unitless'),
             'altitude_optimize': altitude_optimize,
             'altitude_polynomial_order': 1,
-            'altitude_bounds': ((0.0, 250.0), 'ft'),
+            'altitude_bounds': ((0.0, 150.0), 'ft'),
+            'altitude_final': (50.0, 'ft'),
+            'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'boundary_constraint',
             'rotation': False,
         },
@@ -115,7 +119,7 @@ phase_info = {
     },
     'CD_to_P2': {
         'user_options': {
-            'num_segments': 4,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -130,15 +134,8 @@ phase_info = {
             'altitude_initial': (50.0, 'ft'),
             'altitude_final': (985.0, 'ft'),
             'altitude_bounds': ((0.0, 985.0), 'ft'),
+            'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'boundary_constraint',
-            'constraints': {
-                'altitude': {
-                    'equals': 985.0,
-                    'loc': 'final',
-                    'units': 'ft',
-                    'type': 'boundary',
-                },
-            },
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
@@ -150,7 +147,7 @@ phase_info = {
     },
     'P2_to_DE': {
         'user_options': {
-            'num_segments': 4,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -163,6 +160,7 @@ phase_info = {
             'altitude_optimize': altitude_optimize,
             'altitude_polynomial_order': 1,
             'altitude_bounds': ((985.0, 1100.0), 'ft'),
+            'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'distance': {
@@ -176,7 +174,7 @@ phase_info = {
         },
         'subsystem_options': subsystem_options,
         'initial_guesses': {
-            'distance': [(10.0e3, 14.0e3), 'ft'],
+            'distance': [(14.0e3, 4.0e3), 'ft'],
             'time': [(60.0, 80.0), 's'],
             'mach': [(0.22, 0.3), 'unitless'],
             'altitude': [(985.0, 1100.0), 'ft'],
@@ -185,7 +183,7 @@ phase_info = {
     },
     'DE': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -198,6 +196,7 @@ phase_info = {
             'altitude_optimize': altitude_optimize,
             'altitude_polynomial_order': 2,
             'altitude_bounds': ((985.0, 1.5e3), 'ft'),
+            'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'flight_path_angle': {
@@ -219,7 +218,7 @@ phase_info = {
     },
     'EF_to_P1': {
         'user_options': {
-            'num_segments': 3,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -232,6 +231,7 @@ phase_info = {
             'altitude_optimize': altitude_optimize,
             'altitude_polynomial_order': 1,
             'altitude_bounds': ((1.1e3, 1.2e3), 'ft'),
+            'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'path_constraint',
             'constraints': {
                 'distance': {
@@ -260,7 +260,7 @@ phase_info = {
     },
     'EF_past_P1': {
         'user_options': {
-            'num_segments': 5,
+            'num_segments': num_segments,
             'order': 3,
             'clean': False,
             'time_initial_ref': (1.0e3, 'ft'),
@@ -273,6 +273,7 @@ phase_info = {
             'altitude_optimize': altitude_optimize,
             'altitude_polynomial_order': 1,
             'altitude_bounds': ((1.0e3, 3.0e3), 'ft'),
+            'mass_ref': (170000, 'lbm'),
             'throttle_enforcement': 'boundary_constraint',
             'constraints': {
                 'flight_path_angle': {
@@ -317,15 +318,24 @@ if __name__ == '__main__':
 
     prob.build_model()
 
-    prob.add_driver(optimizer, max_iter=25)
+    prob.add_driver(optimizer, max_iter=60)
+
+    if optimizer == 'IPOPT':
+        # custom optimizer seettings
+        prob.driver.opt_settings['mu_init'] = 1.0
+        prob.driver.opt_settings['nlp_scaling_method'] = 'none'
+        prob.driver.opt_settings['limited_memory_max_history'] = 50
 
     prob.add_design_variables()
 
     # Load optimization problem formulation
     # Detail which variables the optimizer can control
-    prob.add_objective('mass')
+    prob.add_objective('mass')  # maximize final mass (i.e. minimize fuel burn)
 
     prob.setup()
+
+    # set the start-of-takeoff mass to mission:summary:gross_mass
+    prob.set_val('mission:summary:gross_mass', 175000, units='lbm')
 
     prob.run_aviary_problem(suppress_solver_print=True)
 

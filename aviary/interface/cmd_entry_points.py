@@ -3,8 +3,8 @@ import os
 import sys
 
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
-from aviary.interface.methods_for_level1 import _exec_level1, _setup_level1_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
+from aviary.interface.run_aviary import _exec_run_aviary, _setup_run_aviary_parser
 from aviary.interface.test_installation import _exec_installation_test, _setup_installation_test
 from aviary.utils.aero_table_conversion_cmd import _exec_ATC, _setup_ATC_parser
 from aviary.utils.engine_deck_conversion_cmd import _exec_EDC, _setup_EDC_parser
@@ -105,15 +105,20 @@ _command_map = {
         _exec_convert,
         'Convert legacy formatted data files (aero_table, engine_deck, fortran_to_aviary, propeller_table) to Aviary format.',
     ),
-    'dashboard': (
-        _dashboard_setup_parser,
-        _dashboard_cmd,
-        'Open the results dashboard for a provided Aviary run.',
+    'run_mission': (
+        _setup_run_aviary_parser,
+        _exec_run_aviary,
+        'Run Aviary using a provided input deck.',
     ),
     'draw_mission': (
         _setup_flight_profile_parser,
         _exec_flight_profile,
         'Open the mission profile drawing GUI.',
+    ),
+    'dashboard': (
+        _dashboard_setup_parser,
+        _dashboard_cmd,
+        'Open the results dashboard for a provided Aviary run.',
     ),
     'plot_drag_polar': (
         _setup_plot_drag_polar_parser,
@@ -125,7 +130,6 @@ _command_map = {
         _rtplot_cmd,
         'Run a script and show a real-time plot of the optimization progress.',
     ),
-    'run_mission': (_setup_level1_parser, _exec_level1, 'Run Aviary using a provided input deck.'),
 }
 
 

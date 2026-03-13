@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 from aviary.utils.functions import get_path
 from aviary.variable_info.enums import Verbosity
@@ -77,7 +78,7 @@ def run_aviary(
     else:
         name = None
 
-    from aviary.interface.methods_for_level2 import AviaryProblem
+    from aviary.core.aviary_problem import AviaryProblem
 
     # Build problem
     prob = AviaryProblem(name=name, verbosity=verbosity)
@@ -120,7 +121,7 @@ def run_aviary(
     return prob
 
 
-def run_level_1(
+def run_aviary_cmd(
     input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF, rt=False
 ):
     """
@@ -146,7 +147,7 @@ def run_level_1(
     return prob
 
 
-def _setup_level1_parser(parser):
+def _setup_run_aviary_parser(parser):
     parser.add_argument(
         'input_deck',
         metavar='indeck',
@@ -177,7 +178,7 @@ def _setup_level1_parser(parser):
     )
 
 
-def _exec_level1(args, user_args):
+def _exec_run_aviary(args, user_args):
     if args.optimizer == 'None':
         args.optimizer = None
 
@@ -220,14 +221,7 @@ def _exec_level1(args, user_args):
 
         hooks._register_hook('_setup_recording', 'Problem', post=_view_realtime_plot_hook, ncalls=1)
 
-
-
-
-
-
-
-
-    run_level_1(
+    run_aviary_cmd(
         input_deck=args.input_deck,
         optimizer=args.optimizer,
         phase_info=args.phase_info,
