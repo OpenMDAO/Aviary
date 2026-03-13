@@ -697,15 +697,6 @@ class AviaryGroup(om.Group):
                 for parameter in sorted(parameter_dict):
                     external_parameters[phase_name][parameter] = parameter_dict[parameter]
 
-                # Get all controls and add them.
-                control_dicts = subsystem.get_controls(
-                    aviary_inputs=self.aviary_inputs,
-                    user_options=user_options,
-                    subsystem_options=subsystem_options,
-                )
-                for control_name, control_dict in control_dicts.items():
-                    phase.add_control(control_name, **control_dict)
-
                 # Get all timeseries outputs and add them.
                 timeseries_to_add = subsystem.get_timeseries(
                     aviary_inputs=self.aviary_inputs,

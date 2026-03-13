@@ -525,7 +525,7 @@ class PhaseBuilder(ABC):
 
     def add_subsystem_variables_to_phase(self, phase, aviary_inputs):
         """
-        Add subsystem variables like states, controls, parameters, and constraints to a phase.
+        Add subsystem states, controls, and constraints to this phase.
 
         Parameters
         ----------
@@ -546,7 +546,10 @@ class PhaseBuilder(ABC):
 
         # Loop through each subsystem in the list of external_subsystems
         for subsystem in subsystems:
-            subsystem_options = all_subsystem_options[phase_name]
+            if subsystem.name in all_subsystem_options:
+                subsystem_options = all_subsystem_options[subsystem.name]
+            else:
+                subsystem_options = {}
 
             # Fetch the states from the current subsystem
             subsystem_states = subsystem.get_states(
