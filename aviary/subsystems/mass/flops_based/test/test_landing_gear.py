@@ -50,7 +50,7 @@ class LandingGearMassTest(unittest.TestCase):
                 Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
                 Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
                 Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Aircraft.Design.TOUCHDOWN_MASS,
+                Aircraft.Design.LANDING_MASS,
             ],
             output_keys=[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS],
             version=Version.TRANSPORT,
@@ -83,7 +83,7 @@ class LandingGearMassTest2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, 100.0, 'inch')
         prob.set_val(Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, 75.0, 'inch')
-        prob.set_val(Aircraft.Design.TOUCHDOWN_MASS, 100000.0, 'lbm')
+        prob.set_val(Aircraft.Design.LANDING_MASS, 100000.0, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
@@ -228,7 +228,7 @@ class BWBLandingGearMassTest(unittest.TestCase):
                 Aircraft.LandingGear.MAIN_GEAR_MASS_SCALER,
                 Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH,
                 Aircraft.LandingGear.NOSE_GEAR_MASS_SCALER,
-                Aircraft.Design.TOUCHDOWN_MASS,
+                Aircraft.Design.LANDING_MASS,
             ],
             output_keys=[Aircraft.LandingGear.MAIN_GEAR_MASS, Aircraft.LandingGear.NOSE_GEAR_MASS],
             version=Version.BWB,

@@ -13,7 +13,7 @@ outputs = LargeSingleAisle1FLOPS['outputs'] = AviaryValues()
 # ---------------------------
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)
-inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 152800.0, 'lbm')
+inputs.set_val(Aircraft.Design.LANDING_MASS, 152800.0, 'lbm')
 inputs.set_val(Mission.Design.GROSS_MASS, 181200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.909839381134961)
