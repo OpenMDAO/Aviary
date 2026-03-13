@@ -78,9 +78,6 @@ inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)  # WSRV
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')  # WPPASS
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')  # CARGOW
-inputs.set_val(
-    Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 44.0, 'lbm'
-)  # BPP, value taken from FLOPS run
 
 # Electrical
 # ---------------------------

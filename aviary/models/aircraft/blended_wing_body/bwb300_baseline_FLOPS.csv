@@ -16,7 +16,6 @@ aircraft:canard:mass_scaler,1.0,unitless
 aircraft:canard:taper_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
 aircraft:canard:wetted_area_scaler,1.0,unitless
-aircraft:crew_and_payload:baggage_mass_per_passenger,44.0,lbm
 aircraft:crew_and_payload:cabin_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:cargo_container_mass,23500.0,lbm
