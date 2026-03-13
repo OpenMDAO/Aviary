@@ -109,7 +109,7 @@ class SimpleTestEngine(EngineModel):
     def build_mission(self, num_nodes, aviary_inputs):
         return SimpleEngine(num_nodes=num_nodes)
 
-    def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         controls_dict = {
             'different_throttle': {
                 'units': 'unitless',
@@ -130,7 +130,7 @@ class SimpleTestEngine(EngineModel):
         }
         return bus_dict
 
-    def get_initial_guesses(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         initial_guesses_dict = {
             'different_throttle': {
                 'val': 0.05,

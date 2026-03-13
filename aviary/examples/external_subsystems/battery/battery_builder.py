@@ -52,7 +52,7 @@ class BatteryBuilder(SubsystemBuilder):
         self.include_constraints = include_constraints
         super().__init__(name, meta_data=ExtendedMetaData)
 
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of states for the battery subsystem.
 
@@ -116,20 +116,18 @@ class BatteryBuilder(SubsystemBuilder):
         """
         return BatteryMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
 
-    def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of constraints for the battery subsystem.
 
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        phase_name : str
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -194,7 +192,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of fixed values exposed to the phases for the battery subsystem.
 
@@ -217,7 +215,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return parameters_dict
 
-    def get_initial_guesses(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of initial guesses for the battery subsystem.
 
@@ -276,7 +274,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return aviary_inputs
 
-    def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a list of output names for the battery subsystem.
 

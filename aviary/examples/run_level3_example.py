@@ -335,7 +335,7 @@ descent = phases['descent']
 
 externs = {'climb': {}, 'cruise': {}, 'descent': {}}
 for default_subsys in default_mission_subsystems:
-    params = default_subsys.get_parameters(aviary_inputs=aviary_inputs, phase_info={})
+    params = default_subsys.get_parameters(aviary_inputs=aviary_inputs)
     for key, val in params.items():
         for phname in externs:
             externs[phname][key] = val

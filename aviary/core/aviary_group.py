@@ -620,24 +620,6 @@ class AviaryGroup(om.Group):
 
         self.phase_objects.append(phase_object)
 
-        # TODO: add logic to filter which phases get which controls.
-        # right now all phases get all controls added from every subsystem.
-        # for example, we might only want ELECTRIC_SHAFT_POWER applied during the
-        # climb phase.
-        all_subsystems = self.subsystems
-
-        # loop through all_subsystems and call `get_controls` on each subsystem
-        for subsystem in all_subsystems:
-            # add the controls from the subsystems to each phase
-            control_dicts = subsystem.get_controls(
-                aviary_inputs=self.aviary_inputs,
-                phase_info=phase_options,
-                phase_name=phase_name,
-            )
-
-            for control_name, control_dict in control_dicts.items():
-                phase.add_control(control_name, **control_dict)
-
         # This fills in all defaults from the phase_builders user_options.
         full_options = phase_object.user_options.to_phase_info()
         self.mission_info[phase_name]['user_options'] = full_options
@@ -681,64 +663,77 @@ class AviaryGroup(om.Group):
                 self.mission_info, self.post_mission_info, self.aviary_inputs
             )
 
-        phase_info = self.mission_info
+        mission_info = self.mission_info
 
-        phases = list(phase_info.keys())
         traj = self.add_subsystem('traj', dm.Trajectory(parallel_phases=parallel_phases))
 
-        def add_subsystem_timeseries_outputs(phase, phase_name):
-            all_subsystems = self.subsystems
-            for subsystem in all_subsystems:
-                timeseries_to_add = subsystem.get_timeseries(
-                    aviary_inputs=self.aviary_inputs,
-                    phase_info=self.mission_info[phase_name],
-                    phase_name=phase_name,
-                )
-                for timeseries in timeseries_to_add:
-                    phase.add_timeseries_output(timeseries)
-                mbvars = subsystem.get_post_mission_bus_variables(
-                    self.aviary_inputs, self.mission_info
-                )
-                if mbvars:
-                    mbvars_this_phase = mbvars.get(phase_name, None)
-                    if mbvars_this_phase:
-                        timeseries_to_add = mbvars_this_phase.keys()
-                        for timeseries in timeseries_to_add:
-                            phase.add_timeseries_output(
-                                timeseries, timeseries='mission_bus_variables'
-                            )
-
         self.phase_objects = []
-        for phase_idx, phase_name in enumerate(phases):
-            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
-            add_subsystem_timeseries_outputs(phase, phase_name)
 
-        # loop through phase_info and external subsystems
+        # Process all subsystems for all phases.
         external_parameters = {}
-        for phase_name in self.mission_info:
+        all_subsystems = self.subsystems
+        for phase_idx, phase_name in enumerate(mission_info):
+            phase_info = mission_info[phase_name]
             external_parameters[phase_name] = {}
-            all_subsystems = self.subsystems
+            user_options = phase_info.get('user_options', {})
+            all_subsystem_options = phase_info.get('subsystem_options', {})
 
-            all_subsystem_options = phase_info[phase_name].get('subsystem_options', {})
+            # Create phase
+            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
 
             for subsystem in all_subsystems:
                 if subsystem.name in all_subsystem_options:
                     subsystem_options = all_subsystem_options[subsystem.name]
                 else:
                     subsystem_options = {}
+
+                # Get all parameters and assemble them.
                 parameter_dict = subsystem.get_parameters(
-                    phase_info=self.mission_info[phase_name],
                     aviary_inputs=self.aviary_inputs,
+                    user_options=user_options,
                     subsystem_options=subsystem_options,
                 )
+                # We can't guarantee a consistent order from user-provided dicts, so sort params.
                 for parameter in sorted(parameter_dict):
                     external_parameters[phase_name][parameter] = parameter_dict[parameter]
+
+                # Get all controls and add them.
+                control_dicts = subsystem.get_controls(
+                    aviary_inputs=self.aviary_inputs,
+                    user_options=user_options,
+                    subsystem_options=subsystem_options,
+                )
+                for control_name, control_dict in control_dicts.items():
+                    phase.add_control(control_name, **control_dict)
+
+                # Get all timeseries outputs and add them.
+                timeseries_to_add = subsystem.get_timeseries(
+                    aviary_inputs=self.aviary_inputs,
+                    user_options=user_options,
+                    subsystem_options=subsystem_options,
+                )
+                for timeseries in timeseries_to_add:
+                    phase.add_timeseries_output(timeseries)
+
+                # Get all post_mission bus vars and add them to the timeseries.
+                # TODO: This method returns a dictionary keyed by phase name, but our
+                # philosophy is moving away from this.
+                mbvars = subsystem.get_post_mission_bus_variables(
+                    self.aviary_inputs,
+                    mission_info=mission_info,
+                )
+                if mbvars:
+                    mbvars_this_phase = mbvars.get(phase_name, {})
+                    for timeseries in mbvars_this_phase:
+                        phase.add_timeseries_output(
+                            timeseries, timeseries='mission_bus_variables'
+                        )
 
         traj = setup_trajectory_params(
             self,
             traj,
             self.aviary_inputs,
-            phases,
+            list(mission_info.keys()),
             meta_data=self.meta_data,
             external_parameters=external_parameters,
         )
@@ -1234,7 +1229,7 @@ class AviaryGroup(om.Group):
         # Loop through all external subsystems.
         for subsystem in all_subsystems:
             for phase_name, var_mapping in subsystem.get_post_mission_bus_variables(
-                aviary_inputs=self.aviary_inputs, phase_info=self.mission_info
+                aviary_inputs=self.aviary_inputs, mission_info=self.mission_info
             ).items():
                 for mission_variable_name, variable_data in var_mapping.items():
                     post_mission_variable_names = variable_data['post_mission_name']
@@ -1491,14 +1486,22 @@ class AviaryGroup(om.Group):
             The phase object for which the subsystem guesses are being added.
         """
         all_subsystems = self.subsystems
+        phase_info = self.mission_info[phase_name]
+        user_options = phase_info.get('user_options', {})
+        all_subsystem_options = phase_info.get('subsystem_options', {})
 
         # Loop over each subsystem
         for subsystem in all_subsystems:
+            if subsystem.name in all_subsystem_options:
+                subsystem_options = all_subsystem_options[subsystem.name]
+            else:
+                subsystem_options = {}
+
             # Fetch the initial guesses for the subsystem
             initial_guesses = subsystem.get_initial_guesses(
                 aviary_inputs=self.aviary_inputs,
-                phase_info=self.mission_info[phase_name],
-                phase_name=phase_name,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
             )
 
             # Loop over each guess

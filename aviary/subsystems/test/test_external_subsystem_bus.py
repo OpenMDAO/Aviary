@@ -210,10 +210,10 @@ class CustomBuilder(SubsystemBuilder):
             }
         return vars_to_connect
 
-    def get_post_mission_bus_variables(self, aviary_inputs, phase_info):
+    def get_post_mission_bus_variables(self, aviary_inputs, mission_info):
         name = self.name
         out = {}
-        for phase_name, phase_data in phase_info.items():
+        for phase_name, phase_data in mission_info.items():
             phase_d = {}
             if phase_data.get('do_the_zz_thing', False):
                 if self.mangle_names:

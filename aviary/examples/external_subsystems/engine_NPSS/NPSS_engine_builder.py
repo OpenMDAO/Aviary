@@ -179,7 +179,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         """Transfer training data from pre-mission to mission"""
         return vars_to_connect
 
-    def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Builds dictionary of controls for engine off-design.
 
@@ -192,7 +192,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         """
         return {}
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Builds dictionary of design variables for Engine off-design.
 

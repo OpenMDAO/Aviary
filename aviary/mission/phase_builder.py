@@ -541,12 +541,18 @@ class PhaseBuilder(ABC):
         """
         phase_name = self.name
         subsystems = self.subsystems
+        user_options = self.user_options
+        all_subsystem_options = self.subsystem_options
 
         # Loop through each subsystem in the list of external_subsystems
         for subsystem in subsystems:
+            subsystem_options = all_subsystem_options[phase_name]
+
             # Fetch the states from the current subsystem
             subsystem_states = subsystem.get_states(
-                aviary_inputs=aviary_inputs, phase_info=self.user_options, phase_name=phase_name
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
             )
 
             # Add each state and its corresponding arguments to the phase
@@ -562,7 +568,9 @@ class PhaseBuilder(ABC):
                 phase.add_state(state_name, **kwargs)
 
             controls = subsystem.get_controls(
-                aviary_inputs=aviary_inputs, phase_info=self.user_options, phase_name=phase_name
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
             )
 
             for control_name in controls:
@@ -570,7 +578,9 @@ class PhaseBuilder(ABC):
                 phase.add_control(control_name, **kwargs)
 
             constraints = subsystem.get_constraints(
-                aviary_inputs=aviary_inputs, phase_info=self.user_options, phase_name=phase_name
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
             )
 
             # Add each constraint and its corresponding arguments to the phase

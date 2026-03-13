@@ -94,7 +94,10 @@ class BreguetCruisePhase(PhaseBuilder):
         meta_data=None,
     ):
         for sub in subsystems:
-            states = sub.get_states()
+            states = sub.get_states(
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             if len(states) > 0:
                 raise AttributeError(
                     'The Breguet Cruise phase does not support dynamic variables in its subsystems.'

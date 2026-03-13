@@ -74,7 +74,7 @@ class BatteryBuilder(SubsystemBuilder):
     def mission_outputs(self, aviary_inputs=None, **kwargs):
         return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
 
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         state_dict = {
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED: {
                 'fix_initial': True,
@@ -91,7 +91,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return state_dict
 
-    def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         constraint_dict = {
             # Can add constraints here; state of charge is a common one in many
             # battery applications
@@ -103,7 +103,7 @@ class BatteryBuilder(SubsystemBuilder):
         }
         return constraint_dict
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = {
             Aircraft.Battery.ENERGY_CAPACITY: {
                 'val': 0.0,

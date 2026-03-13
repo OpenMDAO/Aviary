@@ -247,7 +247,7 @@ class PostOnlyBuilder(SubsystemBuilder):
 
 
 class FailingSubsystemBuilder(SubsystemBuilder):
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             'State1': {
                 'rate_source': 'NonExistentRateSource',
@@ -268,7 +268,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         return DummyMissionComp(num_nodes=num_nodes)
 
-    def get_initial_guesses(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             Mission.Dummy.VARIABLE: {
                 'val': [1.0, 2.0, 3.0],
@@ -277,7 +277,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             Mission.Dummy.VARIABLE: {
                 'rate_source': Mission.Dummy.VARIABLE_RATE,
@@ -285,10 +285,10 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {}
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {Aircraft.Dummy.PARAMETER: {'val': 2.0, 'units': 'm'}}
 
 
@@ -342,7 +342,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
     # def mission_outputs(self, **kwargs):
     #     return [MoreMission.Dummy.DUMMY_FLIGHT_DURATION + '_rate']
 
-    def get_initial_guesses(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             MoreMission.Dummy.DUMMY_FLIGHT_DURATION: {
                 'val': [1.0, 2.0, 3.0],
@@ -351,7 +351,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             MoreMission.Dummy.DUMMY_FLIGHT_DURATION: {
                 'rate_source': MoreMission.Dummy.DUMMY_FLIGHT_DURATION + '_rate',
@@ -359,8 +359,8 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
-        if phase_name == 'cruise':
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        if subsystem_options and subsystem_options.get('enable_control', False):
             controls_dict = {
                 MoreMission.Dummy.DUMMY_CONTROL: {
                     'units': 'unitless',
@@ -373,7 +373,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
             controls_dict = {}
         return controls_dict
 
-    def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return [MoreMission.Dummy.DUMMY_CONTROL, MoreMission.Dummy.TIMESERIES_VAR]
 
 

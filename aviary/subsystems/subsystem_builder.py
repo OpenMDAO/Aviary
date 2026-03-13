@@ -56,7 +56,7 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of dynamic states defined by this subsystem. (Optional)
 
@@ -69,13 +69,11 @@ class SubsystemBuilder(ABC):
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        phase_name : str
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -90,20 +88,18 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_controls(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of control variables for the subsystem. (Optional)
 
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        phase_name : str
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -119,7 +115,7 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of parameters for the subsystem. (Optional)
 
@@ -131,11 +127,11 @@ class SubsystemBuilder(ABC):
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        subsystem_options : dict or None
-            Dictionary of optional arguments for this subsystem.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -151,7 +147,7 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_constraints(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of constraints for the subsystem.
 
@@ -160,13 +156,11 @@ class SubsystemBuilder(ABC):
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        phase_name : str
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -306,18 +300,18 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_initial_guesses(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of initial guesses for the subsystem.
 
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        **kwargs : dict
-            Dictionary of optional arguments.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -370,7 +364,7 @@ class SubsystemBuilder(ABC):
         )
         return self.get_timeseries()
 
-    def get_timeseries(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a list of outputs to add to the Dymos timeseries outputs for use when graphing or
         post-processing the mission.
@@ -378,13 +372,11 @@ class SubsystemBuilder(ABC):
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        phase_name : str
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -393,7 +385,7 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def get_post_mission_bus_variables(self, aviary_inputs=None, phase_info=None):
+    def get_post_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """
         Return a dict mapping phase names to a dict mapping mission variable names to (a list of)
         post-mission variable names.
@@ -407,8 +399,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info dict for all phases
+        mission_info : dict
+            The mission_info dict containing the phase_info for each phase.
 
         Returns
         -------

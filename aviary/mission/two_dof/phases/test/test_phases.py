@@ -13,7 +13,7 @@ from aviary.variable_info.enums import PhaseType
 
 
 class DynBuilder(SubsystemBuilder):
-    def get_states(self, aviary_inputs=None, phase_info=None, phase_name=None):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             'x': {
                 'rate_source': 'x_dot',

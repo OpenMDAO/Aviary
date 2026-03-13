@@ -377,7 +377,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         return promotes
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None, subsystem_options=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of parameters for the subsystem. (Optional)
 
@@ -389,11 +389,11 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info subdict for this phase.
-        subsystem_options : dict or None
-            Dictionary of optional arguments for this subsystem.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -418,7 +418,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         if method == 'external':
             return super().get_parameters(
                 aviary_inputs=aviary_inputs,
-                phase_info=phase_info,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
 
