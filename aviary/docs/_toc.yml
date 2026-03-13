@@ -30,7 +30,7 @@ parts:
     - file: user_guide_unreviewed/aviary_commands
     - file: user_guide_unreviewed/drawing_and_running_simple_missions
     - file: user_guide_unreviewed/pre_mission_and_mission
-    - file: user_guide_unreviewed/postprocessing_and_visualizing_results
+    - file: user_guide_unreviewed/visualizing_results
     - file: user_guide_unreviewed/features_and_functionalities
     - file: user_guide_unreviewed/custom_variable_hierarchies
     - file: user_guide_unreviewed/subsystems/subsystems
