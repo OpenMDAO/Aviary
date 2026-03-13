@@ -54,10 +54,12 @@ class LandingSegment(TwoDOFODE):
         # collect the propulsion group names for later use with
         for subsystem in subsystems:
             if isinstance(subsystem, AerodynamicsBuilder):
-                kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
+                subsystem_options = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
-                    num_nodes=1, aviary_inputs=aviary_options, **kwargs
+                    num_nodes=1,
+                    aviary_inputs=aviary_options,
+                    subsystem_options=subsystem_options
                 )
                 self.add_subsystem(
                     subsystem.name,
@@ -92,7 +94,9 @@ class LandingSegment(TwoDOFODE):
 
             if isinstance(subsystem, PropulsionBuilder):
                 propulsion_system = subsystem.build_mission(
-                    num_nodes=1, aviary_inputs=aviary_options
+                    num_nodes=1,
+                    aviary_inputs=aviary_options,
+                    subsystem_options={},
                 )
                 propulsion_mission = self.add_subsystem(
                     subsystem.name,
@@ -152,11 +156,15 @@ class LandingSegment(TwoDOFODE):
             ],
         )
 
-        kwargs = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
+        subsystem_options = {'method': 'low_speed', 'retract_flaps': True, 'retract_gear': False}
 
         self.add_subsystem(
             'aero_td',
-            aero_builder.build_mission(num_nodes=1, aviary_inputs=aviary_options, **kwargs),
+            aero_builder.build_mission(
+                num_nodes=1,
+                aviary_inputs=aviary_options,
+                subsystem_options=subsystem_options,
+            ),
             promotes_inputs=[
                 '*',
                 (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),

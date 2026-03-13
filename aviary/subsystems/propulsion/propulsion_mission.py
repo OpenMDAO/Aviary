@@ -116,13 +116,17 @@ class PropulsionMission(om.Group):
                     kwargs = engine_options[engine.name]
                 if engine.compute_max_values:
                     engine_model = engine.build_mission(
-                        num_nodes=nn, aviary_inputs=options, **kwargs
+                        num_nodes=nn, aviary_inputs=options, subsystem_options={},
                     )
                 else:
-                    base_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                    base_comp = engine.build_mission(
+                        num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                    )
                     engine_model = om.Group()
 
-                    max_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                    max_comp = engine.build_mission(
+                        num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                    )
 
                     input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
                     if engine.use_hybrid_throttle:
@@ -173,12 +177,18 @@ class PropulsionMission(om.Group):
             if engine.name in engine_options:
                 kwargs = engine_options[engine.name]
             if engine.compute_max_values:
-                engine_model = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                engine_model = engine.build_mission(
+                    num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                )
             else:
-                base_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                base_comp = engine.build_mission(
+                    num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                )
                 engine_model = om.Group()
 
-                max_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                max_comp = engine.build_mission(
+                    num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                )
 
                 input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
                 if engine.use_hybrid_throttle:

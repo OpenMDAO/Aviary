@@ -20,7 +20,7 @@ class CustomAeroBuilder(SubsystemBuilder):
     def __init__(self, name='simple_aero'):
         super().__init__(name)
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the subsystem.
 
@@ -91,7 +91,7 @@ class CustomAeroBuilder(SubsystemBuilder):
         }
         return params
 
-    def needs_mission_solver(self, aviary_inputs):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is

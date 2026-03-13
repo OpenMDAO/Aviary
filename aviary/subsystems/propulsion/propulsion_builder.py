@@ -106,12 +106,12 @@ class CorePropulsionBuilder(PropulsionBuilder):
             aviary_options=aviary_inputs, engine_models=self.engine_models, engine_options=kwargs
         )
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
         return PropulsionMission(
             num_nodes=num_nodes,
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
-            engine_options=kwargs,
+            engine_options=subsystem_options,
         )
 
     # NOTE no unittests!

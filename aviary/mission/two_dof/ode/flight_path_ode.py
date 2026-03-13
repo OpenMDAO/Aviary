@@ -114,7 +114,11 @@ class FlightPathODE(TwoDOFODE):
             )
 
         for subsystem in subsystems:
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
                 mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
                 mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)

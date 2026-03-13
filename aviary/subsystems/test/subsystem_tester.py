@@ -107,7 +107,7 @@ class TestSubsystemBuilder(unittest.TestCase):
             self.aviary_values = AviaryValues()
         # Test that the method returns an OpenMDAO System object
         mission_sys = self.subsystem_builder.build_mission(
-            10, aviary_inputs=self.aviary_values, **kwargs
+            num_nodes=10, aviary_inputs=self.aviary_values, subsystem_options=kwargs
         )
         if mission_sys is not None:
             self.assertIsInstance(
@@ -115,7 +115,9 @@ class TestSubsystemBuilder(unittest.TestCase):
             )
 
         with self.assertRaises(TypeError, msg='num_nodes argument missing from build_mission().'):
-            self.subsystem_builder.build_mission(aviary_inputs=self.aviary_values)
+            self.subsystem_builder.build_mission(
+                aviary_inputs=self.aviary_values, subsystem_options={}
+            )
 
     def test_get_constraints(self):
         constraints = self.subsystem_builder.get_constraints()
@@ -259,10 +261,12 @@ class TestSubsystemBuilder(unittest.TestCase):
         # Perform post-mission operations
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
-        phase_info = {}
+        mission_info = {}
         phase_mission_bus_lengths = {'foo': 10, 'bar': 11}
         post_mission_sys = self.subsystem_builder.build_post_mission(
-            self.aviary_values, phase_info, phase_mission_bus_lengths
+            aviary_inputs=self.aviary_values,
+            mission_info=mission_info,
+            phase_mission_bus_lengths=phase_mission_bus_lengths,
         )
 
         if post_mission_sys is not None:
@@ -287,7 +291,7 @@ class TestSubsystemBuilder(unittest.TestCase):
         states = self.subsystem_builder.get_states()
 
         mission_sys = self.subsystem_builder.build_mission(
-            num_nodes=5, aviary_inputs=self.aviary_values
+            num_nodes=5, aviary_inputs=self.aviary_values, subsystem_options={},
         )
 
         if mission_sys is None:
@@ -350,7 +354,7 @@ class TestSubsystemBuilder(unittest.TestCase):
         )
 
         mission_sys = self.subsystem_builder.build_mission(
-            num_nodes=5, aviary_inputs=self.aviary_values
+            num_nodes=5, aviary_inputs=self.aviary_values, subsystem_options={}
         )
 
         if mission_sys is None:
@@ -379,7 +383,7 @@ class TestSubsystemBuilder(unittest.TestCase):
         constraints = self.subsystem_builder.get_constraints()
 
         mission_sys = self.subsystem_builder.build_mission(
-            num_nodes=5, aviary_inputs=self.aviary_values
+            num_nodes=5, aviary_inputs=self.aviary_values, subsystem_options={}
         )
 
         if mission_sys is None:
@@ -442,7 +446,7 @@ class TestSubsystemBuilder(unittest.TestCase):
         initial_guesses = self.subsystem_builder.get_initial_guesses()
 
         mission_sys = self.subsystem_builder.build_mission(
-            num_nodes=5, aviary_inputs=self.aviary_values
+            num_nodes=5, aviary_inputs=self.aviary_values, subsystem_options={}
         )
 
         if mission_sys is None:

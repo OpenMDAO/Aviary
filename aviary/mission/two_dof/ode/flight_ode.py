@@ -189,7 +189,11 @@ class FlightODE(TwoDOFODE):
                 }
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilder):

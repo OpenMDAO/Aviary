@@ -37,13 +37,17 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Settings.VERBOSITY, 0)
 
-        kwargs = {'method': 'tabular', 'CDI_data': CDI_table, 'CD0_data': CD0_table}
+        subsystem_options = {'method': 'tabular', 'CDI_data': CDI_table, 'CD0_data': CD0_table}
 
         aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         self.prob.model.add_subsystem(
             'aero',
-            aero_builder.build_mission(num_nodes=1, aviary_inputs=aviary_options, **kwargs),
+            aero_builder.build_mission(
+                num_nodes=1,
+                aviary_inputs=aviary_options,
+                subsystem_options=subsystem_options,
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -152,7 +156,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         self.CDI_clean_table = CDI_clean_table
         self.CD0_clean_table = CD0_clean_table
 
-        kwargs = {
+        subsystem_options = {
             'method': 'tabular',
             'CDI_data': CDI_clean_table,
             'CD0_data': CD0_clean_table,
@@ -163,7 +167,11 @@ class TabularAeroGroupDataTest(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'aero',
-            aero_builder.build_mission(num_nodes=1, aviary_inputs=aviary_options, **kwargs),
+            aero_builder.build_mission(
+                num_nodes=1,
+                aviary_inputs=aviary_options,
+                subsystem_options=subsystem_options,
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -311,13 +319,17 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         prob = om.Problem()
 
-        kwargs = {'method': 'tabular', 'CDI_data': CDI_data, 'CD0_data': CD0_data}
+        subsystem_options = {'method': 'tabular', 'CDI_data': CDI_data, 'CD0_data': CD0_data}
 
         aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         prob.model.add_subsystem(
             'aero',
-            aero_builder.build_mission(num_nodes=1, aviary_inputs=flops_inputs, **kwargs),
+            aero_builder.build_mission(
+                num_nodes=1,
+                aviary_inputs=flops_inputs,
+                subsystem_options=subsystem_options,
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -675,13 +687,17 @@ class _ComputedAeroHarness(om.Group):
             promotes_outputs=['aircraft:*', 'mission:*'],
         )
 
-        kwargs = {'method': 'computed', 'gamma': gamma}
+        subsystem_options = {'method': 'computed', 'gamma': gamma}
 
         aero_builder = CoreAerodynamicsBuilder(code_origin=FLOPS)
 
         self.add_subsystem(
             'aero',
-            aero_builder.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs),
+            aero_builder.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=subsystem_options,
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -885,7 +885,7 @@ class EngineDeck(EngineModel):
 
         return engine
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
         Interpolators must be re-generated for each ODE due to potentially different
@@ -895,6 +895,10 @@ class EngineDeck(EngineModel):
         ----------
         num_nodes : int
             Number of nodes present in the current Dymos phase of mission analysis.
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------

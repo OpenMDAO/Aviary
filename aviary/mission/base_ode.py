@@ -75,28 +75,39 @@ class BaseODE(om.Group):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         all_subsystems = self.options['subsystems']
-        subsystem_options = self.options['subsystem_options']
+        all_subsystem_options = self.options['subsystem_options']
         use_mission_solver = False
 
         for subsystem in all_subsystems:
             # check if subsystem_options has entry for a subsystem of this name
-            if subsystem.name in subsystem_options:
-                kwargs = subsystem_options[subsystem.name]
+            if subsystem.name in all_subsystem_options:
+                subsystem_options = all_subsystem_options[subsystem.name]
             else:
-                kwargs = {}
+                subsystem_options = {}
 
             subsystem_mission = subsystem.build_mission(
-                num_nodes=nn, aviary_inputs=aviary_options, **kwargs
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=subsystem_options,
             )
 
             if subsystem_mission is not None:
                 target = self
-                if subsystem.needs_mission_solver(aviary_options) and solver_group is not None:
+                needs_sovler = subsystem.needs_mission_solver(
+                    aviary_inputs=aviary_options,
+                    subsystem_options=subsystem_options,
+                )
+
+                if needs_sovler and solver_group is not None:
                     target = solver_group
                     use_mission_solver = True
 
-                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
-                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options, **subsystem_options
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options, **subsystem_options
+                )
                 target.add_subsystem(
                     subsystem.name,
                     subsystem_mission,

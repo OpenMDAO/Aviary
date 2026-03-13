@@ -31,11 +31,19 @@ class SubsystemBuilder(ABC):
             meta_data = self.default_metadata
         self.meta_data = meta_data
 
-    def needs_mission_solver(self, aviary_inputs):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is
         True.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
+
         """
         return True
 
@@ -227,13 +235,22 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
         """
         Build an OpenMDAO System for the mission computations of the subsystem.
 
         Required for subsystems with mission-based dynamics.
 
         Used in the ODE class definition (e.g. mission_ODE.py) to build the mission system.
+
+        Parameters
+        ----------
+        num_nodes : int
+            Number of nodes present in the current Dymos phase of mission analysis.
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -436,7 +453,7 @@ class SubsystemBuilder(ABC):
         return {}
 
     def build_post_mission(
-        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+        self, aviary_inputs=None, mission_info=None, phase_mission_bus_lengths=None
     ):
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
@@ -447,8 +464,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info dict for all phases
+        mission_info : dict
+            The mission_info dict containing the phase_info for each phase.
         phase_mission_bus_lengths : dict
             Mapping from phase names to the lengths of the phase's "mission_bus_variables"
             timeseries

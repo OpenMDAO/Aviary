@@ -112,7 +112,9 @@ def make_problem(subsystem_options={}):
     prob.model.add_subsystem(
         name='aerodynamics',
         subsys=aero_builder.build_mission(
-            num_nodes=nn, aviary_inputs=aviary_inputs, **subsystem_options['aerodynamics']
+            num_nodes=nn,
+            aviary_inputs=aviary_inputs,
+            subsystem_options=subsystem_options['aerodynamics'],
         ),
         promotes_inputs=aero_builder.mission_inputs(**subsystem_options['aerodynamics']),
         promotes_outputs=aero_builder.mission_outputs(**subsystem_options['aerodynamics']),

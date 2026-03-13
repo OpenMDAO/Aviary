@@ -674,10 +674,20 @@ class AviaryGroup(om.Group):
         for phase_idx, phase_name in enumerate(mission_info):
             phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
 
+        # Get all post_mission bus vars once.
+        # TODO: This method returns a dictionary keyed by phase name, but our
+        # philosophy is moving away from this.
+        all_subsystems = self.subsystems
+        mbvars_by_sys = {}
+        for subsystem in all_subsystems:
+            mbvars_by_sys[subsystem.name] = subsystem.get_post_mission_bus_variables(
+                self.aviary_inputs,
+                mission_info=mission_info,
+        )
+
         # Process all subsystems for all phases.
         external_parameters = {}
-        all_subsystems = self.subsystems
-        for phase_idx, phase_info in mission_info.items():
+        for phase_name, phase_info in mission_info.items():
             phase_info = mission_info[phase_name]
             external_parameters[phase_name] = {}
             user_options = phase_info.get('user_options', {})
@@ -708,13 +718,8 @@ class AviaryGroup(om.Group):
                 for timeseries in timeseries_to_add:
                     phase.add_timeseries_output(timeseries)
 
-                # Get all post_mission bus vars and add them to the timeseries.
-                # TODO: This method returns a dictionary keyed by phase name, but our
-                # philosophy is moving away from this.
-                mbvars = subsystem.get_post_mission_bus_variables(
-                    self.aviary_inputs,
-                    mission_info=mission_info,
-                )
+                # Add bus variables to this phase.
+                mbvars = mbvars_by_sys[subsystem.name]
                 if mbvars:
                     mbvars_this_phase = mbvars.get(phase_name, {})
                     for timeseries in mbvars_this_phase:
@@ -797,7 +802,7 @@ class AviaryGroup(om.Group):
         for subsystem in self.subsystems:
             subsystem_postmission = subsystem.build_post_mission(
                 aviary_inputs=self.aviary_inputs,
-                phase_info=self.mission_info,
+                mission_info=self.mission_info,
                 phase_mission_bus_lengths=phase_mission_bus_lengths,
             )
 

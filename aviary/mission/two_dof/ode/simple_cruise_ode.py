@@ -47,7 +47,11 @@ class SimpleCruiseODE(TwoDOFODE):
                 base_kwargs = {'method': 'cruise', 'output_alpha': True}
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):

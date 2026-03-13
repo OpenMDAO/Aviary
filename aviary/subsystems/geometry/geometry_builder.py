@@ -103,16 +103,16 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         return geom_group
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
         # by default there is no geom mission, but call super for safety/future-proofing
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         geom_group = None
 
         if method != 'external':
-            geom_group = super().build_mission(num_nodes, aviary_inputs)
+            geom_group = super().build_mission(num_nodes, aviary_inputs, subsystem_options)
 
         return geom_group
 

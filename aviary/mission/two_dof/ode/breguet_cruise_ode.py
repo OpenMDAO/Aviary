@@ -37,17 +37,22 @@ class BreguetCruiseODE(TwoDOFODE):
         prop_group = om.Group()
 
         for subsystem in subsystems:
-            kwargs = {}
-
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs = subsystem_options[subsystem.name]
+            else:
+                kwargs = {}
+
             if isinstance(subsystem, AerodynamicsBuilder):
                 # set default options for Aero if not specified by user
                 base_kwargs = {'method': 'cruise', 'output_alpha': True}
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
@@ -161,6 +166,7 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
+        subsystem_options = self.options['subsystem_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -176,12 +182,23 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
 
         prop_group = om.Group()
 
-        kwargs = {
-            'method': 'cruise',
-            'output_alpha': True,
-        }
         for subsystem in subsystems:
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs = subsystem_options[subsystem.name]
+            else:
+                kwargs = {}
+
+            if isinstance(subsystem, AerodynamicsBuilder):
+                # set default options for Aero if not specified by user
+                base_kwargs = {'method': 'cruise', 'output_alpha': True}
+                kwargs.update(base_kwargs)
+
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
                     target = prop_group

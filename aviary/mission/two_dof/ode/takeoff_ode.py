@@ -153,7 +153,11 @@ class TakeOffODE(TwoDOFODE):
             if name in subsystem_options:
                 kwargs.update(subsystem_options[name])
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):

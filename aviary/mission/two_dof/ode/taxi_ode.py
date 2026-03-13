@@ -55,7 +55,9 @@ class TaxiSegment(TwoDOFODE):
 
         for subsystem in subsystems:
             if isinstance(subsystem, PropulsionBuilder):
-                system = subsystem.build_mission(num_nodes=1, aviary_inputs=options)
+                system = subsystem.build_mission(
+                    num_nodes=1, aviary_inputs=options, subsystem_options={}
+                )
 
                 self.add_subsystem(
                     subsystem.name,

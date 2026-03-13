@@ -46,7 +46,11 @@ class TestGearbox(unittest.TestCase):
         num_nodes = 3
         prob.model.add_subsystem(
             'gearbox_mission',
-            self.gearbox.build_mission(num_nodes=num_nodes, aviary_inputs=self.options),
+            self.gearbox.build_mission(
+                num_nodes=num_nodes,
+                aviary_inputs=self.options,
+                subsystem_options={},
+            ),
             promotes=['*'],
         )
 

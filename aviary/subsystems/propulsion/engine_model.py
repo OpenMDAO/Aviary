@@ -88,7 +88,7 @@ class EngineModel(SubsystemBuilder):
         """
         return None
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the engine model.
 
@@ -109,7 +109,7 @@ class EngineModel(SubsystemBuilder):
         )
 
     def build_post_mission(
-        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+        self, aviary_inputs=None, mission_info=None, phase_mission_bus_lengths=None
     ):
         """
         Build an OpenMDAO system for the post-mission computations of the engine model.

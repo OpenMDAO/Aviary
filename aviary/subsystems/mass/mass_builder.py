@@ -64,16 +64,16 @@ class CoreMassBuilder(MassBuilder):
 
         return mass_group
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
         # by default there is no mass mission, but call super for safety/future-proofing
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         mass_group = None
 
         if method != 'external':
-            mass_group = super().build_mission(num_nodes, aviary_inputs)
+            mass_group = super().build_mission(num_nodes, aviary_inputs, subsystem_options)
 
         return mass_group
 

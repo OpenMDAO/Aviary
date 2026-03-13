@@ -78,7 +78,11 @@ class MissionDragTest(unittest.TestCase):
 
         model.add_subsystem(
             'aero',
-            aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
+            aero.build_mission(
+                num_nodes=nn,
+                aviary_inputs=flops_inputs,
+                subsystem_options={'method': 'computed'},
+            ),
             promotes=['*'],
         )
 
@@ -229,7 +233,11 @@ class MissionDragTest(unittest.TestCase):
 
         model.add_subsystem(
             'aero',
-            aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
+            aero.build_mission(
+                num_nodes=nn,
+                aviary_inputs=flops_inputs,
+                subsystem_options={'method': 'computed'},
+            ),
             promotes=['*'],
         )
 
@@ -376,7 +384,11 @@ class MissionDragTest(unittest.TestCase):
 
         model.add_subsystem(
             'aero',
-            aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
+            aero.build_mission(
+                num_nodes=nn,
+                aviary_inputs=flops_inputs,
+                subsystem_options={'method': 'computed'},
+            ),
             promotes=['*'],
         )
 

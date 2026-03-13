@@ -117,8 +117,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         elif code_origin is FLOPS:
             return Design()
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
-        aero_opts = kwargs.copy()
+    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+        aero_opts = subsystem_options.copy()
         try:
             method = aero_opts.pop('method')
         except KeyError:
@@ -235,7 +235,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         return aero_group
 
     # TODO DragPolar comp is unfinished and currently does nothing
-    # def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
+    # def build_post_mission(self, aviary_inputs, mission_info, phase_mission_bus_lengths):
     #     aero_group = DragPolar(aviary_options=aviary_inputs),
 
     #     return aero_group
