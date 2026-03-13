@@ -1151,11 +1151,24 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
         (Aircraft.Fuselage.LENGTH, 'ft'),
         (Aircraft.Fuselage.MAX_WIDTH, 'ft'),
+        (Aircraft.Design.EMPTY_MASS, 'lbm'),
     ]
     for var in rem_list:
         try:
             val = input_values.get_val(var[0], var[1])[0]
             if val == 0.0:
+                input_values.delete(var[0])
+        except:
+            pass
+
+    # These variables should be removed if they are negative.
+    rem_list = [
+        (Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm'),
+    ]
+    for var in rem_list:
+        try:
+            val = input_values.get_val(var[0], var[1])[0]
+            if val < 0.0:
                 input_values.delete(var[0])
         except:
             pass
