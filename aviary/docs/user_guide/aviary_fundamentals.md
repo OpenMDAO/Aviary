@@ -5,5 +5,5 @@ This section will teach some important basics that Aviary users should be famili
 :maxdepth: 1
 :glob:
 
-getting_started/fundamentals/*
+fundamentals/*
 ```

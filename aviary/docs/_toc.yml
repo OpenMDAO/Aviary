@@ -16,12 +16,12 @@ parts:
   chapters:
     - file: user_guide/aviary_fundamentals
       sections:
-        - file: user_guide/variables
-        - file: user_guide/input_files
+        - file: user_guide/fundamentals/variables
+        - file: user_guide/fundamentals/input_files
           sections:
-            - file: user_guide/aircraft_definition
-            - file: user_guide/mission_definition
-            - file: user_guide/data_files
+            - file: user_guide/fundamentals/aircraft_definition
+            - file: user_guide/fundamentals/mission_definition
+            - file: user_guide/fundamentals/data_files
         - file: user_guide_unreviewed/outputs
         # - file: user_guide/user_interface
         # - file: new file with recommended examples to view next

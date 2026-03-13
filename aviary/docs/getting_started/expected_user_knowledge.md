@@ -26,11 +26,9 @@ For a quick introduction to gradient-based multidisciplinary optimization, [chec
 
 There is also a [free textbook on MDO](http://mdobook.github.io/) available written by Professors Joaquim R.R.A. Martins and Andrew Ning.
 
-````{margin}
 ```{note}
 This textbook is cited as a reference only, and is not officially endorsed by the Aviary team or NASA.
 ```
-````
 
 ## Programming in Python
 
