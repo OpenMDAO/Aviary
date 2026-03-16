@@ -688,7 +688,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     )[0]
     if reserve_fuel_additional <= 0:
         # This is a percentage of mission fuel
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_MARGIN, [-reserve_fuel_additional*100], units='lbm') # flip the value and multipy by 100 because it is a percentage
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_MARGIN, [-reserve_fuel_additional*100], units='unitless') # flip the value and multipy by 100 because it is a percentage
         input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm') # then clear out the unused value
     if reserve_fuel_additional > 0 and reserve_fuel_additional < 10:
         ValueError('"FRESF" is not valid between 0 and 10. To set a reserve mission flight time you must setup a reserve mission definition with a target_duration.')

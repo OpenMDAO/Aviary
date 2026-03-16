@@ -45,9 +45,9 @@ aircraft:engine:thrust_reversers_mass_scaler,0.0,unitless
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,[0.26869218],unitless
 aircraft:fuel:density,6.687,lbm/galUS
-aircraft:fuel:volume_margin,0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.041,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
+aircraft:fuel:volume_margin,0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6,unitless
 aircraft:fuselage:aisle_width,24,inch
 aircraft:fuselage:delta_diameter,4.5,ft

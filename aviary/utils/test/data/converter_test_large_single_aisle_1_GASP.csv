@@ -47,10 +47,10 @@ aircraft:engine:scaled_sls_thrust,28690.0,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.35,unitless
 aircraft:fuel:density,6.687,lbm/galUS
-aircraft:fuel:volume_margin,0.0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.041,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12.0,unitless
+aircraft:fuel:volume_margin,0.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6,unitless
 aircraft:furnishings:mass,11192.0,lbm
 aircraft:fuselage:aisle_width,24.0,inch
