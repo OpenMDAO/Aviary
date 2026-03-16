@@ -69,7 +69,6 @@ inputs.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, 'inch')  # T
 
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS_SCALER, 1.0)  # WCON
 inputs.set_val(Aircraft.CrewPayload.CARGO_CONTAINER_MASS, 23500.0, 'lbm')  # WCON
-inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS, 8)  # NSTU
 inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)  # WFLCRB
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 2)  # NGALC
