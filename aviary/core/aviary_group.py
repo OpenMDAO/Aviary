@@ -824,7 +824,7 @@ class AviaryGroup(om.Group):
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',  
+            'fuel_burned = initial_mass - mass_final',
             # TODO: Fix to include any payloads dropped off during the mission
             # We execute a similar calculaton a second time when calculating Aircraft.Design.RESERVE_FUEL_MARGIN
             initial_mass={'units': 'lbm'},
@@ -1539,7 +1539,7 @@ class AviaryGroup(om.Group):
             reserve_calc_location.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
-                promotes=[ # we switch to promotes as opposed to promote_inputs and promote_outputs here because we have to use promotes later on as well
+                promotes=[  # we switch to promotes as opposed to promote_inputs and promote_outputs here because we have to use promotes later on as well
                     ('reserve_fuel_margin', Aircraft.Design.RESERVE_FUEL_MARGIN),
                     'reserve_fuel_margin_mass',
                 ],

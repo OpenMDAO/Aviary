@@ -71,7 +71,7 @@ class ReserveTest(unittest.TestCase):
         )
         td_mass = prob.model.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm')
         reserve = prob.model.get_val(Mission.Design.RESERVE_FUEL, units='lbm')
-        assert_near_equal(reserve, reserve_percentage/100 * (140000.0 - td_mass), 1e-3)
+        assert_near_equal(reserve, reserve_percentage / 100 * (140000.0 - td_mass), 1e-3)
 
 
 if __name__ == '__main__':

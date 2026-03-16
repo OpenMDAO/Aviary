@@ -35,9 +35,7 @@ class BodyCalculationTestCase1(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=1114.006551379108, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=32853, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=42892.0, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=42892.0, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=55725.1, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=1114.0, units='ft**3'
@@ -83,9 +81,7 @@ class BodyCalculationTestCase2(
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=876.7, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=34942.7, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=44982.7, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=44982.7, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=43852.1, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=876.7, units='ft**3'
@@ -134,9 +130,7 @@ class BodyCalculationTestCase3(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=876.7, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=34942.7, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=44982.7, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=44982.7, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=43852.1, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=876.7, units='ft**3'
@@ -171,9 +165,7 @@ class BodyCalculationTestCase4smooth(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=1114.006551379108, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=32853, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=42892.0, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=42892.0, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=55725.1, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=1114.0, units='ft**3'
@@ -224,9 +216,7 @@ class BodyCalculationTestCase5(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=677.554, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=14115.342, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=30085.342, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=30085.342, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=33892.8, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=677.554, units='ft**3'
@@ -279,9 +269,7 @@ class BodyCalculationTestCase6smooth(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=677.554, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=14115.342, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=30085.342, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=30085.342, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=33892.8, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=677.554, units='ft**3'
@@ -333,18 +321,14 @@ class BodyCalculationTestCase7smooth(unittest.TestCase):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, val=620.75516364, units='ft**3'
         )
         self.prob.model.set_input_defaults('fuel_mass_min', val=11998.49344063, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=27968.49344063, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=27968.49344063, units='lbm')
         self.prob.model.set_input_defaults('max_wingfuel_mass', val=31051.56633854, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, val=620.75516364, units='ft**3'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=143100.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass', val=26236.86063849, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass', val=26236.86063849, units='lbm')
         self.prob.model.set_input_defaults(
             Mission.Summary.OPERATING_MASS, val=84331.50655937, units='lbm'
         )
@@ -381,9 +365,7 @@ class FuelAndOEMTestCase(unittest.TestCase):
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, val=21089.0, units='lbm'
         )
         self.prob.model.set_input_defaults(Mission.Summary.USEFUL_LOAD, val=4932.0, units='lbm')
-        self.prob.model.set_input_defaults(
-            'fuel_mass_required', val=42892.0, units='lbm'
-        )
+        self.prob.model.set_input_defaults('fuel_mass_required', val=42892.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, 1114, units='ft**3'
         )

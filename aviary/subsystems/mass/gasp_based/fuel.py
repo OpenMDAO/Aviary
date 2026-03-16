@@ -462,9 +462,7 @@ class BodyTankCalculations(om.ExplicitComponent):
             dmax_extra_fuel_wt_drho_fuel * conversion_factor
         )
 
-        J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'fuel_mass_required'] = (
-            dextra_fuel_wt_dreq_fuel_wt
-        )
+        J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'fuel_mass_required'] = dextra_fuel_wt_dreq_fuel_wt
         J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'max_wingfuel_mass'] = (
             dextra_fuel_wt_dmax_wingfuel_wt
         )
@@ -484,9 +482,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         )
 
         J[Aircraft.Fuel.TOTAL_CAPACITY, 'fuel_mass'] = dmax_fuel_avail_dfuel_wt_des
-        J[Aircraft.Fuel.TOTAL_CAPACITY, 'fuel_mass_required'] = (
-            dmax_fuel_avail_dreq_fuel_wt
-        )
+        J[Aircraft.Fuel.TOTAL_CAPACITY, 'fuel_mass_required'] = dmax_fuel_avail_dreq_fuel_wt
         J[Aircraft.Fuel.TOTAL_CAPACITY, 'max_wingfuel_mass'] = dmax_fuel_avail_dmax_wingfuel_wt
         J[Aircraft.Fuel.TOTAL_CAPACITY, Mission.Design.GROSS_MASS] = (
             dmax_fuel_avail_dgross_wt_initial
@@ -1440,9 +1436,7 @@ class FuelMass(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Propulsion.MASS, ['eng_comb_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS], val=1
         )
-        self.declare_partials(
-            'fuel_mass_required', [Mission.Design.GROSS_MASS], val=1
-        )
+        self.declare_partials('fuel_mass_required', [Mission.Design.GROSS_MASS], val=1)
         self.declare_partials(
             'fuel_mass_required',
             [
