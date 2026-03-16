@@ -67,7 +67,7 @@ class ReserveTest(unittest.TestCase):
         prob.run_model()
 
         res_frac = prob.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
+            Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless'
         )
         td_mass = prob.model.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm')
         reserve = prob.model.get_val(Mission.Design.RESERVE_FUEL, units='lbm')
