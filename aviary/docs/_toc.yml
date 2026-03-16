@@ -107,7 +107,7 @@ parts:
   chapters:
     - file: source_docs/variable_metadata
     - file: source_docs/phase_info_detailed
-    - file: subsystem_builder
+    - file: source_docs/subsystem_builder
     - file: _srcdocs/index
 
 - caption: Miscellaneous Resources
