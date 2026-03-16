@@ -434,7 +434,7 @@ class FuelSysAndFullFusMassTestCase(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Mission.Summary.FUEL_MASS, val=42893, units='lbm')
+        self.prob.model.set_input_defaults('fuel_mass', val=42893, units='lbm')
         self.prob.model.set_input_defaults('wingfuel_mass_min', val=32853, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
@@ -481,7 +481,7 @@ class FuelSysAndFullFusMassTestCase2(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Mission.Summary.FUEL_MASS, val=42893, units='lbm')
+        self.prob.model.set_input_defaults('fuel_mass', val=42893, units='lbm')
         self.prob.model.set_input_defaults('wingfuel_mass_min', val=32853, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
@@ -1189,7 +1189,7 @@ class BWBFuelSysAndFullFusMassTestCase(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, 0.035, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.687, units='lbm/galUS')
-        prob.model.set_input_defaults(Mission.Summary.FUEL_MASS, 24229.3, units='lbm')
+        prob.model.set_input_defaults('fuel_mass', 24229.3, units='lbm')
         prob.model.set_input_defaults('wingfuel_mass_min', 9221.6, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, 10.0, units='unitless')
 
@@ -1416,7 +1416,7 @@ class BWBFuelMassGroupTest(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, 0.035, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.687, units='lbm/galUS')
-        prob.model.set_input_defaults(Mission.Summary.FUEL_MASS, 33268.2, units='lbm')
+        prob.model.set_input_defaults('fuel_mass', 33268.2, units='lbm')
         # prob.model.set_input_defaults('wingfuel_mass_min', 0.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, 10.0, units='unitless')
 

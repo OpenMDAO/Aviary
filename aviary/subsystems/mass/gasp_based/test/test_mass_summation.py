@@ -3278,7 +3278,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         payload_mass_max_fuel -- WPLMXF = 30423.2
         max_wingfuel_mass -- WFWMX = 30309.0
         Aircraft.Design.STRUCTURE_MASS -- WST = 45623.
-        Mission.Summary.FUEL_MASS -- WFADES = 33268.2
+        FUEL_MASS -- WFADES = 33268.2
         Aircraft.Propulsion.MASS -- WP = 8592.
         FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
         fuel_mass_min -- WFAMIN = 18268.2
@@ -3360,7 +3360,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         # StructMass
         assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 44470.83642382, tol)
         # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 35262.87713501, tol)
+        assert_near_equal(prob['fuel_mass'], 35262.87713501, tol)
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 8669.11094154, tol)
         assert_near_equal(prob['fuel_mass_min'], 20262.87713501, tol)
         # FuelAndOEMOutputs

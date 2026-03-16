@@ -230,7 +230,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.Fuselage.MASS -- WB = 27160
         FUEL_MASS_REQUIRED tol -- WFAREQ = 36595.0
         Aircraft.Propulsion.MASS tol -- WP = 8592.
-        Mission.Summary.FUEL_MASS -- WFADES = 33268.2
+        FUEL_MASS -- WFADES = 33268.2
         Aircraft.Fuel.WING_VOLUME_DESIGN -- FVOLREQ = 731.6
         Mission.Summary.OPERATING_MASS tol -- OWE = 82982.
         Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY -- not in GASP
