@@ -1,5 +1,5 @@
 # created 04/01/25
-# GASP-derived aircraft input deck converted from Generic_HWB_Trade_Study.dat
+# GASP-derived aircraft input deck converted from generic_BWB_GASP.dat
 
 # Input Values
 aircraft:air_conditioning:mass_coefficient,1.155,unitless
@@ -31,7 +31,8 @@ aircraft:design:drag_coefficient_increment,0.00025,unitless
 aircraft:design:emergency_equipment_mass,100,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-aircraft:design:reserve_fuel_additional,0.2222,lbm
+aircraft:design:reserve_fuel_additional,0,lbm
+aircraft:design:reserve_fuel_margin,10.0,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:drag_divergence_shift,0.025,unitless
