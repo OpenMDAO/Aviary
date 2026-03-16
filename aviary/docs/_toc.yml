@@ -42,11 +42,11 @@ parts:
         - file: user_guide_unreviewed/subsystems/propulsion
           sections:
             - file: user_guide_unreviewed/subsystems/hamilton_standard
-            - file: user_guide_unreviewed/creating_a_turboprop_engine
+            - file: user_guide_unreviewed/subsystems/creating_a_turboprop_engine
         - file: user_guide_unreviewed/subsystems/mass
           sections:
-            - file: user_guide_unreviewed/features/blended_wing_body_GASP
-            - file: user_guide_unreviewed/features/blended_wing_body_FLOPS
+            - file: user_guide_unreviewed/subsystems/blended_wing_body_GASP
+            - file: user_guide_unreviewed/subsystems/blended_wing_body_FLOPS
         - file: user_guide_unreviewed/subsystems/using_external_subsystems
         - file: user_guide_unreviewed/subsystems/step_by_step_external_guide
         - file: user_guide_unreviewed/subsystems/battery_subsystem_example
