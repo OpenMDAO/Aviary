@@ -64,14 +64,14 @@ class BatteryBuilder(SubsystemBuilder):
 
         return battery_group
 
-    def mission_inputs(self, aviary_inputs=None, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         return [
             Aircraft.Battery.ENERGY_CAPACITY,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             Aircraft.Battery.EFFICIENCY,
         ]
 
-    def mission_outputs(self, aviary_inputs=None, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
 
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):

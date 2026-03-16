@@ -58,10 +58,10 @@ class AerodynamicsBuilder(SubsystemBuilder):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def mission_inputs(self, aviary_inputs=None, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         return ['*']
 
-    def mission_outputs(self, aviary_inputs=None, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         return ['*']
 
 
@@ -240,9 +240,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     #     return aero_group
 
-    def mission_inputs(self, aviary_inputs=None, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
 
@@ -314,8 +314,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 ]
 
             elif method in ('cruise', 'tabular_cruise'):
-                if 'output_alpha' in kwargs:
-                    if kwargs['output_alpha']:
+                if 'output_alpha' in subsystem_options:
+                    if subsystem_options['output_alpha']:
                         promotes = ['*', ('lift_req', 'weight')]
 
             else:
@@ -326,9 +326,9 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         return promotes
 
-    def mission_outputs(self, aviary_inputs=None, phase_info=None, phase_name=None, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         promotes = ['*']
@@ -355,8 +355,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 if method == 'tabular_cruise':
                     promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
                 else:
-                    if 'output_alpha' in kwargs:
-                        if kwargs['output_alpha']:
+                    if 'output_alpha' in subsystem_options:
+                        if subsystem_options['output_alpha']:
                             promotes = [
                                 Dynamic.Vehicle.DRAG,
                                 Dynamic.Vehicle.LIFT,

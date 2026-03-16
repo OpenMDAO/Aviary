@@ -151,7 +151,7 @@ class TurbopropModel(EngineModel):
 
         return turboprop_group
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         # NOTE what may be an input/output for an individual subsystem may not be an overall
         # input/output for the TurbopropModel as a whole, commenting this out for now
         # inputs = []
@@ -176,7 +176,7 @@ class TurbopropModel(EngineModel):
         # return list(set(inputs))
         return []
 
-    def mission_outputs(self, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         # NOTE what may be an input/output for an individual subsystem may not be an overall
         # input/output for the TurbopropModel as a whole, commenting this out for now
         # outputs = []

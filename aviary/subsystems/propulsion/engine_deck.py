@@ -1215,11 +1215,11 @@ class EngineDeck(EngineModel):
         }
         return params
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         inputs = [inp.value for inp in self.inputs]
         return inputs
 
-    def mission_outputs(self, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         outputs = [out.value for out in self.outputs]
         return outputs
 

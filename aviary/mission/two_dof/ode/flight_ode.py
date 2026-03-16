@@ -200,8 +200,14 @@ class FlightODE(TwoDOFODE):
                     target = lift_balance_group
                 else:
                     target = self
-                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
-                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    subsystem_options=kwargs,
+                )
                 target.add_subsystem(
                     subsystem.name,
                     system,

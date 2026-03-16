@@ -261,7 +261,7 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def mission_inputs(self, aviary_inputs=None, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         """
         Returns list of mission inputs to be promoted out of the external subsystem. By default, all
         inputs are promoted. Used when only a subset of inputs should be promoted.
@@ -270,8 +270,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        **kwargs : dict
-            Dictionary of optional arguments.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -280,7 +280,7 @@ class SubsystemBuilder(ABC):
         """
         return ['*']
 
-    def mission_outputs(self, aviary_inputs=None, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         """
         Returns list of mission outputs to be promoted out of the external subsystem. By default,
         all outputs are promoted. Used when only a subset of outputs should be promoted.
@@ -289,8 +289,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        **kwargs : dict
-            Dictionary of optional arguments.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -302,8 +302,6 @@ class SubsystemBuilder(ABC):
     def get_design_vars(self):
         """
         Return a dictionary of design variables for the subsystem.
-
-        Optional
 
         Not currently used.
 

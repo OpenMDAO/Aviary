@@ -32,11 +32,11 @@ class GearboxBuilder(SubsystemBuilder):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return GearboxMission(num_nodes=num_nodes)
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         inputs = [Aircraft.Engine.Gearbox.GEAR_RATIO, Aircraft.Engine.Gearbox.EFFICIENCY]
         return inputs
 
-    def mission_outputs(self, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         return []
 
     def get_design_vars(self):

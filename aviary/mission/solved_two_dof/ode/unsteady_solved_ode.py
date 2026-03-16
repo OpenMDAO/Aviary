@@ -180,8 +180,14 @@ class UnsteadySolvedODE(TwoDOFODE):
                 subsystem_options=kwargs,
             )
             if system is not None:
-                mission_in = subsystem.mission_inputs(aviary_inputs=aviary_options, **kwargs)
-                mission_out = subsystem.mission_outputs(aviary_inputs=aviary_options, **kwargs)
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    subsystem_options=kwargs,
+                )
                 if isinstance(subsystem, AerodynamicsBuilder):
                     mission_inputs = mission_in.copy()
                     if (
@@ -194,7 +200,7 @@ class UnsteadySolvedODE(TwoDOFODE):
                         subsystem.name,
                         system,
                         promotes_inputs=mission_inputs,
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_outputs=mission_out,
                     )
                 elif isinstance(subsystem, PropulsionBuilder):
                     throttle_balance_group.add_subsystem(

@@ -37,7 +37,7 @@ class CustomAeroBuilder(SubsystemBuilder):
         )
         return aero_group
 
-    def mission_inputs(self, aviary_inputs=None, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         promotes = [
             Dynamic.Atmosphere.STATIC_PRESSURE,
             Dynamic.Atmosphere.MACH,

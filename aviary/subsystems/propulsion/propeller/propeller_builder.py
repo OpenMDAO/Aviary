@@ -37,7 +37,7 @@ class PropellerBuilder(SubsystemBuilder):
             num_nodes=num_nodes, aviary_options=aviary_inputs, propeller_data=self.data
         )
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         inputs = [
             Dynamic.Atmosphere.MACH,
             Aircraft.Engine.Propeller.TIP_SPEED_MAX,

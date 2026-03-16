@@ -103,10 +103,12 @@ class BaseODE(om.Group):
                     use_mission_solver = True
 
                 mission_in = subsystem.mission_inputs(
-                    aviary_inputs=aviary_options, **subsystem_options
+                    aviary_inputs=aviary_options,
+                    subsystem_options=subsystem_options,
                 )
                 mission_out = subsystem.mission_outputs(
-                    aviary_inputs=aviary_options, **subsystem_options
+                    aviary_inputs=aviary_options,
+                    subsystem_options=subsystem_options,
                 )
                 target.add_subsystem(
                     subsystem.name,
