@@ -403,7 +403,7 @@ def get_value(dict_of_dicts: dict, comlpete_key: str):
     return dict_of_dicts
 
 
-def glue_variable(name: str, val=None, md_code=False, display=False):
+def glue_variable(name: str, val=None, md_code=False, display=True):
     """
     Glue a variable for later use in markdown cells of notebooks.
 
