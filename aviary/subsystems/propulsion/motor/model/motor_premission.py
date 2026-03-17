@@ -22,7 +22,7 @@ class MotorPreMission(om.Group):
         # max_throttle is set to 1 for the purposes of determining max_torque.
         self.set_input_defaults('max_throttle', 1.0, units=None)
 
-        # RPM HAS NO EFFECT ON TORQUE_MAX OR MOTOR_MASS.
+        # We Assume that RPM has no effect on TORQUE_MAX or MOTOR_MASS.
         # We did not want to write a second MotorMap() group just to remove the RPM inputs
         # since we need that input in Motor Mission.
         self.set_input_defaults('dummy_rpm', 0.0, units='rpm')
