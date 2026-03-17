@@ -75,6 +75,13 @@ def _unint(xa, ya, x):
             c4 = (rb * d2 * d3) / (p5 *  p3)
             y = ya[jx1] * c1 + ya[jx1 + 1] * c2 + ya[jx1 + 2] * c3 + ya[jx1 + 3] * c4
 
+            # we don't want y to be an array
+            try:
+                y = y[0]
+            # floats/ints will give TypeError, numpy versions give IndexError
+            except (TypeError, IndexError):
+                pass
+
     return y, extrap_flag
 
 
