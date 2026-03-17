@@ -69,10 +69,10 @@ def _unint(xa, ya, x):
             d2 = x - xa[jx1 + 1]
             d3 = x - xa[jx1 + 2]
             d4 = x - xa[jx1 + 3]
-            c1 = (ra * d2 * d3) / (p1 *  p4)
+            c1 = (ra * d2 * d3) / (p1 * p4)
             c2 = -(ra * d1 * d3) / (p1 * p2) + (rb * d3 * d4) / (p2 * p5)
             c3 = (ra * d1 * d2) / (p2 * p4) - (rb * d2 * d4) / (p2 * p3)
-            c4 = (rb * d2 * d3) / (p5 *  p3)
+            c4 = (rb * d2 * d3) / (p5 * p3)
             y = ya[jx1] * c1 + ya[jx1 + 1] * c2 + ya[jx1 + 2] * c3 + ya[jx1 + 3] * c4
 
     return y, extrap_flag
@@ -696,8 +696,7 @@ class HamiltonStandard(om.ExplicitComponent):
             AF_adj_CT[2:] = AF_adj_CT[1]
 
             if adv_ratio[i_node] <= 0.5:
-                AFCTE = (2.0 * adv_ratio[i_node] * (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
-                )
+                AFCTE = 2.0 * adv_ratio[i_node] * (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
             else:
                 AFCTE = AF_adj_CT[1]
 
