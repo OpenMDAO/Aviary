@@ -631,7 +631,7 @@ class HamiltonStandard(om.ExplicitComponent):
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
     def setup_partials(self):
-        #self.declare_partials('*', '*', method='cs')
+        # self.declare_partials('*', '*', method='cs')
         # This should pick up 3 because the vectorized inputs have digaonal jacs.
         self.declare_coloring(
             '*', method='cs', num_full_jacs=1, show_summary=False, show_sparsity=False
@@ -696,9 +696,7 @@ class HamiltonStandard(om.ExplicitComponent):
             AF_adj_CT[2:] = AF_adj_CT[1]
 
             if adv_ratio[i_node] <= 0.5:
-                AFCTE = (
-                    2.0 * adv_ratio[i_node] * (AF_adj_CT[1] - AF_adj_CT[0])
-                    + AF_adj_CT[0]
+                AFCTE = (2.0 * adv_ratio[i_node] * (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
                 )
             else:
                 AFCTE = AF_adj_CT[1]
@@ -853,9 +851,7 @@ class HamiltonStandard(om.ExplicitComponent):
                 # ERR_CT = CTG1[il]/CTTT[ibb], where CTG1 =CT_Eff - CTTT(IBB).
                 CTG[0] = 0.100
                 CTG[1] = 0.200
-                TFCLII, extrap_flag = _unint(
-                    advance_ratio_array, TF_CLI_arr, adv_ratio[i_node]
-                )
+                TFCLII, extrap_flag = _unint(advance_ratio_array, TF_CLI_arr, adv_ratio[i_node])
                 NCTG = 10
                 ifnd1 = 0
                 ifnd2 = 0
