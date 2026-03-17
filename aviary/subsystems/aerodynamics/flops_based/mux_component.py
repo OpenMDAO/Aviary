@@ -25,6 +25,7 @@ class MuxComponent(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Fuselage.NUM_FUSELAGES)
+        add_aviary_option(self, Aircraft.HorizontalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.Design.TYPE)
 
@@ -39,7 +40,7 @@ class MuxComponent(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.LAMINAR_FLOW_LOWER, units='unitless')
 
         # Horizontal Tail
-        num = self.options[Aircraft.VerticalTail.NUM_TAILS]
+        num = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
         self.num_h_tails = num
         if num > 0:
