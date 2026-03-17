@@ -299,7 +299,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=25, units='ft')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -436,7 +436,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.Strut.AREA_RATIO, val=0.021893, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'

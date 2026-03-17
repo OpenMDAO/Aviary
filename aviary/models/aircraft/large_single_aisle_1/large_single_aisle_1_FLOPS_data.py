@@ -110,7 +110,7 @@ inputs.set_val(Aircraft.HorizontalTail.AREA, 355.0, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 6.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.22)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.125)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.2)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 592.65, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)

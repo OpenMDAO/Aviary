@@ -90,7 +90,7 @@ aircraft:horizontal_tail:mass_scaler,1.42225,unitless
 aircraft:horizontal_tail:sweep,30.5853213018973,deg
 aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0,unitless
 aircraft:horizontal_tail:wetted_area,576.571192,ft**2
 aircraft:horizontal_tail:wetted_area_scaler,1,unitless
 aircraft:hydraulics:mass_scaler,0.95543,unitless

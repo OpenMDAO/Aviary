@@ -618,7 +618,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:horizontal_tail:vertical_tail_fraction",
+        "aircraft:horizontal_tail:vertical_tail_mount_location",
         0.0,
         "unitless",
         "<class 'float'>"

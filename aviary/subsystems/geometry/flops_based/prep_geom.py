@@ -760,7 +760,9 @@ class _Tail(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
 
         add_aviary_input(self, Aircraft.HorizontalTail.WETTED_AREA_SCALER, units='unitless')
 
@@ -790,7 +792,7 @@ class _Tail(om.ExplicitComponent):
         if not redux:
             self.declare_partials(
                 Aircraft.HorizontalTail.WETTED_AREA,
-                [Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION],
+                [Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION],
             )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
@@ -806,7 +808,7 @@ class _Tail(om.ExplicitComponent):
         if not redux:
             num_fuselage_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
 
-            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
+            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
 
             wetted_area *= 1.0 - (0.185 + num_fuselage_engines * 0.063) * (
                 1.0 - vertical_tail_fraction
@@ -834,7 +836,7 @@ class _Tail(om.ExplicitComponent):
         if not redux:
             num_fuselage_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES]
 
-            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
+            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
 
             fengines = 0.185 + num_fuselage_engines * 0.063
             fact = 1.0 - fengines * (1.0 - vertical_tail_fraction)
@@ -848,7 +850,8 @@ class _Tail(om.ExplicitComponent):
             deriv = scaler * XMULTH * area * fengines
 
             J[
-                Aircraft.HorizontalTail.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION
+                Aircraft.HorizontalTail.WETTED_AREA,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
             ] = deriv
 
             J[
@@ -915,7 +918,9 @@ class _Fuselage(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA_SCALER, units='unitless')
 
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
@@ -932,7 +937,7 @@ class _Fuselage(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.WETTED_AREA_SCALER,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Names.CROOTB,
@@ -965,7 +970,7 @@ class _Fuselage(om.ExplicitComponent):
             scaler = inputs[Aircraft.Fuselage.WETTED_AREA_SCALER]
             ht_thickness_chord = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
 
-            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
+            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
 
             CROTVT = inputs[Names.CROTVT]
 
@@ -1008,7 +1013,7 @@ class _Fuselage(om.ExplicitComponent):
             vt_thickness_chord = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
 
             length = inputs[Aircraft.Fuselage.LENGTH]
-            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
+            vertical_tail_fraction = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
 
             cfa = calc_fuselage_adjustment(CROOTB, thickness_chord)
             cfah = calc_fuselage_adjustment(CRTHTB, ht_thickness_chord)
@@ -1051,9 +1056,9 @@ class _Fuselage(om.ExplicitComponent):
                 scaler * -dcfav[1]
             )
 
-            J[Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = (
-                scaler * 2.0 * cfah
-            )
+            J[
+                Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION
+            ] = scaler * 2.0 * cfah
         else:
             J[Aircraft.Fuselage.WETTED_AREA, Names.CROOTB] = J[
                 Aircraft.Fuselage.WETTED_AREA, Names.CRTHTB
@@ -1062,7 +1067,7 @@ class _Fuselage(om.ExplicitComponent):
             ] = J[Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.LENGTH] = J[
                 Aircraft.Fuselage.WETTED_AREA, Aircraft.Fuselage.WETTED_AREA_SCALER
             ] = J[Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.THICKNESS_TO_CHORD] = J[
-                Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION
+                Aircraft.Fuselage.WETTED_AREA, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION
             ] = J[Aircraft.Fuselage.WETTED_AREA, Aircraft.VerticalTail.THICKNESS_TO_CHORD] = J[
                 Aircraft.Fuselage.WETTED_AREA, Aircraft.Wing.THICKNESS_TO_CHORD
             ] = 0.0

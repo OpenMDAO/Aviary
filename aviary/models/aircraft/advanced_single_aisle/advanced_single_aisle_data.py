@@ -149,7 +149,7 @@ inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 29.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.2734375)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.115)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.42225)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 576.571192, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)

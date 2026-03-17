@@ -346,7 +346,7 @@ class Aircraft:
         SWEEP = 'aircraft:horizontal_tail:sweep'
         TAPER_RATIO = 'aircraft:horizontal_tail:taper_ratio'
         THICKNESS_TO_CHORD = 'aircraft:horizontal_tail:thickness_to_chord'
-        VERTICAL_TAIL_FRACTION = 'aircraft:horizontal_tail:vertical_tail_fraction'
+        VERTICAL_TAIL_MOUNT_LOCATION = 'aircraft:horizontal_tail:vertical_tail_mount_location'
         VOLUME_COEFFICIENT = 'aircraft:horizontal_tail:volume_coefficient'
         WETTED_AREA = 'aircraft:horizontal_tail:wetted_area'
         WETTED_AREA_SCALER = 'aircraft:horizontal_tail:wetted_area_scaler'

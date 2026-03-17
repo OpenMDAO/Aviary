@@ -221,7 +221,7 @@ def _init_geom(prob):
     prob.set_val(Aircraft.Wing.TAPER_RATIO, setup_data['slm'])
     prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, setup_data['tcr'])
     prob.set_val(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, setup_data['hwing'])
-    prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, setup_data['sah'])
+    prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, setup_data['sah'])
     prob.set_val(Aircraft.HorizontalTail.SPAN, setup_data['bht'])
     prob.set_val(Aircraft.VerticalTail.SPAN, setup_data['bvt'])
     prob.set_val(Aircraft.HorizontalTail.AREA, setup_data['sht'])
@@ -293,7 +293,7 @@ class XLiftsTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SWEEP, 45.0, units='deg')
         prob.model.set_input_defaults(
@@ -333,7 +333,7 @@ class XLiftsTest(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 10.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SWEEP, 30.0, units='deg')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SWEEP, 45.0, units='deg')
         prob.model.set_input_defaults(
@@ -612,7 +612,7 @@ class WingTailRatiosTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
         prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
@@ -733,7 +733,7 @@ class BWBAeroSetupTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
         prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
@@ -1225,7 +1225,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
         prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
@@ -1410,7 +1410,7 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
         prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
@@ -1550,7 +1550,7 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
         prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')
@@ -1699,7 +1699,7 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.VERTICAL_MOUNT_LOCATION, 0.5, units='unitless')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.SPAN, 0.04467601, units='ft')
         prob.model.set_input_defaults(Aircraft.VerticalTail.SPAN, 16.98084188, units='ft')

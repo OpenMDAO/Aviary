@@ -4002,7 +4002,7 @@ add_meta_data(
 
 # TODO preprocessing for this variable on FLOPS side
 add_meta_data(
-    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.SAH',
