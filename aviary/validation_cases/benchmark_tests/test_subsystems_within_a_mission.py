@@ -29,7 +29,7 @@ class TestSubsystemsMission(unittest.TestCase):
             'cruise': {
                 'subsystem_options': {
                     'aerodynamics': {'method': 'cruise', 'solve_alpha': True},
-                    'additional_array_guess': {'enable_control': True}
+                    'additional_array_guess': {'enable_control': True},
                 },
                 'user_options': {
                     'num_segments': 2,

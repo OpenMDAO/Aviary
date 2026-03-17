@@ -85,19 +85,22 @@ class TurbopropModel(EngineModel):
     def needs_mission_solver(self, aviary_inputs, subsystem_options):
         if self.shaft_power_model is not None:
             shp_solver = self.shaft_power_model.needs_mission_solver(
-                aviary_inputs=aviary_inputs, subsystem_options=subsystem_options,
+                aviary_inputs=aviary_inputs,
+                subsystem_options=subsystem_options,
             )
         else:
             shp_solver = False
         if self.gearbox_model is not None:
             gearbox_solver = self.gearbox_model.needs_mission_solver(
-                aviary_inputs=aviary_inputs, subsystem_options=subsystem_options,
+                aviary_inputs=aviary_inputs,
+                subsystem_options=subsystem_options,
             )
         else:
             gearbox_solver = False
         if self.propeller_model is not None:
             prop_solver = self.propeller_model.needs_mission_solver(
-                aviary_inputs=aviary_inputs, subsystem_options=subsystem_options,
+                aviary_inputs=aviary_inputs,
+                subsystem_options=subsystem_options,
             )
         else:
             prop_solver = False

@@ -291,7 +291,9 @@ class TestSubsystemBuilder(unittest.TestCase):
         states = self.subsystem_builder.get_states()
 
         mission_sys = self.subsystem_builder.build_mission(
-            num_nodes=5, aviary_inputs=self.aviary_values, subsystem_options={},
+            num_nodes=5,
+            aviary_inputs=self.aviary_values,
+            subsystem_options={},
         )
 
         if mission_sys is None:

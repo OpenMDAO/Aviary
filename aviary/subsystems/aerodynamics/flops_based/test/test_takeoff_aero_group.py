@@ -123,7 +123,7 @@ def make_problem(subsystem_options={}):
         promotes_outputs=aero_builder.mission_outputs(
             aviary_inputs=aviary_inputs,
             subsystem_options=subsystem_options['aerodynamics'],
-        )
+        ),
     )
 
     prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')

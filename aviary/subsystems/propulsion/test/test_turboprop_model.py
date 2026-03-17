@@ -83,9 +83,7 @@ class TurbopropMissionTest(unittest.TestCase):
         self.prob.model.add_subsystem(
             engine.name,
             subsys=engine.build_mission(
-                num_nodes=num_nodes,
-                aviary_inputs=options,
-                subsystem_options=kwargs
+                num_nodes=num_nodes, aviary_inputs=options, subsystem_options=kwargs
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],

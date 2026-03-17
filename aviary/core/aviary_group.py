@@ -678,7 +678,7 @@ class AviaryGroup(om.Group):
             mbvars_by_sys[subsystem.name] = subsystem.get_post_mission_bus_variables(
                 self.aviary_inputs,
                 mission_info=mission_info,
-        )
+            )
 
         # Process all subsystems for all phases.
         external_parameters = {}
@@ -722,9 +722,7 @@ class AviaryGroup(om.Group):
                 if mbvars:
                     mbvars_this_phase = mbvars.get(phase_name, {})
                     for timeseries in mbvars_this_phase:
-                        phase.add_timeseries_output(
-                            timeseries, timeseries='mission_bus_variables'
-                        )
+                        phase.add_timeseries_output(timeseries, timeseries='mission_bus_variables')
 
         traj = setup_trajectory_params(
             self,
