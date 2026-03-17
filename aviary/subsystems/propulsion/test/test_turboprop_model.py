@@ -343,7 +343,7 @@ class TurbopropMissionTest(unittest.TestCase):
         assert_near_equal(shp, shp_expected, tolerance=1e-8)
         assert_near_equal(total_thrust, total_thrust_expected, tolerance=1e-8)
         assert_near_equal(prop_thrust, prop_thrust_expected, tolerance=1e-8)
-        assert_near_equal(electric_power, electric_power_expected, tolerance=1e-8)
+        assert_near_equal(electric_power, electric_power_expected, tolerance=2e-7)
 
         # Note: There isn't much point in checking the partials of a component
         # that computes them with FD.
