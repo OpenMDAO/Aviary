@@ -633,7 +633,9 @@ class HamiltonStandard(om.ExplicitComponent):
     def setup_partials(self):
         #self.declare_partials('*', '*', method='cs')
         # This should pick up 3 because the vectorized inputs have digaonal jacs.
-        self.declare_coloring('*', method='cs', num_full_jacs=1)
+        self.declare_coloring(
+            '*', method='cs', num_full_jacs=1, show_summary=False, show_sparsity=False
+        )
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
