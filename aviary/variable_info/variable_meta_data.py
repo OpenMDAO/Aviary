@@ -2619,7 +2619,7 @@ add_meta_data(
     types=str,
     default_value=None,
     option=True,
-    desc='filepath to data file containing motor performance tables',
+    desc='filepath to data file containing electric motor performance table',
     multivalue=True,
 )
 
