@@ -50,6 +50,7 @@ class MotorMap(om.Group):
         rpm_vals = np.unique(data_dict['rpm_vals'])
         rpm_units = units_dict['rpm_vals']
         torque_vals = np.unique(data_dict['torque_vals'])
+        torque_max = np.max(torque_vals)
         torque_units = units_dict['torque_vals']
         efficiency = data_dict['efficiency'].reshape(len(torque_vals), len(rpm_vals)).T
         efficiency_units = units_dict['efficiency']
@@ -80,7 +81,7 @@ class MotorMap(om.Group):
                 'torque_unscaled = torque_max * throttle',
                 torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
                 torque_max={
-                    'val': torque_vals[-1],
+                    'val': torque_max,
                     'units': 'N*m',
                 },  # only used as input because we need to dynamically assign the last value of torque as the max torque
                 throttle={'val': np.ones(n), 'units': 'unitless'},
