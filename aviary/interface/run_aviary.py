@@ -116,6 +116,7 @@ def run_aviary(
         run_driver=run_driver,
         make_plots=make_plots,
         verbosity=verbosity,
+        rt=rt
     )
 
     return prob
@@ -188,38 +189,38 @@ def _exec_run_aviary(args, user_args):
 
 
 
-    def _view_realtime_plot_hook(problem):
-        driver = problem.driver
-        if not driver:
-            raise RuntimeError(
-                'Unable to run realtime optimization progress plot because no Driver'
-            )
-        if len(problem.driver._rec_mgr._recorders) == 0:
-            raise RuntimeError(
-                'Unable to run realtime optimization progress plot '
-                'because no case recorder attached to Driver'
-            )
+    # def _view_realtime_plot_hook(problem):
+    #     driver = problem.driver
+    #     if not driver:
+    #         raise RuntimeError(
+    #             'Unable to run realtime optimization progress plot because no Driver'
+    #         )
+    #     if len(problem.driver._rec_mgr._recorders) == 0:
+    #         raise RuntimeError(
+    #             'Unable to run realtime optimization progress plot '
+    #             'because no case recorder attached to Driver'
+    #         )
 
-        case_recorder_file = str(problem.driver._rec_mgr._recorders[0]._filepath)
+    #     case_recorder_file = str(problem.driver._rec_mgr._recorders[0]._filepath)
 
-        cmd = ['openmdao', 'realtime_plot', '--pid', str(os.getpid()), case_recorder_file]
-        cp = subprocess.Popen(cmd)  # nosec: trusted input
+    #     cmd = ['openmdao', 'realtime_plot', '--pid', str(os.getpid()), case_recorder_file]
+    #     cp = subprocess.Popen(cmd)  # nosec: trusted input
 
-        # Do a quick non-blocking check to see if it immediately failed
-        # This will catch immediate failures but won't wait for the process to finish
-        quick_check = cp.poll()
-        if quick_check is not None and quick_check != 0:
-            # Process already terminated with an error
-            stderr = cp.stderr.read().decode()
-            raise RuntimeError(
-                f'Failed to start up the realtime plot server with code {quick_check}: {stderr}.'
-            )
+    #     # Do a quick non-blocking check to see if it immediately failed
+    #     # This will catch immediate failures but won't wait for the process to finish
+    #     quick_check = cp.poll()
+    #     if quick_check is not None and quick_check != 0:
+    #         # Process already terminated with an error
+    #         stderr = cp.stderr.read().decode()
+    #         raise RuntimeError(
+    #             f'Failed to start up the realtime plot server with code {quick_check}: {stderr}.'
+    #         )
 
-    # register the hook
-    if args.rt:
-        import openmdao.utils.hooks as hooks
+    # # register the hook
+    # if args.rt:
+    #     import openmdao.utils.hooks as hooks
 
-        hooks._register_hook('_setup_recording', 'Problem', post=_view_realtime_plot_hook, ncalls=1)
+    #     hooks._register_hook('_setup_recording', 'Problem', post=_view_realtime_plot_hook, ncalls=1)
 
     run_aviary_cmd(
         input_deck=args.input_deck,
