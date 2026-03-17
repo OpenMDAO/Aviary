@@ -203,7 +203,7 @@ two_dof_phase_info = {
             'order': 3,
             'EAS_target': (250, 'kn'),
             'mach_target': 0.475,
-            'time_duration_bounds': ((30, 300), 's'),
+            'time_duration_bounds': ((30, 400), 's'),
             'time_duration_ref': (1000, 's'),
             'altitude_final': (10.0e3, 'ft'),
             'altitude_bounds': ((400.0, 11_000.0), 'ft'),
