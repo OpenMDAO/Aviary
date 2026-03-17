@@ -39,7 +39,7 @@ class GearboxBuilder(SubsystemBuilder):
     def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
         return []
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Design vars are only tested to see if they exist in pre_mission
         Returns a dictionary of design variables for the gearbox subsystem, where the keys are the

@@ -224,11 +224,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return complete_bus_vars
 
     # NOTE no unittests!
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """Call get_design_vars() on all engine models and return combined result."""
         design_vars = {}
         for engine in self.engine_models:
-            engine_design_vars = engine.get_design_vars()
+            engine_design_vars = engine.get_design_vars(aviary_inputs=aviary_inputs)
             design_vars.update(engine_design_vars)
 
         return design_vars

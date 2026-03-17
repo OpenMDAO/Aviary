@@ -284,14 +284,14 @@ class TurbopropModel(EngineModel):
 
         return params
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         desvars = super().get_design_vars()  # calls from EngineModel
         if self.shaft_power_model is not None:
-            desvars.update(self.shaft_power_model.get_design_vars())
+            desvars.update(self.shaft_power_model.get_design_vars(aviary_inputs=aviary_inputs))
         if self.gearbox_model is not None:
-            desvars.update(self.gearbox_model.get_design_vars())
+            desvars.update(self.gearbox_model.get_design_vars(aviary_inputs=aviary_inputs))
         if self.propeller_model is not None:
-            desvars.update(self.propeller_model.get_design_vars())
+            desvars.update(self.propeller_model.get_design_vars(aviary_inputs=aviary_inputs))
         return desvars
 
 

@@ -192,7 +192,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         """
         return {}
 
-    def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Builds dictionary of design variables for Engine off-design.
 

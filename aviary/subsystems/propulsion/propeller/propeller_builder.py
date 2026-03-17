@@ -57,7 +57,7 @@ class PropellerBuilder(SubsystemBuilder):
         outputs = [Dynamic.Vehicle.Propulsion.THRUST]
         return outputs
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Design vars are only tested to see if they exist in pre_mission
         Returns a dictionary of design variables for the propeller subsystem, where the keys are the

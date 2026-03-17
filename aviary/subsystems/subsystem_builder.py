@@ -299,11 +299,16 @@ class SubsystemBuilder(ABC):
         """
         return ['*']
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Return a dictionary of design variables for the subsystem.
 
         Not currently used.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------

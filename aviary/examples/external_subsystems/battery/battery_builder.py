@@ -163,7 +163,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return constraints
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Return a dictionary of design variables for the battery subsystem.
 

@@ -1282,7 +1282,7 @@ class AviaryGroup(om.Group):
 
         # loop through all_subsystems and call `get_design_vars` on each subsystem
         for subsystem in all_subsystems:
-            dv_dict = subsystem.get_design_vars()
+            dv_dict = subsystem.get_design_vars(aviary_inputs=self.aviary_inputs)
             for dv_name, dv_dict in dv_dict.items():
                 self.add_design_var(dv_name, **dv_dict)
 
