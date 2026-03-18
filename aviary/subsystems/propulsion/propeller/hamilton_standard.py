@@ -695,19 +695,19 @@ class HamiltonStandard(om.ExplicitComponent):
             AF_adj_CP[2:] = AF_adj_CP[1]
             AF_adj_CT[2:] = AF_adj_CT[1]
 
-            if adv_ratio[i_node] <= 0.5:
+            if adv_ratio[i_node].real <= 0.5:
                 AFCTE = 2.0 * adv_ratio[i_node] * (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
             else:
                 AFCTE = AF_adj_CT[1]
 
             # bounding J (advance ratio) for setting up interpolation
-            if adv_ratio[i_node] <= 1.0:
+            if adv_ratio[i_node].real <= 1.0:
                 J_begin = 0
                 J_end = 3
-            elif adv_ratio[i_node] <= 1.5:
+            elif adv_ratio[i_node].real <= 1.5:
                 J_begin = 1
                 J_end = 4
-            elif adv_ratio[i_node] <= 2.0:
+            elif adv_ratio[i_node].real <= 2.0:
                 J_begin = 2
                 J_end = 5
             else:
@@ -876,7 +876,7 @@ class HamiltonStandard(om.ExplicitComponent):
                                 f'ERROR IN PROP. PERF.-- NERPT={NERPT}, '
                                 f'extrap_flag={extrap_flag}, il={il}, kl = {kl}'
                             )
-                        if adv_ratio[i_node] != 0.0:
+                        if adv_ratio[i_node].real != 0.0:
                             ZMCRT, extrap_flag = _unint(
                                 advance_ratio_array2,
                                 mach_corr_table[CL_tab_idx],
