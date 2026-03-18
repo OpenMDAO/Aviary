@@ -1049,7 +1049,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
 
         # avoid divide by zero when shaft power is zero
         calc_idx = np.where(inputs['power_coefficient'] > 1e-6)  # index where CP > 1e-5
-        prop_eff = np.zeros(self.options['num_nodes'])
+        prop_eff = np.zeros(self.options['num_nodes'], dtype=ctx.dtype)
         prop_eff[calc_idx] = (
             inputs['advance_ratio'][calc_idx]
             * ctx[calc_idx]
