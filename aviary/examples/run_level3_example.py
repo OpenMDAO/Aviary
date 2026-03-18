@@ -459,9 +459,8 @@ prob.model.post_mission.add_subsystem(
 )
 
 ecomp = om.ExecComp(
-    'overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
+    'overall_fuel = fuel_burned + reserve_fuel',
     overall_fuel={'units': 'lbm', 'shape': 1},
-    fuel_margin={'units': 'unitless', 'val': 0},
     fuel_burned={'units': 'lbm'},  # from regular_phases only
     reserve_fuel={'units': 'lbm', 'shape': 1},
 )
@@ -469,7 +468,6 @@ prob.model.post_mission.add_subsystem(
     'fuel_calc',
     ecomp,
     promotes_inputs=[
-        ('fuel_margin', Aircraft.Fuel.FUEL_MARGIN),
         ('fuel_burned', Mission.Summary.FUEL_BURNED),
         ('reserve_fuel', Mission.Design.RESERVE_FUEL),
     ],

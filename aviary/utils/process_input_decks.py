@@ -83,7 +83,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val(Settings.PROBLEM_TYPE, val=ProblemType.SIZING)
     aircraft_values.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=0)
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
-    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
+    aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_MARGIN, val=0)
     # these are used in initialization_guessing()
     aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
     aircraft_values.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=0, units='lbm')
@@ -327,8 +327,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     problem_type = aircraft_values.get_val(Settings.PROBLEM_TYPE)
     num_pax = aircraft_values.get_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS)
     reserve_val = aircraft_values.get_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm')
-    reserve_frac = aircraft_values.get_val(Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless')
-
+    reserve_frac = aircraft_values.get_val(Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless')
     if initialization_guesses['fuel_burn_per_passenger_mile'] <= 0:
         initialization_guesses['fuel_burn_per_passenger_mile'] = 0.1
 

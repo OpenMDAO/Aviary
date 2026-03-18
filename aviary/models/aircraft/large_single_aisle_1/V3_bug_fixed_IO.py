@@ -47,7 +47,7 @@ V3_bug_fixed_options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, u
 V3_bug_fixed_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28690]), units='lbf')
 # NOTE override required for mass summation test
 V3_bug_fixed_options.set_val(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
-V3_bug_fixed_options.set_val(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
+V3_bug_fixed_options.set_val(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
 
 V3_bug_fixed_non_metadata = AviaryValues()

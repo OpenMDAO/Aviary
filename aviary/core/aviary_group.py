@@ -824,7 +824,9 @@ class AviaryGroup(om.Group):
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',  # TODO: Fix to be difference in cumulative fuel burn
+            'fuel_burned = initial_mass - mass_final',
+            # TODO: Fix to include any payloads dropped off during the mission
+            # We execute a similar calculaton a second time when calculating Aircraft.Design.RESERVE_FUEL_MARGIN
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
@@ -890,10 +892,10 @@ class AviaryGroup(om.Group):
         # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
         # also include the unused fuel, and the hierarchy variable name should be
         # more clear
+
         ecomp = om.ExecComp(
-            'overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
+            'overall_fuel = fuel_burned + reserve_fuel',
             overall_fuel={'units': 'lbm', 'shape': 1},
-            fuel_margin={'units': 'unitless', 'val': 0},
             fuel_burned={'units': 'lbm'},  # from regular_phases only
             reserve_fuel={'units': 'lbm', 'shape': 1},
         )
@@ -901,7 +903,6 @@ class AviaryGroup(om.Group):
             'fuel_calc',
             ecomp,
             promotes_inputs=[
-                ('fuel_margin', Aircraft.Fuel.FUEL_MARGIN),
                 ('fuel_burned', Mission.Summary.FUEL_BURNED),
                 ('reserve_fuel', Mission.Design.RESERVE_FUEL),
             ],
@@ -1519,39 +1520,60 @@ class AviaryGroup(om.Group):
         else:
             reserve_calc_location = self.model
 
-        RESERVE_FUEL_FRACTION = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
+        RESERVE_FUEL_MARGIN = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless'
         )
-        if RESERVE_FUEL_FRACTION != 0:
+        if RESERVE_FUEL_MARGIN != 0:
+            # Originally tried to reference Mission.Summary.FUEL_BURNED for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
-                reserve_fuel_frac_mass={'units': 'lbm'},
-                reserve_fuel_fraction={
+                'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
+                reserve_fuel_margin_mass={'units': 'lbm'},
+                reserve_fuel_margin={
                     'units': 'unitless',
-                    'val': RESERVE_FUEL_FRACTION,
+                    'val': RESERVE_FUEL_MARGIN,
                 },
+                initial_mass={'units': 'lbm'},
                 final_mass={'units': 'lbm'},
-                takeoff_mass={'units': 'lbm'},
             )
 
             reserve_calc_location.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
-                promotes_inputs=[
-                    ('takeoff_mass', Mission.Summary.GROSS_MASS),
-                    ('final_mass', Mission.Landing.TOUCHDOWN_MASS),
-                    ('reserve_fuel_fraction', Aircraft.Design.RESERVE_FUEL_FRACTION),
+                promotes=[  # we switch to promotes as opposed to promote_inputs and promote_outputs here because we have to use promotes later on as well
+                    ('reserve_fuel_margin', Aircraft.Design.RESERVE_FUEL_MARGIN),
+                    'reserve_fuel_margin_mass',
                 ],
-                promotes_outputs=['reserve_fuel_frac_mass'],
+            )
+
+            # Connect inicial mass correctly
+            if self.pre_mission_info['include_takeoff']:
+                reserve_calc_location.promotes(
+                    'reserve_fuel_frac',
+                    [('initial_mass', Mission.Summary.GROSS_MASS)],
+                )
+            else:
+                # timeseries has to be used because Breguet cruise phases don't have
+                # states
+                self.connect(
+                    f'traj.{self.regular_phases[0]}.timeseries.mass',
+                    'reserve_fuel_frac.initial_mass',
+                    src_indices=[0],
+                )
+            # connect final mass
+
+            self.connect(
+                f'traj.{self.regular_phases[-1]}.timeseries.mass',
+                'reserve_fuel_frac.final_mass',
+                src_indices=[-1],
             )
 
         RESERVE_FUEL_ADDITIONAL = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
         )
         reserve_fuel = om.ExecComp(
-            'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+            'reserve_fuel = reserve_fuel_margin_mass + reserve_fuel_additional + reserve_fuel_burned',
             reserve_fuel={'units': 'lbm', 'shape': 1},
-            reserve_fuel_frac_mass={'units': 'lbm', 'val': 0},
+            reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
             reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
             reserve_fuel_burned={'units': 'lbm', 'val': 0},
         )
@@ -1560,7 +1582,7 @@ class AviaryGroup(om.Group):
             'reserve_fuel',
             reserve_fuel,
             promotes_inputs=[
-                'reserve_fuel_frac_mass',
+                'reserve_fuel_margin_mass',
                 ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
                 ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
             ],
