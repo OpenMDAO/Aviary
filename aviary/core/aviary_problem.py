@@ -1,6 +1,5 @@
 import csv
 import json
-import math
 import os
 import subprocess
 import warnings
@@ -8,14 +7,16 @@ from copy import deepcopy
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from packaging import version
+
+import numpy as np
 
 import dymos as dm
-import numpy as np
 import openmdao
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
-from packaging import version
+import openmdao.utils.hooks as hooks
 
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
@@ -1225,19 +1226,6 @@ class AviaryProblem(om.Problem):
                 self.model.list_inputs(out_stream=outfile)
 
         def _view_realtime_plot_hook(driver):
-
-            # Check if no driver case recorder file and if not, add one
-            # if len(driver._rec_mgr._recorders) == 0:
-            #     recorder = om.SqliteRecorder('optimization_history.db')
-            #     self.driver.add_recorder(recorder)
-
-
-            # if len(problem.driver._rec_mgr._recorders) == 0:
-            #     raise RuntimeError(
-            #         'Unable to run realtime optimization progress plot '
-            #         'because no case recorder attached to Driver'
-            #     )
-
             case_recorder_file = str(driver._rec_mgr._recorders[0]._filepath)
 
             cmd = ['openmdao', 'realtime_plot', '--pid', str(os.getpid()), case_recorder_file]
@@ -1253,21 +1241,15 @@ class AviaryProblem(om.Problem):
                     f'Failed to start up the realtime plot server with code {quick_check}: {stderr}.'
                 )
 
-        # register the hook
+        # register the hook to stat up the real-time plot server
         if rt:
-            import openmdao.utils.hooks as hooks
             if not self.driver:
                 raise RuntimeError(
                     'Unable to run realtime optimization progress plot because no Driver'
                 )
 
             hooks._register_hook('_setup_recording', 'Driver', post=_view_realtime_plot_hook, ncalls=1)
-
             hooks._setup_hooks(self.driver)
-
-
-
-
 
         if suppress_solver_print:
             self.set_solver_print(level=0)
