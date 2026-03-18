@@ -835,22 +835,9 @@ class AviaryGroup(om.Group):
         post_mission.add_subsystem(
             'fuel_burned',
             ecomp,
-            promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
+            promotes_inputs=[('initial_mass', Mission.Summary.GROSS_MASS)],
+            promotes_outputs=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
         )
-
-        if self.pre_mission_info['include_takeoff']:
-            post_mission.promotes(
-                'fuel_burned',
-                [('initial_mass', Mission.Summary.GROSS_MASS)],
-            )
-        else:
-            # timeseries has to be used because Breguet cruise phases don't have
-            # states
-            self.connect(
-                f'traj.{self.regular_phases[0]}.timeseries.mass',
-                'fuel_burned.initial_mass',
-                src_indices=[0],
-            )
 
         self.connect(
             f'traj.{self.regular_phases[-1]}.timeseries.mass',
@@ -1539,28 +1526,13 @@ class AviaryGroup(om.Group):
             reserve_calc_location.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
-                promotes=[  # we switch to promotes as opposed to promote_inputs and promote_outputs here because we have to use promotes later on as well
+                promotes_inputs=[
+                    ('initial_mass', Mission.Summary.GROSS_MASS),
                     ('reserve_fuel_margin', Aircraft.Design.RESERVE_FUEL_MARGIN),
-                    'reserve_fuel_margin_mass',
                 ],
+                promotes_outputs=['reserve_fuel_margin_mass'],
             )
-
-            # Connect inicial mass correctly
-            if self.pre_mission_info['include_takeoff']:
-                reserve_calc_location.promotes(
-                    'reserve_fuel_frac',
-                    [('initial_mass', Mission.Summary.GROSS_MASS)],
-                )
-            else:
-                # timeseries has to be used because Breguet cruise phases don't have
-                # states
-                self.connect(
-                    f'traj.{self.regular_phases[0]}.timeseries.mass',
-                    'reserve_fuel_frac.initial_mass',
-                    src_indices=[0],
-                )
             # connect final mass
-
             self.connect(
                 f'traj.{self.regular_phases[-1]}.timeseries.mass',
                 'reserve_fuel_frac.final_mass',
