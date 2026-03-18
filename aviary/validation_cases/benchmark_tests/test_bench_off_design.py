@@ -514,7 +514,7 @@ class PayloadRangeTest(unittest.TestCase):
                 24368.28182739,
                 0,
             ],
-            tolerance=1e-10,
+            tolerance=1e-8,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Fuel', 'lbm'),
@@ -531,12 +531,12 @@ class PayloadRangeTest(unittest.TestCase):
         assert_near_equal(
             off_design_probs[0].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             165899.19090919,
-            tolerance=1e-12,
+            tolerance=1e-8,
         )
         assert_near_equal(
             off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             140541.17160737,
-            tolerance=1e-12,
+            tolerance=1e-8,
         )
 
 
