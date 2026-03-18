@@ -27,8 +27,7 @@ What kind of aircraft you are modeling (regional jet, general aviation, blended-
 
 As a framework, Aviary is able to integrate external tools and methods into the design loop. We refer to these user-provided models as "external subsystems".
 This is extremely powerful and can help designers capture the effects of interacting (or "coupled") systems during optimization.
-Please see the [external subsystems doc pages](../user_guide_unreviewed/using_external_subsystems.md) for more information on how to add your own subsystems to an Aviary model.
-
+Please see the [external subsystems doc pages](../user_guide_unreviewed/subsystems/using_external_subsystems) for more information on how to add your own subsystems to an Aviary model.
 
 ### Included Methods
 
@@ -50,11 +49,11 @@ The basic subsystems included with Aviary are:
 For each of these subsystems, Aviary provides a few different methods that can be used.
 In general, these are very low-fidelity methods that emphasize computational speed over detail. These methods are primarily empirical models based on historical data, occasionally augmented with raw tabular data from other models or experiments or some physics-based models.
 
-The [Theory Guide](./theory_guide/intro) provides much more information on the specific methods used for each subsystem.
+The [Theory Guide](../theory_guide/intro.ipynb) provides much more information on the specific methods used for each subsystem.
 
 ### Optimization
 Aviary excels at designing aircraft through optimization.
 Aircraft sizing problems are solved via gradient-based optimization, allowing for the design of the aircraft and trajectory analysis to be solved simultaneously.
 For unconventional aircraft designs, this makes Aviary extremely useful for fully accounting for the effects of coupled systems.
 
-Aviary's [Installation Guide](./getting_started/installation) provides instructions on how to get access to several different gradient-based optimizers that can be used with the tool.
+Aviary's [Installation Guide](./installation.ipynb) provides instructions on how to get access to several different gradient-based optimizers that can be used with the tool.

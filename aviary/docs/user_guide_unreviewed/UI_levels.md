@@ -14,7 +14,7 @@ While Level 1 requires no Python coding, it incorporates methods and functionali
 Working with Aviary at Level 1 means you access it through a command line interface (CLI) or with a call to a singular Python function.
 You do not have to keep track of multi-line Python scripts when using Level 1.
 Level 1 is the simplest way to use Aviary, but it is also the most limited.
-This interface level uses a [text-based input file](input_files) to define aircraft and mission properties.
+This interface level uses a [text-based input file](../user_guide/fundamentals/input_files.ipynb) to define aircraft and mission properties.
 
 ## Level 2
 
@@ -25,7 +25,7 @@ By incorporating methods from Level 3, Level 2 empowers users to define and mani
 
 Level 2 is where you can integrate user-defined external subsystems, which is one of the main features of the Aviary tool.
 The idea is that a user who wants to incorporate a new subsystem doesn't necessarily need to understand all the Python and OpenMDAO methods that Aviary uses, but instead only needs to create a builder class for their subsystem following an expected format.
-[Other docs go into much more detail about how to create and use external subsystems within Aviary.](subsystems)
+[Other docs go into much more detail about how to create and use external subsystems within Aviary.](./subsystems/using_external_subsystems.md)
 
 ## Level 3
 
