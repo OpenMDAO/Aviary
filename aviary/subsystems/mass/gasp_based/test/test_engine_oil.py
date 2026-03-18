@@ -58,7 +58,7 @@ class ElectricalTestCase1(unittest.TestCase):
 
         prob.model.set_input_defaults(
             Aircraft.Engine.SCALED_SLS_THRUST, val=29500, units='lbf'
-        )
+        )  # generic_BWB_GASP.csv - 11.45
 
         prob.setup(check=False, force_alloc_complex=True)
 
