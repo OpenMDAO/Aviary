@@ -110,7 +110,7 @@ class CoreMassBuilder(MassBuilder):
             f.write('||||\n')
             f.write(f'|####**AIRCRAFT DESIGN DETAILS:**####|||\n')
             f.write('||||\n')
-            
+
             f.write('\n| Name | Value | Units |\n')
             f.write('|:-|:-|:-|\n')
             val, units = find_variable_in_problem(Aircraft.Wing.MASS, prob, self.meta_data)
