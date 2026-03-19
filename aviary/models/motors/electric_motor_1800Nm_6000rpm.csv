@@ -1,7 +1,7 @@
 # Electric motor efficiency map
 # Motor: 1800 N*m max torque, 6000 rpm max speed
 
-rpm_vals (rpm, input), torque_vals (N*m, input), efficiency (unitless, output)
+rotations_per_minute (rpm, input), torque_unscaled (N*m, input), efficiency (unitless, output)
 0,0,0.871
 500,0,0.872
 1000,0,0.862

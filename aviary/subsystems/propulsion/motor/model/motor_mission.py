@@ -31,7 +31,7 @@ class MotorMission(om.Group):
             ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.TORQUE,
-                'motor_efficiency',
+                'efficiency',
             ],
         )
 
@@ -61,7 +61,7 @@ class MotorMission(om.Group):
                 efficiency={'val': np.ones(nn), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[('efficiency', 'motor_efficiency')],
+            promotes_inputs=['efficiency'],
             promotes_outputs=[('power_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
         )
 
@@ -91,7 +91,7 @@ class MotorMission(om.Group):
                     Dynamic.Vehicle.Propulsion.TORQUE,
                     Dynamic.Vehicle.Propulsion.TORQUE_MAX,
                 ),
-                'motor_efficiency',
+                'efficiency',
             ],
         )
 

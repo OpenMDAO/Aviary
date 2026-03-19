@@ -38,7 +38,7 @@ class TestMotorMission(unittest.TestCase):
 
         torque = prob.get_val(Dynamic.Vehicle.Propulsion.TORQUE, 'N*m')
         max_torque = prob.get_val(Dynamic.Vehicle.Propulsion.TORQUE_MAX, 'N*m')
-        efficiency = prob.get_val('motor_efficiency')
+        efficiency = prob.get_val('efficiency')
         shp = prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER)
         max_shp = prob.get_val(Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX)
         power = prob.get_val(Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN, 'kW')

@@ -47,29 +47,29 @@ class MotorMap(om.Group):
             units_dict[name] = units
 
         # Reshape to 2D array
-        rpm_vals = np.unique(data_dict['rpm_vals'])
-        rpm_units = units_dict['rpm_vals']
-        torque_vals = np.unique(data_dict['torque_vals'])
-        torque_max = np.max(torque_vals)
-        torque_units = units_dict['torque_vals']
-        efficiency = data_dict['efficiency'].reshape(len(torque_vals), len(rpm_vals)).T
+        rotations_per_minute = np.unique(data_dict['rotations_per_minute'])
+        rpm_units = units_dict['rotations_per_minute']
+        torque_unscaled = np.unique(data_dict['torque_unscaled'])
+        torque_max = np.max(torque_unscaled)
+        torque_units = units_dict['torque_unscaled']
+        efficiency = data_dict['efficiency'].reshape(len(torque_unscaled), len(rotations_per_minute)).T
         efficiency_units = units_dict['efficiency']
 
         motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=False)
         motor.add_input(
             Dynamic.Vehicle.Propulsion.RPM,
             val=np.ones(n),
-            training_data=rpm_vals,
+            training_data=rotations_per_minute,
             units=rpm_units,
         )
         motor.add_input(
             'torque_unscaled',
             val=np.ones(n),  # unscaled torque
-            training_data=torque_vals,
+            training_data=torque_unscaled,
             units=torque_units,
         )
         motor.add_output(
-            'motor_efficiency',
+            'efficiency',
             val=np.ones(n),
             training_data=efficiency,
             units=efficiency_units,
@@ -94,7 +94,7 @@ class MotorMap(om.Group):
             name='motor_efficiency',
             subsys=motor,
             promotes_inputs=[Dynamic.Vehicle.Propulsion.RPM],
-            promotes_outputs=['motor_efficiency'],
+            promotes_outputs=['efficiency'],
         )
 
         # Now that we know the efficiency, scale up the torque correctly for the engine
@@ -119,6 +119,7 @@ class MotorMap(om.Group):
             ],
         )
 
+        # Connect Torque
         self.connect(
             'throttle_to_torque.torque_unscaled',
             ['motor_efficiency.torque_unscaled', 'scale_motor_torque.torque_unscaled'],
