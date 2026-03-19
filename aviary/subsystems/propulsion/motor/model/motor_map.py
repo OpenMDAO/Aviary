@@ -52,7 +52,9 @@ class MotorMap(om.Group):
         torque_unscaled = np.unique(data_dict['torque_unscaled'])
         torque_max = np.max(torque_unscaled)
         torque_units = units_dict['torque_unscaled']
-        efficiency = data_dict['efficiency'].reshape(len(torque_unscaled), len(rotations_per_minute)).T
+        efficiency = (
+            data_dict['efficiency'].reshape(len(torque_unscaled), len(rotations_per_minute)).T
+        )
         efficiency_units = units_dict['efficiency']
 
         motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=False)
