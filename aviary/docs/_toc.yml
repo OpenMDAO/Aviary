@@ -61,6 +61,7 @@ parts:
 
 - caption: Examples
   chapters:
+    - file: examples/intro
     - file: examples/simple_mission
     - file: examples/custom_optimization
     - file: examples/reserve_mission
