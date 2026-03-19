@@ -7,9 +7,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class MotorPreMission(om.Group):
     """Calculate electric motor mass for a single motor."""
 
-    def initialize(self):
-        self.name = 'motor_premission'
-
     def setup(self):
         # Determine max torque of scaled motor
 

@@ -10,7 +10,6 @@ class MotorMission(om.Group):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.name = 'motor_mission'
 
     def setup(self):
         nn = self.options['num_nodes']
