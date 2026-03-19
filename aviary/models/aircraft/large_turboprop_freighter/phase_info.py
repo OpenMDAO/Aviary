@@ -141,7 +141,7 @@ two_dof_phase_info = {
             'velocity_ref': (200, 'kn'),
             'velocity_ref0': (0, 'kn'),
             'time_duration_ref': (10, 's'),
-            'time_duration_bounds': ((5.0, 1000.0), 's'),
+            'time_duration_bounds': ((5.0, 25.0), 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -153,7 +153,7 @@ two_dof_phase_info = {
             'altitude_defect_ref': (500, 'ft'),
             'altitude_final': (500, 'ft'),
             'altitude_constraint_ref': (500, 'ft'),
-            'flight_path_angle_bounds': ((-10.0, 20.0), 'rad'),
+            'flight_path_angle_bounds': ((0.0, 20.0), 'rad'),
             'flight_path_angle_ref': (57.2958, 'deg'),
             'flight_path_angle_defect_ref': (57.2958, 'deg'),
             'flight_path_angle_initial': (0.0, 'deg'),
@@ -254,6 +254,8 @@ two_dof_phase_info = {
     'cruise': {
         'user_options': {
             'phase_type': PhaseType.SIMPLE_CRUISE,
+            'num_segments': 1,
+            'order': 3,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
             'mass_bounds': ((0, None), 'lbm'),
