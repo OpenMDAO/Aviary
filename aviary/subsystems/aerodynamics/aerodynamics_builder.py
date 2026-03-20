@@ -495,23 +495,27 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
             if method == 'computed':
                 try:
+                    verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+                except KeyError:
+                    verbosity = Verbosity.QUIET
+                try:
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
                 except KeyError:
                     design_type = AircraftTypes.TRANSPORT
-                    if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    if verbosity >= Verbosity.BRIEF:
                         warnings.warn('Assume the aircraft is a transport.')
 
                 try:
                     num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
                 except KeyError:
                     num_horizontal_tails = 1
-                    if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    if verbosity >= Verbosity.BRIEF:
                         warnings.warn('Assume there is a horizontal tail.')
                 try:
                     num_vertical_tails = aviary_inputs.get_val(Aircraft.VerticalTail.NUM_TAILS)
                 except KeyError:
                     num_vertical_tails = 1
-                    if aviary_inputs.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    if verbosity >= Verbosity.BRIEF:
                         warnings.warn('Assume there is a vertical tail.')
 
                 if design_type is AircraftTypes.BLENDED_WING_BODY:
