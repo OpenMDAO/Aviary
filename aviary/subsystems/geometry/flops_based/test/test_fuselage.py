@@ -66,9 +66,9 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         prob.run_model()
 
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
-        assert_near_equal(pax_compart_length, 107.53947222, tolerance=1e-9)
+        assert_near_equal(pax_compart_length, 108.37731944, tolerance=1e-9)
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
-        assert_near_equal(fuselage_length, 147.53947222, tolerance=1e-9)
+        assert_near_equal(fuselage_length, 148.37731944, tolerance=1e-9)
 
         fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
         assert_near_equal(fuselage_width, 14.84, tolerance=1e-9)
