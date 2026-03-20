@@ -478,7 +478,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             if isinstance(num_fulselage_engines, (list, np.ndarray)):
                 num_fulselage_engines = num_fulselage_engines[0]
 
-        if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in aviary_options:
+        if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in aviary_options:
             if (
                 Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
                 and num_fulselage_engines > 1
@@ -486,21 +486,21 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             ):
                 HHT = 1
                 warnings.warn(
-                    'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified and '
+                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified and '
                     'Aircraft.Engine.NUM_FUSELAGE_ENGINES = '
                     f'{aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)}'
                     ' assume T-Tail configuration. Setting '
-                    ' Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 1'
+                    ' Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 1'
                 )
             else:
                 HHT = 0
                 warnings.warn(
-                    'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified '
+                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified '
                     'assume conventional tail configuration. Setting '
-                    'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0'
+                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 0'
                 )
             aviary_options.set_val(
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 val=HHT,
                 units='unitless',
             )

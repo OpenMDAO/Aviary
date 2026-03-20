@@ -994,7 +994,9 @@ class TailMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_ARM, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.VerticalTail.MOMENT_ARM, units='ft')
         add_aviary_input(self, Aircraft.VerticalTail.THICKNESS_TO_CHORD, units='unitless')
@@ -1048,7 +1050,7 @@ class TailMass(om.ExplicitComponent):
                 Aircraft.HorizontalTail.SPAN,
                 Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER,
                 Aircraft.HorizontalTail.TAPER_RATIO,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.VerticalTail.AREA,
                 'min_dive_vel',
                 Aircraft.VerticalTail.MOMENT_ARM,
@@ -1075,7 +1077,7 @@ class TailMass(om.ExplicitComponent):
         htail_mom_arm = inputs[Aircraft.HorizontalTail.MOMENT_ARM]
         tc_ratio_root_htail = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
         root_chord_htail = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
-        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
         vtail_area = inputs[Aircraft.VerticalTail.AREA]
         vtail_mom_arm = inputs[Aircraft.VerticalTail.MOMENT_ARM]
         tc_ratio_root_vtail = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
@@ -1150,7 +1152,7 @@ class TailMass(om.ExplicitComponent):
         htail_mom_arm = inputs[Aircraft.HorizontalTail.MOMENT_ARM]
         tc_ratio_root_htail = inputs[Aircraft.HorizontalTail.THICKNESS_TO_CHORD]
         root_chord_htail = inputs[Aircraft.HorizontalTail.ROOT_CHORD]
-        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION]
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
         vtail_area = inputs[Aircraft.VerticalTail.AREA]
         vtail_mom_arm = inputs[Aircraft.VerticalTail.MOMENT_ARM]
         tc_ratio_root_vtail = inputs[Aircraft.VerticalTail.THICKNESS_TO_CHORD]
@@ -1527,7 +1529,7 @@ class TailMass(om.ExplicitComponent):
             * htail_loc
             / 2
         )
-        J[Aircraft.VerticalTail.MASS, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = (
+        J[Aircraft.VerticalTail.MASS, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION] = (
             380.0
             / GRAV_ENGLISH_LBM
             * (

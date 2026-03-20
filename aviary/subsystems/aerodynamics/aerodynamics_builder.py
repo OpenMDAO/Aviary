@@ -860,7 +860,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.HorizontalTail.MOMENT_RATIO,
     Aircraft.HorizontalTail.SPAN,
     Aircraft.HorizontalTail.SWEEP,
-    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
     Aircraft.Nacelle.AVG_LENGTH,
     Aircraft.Nacelle.FORM_FACTOR,
     Aircraft.Nacelle.SURFACE_AREA,

@@ -364,7 +364,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Engine.THRUST_REVERSERS_MASS,
                 Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
                 # LandingMassGroup
-                Aircraft.Design.TOUCHDOWN_MASS,
+                Aircraft.Design.LANDING_MASS,
                 # SurfaceControlMass
                 Aircraft.Wing.SURFACE_CONTROL_MASS,
                 Aircraft.Wing.CONTROL_SURFACE_AREA,
@@ -629,7 +629,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 14152.3734702, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 5513.13877521, tol)
@@ -870,7 +870,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 11731.15573539, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 4032.5967, tol)
@@ -1111,6 +1111,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
         assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 420000.0, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 8093.1997108029764, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 2526.5144041515805, tol)

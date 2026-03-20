@@ -168,7 +168,7 @@ class PrepGeomTest(unittest.TestCase):
                 Aircraft.HorizontalTail.ASPECT_RATIO,
                 Aircraft.HorizontalTail.TAPER_RATIO,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.HorizontalTail.WETTED_AREA_SCALER,
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.Nacelle.AVG_LENGTH,
@@ -367,7 +367,7 @@ class _TailTest(unittest.TestCase):
                 Names.XMULTH,
                 Names.XMULTV,
                 Aircraft.HorizontalTail.AREA,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.HorizontalTail.WETTED_AREA_SCALER,
                 Aircraft.VerticalTail.AREA,
                 Aircraft.VerticalTail.WETTED_AREA_SCALER,
@@ -425,7 +425,7 @@ class _FuselageTest(unittest.TestCase):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.WETTED_AREA_SCALER,
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
@@ -841,7 +841,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # _BWBWing
         # skip
         # _Tail
-        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.311)
+        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0.311)
         # _BWBFuselage
         # skip
         # _FuselageRatios
@@ -1128,7 +1128,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # skip
         # _Tail
         prob.set_val(Aircraft.HorizontalTail.AREA, val=0.0)
-        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0.311)
+        prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0.311)
         prob.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, val=1.0)
         prob.set_val(Aircraft.VerticalTail.AREA, val=0.0)
         prob.set_val(Aircraft.VerticalTail.WETTED_AREA_SCALER, val=1.0)
