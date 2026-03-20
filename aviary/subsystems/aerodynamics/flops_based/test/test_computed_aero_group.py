@@ -76,7 +76,8 @@ class MissionDragTest(unittest.TestCase):
                 subsystems=default_premission_subsystems,
                 subsystem_options={},
             ),
-        )
+            promotes_inputs=['aircraft:*'],
+            promotes_outputs=['aircraft:*', 'mission:*'],        )
 
         model.add_subsystem(
             'aero',
