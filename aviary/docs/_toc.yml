@@ -42,7 +42,7 @@ parts:
         - file: user_guide_unreviewed/subsystems/atmosphere
         - file: user_guide_unreviewed/subsystems/propulsion
           sections:
-            - file: user_guide_unreviewed/electric_motor
+            - file: user_guide_unreviewed/subsystems/electric_motor
             - file: user_guide_unreviewed/subsystems/hamilton_standard
             - file: user_guide_unreviewed/subsystems/creating_a_turboprop_engine
         - file: user_guide_unreviewed/subsystems/mass
