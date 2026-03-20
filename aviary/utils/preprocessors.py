@@ -477,7 +477,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             if isinstance(num_fulselage_engines, (list, np.ndarray)):
                 num_fulselage_engines = num_fulselage_engines[0]
 
-        if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in aviary_options:
+        if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in aviary_options:
             if (
                 Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
                 and num_fulselage_engines > 1
