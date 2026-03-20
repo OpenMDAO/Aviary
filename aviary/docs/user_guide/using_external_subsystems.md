@@ -1,4 +1,4 @@
-# Using external subsystems
+# External Subsystems
 
 Aviary has the ability to include user-defined external subsystems within its mission analysis and optimization processes.
 This doc page explains what these subsystems are, how to write a builder object that Aviary uses, and details the methods that you need to provide to use external subsystems.
