@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.motor.model.motor_map import MotorMap
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -11,13 +10,6 @@ class MotorMission(om.Group):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
-        self.options.declare(
-            'aviary_inputs',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-            default=None,
-        )
-        self.name = 'motor_mission'
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -39,7 +31,7 @@ class MotorMission(om.Group):
             ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.TORQUE,
-                'motor_efficiency',
+                'efficiency',
             ],
         )
 
@@ -69,7 +61,7 @@ class MotorMission(om.Group):
                 efficiency={'val': np.ones(nn), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
-            promotes_inputs=[('efficiency', 'motor_efficiency')],
+            promotes_inputs=['efficiency'],
             promotes_outputs=[('power_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
         )
 
@@ -99,7 +91,7 @@ class MotorMission(om.Group):
                     Dynamic.Vehicle.Propulsion.TORQUE,
                     Dynamic.Vehicle.Propulsion.TORQUE_MAX,
                 ),
-                'motor_efficiency',
+                'efficiency',
             ],
         )
 
