@@ -24,7 +24,8 @@ class CorePreMission(om.Group):
         self.options.declare('subsystems', desc='list of subsystem builders')
         self.options.declare(
             'subsystem_options',
-            desc='dictionary containing all options for the subsystems in premission')
+            desc='dictionary containing all options for the subsystems in premission'
+        )
         self.options.declare('meta_data', desc='problem metadata', default=_MetaData)
 
         # NOTE this flag is only needed for tests - in AviaryProblem it should always be False
