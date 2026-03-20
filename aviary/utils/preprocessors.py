@@ -502,7 +502,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
                 Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 val=HHT,
                 units='unitless',
-            ) 
+            )
 
     return aviary_options
 
