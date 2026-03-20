@@ -101,9 +101,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         self.engine_models = engine_models
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         return PropulsionPreMission(
-            aviary_options=aviary_inputs, engine_models=self.engine_models, engine_options=kwargs
+            aviary_options=aviary_inputs,
+            engine_models=self.engine_models,
+            engine_options=subsystem_options,
         )
 
     def build_mission(self, num_nodes, aviary_inputs, subsystem_options):

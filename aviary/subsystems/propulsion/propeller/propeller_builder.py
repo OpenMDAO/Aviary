@@ -27,7 +27,7 @@ class PropellerBuilder(SubsystemBuilder):
         super().__init__(name)
         self.data = data
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
         return
 

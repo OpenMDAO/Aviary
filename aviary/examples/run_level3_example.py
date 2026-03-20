@@ -89,7 +89,7 @@ prob.model.add_subsystem(
 # In the aviary code add_pre_mission_systems only instantiates the objects and methods, the build method is called in prob.setup()
 prob.model.pre_mission.add_subsystem(
     'core_propulsion',
-    propulsion.build_pre_mission(aviary_inputs),
+    propulsion.build_pre_mission(aviary_inputs, subsystem_options={}),
 )
 
 # adding another group subsystem to match the L2 example

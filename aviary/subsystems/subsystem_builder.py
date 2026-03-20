@@ -47,13 +47,20 @@ class SubsystemBuilder(ABC):
         """
         return True
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO System for the pre-mission computations of the subsystem.
 
         Required for subsystems with pre-mission computations.
 
         Used in level3.py to build the pre-mission system.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in pre-mission.
 
         Returns
         -------
@@ -159,7 +166,7 @@ class SubsystemBuilder(ABC):
         """
         Return a dictionary of constraints for the subsystem.
 
-        Optional, used if subsystems have path or boundary constraints.
+        Use when subsystems have path or boundary constraints in the phases.
 
         Parameters
         ----------
@@ -302,8 +309,6 @@ class SubsystemBuilder(ABC):
     def get_design_vars(self, aviary_inputs=None):
         """
         Return a dictionary of design variables for the subsystem.
-
-        Not currently used.
 
         Parameters
         ----------
@@ -456,7 +461,11 @@ class SubsystemBuilder(ABC):
         return {}
 
     def build_post_mission(
-        self, aviary_inputs=None, mission_info=None, phase_mission_bus_lengths=None
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
     ):
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
@@ -469,6 +478,8 @@ class SubsystemBuilder(ABC):
             A dictionary containing the inputs to the subsystem.
         mission_info : dict
             The mission_info dict containing the phase_info for each phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in post_mission.
         phase_mission_bus_lengths : dict
             Mapping from phase names to the lengths of the phase's "mission_bus_variables"
             timeseries

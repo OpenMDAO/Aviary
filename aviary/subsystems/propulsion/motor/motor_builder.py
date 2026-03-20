@@ -68,7 +68,7 @@ class MotorBuilder(SubsystemBuilder):
         # self.include_constraints = include_constraints
         super().__init__(name)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         return MotorPreMission(aviary_inputs=aviary_inputs)  # , simple_mass=True)
 
     def build_mission(self, num_nodes, aviary_inputs, subsystem_options):

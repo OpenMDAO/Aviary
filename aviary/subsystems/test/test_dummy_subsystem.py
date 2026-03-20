@@ -227,7 +227,7 @@ class DummyMissionComp(om.ExplicitComponent):
 
 
 class PreOnlyBuilder(SubsystemBuilder):
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         return DummyComp()
 
     def get_mass_names(self, aviary_inputs=None):
@@ -235,7 +235,13 @@ class PreOnlyBuilder(SubsystemBuilder):
 
 
 class PostOnlyBuilder(SubsystemBuilder):
-    def build_post_mission(self, aviary_inputs, mission_info, phase_mission_bus_lengths):
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
         group = om.Group()
         group.add_subsystem(
             'comp',
@@ -262,7 +268,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
     def __init__(self, name='array_guess'):
         super().__init__(name, meta_data=ExtendedMetaData)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         return DummyComp()
 
     def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
@@ -333,7 +339,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
     def __init__(self, name='additional_array_guess'):
         super().__init__(name, meta_data=AdditionalMetaData)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         return DummyWingspanComp()
 
     def build_mission(self, num_nodes, aviary_inputs, subsystem_options):

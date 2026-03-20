@@ -44,7 +44,7 @@ class NPSSTabularEngineBuilder(EngineModel):
     def __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
         super().__init__(name, options=aviary_inputs, meta_data=ExtendedMetaData)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Builds the design (pre-mission) engine model.
 

@@ -78,12 +78,12 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         code_origin = self.code_origin
         both_geom = self.use_both_geometries
         code_origin_to_prioritize = self.code_origin_to_prioritize
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
 

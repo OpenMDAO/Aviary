@@ -515,6 +515,7 @@ class AviaryGroup(om.Group):
         A user can override this method with their own pre-mission systems as desired.
         """
         pre_mission = PreMissionGroup()
+        all_subsystem_options = self.pre_mission_info.get('subsystem_options', {})
 
         self.add_subsystem(
             'pre_mission',
@@ -529,8 +530,10 @@ class AviaryGroup(om.Group):
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
         pre_mission.add_subsystem(
-            'propulsion',
-            core_subsystems[0].build_pre_mission(self.aviary_inputs),
+            'propulsion', core_subsystems[0].build_pre_mission(
+                self.aviary_inputs,
+                subsystem_options=all_subsystem_options.get('propulsion', {}),
+            ),
         )
 
         default_subsystems = core_subsystems[1:5]
@@ -540,6 +543,7 @@ class AviaryGroup(om.Group):
             CorePreMission(
                 aviary_options=self.aviary_inputs,
                 subsystems=default_subsystems,
+                subsystem_options=all_subsystem_options,
                 process_overrides=False,
             ),
             promotes_inputs=['*'],
@@ -547,10 +551,15 @@ class AviaryGroup(om.Group):
         )
 
         for subsystem in self.external_subsystems:
-            subsystem_premission = subsystem.build_pre_mission(self.aviary_inputs)
+            name = subsystem.name
+            subsystem_options = all_subsystem_options.get(name, {})
+
+            subsystem_premission = subsystem.build_pre_mission(
+                self.aviary_inputs, subsystem_options=subsystem_options
+            )
 
             if subsystem_premission is not None:
-                self.pre_mission.add_subsystem(subsystem.name, subsystem_premission)
+                self.pre_mission.add_subsystem(name, subsystem_premission)
 
         self._add_premission_external_subsystem_masses()
 
@@ -795,16 +804,21 @@ class AviaryGroup(om.Group):
         self.configurator.add_post_mission_systems(self)
 
         # Add all post-mission subsystems.
+        all_subsystem_options = self.pre_mission_info.get('subsystem_options', {})
         phase_mission_bus_lengths = get_phase_mission_bus_lengths(self.traj)
         for subsystem in self.subsystems:
+            name = subsystem.name
+            subsystem_options = all_subsystem_options.get(name, {})
+
             subsystem_postmission = subsystem.build_post_mission(
                 aviary_inputs=self.aviary_inputs,
                 mission_info=self.mission_info,
+                subsystem_options=subsystem_options,
                 phase_mission_bus_lengths=phase_mission_bus_lengths,
             )
 
             if subsystem_postmission is not None:
-                post_mission.add_subsystem(subsystem.name, subsystem_postmission)
+                post_mission.add_subsystem(name, subsystem_postmission)
 
         # Check if regular_phases[] is accessible
         try:

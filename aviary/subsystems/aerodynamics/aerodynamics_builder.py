@@ -97,14 +97,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         # pre-mission is not required when exclusively using tabular aero
         if self.tabular:
             return
 
         code_origin = self.code_origin
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
 

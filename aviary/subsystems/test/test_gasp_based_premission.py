@@ -36,7 +36,11 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_and_mass_subsystems),
+            CorePreMission(
+                aviary_options=self.gasp_inputs,
+                subsystems=geom_and_mass_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -117,7 +121,9 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(
-                aviary_options=self.gasp_inputs, subsystems=default_premission_subsystems
+                aviary_options=self.gasp_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -248,7 +254,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(
-                aviary_options=self.gasp_inputs, subsystems=default_premission_subsystems
+                aviary_options=self.gasp_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -330,7 +338,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_subsystem),
+            CorePreMission(
+                aviary_options=self.gasp_inputs,
+                subsystems=geom_subsystem,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -378,7 +390,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.gasp_inputs, subsystems=geom_and_mass_subsystems),
+            CorePreMission(
+                aviary_options=self.gasp_inputs,
+                subsystems=geom_and_mass_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
