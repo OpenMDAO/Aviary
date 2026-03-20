@@ -571,51 +571,46 @@ def setup_model_options(
         prefix = ''  # the original default value
     prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 
-    # Multi-engines need to index into their options.
-    try:
-        num = aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
-        if isinstance(num, int):
-            num_engine_models = 1
-        else:
-            num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
-    except KeyError:
-        # No engine data.
-        return
-
     # TODO: Modify this method for multi mission/model.
 
-    if num_engine_models > 1:
-        if engine_models is None:
-            # Required in multi-mission cases
-            if group is None:
-                engine_models = prob.model.engine_models
-            else:
-                engine_models = group.engine_models
+    if engine_models is None:
+        # Required in multi-mission cases
+        if group is None:
+            src = prob.model
+        else:
+            src = group
 
-        for idx in range(num_engine_models):
-            eng_name = engine_models[idx].name
+        if not hasattr(src, 'engine_models'):
+            # In a unit-test context, this function can be used without an aviary model.
+            return
 
-            # TODO: For future flexibility, need get a list of options per engine (these are
-            # EngineDeck required options), so custom multiengine works
-            opt_names = [
-                Aircraft.Engine.SCALE_PERFORMANCE,
-                Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
-                Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
-                Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
-                Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
-            ]
-            opt_names_units = [
-                Aircraft.Engine.REFERENCE_SLS_THRUST,
-                Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
-            ]
-            opts = {}
-            for key in opt_names:
-                if key in aviary_inputs:
-                    opts[key] = aviary_inputs.get_item(key)[0][idx]
-            for key in opt_names_units:
-                if key in aviary_inputs:
-                    val, units = aviary_inputs.get_item(key)
-                    opts[key] = (val[idx], units)
+        engine_models = src.engine_models
 
-            path = f'{prefix}*propulsion.{eng_name}*'
-            prob.model_options[path] = opts
+    for idx, engine_model in enumerate(engine_models):
+        eng_name = engine_model.name
+
+        # TODO: For future flexibility, need get a list of options per engine (these are
+        # EngineDeck required options), so custom multiengine works
+        opt_names = [
+            Aircraft.Engine.Motor.DATA_FILE,
+            Aircraft.Engine.SCALE_PERFORMANCE,
+            Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
+            Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
+            Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
+            Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
+        ]
+        opt_names_units = [
+            Aircraft.Engine.REFERENCE_SLS_THRUST,
+            Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
+        ]
+        opts = {}
+        for key in opt_names:
+            if key in aviary_inputs:
+                opts[key] = aviary_inputs.get_item(key)[0][idx]
+        for key in opt_names_units:
+            if key in aviary_inputs:
+                val, units = aviary_inputs.get_item(key)
+                opts[key] = (val[idx], units)
+
+        path = f'{prefix}*propulsion.{eng_name}*'
+        prob.model_options[path] = opts

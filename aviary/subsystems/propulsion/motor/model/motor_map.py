@@ -1,46 +1,14 @@
 import numpy as np
 import openmdao.api as om
-
+from aviary.utils.csv_data_file import read_data_file
+from aviary.utils.named_values import get_items
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
-
-# block auto-formatting of tables
-# fmt: off
-motor_map = np.array([
-    # speed---- .0       .083333  .16667  .25    .33333.41667  .5,     .58333 .66667  .75,   .83333, .91667 1.
-    [.871,    .872,    .862,   .853,  .845, .838,   .832,   .825,  .819,   .813,  .807,   .802,   .796],  # 0
-    [.872,    .873,    .863,   .854,  .846, .839,   .833,   .826,  .820,   .814,   .808,  .803,   .797],  # 0.040
-    [.928,    .928,    .932,   .930,  .928, .926,   .923,   .920,  .918,   .915,   .912,  .909,   .907],  # 0.104
-    [.931,    .932,    .944,   .947,  .947, .947,   .946,   .945,  .943,   .942,   .940,  .938,   .937],  # 0.168
-    [.931,    .927,    .946,   .952,  .954, .955,   .955,   .954,  .954,   .953,   .952,  .951,   .950],  # 0.232
-    [.917,    .918,    .944,   .952,  .956, .958,   .958,   .959,  .959,   .958,   .958,  .957,   .956],  # 0.296
-    [.907,    .908,    .940,   .951,  .956, .958,   .960,   .961,  .961,   .961,   .961,  .960,   .960],  # 0.360
-    [.897,    .898,    .935,   .948,  .954, .958,   .960,   .961,  .962,   .962,   .962,  .962,   .962],  # 0.424
-    [.886,    .887,    .930,   .945,  .952, .956,   .959,   .960,  .962,   .962,   .963,  .963,   .963],  # 0.488
-    [.875,    .876,    .924,   .941,  .949, .954,   .957,   .960,  .961,   .962,   .962,  .963,   .963],  # 0.552
-    [.864,    .865,    .918,   .937,  .946, .952,   .956,   .958,  .960,   .961,   .962,  .962,   .962],  # 0.616
-    [.853,    .854,    .912,   .932,  .943, .949,   .953,   .956,  .958,   .960,   .961,  .961,   .962],  # 0.680
-    [.842,    .843,    .905,   .928,  .939, .947,   .951,   .954,  .957,   .958,   .959,  .960,   .961],  # 0.744
-    [.831,    .832,    .899,   .923,  .936, .944,   .949,   .952,  .955,   .957,   .958,  .959,   .959],  # 0.808
-    [.820,    .821,    .892,   .918,  .932, .940,   .946,   .950,  .953,   .955,   .956,  .957,   .958],  # 0.872
-    [.807,    .808,    .884,   .912,  .927, .936,   .942,   .947,  .950,   .952,   .954,  .955,   .956],  # 0.936
-    [.795,    .796,    .877,   .907,  .923, .933,   .939,   .944,  .948,   .950,   .952,  .953,   .954]  # 1.000
-]).T
-# fmt: on
+from aviary.utils.functions import get_path
 
 
 class MotorMap(om.Group):
     """
-    This function takes in 0-1 values for electric motor throttle,
-    scales those values into 0 to max_torque on the motor map
-    this also allows us to solve for motor efficiency
-    then we scale the torque up based on the actual scale factor of the motor.
-    This avoids the need to rescale the map values, and still allows for the motor scale to be optimized.
-    Scaling only effects torque (and therefore shaft power production, and electric power consumption).
-    RPM is not scaled and is assumed to be maxed at 6,000 rpm.
-    The original maps were put together for a 746kw (1,000 hp) electric motor published in the TTBW paper:
-    https://ntrs.nasa.gov/api/citations/20230016987/downloads/TTBW_SciTech_2024_Final_12_5_2023.pdf
-    The map is shown in Figure 4.
-
     Inputs
     ----------
     Dynamic.Vehicle.Propulsion.THROTTLE : float (unitless) (0 to 1)
@@ -57,43 +25,56 @@ class MotorMap(om.Group):
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
+        add_aviary_option(self, Aircraft.Engine.Motor.DATA_FILE)
 
     def setup(self):
         n = self.options['num_nodes']
+        motor_model = get_path(self.options[Aircraft.Engine.Motor.DATA_FILE])
 
-        # Training data
-        # fmt: off
-        rpm_vals = np.array(
-            [
-                0, .083333, .16667, .25, .33333, .41667, .5, .58333, .66667, .75, .83333, .91667, 1.
-            ]
-        ) * 6000
-        torque_vals = np.array(
-            [
-                0.0, 0.040, 0.104, 0.168, 0.232, 0.296, 0.360, 0.424, 0.488,
-                0.552, 0.616, 0.680,  0.744, 0.808, 0.872, 0.936, 1.000
-            ]
-        ) * 1800
-        # fmt: on
-        # Create a structured metamodel to compute motor efficiency from rpm
-        motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=True)
+        # Read the CSV file
+        # Data must be on a regular, structured, grid
+        (
+            read_data,
+            _,
+            _,
+        ) = read_data_file(motor_model)
+
+        # Extract data with units using get_items
+        data_dict = {}
+        units_dict = {}
+        for name, (values, units) in get_items(read_data):
+            data_dict[name] = values
+            units_dict[name] = units
+
+        # Reshape to 2D array
+        rotations_per_minute = np.unique(data_dict['rotations_per_minute'])
+        rpm_units = units_dict['rotations_per_minute']
+        torque_unscaled = np.unique(data_dict['torque_unscaled'])
+        torque_max = np.max(torque_unscaled)
+        torque_units = units_dict['torque_unscaled']
+        efficiency = (
+            data_dict['efficiency'].reshape(len(torque_unscaled), len(rotations_per_minute)).T
+        )
+        efficiency_units = units_dict['efficiency']
+
+        motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=False)
         motor.add_input(
             Dynamic.Vehicle.Propulsion.RPM,
             val=np.ones(n),
-            training_data=rpm_vals,
-            units='rpm',
+            training_data=rotations_per_minute,
+            units=rpm_units,
         )
         motor.add_input(
             'torque_unscaled',
             val=np.ones(n),  # unscaled torque
-            training_data=torque_vals,
-            units='N*m',
+            training_data=torque_unscaled,
+            units=torque_units,
         )
         motor.add_output(
-            'motor_efficiency',
+            'efficiency',
             val=np.ones(n),
-            training_data=motor_map,
-            units='unitless',
+            training_data=efficiency,
+            units=efficiency_units,
         )
 
         self.add_subsystem(
@@ -101,7 +82,10 @@ class MotorMap(om.Group):
             om.ExecComp(
                 'torque_unscaled = torque_max * throttle',
                 torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                torque_max={'val': torque_vals[-1], 'units': 'N*m'},
+                torque_max={
+                    'val': torque_max,
+                    'units': 'N*m',
+                },  # only used as input because we need to dynamically assign the last value of torque as the max torque
                 throttle={'val': np.ones(n), 'units': 'unitless'},
                 has_diag_partials=True,
             ),
@@ -112,7 +96,7 @@ class MotorMap(om.Group):
             name='motor_efficiency',
             subsys=motor,
             promotes_inputs=[Dynamic.Vehicle.Propulsion.RPM],
-            promotes_outputs=['motor_efficiency'],
+            promotes_outputs=['efficiency'],
         )
 
         # Now that we know the efficiency, scale up the torque correctly for the engine
@@ -124,7 +108,11 @@ class MotorMap(om.Group):
                 'torque = torque_unscaled * scale_factor',
                 torque={'val': np.ones(n), 'units': 'N*m'},
                 torque_unscaled={'val': np.ones(n), 'units': 'N*m'},
-                scale_factor={'val': 1.0, 'units': 'unitless'},
+                scale_factor={
+                    'val': 1.0,
+                    'units': 'unitless',
+                    'desc': 'Scales the motor by increasing or decreasing the maximum torque value.',
+                },
                 has_diag_partials=True,
             ),
             promotes=[
@@ -133,6 +121,7 @@ class MotorMap(om.Group):
             ],
         )
 
+        # Connect Torque
         self.connect(
             'throttle_to_torque.torque_unscaled',
             ['motor_efficiency.torque_unscaled', 'scale_motor_torque.torque_unscaled'],

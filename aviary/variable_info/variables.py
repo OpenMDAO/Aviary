@@ -227,6 +227,7 @@ class Aircraft:
             SPECIFIC_TORQUE = 'aircraft:engine:gearbox:specific_torque'
 
         class Motor:
+            DATA_FILE = 'aircraft:engine:motor:data_file'
             MASS = 'aircraft:engine:motor:mass'
             TORQUE_MAX = 'aircraft:engine:motor:torque_max'
 
