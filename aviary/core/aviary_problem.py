@@ -408,7 +408,7 @@ class AviaryProblem(om.Problem):
         else:
             self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
+    def add_driver(self, optimizer=None, use_coloring=None, max_iter=None, verbosity=None):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -453,6 +453,8 @@ class AviaryProblem(om.Problem):
             optimizer = 'IPOPT'
         if use_coloring is None:
             use_coloring = True
+        if max_iter is None:
+            max_iter = 50
 
         # check if optimizer is SLSQP
         if optimizer == 'SLSQP':
