@@ -1260,6 +1260,9 @@ class AviaryProblem(om.Problem):
                 self.model.list_outputs(out_stream=outfile)
 
         if self.generate_payload_range:
+            self.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, False)
+            # aviary inputs unforunately altered for the problem that triggered generation of payload range
+            # self.generate_payload_range remains True for the parent problem.
             self.run_payload_range()
 
     def run_off_design_mission(
