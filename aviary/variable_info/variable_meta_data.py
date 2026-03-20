@@ -2393,8 +2393,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='Thrust-based scaling factor used to scale engine performance data during '
-    'mission analysis',
+    desc='A scaling factor used to scale engine performance data during mission analysis.',
     default_value=1.0,
     multivalue=True,
 )
@@ -2611,6 +2610,18 @@ add_meta_data(
 # | |\/| | / _ \ |  _| / _ \ | '_|
 # |_|  |_| \___/  \__| \___/ |_|
 # ================================
+
+add_meta_data(
+    Aircraft.Engine.Motor.DATA_FILE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'None', 'LEAPS1': None},
+    units='unitless',
+    types=str,
+    default_value=None,
+    option=True,
+    desc='filepath to data file containing electric motor performance table',
+    multivalue=True,
+)
 
 add_meta_data(
     Aircraft.Engine.Motor.MASS,
@@ -6906,7 +6917,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='kW',
-    desc='Current electric power consumption of each engine',
+    desc='The electric power consumption of each engine during the mission.',
     multivalue=True,
 )
 
