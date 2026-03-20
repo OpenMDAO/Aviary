@@ -1164,7 +1164,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR', 'LEAPS1': None},
     units='unitless',
-    desc='Number of business class passengers abreast. If 0, use default.',
+    desc='Number of business class seats abreast. If 0, use default.',
     types=int,
     option=True,
     default_value=5,
@@ -1175,7 +1175,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR', 'LEAPS1': None},
     units='unitless',
-    desc='Number of economy class passengers abreast. If 0, use default.',
+    desc='Number of economy class seats abreast. If 0, use default.',
     types=int,
     option=True,
     default_value=6,
@@ -1186,7 +1186,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR', 'LEAPS1': None},
     units='unitless',
-    desc='Number of first class passengers abreast. If 0, use default.',
+    desc='Number of first class seats abreast. If 0, use default.',
     types=int,
     option=True,
     default_value=4,
@@ -1199,7 +1199,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the business class seats. If 0, use default.',
     option=True,
-    default_value=0.0,
+    default_value=39.0,
 )
 
 add_meta_data(
@@ -1209,7 +1209,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the economy class seats. If 0, use default.',
     option=True,
-    default_value=0.0,
+    default_value=32.0,
 )
 
 add_meta_data(
@@ -1219,7 +1219,7 @@ add_meta_data(
     units='inch',
     desc='pitch of the first class seats. If 0, use default.',
     option=True,
-    default_value=0.0,
+    default_value=61.0,
 )
 
 #  _____                 _

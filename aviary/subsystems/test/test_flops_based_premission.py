@@ -279,6 +279,8 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # BWBWingPrelim
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.ASPECT_RATIO_REFERENCE,
+                Aircraft.Wing.LOAD_FRACTION,
                 # _BWBWing
                 Aircraft.Wing.WETTED_AREA,
                 # _Tail
@@ -316,7 +318,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.CrewPayload.CARGO_MASS,
                 Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
                 # TransportCargoContainersMass
-                # Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
+                Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
                 # TransportEngineCtrlsMass
                 Aircraft.Propulsion.TOTAL_ENGINE_CONTROLS_MASS,
                 # TransportAvionicsMass
