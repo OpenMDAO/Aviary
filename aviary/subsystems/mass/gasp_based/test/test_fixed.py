@@ -667,7 +667,7 @@ class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 te
             Aircraft.HorizontalTail.ROOT_CHORD, val=13.261162230765065, units='ft'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.AREA, val=476.8, units='ft**2'
@@ -1049,7 +1049,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.HorizontalTail.ROOT_CHORD, val=13.261162230765065, units='ft'
         )  # bug fixed value
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.AREA, val=476.8, units='ft**2'
@@ -1280,7 +1280,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.HorizontalTail.ROOT_CHORD, val=13.16130387591471, units='ft'
         )  # original GASP value
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.AREA, val=469.3, units='ft**2'
@@ -1574,7 +1574,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 Aircraft.HorizontalTail.MOMENT_ARM: (20.0, 'ft'),
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD: (0.15, 'unitless'),
                 Aircraft.HorizontalTail.ROOT_CHORD: (8.0, 'ft'),
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION: (0.3, 'unitless'),
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION: (0.3, 'unitless'),
                 Aircraft.VerticalTail.AREA: (250.0, 'ft**2'),
                 Aircraft.VerticalTail.MOMENT_ARM: (6.0, 'ft'),
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD: (0.12, 'unitless'),
@@ -1799,7 +1799,7 @@ class BWBTailTestCase(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.ROOT_CHORD, 0.03836448, units='ft')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.11964286, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_ARM, 27.82191598, units='ft')
@@ -2030,7 +2030,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.HorizontalTail.ROOT_CHORD, 0.03836448, units='ft')
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.VerticalTail.AREA, 169.11964286, units='ft**2')
         prob.model.set_input_defaults(Aircraft.VerticalTail.MOMENT_ARM, 27.82191598, units='ft')

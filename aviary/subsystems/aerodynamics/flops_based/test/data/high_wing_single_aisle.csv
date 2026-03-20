@@ -72,7 +72,7 @@ aircraft:horizontal_tail:mass_scaler,1.01,unitless   #check
 aircraft:horizontal_tail:sweep,28,deg
 aircraft:horizontal_tail:taper_ratio,0.33,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.0799,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,1.01,unitless   #check
+aircraft:horizontal_tail:vertical_tail_mount_location,1.01,unitless   #check
 aircraft:hydraulics:mass_scaler,1.01,unitless   #check
 aircraft:hydraulics:system_pressure,5010.0,lbf/ft**2
 aircraft:instruments:mass_scaler,1.01,unitless   #check
