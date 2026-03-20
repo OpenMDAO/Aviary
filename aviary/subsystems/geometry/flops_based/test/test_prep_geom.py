@@ -16,7 +16,7 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
-from aviary.subsystems.geometry.flops_based.nacelle import NacellesWettedArea
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleWettedArea
 from aviary.subsystems.geometry.flops_based.prep_geom import _FuselageRatios, PrepGeom
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     BWBWingWettedArea,
@@ -458,7 +458,7 @@ class NacellesTest(unittest.TestCase):
             options[key] = flops_inputs.get_item(key)[0]
         options[Aircraft.Engine.NUM_ENGINES] = np.array([2])
 
-        prob.model.add_subsystem('nacelles', NacellesWettedArea(**options), promotes=['*'])
+        prob.model.add_subsystem('nacelles', NacelleWettedArea(**options), promotes=['*'])
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -817,7 +817,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         # BWBFuselageWettedArea
         # skip
         # _FuselageRatios
-        # NacellesWettedArea
+        # NacelleWettedArea
         # DNAC = 12.608, XNAC = 17.433 originally. It is then scaled down by
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
@@ -960,7 +960,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER), 3.4502227, tolerance=1e-8
         )
-        # NacellesWettedArea
+        # NacelleWettedArea
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80466199, tolerance=1e-8
         )
@@ -1115,7 +1115,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # BWBFuselageWettedArea
         # skip
         # _FuselageRatios
-        # NacellesWettedArea
+        # NacelleWettedArea
         # DNAC = 12.608, XNAC = 17.433 originally. It is then scaled down by
         # SQRT(ESCALE) = sqrt(0.80963)
         # DNAC = 12.608 * sqrt(0.80963) = 11.3446080595
@@ -1290,7 +1290,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         assert_near_equal(
             prob.get_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER), 2.42617719, tolerance=1e-8
         )
-        # NacellesWettedArea
+        # NacelleWettedArea
         assert_near_equal(
             prob.get_val(Aircraft.Nacelle.TOTAL_WETTED_AREA), 1494.80466199, tolerance=1e-8
         )
