@@ -121,7 +121,7 @@ class SimpleTestEngine(EngineModel):
         }
         return controls_dict
 
-    def get_pre_mission_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
         bus_dict = {
             'y': {
                 'mission_name': 'y',

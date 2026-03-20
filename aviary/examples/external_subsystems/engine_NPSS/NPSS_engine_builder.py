@@ -175,7 +175,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         )
         return engine
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """Transfer training data from pre-mission to mission"""
         return vars_to_connect
 

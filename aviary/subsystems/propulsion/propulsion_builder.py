@@ -209,11 +209,13 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         return linked_vars
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         bus_vars = {}
         for engine in self.engine_models:
-            engine_bus_vars = engine.get_pre_mission_bus_variables(aviary_inputs)
+            engine_bus_vars = engine.get_pre_mission_bus_variables(
+                aviary_inputs, mission_info=mission_info
+            )
             bus_vars.update(engine_bus_vars)
 
         # append propulsion group name to all engine-level bus variables

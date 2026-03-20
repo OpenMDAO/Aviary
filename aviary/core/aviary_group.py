@@ -1153,7 +1153,9 @@ class AviaryGroup(om.Group):
         base_phases = list(self.mission_info.keys())
 
         for subsystem in all_subsystems:
-            bus_variables = subsystem.get_pre_mission_bus_variables(self.aviary_inputs)
+            bus_variables = subsystem.get_pre_mission_bus_variables(
+                self.aviary_inputs, mission_info=self.mission_info
+            )
             if bus_variables is not None:
                 for bus_variable, variable_data in bus_variables.items():
                     if 'mission_name' in variable_data:

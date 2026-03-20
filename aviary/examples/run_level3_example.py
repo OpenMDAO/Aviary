@@ -101,19 +101,19 @@ prob.model.pre_mission.add_subsystem(
 )
 prob.model.pre_mission.core_subsystems.add_subsystem(
     'core_geometry',
-    geometry.build_pre_mission(aviary_inputs),
+    geometry.build_pre_mission(aviary_inputs, subsystem_options={}),
     promotes_inputs=['*'],
     promotes_outputs=['*'],
 )
 prob.model.pre_mission.core_subsystems.add_subsystem(
     'core_aerodynamics',
-    aerodynamics.build_pre_mission(aviary_inputs),
+    aerodynamics.build_pre_mission(aviary_inputs, subsystem_options={}),
     promotes_inputs=['*'],
     promotes_outputs=['*'],
 )
 prob.model.pre_mission.core_subsystems.add_subsystem(
     'core_mass',
-    mass.build_pre_mission(aviary_inputs),
+    mass.build_pre_mission(aviary_inputs, subsystem_options={}),
     promotes_inputs=['*'],
     promotes_outputs=['*'],
 )

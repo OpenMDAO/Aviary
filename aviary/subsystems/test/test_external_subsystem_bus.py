@@ -149,7 +149,7 @@ class CustomBuilder(SubsystemBuilder):
             )
         return sub_group
 
-    def get_pre_mission_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),

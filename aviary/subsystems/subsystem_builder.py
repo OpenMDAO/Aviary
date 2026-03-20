@@ -214,7 +214,7 @@ class SubsystemBuilder(ABC):
             'in your subsytem builders.'
         )
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """
         Return a dictionary of variables that will be passed from the pre-mission
         to mission and post-mission systems.
@@ -223,6 +223,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
+        mission_info : dict
+            The mission_info dict containing the phase_info for each phase.
 
         Returns
         -------
