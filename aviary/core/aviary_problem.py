@@ -1488,9 +1488,11 @@ class AviaryProblem(om.Problem):
         if optimizer is None:
             try:
                 optimizer = self.driver.options['optimizer']
+                max_iter = self.driver.options['max_iter']
             except KeyError:
                 optimizer = None
-        off_design_prob.add_driver(optimizer, verbosity=verbosity)
+                max_iter = None
+        off_design_prob.add_driver(optimizer=optimizer, max_iter=max_iter, verbosity=verbosity)
         off_design_prob.add_design_variables(verbosity=verbosity)
 
         # Handle edge case for payload-range diagrams
