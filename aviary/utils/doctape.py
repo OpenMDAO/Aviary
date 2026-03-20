@@ -437,8 +437,8 @@ def glue_variable(name: str, val=None, md_code=False, display=True):
 
     with io.capture_output() as captured:
         glue(f'{name}', val, display)
-    if display:
-        captured.show()
+
+    captured.show()
 
 
 def glue_keys(dict_of_dicts: dict, display=True) -> list:
