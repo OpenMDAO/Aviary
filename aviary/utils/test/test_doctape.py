@@ -7,6 +7,8 @@ from openmdao.utils.assert_utils import (
     assert_near_equal,
 )
 
+from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.utils.doctape import (
     check_args,
     check_contains,
@@ -35,6 +37,7 @@ except ImportError:
     myst_nb is False,
     'Skipping because myst_nb is not installed for doc testing.',
 )
+@use_tempdirs
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
