@@ -105,6 +105,7 @@ inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)  # CARGF
 inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 1.0)  # FRFU
 inputs.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, 'deg')  # SWPLE
 inputs.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, 0.11)  # TCSOB
+# inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 0.0, 'ft**2')  # see BWBFuselage_SWet()
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 
 # Horizontal Tail
