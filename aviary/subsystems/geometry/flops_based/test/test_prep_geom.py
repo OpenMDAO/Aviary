@@ -822,7 +822,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.LENGTH, 137.5, units='ft')
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, units='ft')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, units='deg')
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11, units='unitless')
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, 0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', 0.7, units='unitless')
         # BWBComputeDetailedWingDist
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
@@ -1072,7 +1072,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
         # BWBDetailedCabinLayout
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11, units='unitless')
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         # BWBUpdateDetailedWingDist
         prob.set_val(
@@ -1360,7 +1360,4 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBWingTest()
-    test.setUp()
-    test.test_case2()
+    unittest.main()
