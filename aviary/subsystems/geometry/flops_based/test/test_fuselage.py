@@ -94,7 +94,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5, units='ft')
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58, units='ft')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11, units='unitless')
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
@@ -141,7 +141,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11, units='unitless')
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 
@@ -189,7 +189,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         setup_model_options(self.prob, options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11, units='unitless')
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         # prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=50.0, units='ft')
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()

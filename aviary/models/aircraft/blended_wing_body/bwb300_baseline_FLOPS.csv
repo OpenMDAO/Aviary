@@ -88,7 +88,7 @@ aircraft:fuel:wing_ref_capacity,0.0,lbm
 aircraft:fuel:wing_ref_capacity_term_a,0.0,unitless
 aircraft:fuel:wing_ref_capacity_term_b,0.0,unitless
 aircraft:furnishings:mass_scaler,1.118,unitless
-aircraft:fuselage:height_to_width_ratio,0.1792,unitless
+aircraft:fuselage:sidebody_thickness_to_chord,0.1792,unitless
 aircraft:fuselage:laminar_flow_lower,0.0,unitless
 aircraft:fuselage:laminar_flow_upper,0.0,unitless
 aircraft:fuselage:mass_scaler,1.0,unitless

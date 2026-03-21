@@ -404,7 +404,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
-        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, units='unitless')
         self.add_input(
             'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
         )
@@ -445,7 +445,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
             of=[Aircraft.Fuselage.MAX_HEIGHT],
             wrt=[
                 Aircraft.Fuselage.LENGTH,
-                Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO,
+                Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
             ],
         )
 
@@ -455,7 +455,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         length = inputs[Aircraft.Fuselage.LENGTH]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
         max_width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
-        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
         bay_width_nom = 12.0  # ft
 
         if length <= 0.0:
@@ -494,7 +494,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
         tan_sweep = np.tan(sweep / 57.296)
         pax_compart_length = rear_spar_percent_chord * length
-        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
 
         J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = (
             rear_spar_percent_chord
@@ -520,7 +520,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         )
 
         J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.LENGTH] = height_to_width
-        J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO] = length
+        J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD] = length
 
 
 class BWBDetailedCabinLayout(om.ExplicitComponent):
@@ -541,7 +541,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
-        add_aviary_input(self, Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, units='unitless')
+        add_aviary_input(self, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, units='unitless')
         self.add_input(
             'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
         )
@@ -560,7 +560,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
-        height_to_width = inputs[Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO]
+        height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
         tan_sweep = np.tan(sweep / 57.296)
 
         bay_width_nom = 12.0  # ft

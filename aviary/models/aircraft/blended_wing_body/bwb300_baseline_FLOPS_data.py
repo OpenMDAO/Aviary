@@ -113,7 +113,7 @@ inputs.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)  # NFUSE
 inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)  # CARGF
 inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 1.0)  # FRFU
 inputs.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 60.0, 'deg')  # SWPLE
-inputs.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.1792)  # TCF
+inputs.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, 0.1792)  # TCF
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 inputs.set_val(Aircraft.Fuselage.LAMINAR_FLOW_LOWER, 0.0)  # TRLB
 inputs.set_val(Aircraft.Fuselage.LAMINAR_FLOW_UPPER, 0.0)  # TRUB
