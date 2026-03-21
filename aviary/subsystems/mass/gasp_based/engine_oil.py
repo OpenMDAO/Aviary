@@ -60,7 +60,7 @@ class EngineOilMass(om.ExplicitComponent):
         if engine_type is GASPEngineType.TURBOJET:
             doil_per_eng_wt_dFn_SLS = 0.0054
         elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
-            doil_per_eng_wt_dFn_SLS = 0.0124
+            doil_per_eng_wt_dFn_SLS = 0.0214
         # else:
         #     doil_per_eng_wt_dFn_SLS = 0.062
         else:
