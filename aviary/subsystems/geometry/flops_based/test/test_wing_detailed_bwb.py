@@ -84,7 +84,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11)
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
         prob.run_model()
 
@@ -165,7 +165,7 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=49.77182929)
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=68.43)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=116.57609631)
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.1792)
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.1792)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
         prob.run_model()
 
@@ -216,7 +216,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
-        prob.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, val=0.11)
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 63.96)
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()

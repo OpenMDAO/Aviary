@@ -767,7 +767,9 @@ class BWBWingTest(unittest.TestCase):
             [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
-        prob.model.add_subsystem('wing', _BWBWing(), promotes_outputs=['*'], promotes_inputs=['*'])
+        prob.model.add_subsystem(
+            'wing', BWBWingWettedArea(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
         setup_model_options(self.prob, self.aviary_options)
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(
