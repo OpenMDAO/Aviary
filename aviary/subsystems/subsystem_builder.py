@@ -438,27 +438,6 @@ class SubsystemBuilder(ABC):
                 Names of the input variable to be connected in the post-mission subsystem
             - 'src_indices': int or list of ints or tuple of ints or int ndarray or Iterable or None
                 Indices of the mission variable for connection
-
-        Example
-        -------
-        bus_variables = {}
-        if phase_info:
-            for phase_name, phase_data in phase_info.items():
-                phase_d = {}
-                if phase_data["do_the_thing"]:
-                    phase_d[f"{self.name}.mission_variable_a"] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_variable_a", "src_indices": -1}
-                    phase_d[f"{self.name}.mission_variable_b"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_b_name1", f"{self.name}.{phase_name}_post_mission_variable_b_name2"]}
-                    phase_d[f"{self.name}.mission_variable_c"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_c_name1"]}
-                    phase_d[Dynamic.Mission.VELOCITY] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_velocity_name1"}
-                if phase_data["do_the_other_thing"]:
-                    phase_d[f"{self.name}.mission_variable_d"] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_variable_d", "src_indices": [0, 1]}
-                    phase_d[f"{self.name}.mission_variable_e"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_e_name1", f"{self.name}.{phase_name}_post_mission_variable_e_name2"]}
-                    phase_d[f"{self.name}.mission_variable_f"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_f_name1"]}
-                    phase_d[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_nu_name1"}
-
-                bus_variables[phase_name] = phase_d
-
-        return bus_variables
         """
         return {}
 
