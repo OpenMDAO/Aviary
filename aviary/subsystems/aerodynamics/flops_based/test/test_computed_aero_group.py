@@ -73,7 +73,7 @@ class MissionDragTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
@@ -224,7 +224,7 @@ class MissionDragTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
@@ -371,7 +371,7 @@ class MissionDragTest(unittest.TestCase):
             'pre_mission',
             CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(

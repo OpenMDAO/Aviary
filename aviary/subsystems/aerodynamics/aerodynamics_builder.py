@@ -260,7 +260,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     Dynamic.Atmosphere.TEMPERATURE,
                     Dynamic.Vehicle.MASS,
                     'aircraft:*',
-                    'mission:*',
+                    #'mission:*',
                 ]
 
             elif method == 'low_speed':
