@@ -116,7 +116,7 @@ def run_aviary(
         run_driver=run_driver,
         make_plots=make_plots,
         verbosity=verbosity,
-        rt=rt
+        rt=rt,
     )
 
     return prob
@@ -129,7 +129,12 @@ def run_aviary_cmd(
     This file enables running aviary from the command line with a user specified input deck.
     usage: aviary run_mission [input_deck] [opt_args].
     """
-    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity), 'rt': rt}
+    kwargs = {
+        'max_iter': max_iter,
+        'optimizer': optimizer,
+        'verbosity': Verbosity(verbosity),
+        'rt': rt,
+    }
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)

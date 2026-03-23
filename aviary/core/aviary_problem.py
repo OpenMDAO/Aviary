@@ -1180,7 +1180,7 @@ class AviaryProblem(om.Problem):
         simulate=False,
         make_plots=True,
         verbosity=None,
-        rt=False
+        rt=False,
     ):
         """
         This function actually runs the Aviary problem, which could be a simulation,
@@ -1216,7 +1216,9 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        if verbosity >= Verbosity.VERBOSE or rt:  # rt needs a driver recorder file to run the realtime plot server
+        if (
+            verbosity >= Verbosity.VERBOSE or rt
+        ):  # rt needs a driver recorder file to run the realtime plot server
             recorder = om.SqliteRecorder('optimization_history.db')
             self.driver.add_recorder(recorder)
             self.final_setup()
@@ -1248,7 +1250,9 @@ class AviaryProblem(om.Problem):
                     'Unable to run realtime optimization progress plot because no Driver'
                 )
 
-            hooks._register_hook('_setup_recording', 'Driver', post=_view_realtime_plot_hook, ncalls=1)
+            hooks._register_hook(
+                '_setup_recording', 'Driver', post=_view_realtime_plot_hook, ncalls=1
+            )
             hooks._setup_hooks(self.driver)
 
         if suppress_solver_print:

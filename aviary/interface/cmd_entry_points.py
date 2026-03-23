@@ -70,10 +70,7 @@ _convert_command_map = {
 def _setup_convert_parser(parser):
     """Set up parser for the 'convert' subcommand with sub-sub-commands."""
     subparsers = parser.add_subparsers(
-        title='Conversion Types',
-        metavar='',
-        dest='convert_type',
-        help='Type of data to convert'
+        title='Conversion Types', metavar='', dest='convert_type', help='Type of data to convert'
     )
 
     for name, (parser_setup_func, executor, help_str) in sorted(_convert_command_map.items()):
@@ -86,7 +83,9 @@ def _exec_convert(options, user_args):
     """Execute the appropriate conversion command based on sub-sub-command."""
     if not hasattr(options, 'executor'):
         # No sub-sub-command was specified, show help
-        print("Error: Please specify a conversion type (aero_table, engine_deck, fortran_to_aviary, or propeller_table)")
+        print(
+            'Error: Please specify a conversion type (aero_table, engine_deck, fortran_to_aviary, or propeller_table)'
+        )
         print("Use 'aviary convert -h' for more information.")
         sys.exit(1)
 
