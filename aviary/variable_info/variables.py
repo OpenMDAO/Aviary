@@ -651,6 +651,8 @@ class Dynamic:
 class Mission:
     """Mission data hierarchy."""
 
+    RESERVE_FUEL = 'Mission:RESERVE_FUEL'
+
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
         EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
@@ -665,7 +667,6 @@ class Mission:
         # mission these are either user inputs or calculated outputs, in off-design they are
         # strictly inputs and therefore do not change.
         GROSS_MASS = 'mission:design:gross_mass'
-        RESERVE_FUEL = 'mission:design:reserve_fuel'
 
     class Landing:
         # These are values which have to do with landing

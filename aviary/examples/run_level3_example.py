@@ -455,7 +455,7 @@ prob.model.post_mission.add_subsystem(
         ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
         ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
     ],
-    promotes_outputs=[('reserve_fuel', Mission.Design.RESERVE_FUEL)],
+    promotes_outputs=[('reserve_fuel', Mission.RESERVE_FUEL)],
 )
 
 ecomp = om.ExecComp(
@@ -471,7 +471,7 @@ prob.model.post_mission.add_subsystem(
     promotes_inputs=[
         ('fuel_margin', Aircraft.Fuel.FUEL_MARGIN),
         ('fuel_burned', Mission.Summary.FUEL_BURNED),
-        ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+        ('reserve_fuel', Mission.RESERVE_FUEL),
     ],
     promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
 )
