@@ -1001,7 +1001,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:design:thrust_takeoff_per_eng",
+        "aircraft:design:thrust_takeoff_per_eng",
         28928.1,
         "lbf",
         "<class 'float'>"

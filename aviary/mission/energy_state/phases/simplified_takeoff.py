@@ -114,7 +114,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2)
 
-        add_aviary_input(self, Mission.Design.THRUST_TAKEOFF_PER_ENG, val=100_000)
+        add_aviary_input(self, Aircraft.Design.THRUST_TAKEOFF_PER_ENG, val=100_000)
 
         add_aviary_input(self, Mission.Takeoff.LIFT_OVER_DRAG, val=2)
 
@@ -139,7 +139,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
-                Mission.Design.THRUST_TAKEOFF_PER_ENG,
+                Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
                 Mission.Takeoff.LIFT_OVER_DRAG,
             ],
         )
@@ -163,7 +163,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
-        thrust = inputs[Mission.Design.THRUST_TAKEOFF_PER_ENG]
+        thrust = inputs[Aircraft.Design.THRUST_TAKEOFF_PER_ENG]
         L_over_D = inputs[Mission.Takeoff.LIFT_OVER_DRAG]
         num_engines = self.options['num_engines']
         rho_ratio = rho / rho_SL
@@ -211,7 +211,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
-        thrust = inputs[Mission.Design.THRUST_TAKEOFF_PER_ENG]
+        thrust = inputs[Aircraft.Design.THRUST_TAKEOFF_PER_ENG]
         L_over_D = inputs[Mission.Takeoff.LIFT_OVER_DRAG]
         num_engines = self.options['num_engines']
         rho_ratio = rho / rho_SL
@@ -319,7 +319,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         J[Mission.Takeoff.GROUND_DISTANCE, Mission.Takeoff.LIFT_COEFFICIENT_MAX] = (
             dRD_dClMax + dRot_dClMax + dCout_dClMax
         )
-        J[Mission.Takeoff.GROUND_DISTANCE, Mission.Design.THRUST_TAKEOFF_PER_ENG] = (
+        J[Mission.Takeoff.GROUND_DISTANCE, Aircraft.Design.THRUST_TAKEOFF_PER_ENG] = (
             dRD_dThrust + dRot_dThrust + dCout_dThrust
         )
         J[Mission.Takeoff.GROUND_DISTANCE, Mission.Takeoff.LIFT_OVER_DRAG] = (
@@ -363,7 +363,7 @@ class TakeoffGroup(om.Group):
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.FUEL_SIMPLE,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
-                Mission.Design.THRUST_TAKEOFF_PER_ENG,
+                Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
                 Mission.Takeoff.LIFT_OVER_DRAG,
             ],
             promotes_outputs=[

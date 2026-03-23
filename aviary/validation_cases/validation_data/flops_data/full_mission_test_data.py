@@ -55,7 +55,7 @@ data.set_val(
 )
 
 data.set_val(
-    Mission.Design.THRUST_TAKEOFF_PER_ENG,
+    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
     val=24555.5,
     units='lbf',
 )

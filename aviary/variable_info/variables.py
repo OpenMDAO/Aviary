@@ -665,7 +665,7 @@ class Mission:
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
         RESERVE_FUEL = 'mission:design:reserve_fuel'
-        THRUST_TAKEOFF_PER_ENG = 'mission:design:thrust_takeoff_per_eng'
+        THRUST_TAKEOFF_PER_ENG = 'aircraft:design:thrust_takeoff_per_eng'
 
     class Landing:
         # These are values which have to do with landing

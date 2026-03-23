@@ -244,7 +244,7 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)
 # # never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # lbf TODO: where should this get connected from?
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
+inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
 
 # Settings
 # ---------------------------
