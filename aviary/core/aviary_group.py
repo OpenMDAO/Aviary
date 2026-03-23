@@ -1507,17 +1507,17 @@ class AviaryGroup(om.Group):
         else:
             reserve_calc_location = self.model
 
-        RESERVE_FUEL_MARGIN = self.aviary_inputs.get_val(
+        reserve_fuel_margin = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless'
         )
-        if RESERVE_FUEL_MARGIN != 0:
+        if reserve_fuel_margin != 0:
             # Originally tried to reference Mission.Summary.FUEL_BURNED for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
                 'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
                 reserve_fuel_margin_mass={'units': 'lbm'},
                 reserve_fuel_margin={
                     'units': 'unitless',
-                    'val': RESERVE_FUEL_MARGIN,
+                    'val': reserve_fuel_margin,
                 },
                 initial_mass={'units': 'lbm'},
                 final_mass={'units': 'lbm'},
@@ -1539,14 +1539,14 @@ class AviaryGroup(om.Group):
                 src_indices=[-1],
             )
 
-        RESERVE_FUEL_ADDITIONAL = self.aviary_inputs.get_val(
+        reserve_fuel_additional = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
         )
         reserve_fuel = om.ExecComp(
             'reserve_fuel = reserve_fuel_margin_mass + reserve_fuel_additional + reserve_fuel_burned',
             reserve_fuel={'units': 'lbm', 'shape': 1},
             reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
-            reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
+            reserve_fuel_additional={'units': 'lbm', 'val': reserve_fuel_additional},
             reserve_fuel_burned={'units': 'lbm', 'val': 0},
         )
 
