@@ -386,7 +386,7 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 7552.6, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 3127.4, 'lbm')
 
 outputs.set_val(Aircraft.Design.MACH, 0.799)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.523)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.523)
 
 # Back out some of the outputs need for validation of alt mass
 sys_equip_mass_base = (sys_equip_mass - 0.01 * (struct_mass + propulsion_mass)) / 1.01

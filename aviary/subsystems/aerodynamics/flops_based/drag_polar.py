@@ -46,4 +46,4 @@ class DragPolar(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.CHARACTERISTIC_LENGTH, units='ft')
 
         add_aviary_input(self, Aircraft.Design.MACH, units='unitless')
-        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
+        add_aviary_input(self, Aircraft.Design.LIFT_COEFFICIENT, units='unitless')

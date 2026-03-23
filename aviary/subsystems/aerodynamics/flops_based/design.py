@@ -38,7 +38,7 @@ class Design(om.ExplicitComponent):
 
         # Declare outputs
         add_aviary_output(self, Aircraft.Design.MACH, units='unitless')
-        add_aviary_output(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
+        add_aviary_output(self, Aircraft.Design.LIFT_COEFFICIENT, units='unitless')
 
     def setup_partials(self):
         self.declare_partials(of='*', wrt='*')
@@ -59,7 +59,7 @@ class Design(om.ExplicitComponent):
             FAR = AR * TC**e
             CLDES = a + b * FAR + c * FAR**2.0 + d * FAR**3.0
 
-        outputs[Mission.Design.LIFT_COEFFICIENT] = CLDES
+        outputs[Aircraft.Design.LIFT_COEFFICIENT] = CLDES
 
         # design Mach equation selected based on thickness/chord ratio or maximum Mach number
         if TC.real > 0.065 or VMAX < 1.0:  # subsonic
@@ -119,12 +119,12 @@ class Design(om.ExplicitComponent):
             dCLDES_dSW25 = 0.0
             dCLDES_dCAM = 0.0
 
-        partials[Mission.Design.LIFT_COEFFICIENT, Aircraft.Wing.ASPECT_RATIO] = dCLDES_dAR
-        partials[Mission.Design.LIFT_COEFFICIENT, Aircraft.Wing.THICKNESS_TO_CHORD] = dCLDES_dTC
-        partials[Mission.Design.LIFT_COEFFICIENT, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = (
+        partials[Aircraft.Design.LIFT_COEFFICIENT, Aircraft.Wing.ASPECT_RATIO] = dCLDES_dAR
+        partials[Aircraft.Design.LIFT_COEFFICIENT, Aircraft.Wing.THICKNESS_TO_CHORD] = dCLDES_dTC
+        partials[Aircraft.Design.LIFT_COEFFICIENT, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = (
             dCLDES_dCAM
         )
-        partials[Mission.Design.LIFT_COEFFICIENT, Aircraft.Wing.SWEEP] = dCLDES_dSW25
+        partials[Aircraft.Design.LIFT_COEFFICIENT, Aircraft.Wing.SWEEP] = dCLDES_dSW25
 
         if TC.real > 0.065 or VMAX < 1.0:  # subsonic
             TC23 = TC ** (2.0 / 3.0)

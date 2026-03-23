@@ -1518,6 +1518,29 @@ add_meta_data(
 )
 
 add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'AERIN.FCLDES',
+        #  [  # inputs
+        #      '&DEFINE.AERIN.FCLDES', 'OSWALD.FCLDES',
+        #      # outputs
+        #      '~EDET.CLDES', '~CLDESN.CLDES', '~MDESN.CLDES'
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_aerodynamics.design_lift_coeff',
+            'aircraft.outputs.L0_aerodynamics.design_lift_coeff',
+        ],
+    },
+    units='unitless',
+    desc='Fixed design lift coefficient. If input, overrides design lift '
+    'coefficient computed by EDET.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     meta_data=_MetaData,
     historical_name={
@@ -7323,29 +7346,6 @@ add_meta_data(
     },
     units='lbm',
     desc='Design gross mass of the aircraft. Includes zero fuel mass plus useable fuel.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # NOTE: user override (no scaling)
-    Mission.Design.LIFT_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'AERIN.FCLDES',
-        #  [  # inputs
-        #      '&DEFINE.AERIN.FCLDES', 'OSWALD.FCLDES',
-        #      # outputs
-        #      '~EDET.CLDES', '~CLDESN.CLDES', '~MDESN.CLDES'
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_aerodynamics.design_lift_coeff',
-            'aircraft.outputs.L0_aerodynamics.design_lift_coeff',
-        ],
-    },
-    units='unitless',
-    desc='Fixed design lift coefficient. If input, overrides design lift '
-    'coefficient computed by EDET.',
     default_value=0.0,
 )
 

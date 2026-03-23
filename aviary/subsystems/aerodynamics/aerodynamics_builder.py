@@ -736,7 +736,7 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Wing.THICKNESS_TO_CHORD,
     Aircraft.Wing.WETTED_AREA,
     # Mission.Summary.GROSS_MASS,
-    Mission.Design.LIFT_COEFFICIENT,
+    Aircraft.Design.LIFT_COEFFICIENT,
     Aircraft.Design.MACH,
 ]
 
@@ -767,7 +767,7 @@ COMPUTED_CORE_INPUTS_BWB = [
     Aircraft.Wing.THICKNESS_TO_CHORD,
     Aircraft.Wing.WETTED_AREA,
     # Mission.Summary.GROSS_MASS,
-    Mission.Design.LIFT_COEFFICIENT,
+    Aircraft.Design.LIFT_COEFFICIENT,
     Aircraft.Design.MACH,
 ]
 

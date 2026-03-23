@@ -143,6 +143,7 @@ class Aircraft:
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
         LANDING_MASS = 'aircraft:design:landing_mass'
         LANDING_TO_TAKEOFF_MASS_RATIO = 'aircraft:design:landing_to_takeoff_mass_ratio'
+        LIFT_COEFFICIENT = 'aircraft:design:lift_coefficient'
         LIFT_COEFFICIENT_MAX_FLAPS_UP = 'aircraft:design:lift_coefficient_max_flaps_up'
         LIFT_CURVE_SLOPE = 'aircraft:design:lift_curve_slope'
         LIFT_DEPENDENT_DRAG_COEFF_FACTOR = 'aircraft:design:lift_dependent_drag_coeff_factor'
@@ -664,7 +665,6 @@ class Mission:
         # mission these are either user inputs or calculated outputs, in off-design they are
         # strictly inputs and therefore do not change.
         GROSS_MASS = 'mission:design:gross_mass'
-        LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
         RESERVE_FUEL = 'mission:design:reserve_fuel'
 
     class Landing:

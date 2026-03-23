@@ -24,7 +24,7 @@ class DesignMCLTest(unittest.TestCase):
             'design',
             Design(**options),
             promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
         )
         prob.setup(force_alloc_complex=True)
 
@@ -39,7 +39,7 @@ class DesignMCLTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.753238], 1e-6)
-        assert_near_equal(prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.909926], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.909926], 1e-6)
 
     def test_derivs_subsonic1(self):
         # Case: THICKNESS_TO_CHORD > 0.065 and MAX_MACH < 1
@@ -55,7 +55,7 @@ class DesignMCLTest(unittest.TestCase):
             'design',
             Design(**options),
             promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
         )
         prob.setup(force_alloc_complex=True)
 
@@ -70,7 +70,7 @@ class DesignMCLTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.671145], 1e-6)
-        assert_near_equal(prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
 
     def test_derivs_supersonic2(self):
         # Case: THICKNESS_TO_CHORD > 0.065 and MAX_MACH > 1
@@ -86,7 +86,7 @@ class DesignMCLTest(unittest.TestCase):
             'design',
             Design(**options),
             promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
         )
         prob.setup(force_alloc_complex=True)
 
@@ -101,7 +101,7 @@ class DesignMCLTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.671145], 1e-6)
-        assert_near_equal(prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
 
     def test_derivs_subsonic2(self):
         # Case: THICKNESS_TO_CHORD <= 0.065 and MAX_MACH < 1
@@ -117,7 +117,7 @@ class DesignMCLTest(unittest.TestCase):
             'design',
             Design(**options),
             promotes_inputs=['*'],
-            promotes_outputs=[Aircraft.Design.MACH, Mission.Design.LIFT_COEFFICIENT],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
         )
         prob.setup(force_alloc_complex=True)
 
@@ -132,7 +132,7 @@ class DesignMCLTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.740390], 1e-6)
-        assert_near_equal(prob.get_val(Mission.Design.LIFT_COEFFICIENT), [0.753], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.753], 1e-6)
 
 
 if __name__ == '__main__':

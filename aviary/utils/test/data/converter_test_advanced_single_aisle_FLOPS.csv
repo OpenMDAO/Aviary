@@ -24,6 +24,7 @@ aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
 aircraft:design:empty_mass_margin_scaler,0.01498,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
+aircraft:design:lift_coefficient,-1.0,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:mach,-1.0,unitless
 aircraft:design:range,3500.0,NM
@@ -152,7 +153,6 @@ aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
 mission:design:gross_mass,1.0,lbm
-mission:design:lift_coefficient,-1.0,unitless
 mission:landing:drag_coefficient_min,0.045,unitless
 mission:landing:flare_rate,2.2,deg/s
 mission:landing:initial_velocity,145.0,ft/s
