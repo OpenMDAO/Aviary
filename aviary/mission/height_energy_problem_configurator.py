@@ -61,7 +61,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.require_range_residual = False
             # still instantiate target_range because it is used for default guesses
             # for phase comps
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
 
     def get_default_phase_info(self, aviary_group):
         """

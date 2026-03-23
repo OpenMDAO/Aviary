@@ -51,7 +51,7 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
     def compare_results(self, comparison_prob):
         # compares provided problem with design problem
         prob_var_list = [
-            Mission.Design.RANGE,
+            Aircraft.Design.RANGE,
             Mission.Summary.RANGE,
             Mission.Summary.FUEL_MASS,
             Mission.Summary.TOTAL_FUEL_MASS,
@@ -104,8 +104,8 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
             num_economy=75,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.RANGE),
-            self.prob.get_val(Mission.Design.RANGE),
+            prob_fallout.get_val(Aircraft.Design.RANGE),
+            self.prob.get_val(Aircraft.Design.RANGE),
             tolerance=1e-12,
         )
         assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 2438.6, tolerance=1e-3)
@@ -194,8 +194,8 @@ class TestHeightEnergyOffDesign(unittest.TestCase):
             num_economy=144,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Design.RANGE),
-            self.prob.get_val(Mission.Design.RANGE),
+            prob_alternate.get_val(Aircraft.Design.RANGE),
+            self.prob.get_val(Aircraft.Design.RANGE),
             tolerance=1e-12,
         )
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
@@ -317,7 +317,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         ]
 
         inputs_var_list = [
-            (Mission.Design.RANGE, 'nmi'),
+            (Aircraft.Design.RANGE, 'nmi'),
             (Aircraft.CrewPayload.NUM_PASSENGERS, 'unitless'),
         ]
 
@@ -353,8 +353,8 @@ class Test2DOFOffDesign(unittest.TestCase):
             num_pax=75,
         )
         assert_near_equal(
-            prob_fallout.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
-            prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            prob_fallout.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
+            prob.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
         assert_near_equal(
@@ -433,8 +433,8 @@ class Test2DOFOffDesign(unittest.TestCase):
             num_pax=150,
         )
         assert_near_equal(
-            prob_alternate.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
-            prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            prob_alternate.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
+            prob.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)

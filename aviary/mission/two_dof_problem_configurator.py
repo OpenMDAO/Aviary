@@ -72,10 +72,10 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
             aviary_inputs.set_val(Mission.Summary.RANGE, aviary_group.target_range, units='NM')
         else:
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
             aviary_inputs.set_val(
                 Mission.Summary.RANGE,
-                aviary_inputs.get_val(Mission.Design.RANGE, units='NM'),
+                aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM'),
                 units='NM',
             )
 

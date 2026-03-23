@@ -340,13 +340,13 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         reserves += reserve_frac * (
             num_pax
             * initialization_guesses['fuel_burn_per_passenger_mile']
-            * aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+            * aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
         )
     elif reserves < 10:
         reserves *= (
             num_pax
             * initialization_guesses['fuel_burn_per_passenger_mile']
-            * aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+            * aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
         )
 
     initialization_guesses['reserves'] = reserves
@@ -368,7 +368,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 num_pax
                 * (
                     initialization_guesses['fuel_burn_per_passenger_mile']
-                    * aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+                    * aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
                 )
                 + reserves
             )
@@ -420,7 +420,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     if initialization_guesses['flight_duration'] <= 0:  # estimation based on mach
         initialization_guesses['flight_duration'] = (
-            aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+            aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
             / (667 * cruise_mach)
             * (60 * 60)
         )

@@ -10,7 +10,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Mission.Summary.CRUISE_MACH, units='unitless')
-        add_aviary_input(self, Mission.Design.RANGE, units='NM')
+        add_aviary_input(self, Aircraft.Design.RANGE, units='NM')
 
         add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, units='unitless')
 
@@ -19,7 +19,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         cruise_mach = inputs[Mission.Summary.CRUISE_MACH]
-        des_range = inputs[Mission.Design.RANGE]
+        des_range = inputs[Aircraft.Design.RANGE]
 
         # cruise factor set by the cruise Mach number
         # (If statement replaced with expression to give continuous derivatives around
@@ -30,13 +30,13 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         cruise_mach = inputs[Mission.Summary.CRUISE_MACH]
-        des_range = inputs[Mission.Design.RANGE]
+        des_range = inputs[Aircraft.Design.RANGE]
 
         den = 1.0 + np.exp(-1000 * (cruise_mach - 1))
         cruise_factor = 5e-5 / den + 4e-5
         dfact_dmach = 5e-2 / den**2 * np.exp(-1000 * (cruise_mach - 1))
 
-        J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Mission.Design.RANGE] = -cruise_factor
+        J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Aircraft.Design.RANGE] = -cruise_factor
         J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Mission.Summary.CRUISE_MACH] = (
             -des_range * dfact_dmach
         )

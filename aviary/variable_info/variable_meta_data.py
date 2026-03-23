@@ -1634,6 +1634,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.RANGE,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.ARNGE',
+        # ['&DEFINE.CONFIN.DESRNG', 'CONFIG.DESRNG'],
+        'FLOPS': 'CONFIN.DESRNG',
+        'LEAPS1': 'aircraft.inputs.L0_configuration.design_range',
+    },
+    units='NM',
+    desc='The design range of the aircraft used for sizing of FLOPS based subsystems and mission target length if not provided in phase_info',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.RESERVE_FUEL_ADDITIONAL,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None, 'LEAPS1': None},
@@ -7318,20 +7332,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Design.RANGE,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.ARNGE',
-        # ['&DEFINE.CONFIN.DESRNG', 'CONFIG.DESRNG'],
-        'FLOPS': 'CONFIN.DESRNG',
-        'LEAPS1': 'aircraft.inputs.L0_configuration.design_range',
-    },
-    units='NM',
-    desc='the aircraft target distance',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Design.RATE_OF_CLIMB_AT_TOP_OF_CLIMB,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.ROCTOC', 'FLOPS': None, 'LEAPS1': None},
@@ -7811,7 +7811,7 @@ add_meta_data(
     units='NM',
     desc='actual range that the aircraft flies, whether '
     'it is a design case or an off design case. Equal '
-    'to Mission.Design.RANGE value in the design case.',
+    'to Aircraft.Design.RANGE value in the design case.',
 )
 
 add_meta_data(

@@ -769,7 +769,7 @@ class AviaryProblem(om.Problem):
         for name, group in matching_names:
             target_range, units = group.post_mission_info['target_range']
             design_range.append(convert_units(target_range, units, 'nmi'))
-        # TODO: loop through all the .csv files and extract Mission.Design.RANGE
+        # TODO: loop through all the .csv files and extract Aircraft.Design.RANGE
         design_range_max = np.max(design_range)
         self.set_val(range, val=design_range_max, units='nmi')
 

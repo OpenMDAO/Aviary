@@ -995,7 +995,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:design:range",
+        "aircraft:design:range",
         3500.0,
         "NM",
         "<class 'float'>"
