@@ -1491,11 +1491,11 @@ class AviaryProblem(om.Problem):
             try:
                 optimizer = self.driver.options['optimizer']
                 if optimizer == 'SNOPT':
-                    max_iter = self.driver.options['Major iterations limit']
+                    max_iter = self.driver.opt_settings['Major iterations limit']
                 elif optimizer == 'IPOPT':
-                    max_iter = self.driver.options['max_iter']
+                    max_iter = self.driver.opt_settings['max_iter']
                 elif optimizer == 'SLSQP':
-                    max_iter = self.driver.options['maxiter']
+                    max_iter = self.driver.opt_settings['maxiter']
             except KeyError:
                 optimizer = None
                 max_iter = None
