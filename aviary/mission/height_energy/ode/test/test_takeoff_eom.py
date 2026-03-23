@@ -122,6 +122,7 @@ class TakeoffEOMTest(unittest.TestCase):
             'climb_gradient_forces_vertical',
             'forces_horizontal',
             'forces_vertical',
+            'ground_normal_force',
             'climb_gradient_forces_horizontal',
         }
         assert_match_varnames(

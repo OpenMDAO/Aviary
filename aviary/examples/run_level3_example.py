@@ -155,7 +155,7 @@ for phase_idx, phase_name in enumerate(phase_list):
         phase_options.get('initial_guesses', ())
     )  # Not used in this example
 
-    # instantiate the PhaseBuilderBaseClass:
+    # instantiate the PhaseBuilder class:
     # phase_builder = cls(
     #     name,
     #     subsystem_options=subsystem_options,

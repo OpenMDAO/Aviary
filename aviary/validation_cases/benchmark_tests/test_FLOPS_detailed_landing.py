@@ -17,7 +17,7 @@ from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data imp
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     landing_trajectory_builder as _landing_trajectory_builder,
 )
-from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.functions import set_aviary_initial_values, set_aviary_input_defaults
 from aviary.utils.preprocessors import preprocess_options

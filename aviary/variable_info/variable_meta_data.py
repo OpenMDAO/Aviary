@@ -6849,6 +6849,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Vehicle.ANGLE_OF_ATTACK_RATE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='deg/s',
+    desc='Time derivative of the angle of attack.',
+    multivalue=True,
+)
+
+add_meta_data(
     Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
