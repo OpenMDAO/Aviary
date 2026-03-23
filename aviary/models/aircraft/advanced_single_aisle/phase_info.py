@@ -1,4 +1,4 @@
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 # defaults for height energy based phases
 

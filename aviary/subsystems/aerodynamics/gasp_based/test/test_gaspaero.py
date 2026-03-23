@@ -64,7 +64,7 @@ class GASPAeroTest(unittest.TestCase):
         _init_geom(prob)
 
         # extra params needed for cruise aero
-        prob.set_val(Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, setup_data['clmwfu'])
+        prob.set_val(Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, setup_data['clmwfu'])
         prob.set_val(Aircraft.Design.DRAG_DIVERGENCE_SHIFT, setup_data['scfac'])
 
         for i, row in cruise_data.iterrows():
@@ -400,7 +400,7 @@ class LiftCoeffCleanTest(unittest.TestCase):
         prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
         prob.model.set_input_defaults(
-            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
+            Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -428,7 +428,7 @@ class LiftCoeffCleanTest(unittest.TestCase):
         prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
         prob.model.set_input_defaults(
-            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
+            Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.8885, units='unitless'
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -983,7 +983,7 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, 0.0, units='deg')
         prob.model.set_input_defaults(
-            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.53789318, units='unitless'
+            Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.53789318, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
@@ -1015,7 +1015,7 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, 0.0, units='deg')
         prob.model.set_input_defaults(
-            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.53789318, units='unitless'
+            Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.53789318, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85718, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
@@ -1292,7 +1292,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
         # BWBLiftCoeffClean
         prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, 0.0, units='deg')
         prob.model.set_input_defaults(
-            Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.53789318, units='unitless'
+            Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, 1.53789318, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.11353, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Fuselage.PLANFORM_AREA, 1943.76587, units='ft**2')

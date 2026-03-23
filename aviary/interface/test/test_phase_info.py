@@ -21,7 +21,7 @@ from aviary.models.missions.two_dof_default import (
 )
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs

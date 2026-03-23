@@ -1518,6 +1518,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': ['INGASP.CLMWFU', 'INGASP.CLMAX'],
+        'FLOPS': None,
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='maximum lift coefficient from flaps model when flaps are up (not deployed)',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.LIFT_CURVE_SLOPE,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CLALPH', 'FLOPS': None, 'LEAPS1': None},
@@ -7279,19 +7292,6 @@ add_meta_data(
     units='unitless',
     desc='Fixed design lift coefficient. If input, overrides design lift '
     'coefficient computed by EDET.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': ['INGASP.CLMWFU', 'INGASP.CLMAX'],
-        'FLOPS': None,
-        'LEAPS1': None,
-    },
-    units='unitless',
-    desc='maximum lift coefficient from flaps model when flaps are up (not deployed)',
     default_value=0.0,
 )
 
