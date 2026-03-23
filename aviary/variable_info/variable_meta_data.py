@@ -7332,16 +7332,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Design.RATE_OF_CLIMB_AT_TOP_OF_CLIMB,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.ROCTOC', 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='ft/min',
-    desc='The required rate of climb at top of climb',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Design.RESERVE_FUEL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
