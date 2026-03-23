@@ -49,7 +49,7 @@ class LandingMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Design.GROSS_MASS)
         add_aviary_input(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
 
-        add_aviary_output(self, Aircraft.Design.TOUCHDOWN_MASS)
+        add_aviary_output(self, Aircraft.Design.LANDING_MASS)
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -58,14 +58,12 @@ class LandingMass(om.ExplicitComponent):
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         landing_to_takeoff_mass_ratio = inputs[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO]
 
-        outputs[Aircraft.Design.TOUCHDOWN_MASS] = gross_mass * landing_to_takeoff_mass_ratio
+        outputs[Aircraft.Design.LANDING_MASS] = gross_mass * landing_to_takeoff_mass_ratio
 
     def compute_partials(self, inputs, J):
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         landing_to_takeoff_mass_ratio = inputs[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO]
 
-        J[Aircraft.Design.TOUCHDOWN_MASS, Mission.Design.GROSS_MASS] = landing_to_takeoff_mass_ratio
+        J[Aircraft.Design.LANDING_MASS, Mission.Design.GROSS_MASS] = landing_to_takeoff_mass_ratio
 
-        J[Aircraft.Design.TOUCHDOWN_MASS, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO] = (
-            gross_mass
-        )
+        J[Aircraft.Design.LANDING_MASS, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO] = gross_mass

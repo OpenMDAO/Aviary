@@ -170,7 +170,6 @@ class CLmaxCalculation(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             Dynamic.Atmosphere.MACH,
@@ -198,7 +197,6 @@ class CLmaxCalculation(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
         self.declare_partials(
             'reynolds',
@@ -229,7 +227,6 @@ class CLmaxCalculation(om.ExplicitComponent):
             ],
             dependent=True,
             method='cs',
-            step=1e-8,
         )
 
     def compute(self, inputs, outputs):
