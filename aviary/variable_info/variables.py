@@ -164,6 +164,7 @@ class Aircraft:
         SUPERSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:supersonic_drag_coeff_factor'
         SYSTEMS_AND_EQUIPMENT_MASS = 'aircraft:design:systems_and_equipment_mass'
         SYSTEMS_AND_EQUIPMENT_MASS_BASE = 'aircraft:design:systems_and_equipment_mass_base'
+        THRUST_TAKEOFF_PER_ENG = 'aircraft:design:thrust_takeoff_per_eng'
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TYPE = 'aircraft:design:type'
@@ -665,7 +666,6 @@ class Mission:
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
         RESERVE_FUEL = 'mission:design:reserve_fuel'
-        THRUST_TAKEOFF_PER_ENG = 'aircraft:design:thrust_takeoff_per_eng'
 
     class Landing:
         # These are values which have to do with landing
