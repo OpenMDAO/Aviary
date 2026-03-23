@@ -651,7 +651,7 @@ class Dynamic:
 class Mission:
     """Mission data hierarchy."""
 
-    RESERVE_FUEL = 'Mission:RESERVE_FUEL'
+    RESERVE_FUEL = 'Mission:reserve_fuel'
 
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
