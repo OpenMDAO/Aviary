@@ -1,7 +1,7 @@
 import openmdao.api as om
 
-from aviary.mission.height_energy.ode.range_rate import RangeRate
-from aviary.mission.height_energy.ode.required_thrust import RequiredThrust
+from aviary.mission.energy_state.ode.range_rate import RangeRate
+from aviary.mission.energy_state.ode.required_thrust import RequiredThrust
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.variable_info.variables import Dynamic

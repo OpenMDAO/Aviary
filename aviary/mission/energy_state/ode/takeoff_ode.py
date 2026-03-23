@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.mission.base_ode import BaseODE as _BaseODE
-from aviary.mission.height_energy.ode.takeoff_eom import StallSpeed, TakeoffEOM
+from aviary.mission.energy_state.ode.takeoff_eom import StallSpeed, TakeoffEOM
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 

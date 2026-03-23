@@ -23,7 +23,7 @@ from aviary.validation_cases.benchmark_utils import compare_against_expected_val
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
-    GASP mass method, GASP aero method, and HEIGHT_ENERGY mission method. Expected outputs
+    GASP mass method, GASP aero method, and ENERGY_STATE mission method. Expected outputs
     based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
