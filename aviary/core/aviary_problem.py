@@ -1684,7 +1684,7 @@ class AviaryProblem(om.Problem):
                 # Passenger number rounding and potentially cargo container mass changing means
                 # we don't know if we actually filled the aircraft to exactly TOGW yet. Need to use
                 # "fill_cargo" flag in off-design call
-                economic_range_prob = self.run_off_design_mission(
+                economic_range_prob = self.economic_range_prob = self.run_off_design_mission(
                     problem_type=ProblemType.FALLOUT,
                     phase_info=phase_info,
                     num_first_class=economic_mission_num_first,
@@ -1719,7 +1719,7 @@ class AviaryProblem(om.Problem):
             else:
                 ferry_cargo_mass = None
             ferry_range_gross_mass = operating_mass + max_usable_fuel
-            ferry_range_prob = self.run_off_design_mission(
+            ferry_range_prob = self.ferry_range_prob = self.run_off_design_mission(
                 problem_type=ProblemType.FALLOUT,
                 phase_info=phase_info,
                 num_first_class=0,

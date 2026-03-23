@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
@@ -507,7 +507,10 @@ class PayloadRangeTest(unittest.TestCase):
             'min',
         )
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-        # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
+        prob.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)
+        prob.load_inputs(
+            prob.aviary_inputs, phase_info
+        )  # this is a hacky way to test payload_range setting without modifying the .csv file
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -526,7 +529,7 @@ class PayloadRangeTest(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
         prob.run_aviary_problem()
-        off_design_probs = prob.run_payload_range()
+
         # test outputted payload-range data
         assert_near_equal(
             prob.payload_range_data.get_val('Payload', 'lbm'),
@@ -549,14 +552,14 @@ class PayloadRangeTest(unittest.TestCase):
             tolerance=1e-6,
         )
 
-        # verify TOGW for each off-design problem
+        # verify TOGW for each payload range problem
         assert_near_equal(
-            off_design_probs[0].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob.economic_range_prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             165899.19090919,
             tolerance=1e-12,
         )
         assert_near_equal(
-            off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob.ferry_range_prob.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
             140541.17160737,
             tolerance=1e-12,
         )
