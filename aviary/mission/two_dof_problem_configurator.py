@@ -24,7 +24,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
     """
     A 2DOF specific builder that customizes AviaryProblem() for use with
-     two degree of freedom phases.
+     two-degree-of-freedom phases.
     """
 
     def initial_guesses(self, aviary_group):
