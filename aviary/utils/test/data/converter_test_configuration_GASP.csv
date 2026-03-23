@@ -29,6 +29,7 @@ aircraft:design:emergency_equipment_mass,0.0,lbm
 aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,440.0,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
+aircraft:design:range,3500.0,NM
 aircraft:design:reserve_fuel_additional,0,lbm
 aircraft:design:reserve_fuel_fraction,0.15,unitless
 aircraft:design:static_margin,0.05,unitless
@@ -142,7 +143,6 @@ aircraft:wing:thickness_to_chord_tip,0.1,unitless
 aircraft:wing:vertical_mount_location,1.0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:design:gross_mass,160000.0,lbm
-aircraft:design:range,3500.0,NM
 mission:design:rate_of_climb_at_top_of_climb,300.0,ft/min
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1.0,s
