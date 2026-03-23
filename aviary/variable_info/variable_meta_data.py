@@ -1778,6 +1778,24 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'AERIN.THROFF',
+        # LEAPS1 used the average thrust_takeoff of all operational engines
+        # actually on the airplane, possibly after resizing (as with FLOPS)
+        'LEAPS1': [
+            'aircraft.inputs.L0_engine.thrust_takeoff',
+            '(SimpleTakeoff)self.thrust',
+        ],
+    },
+    units='lbf',
+    desc='Thrust per engine, used for energy state simple takeoff calculation',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.THRUST_TO_WEIGHT_RATIO,
     meta_data=_MetaData,
     historical_name={
@@ -7339,31 +7357,6 @@ add_meta_data(
     desc='the total fuel reserves which is the sum of: '
     'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_FRACTION',
     default_value=0,
-)
-
-add_meta_data(
-    # TODO move to Engine?
-    # TODO this isn't actually tied to the engines in any way - user provided value is
-    #      arbitrary and will not update as engines resize
-    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # FLOPS may scale the input value as it resizes the engine if requested by
-        # the user
-        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROFF'],
-        'FLOPS': 'AERIN.THROFF',
-        # LEAPS1 uses the average thrust_takeoff of all operational engines
-        # actually on the airplane, possibly after resizing (as with FLOPS)
-        'LEAPS1': [
-            'aircraft.inputs.L0_engine.thrust_takeoff',
-            '(SimpleTakeoff)self.thrust',
-        ],
-    },
-    units='lbf',
-    # need better description of what state. rolling takeoff condition? alt? mach?
-    desc='thrust on the aircraft for takeoff',
-    default_value=0.0,
 )
 
 #  _                            _   _
