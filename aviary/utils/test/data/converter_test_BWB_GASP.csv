@@ -29,6 +29,7 @@ aircraft:design:cruise_altitude,41000.0,ft
 aircraft:design:drag_coefficient_increment,0.00025,unitless
 aircraft:design:drag_divergence_shift,0.025,unitless
 aircraft:design:emergency_equipment_mass,100.0,lbm
+aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
 aircraft:design:reserve_fuel_additional,0.2222,lbm
@@ -148,7 +149,6 @@ aircraft:wing:thickness_to_chord_tip,0.1,unitless
 aircraft:wing:vertical_mount_location,0.5,unitless
 aircraft:wing:zero_lift_angle,0.0,deg
 mission:design:gross_mass,150000.0,lbm
-aircraft:design:mach,0.8,unitless
 mission:design:range,3500.0,NM
 mission:design:rate_of_climb_at_top_of_climb,300.0,ft/min
 mission:landing:airport_altitude,0,ft
