@@ -1472,6 +1472,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.LANDING_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.WLDG',
+        #  [  # inputs
+        #      '&DEFINE.WTIN.WLDG', 'WTS.WLDG',
+        #      # outputs
+        #      'CMODLW.WLDGO',
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_landing_gear.design_landing_weight',
+            'aircraft.outputs.L0_landing_gear.design_landing_weight',
+        ],
+    },
+    units='lbm',
+    desc='design landing mass',
+    default_value=0.0,
+)
+
+add_meta_data(
     # Note user override (no scaling)
     Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO,
     meta_data=_MetaData,
@@ -1721,28 +1743,6 @@ add_meta_data(
     },
     units='ft**2',
     desc='total aircraft wetted area',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # NOTE: user override (no scaling)
-    Aircraft.Design.TOUCHDOWN_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.WLDG',
-        #  [  # inputs
-        #      '&DEFINE.WTIN.WLDG', 'WTS.WLDG',
-        #      # outputs
-        #      'CMODLW.WLDGO',
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_landing_gear.design_landing_weight',
-            'aircraft.outputs.L0_landing_gear.design_landing_weight',
-        ],
-    },
-    units='lbm',
-    desc='design landing mass',
     default_value=0.0,
 )
 
@@ -2390,8 +2390,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='Thrust-based scaling factor used to scale engine performance data during '
-    'mission analysis',
+    desc='A scaling factor used to scale engine performance data during mission analysis.',
     default_value=1.0,
     multivalue=True,
 )
@@ -2608,6 +2607,18 @@ add_meta_data(
 # | |\/| | / _ \ |  _| / _ \ | '_|
 # |_|  |_| \___/  \__| \___/ |_|
 # ================================
+
+add_meta_data(
+    Aircraft.Engine.Motor.DATA_FILE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'None', 'LEAPS1': None},
+    units='unitless',
+    types=str,
+    default_value=None,
+    option=True,
+    desc='filepath to data file containing electric motor performance table',
+    multivalue=True,
+)
 
 add_meta_data(
     Aircraft.Engine.Motor.MASS,
@@ -3999,7 +4010,7 @@ add_meta_data(
 
 # TODO preprocessing for this variable on FLOPS side
 add_meta_data(
-    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.SAH',
@@ -6903,7 +6914,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='kW',
-    desc='Current electric power consumption of each engine',
+    desc='The electric power consumption of each engine during the mission.',
     multivalue=True,
 )
 
@@ -7617,7 +7628,7 @@ add_meta_data(
     },
     units='lbm',
     desc='computed mass of aircraft for landing, is only '
-    'required to be equal to Aircraft.Design.TOUCHDOWN_MASS '
+    'required to be equal to Aircraft.Design.LANDING_MASS '
     'when the design case is being run '
     'for HEIGHT_ENERGY missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )

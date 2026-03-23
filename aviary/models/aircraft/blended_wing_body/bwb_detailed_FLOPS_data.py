@@ -107,7 +107,7 @@ inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)  # CARGF
 inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 1.0)  # FRFU
 inputs.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, 'deg')  # SWPLE
 inputs.set_val(Aircraft.Fuselage.HEIGHT_TO_WIDTH_RATIO, 0.11)  # TCF
-# inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 0.0, 'ft**2')  # see _BWBFuselage()
+# inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 0.0, 'ft**2')  # see BWBFuselage_SWet()
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)  # SWETF
 
 # Horizontal Tail
@@ -116,7 +116,7 @@ inputs.set_val(Aircraft.HorizontalTail.AREA, 0.0, 'ft**2')  # SHT
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 0.1)  # ARHT
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.0)  # TRHT
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT
-# inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)  # HHT
+# inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)  # HHT
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # FRHT
 inputs.set_val(Aircraft.HorizontalTail.NUM_TAILS, 0)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)  # SWETH
@@ -311,7 +311,7 @@ outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 240915.88664709, 'lbm')  # WSTRCT 240989.14132753
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 90644.95111232, 'lbm')  # WSYS
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 26208.46595187, 'ft**2')  # TWET
-outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 699279.2, 'lbm')  # WLDG = GW*WRATIO
+outputs.set_val(Aircraft.Design.LANDING_MASS, 699279.2, 'lbm')  # WLDG = GW*WRATIO
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 3897.6527857555625, 'lbm')  # WAC
 outputs.set_val(Aircraft.AntiIcing.MASS, 562.09100951165135, 'lbm')  # WAI

@@ -167,7 +167,7 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -512,7 +512,7 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -854,7 +854,7 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -1204,7 +1204,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -1549,7 +1549,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -1897,7 +1897,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.Design.WING_LOADING, val=104.50, units='lbf/ft**2'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -2388,7 +2388,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=1, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=0.1, units='unitless'
@@ -2759,7 +2759,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.HorizontalTail.THICKNESS_TO_CHORD, val=0.11, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=1, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=1, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.THICKNESS_TO_CHORD, val=0.1, units='unitless'
@@ -3129,7 +3129,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless'
         )
         prob.model.set_input_defaults(
             Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.1, units='unitless'

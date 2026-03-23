@@ -72,7 +72,7 @@ aircraft:horizontal_tail:moment_ratio,0.13067,unitless
 aircraft:horizontal_tail:sweep,43.5,deg
 aircraft:horizontal_tail:taper_ratio,0.352,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,1.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,1.0,unitless
 aircraft:horizontal_tail:volume_coefficient,1.43,unitless
 aircraft:hydraulics:flight_control_mass_coefficient,0.085,unitless
 aircraft:hydraulics:gear_mass_coefficient,0.105,unitless

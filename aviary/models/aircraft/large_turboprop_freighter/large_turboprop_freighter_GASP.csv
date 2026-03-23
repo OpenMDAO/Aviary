@@ -106,7 +106,7 @@ aircraft:horizontal_tail:moment_ratio, 0.3061, unitless
 aircraft:horizontal_tail:sweep, 0, deg
 aircraft:horizontal_tail:taper_ratio, 0.374, unitless
 aircraft:horizontal_tail:thickness_to_chord, 0.15, unitless
-aircraft:horizontal_tail:vertical_tail_fraction, 0, unitless
+aircraft:horizontal_tail:vertical_tail_mount_location, 0, unitless
 aircraft:horizontal_tail:volume_coefficient, 0.8614, unitless
 
 # Landing Gear
