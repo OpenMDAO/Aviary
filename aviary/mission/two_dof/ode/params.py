@@ -117,7 +117,7 @@ params_for_unit_tests = {
     Aircraft.Wing.TAPER_RATIO: dict(units='unitless', val=0.33),
     Aircraft.Wing.THICKNESS_TO_CHORD_ROOT: dict(units='unitless', val=0.15),
     Aircraft.Wing.THICKNESS_TO_CHORD_TIP: dict(units='unitless', val=0.12),
-    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION: dict(units='unitless', val=0),
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION: dict(units='unitless', val=0),
     Aircraft.Wing.SWEEP: dict(units='deg', val=25),
     Aircraft.HorizontalTail.SWEEP: dict(units='deg', val=25),
     Aircraft.HorizontalTail.MOMENT_RATIO: dict(units='unitless', val=0.2307),

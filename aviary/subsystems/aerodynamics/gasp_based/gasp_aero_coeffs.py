@@ -19,7 +19,9 @@ class AeroFormfactors(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.VerticalTail.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, units='rad')
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
         add_aviary_input(self, Mission.Design.MACH, units='unitless')
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, units='ft')
@@ -49,7 +51,7 @@ class AeroFormfactors(om.ExplicitComponent):
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
                 Mission.Design.MACH,
                 Aircraft.HorizontalTail.SWEEP,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
             ],
         )
         self.declare_partials(
@@ -160,9 +162,10 @@ class AeroFormfactors(om.ExplicitComponent):
             * (1 / A3**3)
             * (1.0 + 0.05 * (1.0 - sah))
         )
-        J[Aircraft.HorizontalTail.FORM_FACTOR, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = (
-            2 * SWETFCT * (1 + tcht * (2 - smn**2) * cos3 / A3 + 100 * tcht**4) * -0.05
-        )
+        J[
+            Aircraft.HorizontalTail.FORM_FACTOR,
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
+        ] = 2 * SWETFCT * (1 + tcht * (2 - smn**2) * cos3 / A3 + 100 * tcht**4) * -0.05
 
         A4 = np.sqrt(1.0 - smn**2)
         J[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, Aircraft.Strut.THICKNESS_TO_CHORD] = (
