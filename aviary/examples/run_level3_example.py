@@ -436,7 +436,7 @@ prob.model.connect(
     src_indices=[-1],
 )
 
-RESERVE_FUEL_ADDITIONAL = prob.aviary_inputs.get_val(
+reserve_fuel_additional = prob.aviary_inputs.get_val(
     Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
 )
 
@@ -444,7 +444,7 @@ reserve_fuel = om.ExecComp(
     'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
     reserve_fuel={'units': 'lbm', 'shape': 1},
     reserve_fuel_frac_mass={'units': 'lbm', 'val': 0},
-    reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
+    reserve_fuel_additional={'units': 'lbm', 'val': reserve_fuel_additional},
     reserve_fuel_burned={'units': 'lbm', 'val': 0},
 )
 prob.model.post_mission.add_subsystem(
