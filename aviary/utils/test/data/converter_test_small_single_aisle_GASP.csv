@@ -22,6 +22,7 @@ aircraft:crew_and_payload:uld_mass_per_passenger,0.11,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3.0,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
+aircraft:design:cruise_altitude,37000.0,ft
 aircraft:design:drag_coefficient_increment,0.0018,unitless
 aircraft:design:drag_divergence_shift,0.025,unitless
 aircraft:design:emergency_equipment_mass,50.0,lbm
@@ -140,7 +141,6 @@ aircraft:wing:thickness_to_chord_root,0.1125,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:vertical_mount_location,0.0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
-aircraft:design:cruise_altitude,37000.0,ft
 mission:design:gross_mass,124780.0,lbm
 mission:design:mach,0.78,unitless
 mission:design:range,3480.0,NM
