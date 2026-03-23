@@ -127,6 +127,7 @@ class Aircraft:
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
+        CRUISE_ALTITUDE = 'aircraft:design:cruise_altitude'
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_coefficient_increment'
         DRAG_DIVERGENCE_SHIFT = 'aircraft:design:drag_divergence_shift'
         DRAG_POLAR = 'aircraft:design:drag_polar'
@@ -658,7 +659,6 @@ class Mission:
         # These values may change in a design mission, but not during off-design. In a design
         # mission these are either user inputs or calculated outputs, in off-design they are
         # strictly inputs and therefore do not change.
-        CRUISE_ALTITUDE = 'aircraft:design:cruise_altitude'
         CRUISE_RANGE = 'mission:design:cruise_range'
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
