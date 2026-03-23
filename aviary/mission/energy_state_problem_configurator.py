@@ -18,8 +18,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
     """
-    An Energy State specific builder that customizes AviaryProblem() for use with
-    Energy State phases.
+    An energy-state specific builder that customizes AviaryProblem() for use with
+    energy-state phases.
     """
 
     def initial_guesses(self, aviary_group):

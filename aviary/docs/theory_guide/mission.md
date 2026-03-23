@@ -40,7 +40,7 @@ Having a basic understanding of some control theory lingo will be helpful for un
 (energy-method)=
 ### Energy-state approximation
 
-The energy-state approximation is a method of describing an aircraft's energy state based on its combined kinetic and potential energy.
+The energy-state approximation is a method of describing an aircraft's energy-state based on its combined kinetic and potential energy.
 This is a relatively simple EOM model for an aircraft because it does not consider the aircraft's flight path angle (using small-angle approximations), and treats the aircraft as a point mass without rotational degrees of freedom.
 Instead, we only care about the aircraft's current speed and current altitude, as that is all we need to calculate its combined energy.
 The aircraft is then modeled in such a way that this energy can be instantaneously transferred between the kinetic and potential realms.

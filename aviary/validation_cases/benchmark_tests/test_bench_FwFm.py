@@ -222,7 +222,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
 
-        # This is one of the few places we test Energy State + simple takeoff.
+        # This is one of the few places we test energy-state + simple takeoff.
         overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
 
         # Making sure we include the fuel mass consumed in take-off and taxi.

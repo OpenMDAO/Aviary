@@ -1,7 +1,7 @@
 from aviary.variable_info.variables import Mission
 from aviary.variable_info.enums import Transcription
 
-# defaults for Energy State based phases
+# defaults for energy-state based phases
 
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
