@@ -7238,15 +7238,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Design.CRUISE_RANGE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='NM',
-    desc='the distance flown by the aircraft during cruise',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Design.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={
