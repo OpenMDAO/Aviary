@@ -29,14 +29,14 @@ class TestTailVolCoef(
             promotes=['aircraft:*'],
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8054, units='ft')
@@ -202,7 +202,7 @@ class TestEmpennageGroup(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless')
+        self.prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless')
         self.prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units='ft')
         self.prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
 
