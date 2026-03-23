@@ -658,7 +658,7 @@ class Mission:
         # These values may change in a design mission, but not during off-design. In a design
         # mission these are either user inputs or calculated outputs, in off-design they are
         # strictly inputs and therefore do not change.
-        CRUISE_ALTITUDE = 'mission:design:cruise_altitude'
+        CRUISE_ALTITUDE = 'aircraft:design:cruise_altitude'
         CRUISE_RANGE = 'mission:design:cruise_range'
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'

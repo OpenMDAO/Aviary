@@ -340,7 +340,7 @@ class LoadParameters(om.ExplicitComponent):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.PART25_STRUCTURAL_CATEGORY)
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
-        add_aviary_option(self, Mission.Design.CRUISE_ALTITUDE, units='ft')
+        add_aviary_option(self, Aircraft.Design.CRUISE_ALTITUDE, units='ft')
 
     def setup(self):
         self.add_input(
@@ -384,7 +384,7 @@ class LoadParameters(om.ExplicitComponent):
         vel_c = inputs['vel_c']
         max_airspeed = inputs['max_airspeed']
 
-        cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
+        cruise_alt, _ = self.options[Aircraft.Design.CRUISE_ALTITUDE]
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
@@ -449,7 +449,7 @@ class LoadParameters(om.ExplicitComponent):
         vel_c = inputs['vel_c']
         max_airspeed = inputs['max_airspeed']
 
-        cruise_alt, _ = self.options[Mission.Design.CRUISE_ALTITUDE]
+        cruise_alt, _ = self.options[Aircraft.Design.CRUISE_ALTITUDE]
         CATD = self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 

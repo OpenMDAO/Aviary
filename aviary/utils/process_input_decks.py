@@ -85,7 +85,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, val=0)
     # these are used in initialization_guessing()
-    aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
+    aircraft_values.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
     aircraft_values.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=0, units='lbm')
 
     initialization_guesses = {
@@ -451,7 +451,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     if initialization_guesses['time_to_climb'] <= 0:  # no guess given
         initialization_guesses['time_to_climb'] = aircraft_values.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft'
+            Aircraft.Design.CRUISE_ALTITUDE, units='ft'
         ) / (avg_speed_guess * np.sin(gamma_guess))
     elif initialization_guesses['time_to_climb'] <= 2:  # duration entered in hours
         initialization_guesses['time_to_climb'] = initialization_guesses['time_to_climb'] * (
@@ -459,7 +459,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         )
     elif initialization_guesses['time_to_climb'] <= 200:  # average climb rate in ft/s
         initialization_guesses['time_to_climb'] = (
-            aircraft_values.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+            aircraft_values.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
             / initialization_guesses['time_to_climb']
         )
 

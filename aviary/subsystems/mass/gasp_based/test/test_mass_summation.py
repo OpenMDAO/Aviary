@@ -130,7 +130,7 @@ class MassSummationTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -481,7 +481,7 @@ class MassSummationTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -830,7 +830,7 @@ class MassSummationTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1187,7 +1187,7 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1539,7 +1539,7 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1893,7 +1893,7 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37100, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37100, units='ft')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
@@ -2269,7 +2269,7 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=43000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=43000, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -2646,7 +2646,7 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=43000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=43000, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -3058,7 +3058,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         # options from MassPremission
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=41000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')

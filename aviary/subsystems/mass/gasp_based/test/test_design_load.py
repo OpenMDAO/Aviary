@@ -380,7 +380,7 @@ class LoadSpeedsTestCase10smooth(unittest.TestCase):  # TestCase5 with smooth fu
 class LoadParametersTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('params', LoadParameters(), promotes=['*'])
@@ -408,7 +408,7 @@ class LoadParametersTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('params', LoadParameters(), promotes=['*'])
@@ -436,7 +436,7 @@ class LoadParametersTestCase3(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem('params', LoadParameters(), promotes=['*'])
@@ -465,7 +465,7 @@ class LoadParametersTestCase4smooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -498,7 +498,7 @@ class LoadParametersTestCase5smooth(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=2, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=30000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=30000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -531,7 +531,7 @@ class LoadParametersTestCase6smooth(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, val=4, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=22000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=22000, units='ft')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -751,7 +751,7 @@ class LoadFactorsTestCase4smooth(unittest.TestCase):
 class DesignLoadGroupTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
 
@@ -794,7 +794,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         self.prob = om.Problem()
 
@@ -1432,7 +1432,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
 class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         prob = self.prob = om.Problem()
 
@@ -1469,7 +1469,7 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 
         prob = self.prob = om.Problem()
 

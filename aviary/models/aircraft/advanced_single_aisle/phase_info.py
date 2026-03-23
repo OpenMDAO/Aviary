@@ -98,7 +98,7 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         the new mission parameters
     """
 
-    alt_cruise = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+    alt_cruise = aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
     mach_cruise = aviary_inputs.get_val(Mission.Summary.CRUISE_MACH)
 
     # Range

@@ -137,7 +137,7 @@ aircraft:wing:taper_ratio,0.301,unitless
 aircraft:wing:thickness_to_chord_root,0.1125,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
-mission:design:cruise_altitude,37000,ft
+aircraft:design:cruise_altitude,37000,ft
 mission:design:gross_mass,124780,lbm
 mission:design:mach,0.78,unitless
 mission:design:range,3480,NM

@@ -59,7 +59,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.post_mission_info.setdefault('include_landing', True)
 
         # Commonly referenced values
-        aviary_group.cruise_alt = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+        aviary_group.cruise_alt = aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
         aviary_group.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
         aviary_group.cruise_mass_final = aviary_inputs.get_val(
@@ -131,7 +131,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this configurator.
         """
         aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft'
+            Aircraft.Design.CRUISE_ALTITUDE, units='ft'
         )
 
         # Add event transformation subsystem

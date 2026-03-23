@@ -1311,6 +1311,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.CRUISE_ALTITUDE,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
+    units='ft',
+    option=True,
+    default_value=25000.0,
+    desc='design mission cruise altitude',
+)
+
+add_meta_data(
     Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DELCD', 'FLOPS': None, 'LEAPS1': None},
@@ -7226,16 +7236,6 @@ add_meta_data(
 #                             __/ |
 #                            |___/
 # =========================================
-
-add_meta_data(
-    Mission.Design.CRUISE_ALTITUDE,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
-    units='ft',
-    option=True,
-    default_value=25000.0,
-    desc='design mission cruise altitude',
-)
 
 add_meta_data(
     Mission.Design.GROSS_MASS,
