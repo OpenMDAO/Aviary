@@ -150,7 +150,7 @@ aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
 mission:design:gross_mass,1.0,lbm
 mission:design:lift_coefficient,-1.0,unitless
-mission:design:mach,-1.0,unitless
+aircraft:design:mach,-1.0,unitless
 mission:design:range,3500.0,NM
 mission:design:thrust_takeoff_per_eng,0.0,lbf
 mission:landing:drag_coefficient_min,0.045,unitless

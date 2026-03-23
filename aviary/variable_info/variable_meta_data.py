@@ -1583,6 +1583,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.Mach,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.CRMACH',
+        'FLOPS': 'AERIN.FMDES',
+        #  [  # inputs
+        #      '&DEFINE.AERIN.FMDES', 'OSWALD.FMDES'
+        #      # outputs
+        #      '~EDET.DESM', '~MDESN.DESM'
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_design_variables.design_mach',
+            'aircraft.outputs.L0_design_variables.design_mach',
+        ],
+    },
+    units='unitless',
+    desc='aircraft design Mach number',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.THEMAX', 'FLOPS': None, 'LEAPS1': None},
@@ -7292,28 +7314,6 @@ add_meta_data(
     units='unitless',
     desc='Fixed design lift coefficient. If input, overrides design lift '
     'coefficient computed by EDET.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # NOTE: user override (no scaling)
-    Mission.Design.MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.CRMACH',
-        'FLOPS': 'AERIN.FMDES',
-        #  [  # inputs
-        #      '&DEFINE.AERIN.FMDES', 'OSWALD.FMDES'
-        #      # outputs
-        #      '~EDET.DESM', '~MDESN.DESM'
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_design_variables.design_mach',
-            'aircraft.outputs.L0_design_variables.design_mach',
-        ],
-    },
-    units='unitless',
-    desc='aircraft design Mach number',
     default_value=0.0,
 )
 

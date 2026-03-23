@@ -137,7 +137,7 @@ aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 aircraft:design:cruise_altitude,37500,ft
 mission:design:gross_mass,175400.0,lbm
-mission:design:mach,0.8,unitless
+aircraft:design:mach,0.8,unitless
 mission:design:range,3675,NM
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s

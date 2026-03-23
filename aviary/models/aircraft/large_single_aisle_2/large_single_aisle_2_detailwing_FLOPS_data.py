@@ -381,5 +381,5 @@ outputs.set_val(Aircraft.Wing.MISC_MASS, 1718.7, 'lbm')
 outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 7552.6, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 1835.0, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.799)
+outputs.set_val(Aircraft.Design.Mach, 0.799)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.523)

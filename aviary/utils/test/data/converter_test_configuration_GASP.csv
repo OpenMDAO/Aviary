@@ -141,7 +141,7 @@ aircraft:wing:thickness_to_chord_tip,0.1,unitless
 aircraft:wing:vertical_mount_location,1.0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:design:gross_mass,160000.0,lbm
-mission:design:mach,0.8,unitless
+aircraft:design:mach,0.8,unitless
 mission:design:range,3500.0,NM
 mission:design:rate_of_climb_at_top_of_climb,300.0,ft/min
 mission:landing:airport_altitude,0,ft

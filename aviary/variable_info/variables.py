@@ -149,6 +149,7 @@ class Aircraft:
         LIFT_DEPENDENT_DRAG_POLAR = 'aircraft:design:lift_dependent_drag_polar'
         LIFT_INDEPENDENT_DRAG_POLAR = 'aircraft:design:lift_independent_drag_polar'
         LIFT_POLAR = 'aircraft:design:lift_polar'
+        MACH = 'aircraft:design:mach'
         MAX_FUSELAGE_PITCH_ANGLE = 'aircraft:design:max_fuselage_pitch_angle'
         MAX_STRUCTURAL_SPEED = 'aircraft:design:max_structural_speed'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
@@ -662,7 +663,6 @@ class Mission:
         # strictly inputs and therefore do not change.
         GROSS_MASS = 'mission:design:gross_mass'
         LIFT_COEFFICIENT = 'mission:design:lift_coefficient'
-        MACH = 'mission:design:mach'
         RANGE = 'mission:design:range'
         RATE_OF_CLIMB_AT_TOP_OF_CLIMB = 'mission:design:rate_of_climb_at_top_of_climb'
         RESERVE_FUEL = 'mission:design:reserve_fuel'

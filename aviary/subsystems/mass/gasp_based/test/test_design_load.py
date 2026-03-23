@@ -565,7 +565,7 @@ class LiftCurveSlopeAtCruiseTest(unittest.TestCase):
         self.prob.model.add_subsystem('factors', LiftCurveSlopeAtCruise(), promotes=['*'])
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=0.436, units='rad')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.Mach, val=0.8, units='unitless')
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -816,7 +816,7 @@ class DesignLoadGroupTestCase2smooth(unittest.TestCase):
         )  # bug fixed value
         self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=0.436, units='rad')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.Mach, val=0.8, units='unitless')
 
         setup_model_options(self.prob, options)
 
@@ -1486,7 +1486,7 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SWEEP, val=0.436, units='rad')
-        prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.Mach, val=0.8, units='unitless')
 
         setup_model_options(self.prob, options)
 

@@ -423,5 +423,5 @@ outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 894, 'lbm')
 
 outputs.set_val(Aircraft.Wing.MASS, 18268, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.800)
+outputs.set_val(Aircraft.Design.Mach, 0.800)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)

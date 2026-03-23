@@ -145,7 +145,7 @@ mission:constraints:max_mach,0.785,unitless
 aircraft:design:cruise_altitude,37500,ft # double check against phase_info
 mission:design:gross_mass,175400.0,lbm
 aircraft:design:lift_coefficient_max_flaps_up,1.2596,unitless
-mission:design:mach,0.8,unitless
+aircraft:design:mach,0.8,unitless
 mission:design:range,3500,NM
 mission:design:thrust_takeoff_per_eng,28928.1,lbf
 mission:landing:airport_altitude,0,ft
