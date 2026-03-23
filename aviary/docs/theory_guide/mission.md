@@ -56,7 +56,7 @@ Through this approximation, the only state variable is the energy $E$ and $V$ ca
 
 An excellent introduction to this type of aircraft modeling is [Rutowski's 1953 "Energy Approach to the General Aircraft Performance Problem"](https://arc.aiaa.org/doi/pdf/10.2514/8.2956).
 
-### Two degree-of-freedom
+### Two-degrees-of-freedom
 
 The 2DOF EOM is a bit more detailed than the energy-state approximation as it considers the x-y movement of the aircraft.
 This means that we need some notion of the aircraft's flight path heading and speed to obtain its change in the x- and y-directions.

@@ -137,8 +137,8 @@ FLOPS uses a single type of mission analysis: energy-state, with an explicit
 integration scheme. When full developed, Aviary will offer this type of
 analysis, as well as a variety of other mission analysis types.
 
-Currently there are two options for the equations of motion used: two degree of
-freedom, and energy-state. The energy-state equations are the same as those
+Currently there are two options for the equations of motion used: two-degrees-of-freedom, 
+and energy-state. The energy-state equations are the same as those
 used in FLOPS, although the integration scheme is different. Prescribed mission
 equations are also being planned.
 
