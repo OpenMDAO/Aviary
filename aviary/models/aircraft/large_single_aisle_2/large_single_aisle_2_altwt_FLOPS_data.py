@@ -116,7 +116,7 @@ inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 10.0)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 10.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.3008)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1195)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 707.706, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -261,7 +261,7 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 96288.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 492.0, 'lbm')
-outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 146328.0, 'lbm')
+outputs.set_val(Aircraft.Design.LANDING_MASS, 146328.0, 'lbm')
 outputs.set_val(Mission.Summary.OPERATING_MASS, 106360.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3906.6, 'lbm')
 propulsion_mass = 20275.0
