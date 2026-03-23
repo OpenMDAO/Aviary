@@ -3022,7 +3022,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FVOL_MRG', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='Extra volume required in the wing fuel tank as a persantage of design mission fuel mass.'
+    desc='Extra volume required in the wing fuel tank as a percentage of design mission fuel mass.'
     'Only used in GASP wing tank mass and fuel system mass sizing calculations.',
     default_value=0.0,
 )
