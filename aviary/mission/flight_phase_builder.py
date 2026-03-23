@@ -17,7 +17,7 @@ from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation, Tr
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-# Height Energy and Solved2DOF use this builder
+# energy-state and Solved2DOF use this builder
 
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()
