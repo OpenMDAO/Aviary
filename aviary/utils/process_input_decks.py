@@ -413,8 +413,8 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             mission_mass * initialization_guesses['rotation_mass']
         )
 
-    if Aircraft.Design.Mach in aircraft_values:
-        cruise_mach = aircraft_values.get_val(Aircraft.Design.Mach)
+    if Aircraft.Design.MACH in aircraft_values:
+        cruise_mach = aircraft_values.get_val(Aircraft.Design.MACH)
     else:
         cruise_mach = aircraft_values.get_val(Mission.Summary.CRUISE_MACH)
 

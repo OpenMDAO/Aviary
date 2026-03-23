@@ -79,7 +79,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 units='NM',
             )
 
-        aviary_group.cruise_mach = aviary_inputs.get_val(Aircraft.Design.Mach)
+        aviary_group.cruise_mach = aviary_inputs.get_val(Aircraft.Design.MACH)
         aviary_group.require_range_residual = True
 
     def get_default_phase_info(self, aviary_group):

@@ -434,7 +434,7 @@ outputs.set_val(Aircraft.Wing.SPAN, 253.720756, 'ft')  # SPAN = WF+OSSPAN*2
 
 outputs.set_val(Mission.Summary.USEFUL_LOAD, 20996.3933862, 'lbm')
 
-outputs.set_val(Aircraft.Design.Mach, 0.800)
+outputs.set_val(Aircraft.Design.MACH, 0.800)
 outputs.set_val(Mission.Summary.OPERATING_MASS, 411479.0724484, 'lbm')  # WOWE
 outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 509291.0724484, 'lbm')  # WZF
 outputs.set_val(Mission.Summary.FUEL_MASS, 364807.9275516, 'lbm')  # FUELM

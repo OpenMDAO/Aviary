@@ -22,7 +22,7 @@ class AeroFormfactors(om.ExplicitComponent):
         add_aviary_input(
             self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
         )
-        add_aviary_input(self, Aircraft.Design.Mach, units='unitless')
+        add_aviary_input(self, Aircraft.Design.MACH, units='unitless')
         add_aviary_input(self, Aircraft.Nacelle.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, units='ft')
 
@@ -37,7 +37,7 @@ class AeroFormfactors(om.ExplicitComponent):
             Aircraft.Wing.FORM_FACTOR,
             [
                 Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED,
-                Aircraft.Design.Mach,
+                Aircraft.Design.MACH,
                 Aircraft.Wing.SWEEP,
             ],
         )
@@ -45,7 +45,7 @@ class AeroFormfactors(om.ExplicitComponent):
             Aircraft.VerticalTail.FORM_FACTOR,
             [
                 Aircraft.VerticalTail.THICKNESS_TO_CHORD,
-                Aircraft.Design.Mach,
+                Aircraft.Design.MACH,
                 Aircraft.VerticalTail.SWEEP,
             ],
         )
@@ -53,14 +53,14 @@ class AeroFormfactors(om.ExplicitComponent):
             Aircraft.HorizontalTail.FORM_FACTOR,
             [
                 Aircraft.HorizontalTail.THICKNESS_TO_CHORD,
-                Aircraft.Design.Mach,
+                Aircraft.Design.MACH,
                 Aircraft.HorizontalTail.SWEEP,
                 Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
             ],
         )
         self.declare_partials(
             Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR,
-            [Aircraft.Strut.THICKNESS_TO_CHORD, Aircraft.Design.Mach],
+            [Aircraft.Strut.THICKNESS_TO_CHORD, Aircraft.Design.MACH],
         )
         self.declare_partials(
             Aircraft.Nacelle.FORM_FACTOR,
@@ -128,7 +128,7 @@ class AeroFormfactors(om.ExplicitComponent):
         J[Aircraft.Wing.FORM_FACTOR, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED] = (
             2 * SWETFCT * ((2 - smn**2) * cos1 / A1 + 400 * tc**3)
         )
-        J[Aircraft.Wing.FORM_FACTOR, Aircraft.Design.Mach] = (
+        J[Aircraft.Wing.FORM_FACTOR, Aircraft.Design.MACH] = (
             -2 * SWETFCT * (tc * smn * cos1) * ((A1**2 + 1 - 2 * cos1**2) / A1**3)
         )
         J[Aircraft.Wing.FORM_FACTOR, Aircraft.Wing.SWEEP] = (
@@ -140,7 +140,7 @@ class AeroFormfactors(om.ExplicitComponent):
         J[Aircraft.VerticalTail.FORM_FACTOR, Aircraft.VerticalTail.THICKNESS_TO_CHORD] = (
             2 * SWETFCT * ((2 - smn**2) * cos2 / A2 + 400 * tcvt**3)
         )
-        J[Aircraft.VerticalTail.FORM_FACTOR, Aircraft.Design.Mach] = (
+        J[Aircraft.VerticalTail.FORM_FACTOR, Aircraft.Design.MACH] = (
             -2 * SWETFCT * (tcvt * smn * cos2) * ((A2**2 + 1 - 2 * cos2**2) / A2**3)
         )
         J[Aircraft.VerticalTail.FORM_FACTOR, Aircraft.VerticalTail.SWEEP] = (
@@ -152,7 +152,7 @@ class AeroFormfactors(om.ExplicitComponent):
         J[Aircraft.HorizontalTail.FORM_FACTOR, Aircraft.HorizontalTail.THICKNESS_TO_CHORD] = (
             2 * SWETFCT * ((2 - smn**2) * cos3 / A3 + 400 * tcht**3) * (1.0 + 0.05 * (1.0 - sah))
         )
-        J[Aircraft.HorizontalTail.FORM_FACTOR, Aircraft.Design.Mach] = (
+        J[Aircraft.HorizontalTail.FORM_FACTOR, Aircraft.Design.MACH] = (
             -2
             * SWETFCT
             * (tcht * smn * cos3)
@@ -175,7 +175,7 @@ class AeroFormfactors(om.ExplicitComponent):
         J[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, Aircraft.Strut.THICKNESS_TO_CHORD] = (
             2 * SWETFCT * ((2 - smn**2) / A4 + 400 * tcstrt**3)
         )
-        J[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, Aircraft.Design.Mach] = (
+        J[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, Aircraft.Design.MACH] = (
             -2 * SWETFCT * (tcstrt * smn) * ((A4**2 - 1) / A4**3)
         )
 

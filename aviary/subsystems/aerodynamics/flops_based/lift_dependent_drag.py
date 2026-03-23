@@ -26,7 +26,7 @@ class LiftDependentDrag(om.ExplicitComponent):
 
         # Aero design inputs
         add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
-        add_aviary_input(self, Aircraft.Design.Mach, units='unitless')
+        add_aviary_input(self, Aircraft.Design.MACH, units='unitless')
 
         # Aircraft design inputs
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
@@ -56,7 +56,7 @@ class LiftDependentDrag(om.ExplicitComponent):
 
         wrt = [
             Mission.Design.LIFT_COEFFICIENT,
-            Aircraft.Design.Mach,
+            Aircraft.Design.MACH,
             Aircraft.Wing.AREA,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
@@ -327,7 +327,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         partials['CD', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dCD_dCAM
         partials['CD', Aircraft.Wing.SWEEP] = dCD_dSW25
         partials['CD', Mission.Design.LIFT_COEFFICIENT] = -dCD_dCL
-        partials['CD', Aircraft.Design.Mach] = -dCD_dmach
+        partials['CD', Aircraft.Design.MACH] = -dCD_dmach
 
         if self.clamp_indices:
             partials['CD', Dynamic.Atmosphere.MACH][self.clamp_indices] = 0.0
@@ -339,7 +339,7 @@ class LiftDependentDrag(om.ExplicitComponent):
             partials['CD', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN][self.clamp_indices] = 0.0
             partials['CD', Aircraft.Wing.SWEEP][self.clamp_indices] = 0.0
             partials['CD', Mission.Design.LIFT_COEFFICIENT][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Design.Mach][self.clamp_indices] = 0.0
+            partials['CD', Aircraft.Design.MACH][self.clamp_indices] = 0.0
 
 
 # Tables

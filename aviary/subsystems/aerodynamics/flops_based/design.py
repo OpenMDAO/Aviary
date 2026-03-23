@@ -37,7 +37,7 @@ class Design(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
         # Declare outputs
-        add_aviary_output(self, Aircraft.Design.Mach, units='unitless')
+        add_aviary_output(self, Aircraft.Design.MACH, units='unitless')
         add_aviary_output(self, Mission.Design.LIFT_COEFFICIENT, units='unitless')
 
     def setup_partials(self):
@@ -83,7 +83,7 @@ class Design(om.ExplicitComponent):
         DMDAR = c / AR
 
         # Design Mach number
-        outputs[Aircraft.Design.Mach] = DESM2D + DMDSWP + DMDAR
+        outputs[Aircraft.Design.MACH] = DESM2D + DMDSWP + DMDAR
 
     def compute_partials(self, inputs, partials):
         AITEK = self.options[Aircraft.Wing.AIRFOIL_TECHNOLOGY]
@@ -199,10 +199,10 @@ class Design(om.ExplicitComponent):
         dDMDSWP_dSW25 = (a / b) * np.sin(SW25 / b)
         dDESM_dSW25 = dDESM2D_dSW25 + dDMDSWP_dSW25
 
-        partials[Aircraft.Design.Mach, Aircraft.Wing.ASPECT_RATIO] = dDESM_dAR
-        partials[Aircraft.Design.Mach, Aircraft.Wing.THICKNESS_TO_CHORD] = dDESM_dTC
-        partials[Aircraft.Design.Mach, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dDESM_dCAM
-        partials[Aircraft.Design.Mach, Aircraft.Wing.SWEEP] = dDESM_dSW25
+        partials[Aircraft.Design.MACH, Aircraft.Wing.ASPECT_RATIO] = dDESM_dAR
+        partials[Aircraft.Design.MACH, Aircraft.Wing.THICKNESS_TO_CHORD] = dDESM_dTC
+        partials[Aircraft.Design.MACH, Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dDESM_dCAM
+        partials[Aircraft.Design.MACH, Aircraft.Wing.SWEEP] = dDESM_dSW25
 
 
 AMDES = np.array(

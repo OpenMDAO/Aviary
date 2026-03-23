@@ -2144,7 +2144,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Design.Mach, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2529,7 +2529,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Strut.MASS_COEFFICIENT, 0.238, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Design.Mach, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2927,7 +2927,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults('TMS_spec_mass', 0.125, units='lbm/kW')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Design.Mach, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -3238,7 +3238,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FOLD_MASS_COEFFICIENT, 0.15, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Design.Mach, 0.8, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.MACH, 0.8, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')

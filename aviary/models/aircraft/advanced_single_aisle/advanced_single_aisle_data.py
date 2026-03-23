@@ -441,7 +441,7 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4329.9, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 2741.0, 'lbm')
 outputs.set_val(Aircraft.Wing.MASS, 8911.0, 'lbm')
 
-outputs.set_val(Aircraft.Design.Mach, 0.779)
+outputs.set_val(Aircraft.Design.MACH, 0.779)
 outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model

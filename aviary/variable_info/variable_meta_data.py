@@ -1584,7 +1584,7 @@ add_meta_data(
 
 add_meta_data(
     # NOTE: user override (no scaling)
-    Aircraft.Design.Mach,
+    Aircraft.Design.MACH,
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CRMACH',

@@ -600,7 +600,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='rad')
-        add_aviary_input(self, Aircraft.Design.Mach, units='unitless')
+        add_aviary_input(self, Aircraft.Design.MACH, units='unitless')
 
         add_aviary_output(self, Aircraft.Design.LIFT_CURVE_SLOPE, units='1/rad')
 
@@ -611,7 +611,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
 
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         DLMC4 = inputs[Aircraft.Wing.SWEEP]
-        mach = inputs[Aircraft.Design.Mach]
+        mach = inputs[Aircraft.Design.MACH]
 
         if verbosity > Verbosity.BRIEF:
             if AR <= 0.0:
@@ -633,7 +633,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
     def compute_partials(self, inputs, partials):
         AR = inputs[Aircraft.Wing.ASPECT_RATIO]
         DLMC4 = inputs[Aircraft.Wing.SWEEP]
-        mach = inputs[Aircraft.Design.Mach]
+        mach = inputs[Aircraft.Design.MACH]
 
         c1 = np.sqrt(AR**2 * (-(mach**2) * np.cos(DLMC4) ** 2 + 1) + 4 * np.cos(DLMC4) ** 2)
         c2 = 2 * np.cos(DLMC4) + c1
@@ -641,7 +641,7 @@ class LiftCurveSlopeAtCruise(om.ExplicitComponent):
         partials[Aircraft.Design.LIFT_CURVE_SLOPE, Aircraft.Wing.ASPECT_RATIO] = (
             4 * np.pi * np.cos(DLMC4) ** 2
         ) / (c1 * c2)
-        partials[Aircraft.Design.LIFT_CURVE_SLOPE, Aircraft.Design.Mach] = (
+        partials[Aircraft.Design.LIFT_CURVE_SLOPE, Aircraft.Design.MACH] = (
             2 * np.pi * AR**3 * mach * np.cos(DLMC4) ** 3
         ) / (c1 * c2**2)
         partials[Aircraft.Design.LIFT_CURVE_SLOPE, Aircraft.Wing.SWEEP] = (
