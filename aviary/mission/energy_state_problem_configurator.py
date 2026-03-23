@@ -5,9 +5,9 @@ import openmdao.api as om
 from dymos.transcriptions.transcription_base import TranscriptionBase
 
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.height_energy.phases.build_landing import Landing
-from aviary.mission.height_energy.phases.build_takeoff import Takeoff
-from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
+from aviary.mission.energy_state.phases.build_landing import Landing
+from aviary.mission.energy_state.phases.build_takeoff import Takeoff
+from aviary.mission.energy_state.phases.energy_phase import EnergyPhase
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.mission.utils import process_guess_var
@@ -16,10 +16,10 @@ from aviary.variable_info.enums import LegacyCode, Verbosity
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
-class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
+class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
     """
-    A Height-Energy specific builder that customizes AviaryProblem() for use with
-    height energy phases.
+    An energy-state specific builder that customizes AviaryProblem() for use with
+    energy-state phases.
     """
 
     def initial_guesses(self, aviary_group):
@@ -82,7 +82,7 @@ class HeightEnergyProblemConfigurator(ProblemConfiguratorBase):
         AviaryValues
             General default phase_info.
         """
-        from aviary.models.missions.height_energy_default import phase_info
+        from aviary.models.missions.energy_state_default import phase_info
 
         return phase_info
 

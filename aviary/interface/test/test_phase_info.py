@@ -9,11 +9,11 @@ from copy import deepcopy
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.models.missions.height_energy_default import (
-    phase_info as ph_in_height_energy,
+from aviary.models.missions.energy_state_default import (
+    phase_info as ph_in_energy_state,
 )
-from aviary.models.missions.height_energy_default import (
-    phase_info_parameterization as phase_info_parameterization_height_energy,
+from aviary.models.missions.energy_state_default import (
+    phase_info_parameterization as phase_info_parameterization_energy_state,
 )
 from aviary.models.missions.two_dof_default import phase_info as ph_in_two_dof
 from aviary.models.missions.two_dof_default import (
@@ -64,8 +64,8 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         )
         assert_near_equal(prob.get_val('traj.cruise.timeseries.mach')[0], 0.6)
 
-    def test_phase_info_parameterization_height_energy(self):
-        phase_info = deepcopy(ph_in_height_energy)
+    def test_phase_info_parameterization_energy_state(self):
+        phase_info = deepcopy(ph_in_energy_state)
 
         prob = AviaryProblem()
 
@@ -82,7 +82,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.add_pre_mission_systems()
-        prob.add_phases(phase_info_parameterization=phase_info_parameterization_height_energy)
+        prob.add_phases(phase_info_parameterization=phase_info_parameterization_energy_state)
         prob.add_post_mission_systems()
 
         prob.link_phases()

@@ -130,7 +130,7 @@ def fortran_to_aviary(
 
     # Add settings and engine data file
     if legacy_code is FLOPS:
-        eom = ['height_energy']
+        eom = ['energy_state']
         aero = mass = ['FLOPS']
     if legacy_code is GASP:
         eom = ['2DOF']

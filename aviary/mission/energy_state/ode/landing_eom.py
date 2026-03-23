@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_METRIC_FLOPS as grav_metric
-from aviary.mission.height_energy.ode.takeoff_eom import (
+from aviary.mission.energy_state.ode.takeoff_eom import (
     Accelerations,
     DistanceRates,
     FlightPathAngleRate,

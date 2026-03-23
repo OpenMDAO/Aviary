@@ -110,7 +110,7 @@ class FlightPhase(PhaseBuilder):
     A phase builder for a 2DOF flight phase.
 
     This class extends the PhaseBuilder class, providing specific implementations for
-    the descent phase of a 2-degree of freedom flight mission.
+    the descent phase of a 2-degrees-of-freedom flight mission.
 
     Attributes
     ----------

@@ -133,19 +133,19 @@ optimize aircraft with tightly-integrated aerodynamics and propulsion.
 
 ### Main mission segments
 
-FLOPS uses a single type of mission analysis: height-energy, with an explicit
+FLOPS uses a single type of mission analysis: energy-state, with an explicit
 integration scheme. When full developed, Aviary will offer this type of
 analysis, as well as a variety of other mission analysis types.
 
-Currently there are two options for the equations of motion used: two degree of
-freedom, and height-energy. The height-energy equations are the same as those
+Currently there are two options for the equations of motion used: two-degrees-of-freedom, 
+and energy-state. The energy-state equations are the same as those
 used in FLOPS, although the integration scheme is different. Prescribed mission
 equations are also being planned.
 
 Currently, integration of the equations of motion is done using a collocation
 method. Implementation of an analytic shooting method is underway. Eventually
 Aviary will also offer a simple explicit integration, similar to FLOPS. The
-combination of the height-energy equations with the explicit integration should
+combination of the energy-state equations with the explicit integration should
 give similar results to FLOPS, but they will not be exactly the same because of
 differing numerical methods used to achieve convergence.
 
