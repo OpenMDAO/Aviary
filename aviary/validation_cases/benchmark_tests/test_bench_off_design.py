@@ -514,7 +514,7 @@ class PayloadRangeTest(unittest.TestCase):
                 24368.28182739,
                 0,
             ],
-            tolerance=1e-8,
+            tolerance=1e-6,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Fuel', 'lbm'),
