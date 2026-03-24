@@ -859,7 +859,7 @@ class AviaryGroup(om.Group):
         # Fuel burn in reserve phases
         if self.reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final',  # TODO: Fix to be different in cumulative fuel burn
+                'reserve_fuel_burned = initial_mass - mass_final', 
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
@@ -901,10 +901,13 @@ class AviaryGroup(om.Group):
                              ('mission_fuel_burned', Mission.Summary.FUEL_BURNED),
                              ('reserve_fuel', Mission.Design.RESERVE_FUEL)],
             promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)])
-        
+        # This should always try to make Mission.Summary.TOTAL_FUEL_MASS as small as possible to minimize mass
+        # however, by setting it to lower rather than equals, we allow for the case that we want to carry more mass than 
+        # required purely by mission fuel. This is useful if we ever want to specify or override the 
+        # Mission.Summary.TOTAL_FUEL_MASS directly instead of calculating it 
         self.add_constraint(
                     Mission.Constraints.MASS_RESIDUAL,
-                    equals=0.0,
+                    lower=0.0,
                     ref=1e5,
                 )
 
@@ -982,20 +985,6 @@ class AviaryGroup(om.Group):
             initial_mass={'units': 'lbm'},
             mass_resid={'units': 'lbm'},
         )
-
-        # # TODO: Is this constraint needed anymore?
-        # # If we are keeping it it should use ZERO_FUEL_MASS instead of operating empty + payload
-        # post_mission.add_subsystem(
-        #     'mass_constraint',
-        #     ecomp,
-        #     promotes_inputs=[
-        #         ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
-        #         ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
-        #         ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-        #         ('initial_mass', Mission.Summary.GROSS_MASS),
-        #     ],
-        #     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
-        # )
 
         ecomp = om.ExecComp(
             'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
