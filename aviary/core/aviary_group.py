@@ -886,25 +886,9 @@ class AviaryGroup(om.Group):
 
         self.add_fuel_reserve_component()
 
-        # TODO: Add a constraint to check that (taxi_out + takeoff + fuel_burned + reserve_fuel = overall_fuel)
-        # ecomp = om.ExecComp(
-        #     'overall_fuel = fuel_burned + reserve_fuel',
-        #     overall_fuel={'units': 'lbm', 'shape': 1},
-        #     fuel_burned={'units': 'lbm'},  # from regular_phases only
-        #     reserve_fuel={'units': 'lbm', 'shape': 1},
-        # )
-        # post_mission.add_subsystem(
-        #     'fuel_calc',
-        #     ecomp,
-        #     promotes_inputs=[
-        #         ('fuel_burned', Mission.Summary.FUEL_BURNED),
-        #         ('reserve_fuel', Mission.Design.RESERVE_FUEL),
-        #     ],
-        #     promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
-        # )
-
         # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel 
         # The aircraft will naturally try to mimize 'total_fuel_mass_constraint' so it's not carrying extra unnecessary fuel
+        # TODO: Make this include TAXI + TAKEOFF + LANDING + TAXI-in FUEL
         post_mission.add_subsystem(
             'total_fuel_mass_con',
             om.ExecComp(
