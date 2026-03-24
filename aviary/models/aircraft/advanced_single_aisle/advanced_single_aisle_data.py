@@ -8,7 +8,7 @@ FLOPS derived input/output for use with Aviary unit tests and benchmarks
 
 import numpy as np
 
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingApproachToMicP3,
     LandingFlareToTouchdown,
     LandingMicP3ToObstacle,
@@ -17,7 +17,7 @@ from aviary.mission.height_energy.phases.detailed_landing_phases import (
     LandingTouchdownToNoseDown,
     LandingTrajectory,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffBrakeReleaseToDecisionSpeed,
     TakeoffBrakeToAbort,
     TakeoffDecisionSpeedBrakeDelay,
@@ -149,7 +149,7 @@ inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 29.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.2734375)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.115)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.42225)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 576.571192, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -321,7 +321,7 @@ inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577.0, 'lbm')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.VERBOSITY, 0)
@@ -333,7 +333,7 @@ inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.SIZING)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 67542.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 996.88, 'lbm')
-outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 108976.4, 'lbm')
+outputs.set_val(Aircraft.Design.LANDING_MASS, 108976.4, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3322, 'lbm')
 outputs.set_val(Mission.Summary.OPERATING_MASS, 72642.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 13105.0, 'lbm')

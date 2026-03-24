@@ -130,7 +130,7 @@ def fortran_to_aviary(
 
     # Add settings and engine data file
     if legacy_code is FLOPS:
-        eom = ['height_energy']
+        eom = ['energy_state']
         aero = mass = ['FLOPS']
     if legacy_code is GASP:
         eom = ['2DOF']
@@ -817,7 +817,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('PS')
     if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not in input_values:
         missing_vars.append('SAB')
-    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if Aircraft.Wing.TAPER_RATIO not in input_values:
         missing_vars.append('SLM')
@@ -847,7 +847,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('YMG')
     if Aircraft.Engine.WING_LOCATIONS not in input_values:
         missing_vars.append('YP')
-    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
         raise RuntimeError(
@@ -1145,7 +1145,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
     # These variables should be removed if they are zero.
     rem_list = [
-        (Aircraft.Design.TOUCHDOWN_MASS, 'lbm'),
+        (Aircraft.Design.LANDING_MASS, 'lbm'),
         (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
         (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),

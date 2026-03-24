@@ -73,7 +73,7 @@ class CodeOrigin(Enum):
 class EquationsOfMotion(Enum):
     """Available equations of motion for use during mission analysis."""
 
-    HEIGHT_ENERGY = 'height_energy'
+    ENERGY_STATE = 'energy_state'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
     CUSTOM = 'custom'

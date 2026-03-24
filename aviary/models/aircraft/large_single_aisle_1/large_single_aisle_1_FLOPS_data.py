@@ -13,7 +13,7 @@ outputs = LargeSingleAisle1FLOPS['outputs'] = AviaryValues()
 # ---------------------------
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)
-inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 152800.0, 'lbm')
+inputs.set_val(Aircraft.Design.LANDING_MASS, 152800.0, 'lbm')
 inputs.set_val(Mission.Design.GROSS_MASS, 181200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.909839381134961)
@@ -110,7 +110,7 @@ inputs.set_val(Aircraft.HorizontalTail.AREA, 355.0, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 6.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.22)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.125)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.2)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 592.65, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -248,7 +248,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------

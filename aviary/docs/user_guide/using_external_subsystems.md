@@ -1,4 +1,4 @@
-# Using external subsystems
+# External Subsystems
 
 Aviary has the ability to include user-defined external subsystems within its mission analysis and optimization processes.
 This doc page explains what these subsystems are, how to write a builder object that Aviary uses, and details the methods that you need to provide to use external subsystems.
@@ -24,7 +24,7 @@ In Aviary, a subsystem is simply an openMDAO component or group that is self-con
 - mass
 - aerodynamics (table-based or empirically computed)
 - propulsion (table-based)
-- flight dynamics / equations of motion (height energy or 2-DOF)
+- flight dynamics / equations of motion (energy-state or 2DOF)
 
 Aviary allows for integration with arbitrary subsystems beyond the included low-fidelity subsystems.
 These could be disciplinary models to do with batteries, structural models, acoustics, or anything to do with aircraft.
