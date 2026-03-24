@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary import constants
-from aviary.mission.height_energy.phases.simplified_landing import LandingCalc, LandingGroup
+from aviary.mission.energy_state.phases.simplified_landing import LandingCalc, LandingGroup
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -55,12 +55,12 @@ class LandingCalcTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.height_energy.phases.simplified_landing as landing
+        import aviary.mission.energy_state.phases.simplified_landing as landing
 
         landing.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.height_energy.phases.simplified_landing as landing
+        import aviary.mission.energy_state.phases.simplified_landing as landing
 
         landing.GRAV_ENGLISH_LBM = 1.0
 

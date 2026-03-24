@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.mission.height_energy.ode.landing_eom import (
+from aviary.mission.energy_state.ode.landing_eom import (
     FlareEOM,
     FlareSumForces,
     GlideSlopeForces,

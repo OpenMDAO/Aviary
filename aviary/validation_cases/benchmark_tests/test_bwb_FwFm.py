@@ -87,7 +87,7 @@ phase_info = {
 class BWBProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using FLOPS mass and aero method
-    and HEIGHT_ENERGY mission method. Expected outputs based on
+    and ENERGY_STATE mission method. Expected outputs based on
     'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv' model.
     """
 
