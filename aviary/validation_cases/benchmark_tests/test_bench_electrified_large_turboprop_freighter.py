@@ -38,7 +38,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )
 
         if mission_method == 'energy':
-            options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
+            options.set_val(Settings.EQUATIONS_OF_MOTION, 'energy_state')
 
         # set up electric propulsion
         # TODO make separate input file for electroprop freighter?

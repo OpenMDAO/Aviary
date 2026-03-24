@@ -70,7 +70,7 @@ class TestSubsystemsMission(unittest.TestCase):
         #     }
         # }
 
-    def test_subsystems_in_a_mission_height_energy(self):
+    def test_subsystems_in_a_mission_energy_state(self):
         phase_info = self.energy_phase_info.copy()
 
         prob = AviaryProblem(verbosity=0)

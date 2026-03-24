@@ -2,7 +2,7 @@ import unittest
 
 import openmdao.api as om
 
-from aviary.mission.height_energy.ode.landing_ode import FlareODE
+from aviary.mission.energy_state.ode.landing_ode import FlareODE
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     detailed_landing_flare,
     inputs,
