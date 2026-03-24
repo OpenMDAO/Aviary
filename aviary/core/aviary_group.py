@@ -564,6 +564,17 @@ class AviaryGroup(om.Group):
         if self.pre_mission_info['include_takeoff']:
             self.configurator.add_takeoff_systems(self)
 
+        # Calculate Mission.Summary.TOTAL_FUEL_MASS
+        pre_mission.add_subsystem(
+            'total_fuel_mass_comp',
+            om.ExecComp(
+                'total_fuel_mass = gross_mass - zero_fuel_mass',
+                total_fuel_mass={'units': 'lbm'},
+                gross_mass={'units': 'lbm'},
+                zero_fuel_mass={'units': 'lbm'}),
+            promotes_inputs=[('gross_mass', Mission.Summary.GROSS_MASS),('zero_fuel_mass', Mission.Summary.ZERO_FUEL_MASS)],
+            promotes_outputs=[('total_fuel_mass', Mission.Summary.TOTAL_FUEL_MASS)])
+
     def _add_premission_external_subsystem_masses(self):
         """
         This private method adds a mass component that captures external subsystem masses for use in
@@ -875,26 +886,42 @@ class AviaryGroup(om.Group):
 
         self.add_fuel_reserve_component()
 
-        # TODO: need to add some sort of check that this value is less than the fuel capacity
-        # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
-        # also include the unused fuel, and the hierarchy variable name should be
-        # more clear
+        # TODO: Add a constraint to check that (taxi_out + takeoff + fuel_burned + reserve_fuel = overall_fuel)
+        # ecomp = om.ExecComp(
+        #     'overall_fuel = fuel_burned + reserve_fuel',
+        #     overall_fuel={'units': 'lbm', 'shape': 1},
+        #     fuel_burned={'units': 'lbm'},  # from regular_phases only
+        #     reserve_fuel={'units': 'lbm', 'shape': 1},
+        # )
+        # post_mission.add_subsystem(
+        #     'fuel_calc',
+        #     ecomp,
+        #     promotes_inputs=[
+        #         ('fuel_burned', Mission.Summary.FUEL_BURNED),
+        #         ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+        #     ],
+        #     promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
+        # )
 
-        ecomp = om.ExecComp(
-            'overall_fuel = fuel_burned + reserve_fuel',
-            overall_fuel={'units': 'lbm', 'shape': 1},
-            fuel_burned={'units': 'lbm'},  # from regular_phases only
-            reserve_fuel={'units': 'lbm', 'shape': 1},
-        )
+        # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel 
+        # The aircraft will naturally try to mimize 'total_fuel_mass_constraint' so it's not carrying extra unnecessary fuel
         post_mission.add_subsystem(
-            'fuel_calc',
-            ecomp,
-            promotes_inputs=[
-                ('fuel_burned', Mission.Summary.FUEL_BURNED),
-                ('reserve_fuel', Mission.Design.RESERVE_FUEL),
-            ],
-            promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
-        )
+            'total_fuel_mass_con',
+            om.ExecComp(
+                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel',
+                total_fuel_mass_constraint={'units': 'lbm'},
+                total_fuel_mass={'units': 'lbm'},
+                mission_fuel_burned={'units': 'lbm'},
+                reserve_fuel={'units': 'lbm'}),
+            promotes_inputs=[('total_fuel_mass', Mission.Summary.TOTAL_FUEL_MASS),
+                             ('mission_fuel_burned', Mission.Summary.FUEL_BURNED),
+                             ('reserve_fuel', Mission.Design.RESERVE_FUEL)],
+            promotes_outputs=['total_fuel_mass_constraint'])
+        self.add_constraint(
+                    'total_fuel_mass_constraint',
+                    lower=0.0,
+                    ref=1e4,
+                )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
         # measured from the start of this phase to the end of this phase
