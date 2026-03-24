@@ -28,11 +28,11 @@ LandingTrajectory : a trajectory builder for detailed landing
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.height_energy.ode.landing_ode import FlareODE, LandingODE
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.ode.landing_ode import FlareODE, LandingODE
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as _TakeoffTrajectory,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     _init_initial_guess_meta_data,
 )
 from aviary.mission.initial_guess_builders import (
