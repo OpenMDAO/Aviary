@@ -1,4 +1,5 @@
 import unittest
+import aviary.api as av
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -506,11 +507,12 @@ class PayloadRangeTest(unittest.TestCase):
             (25.0, 60.0),
             'min',
         )
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-        prob.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)
-        prob.load_inputs(
-            prob.aviary_inputs, phase_info
-        )  # this is a hacky way to test payload_range setting without modifying the .csv file
+
+        (aviary_inputs, initialization_guesses) = av.create_vehicle(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        )
+        aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)
+        prob.load_inputs(aviary_inputs, phase_info)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
