@@ -408,9 +408,6 @@ prob.model.add_subsystem(
     promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
 )
 
-prob.model.add_constraint(Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5)
-# for reference this is the end of builder.add_post_mission_systems()
-
 ecomp = om.ExecComp(
     'fuel_burned = initial_mass - mass_final',
     initial_mass={'units': 'lbm'},
@@ -484,18 +481,6 @@ ecomp = om.ExecComp(
     payload_mass={'units': 'lbm'},
     initial_mass={'units': 'lbm'},
     mass_resid={'units': 'lbm'},
-)
-
-prob.model.post_mission.add_subsystem(
-    'mass_constraint',
-    ecomp,
-    promotes_inputs=[
-        ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
-        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
-        ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-        ('initial_mass', Mission.Summary.GROSS_MASS),
-    ],
-    promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
 )
 
 ecomp = om.ExecComp(

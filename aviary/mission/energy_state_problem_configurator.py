@@ -415,11 +415,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-        # TODO: replace hard_coded ref for this constraint.
-        aviary_group.post_mission.add_constraint(
-            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5
-        )
-
     def _add_post_mission_takeoff_systems(self, aviary_group):
         """
         Adds residual and constraint components for the mach and alpha connections from takeoff
