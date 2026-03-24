@@ -5,13 +5,13 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
+from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
-class TestHeightEnergyOffDesign(unittest.TestCase):
+class TestEnergyStateOffDesign(unittest.TestCase):
     """Test off-design capability for both fallout and alternate missions."""
 
     def setUp(self):

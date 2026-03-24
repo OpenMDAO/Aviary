@@ -70,7 +70,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
 @register
 class GroundrollPhase(PhaseBuilder):
     """
-    A phase builder for a two degree of freedom (2DOF) ground roll phase.
+    A phase builder for a two-degrees-of-freedom (2DOF) ground roll phase.
 
     This is used exclusively by the Solved 2DOF Phase Builder.
     """

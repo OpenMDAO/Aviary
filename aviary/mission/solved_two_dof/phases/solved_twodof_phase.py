@@ -176,7 +176,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class SolvedTwoDOFPhase(FlightPhaseBase):
-    """A phase builder for a two degree of freedom (2DOF) phase."""
+    """A phase builder for a two-degrees-of-freedom (2DOF) phase."""
 
     default_options_class = SolvedTwoDOFPhaseOptions
 
