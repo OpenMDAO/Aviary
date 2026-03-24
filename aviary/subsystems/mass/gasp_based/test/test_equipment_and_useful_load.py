@@ -6,13 +6,12 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
     BWBEquipMassGroup,
-    EquipMassSum,
+    EquipAndUsefulLoadMassGroup,
     EquipMassGroup,
+    EquipMassSum,
     UsefulLoadMass,
     UsefulLoadMassGroup,
-    EquipAndUsefulLoadMassGroup,
 )
-
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings

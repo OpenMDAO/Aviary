@@ -6,9 +6,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 
 
 class ACMass(om.ExplicitComponent):
-    """
-    Computation of air conditioning mass.
-    """
+    """Computation of air conditioning mass."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_COEFFICIENT, units='unitless')
@@ -97,9 +95,7 @@ class ACMass(om.ExplicitComponent):
 
 
 class BWBACMass(om.ExplicitComponent):
-    """
-    Computation of air conditioning mass for BWB
-    """
+    """Computation of air conditioning mass for BWB."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_COEFFICIENT, units='unitless')

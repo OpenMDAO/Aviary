@@ -41,7 +41,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         )
         self.add_input('max_wingfuel_mass', val=6, units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.Summary.FUEL_MASS, units='lbm')
         add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
@@ -121,10 +121,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         req_fuel_wt = inputs[Mission.Summary.FUEL_MASS_REQUIRED] * GRAV_ENGLISH_LBM
         max_wingfuel_wt = inputs['max_wingfuel_mass'] * GRAV_ENGLISH_LBM
         geom_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
-        rho_fuel = (
-            convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
-            * GRAV_ENGLISH_LBM
-        )
+        rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Summary.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
@@ -212,10 +209,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         req_fuel_wt = inputs[Mission.Summary.FUEL_MASS_REQUIRED] * GRAV_ENGLISH_LBM
         max_wingfuel_wt = inputs['max_wingfuel_mass'] * GRAV_ENGLISH_LBM
         geom_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
-        rho_fuel = (
-            convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
-            * GRAV_ENGLISH_LBM
-        )
+        rho_fuel = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuel_wt_des = inputs[Mission.Summary.FUEL_MASS] * GRAV_ENGLISH_LBM
         OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
@@ -496,14 +490,13 @@ class BodyTankCalculations(om.ExplicitComponent):
         J[Aircraft.Fuel.TOTAL_CAPACITY, Mission.Summary.OPERATING_MASS] = dmax_fuel_avail_dOEW
 
 
-class FuelAndOEMOutputs(om.ExplicitComponent):
+class FuelComponents(om.ExplicitComponent):
     """
-    Computation of various fuel and OEM parameters (such as wing fuel mass when
-    operating empty, wing tank fuel volume when carrying maximum fuel, wing tank
-    fuel volume when carrying design fuel plus fuel margin, operating mass empty
-    of the aircraft, allowable payload mass with maximum fuel, mass of wing fuel
-    based on volume, maximum wingfuel mass, and wing tank volume based on maximum
-    wing fuel weight).
+    Computation of various fuel parameters (wing fuel mass when operating empty, wing tank fuel
+    volume when carrying maximum fuel, wing tank fuel volume when carrying design fuel plus fuel
+    margin, operating mass empty of the aircraft, allowable payload mass with maximum fuel, mass of
+    wing fuel based on volume, maximum wingfuel mass, and wing tank volume based on maximum wing
+    fuel weight).
     """
 
     def setup(self):
@@ -535,7 +528,6 @@ class FuelAndOEMOutputs(om.ExplicitComponent):
             desc='FVOLW: wing tank fuel volume when carrying maximum fuel',
         )
         add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_DESIGN, units='ft**3')
-        add_aviary_output(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
         self.add_output(
             'payload_mass_max_fuel',
@@ -1623,83 +1615,3 @@ class FuelMass(om.ExplicitComponent):
             / rho_fuel
             / GRAV_ENGLISH_LBM
         )
-
-
-class FuelMassGroup(om.Group):
-    """
-    Group of fuel related components including FuelSysAndFullFuselageMass,
-    FuselageMass, StructMass, FuelMass, FuelAndOEMOutputs, and BodyTankCalculations.
-    In case of BWB, FuselageMass is replaced by BWBFuselageMass.
-    """
-
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Design.TYPE)
-
-    def setup(self):
-        design_type = self.options[Aircraft.Design.TYPE]
-
-        self.add_subsystem(
-            'sys_and_full_fus',
-            FuelSysAndFullFuselageMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'fuselage',
-                BWBFuselageMass(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-        elif design_type is AircraftTypes.TRANSPORT:
-            self.add_subsystem(
-                'fuselage',
-                FuselageMass(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-
-        self.add_subsystem(
-            'struct',
-            StructMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
-            'fuel',
-            FuelMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
-            'fuel_and_oem',
-            FuelAndOEMOutputs(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
-            'body_tank',
-            BodyTankCalculations(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        newton = self.nonlinear_solver = om.NewtonSolver()
-        newton.options['atol'] = 1e-9
-        newton.options['rtol'] = 1e-9
-        newton.options['iprint'] = 2
-        newton.options['maxiter'] = 10
-        newton.options['solve_subsystems'] = True
-        newton.options['max_sub_solves'] = 10
-        newton.options['err_on_non_converge'] = True
-        newton.options['reraise_child_analysiserror'] = False
-        newton.linesearch = om.BoundsEnforceLS()
-        newton.linesearch.options['bound_enforcement'] = 'scalar'
-        newton.linesearch.options['iprint'] = -1
-        newton.options['err_on_non_converge'] = False
-
-        self.linear_solver = om.DirectSolver(assemble_jac=True)

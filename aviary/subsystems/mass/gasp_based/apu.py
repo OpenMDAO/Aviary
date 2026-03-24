@@ -1,9 +1,8 @@
 import openmdao.api as om
 
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
-
-from aviary.constants import GRAV_ENGLISH_LBM
 
 
 class APUMass(om.ExplicitComponent):

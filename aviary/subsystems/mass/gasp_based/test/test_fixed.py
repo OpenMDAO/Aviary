@@ -833,7 +833,7 @@ class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 t
             Mission.Design.GROSS_MASS, val=175400, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -882,7 +882,7 @@ class GearTestCase2(unittest.TestCase):
             Mission.Design.GROSS_MASS, val=175400, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0.1, units='unitless'
@@ -930,9 +930,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
             Aircraft.Nacelle.AVG_DIAMETER, val=[7.5, 8.22], units='ft'
         )
         self.prob.model.set_input_defaults(Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04)
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85
-        )
+        self.prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85)
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=152000)
 
         self.prob.model_options['*'] = extract_options(options)
@@ -1099,7 +1097,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -1330,7 +1328,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )  # bug fixed value and original value
 
         self.prob.model.set_input_defaults(
@@ -1603,7 +1601,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 ),
                 Aircraft.Controls.CONTROL_MASS_INCREMENT: (25.0, 'lbm'),
                 Aircraft.LandingGear.MASS_COEFFICIENT: (1.15, 'unitless'),
-                Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT: (1.16, 'unitless'),
+                Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION: (1.16, 'unitless'),
                 Aircraft.Nacelle.CLEARANCE_RATIO: (0.2, 'unitless'),
                 Aircraft.Nacelle.AVG_DIAMETER: (7.5, 'ft'),
             }
@@ -1945,7 +1943,7 @@ class BWBGearTestCase(unittest.TestCase):
         )
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, 0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, 0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Nacelle.CLEARANCE_RATIO, 0.2, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Nacelle.AVG_DIAMETER, 7.35163168, units='ft')
@@ -2070,7 +2068,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, 0.0520, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, 0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, 0.85, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Nacelle.CLEARANCE_RATIO, 0.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.Nacelle.AVG_DIAMETER, 7.35163168, units='ft')

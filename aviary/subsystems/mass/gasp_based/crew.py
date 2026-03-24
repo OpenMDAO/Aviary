@@ -1,18 +1,18 @@
 """
-Define utilities to calculate the estimated mass of the crew (both flight and
-non-flight) as well as their baggage.
+Define utilities to calculate the estimated mass of the crew (both flight and  cabin) as well as
+their baggage.
 """
 
 import openmdao.api as om
 
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
-from aviary.constants import GRAV_ENGLISH_LBM
 
 
-class NonFlightCrewMass(om.ExplicitComponent):
-    """Calculate the estimated mass for the non-flight and their baggage."""
+class CabinCrewMass(om.ExplicitComponent):
+    """Calculate the estimated mass for the cabin crew and their baggage."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.TYPE)

@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
-from aviary.utils.math import sigmoidX, dSigmoidXdx
+from aviary.utils.math import dSigmoidXdx, sigmoidX
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -1139,9 +1139,7 @@ class LoadFactors(om.ExplicitComponent):
 
 
 class DesignLoadGroup(om.Group):
-    """
-    Design load group for GASP-based tube and wing type aircraft mass.
-    """
+    """Design load group for GASP-based tube and wing type aircraft mass."""
 
     def setup(self):
         self.add_subsystem(
@@ -2200,9 +2198,7 @@ class BWBLoadFactors(om.ExplicitComponent):
 
 
 class BWBDesignLoadGroup(om.Group):
-    """
-    Design load group for GASP-based BWB type aircraft mass.
-    """
+    """Design load group for GASP-based BWB type aircraft mass."""
 
     def setup(self):
         self.add_subsystem(

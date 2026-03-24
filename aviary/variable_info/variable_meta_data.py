@@ -1918,8 +1918,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='additional propulsion system mass added to engine control and starter mass, or '
-    'engine installation mass',
+    desc='additional engine mass not counted by existing categories (such as engine control and '
+    'starter mass in FLOPS). In GASP, this is engine installation mass.',
     default_value=0.0,
     multivalue=True,
 )
@@ -1934,9 +1934,8 @@ add_meta_data(
     },
     units='unitless',
     option=True,
-    desc='fraction of (scaled) engine mass used to calculate additional propulsion '
-    'system mass added to engine control and starter mass, or used to calculate engine '
-    'installation mass',
+    desc='fraction of (scaled) engine mass used to calculate additional engine mass (see '
+    'Aircraft.Engine.ADDITIONAL_MASS)',
     types=(float, int, np.ndarray),
     multivalue=True,
     default_value=0.0,
@@ -4254,11 +4253,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT,
+    Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKMG', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    desc='mass trend coefficient of main gear, fraction of total landing gear',
+    desc='fraction of total landing gear mass that is main gear mass',
     default_value=0.0,
 )
 
@@ -4733,6 +4732,8 @@ add_meta_data(
 )
 
 # TODO clash with per-engine scaling, need to resolve w/ heterogeneous engine
+# TODO in GASP this applies to ADDITIONAL_MASS (installation weight), confusing because that also
+#      uses ADDITIONAL_MASS_FRACTION - also applies globally to all engines there, which is wrong
 add_meta_data(
     Aircraft.Propulsion.MISC_MASS_SCALER,
     meta_data=_MetaData,
@@ -4743,8 +4744,8 @@ add_meta_data(
         'LEAPS1': ['aircraft.inputs.L0_overrides.misc_propulsion_weight'],
     },
     units='unitless',
-    desc='scaler applied to miscellaneous engine mass (sum of engine control, starter, '
-    'and additional mass)',
+    desc='scaler applied to miscellaneous engine mass (in FLOPS, sum of engine control, starter, '
+    'and additional mass. In GASP, applied to ADDITIONAL_MASS, which is engine installation mass)',
     default_value=1.0,
 )
 

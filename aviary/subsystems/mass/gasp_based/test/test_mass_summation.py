@@ -283,7 +283,7 @@ class MassSummationTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -635,7 +635,7 @@ class MassSummationTestCase3(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -984,7 +984,7 @@ class MassSummationTestCase4(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -1341,7 +1341,7 @@ class MassSummationTestCase5(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -1693,7 +1693,7 @@ class MassSummationTestCase6(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -2049,7 +2049,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
@@ -2467,7 +2467,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.03390, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
@@ -2843,7 +2843,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.03390, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
         self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0.0, units='unitless')
@@ -3219,7 +3219,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.LandingGear.MASS_COEFFICIENT, 0.0520, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, 0.85, units='unitless'
+            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, 0.85, units='unitless'
         )
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.687, units='lbm/galUS')
 

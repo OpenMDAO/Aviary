@@ -369,7 +369,7 @@ class Aircraft:
         FIXED_GEAR = 'aircraft:landing_gear:fixed_gear'
         MAIN_GEAR_LOCATION = 'aircraft:landing_gear:main_gear_location'
         MAIN_GEAR_MASS = 'aircraft:landing_gear:main_gear_mass'
-        MAIN_GEAR_MASS_COEFFICIENT = 'aircraft:landing_gear:main_gear_mass_coefficient'
+        MAIN_GEAR_MASS_FRACTION = 'aircraft:landing_gear:main_gear_mass_fraction'
         MAIN_GEAR_MASS_SCALER = 'aircraft:landing_gear:main_gear_mass_scaler'
         MAIN_GEAR_OLEO_LENGTH = 'aircraft:landing_gear:main_gear_oleo_length'
         MASS_COEFFICIENT = 'aircraft:landing_gear:mass_coefficient'

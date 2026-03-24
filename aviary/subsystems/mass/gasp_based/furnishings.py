@@ -2,10 +2,10 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.utils.math import sigmoidX, dSigmoidXdx, smooth_max, d_smooth_max
+from aviary.utils.math import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
+from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.variable_info.enums import GASPEngineType
 
 
 def get_num_of_flight_attendent(num_pax):

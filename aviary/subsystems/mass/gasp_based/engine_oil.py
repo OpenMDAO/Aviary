@@ -1,10 +1,9 @@
 import openmdao.api as om
 
-from aviary.variable_info.enums import GASPEngineType, Verbosity
-from aviary.variable_info.variables import Aircraft, Settings
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.enums import GASPEngineType, Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class EngineOilMass(om.ExplicitComponent):
