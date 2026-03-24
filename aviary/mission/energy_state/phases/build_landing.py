@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.mission.height_energy.phases.simplified_landing import LandingGroup
+from aviary.mission.energy_state.phases.simplified_landing import LandingGroup
 from aviary.variable_info.variables import Aircraft, Mission
 
 

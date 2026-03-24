@@ -12,7 +12,7 @@ from openmdao.utils.mpi import MPI
 from aviary.core.post_mission_group import PostMissionGroup
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.interface.utils import set_warning_format
-from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
+from aviary.mission.energy_state_problem_configurator import EnergyStateProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
@@ -45,7 +45,7 @@ from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
+ENERGY_STATE = EquationsOfMotion.ENERGY_STATE
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 CUSTOM = EquationsOfMotion.CUSTOM
 
@@ -136,7 +136,7 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         # add a check for traj using hasattr for pre-mission tests.
-        if mission_method is HEIGHT_ENERGY and hasattr(self, 'traj'):
+        if mission_method is ENERGY_STATE and hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -223,8 +223,8 @@ class AviaryGroup(om.Group):
         self.aero_method = aero_method = aviary_inputs.get_val(Settings.AERODYNAMICS_METHOD)
 
         # Determine which problem configurator to use based on mission_method
-        if mission_method is HEIGHT_ENERGY:
-            self.configurator = HeightEnergyProblemConfigurator()
+        if mission_method is ENERGY_STATE:
+            self.configurator = EnergyStateProblemConfigurator()
         elif mission_method is TWO_DEGREES_OF_FREEDOM:
             self.configurator = TwoDOFProblemConfigurator()
         elif mission_method is SOLVED_2DOF:
@@ -240,7 +240,7 @@ class AviaryGroup(om.Group):
                 )
         else:
             raise ValueError(
-                'settings:equations_of_motion must be one of: height_energy, 2DOF, '
+                'settings:equations_of_motion must be one of: energy_state, 2DOF, '
                 'solved_2DOF, or custom'
             )
 
@@ -817,7 +817,7 @@ class AviaryGroup(om.Group):
             self.regular_phases[0]
         except BaseException:
             raise ValueError(
-                'regular_phases[] dictionary is not accessible. For HEIGHT_ENERGY and '
+                'regular_phases[] dictionary is not accessible. For ENERGY_STATE and '
                 'SOLVED_2DOF missions, check_and_preprocess_inputs() must be called '
                 'before add_post_mission_systems().'
             )
@@ -1290,7 +1290,7 @@ class AviaryGroup(om.Group):
                 )
 
         elif self.mission_method in (
-            HEIGHT_ENERGY,
+            ENERGY_STATE,
             TWO_DEGREES_OF_FREEDOM,
         ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
             # vehicle sizing problem
