@@ -8,7 +8,7 @@ FLOPS derived input/output for use with Aviary unit tests and benchmarks
 
 import numpy as np
 
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingApproachToMicP3,
     LandingFlareToTouchdown,
     LandingMicP3ToObstacle,
@@ -17,7 +17,7 @@ from aviary.mission.height_energy.phases.detailed_landing_phases import (
     LandingTouchdownToNoseDown,
     LandingTrajectory,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffBrakeReleaseToDecisionSpeed,
     TakeoffBrakeToAbort,
     TakeoffDecisionSpeedBrakeDelay,
@@ -321,7 +321,7 @@ inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577.0, 'lbm')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.VERBOSITY, 0)
