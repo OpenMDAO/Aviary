@@ -4,7 +4,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.mission.height_energy.ode.mission_EOM import MissionEOM
+from aviary.mission.energy_state.ode.mission_EOM import MissionEOM
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.variable_info.variables import Dynamic
 

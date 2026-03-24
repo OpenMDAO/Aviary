@@ -72,7 +72,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
 
 class RotationODETestCase(unittest.TestCase):
-    """Test 2-degree of freedom rotation ODE."""
+    """Test 2-degrees-of-freedom rotation ODE."""
 
     def setUp(self):
         self.prob = om.Problem()

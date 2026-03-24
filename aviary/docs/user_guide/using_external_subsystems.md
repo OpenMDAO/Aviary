@@ -24,7 +24,7 @@ In Aviary, a subsystem is simply an openMDAO component or group that is self-con
 - mass
 - aerodynamics (table-based or empirically computed)
 - propulsion (table-based)
-- flight dynamics / equations of motion (height energy or 2-DOF)
+- flight dynamics / equations of motion (energy-state or 2DOF)
 
 Aviary allows for integration with arbitrary subsystems beyond the included low-fidelity subsystems.
 These could be disciplinary models to do with batteries, structural models, acoustics, or anything to do with aircraft.
