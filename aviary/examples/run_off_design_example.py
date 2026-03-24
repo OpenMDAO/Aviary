@@ -13,7 +13,7 @@ import aviary.api as av
 
 # We will size the aircraft in this example for a longer design range than specified in the default
 # phase_info
-phase_info = av.default_height_energy_phase_info
+phase_info = av.default_energy_state_phase_info
 phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
 
 ##################
