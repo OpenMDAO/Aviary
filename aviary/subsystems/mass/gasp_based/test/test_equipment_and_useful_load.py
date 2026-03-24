@@ -86,7 +86,7 @@ class FixedEquipMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
@@ -259,7 +259,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
@@ -352,7 +352,7 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
         )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
@@ -482,7 +482,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')

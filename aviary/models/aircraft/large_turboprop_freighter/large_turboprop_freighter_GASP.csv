@@ -192,7 +192,7 @@ mission:summary:fuel_flow_scaler, 1, unitless
 
 # Design
 aircraft:design:cruise_altitude, 21000, ft
-mission:design:gross_mass, 155000, lbm
+aircraft:design:gross_mass, 155000, lbm
 aircraft:design:mach, 0.475, unitless
 aircraft:design:range, 2020, NM
 

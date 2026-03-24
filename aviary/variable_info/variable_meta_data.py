@@ -1447,6 +1447,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.GROSS_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.WG',
+        # ['&DEFINE.WTIN.DGW', 'WTS.DGW', '~WEIGHT.DG', '~WWGHT.DG'],
+        'FLOPS': 'WTIN.DGW',
+        'LEAPS1': [  # TODO: 'aircraft.inputs.L0_weights.design_ramp_weight_fraction' ???
+            #    - design_ramp_weight_fraction has a default: 1.0
+            #    - design_ramp_weight does not have an explicit default
+            #        - design_ramp_weight has an implicit default, by way of
+            #          design_ramp_weight_fraction:
+            #          [L0_design_variables] ramp_weight
+            'aircraft.inputs.L0_weights.design_ramp_weight',
+            '(weightABC)self._design_gross_weight',
+        ],
+    },
+    units='lbm',
+    desc='Design gross mass of the aircraft. Includes zero fuel mass plus useable fuel.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.IJEFF', 'FLOPS': None, 'LEAPS1': None},
@@ -7336,28 +7358,6 @@ add_meta_data(
 #                             __/ |
 #                            |___/
 # =========================================
-
-add_meta_data(
-    Mission.Design.GROSS_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.WG',
-        # ['&DEFINE.WTIN.DGW', 'WTS.DGW', '~WEIGHT.DG', '~WWGHT.DG'],
-        'FLOPS': 'WTIN.DGW',
-        'LEAPS1': [  # TODO: 'aircraft.inputs.L0_weights.design_ramp_weight_fraction' ???
-            #    - design_ramp_weight_fraction has a default: 1.0
-            #    - design_ramp_weight does not have an explicit default
-            #        - design_ramp_weight has an implicit default, by way of
-            #          design_ramp_weight_fraction:
-            #          [L0_design_variables] ramp_weight
-            'aircraft.inputs.L0_weights.design_ramp_weight',
-            '(weightABC)self._design_gross_weight',
-        ],
-    },
-    units='lbm',
-    desc='Design gross mass of the aircraft. Includes zero fuel mass plus useable fuel.',
-    default_value=0.0,
-)
 
 #  _                            _   _
 # | |                          | | (_)

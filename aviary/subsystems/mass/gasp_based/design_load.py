@@ -1204,7 +1204,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.MAX_STRUCTURAL_SPEED, units='mi/h')
 
         if self.options[Aircraft.Design.PART25_STRUCTURAL_CATEGORY] < 3:
-            add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+            add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
             add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
 
         self.add_output(
@@ -1239,13 +1239,13 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         max_struct_speed_kts = max_struct_speed_mph / 1.15
 
         if CATD < 3:
-            gross_mass = inputs[Mission.Design.GROSS_MASS]
+            gross_mass = inputs[Aircraft.Design.GROSS_MASS]
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
                     print('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Mission.Design.GROSS_MASS must be positive.')
+                    print('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             VCMAX = 0.9 * max_struct_speed_kts
@@ -1336,7 +1336,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
         dmax_struct_speed_kts_dexp_wing_area = 0.0
 
         if CATD < 3:
-            gross_mass = inputs[Mission.Design.GROSS_MASS]
+            gross_mass = inputs[Aircraft.Design.GROSS_MASS]
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             wing_loading = gross_mass / exp_wing_area
             dwing_loading_dgross_mass = 1 / exp_wing_area
@@ -1544,13 +1544,13 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                         dmax_struct_speed_kts_dmax_struct_speed_mph
                     )
 
-            partials['min_dive_vel', Mission.Design.GROSS_MASS] = dmin_dive_vel_dgross_mass
+            partials['min_dive_vel', Aircraft.Design.GROSS_MASS] = dmin_dive_vel_dgross_mass
             partials['min_dive_vel', Aircraft.Wing.EXPOSED_AREA] = dmin_dive_vel_dexp_wing_area
             partials['min_dive_vel', Aircraft.Design.MAX_STRUCTURAL_SPEED] = (
                 dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials['max_airspeed', Mission.Design.GROSS_MASS] = 0.85 * dmin_dive_vel_dgross_mass
+            partials['max_airspeed', Aircraft.Design.GROSS_MASS] = 0.85 * dmin_dive_vel_dgross_mass
             partials['max_airspeed', Aircraft.Wing.EXPOSED_AREA] = (
                 0.85 * dmin_dive_vel_dexp_wing_area
             )
@@ -1558,7 +1558,7 @@ class BWBLoadSpeeds(om.ExplicitComponent):
                 0.85 * dmin_dive_vel_dmax_struct_speed_mph
             )
 
-            partials['vel_c', Mission.Design.GROSS_MASS] = dVCMIN_dgross_mass
+            partials['vel_c', Aircraft.Design.GROSS_MASS] = dVCMIN_dgross_mass
             partials['vel_c', Aircraft.Wing.EXPOSED_AREA] = dVCMIN_dexp_wing_area
             partials['vel_c', Aircraft.Design.MAX_STRUCTURAL_SPEED] = dVCMIN_dmax_struct_speed_mph
 
@@ -1595,7 +1595,7 @@ class BWBLoadFactors(om.ExplicitComponent):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2')
 
         self.add_input(
@@ -1628,13 +1628,13 @@ class BWBLoadFactors(om.ExplicitComponent):
         if ULF_from_maneuver == True:
             ULF = 1.5 * max_maneuver_factor
         else:
-            gross_mass = inputs[Mission.Design.GROSS_MASS]
+            gross_mass = inputs[Aircraft.Design.GROSS_MASS]
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             if verbosity > Verbosity.BRIEF:
                 if exp_wing_area <= 0.0:
                     print('Aircraft.Wing.EXPOSED_AREA must be positive.')
                 if gross_mass <= 0.0:
-                    print('Mission.Design.GROSS_MASS must be positive.')
+                    print('Aircraft.Design.GROSS_MASS must be positive.')
             wing_loading = gross_mass / exp_wing_area
 
             density_ratio = inputs['density_ratio']
@@ -1699,7 +1699,7 @@ class BWBLoadFactors(om.ExplicitComponent):
             dULF_dV9 = 0.0
             dULF_dmin_dive_vel = 0.0
         else:
-            gross_mass = inputs[Mission.Design.GROSS_MASS]
+            gross_mass = inputs[Aircraft.Design.GROSS_MASS]
             exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
             wing_loading = gross_mass / exp_wing_area
             dwing_loading_dgross_mass = 1 / exp_wing_area
@@ -2186,7 +2186,7 @@ class BWBLoadFactors(om.ExplicitComponent):
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 'max_maneuver_factor'] = (
             dULF_dmax_maneuver_factor
         )
-        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Mission.Design.GROSS_MASS] = dULF_dgross_mass
+        partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Design.GROSS_MASS] = dULF_dgross_mass
         partials[Aircraft.Wing.ULTIMATE_LOAD_FACTOR, Aircraft.Wing.EXPOSED_AREA] = (
             dULF_dexp_wing_areas
         )

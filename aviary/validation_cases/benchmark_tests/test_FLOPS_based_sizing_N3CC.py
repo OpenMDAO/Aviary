@@ -58,7 +58,7 @@ def run_trajectory(sim=True):
     prob.add_design_variables()
 
     # Nudge it a bit off the correct answer to verify that the optimize takes us there.
-    prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
+    prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 135000.0, units='lbm')
 
     ##########################
     # Add Objective Function #

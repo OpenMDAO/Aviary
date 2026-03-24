@@ -92,7 +92,7 @@ params_for_unit_tests = {
     Aircraft.Wing.AREA: dict(units='ft**2', val=1370.3),
     Aircraft.Wing.HEIGHT: dict(units='ft', val=8),
     Aircraft.Wing.SPAN: dict(units='ft', val=117.8),
-    Mission.Design.GROSS_MASS: dict(units='lbm', val=175400),
+    Aircraft.Design.GROSS_MASS: dict(units='lbm', val=175400),
     Mission.Summary.GROSS_MASS: dict(units='lbm', val=175400),
     Mission.Summary.FUEL_FLOW_SCALER: dict(units='unitless', val=1.0),
     Mission.Takeoff.AIRPORT_ALTITUDE: dict(units='ft', val=0),

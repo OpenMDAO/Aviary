@@ -50,7 +50,7 @@ outputs = N3CC['outputs'] = AviaryValues()
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.01498)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
-inputs.set_val(Mission.Design.GROSS_MASS, 129734.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 129734.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.93)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 0.95)
@@ -507,7 +507,7 @@ takeoff_brake_release_initial_guesses.set_val('distance', [0.0, 4100.0], 'ft')
 takeoff_brake_release_initial_guesses.set_val('velocity', [0.01, 150.0], 'kn')
 
 gross_mass_units = 'lbm'
-gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
+gross_mass = inputs.get_val(Aircraft.Design.GROSS_MASS, gross_mass_units)
 takeoff_brake_release_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 takeoff_brake_release_initial_guesses.set_val('throttle', 1.0)

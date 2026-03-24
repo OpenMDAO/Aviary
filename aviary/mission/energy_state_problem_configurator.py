@@ -543,7 +543,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         guess_dict = deepcopy(guesses)
 
         if 'mass' not in guess_dict:
-            mass_guess = aviary_group.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
+            mass_guess = aviary_group.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
             guess_dict['mass'] = (mass_guess, 'lbm')
 

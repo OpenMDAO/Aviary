@@ -110,7 +110,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.HEIGHT, 8.0)  # not defined in standalone aero
         prob.set_val('airport_alt', 0.0)  # not defined in standalone aero
         prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data['cfoc'])
-        prob.set_val(Mission.Design.GROSS_MASS, setup_data['wgto'])
+        prob.set_val(Aircraft.Design.GROSS_MASS, setup_data['wgto'])
 
         for i, row in ground_data.iterrows():
             ilift = row['ilift']  # 2: takeoff, 3: landing
@@ -159,7 +159,6 @@ class GASPAeroTest(unittest.TestCase):
             LowSpeedAero(),
             promotes_inputs=[
                 'aircraft:*',
-                'mission:*',
                 'airport_alt',
                 '*_area',
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
@@ -175,7 +174,6 @@ class GASPAeroTest(unittest.TestCase):
             LowSpeedAero(lift_required=True),
             promotes_inputs=[
                 'aircraft:*',
-                'mission:*',
                 'airport_alt',
                 '*_area',
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
@@ -196,7 +194,7 @@ class GASPAeroTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.HEIGHT, 8.0)  # not defined in standalone aero
         prob.set_val('airport_alt', 0.0)  # not defined in standalone aero
         prob.set_val(Aircraft.Wing.FLAP_CHORD_RATIO, setup_data['cfoc'])
-        prob.set_val(Mission.Design.GROSS_MASS, setup_data['wgto'])
+        prob.set_val(Aircraft.Design.GROSS_MASS, setup_data['wgto'])
 
         prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1)
         prob.set_val(Dynamic.Atmosphere.MACH, 0.1)
@@ -1047,7 +1045,7 @@ class DragCoefTest(unittest.TestCase):
         prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
         prob.model.set_input_defaults('CL', [0.09930717, 0.09930717], units='unitless')
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults('flap_defl', 10.0, units='deg')
         prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 12.5, units='ft')
         prob.model.set_input_defaults('airport_alt', 0.0, units='ft')
@@ -1088,7 +1086,7 @@ class DragCoefTest(unittest.TestCase):
         prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
         prob.model.set_input_defaults('CL', [0.153386101, 0.153386101], units='unitless')
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults('flap_defl', 0.0, units='deg')
         prob.model.set_input_defaults(Aircraft.Wing.HEIGHT, 12.5, units='ft')
         prob.model.set_input_defaults('airport_alt', 0.0, units='ft')

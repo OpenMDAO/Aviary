@@ -28,7 +28,7 @@ class CombinedGeometry(om.Group):
         self.add_subsystem(
             'gasp_based_geom',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=['aircraft:*'],
         )
 

@@ -13,7 +13,7 @@ outputs = BWBsimpleFLOPS['outputs'] = AviaryValues()
 # ---------------------------
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')  # SBASE
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)  # EWMARG
-inputs.set_val(Mission.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
+inputs.set_val(Aircraft.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB

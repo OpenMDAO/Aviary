@@ -85,7 +85,7 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS,
                 Aircraft.VerticalTail.MASS,
                 Aircraft.Wing.MASS,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS,
                 Aircraft.Propulsion.TOTAL_MISC_MASS,
             ],
@@ -174,7 +174,7 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS,
                 Aircraft.VerticalTail.MASS,
                 Aircraft.Wing.MASS,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS,
             ],
             output_keys=[

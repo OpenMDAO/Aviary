@@ -989,7 +989,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:design:gross_mass",
+        "aircraft:design:gross_mass",
         175400.0,
         "lbm",
         "<class 'float'>"

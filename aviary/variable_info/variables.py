@@ -138,6 +138,7 @@ class Aircraft:
         EMPTY_MASS_MARGIN_SCALER = 'aircraft:design:empty_mass_margin_scaler'
         EXTERNAL_SUBSYSTEMS_MASS = 'aircraft:design:external_subsystems_mass'
         FINENESS = 'aircraft:design:fineness'
+        GROSS_MASS = 'aircraft:design:gross_mass'
         IJEFF = 'ijeff'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'
         LAMINAR_FLOW_UPPER = 'aircraft:design:laminar_flow_upper'
@@ -661,12 +662,6 @@ class Mission:
         MAX_MACH = 'mission:constraints:max_mach'
         RANGE_RESIDUAL = 'mission:constraints:range_residual'
         RANGE_RESIDUAL_RESERVE = 'mission:constraints:range_residual_reserve'
-
-    class Design:
-        # These values may change in a design mission, but not during off-design. In a design
-        # mission these are either user inputs or calculated outputs, in off-design they are
-        # strictly inputs and therefore do not change.
-        GROSS_MASS = 'mission:design:gross_mass'
 
     class Landing:
         # These are values which have to do with landing

@@ -150,7 +150,7 @@ aircraft:wing:thickness_to_chord_tip,0.1,unitless
 aircraft:wing:vertical_mount_location,0.5,unitless
 aircraft:wing:zero_lift_angle,0,deg
 aircraft:design:cruise_altitude,41000,ft
-mission:design:gross_mass,150000,lbm
+aircraft:design:gross_mass,150000,lbm
 aircraft:design:mach,0.8,unitless
 aircraft:design:range,3500,NM
 mission:landing:airport_altitude,0,ft

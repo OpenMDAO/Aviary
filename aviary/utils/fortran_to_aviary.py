@@ -1,7 +1,7 @@
 """
 fortran_to_aviary.py is used to read in Fortran based vehicle decks and convert them to Aviary decks.
 
-FLOPS, GASP, or Aviary names can be used for variables (Ex WG or Mission:Design:GROSS_MASS)
+FLOPS, GASP, or Aviary names can be used for variables (Ex WG or aircraft:design:gross_mass)
 When specifying variables from FORTRAN, they should be in the appropriate NAMELIST.
 Aviary variable names should be specified outside any NAMELISTS.
 Names are not case-sensitive.

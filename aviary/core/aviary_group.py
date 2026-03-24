@@ -1294,7 +1294,7 @@ class AviaryGroup(om.Group):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.add_design_var(
-                    Mission.Design.GROSS_MASS,
+                    Aircraft.Design.GROSS_MASS,
                     units='lbm',
                     lower=10,
                     upper=900.0e3,
@@ -1310,7 +1310,7 @@ class AviaryGroup(om.Group):
             # capacity
             if problem_type is ProblemType.SIZING:
                 self.add_design_var(
-                    Mission.Design.GROSS_MASS,
+                    Aircraft.Design.GROSS_MASS,
                     lower=10.0,
                     upper=None,
                     units='lbm',
@@ -1333,7 +1333,7 @@ class AviaryGroup(om.Group):
                         add_constraint=True,
                     ),
                     promotes_inputs=[
-                        ('lhs:GTOW', Mission.Design.GROSS_MASS),
+                        ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
                         ('rhs:GTOW', Mission.Summary.GROSS_MASS),
                     ],
                 )
@@ -1345,7 +1345,7 @@ class AviaryGroup(om.Group):
                 # target range problem
                 # fixed vehicle (design GTOW) but variable actual GTOW for off-design
                 # get the design gross mass and set as the upper bound for the gross mass design variable
-                MTOW = self.aviary_inputs.get_val(Mission.Design.GROSS_MASS, 'lbm')
+                MTOW = self.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, 'lbm')
                 self.add_design_var(
                     Mission.Summary.GROSS_MASS,
                     lower=10.0,
@@ -1388,7 +1388,7 @@ class AviaryGroup(om.Group):
                         gross_mass_resid={'val': 30, 'units': 'kg'},
                     ),
                     promotes_inputs=[
-                        ('design_mass', Mission.Design.GROSS_MASS),
+                        ('design_mass', Aircraft.Design.GROSS_MASS),
                         ('actual_mass', Mission.Summary.GROSS_MASS),
                     ],
                     promotes_outputs=['gross_mass_resid'],

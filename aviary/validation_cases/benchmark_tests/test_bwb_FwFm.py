@@ -109,7 +109,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+            prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
             782430.3,
             tolerance=rtol,
         )
@@ -147,7 +147,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
 
     # # There are no truth values for these.
     # assert_near_equal(
-    # prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+    # prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
     # 789473.7,
     # tolerance=rtol,
     # )

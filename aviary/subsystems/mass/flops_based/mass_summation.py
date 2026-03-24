@@ -436,17 +436,17 @@ class ZeroFuelMass(om.ExplicitComponent):
 # TODO This should also probably not go in mass summation
 class FuelMass(om.ExplicitComponent):
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.Summary.ZERO_FUEL_MASS, units='lbm')
 
         add_aviary_output(self, Mission.Summary.FUEL_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Design.GROSS_MASS, val=1)
+        self.declare_partials(Mission.Summary.FUEL_MASS, Aircraft.Design.GROSS_MASS, val=1)
         self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Summary.ZERO_FUEL_MASS, val=-1)
 
     def compute(self, inputs, outputs):
         zero_fuel_mass = inputs[Mission.Summary.ZERO_FUEL_MASS]
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
 
         outputs[Mission.Summary.FUEL_MASS] = gross_mass - zero_fuel_mass

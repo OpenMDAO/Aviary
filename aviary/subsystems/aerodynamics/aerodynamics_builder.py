@@ -260,7 +260,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     Dynamic.Atmosphere.TEMPERATURE,
                     Dynamic.Vehicle.MASS,
                     'aircraft:*',
-                    #'mission:*',
                 ]
 
             elif method == 'low_speed':
@@ -844,7 +843,7 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     Aircraft.Wing.HEIGHT,
     Aircraft.Wing.FLAP_CHORD_RATIO,
-    Mission.Design.GROSS_MASS,
+    Aircraft.Design.GROSS_MASS,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [

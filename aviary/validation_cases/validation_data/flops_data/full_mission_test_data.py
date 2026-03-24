@@ -19,7 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 data = AviaryValues()
 
 data.set_val(
-    Mission.Design.GROSS_MASS,
+    Aircraft.Design.GROSS_MASS,
     val=181200.0,
     units='lbm',
 )

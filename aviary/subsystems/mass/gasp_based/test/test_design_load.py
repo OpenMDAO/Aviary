@@ -952,7 +952,7 @@ class BWBLoadSpeedsTestCATD0(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, 402.5, units='mi/h'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.1136, units='ft**2')
         setup_model_options(self.prob, self.options)
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -1048,7 +1048,7 @@ class BWBLoadSpeedsTestCATD1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, 402.5, units='mi/h'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.1136, units='ft**2')
 
         setup_model_options(self.prob, self.options)
@@ -1146,7 +1146,7 @@ class BWBLoadSpeedsTestCATD2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, 402.5, units='mi/h'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.1136, units='ft**2')
 
         setup_model_options(self.prob, self.options)
@@ -1329,7 +1329,7 @@ class BWBLoadFactorsTestCaseNonsmooth(unittest.TestCase):
         prob = self.prob = om.Problem()
         self.prob.model.add_subsystem('factors', BWBLoadFactors(), promotes=['*'])
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, 1352.1136, units='ft**2')
         prob.model.set_input_defaults('density_ratio', 0.692859828, units='unitless')
         prob.model.set_input_defaults('V9', 350.0, units='kn')
@@ -1404,7 +1404,7 @@ class BWBLoadFactorsTestCaseSmooth(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('factors', BWBLoadFactors(), promotes=['*'])
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=150000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2')
         prob.model.set_input_defaults('density_ratio', val=0.692859828, units='unitless')
         prob.model.set_input_defaults('V9', val=350.0, units='kn')
@@ -1444,7 +1444,7 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h')
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=150000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')
@@ -1481,7 +1481,7 @@ class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
 
         prob.model.set_input_defaults(Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h')
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=150000.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=150000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.EXPOSED_AREA, val=1352.1136, units='ft**2')
         prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.71, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitless')

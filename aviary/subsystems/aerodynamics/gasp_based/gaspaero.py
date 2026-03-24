@@ -1245,7 +1245,7 @@ class DragCoef(om.ExplicitComponent):
 
         # user inputs
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
 
         self.add_input('flap_defl', val=10.0, units='deg', desc='Full flap deflection')
 
@@ -1328,14 +1328,14 @@ class DragCoef(om.ExplicitComponent):
             method='cs',
         )
         # self.declare_partials(
-        #     "CD_base", [Mission.Design.GROSS_MASS, "dCD_flaps_model", "wing_area"], val=0
+        #     "CD_base", [Aircraft.Design.GROSS_MASS, "dCD_flaps_model", "wing_area"], val=0
         # )
 
         self.declare_partials('dCD_flaps_full', ['dCD_flaps_model'], val=1)
 
         self.declare_partials(
             'dCD_gear_full',
-            [Mission.Design.GROSS_MASS, Aircraft.Wing.AREA, 'flap_defl'],
+            [Aircraft.Design.GROSS_MASS, Aircraft.Wing.AREA, 'flap_defl'],
             method='cs',
         )
 

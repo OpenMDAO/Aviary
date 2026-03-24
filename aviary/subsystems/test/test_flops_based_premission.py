@@ -68,7 +68,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         # Initial guess for gross weight.
         # We set it to an unconverged value to test convergence.
-        prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+        prob.set_val(Aircraft.Design.GROSS_MASS, val=1000.0)
 
         set_aviary_initial_values(prob, flops_inputs)
 
@@ -256,7 +256,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         # Initial guess for gross weight.
         # We set it to an unconverged value to test convergence.
-        # prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+        # prob.set_val(Aircraft.Design.GROSS_MASS, val=1000.0)
 
         set_aviary_initial_values(prob, flops_inputs)
 

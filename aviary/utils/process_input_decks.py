@@ -354,7 +354,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     if Mission.Summary.GROSS_MASS in aircraft_values:
         mission_mass = aircraft_values.get_val(Mission.Summary.GROSS_MASS, units='lbm')
     else:
-        mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
+        mission_mass = aircraft_values.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
     if Mission.Summary.CRUISE_MASS_FINAL in aircraft_values:
         cruise_mass_final = aircraft_values.get_val(Mission.Summary.CRUISE_MASS_FINAL, units='lbm')
@@ -383,7 +383,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 + fuel_mass
             )
         elif problem_type == ProblemType.FALLOUT or problem_type == ProblemType.SIZING:
-            mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
+            mission_mass = aircraft_values.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
     initialization_guesses['actual_takeoff_mass'] = mission_mass
 
     if cruise_mass_final == 0:  # no guess given
