@@ -7139,6 +7139,23 @@ add_meta_data(
 #  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
 #  ============================================================================================================================================
 
+add_meta_data(
+    Mission.FINAL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='lbm',
+    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
+)
+
+add_meta_data(
+    Mission.FINAL_TIME,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='min',
+    desc='Total mission time from the start of the first regular_phase'
+    'to the end of the last regular_phase (does not include reserve phases).',
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7713,23 +7730,6 @@ add_meta_data(
     units='lbm',
     desc='mass of the aircraft at the end of cruise',
     default_value=0.0,
-)
-
-add_meta_data(
-    Mission.FINAL_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
-    units='lbm',
-    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
-)
-
-add_meta_data(
-    Mission.FINAL_TIME,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
-    units='min',
-    desc='Total mission time from the start of the first regular_phase'
-    'to the end of the last regular_phase (does not include reserve phases).',
 )
 
 add_meta_data(
