@@ -6,8 +6,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.engine import (
-    BWBEngineSize,
-    BWBEngineSizeGroup,
+    NewEngineSize,
+    NewEngineSizeGroup,
     EngineSize,
     PercentNotInFuselage,
 )
@@ -146,7 +146,7 @@ class TestEngineBWB(unittest.TestCase):
 
 
 class BWBTestEngine(unittest.TestCase):
-    """Test engine size using BWBEngineSize class and BWB data"""
+    """Test engine size using NewEngineSize class and BWB data"""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -154,7 +154,7 @@ class BWBTestEngine(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model.add_subsystem('engsz', BWBEngineSize(), promotes=['*'])
+        self.prob.model.add_subsystem('engsz', NewEngineSize(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults('percent_exposed', 1.0)
@@ -215,7 +215,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
 
 @use_tempdirs
-class BWBEngineSizeGroupTestCase(unittest.TestCase):
+class NewEngineSizeGroupTestCase(unittest.TestCase):
     """this is the GASP BWB test case"""
 
     def setUp(self):
@@ -225,7 +225,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            BWBEngineSizeGroup(),
+            NewEngineSizeGroup(),
             promotes=['*'],
         )
 
