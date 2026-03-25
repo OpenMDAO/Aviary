@@ -7724,7 +7724,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Summary.FINAL_TIME,
+    Mission.FINAL_TIME,
     meta_data=_MetaData,
     historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
     units='min',

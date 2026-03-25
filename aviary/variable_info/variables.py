@@ -646,6 +646,7 @@ class Mission:
     """Mission data hierarchy."""
 
     FINAL_MASS = 'mission:final_mass'
+    FINAL_TIME = 'mission:final_time'
 
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
@@ -710,7 +711,6 @@ class Mission:
         # user selection.
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
-        FINAL_TIME = 'mission:summary:final_time'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         FUEL_MASS = 'mission:summary:fuel_mass'

@@ -905,7 +905,7 @@ class AviaryProblem(om.Problem):
                 if len(args) == 1 and ref == None:
                     ref = default_ref_values['mass']
             elif output == 'time':
-                output = Mission.Summary.FINAL_TIME
+                output = Mission.FINAL_TIME
             elif output == 'range':
                 output = Mission.Summary.RANGE  # Unsure if this will work
             objectives_cleaned.append((model, output, weight))
