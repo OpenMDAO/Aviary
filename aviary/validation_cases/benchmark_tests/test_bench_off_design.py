@@ -38,7 +38,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
 
         # Link phases and variables
         prob.link_phases()
-        prob.add_driver('SNOPT', max_iter=20)
+        prob.add_driver('SNOPT', max_iter=50)
         prob.add_design_variables()
 
         # Load optimization problem formulation

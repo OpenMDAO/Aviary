@@ -908,7 +908,7 @@ class AviaryGroup(om.Group):
         self.add_constraint(
                     Mission.Constraints.MASS_RESIDUAL,
                     equals=0.0,
-                    ref=1e7,
+                    ref=1e5,
                 )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
