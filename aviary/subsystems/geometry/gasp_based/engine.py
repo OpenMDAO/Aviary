@@ -277,19 +277,28 @@ class EngineSize(om.ExplicitComponent):
         )
 
 
-class BWBEngineSize(om.ExplicitComponent):
+class NewEngineSize(om.ExplicitComponent):
     """
-    Engine geometry calculation for BWB. It returns Aircraft.Nacelle.AVG_DIAMETER,
+    Engine geometry calculation based on engine diameter. It returns Aircraft.Nacelle.AVG_DIAMETER,
     Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. It follows the algorithm in GASP.
     Users can use this component instead of EngineSize.
     """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.INLET_AREA_COEFFICIENT)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+
+        # TODO: remove
+        add_aviary_input(
+            self, Aircraft.Engine.REFERENCE_DIAMETER, shape=num_engine_type, units='ft'
+        )
+        add_aviary_input(
+            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
+        )
 
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(
@@ -339,13 +348,14 @@ class BWBEngineSize(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
+        coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
-        area_engine = 0.3 * gross_mass / 1500.0 / num_engine
+        area_engine = coeff_inlet * gross_mass / num_engine
         diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
         len_nacelle = fineness_nac * diam_nacelle
@@ -357,19 +367,19 @@ class BWBEngineSize(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
+        coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
-        area_engine = 0.3 * gross_mass / 1500.0 / num_engine
+        area_engine = coeff_inlet * gross_mass / num_engine
         diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
         len_nacelle = fineness_nac * diam_nacelle
-        wet_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
 
-        darea_engine_dgross_mass = 0.3 * np.ones(1) / 1500.0 / num_engine
+        darea_engine_dgross_mass = coeff_inlet * np.ones(1) / num_engine
         ddiam_engine_dgross_mass = 2 / np.pi / diam_engine * darea_engine_dgross_mass
         ddiam_nacelle_dgross_mass = core_diam_ratio * ddiam_engine_dgross_mass
         ddiam_nacelle_dcore_diam_ratio = diam_engine
@@ -412,7 +422,7 @@ class BWBEngineSize(om.ExplicitComponent):
         J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = dwet_area_nacelle_dpct_exposed
 
 
-class BWBEngineSizeGroup(om.Group):
+class NewEngineSizeGroup(om.Group):
     def setup(self):
         self.add_subsystem(
             'perc',
@@ -423,7 +433,7 @@ class BWBEngineSizeGroup(om.Group):
 
         self.add_subsystem(
             'eng_size',
-            BWBEngineSize(),
+            NewEngineSize(),
             promotes_inputs=['*'] + ['percent_exposed'],
             promotes_outputs=['*'],
         )

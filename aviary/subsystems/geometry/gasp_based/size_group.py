@@ -2,7 +2,7 @@ import openmdao.api as om
 
 from aviary.subsystems.geometry.gasp_based.electric import CableSize
 from aviary.subsystems.geometry.gasp_based.empennage import EmpennageSize
-from aviary.subsystems.geometry.gasp_based.engine import EngineSize, BWBEngineSizeGroup
+from aviary.subsystems.geometry.gasp_based.engine import EngineSize, NewEngineSizeGroup
 from aviary.subsystems.geometry.gasp_based.fuselage import FuselageGroup, BWBFuselageGroup
 from aviary.subsystems.geometry.gasp_based.wing import WingGroup, BWBWingGroup
 from aviary.variable_info.enums import AircraftTypes
@@ -57,17 +57,26 @@ class SizeGroup(om.Group):
         if design_type is AircraftTypes.BLENDED_WING_BODY:
             self.add_subsystem(
                 'engine',
-                BWBEngineSizeGroup(),
+                NewEngineSizeGroup(),
                 promotes_inputs=['*'],
                 promotes_outputs=['*'],
             )
         elif design_type is AircraftTypes.TRANSPORT:
-            self.add_subsystem(
-                'engine',
-                EngineSize(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
+            use_new = True
+            if use_new:
+                self.add_subsystem(
+                    'engine',
+                    NewEngineSizeGroup(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
+            else:
+                self.add_subsystem(
+                    'engine',
+                    EngineSize(),
+                    promotes_inputs=['*'],
+                    promotes_outputs=['*'],
+                )
 
         if self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]:
             self.add_subsystem(
