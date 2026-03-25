@@ -792,7 +792,7 @@ class AviaryGroup(om.Group):
                 range_final={'units': 'nmi'},
             ),
             promotes_outputs={
-                ('mass_final', Mission.Summary.FINAL_MASS),
+                ('mass_final', Mission.FINAL_MASS),
                 ('time_final', Mission.Summary.FINAL_TIME),
                 ('range_final', Mission.Summary.RANGE),
             },
@@ -1064,7 +1064,7 @@ class AviaryGroup(om.Group):
         final_phase = self.regular_phases[-1]
 
         # We connect the last points in the trajectory to the state_output component to make it
-        # easier for users to access Mission.Summary.FINAL_MASS, Mission.Summary.FINAL_TIME,
+        # easier for users to access Mission.FINAL_MASS, Mission.Summary.FINAL_TIME,
         # and Mission.Summary.RANGE.
         self.connect(
             f'traj.{final_phase}.states:mass',

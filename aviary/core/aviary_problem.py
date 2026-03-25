@@ -901,7 +901,7 @@ class AviaryProblem(om.Problem):
                 if len(args) == 1 and ref == None:
                     ref = default_ref_values['fuel']
             elif output == 'mass':
-                output = Mission.Summary.FINAL_MASS
+                output = Mission.FINAL_MASS
                 if len(args) == 1 and ref == None:
                     ref = default_ref_values['mass']
             elif output == 'time':
