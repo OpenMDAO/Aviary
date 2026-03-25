@@ -449,7 +449,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        # Set defaults for optimizer and use_coloring
+        # Set defaults for optimizer, use_coloring and max_iter
         if optimizer is None:
             optimizer = 'IPOPT'
         if use_coloring is None:
@@ -1501,17 +1501,17 @@ class AviaryProblem(om.Problem):
                 optimizer = self.driver.options['optimizer']
             except KeyError:
                 optimizer = None
-            try:
-                if optimizer == 'SNOPT':
-                    max_iter = self.driver.opt_settings['Major iterations limit']
-                elif optimizer == 'IPOPT':
-                    max_iter = self.driver.opt_settings['max_iter']
-                elif optimizer == 'SLSQP':
-                    max_iter = self.driver.opt_settings['maxiter']
-                else:
-                    max_iter = None
-            except KeyError:
+        try:
+            if optimizer == 'SNOPT':
+                max_iter = self.driver.opt_settings['Major iterations limit']
+            elif optimizer == 'IPOPT':
+                max_iter = self.driver.opt_settings['max_iter']
+            elif optimizer == 'SLSQP':
+                max_iter = self.driver.opt_settings['maxiter']
+            else:
                 max_iter = None
+        except KeyError:
+            max_iter = None
         off_design_prob.add_driver(optimizer=optimizer, max_iter=max_iter, verbosity=verbosity)
         off_design_prob.add_design_variables(verbosity=verbosity)
 
