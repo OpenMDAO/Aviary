@@ -192,6 +192,7 @@ class Aircraft:
         GLOBAL_HYBRID_THROTTLE = 'aircraft:engine:global_hybrid_throttle'
         GLOBAL_THROTTLE = 'aircraft:engine:global_throttle'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
+        INLET_AREA_COEFFICIENT = 'aircraft:engine:inlet_area_coefficient'
         INTERPOLATION_METHOD = 'aircraft:engine:interpolation_method'
         INTERPOLATION_SORT = 'aircraft:engine:interpolation_sort'
         MASS = 'aircraft:engine:mass'

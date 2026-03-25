@@ -2155,6 +2155,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.INLET_AREA_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=0.0002,  # default in GASP
+    types=float,
+    desc='engine inlet area coefficient. suggest 0.0003 for regional jet, 0.0004 for narrow-body, '
+    '0.00045 - 0.00055 for wide-body, 0.0005 - 0.0006 for BWB with embedded engines.',
+    multivalue=True,
+)
+
+add_meta_data(
     Aircraft.Engine.INTERPOLATION_METHOD,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
