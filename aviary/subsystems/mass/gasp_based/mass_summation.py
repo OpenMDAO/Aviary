@@ -47,8 +47,6 @@ class MassSummation(om.Group):
             'zero_fuel_mass', ZeroFuelMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
-        self.add_subsystem('fuel_mass', FuelMass(), promotes_inputs=['*'], promotes_outputs=['*'])
-
 
 class EmpennageMass(om.ExplicitComponent):
     def setup(self):
