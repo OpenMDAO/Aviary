@@ -127,6 +127,7 @@ class Aircraft:
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
+        CRUISE_MACH = 'aircraft:design:cruise_mach'
         DRAG_COEFFICIENT_INCREMENT = 'aircraft:design:drag_coefficient_increment'
         DRAG_DIVERGENCE_SHIFT = 'aircraft:design:drag_divergence_shift'
         DRAG_POLAR = 'aircraft:design:drag_polar'
@@ -709,7 +710,6 @@ class Mission:
         # (whether it is design or off-design). In design these may be constrained to design values,
         # but in off-design they independently represent the final analysis based on the
         # user selection.
-        CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
         FUEL_BURNED = 'mission:summary:fuel_burned'
         FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'

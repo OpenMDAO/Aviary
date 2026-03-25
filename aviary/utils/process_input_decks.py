@@ -416,7 +416,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     if Mission.Design.MACH in aircraft_values:
         cruise_mach = aircraft_values.get_val(Mission.Design.MACH)
     else:
-        cruise_mach = aircraft_values.get_val(Mission.Summary.CRUISE_MACH)
+        cruise_mach = aircraft_values.get_val(Aircraft.Design.CRUISE_MACH)
 
     if initialization_guesses['flight_duration'] <= 0:  # estimation based on mach
         initialization_guesses['flight_duration'] = (

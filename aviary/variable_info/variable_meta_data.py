@@ -1278,6 +1278,30 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.CRUISE_MACH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'CONFIN.VCMN',
+        #  [  # inputs
+        #      '&DEFINE.CONFIN.VCMN', 'PARVAR.DVD(1,8)',
+        #      # outputs
+        #      'CONFIG.VCMN', 'CONFIG.DVA(8)', '~FLOPS.DVA(8)', '~ANALYS.DVA(8)',
+        #      # other
+        #      'MISSA.VCMIN',
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_design_variables.cruise_mach',
+            'aircraft.outputs.L0_design_variables.cruise_mach',
+            'aircraft.outputs.L0_design_variables.mission_cruise_mach',
+        ],
+    },
+    units='unitless',
+    desc='aircraft cruise Mach number',
+    default_value=0.0,  # TODO: required
+)
+
+add_meta_data(
     Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKCC', 'FLOPS': None, 'LEAPS1': None},
@@ -7209,7 +7233,7 @@ add_meta_data(
     },
     units='unitless',
     desc='aircraft cruise Mach number',
-    # TODO: derived default value: Mission.Summary.CRUISE_MACH ???
+    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
     default_value=0.0,
     option=True,
 )
@@ -7698,30 +7722,6 @@ add_meta_data(
 #                                                           __/ |
 #                                                          |___/
 # ===============================================================
-
-add_meta_data(
-    Mission.Summary.CRUISE_MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'CONFIN.VCMN',
-        #  [  # inputs
-        #      '&DEFINE.CONFIN.VCMN', 'PARVAR.DVD(1,8)',
-        #      # outputs
-        #      'CONFIG.VCMN', 'CONFIG.DVA(8)', '~FLOPS.DVA(8)', '~ANALYS.DVA(8)',
-        #      # other
-        #      'MISSA.VCMIN',
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_design_variables.cruise_mach',
-            'aircraft.outputs.L0_design_variables.cruise_mach',
-            'aircraft.outputs.L0_design_variables.mission_cruise_mach',
-        ],
-    },
-    units='unitless',
-    desc='aircraft cruise Mach number',
-    default_value=0.0,  # TODO: required
-)
 
 add_meta_data(
     Mission.Summary.CRUISE_MASS_FINAL,

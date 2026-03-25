@@ -1013,7 +1013,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:summary:cruise_mach",
+        "aircraft:design:cruise_mach",
         0.785,
         "unitless",
         "<class 'float'>"

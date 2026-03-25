@@ -9,7 +9,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
     """Calculate the ratio of maximum landing mass to maximum takeoff gross mass."""
 
     def setup(self):
-        add_aviary_input(self, Mission.Summary.CRUISE_MACH, units='unitless')
+        add_aviary_input(self, Aircraft.Design.CRUISE_MACH, units='unitless')
         add_aviary_input(self, Mission.Design.RANGE, units='NM')
 
         add_aviary_output(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, units='unitless')
@@ -18,7 +18,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        cruise_mach = inputs[Mission.Summary.CRUISE_MACH]
+        cruise_mach = inputs[Aircraft.Design.CRUISE_MACH]
         des_range = inputs[Mission.Design.RANGE]
 
         # cruise factor set by the cruise Mach number
@@ -29,7 +29,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
         outputs[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO] = 1 - cruise_factor * des_range
 
     def compute_partials(self, inputs, J):
-        cruise_mach = inputs[Mission.Summary.CRUISE_MACH]
+        cruise_mach = inputs[Aircraft.Design.CRUISE_MACH]
         des_range = inputs[Mission.Design.RANGE]
 
         den = 1.0 + np.exp(-1000 * (cruise_mach - 1))
@@ -37,7 +37,7 @@ class LandingTakeoffMassRatio(om.ExplicitComponent):
         dfact_dmach = 5e-2 / den**2 * np.exp(-1000 * (cruise_mach - 1))
 
         J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Mission.Design.RANGE] = -cruise_factor
-        J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Mission.Summary.CRUISE_MACH] = (
+        J[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, Aircraft.Design.CRUISE_MACH] = (
             -des_range * dfact_dmach
         )
 
