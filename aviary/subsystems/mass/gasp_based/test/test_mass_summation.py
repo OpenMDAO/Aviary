@@ -99,9 +99,7 @@ class MassSummationTestCase1(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1787.2504876,  # modified from GASP value to account for updated crew mass. GASP value is 1757
             Aircraft.Design.STRUCTURE_MASS: 50266.438,
             Aircraft.Fuselage.MASS: 18624.42144949,  # modified from GASP value to account for updated crew mass. GASP value is 18814
-            Mission.Summary.FUEL_MASS_REQUIRED: 43591.47530728,  # modified from GASP value to account for updated crew mass. GASP value is 42843.6
             Aircraft.Propulsion.MASS: 16161.21,  # modified from GASP value to account for updated crew mass. GASP value is 16127
-            Mission.Summary.FUEL_MASS: 43591.47530728,  # modified from GASP value to account for updated crew mass. GASP value is 42844.0
             'fuel_mass_min': 33551.47530728,  # modified from GASP value to account for updated crew mass. GASP value is 32803.6
             Aircraft.Fuel.WING_VOLUME_DESIGN: 871.44181691,  # modified from GASP value to account for updated crew mass. GASP value is 856.4910800459031
             'OEM_fuel_vol': 1591.12164393,  # modified from GASP value to account for updated crew mass. GASP value is 1576.1710061411081
@@ -372,7 +370,7 @@ class MassSummationTestCase2(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -443,14 +441,8 @@ class MassSummationTestCase2(unittest.TestCase):
         )  # modified from GASP value to account for updated crew mass. GASP value is 18787
 
         assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 43756.73086076, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 43147.2
-        assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16167.631, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16140
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 43756.73086076, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 43147
         assert_near_equal(
             self.prob['fuel_mass_min'], 33716.73086076, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 33107.2
@@ -728,7 +720,7 @@ class MassSummationTestCase3(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -791,16 +783,9 @@ class MassSummationTestCase3(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.MASS], 18621.15351242, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 18787
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 43756.73086076, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 43147.2
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16167.631, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16140
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 43756.73086076, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 43147
         assert_near_equal(
             self.prob['fuel_mass_min'], 33716.73086076, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 33107.2
@@ -1080,7 +1065,7 @@ class MassSummationTestCase4(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -1151,16 +1136,9 @@ class MassSummationTestCase4(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.MASS], 18633.04024108, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 18799
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 43573.66265931, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 42966.7
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16339.047, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16309
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 43573.66265931, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 42967
         assert_near_equal(
             self.prob['fuel_mass_min'], 33533.66265931, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 32926.7
@@ -1440,7 +1418,7 @@ class MassSummationTestCase5(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0.0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -1502,16 +1480,9 @@ class MassSummationTestCase5(unittest.TestCase):
 
         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 48940.74, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 18674.791, tol)
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 45257.899404, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 45424.8
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16225.793, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16233
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 45257.899404, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 45425
         assert_near_equal(
             self.prob['fuel_mass_min'], 35217.899404, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 35384.8
@@ -1795,7 +1766,7 @@ class MassSummationTestCase6(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10.0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -1857,16 +1828,9 @@ class MassSummationTestCase6(unittest.TestCase):
 
         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 49209.648, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 18960.975, tol)
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 44806.43449445, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 44982.7
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 16390.94, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16399
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 44806.4344933, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 44982.7
         assert_near_equal(
             self.prob['fuel_mass_min'], 34766.43449445, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 34942.7
@@ -2162,7 +2126,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.041, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10.0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
         self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
@@ -2235,16 +2199,9 @@ class MassSummationTestCase7(unittest.TestCase):
 
         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 45370.902, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 18858.356, tol)
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 31947.11317787, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 31627.2
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 10768.96980417, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 10755.0
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 31947.11317773, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 31627.0
         assert_near_equal(
             self.prob['fuel_mass_min'], 15977.11317787, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 15657.2
@@ -2494,7 +2451,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10.0, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.060, units='unitless'
         )
@@ -2502,7 +2459,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Fuselage.MASS_COEFFICIENT, val=89.66, units='unitless'
         )
         self.prob.model.set_input_defaults('pylon_len', val=0, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=10.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10.0, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.060, units='unitless'
         )
@@ -2616,16 +2573,9 @@ class MassSummationTestCase8(unittest.TestCase):
 
         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 43655.977, tol)
         assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 14654.517, tol)
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 28567.49187498, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 28572.3
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 14042.33998375, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 14043.0
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 28567.49187498, tol
-        )  # modified from GASP value to account for updated crew mass. GASP value is 28572.0
         assert_near_equal(
             self.prob['fuel_mass_min'], 12597.49187498, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 12602.3
@@ -2873,7 +2823,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-        self.prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, val=0.0, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=0.0, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, val=0.060, units='unitless'
         )
@@ -3016,16 +2966,9 @@ class MassSummationTestCase9(unittest.TestCase):
         assert_near_equal(
             self.prob[Aircraft.Fuselage.MASS], 16375.17869754, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 16436.0
-
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS_REQUIRED], 32651.96389363, 0.00058
-        )  # slightly above tol, due to non-integer number of wires,  #modified from GASP value to account for updated crew mass. GASP value is 32907.6
         assert_near_equal(
             self.prob[Aircraft.Propulsion.MASS], 26496.71105457, 0.00054
         )  # slightly above tol, due to non-integer number of wires,  #modified from GASP value to account for updated crew mass. GASP value is 26527.0
-        assert_near_equal(
-            self.prob[Mission.Summary.FUEL_MASS], 32651.96389363, 0.00056
-        )  # slightly above tol, due to non-integer number of wires,  #modified from GASP value to account for updated crew mass. GASP value is 32908
         assert_near_equal(
             self.prob['fuel_mass_min'], 16681.96389363, 0.0012
         )  # slightly above tol, due to non-integer number of wires,  #modified from GASP value to account for updated crew mass. GASP value is 16937.6
@@ -3250,7 +3193,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Fuel.DENSITY, 6.687, units='lbm/galUS')
 
-        prob.model.set_input_defaults(Aircraft.Fuel.FUEL_MARGIN, 10.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, 10.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, 0.035, units='unitless'
         )
@@ -3362,9 +3305,9 @@ class BWBMassSummationTestCase(unittest.TestCase):
         payload_mass_max_fuel -- WPLMXF = 30423.2
         max_wingfuel_mass -- WFWMX = 30309.0
         Aircraft.Design.STRUCTURE_MASS -- WST = 45623.
-        Mission.Summary.FUEL_MASS -- WFADES = 33268.2
+        FUEL_MASS -- WFADES = 33268.2
         Aircraft.Propulsion.MASS -- WP = 8592.
-        Mission.Summary.FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
+        FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
         fuel_mass_min -- WFAMIN = 18268.2
         fuel_mass.wingfuel_mass_min -- WFWMIN = 11982.2
         Aircraft.Fuel.TOTAL_CAPACITY -- WFAMAX = 33268.2
@@ -3444,9 +3387,8 @@ class BWBMassSummationTestCase(unittest.TestCase):
         # StructMass
         assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 44470.83642382, tol)
         # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 35262.87713501, tol)
+        assert_near_equal(prob['fuel_mass'], 35262.87713501, tol)
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 8669.11094154, tol)
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS_REQUIRED], 35262.87713501, tol)
         assert_near_equal(prob['fuel_mass_min'], 20262.87713501, tol)
         # FuelAndOEMOutputs
         assert_near_equal(prob['OEM_wingfuel_mass'], 69012.87713501, tol)
