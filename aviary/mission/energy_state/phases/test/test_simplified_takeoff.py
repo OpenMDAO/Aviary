@@ -10,7 +10,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary import constants
-from aviary.mission.height_energy.phases.simplified_takeoff import (
+from aviary.mission.energy_state.phases.simplified_takeoff import (
     FinalTakeoffConditions,
     StallSpeed,
     TakeoffGroup,
@@ -55,12 +55,12 @@ class StallSpeedTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.height_energy.phases.simplified_takeoff as takeoff
+        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
 
         takeoff.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.height_energy.phases.simplified_takeoff as takeoff
+        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
 
         takeoff.GRAV_ENGLISH_LBM = 1.0
 
@@ -133,12 +133,12 @@ class FinalConditionsTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.mission.height_energy.phases.simplified_takeoff as takeoff
+        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
 
         takeoff.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.mission.height_energy.phases.simplified_takeoff as takeoff
+        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
 
         takeoff.GRAV_ENGLISH_LBM = 1.0
 

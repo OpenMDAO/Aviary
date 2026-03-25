@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 import aviary.api as av
 from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 
-phase_info = deepcopy(av.default_height_energy_phase_info)
+phase_info = deepcopy(av.default_energy_state_phase_info)
 
 
 @use_tempdirs
