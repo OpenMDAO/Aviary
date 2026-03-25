@@ -42,7 +42,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:reserve_fuel_fraction",
+        "aircraft:design:reserve_fuel_margin",
         0.0,
         "unitless",
         "<class 'float'>"

@@ -252,7 +252,6 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             # get initial values, first in traj
             if idx == 0:
-                initial_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', 0)[0]
                 initial_time = _get_phase_value(model, 'traj', phase, 'time', 'min', 0)
                 initial_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', 0)[0]
 
@@ -264,17 +263,21 @@ def mission_report(prob: AviaryProblem, **kwargs):
             data[phase] = outputs
 
             # get final values, last in traj
-            final_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', -1)[0]
             final_time = _get_phase_value(model, 'traj', phase, 'time', 'min', -1)
             final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
             totals = NamedValues()
-            totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
 
             if multi_mission:
                 var_name = f'{name}.'
             else:
                 var_name = ''
+
+            totals.set_val(
+                'Total Fuel Burn',
+                prob.get_val(f'{var_name}mission:summary:fuel_burned', units='lbm')[0],
+                units='lbm',
+            )
 
             totals.set_val(
                 'Total Fuel Capacity',
