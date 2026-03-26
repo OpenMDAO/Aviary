@@ -46,6 +46,7 @@ class MassSummationTestCase1(unittest.TestCase):
         input_options.delete(Aircraft.Avionics.MASS)
         input_options.delete(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
         input_options.delete(Aircraft.Furnishings.MASS)
+        input_options.delete(Aircraft.Engine.SCALE_FACTOR)
 
         for key, (val, units) in get_items(input_options):
             if not is_option(key):
@@ -223,11 +224,9 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -571,11 +570,9 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -916,11 +913,9 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -1269,11 +1264,9 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -1617,11 +1610,9 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -1969,11 +1960,9 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 7.36, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.594, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2095, units='unitless'
         )
@@ -2296,11 +2285,9 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 7.642, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.35255, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2095, units='unitless'
         )
@@ -2362,7 +2349,6 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Engine.SCALED_SLS_THRUST, val=21160.0, units='lbf'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.73934, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.5625, units='unitless'
         )
@@ -2670,11 +2656,9 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 8.425, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.73934, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2095, units='unitless'
         )
@@ -2736,7 +2720,6 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Engine.SCALED_SLS_THRUST, val=23750.0, units='lbf'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.82984, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.5936, units='unitless'
         )
