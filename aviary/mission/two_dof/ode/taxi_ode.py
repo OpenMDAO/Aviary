@@ -60,7 +60,7 @@ class TaxiSegment(TwoDOFODE):
                     num_nodes=1,
                     aviary_inputs=options,
                     user_options=user_options,
-                    subsystem_options={}
+                    subsystem_options={},
                 )
 
                 self.add_subsystem(

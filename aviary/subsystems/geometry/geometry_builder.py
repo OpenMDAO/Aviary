@@ -113,10 +113,7 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         if method != 'external':
             geom_group = super().build_mission(
-                num_nodes,
-                aviary_inputs,
-                user_options,
-                subsystem_options
+                num_nodes, aviary_inputs, user_options, subsystem_options
             )
 
         return geom_group

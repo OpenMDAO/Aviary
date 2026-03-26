@@ -74,10 +74,7 @@ class CoreMassBuilder(MassBuilder):
 
         if method != 'external':
             mass_group = super().build_mission(
-                num_nodes,
-                aviary_inputs,
-                user_options,
-                subsystem_options
+                num_nodes, aviary_inputs, user_options, subsystem_options
             )
 
         return mass_group

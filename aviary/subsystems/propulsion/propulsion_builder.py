@@ -113,6 +113,7 @@ class CorePropulsionBuilder(PropulsionBuilder):
             num_nodes=num_nodes,
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
+            user_options=user_options,
             engine_options=subsystem_options,
         )
 
