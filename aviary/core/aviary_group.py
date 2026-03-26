@@ -834,18 +834,13 @@ class AviaryGroup(om.Group):
             )
 
         # Fuel burn in regular phases
-        ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',
-            # TODO: Fix to include any payloads dropped off during the mission
-            # We execute a similar calculaton a second time when calculating Aircraft.Design.RESERVE_FUEL_MARGIN
-            initial_mass={'units': 'lbm'},
-            mass_final={'units': 'lbm'},
-            fuel_burned={'units': 'lbm'},
-        )
-
         post_mission.add_subsystem(
             'fuel_burned',
-            ecomp,
+            om.ExecComp(
+                'fuel_burned = initial_mass - mass_final',
+                initial_mass={'units': 'lbm'},
+                mass_final={'units': 'lbm'},
+                fuel_burned={'units': 'lbm'}),
             promotes_inputs=[('initial_mass', Mission.Summary.GROSS_MASS)],
             promotes_outputs=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
         )
@@ -888,7 +883,6 @@ class AviaryGroup(om.Group):
 
         # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel 
         # The aircraft will naturally try to mimize 'total_fuel_mass_constraint' so it's not carrying extra unnecessary fuel
-        # TODO: Make this include TAXI + TAKEOFF + LANDING + TAXI-in FUEL
         post_mission.add_subsystem(
             'total_fuel_mass_con',
             om.ExecComp(
