@@ -99,9 +99,14 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             desc='stall speed of the aircraft',
         )
 
-        add_aviary_input(self, Mission.Summary.GROSS_MASS, val=150_000)
+        self.add_input(
+            'mass',
+            val=150_000,
+            units='lbm',
+            desc='mass of the aircraft',
+        )
 
-        add_aviary_input(self, Mission.Takeoff.FUEL_SIMPLE, val=10.0e3)
+        add_aviary_input(self, Mission.Takeoff.FUEL_BURN, val=10.0e3)
 
         self.add_input(
             Dynamic.Atmosphere.DENSITY,
@@ -135,7 +140,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         self.declare_partials(
             Mission.Takeoff.GROUND_DISTANCE,
             [
-                Mission.Summary.GROSS_MASS,
+                'mass',
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
@@ -145,12 +150,12 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
         self.declare_partials(
             Mission.Takeoff.FINAL_MASS,
-            Mission.Summary.GROSS_MASS,
+            'mass',
             val=1.0,
         )
         self.declare_partials(
             Mission.Takeoff.FINAL_MASS,
-            Mission.Takeoff.FUEL_SIMPLE,
+            Mission.Takeoff.FUEL_BURN,
             val=-1.0,
         )
 
@@ -158,7 +163,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         rho_SL = RHO_SEA_LEVEL_METRIC
 
         v_stall = inputs['v_stall']
-        gross_mass = inputs[Mission.Summary.GROSS_MASS]
+        gross_mass = inputs['mass']
         ramp_weight = gross_mass * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
@@ -201,13 +206,13 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             rolling_distance + rotation_distance + climbout_distance
         )
         outputs[Mission.Takeoff.FINAL_VELOCITY] = V2
-        outputs[Mission.Takeoff.FINAL_MASS] = gross_mass - inputs[Mission.Takeoff.FUEL_SIMPLE]
+        outputs[Mission.Takeoff.FINAL_MASS] = gross_mass - inputs[Mission.Takeoff.FUEL_BURN]
         outputs[Mission.Takeoff.FINAL_ALTITUDE] = 35
 
     def compute_partials(self, inputs, J):
         rho_SL = RHO_SEA_LEVEL_METRIC
 
-        ramp_weight = inputs[Mission.Summary.GROSS_MASS] * GRAV_ENGLISH_LBM
+        ramp_weight = inputs['mass'] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         S = inputs[Aircraft.Wing.AREA]
         Cl_max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
@@ -311,7 +316,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         dCout_dLoD = -140 * (ramp_weight / S) ** 0.5 / den_Cout**2 * 0.9 / L_over_D**2
         dCout_dRho = 0
 
-        J[Mission.Takeoff.GROUND_DISTANCE, Mission.Summary.GROSS_MASS] = dRD_dM + dRot_dM + dCout_dM
+        J[Mission.Takeoff.GROUND_DISTANCE, 'mass'] = dRD_dM + dRot_dM + dCout_dM
         J[Mission.Takeoff.GROUND_DISTANCE, Dynamic.Atmosphere.DENSITY] = (
             dRD_dRho + dRot_dRho + dCout_dRho
         )
@@ -340,13 +345,24 @@ class TakeoffGroup(om.Group):
         self.add_subsystem(name='atmosphere', subsys=Atmosphere(num_nodes=1), promotes=['*'])
 
         self.add_subsystem(
+            'taxi_comp',
+            om.ExecComp('end_of_taxi_mass = gross_mass - taxi_out_fuel_burned',
+                        end_of_taxi_mass={'units':'lbm'},
+                        gross_mass={'units':'lbm'},
+                        taxi_out_fuel_burned={'units':'lbm'}),
+            promotes_inputs=[('gross_mass', Mission.Summary.GROSS_MASS),
+                             ('taxi_out_fuel_burned', Mission.Taxi.FUEL_BURN_TAXI_OUT)],
+            promotes_outputs=['end_of_taxi_mass']            
+        )
+
+        self.add_subsystem(
             'stall_speed',
             StallSpeed(),
             promotes_outputs=[
                 'v_stall',
             ],
             promotes_inputs=[
-                ('mass', Mission.Summary.GROSS_MASS),
+                ('mass', 'end_of_taxi_mass'),
                 Dynamic.Atmosphere.DENSITY,
                 ('planform_area', Aircraft.Wing.AREA),
                 ('Cl_max', Mission.Takeoff.LIFT_COEFFICIENT_MAX),
@@ -358,10 +374,10 @@ class TakeoffGroup(om.Group):
             FinalTakeoffConditions(num_engines=self.options['num_engines']),
             promotes_inputs=[
                 'v_stall',
-                Mission.Summary.GROSS_MASS,
+                ('mass','end_of_taxi_mass'),
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
-                Mission.Takeoff.FUEL_SIMPLE,
+                Mission.Takeoff.FUEL_BURN,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
                 Mission.Design.THRUST_TAKEOFF_PER_ENG,
                 Mission.Takeoff.LIFT_OVER_DRAG,

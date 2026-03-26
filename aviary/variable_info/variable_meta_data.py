@@ -8001,7 +8001,7 @@ add_meta_data(
     # Note user override (no scaling)
     # Note FLOPS/LEAPS1 calculated as part of mission analysis, and not as
     # part of takeoff
-    Mission.Takeoff.FUEL_SIMPLE,
+    Mission.Takeoff.FUEL_BURN,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -8169,6 +8169,17 @@ add_meta_data(
     option=True,
     default_value=0.167,
 )
+
+add_meta_data(
+    Mission.Taxi.FUEL_BURN_TAXI_OUT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='the amount of fuel burned in taxi. Only used in energy-state EOM',
+    option=False,
+    default_value=0.0,
+)
+
 
 add_meta_data(
     Mission.Taxi.MACH,
