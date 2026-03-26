@@ -626,7 +626,7 @@ class AviaryProblem(om.Problem):
             ),
             promotes_inputs=[
                 ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
-                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
             promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
         )

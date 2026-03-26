@@ -31,7 +31,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         expected_values = {
             (Mission.Design.GROSS_MASS, 'lbm'): 171595.06049335,
             (Mission.OPERATING_MASS, 'lbm'): 95089.98897716,
-            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
+            (Mission.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
             (Mission.RANGE, 'NM'): 3675.0,
             (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136087.98897716,

@@ -121,7 +121,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
             239188.4,
             tolerance=rtol,
         )
@@ -159,7 +159,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # )
 
     # assert_near_equal(
-    # prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+    # prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
     # 245443.5,
     # tolerance=rtol,
     # )

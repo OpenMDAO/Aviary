@@ -7242,6 +7242,25 @@ add_meta_data(
     'to Mission.Design.RANGE value in the design case.',
 )
 
+add_meta_data(
+    Mission.RESERVE_FUEL_BURNED,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.TOTAL_FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    # Note: In GASP, WFA does not include fuel margin.
+    desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
+    'reserve fuel and fuel margin',
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7784,25 +7803,6 @@ add_meta_data(
 #                                                           __/ |
 #                                                          |___/
 # ===============================================================
-
-add_meta_data(
-    Mission.Summary.RESERVE_FUEL_BURNED,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.TOTAL_FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    # Note: In GASP, WFA does not include fuel margin.
-    desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
-    'reserve fuel and fuel margin',
-)
 
 add_meta_data(
     Mission.Summary.USEFUL_LOAD,

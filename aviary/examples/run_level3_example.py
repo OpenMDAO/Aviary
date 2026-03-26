@@ -453,7 +453,7 @@ prob.model.post_mission.add_subsystem(
     promotes_inputs=[
         'reserve_fuel_frac_mass',
         ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-        ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
+        ('reserve_fuel_burned', Mission.RESERVE_FUEL_BURNED),
     ],
     promotes_outputs=[('reserve_fuel', Mission.Design.RESERVE_FUEL)],
 )
@@ -471,7 +471,7 @@ prob.model.post_mission.add_subsystem(
         ('fuel_burned', Mission.FUEL_BURNED),
         ('reserve_fuel', Mission.Design.RESERVE_FUEL),
     ],
-    promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
+    promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL_MASS)],
 )
 
 # If target distances have been set per phase then there is a block of code to add here.
@@ -491,7 +491,7 @@ prob.model.post_mission.add_subsystem(
     ecomp,
     promotes_inputs=[
         ('operating_empty_mass', Mission.OPERATING_MASS),
-        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+        ('overall_fuel', Mission.TOTAL_FUEL_MASS),
         ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
         ('initial_mass', Mission.GROSS_MASS),
     ],
@@ -512,7 +512,7 @@ prob.model.post_mission.add_subsystem(
     promotes_inputs=[
         ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
         ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+        ('overall_fuel', Mission.TOTAL_FUEL_MASS),
     ],
     promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
 )
@@ -619,7 +619,7 @@ prob.model.add_subsystem(
     ),
     promotes_inputs=[
         ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
-        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+        ('overall_fuel', Mission.TOTAL_FUEL_MASS),
     ],
     promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
 )

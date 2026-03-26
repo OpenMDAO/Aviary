@@ -40,7 +40,7 @@ class ReserveTest(unittest.TestCase):
         prob.run_model()
 
         fuel_burned = prob.model.get_val(Mission.FUEL_BURNED, units='lbm')
-        total_fuel = prob.model.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm')
+        total_fuel = prob.model.get_val(Mission.TOTAL_FUEL_MASS, units='lbm')
 
         assert_near_equal(total_fuel - fuel_burned, 10000.0, 1e-3)
 

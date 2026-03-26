@@ -857,7 +857,7 @@ class AviaryGroup(om.Group):
             post_mission.add_subsystem(
                 'reserve_fuel_burned',
                 ecomp,
-                promotes=[('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED)],
+                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_BURNED)],
             )
 
             # timeseries has to be used because Breguet cruise phases don't have
@@ -893,7 +893,7 @@ class AviaryGroup(om.Group):
                 ('fuel_burned', Mission.FUEL_BURNED),
                 ('reserve_fuel', Mission.Design.RESERVE_FUEL),
             ],
-            promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
+            promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL_MASS)],
         )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
@@ -976,7 +976,7 @@ class AviaryGroup(om.Group):
             ecomp,
             promotes_inputs=[
                 ('operating_empty_mass', Mission.OPERATING_MASS),
-                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
                 ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
                 ('initial_mass', Mission.GROSS_MASS),
             ],
@@ -997,7 +997,7 @@ class AviaryGroup(om.Group):
             promotes_inputs=[
                 ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
                 ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
             promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
         )
@@ -1556,7 +1556,7 @@ class AviaryGroup(om.Group):
             promotes_inputs=[
                 'reserve_fuel_margin_mass',
                 ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-                ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
+                ('reserve_fuel_burned', Mission.RESERVE_FUEL_BURNED),
             ],
             promotes_outputs=[('reserve_fuel', reserves_name)],
         )
