@@ -292,14 +292,6 @@ class NewEngineSize(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        # TODO: remove
-        add_aviary_input(
-            self, Aircraft.Engine.REFERENCE_DIAMETER, shape=num_engine_type, units='ft'
-        )
-        add_aviary_input(
-            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
-        )
-
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
         add_aviary_input(
             self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, shape=num_engine_type, units='unitless'
@@ -314,6 +306,33 @@ class NewEngineSize(om.ExplicitComponent):
     def setup_partials(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
+        nn = np.zeros(num_engine_type, dtype=int)
+
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_DIAMETER,
+            [
+                Mission.Design.GROSS_MASS,
+            ],
+            rows=shape,
+            cols=nn,
+        )
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_LENGTH,
+            [
+                Mission.Design.GROSS_MASS,
+            ],
+            rows=shape,
+            cols=nn,
+        )
+        self.declare_partials(
+            Aircraft.Nacelle.SURFACE_AREA,
+            [
+                Mission.Design.GROSS_MASS,
+            ],
+            rows=shape,
+            cols=nn,
+        )
+
         self.declare_partials(
             Aircraft.Nacelle.AVG_DIAMETER,
             [
@@ -355,6 +374,9 @@ class NewEngineSize(om.ExplicitComponent):
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
+        import pdb
+
+        pdb.set_trace()
         area_engine = coeff_inlet * gross_mass / num_engine
         diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
@@ -370,6 +392,7 @@ class NewEngineSize(om.ExplicitComponent):
         coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = np.ones(num_engine) * gross_mass
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']

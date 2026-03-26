@@ -62,21 +62,12 @@ class SizeGroup(om.Group):
                 promotes_outputs=['*'],
             )
         elif design_type is AircraftTypes.TRANSPORT:
-            use_new = True
-            if use_new:
-                self.add_subsystem(
-                    'engine',
-                    NewEngineSizeGroup(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
-            else:
-                self.add_subsystem(
-                    'engine',
-                    EngineSize(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
+            self.add_subsystem(
+                'engine',
+                NewEngineSizeGroup(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
         if self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]:
             self.add_subsystem(

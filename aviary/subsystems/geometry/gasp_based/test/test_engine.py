@@ -86,11 +86,12 @@ class TestEngine(
 
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        aviary_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000301265)
 
-        self.prob.model.add_subsystem('engsz', EngineSize(), promotes=['*'])
+        self.prob.model.add_subsystem('engsz', NewEngineSize(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults('percent_exposed', 1.0)
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -103,44 +104,11 @@ class TestEngine(
     def test_large_sinle_aisle_1_defaults(self):
         self.prob.run_model()
         tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58389, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.25002007, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.50004014, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 330.26175625, tol)
 
     def test_partials(self):
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
-
-
-class TestEngineBWB(unittest.TestCase):
-    """Test engine size using EngineSize class and BWB data"""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
-
-        self.prob.model.add_subsystem('engsz', EngineSize(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.3053677239456256)
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
-
-        setup_model_options(self.prob, aviary_options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-        tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 8.08783369, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 10.98974842, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 279.23498901, tol)
-
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
@@ -184,13 +152,12 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
+        aviary_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, [0.0003, 0.0002])
 
-        prob.model.add_subsystem('cable', EngineSize(), promotes=['*'])
+        prob.model.add_subsystem('cable', NewEngineSize(), promotes=['*'])
 
-        prob.model.set_input_defaults(
-            Aircraft.Engine.REFERENCE_DIAMETER, np.array([5.8, 8.2]), units='ft'
-        )
-        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=np.array([1.028233, 0.9]))
+        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        prob.model.set_input_defaults('percent_exposed', [1.0, 1.0])
         prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, np.array([1.25, 1.02]), units='unitless'
         )
@@ -261,4 +228,7 @@ class NewEngineSizeGroupTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = ElectricTestCaseMultiEngine()
+    test.setUp()
+    test.test_case_multiengine()
