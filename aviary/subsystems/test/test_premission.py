@@ -155,9 +155,9 @@ class PreMissionTestCase(unittest.TestCase):
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1721.08,  # modified from GASP value to account for updated crew mass. GASP value is 1757
             Aircraft.Design.STRUCTURE_MASS: 50931.4,
             Aircraft.Fuselage.MASS: 18833.76678366,  # modified from GASP value to account for updated crew mass. GASP value is 18814
-            Mission.Summary.FUEL_MASS_REQUIRED: 41977.7,  # modified from GASP value to account for updated crew mass. GASP value is 42843.6
+            'fuel_mass_required': 41977.7,  # modified from GASP value to account for updated crew mass. GASP value is 42843.6
             Aircraft.Propulsion.MASS: 16098.7,  # modified from GASP value to account for updated crew mass. GASP value is 16127
-            Mission.Summary.FUEL_MASS: 41977.68,  # modified from GASP value to account for updated crew mass. GASP value is 42844.0
+            'fuel_mass': 41977.68,  # modified from GASP value to account for updated crew mass. GASP value is 42844.0
             'fuel_mass_min': 31937.68,  # modified from GASP value to account for updated crew mass. GASP value is 32803.6
             Aircraft.Fuel.WING_VOLUME_DESIGN: 839.18,  # modified from GASP value to account for updated crew mass. GASP value is 856.4910800459031
             'OEM_fuel_vol': 1558.86,  # modified from GASP value to account for updated crew mass. GASP value is 1576.1710061411081
@@ -192,7 +192,8 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0]
+            == f'geometry.flops_based_geom.wetted_area.fus_swet.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' in outs[0][1]['prom_name'])
 
@@ -270,7 +271,8 @@ class PreMissionTestCase(unittest.TestCase):
         )
 
         self.assertTrue(
-            outs[0][0] == f'geometry.flops_based_geom.fuselage.{Aircraft.Fuselage.WETTED_AREA}'
+            outs[0][0]
+            == f'geometry.flops_based_geom.wetted_area.fus_swet.{Aircraft.Fuselage.WETTED_AREA}'
         )
         self.assertTrue('CODE_ORIGIN_OVERRIDE' not in outs[0][1]['prom_name'])
 

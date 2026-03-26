@@ -105,7 +105,7 @@ inputs.set_val(Aircraft.HorizontalTail.AREA, 407.335370699457, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 5.444)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.3008)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1195)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 707.706, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -244,7 +244,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
@@ -255,7 +255,7 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 88507.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 452.6, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 2968.4, 'lbm')
-outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 146328.0, 'lbm')
+outputs.set_val(Aircraft.Design.LANDING_MASS, 146328.0, 'lbm')
 outputs.set_val(Mission.Summary.OPERATING_MASS, 95267.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 19232.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 44648.0, 'lbm')
@@ -263,7 +263,6 @@ outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 24174.0, 'lbm')
 outputs.set_val(Mission.Summary.USEFUL_LOAD, 6760.42285438, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 131744.0, 'lbm')
-outputs.set_val(Mission.Summary.FUEL_MASS, 42456.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 1603.75, 'lbm')
 

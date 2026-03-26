@@ -13,7 +13,7 @@ of the mission1 and mission2 are summed and weighted to create the objective fun
 import copy as copy
 
 import aviary.api as av
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.enums import ProblemType
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -108,7 +108,7 @@ def multi_mission_example():
 
     # optimizer and iteration limit are optional provided here
     # Note: IPOPT needs more iters than SNOPT.
-    prob.add_driver('IPOPT', max_iter=70)
+    prob.add_driver('IPOPT', max_iter=150)
     prob.add_design_variables()
 
     prob.setup()

@@ -110,7 +110,7 @@ inputs.set_val(Aircraft.HorizontalTail.AREA, 407.335370699457, 'ft**2')
 inputs.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, 5.444)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.3008)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1195)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 707.706, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -284,7 +284,7 @@ inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.VERBOSITY, 0)
@@ -301,7 +301,6 @@ outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 50736.0, 'lbm')
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 25169.0, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8275.86, 'ft**2')
 outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 135848.0, 'lbm')
-outputs.set_val(Mission.Summary.FUEL_MASS, 45352.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 1602.0, 'lbm')
 

@@ -46,7 +46,7 @@ from collections import namedtuple
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.height_energy.ode.takeoff_ode import TakeoffODE
+from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessControl,
     InitialGuessIntegrationVariable,

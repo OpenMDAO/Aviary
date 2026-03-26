@@ -34,7 +34,7 @@ V3_bug_fixed_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, un
 V3_bug_fixed_options.set_val(Mission.Design.GROSS_MASS, val=175400, units='lbm')
 V3_bug_fixed_options.set_val(Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2')
 V3_bug_fixed_options.set_val(
-    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
 )
 V3_bug_fixed_options.set_val(Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.HorizontalTail.TAPER_RATIO, val=0.352, units='unitless')
@@ -47,7 +47,7 @@ V3_bug_fixed_options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, u
 V3_bug_fixed_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28690]), units='lbf')
 # NOTE override required for mass summation test
 V3_bug_fixed_options.set_val(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
-V3_bug_fixed_options.set_val(Aircraft.Fuel.FUEL_MARGIN, val=0, units='unitless')
+V3_bug_fixed_options.set_val(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
 
 V3_bug_fixed_non_metadata = AviaryValues()

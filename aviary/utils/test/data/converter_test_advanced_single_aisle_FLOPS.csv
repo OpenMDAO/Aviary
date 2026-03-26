@@ -82,7 +82,7 @@ aircraft:horizontal_tail:mass_scaler,1.42225,unitless
 aircraft:horizontal_tail:sweep,30.5853213018973,deg
 aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:wetted_area,576.571192,ft**2
 aircraft:hydraulics:mass_scaler,0.95543,unitless
 aircraft:hydraulics:system_pressure,5000.0,psi
@@ -170,7 +170,7 @@ mission:takeoff:spoiler_drag_coefficient,0.085,unitless
 mission:takeoff:spoiler_lift_coefficient,-0.81,unitless
 mission:takeoff:thrust_incidence,0.0,deg
 settings:aerodynamics_method,FLOPS
-settings:equations_of_motion,height_energy
+settings:equations_of_motion,energy_state
 settings:mass_method,FLOPS
 
 # Unconverted Values

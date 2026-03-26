@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightODE(TwoDOFODE):
-    """ODE for quasi-steady flight in GASP 2-dof. This replaces ClimbODE and DescentODE.
+    """ODE for quasi-steady flight in GASP 2DOF. This replaces ClimbODE and DescentODE.
 
     This ODE has a ``KSComp`` which aggregates the maximum EAS and mach number constraints.
     This allows a single constraint to whichever of the two constraints would be active at

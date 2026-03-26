@@ -10,7 +10,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.missions.height_energy_default import phase_info as ph_in
+from aviary.models.missions.energy_state_default import phase_info as ph_in
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 

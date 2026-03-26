@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere

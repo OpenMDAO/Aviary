@@ -71,8 +71,6 @@ class MassSummation(om.Group):
             'zero_fuel_mass', ZeroFuelMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
-        self.add_subsystem('fuel_mass', FuelMass(), promotes_inputs=['*'], promotes_outputs=['*'])
-
 
 class EmpennageMass(om.ExplicitComponent):
     def setup(self):
@@ -430,23 +428,3 @@ class ZeroFuelMass(om.ExplicitComponent):
         operating_mass = inputs[Mission.Summary.OPERATING_MASS]
 
         outputs[Mission.Summary.ZERO_FUEL_MASS] = operating_mass + pass_mass + bag_mass + cargo_mass
-
-
-# TODO DO NOT CALCULATE MISSION FUEL THIS WAY!!! ONLY COMPUTE DIRECTLY FROM INTEGRATING FUEL BURN
-# TODO This should also probably not go in mass summation
-class FuelMass(om.ExplicitComponent):
-    def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.ZERO_FUEL_MASS, units='lbm')
-
-        add_aviary_output(self, Mission.Summary.FUEL_MASS, units='lbm')
-
-    def setup_partials(self):
-        self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Design.GROSS_MASS, val=1)
-        self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Summary.ZERO_FUEL_MASS, val=-1)
-
-    def compute(self, inputs, outputs):
-        zero_fuel_mass = inputs[Mission.Summary.ZERO_FUEL_MASS]
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
-
-        outputs[Mission.Summary.FUEL_MASS] = gross_mass - zero_fuel_mass

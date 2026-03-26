@@ -9,7 +9,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TwoDOFODE(_BaseODE):
-    """The base class for all 2 Degree-of-Freedom ODE components."""
+    """The base class for all two-degrees-of-freedom ODE components."""
 
     def initialize(self):
         super().initialize()
