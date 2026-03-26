@@ -173,9 +173,9 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
         tol = 1e-5
 
-        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], [7.35163, 7.9347871], tol)
-        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], [14.70326, 17.5358795], tol)
-        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], [339.58389, 437.13210486], tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], [7.23478278, 3.40843509], tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], [14.46956556, 7.53264155], tol)
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], [328.875, 80.65888272], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)

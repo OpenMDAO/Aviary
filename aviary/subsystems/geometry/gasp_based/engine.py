@@ -336,7 +336,6 @@ class NewEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.AVG_DIAMETER,
             [
-                Mission.Design.GROSS_MASS,
                 Aircraft.Nacelle.CORE_DIAMETER_RATIO,
             ],
             rows=shape,
@@ -345,7 +344,6 @@ class NewEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.AVG_LENGTH,
             [
-                Mission.Design.GROSS_MASS,
                 Aircraft.Nacelle.CORE_DIAMETER_RATIO,
                 Aircraft.Nacelle.FINENESS,
             ],
@@ -355,7 +353,6 @@ class NewEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.SURFACE_AREA,
             [
-                Mission.Design.GROSS_MASS,
                 Aircraft.Nacelle.CORE_DIAMETER_RATIO,
                 Aircraft.Nacelle.FINENESS,
                 'percent_exposed',
@@ -365,7 +362,6 @@ class NewEngineSize(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
         coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
@@ -374,9 +370,6 @@ class NewEngineSize(om.ExplicitComponent):
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
-        import pdb
-
-        pdb.set_trace()
         area_engine = coeff_inlet * gross_mass / num_engine
         diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
@@ -392,7 +385,7 @@ class NewEngineSize(om.ExplicitComponent):
         coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
         gross_mass = inputs[Mission.Design.GROSS_MASS]
-        gross_mass = np.ones(num_engine) * gross_mass
+        gross_mass = np.full(len(num_engine), gross_mass)
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
