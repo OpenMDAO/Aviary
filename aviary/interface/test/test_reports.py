@@ -93,7 +93,7 @@ class TestReports(unittest.TestCase):
         # Make sure it also works when a user forgets to create metadata.
 
         class ExtraBuilder(SubsystemBuilder):
-            def build_pre_mission(self, aviary_inputs):
+            def build_pre_mission(self, aviary_inputs, subsystem_options=None):
                 comp = om.ExecComp(['z = 2*x', 'p = q'])
                 wing_group = om.Group()
                 wing_group.add_subsystem(

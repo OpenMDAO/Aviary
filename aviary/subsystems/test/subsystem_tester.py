@@ -92,7 +92,9 @@ class TestSubsystemBuilder(unittest.TestCase):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
-        pre_mission_sys = self.subsystem_builder.build_pre_mission(aviary_inputs=self.aviary_values)
+        pre_mission_sys = self.subsystem_builder.build_pre_mission(
+            aviary_inputs=self.aviary_values, subsystem_options={}
+        )
 
         if pre_mission_sys is not None:
             # Check that pre_mission_sys is an OpenMDAO System
@@ -261,11 +263,11 @@ class TestSubsystemBuilder(unittest.TestCase):
         # Perform post-mission operations
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
-        mission_info = {}
         phase_mission_bus_lengths = {'foo': 10, 'bar': 11}
         post_mission_sys = self.subsystem_builder.build_post_mission(
             aviary_inputs=self.aviary_values,
-            mission_info=mission_info,
+            mission_info={},
+            subsystem_options={},
             phase_mission_bus_lengths=phase_mission_bus_lengths,
         )
 
@@ -291,7 +293,9 @@ class TestSubsystemBuilder(unittest.TestCase):
         states = self.subsystem_builder.get_states()
 
         mission_sys = self.subsystem_builder.build_mission(
-            num_nodes=5, aviary_inputs=self.aviary_values, subsystem_options={},
+            num_nodes=5,
+            aviary_inputs=self.aviary_values,
+            subsystem_options={},
         )
 
         if mission_sys is None:
@@ -318,7 +322,9 @@ class TestSubsystemBuilder(unittest.TestCase):
         if not hasattr(self, 'aviary_values'):
             self.aviary_values = AviaryValues()
 
-        pre_mission_sys = self.subsystem_builder.build_pre_mission(self.aviary_values)
+        pre_mission_sys = self.subsystem_builder.build_pre_mission(
+            aviary_inputs=self.aviary_values, subsystem_options={}
+        )
 
         if pre_mission_sys is None:
             return
@@ -418,7 +424,9 @@ class TestSubsystemBuilder(unittest.TestCase):
 
         design_vars = self.subsystem_builder.get_design_vars()
 
-        pre_mission_sys = self.subsystem_builder.build_pre_mission(aviary_inputs=self.aviary_values)
+        pre_mission_sys = self.subsystem_builder.build_pre_mission(
+            aviary_inputs=self.aviary_values, subsystem_options={}
+        )
 
         if pre_mission_sys is None:
             return

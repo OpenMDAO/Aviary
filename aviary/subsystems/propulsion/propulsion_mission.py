@@ -116,16 +116,22 @@ class PropulsionMission(om.Group):
                     kwargs = engine_options[engine.name]
                 if engine.compute_max_values:
                     engine_model = engine.build_mission(
-                        num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        subsystem_options={},
                     )
                 else:
                     base_comp = engine.build_mission(
-                        num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        subsystem_options={},
                     )
                     engine_model = om.Group()
 
                     max_comp = engine.build_mission(
-                        num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        subsystem_options={},
                     )
 
                     input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
@@ -178,16 +184,22 @@ class PropulsionMission(om.Group):
                 kwargs = engine_options[engine.name]
             if engine.compute_max_values:
                 engine_model = engine.build_mission(
-                    num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    subsystem_options={},
                 )
             else:
                 base_comp = engine.build_mission(
-                    num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    subsystem_options={},
                 )
                 engine_model = om.Group()
 
                 max_comp = engine.build_mission(
-                    num_nodes=nn, aviary_inputs=options, subsystem_options={},
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    subsystem_options={},
                 )
 
                 input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]

@@ -89,7 +89,7 @@ class BatteryBuilder(SubsystemBuilder):
         """
         return [Dynamic.Battery.VOLTAGE_THEVENIN, Dynamic.Battery.STATE_OF_CHARGE]
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 
@@ -163,7 +163,7 @@ class BatteryBuilder(SubsystemBuilder):
 
         return constraints
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Return a dictionary of design variables for the battery subsystem.
 

@@ -71,7 +71,7 @@ class EngineModel(SubsystemBuilder):
         )
         self._preprocess_inputs()
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the engine model,
         such as sizing.
@@ -109,7 +109,11 @@ class EngineModel(SubsystemBuilder):
         )
 
     def build_post_mission(
-        self, aviary_inputs=None, mission_info=None, phase_mission_bus_lengths=None
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
     ):
         """
         Build an OpenMDAO system for the post-mission computations of the engine model.

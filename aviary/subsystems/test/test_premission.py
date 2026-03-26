@@ -85,7 +85,11 @@ class PreMissionTestCase(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=input_options, subsystems=subsystems),
+            CorePreMission(
+                aviary_options=input_options,
+                subsystems=subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -232,7 +236,11 @@ class PreMissionTestCase(unittest.TestCase):
 
         model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
+            CorePreMission(
+                aviary_options=aviary_inputs,
+                subsystems=subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -27,7 +27,7 @@ class PropellerBuilder(SubsystemBuilder):
         super().__init__(name)
         self.data = data
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
         return
 
@@ -57,7 +57,7 @@ class PropellerBuilder(SubsystemBuilder):
         outputs = [Dynamic.Vehicle.Propulsion.THRUST]
         return outputs
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Design vars are only tested to see if they exist in pre_mission
         Returns a dictionary of design variables for the propeller subsystem, where the keys are the

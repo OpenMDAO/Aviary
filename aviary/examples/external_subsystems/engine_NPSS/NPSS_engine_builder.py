@@ -44,7 +44,7 @@ class NPSSTabularEngineBuilder(EngineModel):
     def __init__(self, name='NPSS_prop_system', aviary_inputs=AviaryValues()):
         super().__init__(name, options=aviary_inputs, meta_data=ExtendedMetaData)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Builds the design (pre-mission) engine model.
 
@@ -175,7 +175,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         )
         return engine
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """Transfer training data from pre-mission to mission"""
         return vars_to_connect
 
@@ -192,7 +192,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         """
         return {}
 
-    def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Builds dictionary of design variables for Engine off-design.
 

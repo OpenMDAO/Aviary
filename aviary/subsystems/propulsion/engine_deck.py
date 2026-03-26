@@ -802,7 +802,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self, aviary_inputs, **kwargs) -> om.ExplicitComponent:
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 

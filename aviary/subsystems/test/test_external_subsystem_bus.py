@@ -103,7 +103,7 @@ class CustomBuilder(SubsystemBuilder):
         self.mangle_names = mangle_names
         super().__init__(name)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),
@@ -149,7 +149,7 @@ class CustomBuilder(SubsystemBuilder):
             )
         return sub_group
 
-    def get_pre_mission_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),
@@ -231,7 +231,13 @@ class CustomBuilder(SubsystemBuilder):
             out[phase_name] = phase_d
         return out
 
-    def build_post_mission(self, aviary_inputs, mission_info, phase_mission_bus_lengths):
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),

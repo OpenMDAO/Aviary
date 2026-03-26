@@ -101,9 +101,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         self.engine_models = engine_models
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         return PropulsionPreMission(
-            aviary_options=aviary_inputs, engine_models=self.engine_models, engine_options=kwargs
+            aviary_options=aviary_inputs,
+            engine_models=self.engine_models,
+            engine_options=subsystem_options,
         )
 
     def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
@@ -207,11 +209,13 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         return linked_vars
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         bus_vars = {}
         for engine in self.engine_models:
-            engine_bus_vars = engine.get_pre_mission_bus_variables(aviary_inputs)
+            engine_bus_vars = engine.get_pre_mission_bus_variables(
+                aviary_inputs, mission_info=mission_info
+            )
             bus_vars.update(engine_bus_vars)
 
         # append propulsion group name to all engine-level bus variables
@@ -224,11 +228,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return complete_bus_vars
 
     # NOTE no unittests!
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """Call get_design_vars() on all engine models and return combined result."""
         design_vars = {}
         for engine in self.engine_models:
-            engine_design_vars = engine.get_design_vars()
+            engine_design_vars = engine.get_design_vars(aviary_inputs=aviary_inputs)
             design_vars.update(engine_design_vars)
 
         return design_vars
