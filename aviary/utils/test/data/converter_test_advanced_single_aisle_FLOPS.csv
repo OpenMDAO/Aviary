@@ -22,6 +22,7 @@ aircraft:crew_and_payload:num_galley_crew,-1,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
+aircraft:design:cruise_mach,0.785,0.0,0.0,0.0,0.0,0.0,unitless
 aircraft:design:empty_mass_margin_scaler,0.01498,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
@@ -157,7 +158,6 @@ mission:landing:drag_coefficient_min,0.045,unitless
 mission:landing:flare_rate,2.2,deg/s
 mission:landing:initial_velocity,145.0,ft/s
 mission:landing:lift_coefficient_max,2.5,unitless
-aircraft:design:cruise_mach,0.785,0.0,0.0,0.0,0.0,0.0,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:angle_of_attack_runway,0.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
