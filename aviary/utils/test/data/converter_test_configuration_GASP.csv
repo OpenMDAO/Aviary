@@ -32,7 +32,7 @@ aircraft:design:max_structural_speed,440.0,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:reserve_fuel_additional,0,lbm
-aircraft:design:reserve_fuel_fraction,0.15,unitless
+aircraft:design:reserve_fuel_margin,15.0,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,transport,unitless
@@ -51,10 +51,10 @@ aircraft:engine:scaled_sls_thrust,21162.0,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.2143,unitless
 aircraft:fuel:density,6.687,lbm/galUS
-aircraft:fuel:fuel_margin,0.0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.06,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12.0,unitless
+aircraft:fuel:volume_margin,0.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.5625,unitless
 aircraft:furnishings:mass,9114.0,lbm
 aircraft:fuselage:aisle_width,24.0,inch

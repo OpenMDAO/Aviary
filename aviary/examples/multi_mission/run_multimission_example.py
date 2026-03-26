@@ -108,7 +108,7 @@ def multi_mission_example():
 
     # optimizer and iteration limit are optional provided here
     # Note: IPOPT needs more iters than SNOPT.
-    prob.add_driver('IPOPT', max_iter=70)
+    prob.add_driver('IPOPT', max_iter=150)
     prob.add_design_variables()
 
     prob.setup()
