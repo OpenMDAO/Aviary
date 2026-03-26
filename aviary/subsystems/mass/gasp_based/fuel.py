@@ -1439,7 +1439,7 @@ class FuelMass(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Propulsion.MASS, ['eng_comb_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS], val=1
         )
-        self.declare_partials('fuel_mass_required', [Mission.Design.GROSS_MASS], val=1)
+        self.declare_partials('fuel_mass_required', [Aircraft.Design.GROSS_MASS], val=1)
         self.declare_partials(
             'fuel_mass_required',
             [
