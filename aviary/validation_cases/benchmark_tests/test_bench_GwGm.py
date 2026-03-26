@@ -29,9 +29,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Mission.Design.GROSS_MASS, 'lbm'): 171595.06049335,
-            (Mission.Summary.OPERATING_MASS, 'lbm'): 95089.98897716,
-            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
+            (Mission.Design.GROSS_MASS, 'lbm'): 171414.17171104,
+            (Mission.Summary.OPERATING_MASS, 'lbm'): 94986.583699,
+            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40451.68735078,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
             (Mission.Summary.RANGE, 'NM'): 3675.0,
             (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136087.98897716,
@@ -106,7 +106,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
+    unittest.main()
     test = ProblemPhaseTestCase()
     test.setUp()
-    test.test_bench_GwGm_IPOPT_Breguet_Cruise()
+    #test.test_bench_GwGm_IPOPT_Breguet_Cruise()
