@@ -652,6 +652,7 @@ class Mission:
     FUEL_FLOW_SCALER = 'mission:fuel_flow_scaler'
     GROSS_MASS = 'mission:gross_mass'
     OPERATING_MASS = 'mission:operating_mass'
+    RANGE = 'mission:range'
 
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
@@ -714,7 +715,6 @@ class Mission:
         # (whether it is design or off-design). In design these may be constrained to design values,
         # but in off-design they independently represent the final analysis based on the
         # user selection.
-        RANGE = 'mission:summary:range'
         RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
         TOTAL_FUEL_MASS = 'mission:summary:total_fuel_mass'
         USEFUL_LOAD = 'mission:summary:useful_load'

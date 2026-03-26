@@ -794,7 +794,7 @@ class AviaryGroup(om.Group):
             promotes_outputs={
                 ('mass_final', Mission.FINAL_MASS),
                 ('time_final', Mission.FINAL_TIME),
-                ('range_final', Mission.Summary.RANGE),
+                ('range_final', Mission.RANGE),
             },
         )
 
@@ -1053,7 +1053,7 @@ class AviaryGroup(om.Group):
 
         # We connect the last points in the trajectory to the state_output component to make it
         # easier for users to access Mission.FINAL_MASS, Mission.FINAL_TIME,
-        # and Mission.Summary.RANGE.
+        # and Mission.RANGE.
         self.connect(
             f'traj.{final_phase}.states:mass',
             'state_output.mass_in',
@@ -1359,7 +1359,7 @@ class AviaryGroup(om.Group):
                 )
 
                 # TODO: RANGE_RESIDUAL constraint should be added based on what the
-                # user sets as the objective. if Objective is not range or Mission.Summary.Range,
+                # user sets as the objective. if Objective is not range or Mission.RANGE,
                 # the range constriant should be added to make target rage = summary range
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 

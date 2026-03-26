@@ -52,7 +52,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         # compares provided problem with design problem
         prob_var_list = [
             Mission.Design.RANGE,
-            Mission.Summary.RANGE,
+            Mission.RANGE,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
@@ -107,7 +107,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             self.prob.get_val(Mission.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 2438.6, tolerance=1e-3)
+        assert_near_equal(prob_fallout.get_val(Mission.RANGE), 2438.6, tolerance=1e-3)
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             29031.53317628,
@@ -192,7 +192,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             self.prob.get_val(Mission.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
+        assert_near_equal(prob_alternate.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             23663.00633808,
@@ -292,7 +292,7 @@ class Test2DOFOffDesign(unittest.TestCase):
     def compare_results(self, comparison_prob):
         # compares provided problem with design problem
         prob_var_list = [
-            Mission.Summary.RANGE,
+            Mission.RANGE,
             Mission.Summary.TOTAL_FUEL_MASS,
             Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
@@ -345,9 +345,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
-        assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.RANGE), 3994.25223046, tolerance=1e-4
-        )
+        assert_near_equal(prob_fallout.get_val(Mission.RANGE), 3994.25223046, tolerance=1e-4)
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             39909.74193096,
@@ -420,7 +418,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
+        assert_near_equal(prob_alternate.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
             21484.97566914,

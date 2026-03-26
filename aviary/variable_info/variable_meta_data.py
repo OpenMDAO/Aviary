@@ -7232,6 +7232,16 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Mission.RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='actual range that the aircraft flies, whether '
+    'it is a design case or an off design case. Equal '
+    'to Mission.Design.RANGE value in the design case.',
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7774,16 +7784,6 @@ add_meta_data(
 #                                                           __/ |
 #                                                          |___/
 # ===============================================================
-
-add_meta_data(
-    Mission.Summary.RANGE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='NM',
-    desc='actual range that the aircraft flies, whether '
-    'it is a design case or an off design case. Equal '
-    'to Mission.Design.RANGE value in the design case.',
-)
 
 add_meta_data(
     Mission.Summary.RESERVE_FUEL_BURNED,

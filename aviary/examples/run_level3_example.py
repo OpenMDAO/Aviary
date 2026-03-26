@@ -55,7 +55,7 @@ prob.model.mission_info = {}
 for phase_name in phase_info:
     if phase_name not in ['pre_mission', 'post_mission']:
         prob.model.mission_info[phase_name] = phase_info[phase_name]
-aviary_inputs.set_val(Mission.Summary.RANGE, 1906.0, units='NM')
+aviary_inputs.set_val(Mission.RANGE, 1906.0, units='NM')
 prob.require_range_residual = True
 prob.target_range = 1906.0
 
@@ -402,7 +402,7 @@ prob.model.add_subsystem(
         range_resid={'val': 30, 'units': 'NM'},
     ),
     promotes_inputs=[
-        ('actual_range', Mission.Summary.RANGE),
+        ('actual_range', Mission.RANGE),
         'target_range',
     ],
     promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
@@ -530,7 +530,7 @@ prob.traj.link_phases(phase_list, [Dynamic.Vehicle.MASS], ref=None, connected=Tr
 prob.traj.link_phases(phase_list, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
 prob.model.connect(
     f'traj.descent.timeseries.distance',
-    Mission.Summary.RANGE,
+    Mission.RANGE,
     src_indices=[-1],
     flat_src_indices=True,
 )
@@ -634,7 +634,7 @@ prob.model.add_subsystem(
         actual_range={'val': prob.target_range, 'units': 'NM'},
     ),
     promotes_inputs=[
-        ('actual_range', Mission.Summary.RANGE),
+        ('actual_range', Mission.RANGE),
         ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
     ],
     promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],

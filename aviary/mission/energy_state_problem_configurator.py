@@ -49,7 +49,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_inputs.set_val(
-                Mission.Summary.RANGE,
+                Mission.RANGE,
                 wrapped_convert_units(aviary_group.post_mission_info['target_range'], 'NM'),
                 units='NM',
             )
@@ -409,7 +409,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 range_resid={'val': 30, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 'target_range',
             ],
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],

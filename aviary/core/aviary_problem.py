@@ -641,7 +641,7 @@ class AviaryProblem(om.Problem):
                 actual_range={'val': self.model.target_range, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],
@@ -907,7 +907,7 @@ class AviaryProblem(om.Problem):
             elif output == 'time':
                 output = Mission.FINAL_TIME
             elif output == 'range':
-                output = Mission.Summary.RANGE  # Unsure if this will work
+                output = Mission.RANGE  # Unsure if this will work
             objectives_cleaned.append((model, output, weight))
 
         # Create the calculation string for the ExecComp() and the promotion reference values
@@ -1444,7 +1444,7 @@ class AviaryProblem(om.Problem):
                         'Alternate problem type requested with no specified range. Using design '
                         'mission range for the off-design mission.'
                     )
-                mission_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
+                mission_range = self.get_val(Mission.RANGE, units='NM')[0]
 
             phase_info['post_mission']['target_range'] = (
                 mission_range,
@@ -1458,7 +1458,7 @@ class AviaryProblem(om.Problem):
         # Some Alternate problem changes had to happen before load_inputs, all fallout problem
         # changes must come after load_inputs
         if problem_type is ProblemType.ALTERNATE:
-            off_design_prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
+            off_design_prob.aviary_inputs.set_val(Mission.RANGE, mission_range, units='NM')
             # set initial guess for Mission.GROSS_MASS to help optimizer with new design
             # variable bounds.
             if mission_gross_mass is None:
@@ -1622,7 +1622,7 @@ class AviaryProblem(om.Problem):
             # payload + fuel on the payload and range diagram
             payload_2 = payload_1
 
-            range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
+            range_2 = float(self.get_val(Mission.RANGE)[0])
             gross_mass = float(self.get_val(Mission.GROSS_MASS)[0])
             # NOTE this operating mass is based on the previously run mission - assumed this is the
             # design mission!! Includes cargo containers needed for design (max payload)
@@ -1690,7 +1690,7 @@ class AviaryProblem(om.Problem):
                     economic_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
                 )
 
-                range_3 = float(economic_range_prob.get_val(Mission.Summary.RANGE))
+                range_3 = float(economic_range_prob.get_val(Mission.RANGE))
                 fuel_3 = economic_range_prob.get_val(Mission.FUEL_BURNED)[0]
 
                 prob_3_skip = False
@@ -1723,7 +1723,7 @@ class AviaryProblem(om.Problem):
             )
 
             payload_4 = float(ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-            range_4 = float(ferry_range_prob.get_val(Mission.Summary.RANGE))
+            range_4 = float(ferry_range_prob.get_val(Mission.RANGE))
             fuel_4 = ferry_range_prob.get_val(Mission.FUEL_BURNED)[0]
 
             # if economic mission was skipped, economic_range_prob is the same as ferry_range_prob

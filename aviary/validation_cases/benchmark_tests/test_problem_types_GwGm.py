@@ -74,7 +74,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.setup()
         prob_alternate.run_aviary_problem()
 
-        fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
+        fallout_range = prob_fallout.get_val(av.Mission.RANGE)
         alternate_mass = prob_alternate.get_val(av.Mission.GROSS_MASS)
         assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
@@ -129,7 +129,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.setup()
         prob_alternate.run_aviary_problem()
 
-        fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
+        fallout_range = prob_fallout.get_val(av.Mission.RANGE)
         alternate_mass = prob_alternate.get_val(av.Mission.GROSS_MASS)
         assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)

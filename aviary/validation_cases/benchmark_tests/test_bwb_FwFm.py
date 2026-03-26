@@ -126,7 +126,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
     # @require_pyoptsparse(optimizer='IPOPT')
     # def test_bench_bwb_FwFm_IPOPT(self):
@@ -164,7 +164,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # tolerance=rtol,
     # )
 
-    # assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
+    # assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
 if __name__ == '__main__':

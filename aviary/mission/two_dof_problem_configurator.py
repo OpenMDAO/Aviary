@@ -63,11 +63,11 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.target_range = wrapped_convert_units(
                 aviary_group.post_mission_info['target_range'], 'NM'
             )
-            aviary_inputs.set_val(Mission.Summary.RANGE, aviary_group.target_range, units='NM')
+            aviary_inputs.set_val(Mission.RANGE, aviary_group.target_range, units='NM')
         else:
             aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
             aviary_inputs.set_val(
-                Mission.Summary.RANGE,
+                Mission.RANGE,
                 aviary_inputs.get_val(Mission.Design.RANGE, units='NM'),
                 units='NM',
             )
@@ -629,7 +629,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 range_resid={'val': 30, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 'target_range',
             ],
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
