@@ -49,6 +49,7 @@ class TestGearbox(unittest.TestCase):
             self.gearbox.build_mission(
                 num_nodes=num_nodes,
                 aviary_inputs=self.options,
+                user_options={},
                 subsystem_options={},
             ),
             promotes=['*'],

@@ -148,7 +148,7 @@ class TurbopropModel(EngineModel):
 
         return turboprop_group
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         turboprop_group = TurbopropMission(
             num_nodes=num_nodes,
             shaft_power_model=self.shaft_power_model,
@@ -160,7 +160,7 @@ class TurbopropModel(EngineModel):
 
         return turboprop_group
 
-    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         # NOTE what may be an input/output for an individual subsystem may not be an overall
         # input/output for the TurbopropModel as a whole, commenting this out for now
         # inputs = []
@@ -185,7 +185,7 @@ class TurbopropModel(EngineModel):
         # return list(set(inputs))
         return []
 
-    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         # NOTE what may be an input/output for an individual subsystem may not be an overall
         # input/output for the TurbopropModel as a whole, commenting this out for now
         # outputs = []
@@ -343,6 +343,7 @@ class TurbopropMission(om.Group):
         shp_model_mission = shp_model.build_mission(
             num_nodes=num_nodes,
             aviary_inputs=aviary_inputs,
+            user_options={},
             subsystem_options=subsystem_options,
         )
         if shp_model_mission is not None:
@@ -357,6 +358,7 @@ class TurbopropMission(om.Group):
             gearbox_model_mission = gearbox_model.build_mission(
                 num_nodes=num_nodes,
                 aviary_inputs=aviary_inputs,
+                user_options={},
                 subsystem_options=gearbox_kwargs,
             )
             if gearbox_model_mission is not None:
@@ -371,6 +373,7 @@ class TurbopropMission(om.Group):
         propeller_model_mission = propeller_model.build_mission(
             num_nodes=num_nodes,
             aviary_inputs=aviary_inputs,
+            user_options={},
             subsystem_options=propeller_kwargs,
         )
 

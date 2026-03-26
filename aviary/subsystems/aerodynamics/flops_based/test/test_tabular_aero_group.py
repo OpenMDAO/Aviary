@@ -46,6 +46,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
             aero_builder.build_mission(
                 num_nodes=1,
                 aviary_inputs=aviary_options,
+                user_options={},
                 subsystem_options=subsystem_options,
             ),
             promotes_inputs=['*'],
@@ -170,6 +171,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
             aero_builder.build_mission(
                 num_nodes=1,
                 aviary_inputs=aviary_options,
+                user_options={},
                 subsystem_options=subsystem_options,
             ),
             promotes_inputs=['*'],
@@ -328,6 +330,7 @@ class ComputedVsTabularTest(unittest.TestCase):
             aero_builder.build_mission(
                 num_nodes=1,
                 aviary_inputs=flops_inputs,
+                user_options={},
                 subsystem_options=subsystem_options,
             ),
             promotes_inputs=['*'],
@@ -700,6 +703,7 @@ class _ComputedAeroHarness(om.Group):
             aero_builder.build_mission(
                 num_nodes=nn,
                 aviary_inputs=aviary_options,
+                user_options={},
                 subsystem_options=subsystem_options,
             ),
             promotes_inputs=['*'],

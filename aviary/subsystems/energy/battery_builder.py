@@ -36,7 +36,7 @@ class BatteryBuilder(SubsystemBuilder):
     def get_mass_names(self, aviary_inputs=None):
         return [Aircraft.Battery.MASS]
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options) -> om.Group:
         battery_group = om.Group()
         # Here, the efficiency variable is used as an overall efficiency for the battery
         soc = om.ExecComp(
@@ -64,14 +64,14 @@ class BatteryBuilder(SubsystemBuilder):
 
         return battery_group
 
-    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return [
             Aircraft.Battery.ENERGY_CAPACITY,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             Aircraft.Battery.EFFICIENCY,
         ]
 
-    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return [Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE]
 
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):

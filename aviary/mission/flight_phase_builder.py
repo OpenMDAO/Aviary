@@ -445,6 +445,7 @@ class FlightPhaseBase(PhaseBuilder):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],
             'throttle_allocation': self.user_options['throttle_allocation'],

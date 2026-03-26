@@ -260,7 +260,7 @@ class FailingSubsystemBuilder(SubsystemBuilder):
             }
         }
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return om.ExecComp('y = x**2')
 
 
@@ -271,7 +271,7 @@ class ArrayGuessSubsystemBuilder(SubsystemBuilder):
     def build_pre_mission(self, aviary_inputs, subsystem_options):
         return DummyComp()
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return DummyMissionComp(num_nodes=num_nodes)
 
     def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
@@ -342,7 +342,7 @@ class AdditionalArrayGuessSubsystemBuilder(SubsystemBuilder):
     def build_pre_mission(self, aviary_inputs, subsystem_options):
         return DummyWingspanComp()
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return DummyFlightDurationComp(num_nodes=num_nodes)
 
     # def mission_outputs(self, **kwargs):

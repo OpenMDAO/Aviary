@@ -20,7 +20,7 @@ class DynBuilder(SubsystemBuilder):
             }
         }
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return om.ExecComp('x_dot = x**2 + x')
 
 

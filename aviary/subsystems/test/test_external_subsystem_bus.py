@@ -125,7 +125,7 @@ class CustomBuilder(SubsystemBuilder):
             sys = PreMissionComp(shape=shape)
         return sys
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         sub_group = om.Group()
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),

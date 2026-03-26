@@ -117,7 +117,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         elif code_origin is FLOPS:
             return Design()
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         aero_opts = subsystem_options.copy()
         try:
             method = aero_opts.pop('method')
@@ -240,7 +240,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
     #     return aero_group
 
-    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         try:
             method = subsystem_options['method']
         except KeyError:
@@ -326,7 +326,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         return promotes
 
-    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         try:
             method = subsystem_options['method']
         except KeyError:

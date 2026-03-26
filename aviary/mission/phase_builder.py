@@ -37,7 +37,10 @@ class PhaseBuilder(ABC):
         list of SubsystemBuilder objects that will be added to the phase ODE
 
     user_options : OptionsDictionary (<empty>)
-        state/path constraint values and flags
+        Processsed phase options for his phase.
+
+    user_options_dict : dict
+        dictionary of user options from the phase_info, as specified by user
 
     initial_guesses : AviaryValues (<empty>)
         state/path beginning values to be set on the problem
@@ -83,6 +86,7 @@ class PhaseBuilder(ABC):
         'subsystems',
         'subsystem_options',
         'user_options',
+        'user_options_dict',
         'initial_guesses',
         'ode_class',
         'transcription',
@@ -129,6 +133,7 @@ class PhaseBuilder(ABC):
 
         self.subsystem_options = subsystem_options
 
+        self.user_options_dict = user_options
         self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:

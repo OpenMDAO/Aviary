@@ -20,7 +20,7 @@ class CustomAeroBuilder(SubsystemBuilder):
     def __init__(self, name='simple_aero'):
         super().__init__(name)
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the subsystem.
 
@@ -37,7 +37,7 @@ class CustomAeroBuilder(SubsystemBuilder):
         )
         return aero_group
 
-    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         promotes = [
             Dynamic.Atmosphere.STATIC_PRESSURE,
             Dynamic.Atmosphere.MACH,
@@ -46,7 +46,7 @@ class CustomAeroBuilder(SubsystemBuilder):
         ]
         return promotes
 
-    def mission_outputs(self, aviary_inputs=None, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         promotes = [
             Dynamic.Vehicle.DRAG,
             Dynamic.Vehicle.LIFT,

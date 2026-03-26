@@ -194,6 +194,7 @@ class GroundrollPhase(PhaseBuilder):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'set_input_defaults': False,
         }

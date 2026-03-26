@@ -39,6 +39,7 @@ class FlightODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
         input_speed_type = self.options['input_speed_type']
 
         if input_speed_type is SpeedType.EAS:
@@ -192,6 +193,7 @@ class FlightODE(TwoDOFODE):
             system = subsystem.build_mission(
                 num_nodes=nn,
                 aviary_inputs=aviary_options,
+                user_options=user_options,
                 subsystem_options=kwargs,
             )
 
@@ -202,10 +204,12 @@ class FlightODE(TwoDOFODE):
                     target = self
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 mission_out = subsystem.mission_outputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 target.add_subsystem(

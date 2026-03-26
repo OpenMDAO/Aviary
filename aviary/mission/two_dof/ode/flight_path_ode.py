@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -45,6 +44,7 @@ class FlightPathODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         alpha_mode = self.options['alpha_mode']
         input_speed_type = self.options['input_speed_type']
+        user_options = self.options['user_options']
 
         print_level = 0
 
@@ -117,15 +117,18 @@ class FlightPathODE(TwoDOFODE):
             system = subsystem.build_mission(
                 num_nodes=nn,
                 aviary_inputs=aviary_options,
+                user_options=user_options,
                 subsystem_options=kwargs,
             )
             if system is not None:
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 mission_out = subsystem.mission_outputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 self.add_subsystem(

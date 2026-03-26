@@ -27,6 +27,7 @@ class GroundrollODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -57,15 +58,18 @@ class GroundrollODE(TwoDOFODE):
             system = subsystem.build_mission(
                 num_nodes=nn,
                 aviary_inputs=aviary_options,
+                user_options=user_options,
                 subsystem_options=kwargs,
             )
             if system is not None:
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 mission_out = subsystem.mission_outputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 self.add_subsystem(

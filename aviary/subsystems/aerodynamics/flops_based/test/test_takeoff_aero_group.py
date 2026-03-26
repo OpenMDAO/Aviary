@@ -114,14 +114,17 @@ def make_problem(subsystem_options={}):
         subsys=aero_builder.build_mission(
             num_nodes=nn,
             aviary_inputs=aviary_inputs,
+            user_options={},
             subsystem_options=subsystem_options['aerodynamics'],
         ),
         promotes_inputs=aero_builder.mission_inputs(
             aviary_inputs=aviary_inputs,
+            user_options={},
             subsystem_options=subsystem_options['aerodynamics'],
         ),
         promotes_outputs=aero_builder.mission_outputs(
             aviary_inputs=aviary_inputs,
+            user_options={},
             subsystem_options=subsystem_options['aerodynamics'],
         ),
     )

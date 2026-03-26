@@ -244,7 +244,7 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO System for the mission computations of the subsystem.
 
@@ -258,6 +258,8 @@ class SubsystemBuilder(ABC):
             Number of nodes present in the current Dymos phase of mission analysis.
         aviary_inputs : dict
             Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
         subsystem_options : dict
             Dictionary of optional arguments for this subsystem in this phase.
 
@@ -270,7 +272,7 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Returns list of mission inputs to be promoted out of the external subsystem. By default, all
         inputs are promoted. Used when only a subset of inputs should be promoted.
@@ -279,6 +281,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
+        user_options : dict
+            Dictionary of user options for this phase.
         subsystem_options : dict
             Dictionary of optional arguments for this subsystem in this phase.
 
@@ -289,7 +293,7 @@ class SubsystemBuilder(ABC):
         """
         return ['*']
 
-    def mission_outputs(self, aviary_inputs=None, subsystem_options=None):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Returns list of mission outputs to be promoted out of the external subsystem. By default,
         all outputs are promoted. Used when only a subset of outputs should be promoted.
@@ -298,6 +302,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
+        user_options : dict
+            Dictionary of user options for this phase.
         subsystem_options : dict
             Dictionary of optional arguments for this subsystem in this phase.
 
