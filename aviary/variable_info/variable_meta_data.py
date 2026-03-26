@@ -7756,15 +7756,6 @@ add_meta_data(
 # ===============================================================
 
 add_meta_data(
-    Mission.Summary.CRUISE_MASS_FINAL,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='mass of the aircraft at the end of cruise',
-    default_value=0.0,
-)
-
-add_meta_data(
     Mission.Summary.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed

@@ -43,11 +43,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_inputs = update_GASP_options(aviary_inputs)
 
         aviary_inputs.set_val(
-            Mission.Summary.CRUISE_MASS_FINAL,
-            val=aviary_group.initialization_guesses['cruise_mass_final'],
-            units='lbm',
-        )
-        aviary_inputs.set_val(
             Mission.GROSS_MASS,
             val=aviary_group.initialization_guesses['actual_takeoff_mass'],
             units='lbm',
@@ -62,9 +57,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.cruise_alt = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
         aviary_group.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
-        aviary_group.cruise_mass_final = aviary_inputs.get_val(
-            Mission.Summary.CRUISE_MASS_FINAL, units='lbm'
-        )
+        aviary_group.cruise_mass_final = aviary_group.initialization_guesses['cruise_mass_final']
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_group.target_range = wrapped_convert_units(

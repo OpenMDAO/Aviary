@@ -713,7 +713,6 @@ class Mission:
         # (whether it is design or off-design). In design these may be constrained to design values,
         # but in off-design they independently represent the final analysis based on the
         # user selection.
-        CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
         OPERATING_MASS = 'mission:summary:operating_mass'
         RANGE = 'mission:summary:range'
         RESERVE_FUEL_BURNED = 'mission:summary:reserve_fuel_burned'
