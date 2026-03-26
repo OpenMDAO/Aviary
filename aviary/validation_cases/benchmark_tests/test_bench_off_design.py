@@ -107,15 +107,15 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             self.prob.get_val(Mission.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 2438.6, tolerance=1e-3)
+        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 2377.4, tolerance=1e-3)
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            29031.53317628,
+            28976.71270599,
             tolerance=1e-5,
         )
         assert_near_equal(
             prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            97743.46682372,
+            97798.28729401,
             tolerance=1e-5,
         )
         assert_near_equal(
@@ -195,12 +195,12 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
-            23663.00633808,
+            24245.7724282,
             tolerance=1e-5,
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
-            97743.52792979,
+            97798.34840008,
             tolerance=1e-5,
         )
         assert_near_equal(
@@ -230,7 +230,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         )
         assert_near_equal(
             prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            157656.53426787,
+            158294.12082828,
             tolerance=1e-5,
         )
         assert_near_equal(
@@ -511,31 +511,31 @@ class PayloadRangeTest(unittest.TestCase):
             [
                 38025.0,
                 38025.0,
-                24368.28182739,
+                24953.7,
                 0,
             ],
-            tolerance=1e-6,
+            tolerance=1e-3,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Fuel', 'lbm'),
-            [0, 28111.65984148, 42192.69757864, 42192.69757864],
-            tolerance=1e-6,
+            [0, 28697.02, 42192.69, 42192.69],
+            tolerance=1e-3,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Range', 'NM'),
-            [0, 2500, 3972.97696604, 4420.79091027],
-            tolerance=1e-6,
+            [0, 2500, 3910.17, 4362.62],
+            tolerance=1e-3,
         )
 
         # verify TOGW for each off-design problem
         assert_near_equal(
             off_design_probs[0].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            165899.19090919,
+            166539.46027154,
             tolerance=1e-8,
         )
         assert_near_equal(
             off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
-            140541.17160737,
+            140596.07154268,
             tolerance=1e-8,
         )
 

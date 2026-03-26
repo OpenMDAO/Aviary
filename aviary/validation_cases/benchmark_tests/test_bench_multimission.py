@@ -7,7 +7,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.examples.multi_mission.run_multimission_example import multi_mission_example
 
 
-# @use_tempdirs
+@use_tempdirs
 class MultiMissionTestcase(unittest.TestCase):
     """Test the different throttle allocation methods for models with multiple, unique EngineModels."""
 
