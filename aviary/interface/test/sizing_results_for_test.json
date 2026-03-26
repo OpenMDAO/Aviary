@@ -204,7 +204,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:landing_mass",
+        "aircraft:design:touchdown_mass_max",
         152800.0,
         "lbm",
         "<class 'float'>"

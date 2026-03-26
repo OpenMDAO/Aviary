@@ -333,7 +333,7 @@ inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.SIZING)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 67542.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 996.88, 'lbm')
-outputs.set_val(Aircraft.Design.LANDING_MASS, 108976.4, 'lbm')
+outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 108976.4, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3322, 'lbm')
 outputs.set_val(Mission.OPERATING_MASS, 72642.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 13105.0, 'lbm')

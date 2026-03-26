@@ -538,12 +538,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
         aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
 
-        aviary_group.connect(
-            f'traj.{aviary_group.regular_phases[-1]}.states:mass',
-            Mission.Landing.TOUCHDOWN_MASS,
-            src_indices=[-1],
-        )
-
         # promote all ParamPort inputs
         param_list = list(ParamPort.param_data)
         aviary_group.promotes('taxi', inputs=param_list)
@@ -646,7 +640,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             promotes_inputs=[
                 'aircraft:*',
                 'mission:*',
-                (Dynamic.Vehicle.MASS, Mission.Landing.TOUCHDOWN_MASS),
+                (Dynamic.Vehicle.MASS, Mission.FINAL_MASS),
             ],
             promotes_outputs=['mission:*'],
         )

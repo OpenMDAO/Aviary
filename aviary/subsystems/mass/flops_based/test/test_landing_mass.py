@@ -32,7 +32,7 @@ class LandingMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[Mission.Design.GROSS_MASS, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO],
-            output_keys=Aircraft.Design.LANDING_MASS,
+            output_keys=Aircraft.Design.TOUCHDOWN_MASS_MAX,
             version=Version.TRANSPORT_and_BWB,
         )
 

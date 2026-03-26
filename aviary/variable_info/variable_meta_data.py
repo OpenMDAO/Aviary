@@ -1496,28 +1496,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    # NOTE: user override (no scaling)
-    Aircraft.Design.LANDING_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.WLDG',
-        #  [  # inputs
-        #      '&DEFINE.WTIN.WLDG', 'WTS.WLDG',
-        #      # outputs
-        #      'CMODLW.WLDGO',
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_landing_gear.design_landing_weight',
-            'aircraft.outputs.L0_landing_gear.design_landing_weight',
-        ],
-    },
-    units='lbm',
-    desc='design landing mass',
-    default_value=0.0,
-)
-
-add_meta_data(
     # Note user override (no scaling)
     Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO,
     meta_data=_MetaData,
@@ -1767,6 +1745,28 @@ add_meta_data(
     },
     units='ft**2',
     desc='total aircraft wetted area',
+    default_value=0.0,
+)
+
+add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.TOUCHDOWN_MASS_MAX,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.WLDG',
+        #  [  # inputs
+        #      '&DEFINE.WTIN.WLDG', 'WTS.WLDG',
+        #      # outputs
+        #      'CMODLW.WLDGO',
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_landing_gear.design_landing_weight',
+            'aircraft.outputs.L0_landing_gear.design_landing_weight',
+        ],
+    },
+    units='lbm',
+    desc='Maximum mass at touchdown used to size landing gear',
     default_value=0.0,
 )
 
@@ -7780,7 +7780,7 @@ add_meta_data(
     },
     units='lbm',
     desc='computed mass of aircraft for landing, is only '
-    'required to be equal to Aircraft.Design.LANDING_MASS '
+    'required to be equal to Aircraft.Design.TOUCHDOWN_MASS_MAX '
     'when the design case is being run '
     'for ENERGY_STATE missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )

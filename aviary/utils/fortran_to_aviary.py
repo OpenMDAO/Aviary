@@ -1160,7 +1160,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
     # These variables should be removed if they are zero.
     rem_list = [
-        (Aircraft.Design.LANDING_MASS, 'lbm'),
+        (Aircraft.Design.TOUCHDOWN_MASS_MAX, 'lbm'),
         (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
         (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),

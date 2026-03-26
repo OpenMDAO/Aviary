@@ -258,7 +258,7 @@ outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 273591.31917826, 'lbm')  # WSTRCT
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 98848.9061107412710, 'lbm')  # WSYS
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 35311.53118076, 'ft**2')  # TWET
-outputs.set_val(Aircraft.Design.LANDING_MASS, 699279.2, 'lbm')  # WLDG = GW*WRATIO
+outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 699279.2, 'lbm')  # WLDG = GW*WRATIO
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 4383.96064972, 'lbm')  # WAC
 outputs.set_val(Aircraft.AntiIcing.MASS, 519.37038003, 'lbm')  # WAI
