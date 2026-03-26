@@ -101,7 +101,7 @@ class TestEngine(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_large_sinle_aisle_1_defaults(self):
+    def test_large_single_aisle_1_defaults(self):
         self.prob.run_model()
         tol = 1e-4
         assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.25002007, tol)
@@ -228,7 +228,4 @@ class NewEngineSizeGroupTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ElectricTestCaseMultiEngine()
-    test.setUp()
-    test.test_case_multiengine()
+    unittest.main()
