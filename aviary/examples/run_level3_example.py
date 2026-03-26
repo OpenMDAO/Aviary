@@ -421,7 +421,7 @@ ecomp = om.ExecComp(
 prob.model.post_mission.add_subsystem(
     'fuel_burned',
     ecomp,
-    promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
+    promotes=[('fuel_burned', Mission.FUEL_BURNED)],
 )
 
 prob.model.connect(
@@ -468,7 +468,7 @@ prob.model.post_mission.add_subsystem(
     'fuel_calc',
     ecomp,
     promotes_inputs=[
-        ('fuel_burned', Mission.Summary.FUEL_BURNED),
+        ('fuel_burned', Mission.FUEL_BURNED),
         ('reserve_fuel', Mission.Design.RESERVE_FUEL),
     ],
     promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
