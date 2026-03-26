@@ -46,7 +46,7 @@ V3_bug_fixed_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_TIP, 0.12, units='
 V3_bug_fixed_options.set_val(Aircraft.HorizontalTail.MOMENT_RATIO, val=0.2307, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Engine.REFERENCE_SLS_THRUST, np.array([28690]), units='lbf')
 # NOTE override required for mass summation test
-# V3_bug_fixed_options.set_val(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
+V3_bug_fixed_options.set_val(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Fuel.VOLUME_MARGIN, val=0, units='unitless')
 
 
