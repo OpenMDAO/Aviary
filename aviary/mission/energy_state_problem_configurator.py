@@ -387,7 +387,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             first_flight_phase.set_state_options(
                 Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
             )
-
+  
             # connect summary mass to the initial guess of mass in the first phase
             eq = aviary_group.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',

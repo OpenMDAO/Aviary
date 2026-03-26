@@ -8013,7 +8013,7 @@ add_meta_data(
         ],
     },
     units='lbm',
-    desc='fuel burned during simple takeoff calculation',
+    desc='Fuel burned during takeoff for energy-state EOM. Not used in 2DOF EOM.',
     default_value=0.0,
 )
 
@@ -8175,7 +8175,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
-    desc='the amount of fuel burned in taxi. Only used in energy-state EOM',
+    desc='Fuel burned in taxi. Only used in energy-state EOM. Not used in 2DOF EOM',
     option=False,
     default_value=0.0,
 )
