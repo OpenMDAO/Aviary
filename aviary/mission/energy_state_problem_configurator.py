@@ -364,6 +364,20 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(aviary_group)
         else:
+            # Calculate how much fuel is burned in taxi and takeoff
+            aviary_group.add_subsystem(
+                'takeoff_mass_comp',
+                om.ExecComp('takeoff_mass = gross_mass - taxi_out_fuel_burn - takeoff_fuel_burn',
+                    takeoff_mass={'units': 'lbm'},
+                    gross_mass={'units': 'lbm'},
+                    taxi_out_fuel_burn={'units':'lbm'},
+                    takeoff_fuel_burn={'units': 'lbm'}),
+                promotes_inputs=[('gross_mass', Mission.Summary.GROSS_MASS),
+                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_BURN_TAXI_OUT),
+                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL_BURN)],
+                promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
+            )
+
             first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
 
             # Since we don't have the takeoff subsystem, we need to use the gross mass as the
@@ -378,7 +392,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             eq = aviary_group.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
-                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+                promotes_inputs=[('rhs:mass', Mission.Takeoff.FINAL_MASS)],
             )
 
             # TODO: replace hard_coded ref for this constraint.
