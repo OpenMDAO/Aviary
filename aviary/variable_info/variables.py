@@ -205,7 +205,6 @@ class Aircraft:
         POD_MASS_SCALER = 'aircraft:engine:pod_mass_scaler'
         POSITION_FACTOR = 'aircraft:engine:position_factor'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
-        REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
         RPM_DESIGN = 'aircraft:engine:rpm_design'

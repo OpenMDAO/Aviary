@@ -6,9 +6,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.engine import (
-    NewEngineSize,
-    NewEngineSizeGroup,
-    EngineSize,
+    GASPEngineSize,
+    GASPEngineSizeGroup,
     PercentNotInFuselage,
 )
 from aviary.utils.aviary_values import AviaryValues
@@ -88,7 +87,7 @@ class TestEngine(
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
         aviary_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000301265)
 
-        self.prob.model.add_subsystem('engsz', NewEngineSize(), promotes=['*'])
+        self.prob.model.add_subsystem('engsz', GASPEngineSize(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults('percent_exposed', 1.0)
@@ -114,7 +113,7 @@ class TestEngine(
 
 
 class BWBTestEngine(unittest.TestCase):
-    """Test engine size using NewEngineSize class and BWB data"""
+    """Test engine size using GASPEngineSize class and BWB data"""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -122,7 +121,7 @@ class BWBTestEngine(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model.add_subsystem('engsz', NewEngineSize(), promotes=['*'])
+        self.prob.model.add_subsystem('engsz', GASPEngineSize(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults('percent_exposed', 1.0)
@@ -154,7 +153,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
         aviary_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, [0.0003, 0.0002])
 
-        prob.model.add_subsystem('cable', NewEngineSize(), promotes=['*'])
+        prob.model.add_subsystem('cable', GASPEngineSize(), promotes=['*'])
 
         prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
         prob.model.set_input_defaults('percent_exposed', [1.0, 1.0])
@@ -182,7 +181,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
 
 @use_tempdirs
-class NewEngineSizeGroupTestCase(unittest.TestCase):
+class GASPEngineSizeGroupTestCase(unittest.TestCase):
     """this is the GASP BWB test case"""
 
     def setUp(self):
@@ -192,7 +191,7 @@ class NewEngineSizeGroupTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            NewEngineSizeGroup(),
+            GASPEngineSizeGroup(),
             promotes=['*'],
         )
 

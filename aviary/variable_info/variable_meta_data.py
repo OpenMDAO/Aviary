@@ -2335,20 +2335,6 @@ add_meta_data(
     multivalue=True,
 )
 
-add_meta_data(
-    Aircraft.Engine.REFERENCE_DIAMETER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.DIAM_REF',
-        'FLOPS': None,
-        'LEAPS1': None,
-    },  # no DIAM_REF in GASP
-    units='ft',
-    desc='engine reference diameter',
-    default_value=0.0,
-    multivalue=True,
-)
-
 # NOTE This unscaled turbine (engine) weight is an input provided by the user, and is not
 #      an override. It is scaled by Aircraft.Engine.SCALE_FACTOR (a calculated value) to
 #      produce Aircraft.Engine.MASS
