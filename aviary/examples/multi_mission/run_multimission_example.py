@@ -153,7 +153,7 @@ if __name__ == '__main__':
         (Aircraft.Avionics.MASS, 'lbm'),
         (Aircraft.Furnishings.MASS, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
-        (Mission.Summary.GROSS_MASS, 'lbm'),
+        (Mission.GROSS_MASS, 'lbm'),
         (Mission.FUEL_BURNED, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),

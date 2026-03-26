@@ -42,7 +42,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         # Commonly referenced values
         aviary_inputs.set_val(
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             val=aviary_group.initialization_guesses['actual_takeoff_mass'],
             units='lbm',
         )
@@ -378,7 +378,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             eq = aviary_group.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
-                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+                promotes_inputs=[('rhs:mass', Mission.GROSS_MASS)],
             )
 
             # TODO: replace hard_coded ref for this constraint.

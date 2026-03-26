@@ -1139,7 +1139,7 @@
         "<class 'int'>"
     ],
     [
-        "mission:summary:gross_mass",
+        "mission:gross_mass",
         175400.0,
         "lbm",
         "<class 'float'>"

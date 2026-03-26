@@ -38,9 +38,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.aviary_inputs.set_val(
             'mission:design:gross_mass', self.sized_mass, units='lbm'
         )
-        prob_fallout.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm'
-        )
+        prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
         prob_fallout.check_and_preprocess_inputs()
 
@@ -66,9 +64,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.aviary_inputs.set_val(
             'mission:design:gross_mass', self.sized_mass, units='lbm'
         )
-        prob_alternate.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm'
-        )
+        prob_alternate.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
@@ -79,7 +75,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
-        alternate_mass = prob_alternate.get_val(av.Mission.Summary.GROSS_MASS)
+        alternate_mass = prob_alternate.get_val(av.Mission.GROSS_MASS)
         assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 
@@ -98,9 +94,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.aviary_inputs.set_val(
             'mission:design:gross_mass', self.sized_mass, units='lbm'
         )
-        prob_fallout.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm'
-        )
+        prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.build_model()
@@ -125,9 +119,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.aviary_inputs.set_val(
             'mission:design:gross_mass', self.sized_mass, units='lbm'
         )
-        prob_alternate.aviary_inputs.set_val(
-            'mission:summary:gross_mass', self.sized_mass, units='lbm'
-        )
+        prob_alternate.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
@@ -138,7 +130,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.run_aviary_problem()
 
         fallout_range = prob_fallout.get_val(av.Mission.Summary.RANGE)
-        alternate_mass = prob_alternate.get_val(av.Mission.Summary.GROSS_MASS)
+        alternate_mass = prob_alternate.get_val(av.Mission.GROSS_MASS)
         assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 

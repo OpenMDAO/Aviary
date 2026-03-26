@@ -30,7 +30,7 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
             -1512,
             units='lbm/h',
         )
-        self.prob.set_val(Mission.Summary.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.set_val(Mission.GROSS_MASS, 175400.0, units='lbm')
 
         self.prob.run_model()
 

@@ -53,7 +53,7 @@ class ReserveTest(unittest.TestCase):
 
         prob.load_inputs(csv_path, phase_info)
 
-        prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
+        prob.aviary_inputs.set_val(Mission.GROSS_MASS, 140000.0, units='lbm')
 
         prob.check_and_preprocess_inputs()
 

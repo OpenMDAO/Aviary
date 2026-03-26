@@ -86,9 +86,7 @@ class FinalConditionsTest(unittest.TestCase):
         self.prob.model.add_subsystem('comp', FinalTakeoffConditions(num_engines=2), promotes=['*'])
 
         self.prob.model.set_input_defaults('v_stall', val=100, units='m/s')  # not actual value
-        self.prob.model.set_input_defaults(
-            Mission.Summary.GROSS_MASS, val=181200.0, units='lbm'
-        )  # check
+        self.prob.model.set_input_defaults(Mission.GROSS_MASS, val=181200.0, units='lbm')  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.FUEL_SIMPLE, val=577, units='lbm'
         )  # check
@@ -148,7 +146,7 @@ class FinalConditionsTest2(unittest.TestCase):
         # default value v_stall = 0.1 will worsen the output
         prob.model.set_input_defaults('v_stall', val=100, units='m/s')
         # default value GROSS_MASS = 150000 will worsen the output
-        prob.model.set_input_defaults(Mission.Summary.GROSS_MASS, val=181200.0, units='lbm')
+        prob.model.set_input_defaults(Mission.GROSS_MASS, val=181200.0, units='lbm')
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
@@ -162,9 +160,7 @@ class TakeoffGroupTest(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('group_example', TakeoffGroup(num_engines=2), promotes=['*'])
 
-        self.prob.model.set_input_defaults(
-            Mission.Summary.GROSS_MASS, val=181200.0, units='lbm'
-        )  # check
+        self.prob.model.set_input_defaults(Mission.GROSS_MASS, val=181200.0, units='lbm')  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.FUEL_SIMPLE, val=577, units='lbm'
         )  # check

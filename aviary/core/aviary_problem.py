@@ -969,7 +969,7 @@ class AviaryProblem(om.Problem):
             List of subsystem names (e.g., 'model1', 'model2') corresponding to different missions.
 
         outputs : list of str
-            List of output variable names (e.g., Mission.FUEL_BURNED, Mission.Summary.GROSS_MASS) to be included
+            List of output variable names (e.g., Mission.FUEL_BURNED, Mission.GROSS_MASS) to be included
             in the objective from each mission.
 
         mission_weights : list of float, optional
@@ -1459,14 +1459,14 @@ class AviaryProblem(om.Problem):
         # changes must come after load_inputs
         if problem_type is ProblemType.ALTERNATE:
             off_design_prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
-            # set initial guess for Mission.Summary.GROSS_MASS to help optimizer with new design
+            # set initial guess for Mission.GROSS_MASS to help optimizer with new design
             # variable bounds.
             if mission_gross_mass is None:
                 mission_gross_mass = off_design_prob.aviary_inputs.get_val(
                     Mission.Design.GROSS_MASS, 'lbm'
                 )
             off_design_prob.aviary_inputs.set_val(
-                Mission.Summary.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
+                Mission.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
             )
 
         elif problem_type is ProblemType.FALLOUT:
@@ -1480,7 +1480,7 @@ class AviaryProblem(om.Problem):
                 mission_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
 
             off_design_prob.aviary_inputs.set_val(
-                Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
+                Mission.GROSS_MASS, mission_gross_mass, units='lbm'
             )
 
         off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
@@ -1538,7 +1538,7 @@ class AviaryProblem(om.Problem):
 
         if fill_fuel:
             off_design_prob.model.add_design_var(
-                Mission.Summary.GROSS_MASS,
+                Mission.GROSS_MASS,
                 lower=0,
                 upper=off_design_prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm'),
                 ref=off_design_prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm'),
@@ -1623,7 +1623,7 @@ class AviaryProblem(om.Problem):
             payload_2 = payload_1
 
             range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
-            gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
+            gross_mass = float(self.get_val(Mission.GROSS_MASS)[0])
             # NOTE this operating mass is based on the previously run mission - assumed this is the
             # design mission!! Includes cargo containers needed for design (max payload)
             operating_mass = float(self.get_val(Mission.Summary.OPERATING_MASS)[0])
@@ -1776,7 +1776,7 @@ class AviaryProblem(om.Problem):
         ----------
         aviary_problem : AviaryProblem
             Aviary problem object optimized for the aircraft design/sizing mission.
-            Assumed to contain aviary_inputs and Mission.Summary.GROSS_MASS
+            Assumed to contain aviary_inputs and Mission.GROSS_MASS
         json_filename : string
             User specified name and relative path of json file to save the data into.
         save_to_reports : bool
@@ -1791,10 +1791,8 @@ class AviaryProblem(om.Problem):
                 type_value = type(value)
 
                 # Get the gross mass value from the sizing problem and add it to input list
-                if name == Mission.Summary.GROSS_MASS or name == Mission.Design.GROSS_MASS:
-                    Mission_Summary_GROSS_MASS_val = self.get_val(
-                        Mission.Summary.GROSS_MASS, units=units
-                    )
+                if name == Mission.GROSS_MASS or name == Mission.Design.GROSS_MASS:
+                    Mission_Summary_GROSS_MASS_val = self.get_val(Mission.GROSS_MASS, units=units)
                     Mission_Summary_GROSS_MASS_val_list = Mission_Summary_GROSS_MASS_val.tolist()
                     value = Mission_Summary_GROSS_MASS_val_list[0]
 
@@ -2021,8 +2019,6 @@ def reload_aviary_problem(
     prob.final_setup()
 
     # some variables are normally in the problem instead, so add them there too
-    prob.set_val(
-        Mission.Summary.GROSS_MASS, aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm'), 'lbm'
-    )
+    prob.set_val(Mission.GROSS_MASS, aviary_inputs.get_val(Mission.GROSS_MASS, 'lbm'), 'lbm')
 
     return prob

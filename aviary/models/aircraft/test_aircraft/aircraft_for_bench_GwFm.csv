@@ -154,7 +154,7 @@ mission:landing:lift_coefficient_flap_increment,1.0293,unitless
 mission:landing:lift_coefficient_max,2.8155,unitless
 aircraft:design:cruise_mach,0.785,unitless
 mission:fuel_flow_scaler,1.0,unitless
-mission:summary:gross_mass,175400,lbm
+mission:gross_mass,175400,lbm
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:drag_coefficient_flap_increment,0.0085,unitless
 mission:takeoff:fuel_simple,577,lbm

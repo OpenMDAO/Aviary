@@ -49,7 +49,7 @@ prob.setup()
 
 prob.run_aviary_problem()
 
-print(f'\nTakeoff Gross Weight = {prob.get_val(av.Mission.Summary.GROSS_MASS, units="lbm")[0]} lbm')
+print(f'\nTakeoff Gross Weight = {prob.get_val(av.Mission.GROSS_MASS, units="lbm")[0]} lbm')
 print('\nDesign Variables\n---------------')
 print(f'Engine Scale Factor (started at 1) = {prob.get_val(av.Aircraft.Engine.SCALE_FACTOR)[0]}')
 print(f'Wing Area (started at 1370) = {prob.get_val(av.Aircraft.Wing.AREA, units="ft**2")[0]} ft^2')

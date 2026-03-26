@@ -334,8 +334,8 @@ if __name__ == '__main__':
 
     prob.setup()
 
-    # set the start-of-takeoff mass to mission:summary:gross_mass
-    prob.set_val('mission:summary:gross_mass', 175000, units='lbm')
+    # set the start-of-takeoff mass to mission:gross_mass
+    prob.set_val('mission:gross_mass', 175000, units='lbm')
 
     prob.run_aviary_problem(suppress_solver_print=True)
 

@@ -835,7 +835,7 @@ class AviaryGroup(om.Group):
         post_mission.add_subsystem(
             'fuel_burned',
             ecomp,
-            promotes_inputs=[('initial_mass', Mission.Summary.GROSS_MASS)],
+            promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
             promotes_outputs=[('fuel_burned', Mission.FUEL_BURNED)],
         )
 
@@ -978,7 +978,7 @@ class AviaryGroup(om.Group):
                 ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
                 ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
                 ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-                ('initial_mass', Mission.Summary.GROSS_MASS),
+                ('initial_mass', Mission.GROSS_MASS),
             ],
             promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
         )
@@ -1305,7 +1305,7 @@ class AviaryGroup(om.Group):
                     ref=175e3,
                 )
                 self.add_design_var(
-                    Mission.Summary.GROSS_MASS,
+                    Mission.GROSS_MASS,
                     lower=10.0,
                     upper=None,
                     units='lbm',
@@ -1322,7 +1322,7 @@ class AviaryGroup(om.Group):
                     ),
                     promotes_inputs=[
                         ('lhs:GTOW', Mission.Design.GROSS_MASS),
-                        ('rhs:GTOW', Mission.Summary.GROSS_MASS),
+                        ('rhs:GTOW', Mission.GROSS_MASS),
                     ],
                 )
 
@@ -1335,7 +1335,7 @@ class AviaryGroup(om.Group):
                 # get the design gross mass and set as the upper bound for the gross mass design variable
                 MTOW = self.aviary_inputs.get_val(Mission.Design.GROSS_MASS, 'lbm')
                 self.add_design_var(
-                    Mission.Summary.GROSS_MASS,
+                    Mission.GROSS_MASS,
                     lower=10.0,
                     upper=MTOW,
                     units='lbm',
@@ -1351,7 +1351,7 @@ class AviaryGroup(om.Group):
 
             elif problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(
-                    Mission.Summary.GROSS_MASS,
+                    Mission.GROSS_MASS,
                     lower=10.0,
                     upper=900e3,
                     units='lbm',
@@ -1363,10 +1363,10 @@ class AviaryGroup(om.Group):
                 # the range constriant should be added to make target rage = summary range
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
-                # We must ensure that design.gross_mass is greater than  mission.summary.gross_mass
+                # We must ensure that design.gross_mass is greater than  Mission.GROSS_MASS
                 # and this must hold true for each of the different missions that is flown the
                 # result will be the design.gross_mass should be equal to the
-                # mission.summary.gross_mass of the heaviest mission
+                # Mission.GROSS_MASS of the heaviest mission
                 self.add_subsystem(
                     'GROSS_MASS_constraint',
                     om.ExecComp(
@@ -1377,7 +1377,7 @@ class AviaryGroup(om.Group):
                     ),
                     promotes_inputs=[
                         ('design_mass', Mission.Design.GROSS_MASS),
-                        ('actual_mass', Mission.Summary.GROSS_MASS),
+                        ('actual_mass', Mission.GROSS_MASS),
                     ],
                     promotes_outputs=['gross_mass_resid'],
                 )
@@ -1527,7 +1527,7 @@ class AviaryGroup(om.Group):
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
                 promotes_inputs=[
-                    ('initial_mass', Mission.Summary.GROSS_MASS),
+                    ('initial_mass', Mission.GROSS_MASS),
                     ('reserve_fuel_margin', Aircraft.Design.RESERVE_FUEL_MARGIN),
                 ],
                 promotes_outputs=['reserve_fuel_margin_mass'],

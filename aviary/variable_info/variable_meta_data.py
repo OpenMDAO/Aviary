@@ -7203,6 +7203,15 @@ add_meta_data(
     option=True,
 )
 
+add_meta_data(
+    Mission.GROSS_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Gross takeoff mass of aircraft for the mission being flown.'
+    'May differ from Aircraft.Design.GROSS_MASS for off-design missions.',
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7753,15 +7762,6 @@ add_meta_data(
     units='lbm',
     desc='mass of the aircraft at the end of cruise',
     default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.GROSS_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='Gross takeoff mass of aircraft for the mission being flown. May differ from design gross '
-    'mass for off-design missions. Includes zero fuel mass plus useable fuel.',
 )
 
 add_meta_data(

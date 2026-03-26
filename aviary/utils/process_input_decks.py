@@ -350,8 +350,8 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     initialization_guesses['reserves'] = reserves
 
-    if Mission.Summary.GROSS_MASS in aircraft_values:
-        mission_mass = aircraft_values.get_val(Mission.Summary.GROSS_MASS, units='lbm')
+    if Mission.GROSS_MASS in aircraft_values:
+        mission_mass = aircraft_values.get_val(Mission.GROSS_MASS, units='lbm')
     else:
         mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
 

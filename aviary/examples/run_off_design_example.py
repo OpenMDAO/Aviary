@@ -63,7 +63,7 @@ print(f'Fuel Mass = {prob.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)[0]} lbm')
 print(f'Operating Empty Mass = {prob.get_val(av.Mission.Summary.OPERATING_MASS)[0]} lbm')
 print(f'Payload Mass = {prob.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0]} lbm')
 print(f'Design Gross Mass = {prob.get_val(av.Mission.Design.GROSS_MASS)[0]} lbm')
-print(f'Mission Gross Mass = {prob.get_val(av.Mission.Summary.GROSS_MASS)[0]} lbm')
+print(f'Mission Gross Mass = {prob.get_val(av.Mission.GROSS_MASS)[0]} lbm')
 
 print('\n---------------')
 print('Fallout Results')
@@ -74,7 +74,7 @@ print(f'Fuel Mass = {prob_fallout.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)[0]
 print(f'Operating Empty Mass = {prob_fallout.get_val(av.Mission.Summary.OPERATING_MASS)[0]} lbm')
 print(f'Payload Mass = {prob_fallout.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0]} lbm')
 print(f'Design Gross Mass = {prob_fallout.get_val(av.Mission.Design.GROSS_MASS)[0]} lbm')
-print(f'Mission Gross Mass = {prob_fallout.get_val(av.Mission.Summary.GROSS_MASS)[0]} lbm')
+print(f'Mission Gross Mass = {prob_fallout.get_val(av.Mission.GROSS_MASS)[0]} lbm')
 
 print('\n-----------------')
 print('Alternate Results')
@@ -85,4 +85,4 @@ print(f'Fuel Mass = {prob_alternate.get_val(av.Mission.Summary.TOTAL_FUEL_MASS)[
 print(f'Operating Empty Mass = {prob_alternate.get_val(av.Mission.Summary.OPERATING_MASS)[0]} lbm')
 print(f'Payload Mass = {prob_alternate.get_val(av.Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0]} lbm')
 print(f'Design Gross Mass = {prob_alternate.get_val(av.Mission.Design.GROSS_MASS)[0]} lbm')
-print(f'Mission Gross Mass = {prob_alternate.get_val(av.Mission.Summary.GROSS_MASS)[0]} lbm')
+print(f'Mission Gross Mass = {prob_alternate.get_val(av.Mission.GROSS_MASS)[0]} lbm')

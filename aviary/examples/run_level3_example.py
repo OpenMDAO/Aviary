@@ -381,7 +381,7 @@ descent.set_time_options(
 eq = prob.model.add_subsystem(
     f'link_climb_mass',
     om.EQConstraintComp(),
-    promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+    promotes_inputs=[('rhs:mass', Mission.GROSS_MASS)],
 )
 
 eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True)
@@ -493,7 +493,7 @@ prob.model.post_mission.add_subsystem(
         ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
         ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
         ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-        ('initial_mass', Mission.Summary.GROSS_MASS),
+        ('initial_mass', Mission.GROSS_MASS),
     ],
     promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
 )
@@ -585,7 +585,7 @@ prob.model.add_design_var(
     ref=175e3,
 )
 prob.model.add_design_var(
-    Mission.Summary.GROSS_MASS,
+    Mission.GROSS_MASS,
     lower=100000.0,
     upper=None,
     units='lbm',
@@ -602,7 +602,7 @@ prob.model.add_subsystem(
     ),
     promotes_inputs=[
         ('lhs:GTOW', Mission.Design.GROSS_MASS),
-        ('rhs:GTOW', Mission.Summary.GROSS_MASS),
+        ('rhs:GTOW', Mission.GROSS_MASS),
     ],
 )
 prob.model.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
@@ -696,7 +696,7 @@ descent.set_control_val(
 descent.set_state_val('mass', 125000, units='lbm')
 
 prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
-prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
+prob.set_val(Mission.GROSS_MASS, 175400, units='lbm')
 
 prob.verbosity = Verbosity.BRIEF
 

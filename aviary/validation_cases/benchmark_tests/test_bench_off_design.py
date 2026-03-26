@@ -58,7 +58,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             Mission.Design.GROSS_MASS,
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             Aircraft.Design.EMPTY_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
         ]
@@ -144,7 +144,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.GROSS_MASS, 'lbm'),
             150000,
             tolerance=1e-12,
         )
@@ -229,7 +229,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.GROSS_MASS, 'lbm'),
             157656.53426787,
             tolerance=1e-5,
         )
@@ -298,7 +298,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             Mission.Design.GROSS_MASS,
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             # currently not a GASP variable
             # Aircraft.Design.EMPTY_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
@@ -385,7 +385,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.GROSS_MASS, 'lbm'),
             155000,
             tolerance=1e-12,
         )
@@ -458,7 +458,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.GROSS_MASS, 'lbm'),
             148675.23373818,
             tolerance=1e-6,
         )
@@ -529,12 +529,12 @@ class PayloadRangeTest(unittest.TestCase):
 
         # verify TOGW for each off-design problem
         assert_near_equal(
-            off_design_probs[0].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            off_design_probs[0].get_val(Mission.GROSS_MASS, 'lbm'),
             165899.19090919,
             tolerance=1e-8,
         )
         assert_near_equal(
-            off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            off_design_probs[1].get_val(Mission.GROSS_MASS, 'lbm'),
             140541.17160737,
             tolerance=1e-8,
         )

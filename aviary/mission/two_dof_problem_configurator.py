@@ -48,7 +48,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             units='lbm',
         )
         aviary_inputs.set_val(
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             val=aviary_group.initialization_guesses['actual_takeoff_mass'],
             units='lbm',
         )
