@@ -54,7 +54,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             Mission.Design.RANGE,
             Mission.Summary.RANGE,
             Mission.Summary.TOTAL_FUEL_MASS,
-            Mission.Summary.OPERATING_MASS,
+            Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             Mission.Design.GROSS_MASS,
@@ -114,7 +114,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.OPERATING_MASS, 'lbm'),
             97743.46682372,
             tolerance=1e-5,
         )
@@ -199,7 +199,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.OPERATING_MASS, 'lbm'),
             97743.52792979,
             tolerance=1e-5,
         )
@@ -294,7 +294,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         prob_var_list = [
             Mission.Summary.RANGE,
             Mission.Summary.TOTAL_FUEL_MASS,
-            Mission.Summary.OPERATING_MASS,
+            Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
             Mission.Design.GROSS_MASS,
@@ -354,7 +354,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.OPERATING_MASS, 'lbm'),
             95090.25806904,
             tolerance=1e-5,
         )
@@ -427,7 +427,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             tolerance=1e-6,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.OPERATING_MASS, 'lbm'),
             95090.25806904,
             tolerance=1e-6,
         )

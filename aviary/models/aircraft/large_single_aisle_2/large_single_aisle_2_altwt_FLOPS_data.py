@@ -262,7 +262,7 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 96288.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 492.0, 'lbm')
 outputs.set_val(Aircraft.Design.LANDING_MASS, 146328.0, 'lbm')
-outputs.set_val(Mission.Summary.OPERATING_MASS, 106360.0, 'lbm')
+outputs.set_val(Mission.OPERATING_MASS, 106360.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3906.6, 'lbm')
 propulsion_mass = 20275.0
 propulsion_mass_units = 'lbm'

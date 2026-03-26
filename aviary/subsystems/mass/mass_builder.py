@@ -296,9 +296,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Oil|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.OPERATING_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.OPERATING_MASS, prob, self.meta_data)
             f.write(f'|**Operating Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 

@@ -115,7 +115,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+            prob.get_val(Mission.OPERATING_MASS, units='lbm'),
             445429.9,
             tolerance=rtol,
         )
@@ -153,7 +153,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
     # )
 
     # assert_near_equal(
-    # prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+    # prob.get_val(Mission.OPERATING_MASS, units='lbm'),
     # 446218.2,
     # tolerance=rtol,
     # )

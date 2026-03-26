@@ -490,7 +490,7 @@ prob.model.post_mission.add_subsystem(
     'mass_constraint',
     ecomp,
     promotes_inputs=[
-        ('operating_empty_mass', Mission.Summary.OPERATING_MASS),
+        ('operating_empty_mass', Mission.OPERATING_MASS),
         ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
         ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
         ('initial_mass', Mission.GROSS_MASS),

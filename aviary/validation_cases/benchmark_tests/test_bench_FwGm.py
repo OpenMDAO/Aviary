@@ -40,7 +40,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         expected_values = {
             Mission.Design.GROSS_MASS: 177536.28,
-            Mission.Summary.OPERATING_MASS: 101262.9,
+            Mission.OPERATING_MASS: 101262.9,
             Mission.Summary.TOTAL_FUEL_MASS: 38417.3,
             Mission.Landing.GROUND_DISTANCE: 2613.4,
             'traj.desc2.timeseries.distance': 3675.0,
@@ -71,7 +71,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         expected_values = {
             Mission.Design.GROSS_MASS: 177536.28,
-            Mission.Summary.OPERATING_MASS: 101262.9,
+            Mission.OPERATING_MASS: 101262.9,
             Mission.Summary.TOTAL_FUEL_MASS: 38417.3,
             Mission.Landing.GROUND_DISTANCE: 2613.4,
             'traj.desc2.timeseries.distance': 3675.0,

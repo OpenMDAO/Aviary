@@ -7212,6 +7212,26 @@ add_meta_data(
     'May differ from Aircraft.Design.GROSS_MASS for off-design missions.',
 )
 
+add_meta_data(
+    Mission.OPERATING_MASS,
+    meta_data=_MetaData,
+    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
+    # defined the same way
+    historical_name={
+        'GASP': 'INGASP.OWE',
+        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
+        'FLOPS': 'MISSIN.DOWE',
+        'LEAPS1': [
+            '(WeightABC)self._operating_weight_empty',
+            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
+        ],
+    },
+    units='lbm',
+    desc='Operating mass of the aircraft. Includes structure mass, crew (and crew baggage), unusable '
+    'fuel, oil, and operational items like cargo containers and passenger service mass.',
+    default_value=0.0,
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7754,26 +7774,6 @@ add_meta_data(
 #                                                           __/ |
 #                                                          |___/
 # ===============================================================
-
-add_meta_data(
-    Mission.Summary.OPERATING_MASS,
-    meta_data=_MetaData,
-    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
-    # defined the same way
-    historical_name={
-        'GASP': 'INGASP.OWE',
-        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
-        'FLOPS': 'MISSIN.DOWE',
-        'LEAPS1': [
-            '(WeightABC)self._operating_weight_empty',
-            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
-        ],
-    },
-    units='lbm',
-    desc='Operating mass of the aircraft. Includes structure mass, crew (and crew baggage), unusable '
-    'fuel, oil, and operational items like cargo containers and passenger service mass.',
-    default_value=0.0,
-)
 
 add_meta_data(
     Mission.Summary.RANGE,
