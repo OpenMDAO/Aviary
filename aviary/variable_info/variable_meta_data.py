@@ -7270,6 +7270,24 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Mission.ZERO_FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
+        'FLOPS': None,
+        'LEAPS1': [
+            '(WeightABC)self._zero_fuel_weight',
+            'aircraft.outputs.L0_weights.zero_fuel_weight',
+            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
+        ],
+    },
+    units='lbm',
+    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, and cargo.',
+    default_value=0.0,
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7802,35 +7820,6 @@ add_meta_data(
     units='unitless',
     desc='regularized objective that maximizes range subject to other necessary additions',
 )
-
-#   _____
-#  / ____|
-# | (___    _   _   _ __ ___    _ __ ___     __ _   _ __   _   _
-#  \___ \  | | | | | '_ ` _ \  | '_ ` _ \   / _` | | '__| | | | |
-#  ____) | | |_| | | | | | | | | | | | | | | (_| | | |    | |_| |
-# |_____/   \__,_| |_| |_| |_| |_| |_| |_|  \__,_| |_|     \__, |
-#                                                           __/ |
-#                                                          |___/
-# ===============================================================
-
-add_meta_data(
-    Mission.Summary.ZERO_FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
-        'FLOPS': None,
-        'LEAPS1': [
-            '(WeightABC)self._zero_fuel_weight',
-            'aircraft.outputs.L0_weights.zero_fuel_weight',
-            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
-        ],
-    },
-    units='lbm',
-    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, and cargo.',
-    default_value=0.0,
-)
-
 
 #  _______           _                      __    __
 # |__   __|         | |                    / _|  / _|

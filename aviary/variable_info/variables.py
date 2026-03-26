@@ -646,6 +646,9 @@ class Dynamic:
 class Mission:
     """Mission data hierarchy."""
 
+    # These values are inputs and outputs to/from mission analysis for the given mission
+    # (whether it is design or off-design). In design these may be constrained to design values,
+    # but in off-design they independently represent the final analysis based on the user selection.
     FINAL_MASS = 'mission:final_mass'
     FINAL_TIME = 'mission:final_time'
     FUEL_BURNED = 'mission:fuel_burned'
@@ -656,6 +659,7 @@ class Mission:
     RESERVE_FUEL_BURNED = 'mission:reserve_fuel_burned'
     TOTAL_FUEL_MASS = 'mission:total_fuel_mass'
     USEFUL_LOAD = 'mission:useful_load'
+    ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
@@ -712,13 +716,6 @@ class Mission:
         # they may often be composite and/or regularized
         FUEL = 'mission:objectives:fuel'
         RANGE = 'mission:objectives:range'
-
-    class Summary:
-        # These values are inputs and outputs to/from mission analysis for the given mission
-        # (whether it is design or off-design). In design these may be constrained to design values,
-        # but in off-design they independently represent the final analysis based on the
-        # user selection.
-        ZERO_FUEL_MASS = 'mission:summary:zero_fuel_mass'
 
     class Takeoff:
         # These are values which have to do with takeoff
