@@ -174,7 +174,7 @@ class UsefulMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5341.36, tol)
+        assert_near_equal(self.prob[Mission.USEFUL_LOAD], 5341.36, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -438,7 +438,7 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 4321.8, tol)
+        assert_near_equal(self.prob[Mission.USEFUL_LOAD], 4321.8, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)

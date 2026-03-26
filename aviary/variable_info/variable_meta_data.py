@@ -7261,6 +7261,15 @@ add_meta_data(
     'reserve fuel and fuel margin',
 )
 
+add_meta_data(
+    Mission.USEFUL_LOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7803,15 +7812,6 @@ add_meta_data(
 #                                                           __/ |
 #                                                          |___/
 # ===============================================================
-
-add_meta_data(
-    Mission.Summary.USEFUL_LOAD,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
-    default_value=0.0,
-)
 
 add_meta_data(
     Mission.Summary.ZERO_FUEL_MASS,

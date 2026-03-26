@@ -369,10 +369,10 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
 
-        add_aviary_output(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+        add_aviary_output(self, Mission.USEFUL_LOAD, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Mission.Summary.USEFUL_LOAD, '*', val=1)
+        self.declare_partials(Mission.USEFUL_LOAD, '*', val=1)
 
     def compute(self, inputs, outputs):
         cargo_container_mass = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
@@ -382,7 +382,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
 
-        outputs[Mission.Summary.USEFUL_LOAD] = (
+        outputs[Mission.USEFUL_LOAD] = (
             cabin_crew_mass
             + flight_crew_mass
             + unusable_fuel_mass
@@ -395,7 +395,7 @@ class UsefulLoadMass(om.ExplicitComponent):
 class OperatingMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Design.EMPTY_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+        add_aviary_input(self, Mission.USEFUL_LOAD, units='lbm')
 
         add_aviary_output(self, Mission.OPERATING_MASS, units='lbm')
 
@@ -403,7 +403,7 @@ class OperatingMass(om.ExplicitComponent):
         self.declare_partials(Mission.OPERATING_MASS, '*', val=1)
 
     def compute(self, inputs, outputs):
-        useful_load = inputs[Mission.Summary.USEFUL_LOAD]
+        useful_load = inputs[Mission.USEFUL_LOAD]
         empty_mass = inputs[Aircraft.Design.EMPTY_MASS]
 
         outputs[Mission.OPERATING_MASS] = empty_mass + useful_load

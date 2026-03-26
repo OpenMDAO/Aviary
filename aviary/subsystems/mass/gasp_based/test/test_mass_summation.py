@@ -3263,7 +3263,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Engine.POSITION_FACTOR -- SKEPOS = 1.05
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS - WFE = 20876.
-        Mission.Summary.USEFUL_LOAD -- WFUL = 5775.
+        Mission.USEFUL_LOAD -- WFUL = 5775.
         Aircraft.Wing.MASS -- WW = 7645.
         Aircraft.Strut.MASS -- WSTRUT = 0
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
@@ -3342,7 +3342,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 19770.39927907, tol)
-        assert_near_equal(prob[Mission.Summary.USEFUL_LOAD], 5961.79463002, tol)
+        assert_near_equal(prob[Mission.USEFUL_LOAD], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         # BWBWingMassGroup
