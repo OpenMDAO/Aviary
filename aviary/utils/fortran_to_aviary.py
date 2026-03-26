@@ -682,22 +682,37 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         num_flap_segments = int(num_flap_segments)
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
 
-    ## Fuel ##
+    ## FUEL RESERVES ##
     reserve_fuel_additional = input_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
     )[0]
     if reserve_fuel_additional <= 0:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+        # This is a percentage of mission fuel
         input_values.set_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION,
-            [-reserve_fuel_additional],
-            units='unitless',
+            Aircraft.Design.RESERVE_FUEL_MARGIN, [-reserve_fuel_additional * 100], units='unitless'
+        )  # flip the value and multipy by 100 because it is a percentage
+        input_values.set_val(
+            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm'
+        )  # then clear out the unused value
+    if reserve_fuel_additional > 0 and reserve_fuel_additional < 10:
+        ValueError(
+            '"FRESF" is not valid between 0 and 10. To set a reserve mission flight time you must setup a reserve mission definition with a target_duration.'
         )
-    elif reserve_fuel_additional >= 10:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless')
-    else:
-        ValueError('"FRESF" is not valid between 0 and 10.')
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+    if reserve_fuel_additional >= 10:
+        # we leave reserve_fuel_additional as it is
+        pass
 
+    # Wing Fuel Tank Sizing ##
+    reserve_fuel_volume = input_values.get_val(Aircraft.Fuel.VOLUME_MARGIN, units='unitless')[0]
+
+    if reserve_fuel_volume < 0:
+        ValueError(
+            '"FVOL_MRG" is not valid below 0. Cannot set fuel volume reserves to less than zero'
+        )  #
+        input_values.set_val(Aircraft.Fuel.VOLUME_MARGIN, [0], units='lbm')
+
+    # FLARE LOAD FACTOR ##
     if Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR in input_values:
         if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
             if verbosity > Verbosity.BRIEF:
