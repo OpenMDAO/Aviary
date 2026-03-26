@@ -7185,6 +7185,24 @@ add_meta_data(
     desc='fuel burned during regular phases, this does not include fuel burned in reserve phases',
 )
 
+# NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
+#      to FFFSUB/FFFSUP
+# CKFF is consistent for one aircraft over all missions, once the vehicle is sized
+# can we map it to both FFFSUB and FFFSUP?
+add_meta_data(
+    Mission.FUEL_FLOW_SCALER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.CKFF',
+        'FLOPS': 'MISSIN.FACT',  # ['&DEFMSS.MISSIN.FACT', 'TRNSF.FACT'],
+        'LEAPS1': ['aircraft.inputs.L0_fuel_flow.overall_factor'],
+    },
+    units='unitless',
+    desc='scale factor on overall fuel flow',
+    default_value=1.0,
+    option=True,
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7735,24 +7753,6 @@ add_meta_data(
     units='lbm',
     desc='mass of the aircraft at the end of cruise',
     default_value=0.0,
-)
-
-# NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
-#      to FFFSUB/FFFSUP
-# CKFF is consistent for one aircraft over all missions, once the vehicle is sized
-# can we map it to both FFFSUB and FFFSUP?
-add_meta_data(
-    Mission.Summary.FUEL_FLOW_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.CKFF',
-        'FLOPS': 'MISSIN.FACT',  # ['&DEFMSS.MISSIN.FACT', 'TRNSF.FACT'],
-        'LEAPS1': ['aircraft.inputs.L0_fuel_flow.overall_factor'],
-    },
-    units='unitless',
-    desc='scale factor on overall fuel flow',
-    default_value=1.0,
-    option=True,
 )
 
 add_meta_data(

@@ -649,6 +649,7 @@ class Mission:
     FINAL_MASS = 'mission:final_mass'
     FINAL_TIME = 'mission:final_time'
     FUEL_BURNED = 'mission:fuel_burned'
+    FUEL_FLOW_SCALER = 'mission:fuel_flow_scaler'
 
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
@@ -712,7 +713,6 @@ class Mission:
         # but in off-design they independently represent the final analysis based on the
         # user selection.
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
-        FUEL_FLOW_SCALER = 'mission:summary:fuel_flow_scaler'
         GROSS_MASS = 'mission:summary:gross_mass'
         OPERATING_MASS = 'mission:summary:operating_mass'
         RANGE = 'mission:summary:range'

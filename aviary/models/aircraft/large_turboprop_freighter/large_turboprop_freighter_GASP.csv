@@ -188,7 +188,7 @@ aircraft:furnishings:mass, 0, lbm
 ###########
 # MISSION #
 ###########
-mission:summary:fuel_flow_scaler, 1, unitless
+mission:fuel_flow_scaler, 1, unitless
 
 # Design
 mission:design:cruise_altitude, 21000, ft

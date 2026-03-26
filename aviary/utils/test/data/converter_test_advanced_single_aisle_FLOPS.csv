@@ -154,11 +154,11 @@ mission:design:lift_coefficient,-1.0,unitless
 mission:design:mach,-1.0,unitless
 mission:design:range,3500.0,NM
 mission:design:thrust_takeoff_per_eng,0.0,lbf
+mission:fuel_flow_scaler,1.0,unitless
 mission:landing:drag_coefficient_min,0.045,unitless
 mission:landing:flare_rate,2.2,deg/s
 mission:landing:initial_velocity,145.0,ft/s
 mission:landing:lift_coefficient_max,2.5,unitless
-mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:angle_of_attack_runway,0.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
 mission:takeoff:drag_coefficient_min,0.05,unitless

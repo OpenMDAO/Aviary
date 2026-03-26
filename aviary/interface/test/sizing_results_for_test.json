@@ -1019,7 +1019,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:summary:fuel_flow_scaler",
+        "mission:fuel_flow_scaler",
         1.0,
         "unitless",
         "<class 'float'>"
