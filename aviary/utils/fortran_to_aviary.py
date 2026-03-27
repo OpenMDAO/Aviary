@@ -1,7 +1,7 @@
 """
 fortran_to_aviary.py is used to read in Fortran based vehicle decks and convert them to Aviary decks.
 
-FLOPS, GASP, or Aviary names can be used for variables (Ex WG or Mission:Design:GROSS_MASS)
+FLOPS, GASP, or Aviary names can be used for variables (Ex WG or aircraft:design:gross_mass)
 When specifying variables from FORTRAN, they should be in the appropriate NAMELIST.
 Aviary variable names should be specified outside any NAMELISTS.
 Names are not case-sensitive.
@@ -503,7 +503,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that
     # corresponds to the problem_type
-    design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
+    design_range, distance_units = input_values.get_item(Aircraft.Design.RANGE)
     try:
         problem_type = input_values.get_val(Settings.PROBLEM_TYPE)[0]
     except KeyError:
@@ -524,7 +524,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     else:
         if design_range == 0:
             input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
-    input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
+    input_values.set_val(Aircraft.Design.RANGE, [design_range], distance_units)
 
     ## Passengers ##
     if Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:

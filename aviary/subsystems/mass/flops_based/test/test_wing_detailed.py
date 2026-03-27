@@ -74,7 +74,7 @@ class DetailedWingBendingTest(unittest.TestCase):
                 Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
                 Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
                 Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Engine.POD_MASS,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.ASPECT_RATIO_REFERENCE,
@@ -140,7 +140,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -230,7 +230,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -313,7 +313,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -391,7 +391,7 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -455,7 +455,7 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
@@ -527,7 +527,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=874099, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')

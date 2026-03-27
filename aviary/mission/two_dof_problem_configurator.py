@@ -54,7 +54,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.post_mission_info.setdefault('include_landing', True)
 
         # Commonly referenced values
-        aviary_group.cruise_alt = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+        aviary_group.cruise_alt = aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
         aviary_group.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
         aviary_group.cruise_mass_final = aviary_group.initialization_guesses['cruise_mass_final']
@@ -65,14 +65,14 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             )
             aviary_inputs.set_val(Mission.RANGE, aviary_group.target_range, units='NM')
         else:
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
             aviary_inputs.set_val(
                 Mission.RANGE,
-                aviary_inputs.get_val(Mission.Design.RANGE, units='NM'),
+                aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM'),
                 units='NM',
             )
 
-        aviary_group.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
+        aviary_group.cruise_mach = aviary_inputs.get_val(Aircraft.Design.MACH)
         aviary_group.require_range_residual = True
 
     def get_default_phase_info(self, aviary_group):
@@ -124,7 +124,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this configurator.
         """
         aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft'
+            Aircraft.Design.CRUISE_ALTITUDE, units='ft'
         )
 
         # Add event transformation subsystem

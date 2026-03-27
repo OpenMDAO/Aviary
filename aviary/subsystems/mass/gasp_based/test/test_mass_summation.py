@@ -28,7 +28,7 @@ class MassSummationTestCase1(unittest.TestCase):
         self.prob.model.add_subsystem(
             'gasp_based_geom',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -128,7 +128,7 @@ class MassSummationTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -147,7 +147,7 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -164,7 +164,7 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -473,7 +473,7 @@ class MassSummationTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -492,7 +492,7 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -509,7 +509,7 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -815,7 +815,7 @@ class MassSummationTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -834,7 +834,7 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -851,7 +851,7 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -1165,7 +1165,7 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1184,7 +1184,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -1201,7 +1201,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -1510,7 +1510,7 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1529,7 +1529,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -1546,7 +1546,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -1857,7 +1857,7 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37100, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37100, units='ft')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
@@ -1875,7 +1875,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -1892,7 +1892,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.12, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=145388.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=145388.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Design.WING_LOADING, val=104.50, units='lbf/ft**2'
         )
@@ -2108,7 +2108,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10.0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2226,7 +2226,7 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=43000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=43000, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -2246,7 +2246,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -2462,7 +2462,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=143100.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=143100.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=78.94, units='unitless'
         )
@@ -2486,7 +2486,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Strut.MASS_COEFFICIENT, 0.238, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2596,7 +2596,7 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=43000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=43000, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -2617,7 +2617,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -2836,7 +2836,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=166100.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=166100.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=78.94, units='unitless'
         )
@@ -2877,7 +2877,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults('TMS_spec_mass', 0.125, units='lbm/kW')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -3001,7 +3001,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         # options from MassPremission
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=41000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
@@ -3013,7 +3013,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -3031,7 +3031,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         # prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.TAPER_RATIO, 0.366, units='unitless')
@@ -3181,7 +3181,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FOLD_MASS_COEFFICIENT, 0.15, units='unitless')
-        prob.model.set_input_defaults(Mission.Design.MACH, 0.8, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.MACH, 0.8, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')

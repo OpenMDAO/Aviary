@@ -121,7 +121,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         # Initial guess for gross mass.
         # We set it to an unconverged value to test convergence.
-        self.prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+        self.prob.set_val(Aircraft.Design.GROSS_MASS, val=1000.0)
 
         # Set initial values for all variables.
         set_aviary_initial_values(self.prob, input_options)

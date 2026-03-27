@@ -100,7 +100,7 @@ class FinalConditionsTest(unittest.TestCase):
             Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2.0000, units='unitless'
         )  # check
         self.prob.model.set_input_defaults(
-            Mission.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units='lbf'
+            Aircraft.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units='lbf'
         )  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless'
@@ -169,7 +169,7 @@ class TakeoffGroupTest(unittest.TestCase):
             Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2.0000, units='unitless'
         )  # check
         self.prob.model.set_input_defaults(
-            Mission.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units='lbf'
+            Aircraft.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units='lbf'
         )  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless'

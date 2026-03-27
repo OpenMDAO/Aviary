@@ -21,7 +21,7 @@ class InstrumentMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.Instruments.MASS_COEFFICIENT, units='unitless')
@@ -36,7 +36,7 @@ class InstrumentMass(om.ExplicitComponent):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
-        gross_mass_initial = inputs[Mission.Design.GROSS_MASS]
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         mass_coefficient = inputs[Aircraft.Instruments.MASS_COEFFICIENT]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
@@ -63,7 +63,7 @@ class InstrumentMass(om.ExplicitComponent):
         engine_type = self.options[Aircraft.Engine.TYPE][0]
 
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
-        gross_mass_initial = inputs[Mission.Design.GROSS_MASS]
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
         mass_coefficient = inputs[Aircraft.Instruments.MASS_COEFFICIENT]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
@@ -95,7 +95,7 @@ class InstrumentMass(om.ExplicitComponent):
             * fus_len**0.05
             * wingspan**0.696
         )
-        J[Aircraft.Instruments.MASS, Mission.Design.GROSS_MASS] = dinstrument_wt_dgross_wt_initial
+        J[Aircraft.Instruments.MASS, Aircraft.Design.GROSS_MASS] = dinstrument_wt_dgross_wt_initial
 
         dinstrument_wt_dfus_len = (
             0.05

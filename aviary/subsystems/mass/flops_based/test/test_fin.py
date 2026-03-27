@@ -24,7 +24,7 @@ fin_test_data = {}
 fin_test_data['1'] = AviaryValues(
     {
         Aircraft.Fins.NUM_FINS: (1, 'unitless'),
-        Mission.Design.GROSS_MASS: (100000, 'lbm'),
+        Aircraft.Design.GROSS_MASS: (100000, 'lbm'),
         Aircraft.Fins.TAPER_RATIO: (0.3300, 'unitless'),
         Aircraft.Fins.AREA: (250.00, 'ft**2'),
         Aircraft.Fins.MASS_SCALER: (1.0, 'unitless'),
@@ -64,7 +64,7 @@ class FinMassTest(unittest.TestCase):
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Fins.TAPER_RATIO,
                 Aircraft.Fins.AREA,
                 Aircraft.Fins.MASS_SCALER,
@@ -102,7 +102,7 @@ class FinMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Mission.Design.GROSS_MASS, 100000.0, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 100000.0, 'lbm')
         prob.set_val(Aircraft.Fins.TAPER_RATIO, 0.33, 'unitless')
         prob.set_val(Aircraft.Fins.AREA, 250.0, 'ft**2')
         prob.set_val(Aircraft.Fins.MASS, 1000.0, 'lbm')
@@ -138,7 +138,7 @@ class BWBFinMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Fins.TAPER_RATIO,
                 Aircraft.Fins.AREA,
             ],

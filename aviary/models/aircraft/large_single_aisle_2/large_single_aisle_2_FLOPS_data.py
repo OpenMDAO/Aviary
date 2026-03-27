@@ -19,7 +19,7 @@ Large Single Aisle 2 Mission/fixed_gw
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.00514)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
-inputs.set_val(Mission.Design.GROSS_MASS, 174200.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 174200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -231,7 +231,7 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
 inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
-inputs.set_val(Mission.Design.RANGE, 2960.0, 'NM')
+inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
@@ -246,7 +246,7 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35)
 # never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # lbf TODO: where should this get connected from?
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 27301.0, 'lbf')
+inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 27301.0, 'lbf')
 
 # Settings
 # ---------------------------
@@ -371,5 +371,5 @@ outputs.set_val(Aircraft.Wing.MISC_MASS, 1718.7, 'lbm')
 outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 7552.6, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 1835.0, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.799)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.523)
+outputs.set_val(Aircraft.Design.MACH, 0.799)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.523)

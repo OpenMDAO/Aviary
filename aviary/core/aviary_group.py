@@ -891,7 +891,7 @@ class AviaryGroup(om.Group):
             ecomp,
             promotes_inputs=[
                 ('fuel_burned', Mission.FUEL_BURNED),
-                ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+                ('reserve_fuel', Mission.RESERVE_FUEL),
             ],
             promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL_MASS)],
         )
@@ -1282,7 +1282,7 @@ class AviaryGroup(om.Group):
             optimize_mass = self.pre_mission_info.get('optimize_mass')
             if optimize_mass:
                 self.add_design_var(
-                    Mission.Design.GROSS_MASS,
+                    Aircraft.Design.GROSS_MASS,
                     units='lbm',
                     lower=10,
                     upper=900.0e3,
@@ -1298,7 +1298,7 @@ class AviaryGroup(om.Group):
             # capacity
             if problem_type is ProblemType.SIZING:
                 self.add_design_var(
-                    Mission.Design.GROSS_MASS,
+                    Aircraft.Design.GROSS_MASS,
                     lower=10.0,
                     upper=None,
                     units='lbm',
@@ -1321,7 +1321,7 @@ class AviaryGroup(om.Group):
                         add_constraint=True,
                     ),
                     promotes_inputs=[
-                        ('lhs:GTOW', Mission.Design.GROSS_MASS),
+                        ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
                         ('rhs:GTOW', Mission.GROSS_MASS),
                     ],
                 )
@@ -1333,7 +1333,7 @@ class AviaryGroup(om.Group):
                 # target range problem
                 # fixed vehicle (design GTOW) but variable actual GTOW for off-design
                 # get the design gross mass and set as the upper bound for the gross mass design variable
-                MTOW = self.aviary_inputs.get_val(Mission.Design.GROSS_MASS, 'lbm')
+                MTOW = self.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, 'lbm')
                 self.add_design_var(
                     Mission.GROSS_MASS,
                     lower=10.0,
@@ -1376,7 +1376,7 @@ class AviaryGroup(om.Group):
                         gross_mass_resid={'val': 30, 'units': 'kg'},
                     ),
                     promotes_inputs=[
-                        ('design_mass', Mission.Design.GROSS_MASS),
+                        ('design_mass', Aircraft.Design.GROSS_MASS),
                         ('actual_mass', Mission.GROSS_MASS),
                     ],
                     promotes_outputs=['gross_mass_resid'],
@@ -1499,9 +1499,7 @@ class AviaryGroup(om.Group):
                     units=val_dict.get('units', None),
                 )
 
-    def add_fuel_reserve_component(
-        self, post_mission=True, reserves_name=Mission.Design.RESERVE_FUEL
-    ):
+    def add_fuel_reserve_component(self, post_mission=True, reserves_name=Mission.RESERVE_FUEL):
         if post_mission:
             reserve_calc_location = self.post_mission
         else:

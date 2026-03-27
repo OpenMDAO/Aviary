@@ -16,7 +16,7 @@ V3_bug_fixed_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180
 # we keep CrewPayload.NUM_PASSENGERS here because preprocess_crewpayload is often not run in these
 # tests which prevents these values being assigned from Design.NUM_PASSENGERS as would normally happen
 V3_bug_fixed_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-V3_bug_fixed_options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+V3_bug_fixed_options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
 V3_bug_fixed_options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
 V3_bug_fixed_options.set_val(
     Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -31,7 +31,7 @@ V3_bug_fixed_options.set_val(Aircraft.Wing.ASPECT_RATIO, val=10.13, units='unitl
 V3_bug_fixed_options.set_val(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Wing.SWEEP, val=25, units='deg')
 V3_bug_fixed_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless')
-V3_bug_fixed_options.set_val(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+V3_bug_fixed_options.set_val(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
 V3_bug_fixed_options.set_val(Aircraft.Design.WING_LOADING, val=126, units='lbf/ft**2')
 V3_bug_fixed_options.set_val(
     Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'

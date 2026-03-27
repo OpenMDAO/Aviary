@@ -71,8 +71,8 @@ def multi_mission_example():
     prob.promote_inputs(
         ['mission1', 'mission2'],
         [
-            (Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
-            (Mission.Design.RANGE, 'Aircraft1:RANGE'),
+            (Aircraft.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
+            (Aircraft.Design.RANGE, 'Aircraft1:RANGE'),
             (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP'),
         ],
     )
@@ -145,7 +145,7 @@ if __name__ == '__main__':
     objective = prob.get_val('composite_objective', units=None)
 
     printoutputs = [
-        (Mission.Design.GROSS_MASS, 'lbm'),
+        (Aircraft.Design.GROSS_MASS, 'lbm'),
         (Aircraft.Design.EMPTY_MASS, 'lbm'),
         (Aircraft.LandingGear.MAIN_GEAR_MASS, 'lbm'),
         (Aircraft.LandingGear.NOSE_GEAR_MASS, 'lbm'),

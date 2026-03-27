@@ -29,7 +29,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Mission.Design.GROSS_MASS, 'lbm'): 171595.06049335,
+            (Aircraft.Design.GROSS_MASS, 'lbm'): 171595.06049335,
             (Mission.OPERATING_MASS, 'lbm'): 95089.98897716,
             (Mission.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,

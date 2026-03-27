@@ -36,7 +36,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.problem_type = ProblemType.FALLOUT
         prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
         prob_fallout.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm'
+            'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
         prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
@@ -62,7 +62,7 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm'
+            'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
         prob_alternate.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
@@ -92,7 +92,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.problem_type = ProblemType.FALLOUT
         prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
         prob_fallout.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm'
+            'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
         prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 
@@ -117,7 +117,7 @@ class TestOffDesign(TwoDOFTestCase):
         )
 
         prob_alternate.aviary_inputs.set_val(
-            'mission:design:gross_mass', self.sized_mass, units='lbm'
+            'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
         prob_alternate.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
 

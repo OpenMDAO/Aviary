@@ -61,7 +61,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.require_range_residual = False
             # still instantiate target_range because it is used for default guesses
             # for phase comps
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -538,7 +538,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         guess_dict = deepcopy(guesses)
 
         if 'mass' not in guess_dict:
-            mass_guess = aviary_group.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
+            mass_guess = aviary_group.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
             guess_dict['mass'] = (mass_guess, 'lbm')
 

@@ -44,7 +44,7 @@ def run_trajectory(sim=True):
     prob.aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, takeoff_fuel_burned, units='lbm')
     prob.aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, takeoff_L_over_D, units='unitless')
     prob.aviary_inputs.set_val(
-        Mission.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
+        Aircraft.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
     )
 
     prob.check_and_preprocess_inputs()
@@ -58,7 +58,7 @@ def run_trajectory(sim=True):
     prob.add_design_variables()
 
     # Nudge it a bit off the correct answer to verify that the optimize takes us there.
-    prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
+    prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 135000.0, units='lbm')
 
     ##########################
     # Add Objective Function #

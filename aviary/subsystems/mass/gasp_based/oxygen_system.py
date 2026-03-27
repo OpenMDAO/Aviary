@@ -20,7 +20,7 @@ class OxygenSystemMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.OxygenSystem.MASS, units='lbm')
 
@@ -30,7 +30,7 @@ class OxygenSystemMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
         if PAX < 9:
             if smooth:
@@ -53,7 +53,7 @@ class OxygenSystemMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
         if PAX < 9:
             if smooth:
@@ -66,6 +66,6 @@ class OxygenSystemMass(om.ExplicitComponent):
         else:
             d_aux_wt_dgross_wt_initial = 0.0
 
-        J[Aircraft.OxygenSystem.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.OxygenSystem.MASS, Aircraft.Design.GROSS_MASS] = (
             d_aux_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
         )

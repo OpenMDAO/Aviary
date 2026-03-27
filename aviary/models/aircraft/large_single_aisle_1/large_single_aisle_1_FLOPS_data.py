@@ -14,7 +14,7 @@ outputs = LargeSingleAisle1FLOPS['outputs'] = AviaryValues()
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)
 inputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 152800.0, 'lbm')
-inputs.set_val(Mission.Design.GROSS_MASS, 181200.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 181200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.909839381134961)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -228,7 +228,7 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
 inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
-inputs.set_val(Mission.Design.RANGE, 3500, 'NM')
+inputs.set_val(Aircraft.Design.RANGE, 3500, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
@@ -244,7 +244,7 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)
 # # never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # lbf TODO: where should this get connected from?
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
+inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 28928.0, 'lbf')
 
 # Settings
 # ---------------------------
@@ -378,5 +378,5 @@ outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 894, 'lbm')
 
 outputs.set_val(Aircraft.Wing.MASS, 18268, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.800)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)
+outputs.set_val(Aircraft.Design.MACH, 0.800)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.568)

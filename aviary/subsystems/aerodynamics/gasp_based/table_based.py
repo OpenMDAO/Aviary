@@ -383,7 +383,7 @@ class GearDragIncrement(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
@@ -407,7 +407,7 @@ class GearDragIncrement(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
         self.declare_partials('dCD', ['flap_defl'], rows=arange, cols=arange)
-        self.declare_partials('dCD', [Mission.Design.GROSS_MASS, Aircraft.Wing.AREA])
+        self.declare_partials('dCD', [Aircraft.Design.GROSS_MASS, Aircraft.Wing.AREA])
 
     def compute(self, inputs, outputs):
         gross_mass_initial, wing_area, flap_defl = inputs.values()
@@ -426,7 +426,7 @@ class GearDragIncrement(om.ExplicitComponent):
         grfe = 0.0033 * gross_wt_initial**0.785
         grcd = grfe / wing_area
 
-        J['dCD', Mission.Design.GROSS_MASS] = (
+        J['dCD', Aircraft.Design.GROSS_MASS] = (
             (0.0033 * 0.785 * gross_wt_initial ** (0.785 - 1) / wing_area)
             * (1 - 0.454545 * flap_defl / 50)
             * GRAV_ENGLISH_LBM

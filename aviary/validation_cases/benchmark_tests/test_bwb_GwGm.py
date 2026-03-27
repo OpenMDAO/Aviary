@@ -40,7 +40,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+            prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
             139803.667415,
             tolerance=rtol,
         )

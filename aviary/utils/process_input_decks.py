@@ -85,7 +85,7 @@ def create_vehicle(vehicle_deck='', meta_data=_MetaData, verbosity=Verbosity.BRI
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, val=0, units='lbm')
     aircraft_values.set_val(Aircraft.Design.RESERVE_FUEL_MARGIN, val=0)
     # these are used in initialization_guessing()
-    aircraft_values.set_val(Mission.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
+    aircraft_values.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=25000.0, units='ft')
     aircraft_values.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=0, units='lbm')
 
     initialization_guesses = {
@@ -339,13 +339,13 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         reserves += reserve_frac * (
             num_pax
             * initialization_guesses['fuel_burn_per_passenger_mile']
-            * aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+            * aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
         )
     elif reserves < 10:
         reserves *= (
             num_pax
             * initialization_guesses['fuel_burn_per_passenger_mile']
-            * aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+            * aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
         )
 
     initialization_guesses['reserves'] = reserves
@@ -353,7 +353,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
     if Mission.GROSS_MASS in aircraft_values:
         mission_mass = aircraft_values.get_val(Mission.GROSS_MASS, units='lbm')
     else:
-        mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
+        mission_mass = aircraft_values.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
     cruise_mass_final = initialization_guesses['cruise_mass_final']
 
@@ -364,7 +364,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 num_pax
                 * (
                     initialization_guesses['fuel_burn_per_passenger_mile']
-                    * aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+                    * aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
                 )
                 + reserves
             )
@@ -379,7 +379,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 + fuel_mass
             )
         elif problem_type == ProblemType.FALLOUT or problem_type == ProblemType.SIZING:
-            mission_mass = aircraft_values.get_val(Mission.Design.GROSS_MASS, units='lbm')
+            mission_mass = aircraft_values.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
     initialization_guesses['actual_takeoff_mass'] = mission_mass
 
     if cruise_mass_final == 0:  # no guess given
@@ -409,14 +409,14 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
             mission_mass * initialization_guesses['rotation_mass']
         )
 
-    if Mission.Design.MACH in aircraft_values:
-        cruise_mach = aircraft_values.get_val(Mission.Design.MACH)
+    if Aircraft.Design.MACH in aircraft_values:
+        cruise_mach = aircraft_values.get_val(Aircraft.Design.MACH)
     else:
         cruise_mach = aircraft_values.get_val(Aircraft.Design.CRUISE_MACH)
 
     if initialization_guesses['flight_duration'] <= 0:  # estimation based on mach
         initialization_guesses['flight_duration'] = (
-            aircraft_values.get_val(Mission.Design.RANGE, units='NM')
+            aircraft_values.get_val(Aircraft.Design.RANGE, units='NM')
             / (667 * cruise_mach)
             * (60 * 60)
         )
@@ -447,7 +447,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     if initialization_guesses['time_to_climb'] <= 0:  # no guess given
         initialization_guesses['time_to_climb'] = aircraft_values.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft'
+            Aircraft.Design.CRUISE_ALTITUDE, units='ft'
         ) / (avg_speed_guess * np.sin(gamma_guess))
     elif initialization_guesses['time_to_climb'] <= 2:  # duration entered in hours
         initialization_guesses['time_to_climb'] = initialization_guesses['time_to_climb'] * (
@@ -455,7 +455,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
         )
     elif initialization_guesses['time_to_climb'] <= 200:  # average climb rate in ft/s
         initialization_guesses['time_to_climb'] = (
-            aircraft_values.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+            aircraft_values.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
             / initialization_guesses['time_to_climb']
         )
 

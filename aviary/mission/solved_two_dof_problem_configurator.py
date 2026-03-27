@@ -8,7 +8,7 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.utils import process_guess_var
 
 
@@ -28,9 +28,18 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
-        aviary_group.target_range = aviary_group.aviary_inputs.get_val(
-            Mission.Design.RANGE, units='NM'
-        )
+        # aviary_group.target_range = aviary_group.aviary_inputs.get_val(
+        #     Aircraft.Design.RANGE, units='NM'
+        # )
+
+        if 'target_range' in aviary_group.post_mission_info:
+            aviary_group.target_range = wrapped_convert_units(
+                aviary_group.post_mission_info['target_range'], 'NM'
+            )
+        else:
+            aviary_group.target_range = aviary_group.aviary_inputs.get_val(
+                Aircraft.Design.RANGE, units='NM'
+            )
 
     def get_default_phase_info(self, aviary_group):
         """
