@@ -47,6 +47,7 @@ parts:
             - file: user_guide_unreviewed/subsystems/creating_a_turboprop_engine
         - file: user_guide_unreviewed/subsystems/mass
           sections:
+            - file: user_guide_unreviewed/subsystems/fuel
             - file: user_guide_unreviewed/subsystems/blended_wing_body_GASP
             - file: user_guide_unreviewed/subsystems/blended_wing_body_FLOPS
         - file: user_guide_unreviewed/subsystems/using_external_subsystems
