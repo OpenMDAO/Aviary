@@ -534,7 +534,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.add_constraint(
             'ascent_initial_time_slack_constraint.con_val',
             equals=0.0,
-            ref=30.0
+            ref=30.0,
         )
 
         # imitate input_initial for taxi -> groundroll
