@@ -1311,6 +1311,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.CRUISE_ALTITUDE,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
+    units='ft',
+    option=True,
+    default_value=25000.0,
+    desc='design mission cruise altitude',
+)
+
+add_meta_data(
     Aircraft.Design.CRUISE_MACH,
     meta_data=_MetaData,
     historical_name={
@@ -1332,16 +1342,6 @@ add_meta_data(
     units='unitless',
     desc='aircraft cruise Mach number',
     default_value=0.0,  # TODO: required
-)
-
-add_meta_data(
-    Aircraft.Design.CRUISE_ALTITUDE,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
-    units='ft',
-    option=True,
-    default_value=25000.0,
-    desc='design mission cruise altitude',
 )
 
 add_meta_data(
