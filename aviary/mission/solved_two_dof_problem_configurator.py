@@ -28,9 +28,6 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
-        # aviary_group.target_range = aviary_group.aviary_inputs.get_val(
-        #     Aircraft.Design.RANGE, units='NM'
-        # )
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_group.target_range = wrapped_convert_units(
