@@ -197,7 +197,7 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         # pass back to FuelSysAndFullFuselageMass
         outputs['wingfuel_mass_min'] = wingfuel_wt_min / GRAV_ENGLISH_LBM
-        # pass back to FuelAndOEMOutputs
+        # pass back to FuelComponents
         outputs[Aircraft.Fuel.TOTAL_CAPACITY] = (max_fuel_avail + unusable_fuel) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
@@ -496,15 +496,11 @@ class FuelComponents(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Propulsion.MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Controls.MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.USEFUL_LOAD, units='lbm')
         self.add_input('fuel_mass_required', units='lbm', desc='WFAREQ: no margin')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.VOLUME_MARGIN, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
+        add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
 
         # GASP total capacity didn't include the unusable mass, but Aviary total capacity does.
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
@@ -545,22 +541,14 @@ class FuelComponents(om.ExplicitComponent):
             'OEM_wingfuel_mass',
             [
                 Mission.Design.GROSS_MASS,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
             ],
         )
         self.declare_partials(
             'OEM_fuel_vol',
             [
                 Mission.Design.GROSS_MASS,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
                 Aircraft.Fuel.DENSITY,
             ],
         )
@@ -568,27 +556,12 @@ class FuelComponents(om.ExplicitComponent):
             Aircraft.Fuel.WING_VOLUME_DESIGN,
             ['fuel_mass_required', Aircraft.Fuel.DENSITY, Aircraft.Fuel.VOLUME_MARGIN],
         )
-        self.declare_partials(
-            Mission.Summary.OPERATING_MASS,
-            [
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
-            ],
-            val=1,
-        )
         self.declare_partials('payload_mass_max_fuel', [Mission.Design.GROSS_MASS], val=1)
         self.declare_partials(
             'payload_mass_max_fuel',
             [
                 Aircraft.Fuel.TOTAL_CAPACITY,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
             ],
             val=-1.0,
         )
@@ -600,11 +573,7 @@ class FuelComponents(om.ExplicitComponent):
             'max_wingfuel_mass',
             [
                 Mission.Design.GROSS_MASS,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
                 Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
                 Aircraft.Fuel.DENSITY,
             ],
@@ -613,11 +582,7 @@ class FuelComponents(om.ExplicitComponent):
             Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX,
             [
                 Mission.Design.GROSS_MASS,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
                 Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX,
                 Aircraft.Fuel.DENSITY,
             ],
@@ -629,27 +594,19 @@ class FuelComponents(om.ExplicitComponent):
             * GRAV_ENGLISH_LBM
         )
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        propulsion_wt = inputs[Aircraft.Propulsion.MASS] * GRAV_ENGLISH_LBM
-        control_wt = inputs[Aircraft.Controls.MASS] * GRAV_ENGLISH_LBM
-        struct_wt = inputs[Aircraft.Design.STRUCTURE_MASS] * GRAV_ENGLISH_LBM
-        fixed_equip_wt = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] * GRAV_ENGLISH_LBM
-        useful_wt = inputs[Mission.Summary.USEFUL_LOAD] * GRAV_ENGLISH_LBM
         req_fuel_wt = inputs['fuel_mass_required'] * GRAV_ENGLISH_LBM
         geometric_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
         fuel_margin = inputs[Aircraft.Fuel.VOLUME_MARGIN]
+        OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
 
         total_fuel = inputs[Aircraft.Fuel.TOTAL_CAPACITY]
         unusable_fuel = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
         max_fuel_avail = (total_fuel - unusable_fuel) * GRAV_ENGLISH_LBM
 
-        OEM_wingfuel_wt = (
-            gross_wt_initial - propulsion_wt - control_wt - struct_wt - fixed_equip_wt - useful_wt
-        )
+        OEM_wingfuel_wt = gross_wt_initial - OEW
 
         OEM_fuel_vol = OEM_wingfuel_wt / rho_fuel
         design_fuel_vol = (1.0 + fuel_margin / 100.0) * req_fuel_wt / rho_fuel
-
-        OEW = propulsion_wt + control_wt + struct_wt + fixed_equip_wt + useful_wt
 
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
         # always smoothing
@@ -662,7 +619,6 @@ class FuelComponents(om.ExplicitComponent):
         outputs['OEM_wingfuel_mass'] = OEM_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['OEM_fuel_vol'] = OEM_fuel_vol
         outputs[Aircraft.Fuel.WING_VOLUME_DESIGN] = design_fuel_vol
-        outputs[Mission.Summary.OPERATING_MASS] = OEW / GRAV_ENGLISH_LBM
         outputs['payload_mass_max_fuel'] = payload_wt_max_fuel / GRAV_ENGLISH_LBM
         outputs['volume_wingfuel_mass'] = volume_wingfuel_wt / GRAV_ENGLISH_LBM
         outputs['max_wingfuel_mass'] = max_wingfuel_wt / GRAV_ENGLISH_LBM
@@ -674,40 +630,22 @@ class FuelComponents(om.ExplicitComponent):
             * GRAV_ENGLISH_LBM
         )
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        propulsion_wt = inputs[Aircraft.Propulsion.MASS] * GRAV_ENGLISH_LBM
-        control_wt = inputs[Aircraft.Controls.MASS] * GRAV_ENGLISH_LBM
-        struct_wt = inputs[Aircraft.Design.STRUCTURE_MASS] * GRAV_ENGLISH_LBM
-        fixed_equip_wt = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] * GRAV_ENGLISH_LBM
-        useful_wt = inputs[Mission.Summary.USEFUL_LOAD] * GRAV_ENGLISH_LBM
+        OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
         req_fuel_wt = inputs['fuel_mass_required'] * GRAV_ENGLISH_LBM
         geometric_fuel_vol = inputs[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX]
         fuel_margin = inputs[Aircraft.Fuel.VOLUME_MARGIN]
 
-        OEM_wingfuel_wt = (
-            gross_wt_initial - propulsion_wt - control_wt - struct_wt - fixed_equip_wt - useful_wt
-        )
+        OEM_wingfuel_wt = gross_wt_initial - OEW
         volume_wingfuel_wt = geometric_fuel_vol * rho_fuel
         max_wingfuel_wt = OEM_wingfuel_wt * sigmoidX(
             volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0
         ) + volume_wingfuel_wt * sigmoidX(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
 
         J['OEM_wingfuel_mass', Mission.Design.GROSS_MASS] = dOEMwingfuelWt_dGTOW = 1
-        J['OEM_wingfuel_mass', Aircraft.Propulsion.MASS] = dOEMwingfuelWt_dPropWt = -1
-        J['OEM_wingfuel_mass', Aircraft.Controls.MASS] = dOEMwingfuelWt_dControlWt = -1
-        J['OEM_wingfuel_mass', Aircraft.Design.STRUCTURE_MASS] = dOEMwingfuelWt_dStructWt = -1
-        J['OEM_wingfuel_mass', Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = (
-            dOEMwingfuelWt_dFEqWt
-        ) = -1
-        J['OEM_wingfuel_mass', Mission.Summary.USEFUL_LOAD] = dOEMwingfuelWt_dUsefulWt = -1
+        J['OEM_wingfuel_mass', Mission.Summary.OPERATING_MASS] = dOEMwingfuelWt_dOEW = -1
 
         J['OEM_fuel_vol', Mission.Design.GROSS_MASS] = 1 / rho_fuel * GRAV_ENGLISH_LBM
-        J['OEM_fuel_vol', Aircraft.Propulsion.MASS] = -1 / rho_fuel * GRAV_ENGLISH_LBM
-        J['OEM_fuel_vol', Aircraft.Controls.MASS] = -1 / rho_fuel * GRAV_ENGLISH_LBM
-        J['OEM_fuel_vol', Aircraft.Design.STRUCTURE_MASS] = -1 / rho_fuel * GRAV_ENGLISH_LBM
-        J['OEM_fuel_vol', Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = (
-            -1 / rho_fuel * GRAV_ENGLISH_LBM
-        )
-        J['OEM_fuel_vol', Mission.Summary.USEFUL_LOAD] = -1 / rho_fuel * GRAV_ENGLISH_LBM
+        J['OEM_fuel_vol', Mission.Summary.OPERATING_MASS] = -1 / rho_fuel * GRAV_ENGLISH_LBM
         conversion_factor = convert_units(1.0, 'lbm/galUS', 'lbm/ft**3')
         J['OEM_fuel_vol', Aircraft.Fuel.DENSITY] = (
             -OEM_wingfuel_wt / rho_fuel**2 * conversion_factor * GRAV_ENGLISH_LBM
@@ -741,61 +679,14 @@ class FuelComponents(om.ExplicitComponent):
             * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
             * dOEMwingfuelWt_dGTOW
         )
-        dMaxWFWt_dPropWt = (
+        dMaxWFWt_dOEW = (
             OEM_wingfuel_wt
             * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dPropWt
-            + dOEMwingfuelWt_dPropWt * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
+            * dOEMwingfuelWt_dOEW
+            + dOEMwingfuelWt_dOEW * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
             + volume_wingfuel_wt
             * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dPropWt
-        )
-        dMaxWFWt_dControlWt = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dControlWt
-            + dOEMwingfuelWt_dControlWt
-            * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dControlWt
-        )
-        dMaxWFWt_dControlWt = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dControlWt
-            + dOEMwingfuelWt_dControlWt
-            * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dControlWt
-        )
-        dMaxWFWt_dStructWt = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dStructWt
-            + dOEMwingfuelWt_dStructWt * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dStructWt
-        )
-        dMaxWFWt_dFEqWt = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dFEqWt
-            + dOEMwingfuelWt_dFEqWt * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dFEqWt
-        )
-        dMaxWFWt_dUsefulWt = (
-            OEM_wingfuel_wt
-            * dSigmoidXdx(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dUsefulWt
-            + dOEMwingfuelWt_dUsefulWt * sigmoidX(volume_wingfuel_wt - OEM_wingfuel_wt, 0, 1 / 95.0)
-            + volume_wingfuel_wt
-            * dSigmoidXdx(OEM_wingfuel_wt - volume_wingfuel_wt, 0, 1 / 95.0)
-            * dOEMwingfuelWt_dUsefulWt
+            * dOEMwingfuelWt_dOEW
         )
         dMaxWFWt_dGeomFuelVol = (
             OEM_wingfuel_wt
@@ -817,11 +708,7 @@ class FuelComponents(om.ExplicitComponent):
         )
 
         J['max_wingfuel_mass', Mission.Design.GROSS_MASS] = dMaxWFWt_dGTOW
-        J['max_wingfuel_mass', Aircraft.Propulsion.MASS] = dMaxWFWt_dPropWt
-        J['max_wingfuel_mass', Aircraft.Controls.MASS] = dMaxWFWt_dControlWt
-        J['max_wingfuel_mass', Aircraft.Design.STRUCTURE_MASS] = dMaxWFWt_dStructWt
-        J['max_wingfuel_mass', Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = dMaxWFWt_dFEqWt
-        J['max_wingfuel_mass', Mission.Summary.USEFUL_LOAD] = dMaxWFWt_dUsefulWt
+        J['max_wingfuel_mass', Mission.Summary.OPERATING_MASS] = dMaxWFWt_dOEW
         J['max_wingfuel_mass', Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
             dMaxWFWt_dGeomFuelVol / GRAV_ENGLISH_LBM
         )
@@ -830,20 +717,8 @@ class FuelComponents(om.ExplicitComponent):
         J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.Design.GROSS_MASS] = dMaxWFWt_dGTOW / (
             rho_fuel
         )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Propulsion.MASS] = dMaxWFWt_dPropWt / (
-            rho_fuel
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Controls.MASS] = (
-            dMaxWFWt_dControlWt / (rho_fuel)
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Design.STRUCTURE_MASS] = (
-            dMaxWFWt_dStructWt / (rho_fuel)
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = (
-            dMaxWFWt_dFEqWt / (rho_fuel)
-        )
-        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.Summary.USEFUL_LOAD] = (
-            dMaxWFWt_dUsefulWt / (rho_fuel)
+        J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Mission.Summary.OPERATING_MASS] = (
+            dMaxWFWt_dOEW / (rho_fuel)
         )
         J[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX] = (
             dMaxWFWt_dGeomFuelVol / (rho_fuel)
@@ -1372,18 +1247,9 @@ class FuelMass(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
         add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        self.add_input(
-            'eng_comb_mass',
-            val=14371.0,
-            units='lbm',
-            desc='WPSTAR: mass of dry engine and engine installation. Includes mass of electrical augmentation system.',
-        )
-        add_aviary_input(self, Aircraft.Controls.MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+        add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
         self.add_input('payload_mass_des', val=36000, units='lbm', desc='WPLDES: design payload')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
@@ -1399,7 +1265,6 @@ class FuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.VOLUME_MARGIN, units='unitless')
 
         self.add_output('fuel_mass', units='lbm', desc='WFADES')
-        add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm', desc='WP')
         self.add_output('fuel_mass_required', units='lbm', desc='WFAREQ')
         self.add_output(
             'fuel_mass_min',
@@ -1413,31 +1278,20 @@ class FuelMass(om.ExplicitComponent):
             'fuel_mass',
             [
                 Mission.Design.GROSS_MASS,
-                'eng_comb_mass',
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
                 'payload_mass_des',
                 Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER,
                 Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT,
                 Aircraft.Fuel.DENSITY,
                 Aircraft.Fuel.VOLUME_MARGIN,
+                Aircraft.Fuel.FUEL_SYSTEM_MASS,
             ],
-        )
-        self.declare_partials(
-            Aircraft.Propulsion.MASS, ['eng_comb_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS], val=1
         )
         self.declare_partials('fuel_mass_required', [Mission.Design.GROSS_MASS], val=1)
         self.declare_partials(
             'fuel_mass_required',
             [
-                'eng_comb_mass',
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
-                Aircraft.Fuel.FUEL_SYSTEM_MASS,
+                Mission.Summary.OPERATING_MASS,
                 'payload_mass_des',
             ],
             val=-1,
@@ -1446,25 +1300,16 @@ class FuelMass(om.ExplicitComponent):
         self.declare_partials(
             'fuel_mass_min',
             [
-                'eng_comb_mass',
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.Summary.USEFUL_LOAD,
+                Mission.Summary.OPERATING_MASS,
                 'payload_mass_max',
-                Aircraft.Fuel.FUEL_SYSTEM_MASS,
             ],
             val=-1,
         )
 
     def compute(self, inputs, outputs):
-        struct_wt = inputs[Aircraft.Design.STRUCTURE_MASS] * GRAV_ENGLISH_LBM
         fuel_sys_wt = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        eng_comb_wt = inputs['eng_comb_mass'] * GRAV_ENGLISH_LBM
-        control_wt = inputs[Aircraft.Controls.MASS] * GRAV_ENGLISH_LBM
-        fixed_equip_wt = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] * GRAV_ENGLISH_LBM
-        useful_wt = inputs[Mission.Summary.USEFUL_LOAD] * GRAV_ENGLISH_LBM
+        OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
         payload_wt_des = inputs['payload_mass_des'] * GRAV_ENGLISH_LBM
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
@@ -1474,47 +1319,17 @@ class FuelMass(om.ExplicitComponent):
 
         # GASP code is updated later than the following formula.
         outputs['fuel_mass'] = (
-            (
-                gross_wt_initial
-                - eng_comb_wt
-                - struct_wt
-                - control_wt
-                - fixed_equip_wt
-                - useful_wt
-                - payload_wt_des
-            )
+            (gross_wt_initial - OEW + fuel_sys_wt - payload_wt_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel)
             / GRAV_ENGLISH_LBM
         )
-        outputs[Aircraft.Propulsion.MASS] = (eng_comb_wt + fuel_sys_wt) / GRAV_ENGLISH_LBM
-        outputs['fuel_mass_required'] = (
-            gross_wt_initial
-            - eng_comb_wt
-            - struct_wt
-            - control_wt
-            - fixed_equip_wt
-            - useful_wt
-            - payload_wt_des
-            - fuel_sys_wt
-        ) / GRAV_ENGLISH_LBM
-        outputs['fuel_mass_min'] = (
-            gross_wt_initial
-            - eng_comb_wt
-            - struct_wt
-            - control_wt
-            - fixed_equip_wt
-            - useful_wt
-            - payload_wt_max
-            - fuel_sys_wt
-        ) / GRAV_ENGLISH_LBM
+        outputs['fuel_mass_required'] = (gross_wt_initial - OEW - payload_wt_des) / GRAV_ENGLISH_LBM
+        outputs['fuel_mass_min'] = (gross_wt_initial - OEW - payload_wt_max) / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        struct_wt = inputs[Aircraft.Design.STRUCTURE_MASS] * GRAV_ENGLISH_LBM
+        fuel_sys_wt = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS] * GRAV_ENGLISH_LBM
         gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
-        eng_comb_wt = inputs['eng_comb_mass'] * GRAV_ENGLISH_LBM
-        control_wt = inputs[Aircraft.Controls.MASS] * GRAV_ENGLISH_LBM
-        fixed_equip_wt = inputs[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] * GRAV_ENGLISH_LBM
-        useful_wt = inputs[Mission.Summary.USEFUL_LOAD] * GRAV_ENGLISH_LBM
+        OEW = inputs[Mission.Summary.OPERATING_MASS] * GRAV_ENGLISH_LBM
         payload_wt_des = inputs['payload_mass_des'] * GRAV_ENGLISH_LBM
         CK21 = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER]
         c_mass_trend_fuel_sys = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT]
@@ -1524,34 +1339,17 @@ class FuelMass(om.ExplicitComponent):
         J['fuel_mass', Mission.Design.GROSS_MASS] = 1 / (
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
-        J['fuel_mass', 'eng_comb_mass'] = -1 / (
-            1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
-        )
-        J['fuel_mass', Aircraft.Design.STRUCTURE_MASS] = -1 / (
-            1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
-        )
-        J['fuel_mass', Aircraft.Controls.MASS] = -1 / (
-            1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
-        )
-        J['fuel_mass', Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS] = -1 / (
-            1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
-        )
-        J['fuel_mass', Mission.Summary.USEFUL_LOAD] = -1 / (
+        J['fuel_mass', Mission.Summary.OPERATING_MASS] = -1 / (
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
         J['fuel_mass', 'payload_mass_des'] = -1 / (
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
+        J['fuel_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS] = 1 / (
+            1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
+        )
         J['fuel_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER] = (
-            -(
-                gross_wt_initial
-                - eng_comb_wt
-                - struct_wt
-                - control_wt
-                - fixed_equip_wt
-                - useful_wt
-                - payload_wt_des
-            )
+            -(gross_wt_initial - OEW + fuel_sys_wt - payload_wt_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * c_mass_trend_fuel_sys
             * (1 + fuel_margin / 100)
@@ -1560,15 +1358,7 @@ class FuelMass(om.ExplicitComponent):
             / GRAV_ENGLISH_LBM
         )
         J['fuel_mass', Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT] = (
-            -(
-                gross_wt_initial
-                - eng_comb_wt
-                - struct_wt
-                - control_wt
-                - fixed_equip_wt
-                - useful_wt
-                - payload_wt_des
-            )
+            -(gross_wt_initial - OEW + fuel_sys_wt - payload_wt_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * CK21
             * (1 + fuel_margin / 100)
@@ -1577,28 +1367,12 @@ class FuelMass(om.ExplicitComponent):
             / GRAV_ENGLISH_LBM
         )
         J['fuel_mass', Aircraft.Fuel.DENSITY] = (
-            -(
-                gross_wt_initial
-                - eng_comb_wt
-                - struct_wt
-                - control_wt
-                - fixed_equip_wt
-                - useful_wt
-                - payload_wt_des
-            )
+            -(gross_wt_initial - OEW + fuel_sys_wt - payload_wt_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * (-CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel**2)
         )
         J['fuel_mass', Aircraft.Fuel.VOLUME_MARGIN] = (
-            -(
-                gross_wt_initial
-                - eng_comb_wt
-                - struct_wt
-                - control_wt
-                - fixed_equip_wt
-                - useful_wt
-                - payload_wt_des
-            )
+            -(gross_wt_initial - OEW + fuel_sys_wt - payload_wt_des)
             / (1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel) ** 2
             * CK21
             * c_mass_trend_fuel_sys

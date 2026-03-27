@@ -12,8 +12,8 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     ElectricAugmentationMass,
     EngineMass,
     FixedMassGroup,
-    GearMass,
     HighLiftMass,
+    LandingGearMassGroup,
     MassParameters,
     PayloadGroup,
     TailMass,
@@ -446,7 +446,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
 
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             'eng_comb_mass': 14370.8,
             'wing_mounted_mass': 24446.343040697346,
@@ -521,7 +521,7 @@ class EngineTestCase2(unittest.TestCase):
 
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             'eng_comb_mass': 14370.8,
             'prop_mass_all': 0,
@@ -595,7 +595,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
         tol = 5e-4
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             'eng_comb_mass': 26142.7716,
             'wing_mounted_mass': 41417.49593562,
@@ -824,7 +824,7 @@ class ControlMassTestCase(unittest.TestCase):
 class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
+        self.prob.model.add_subsystem('gear_mass', LandingGearMassGroup(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
@@ -873,7 +873,7 @@ class GearTestCase2(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
+        self.prob.model.add_subsystem('gear_mass', LandingGearMassGroup(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
@@ -919,7 +919,7 @@ class GearTestCaseMultiengine(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'gear_mass',
-            GearMass(),
+            LandingGearMassGroup(),
             promotes=['*'],
         )
 
@@ -1162,7 +1162,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Controls.MASS: 3945,
             Aircraft.LandingGear.TOTAL_MASS: 7511,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785,
             Aircraft.Engine.ADDITIONAL_MASS: 1765 / 2,
             'eng_comb_mass': 14370.8,
             'wing_mounted_mass': 24446.343040697346,
@@ -1443,7 +1443,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Controls.MASS: 3895,
             Aircraft.LandingGear.TOTAL_MASS: 7016,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785,
             Aircraft.Engine.ADDITIONAL_MASS: 1765 / 2,
             'eng_comb_mass': 14599.28196478,
             'wing_mounted_mass': 24027.6,
@@ -1749,7 +1749,7 @@ class BWBEngineTestCase(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 7005.15475443,
             Aircraft.Nacelle.MASS: 487.39296691,
             'pylon_mass': 558.757916785,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
             'eng_comb_mass': 7311.49017184,
             'wing_mounted_mass': 0,
@@ -1936,7 +1936,7 @@ class BWBGearTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('gear_mass', GearMass(), promotes=['*'])
+        self.prob.model.add_subsystem('gear_mass', LandingGearMassGroup(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.LandingGear.MASS_COEFFICIENT, 0.0520, units='unitless'
@@ -2118,7 +2118,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Controls.MASS: 2114.98158947,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 7005.15475443,
             Aircraft.Nacelle.MASS: 549.8807447,
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2230.13208284,
+            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2230.13208284,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
             'pylon_mass': 565.18529673,
             'eng_comb_mass': 7311.49017184,

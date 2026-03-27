@@ -6,7 +6,7 @@ from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import (
     BodyTankCalculations,
     BWBFuselageMass,
-    FuelAndOEMOutputs,
+    FuelComponents,
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
@@ -144,7 +144,7 @@ class MassPremission(om.Group):
 
         self.add_subsystem(
             'fuel_and_oem',
-            FuelAndOEMOutputs(),
+            FuelComponents(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
