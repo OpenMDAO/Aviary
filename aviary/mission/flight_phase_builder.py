@@ -15,7 +15,7 @@ from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation, Transcription
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 # Height Energy and Solved2DOF use this builder
 
@@ -220,6 +220,23 @@ class FlightPhaseBase(PhaseBuilder):
         ##############
         # Add States #
         ##############
+
+        # Replace None upper bounds with aircraft-derived values so that
+        # Dymos doesn't set them to ~1e21, which creates scaled upper bounds
+        # of ~1e17 (mass) and ~1e15 (distance) and wrecks SNOPT conditioning.
+        # See https://github.com/OpenMDAO/Aviary/issues/607
+        if aviary_options is not None:
+            gross_mass = aviary_options.get_val(Mission.Design.GROSS_MASS, units='kg')
+            design_range = aviary_options.get_val(Mission.Design.RANGE, units='m')
+
+            mass_bounds, mass_units = user_options['mass_bounds']
+            if mass_bounds[1] is None:
+                user_options['mass_bounds'] = ((mass_bounds[0], 2.0 * gross_mass), mass_units)
+
+            dist_bounds, dist_units = user_options['distance_bounds']
+            if dist_bounds[1] is None:
+                user_options['distance_bounds'] = ((dist_bounds[0], 2.5 * design_range), dist_units)
+
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
             rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
