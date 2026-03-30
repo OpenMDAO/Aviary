@@ -1,3 +1,4 @@
+import warnings
 from enum import Enum
 
 import dymos as dm
@@ -11,7 +12,7 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -202,8 +203,8 @@ def add_aviary_output(
 
 def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=_MetaData):
     """
-    Adds an option to an Aviary component. Default values from the metadata are used
-    unless a new value is specified.
+    Adds an option to an Aviary component. Default values from the metadata are used unless a new
+    value is specified.
 
     Parameters
     ----------
@@ -212,17 +213,23 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
     name: str
         Name of variable.
     val: float or ndarray
-        (Optional) Default value for option. If not specified, the value from metadata
-        is used.
+        (Optional) Default value for option. If not specified, the value from metadata is used.
     desc: str
         (Optional) description text for the variable.
     units: str
         (Optional) OpenMDAO units string. This can be specified for variables with units.
     meta_data: dict
-        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
-        be used.
+        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will be used.
     """
     meta = meta_data[name]
+
+    if not meta['option']:
+        warnings.warn(
+            f'Variable {name} was declared an option to an OpenMDAO component, but in variable '
+            'metadata it is not flagged as an option (option = False). This option might never '
+            'get be set to its intended value.'
+        )
+
     # units of None are overwritten with defaults. Overwriting units with None is
     # unnecessary as it will cause errors down the line if the default is not already
     # None
