@@ -895,10 +895,9 @@ class AviaryGroup(om.Group):
                              ('mission_fuel_burned', Mission.Summary.FUEL_BURNED),
                              ('reserve_fuel', Mission.Design.RESERVE_FUEL)],
             promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)])
-        # This should always try to make Mission.Summary.TOTAL_FUEL_MASS as small as possible to minimize mass
-        # however, by setting it to lower rather than equals, we allow for the case that we want to carry more mass than 
-        # required purely by mission fuel. This is useful if we ever want to specify or override the 
-        # Mission.Summary.TOTAL_FUEL_MASS directly instead of calculating it 
+        # Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission
+        # requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer
+        # may not try as hard as needed to minimize this.
         self.add_constraint(
                     Mission.Constraints.MASS_RESIDUAL,
                     equals=0.0,
