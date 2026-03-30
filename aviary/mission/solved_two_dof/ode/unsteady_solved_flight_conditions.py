@@ -387,7 +387,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             if not ground_roll:
                 partials['dTAS_dt_approx', Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
                     -TAS * sgam * (rho_sl / rho) ** 1.5 * inputs['dEAS_dr']
-                    -0.5 * EAS * TAS * cgam * rho_sl**1.5 / rho_sl**2.5 * inputs['drho_dh']
+                    - 0.5 * EAS * TAS * cgam * rho_sl**1.5 / rho_sl**2.5 * inputs['drho_dh']
                 )
 
         else:
@@ -415,6 +415,5 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
 
             if not ground_roll:
                 partials['dTAS_dt_approx', Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
-                    -TAS * sgam * sos * inputs['dmach_dr'] +
-                    TAS**2 * cgam / sos * inputs['dsos_dh']
+                    -TAS * sgam * sos * inputs['dmach_dr'] + TAS**2 * cgam / sos * inputs['dsos_dh']
                 )
