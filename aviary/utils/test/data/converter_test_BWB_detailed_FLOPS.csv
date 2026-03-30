@@ -66,14 +66,14 @@ aircraft:vertical_tail:thickness_to_chord,0.11,unitless
 aircraft:vertical_tail:wetted_area_scaler,1,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0,unitless
 aircraft:wing:airfoil_technology,2,unitless
-aircraft:wing:chord_per_semispan_dist,-1.0,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
+aircraft:wing:chord_per_semispan_distribution,-1.0,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
 aircraft:wing:composite_fraction,1,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3,deg
 aircraft:wing:glove_and_bat,121.05,ft**2
-aircraft:wing:input_station_dist,0.0,0.35,0.4,0.45,0.5,0.55,0.6,0.6499,0.7,0.75,0.8,0.85,0.8999,0.95,1,unitless
-aircraft:wing:load_path_sweep_dist,0.0,0,0,0,0,0,0,0,42.9,42.9,42.9,42.9,42.9,42.9,deg
+aircraft:wing:input_station_distribution,0.0,0.35,0.4,0.45,0.5,0.55,0.6,0.6499,0.7,0.75,0.8,0.85,0.8999,0.95,1,unitless
+aircraft:wing:load_path_sweep_distribution,0.0,0,0,0,0,0,0,0,42.9,42.9,42.9,42.9,42.9,42.9,deg
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
 aircraft:wing:outboard_semispan,86.75,ft
@@ -83,7 +83,7 @@ aircraft:wing:strut_bracing_factor,0,unitless
 aircraft:wing:sweep,35.7,deg
 aircraft:wing:taper_ratio,0.311,unitless
 aircraft:wing:thickness_to_chord,0.11,unitless
-aircraft:wing:thickness_to_chord_dist,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
+aircraft:wing:thickness_to_chord_distribution,-1.0,0.15,0.1132,0.0928,0.0822,0.0764,0.0742,0.0746,0.0758,0.0758,0.0756,0.0756,0.0758,0.076,0.076,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
 mission:constraints:max_mach,0.85,unitless
@@ -94,7 +94,7 @@ mission:landing:initial_velocity,140,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:summary:cruise_mach,0.85,unitless
 settings:aerodynamics_method,FLOPS,unitless
-settings:equations_of_motion,height_energy,unitless
+settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 
 # Unconverted Values

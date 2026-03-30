@@ -20,7 +20,7 @@ class AviaryNPSSTestCase(unittest.TestCase):
     @unittest.skipUnless(os.environ.get('NPSS_TOP', False), 'environment does not contain NPSS')
     def bench_test_aviary_NPSS(self):
         """Build NPSS model in Aviary."""
-        phase_info = deepcopy(av.default_height_energy_phase_info)
+        phase_info = deepcopy(av.default_energy_state_phase_info)
 
         prob = av.AviaryProblem()
 

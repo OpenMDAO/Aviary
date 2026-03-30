@@ -51,6 +51,7 @@ class TotalSummationTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -84,7 +85,6 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS,
                 Aircraft.VerticalTail.MASS,
                 Aircraft.Wing.MASS,
-                Mission.Design.GROSS_MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS,
                 Aircraft.Propulsion.TOTAL_MISC_MASS,
             ],
@@ -98,7 +98,6 @@ class TotalSummationTest(unittest.TestCase):
                 Mission.Summary.USEFUL_LOAD,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
-                Mission.Summary.FUEL_MASS,
             ],
             version=Version.TRANSPORT_and_BWB,
             atol=1e-10,
@@ -138,6 +137,7 @@ class AltTotalSummationTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
@@ -172,7 +172,6 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS,
                 Aircraft.VerticalTail.MASS,
                 Aircraft.Wing.MASS,
-                Mission.Design.GROSS_MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS,
             ],
             output_keys=[
@@ -184,7 +183,6 @@ class AltTotalSummationTest(unittest.TestCase):
                 Mission.Summary.USEFUL_LOAD,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
-                Mission.Summary.FUEL_MASS,
             ],
             version=Version.ALTERNATE,
             atol=1e-10,

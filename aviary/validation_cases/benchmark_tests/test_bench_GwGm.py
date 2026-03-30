@@ -28,37 +28,23 @@ class ProblemPhaseTestCase(unittest.TestCase):
         rtol = 1e-3
 
         # There are no truth values for these.
-        assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-            171595.06049335,
-            tolerance=rtol,
-        )
+        expected_values = {
+            (Mission.Design.GROSS_MASS, 'lbm'): 171595.06049335,
+            (Mission.Summary.OPERATING_MASS, 'lbm'): 95089.98897716,
+            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
+            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
+            (Mission.Summary.RANGE, 'NM'): 3675.0,
+            (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136087.98897716,
+        }
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
-            95089.98897716,
-            tolerance=rtol,
-        )
+        for (var_name, units), expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name, units=units), expected_val, tolerance=rtol)
 
-        assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
-            40505.07151619,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.GROUND_DISTANCE, units='ft'),
-            2657.88663983,
-            tolerance=rtol,
-        )
-
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3675.0, tolerance=rtol)
-
-        assert_near_equal(
-            prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
-            136087.98897716,
-            tolerance=rtol,
-        )
+        # Due to a bug, this constraint was unconnected. Test it explicitly.
+        t1 = prob.get_val('ascent_initial_time_slack_constraint.initial_time', units='s')
+        t2 = prob.get_val(Mission.Takeoff.ASCENT_T_INITIAL, units='s')
+        assert_near_equal(t1, t2, tolerance=rtol)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_GwGm_IPOPT(self):
@@ -69,6 +55,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='IPOPT',
             verbosity=0,
         )
+
+        self.assertTrue(prob.result.success)
+
+        rtol = 1e-3
+
+        # There are no truth values for these.
         self.check_values(prob)
 
     @require_pyoptsparse(optimizer='SNOPT')
@@ -80,6 +72,12 @@ class ProblemPhaseTestCase(unittest.TestCase):
             optimizer='SNOPT',
             verbosity=0,
         )
+
+        self.assertTrue(prob.result.success)
+
+        rtol = 1e-3
+
+        # There are no truth values for these.
         self.check_values(prob)
 
     @require_pyoptsparse(optimizer='IPOPT')
@@ -89,7 +87,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         local_phase_info['cruise'] = {
             'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
             'user_options': {
-                'phase_builder': PhaseType.BREGUET_RANGE,
+                'phase_type': PhaseType.BREGUET_RANGE,
                 'alt_cruise': (37.5e3, 'ft'),
                 'mach_cruise': 10.8,
             },

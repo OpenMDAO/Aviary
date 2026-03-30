@@ -28,7 +28,6 @@ aircraft:design:emergency_equipment_mass,50.0,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
 aircraft:design:reserve_fuel_additional,4998,lbm
-aircraft:design:reserve_fuel_fraction,0,unitless
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,transport,unitless
@@ -47,10 +46,10 @@ aircraft:engine:scaled_sls_thrust,28690.0,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.35,unitless
 aircraft:fuel:density,6.687,lbm/galUS
-aircraft:fuel:fuel_margin,0.0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.041,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12.0,unitless
+aircraft:fuel:volume_margin,0.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6,unitless
 aircraft:furnishings:mass,11192.0,lbm
 aircraft:fuselage:aisle_width,24.0,inch
@@ -72,7 +71,7 @@ aircraft:horizontal_tail:moment_ratio,0.2307,unitless
 aircraft:horizontal_tail:sweep,25.0,deg
 aircraft:horizontal_tail:taper_ratio,0.352,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:volume_coefficient,1.189,unitless
 aircraft:hydraulics:flight_control_mass_coefficient,0.112,unitless
 aircraft:hydraulics:gear_mass_coefficient,0.14,unitless

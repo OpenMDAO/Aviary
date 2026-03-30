@@ -1,7 +1,7 @@
 """
 This is an example of running a coupled aircraft design-mission optimization in Aviary without using the lower level APIs.
 It runs the same aircraft and mission as the `level1_example.py` and 'level2_example.py' scripts.
-The aircraft is loaded from .csv and the default height energy phase_info dictionary is imported from the file.
+The aircraft is loaded from .csv and the default energy-state phase_info dictionary is imported from the file.
 
 This script unwraps the subsystem and trajectory builders, exposing how Aviary interacts with openMDAO and Dymos.
 It is divided into sections separated by '####' with the level2 api calls commented out so you can see what happens in each level2 method.
@@ -16,8 +16,8 @@ import openmdao.api as om
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
@@ -177,7 +177,7 @@ for phase_idx, phase_name in enumerate(phase_list):
     # phase: dm.Phase = super().build_phase(aviary_options)
     # For L3 we need to do this without the builder
 
-    ode_class = EnergyODE
+    ode_class = EnergyStateODE
     user_options = FlightPhaseOptions(user_options)
     num_segments = user_options['num_segments']
     order = user_options['order']
@@ -436,7 +436,7 @@ prob.model.connect(
     src_indices=[-1],
 )
 
-RESERVE_FUEL_ADDITIONAL = prob.aviary_inputs.get_val(
+reserve_fuel_additional = prob.aviary_inputs.get_val(
     Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
 )
 
@@ -444,7 +444,7 @@ reserve_fuel = om.ExecComp(
     'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
     reserve_fuel={'units': 'lbm', 'shape': 1},
     reserve_fuel_frac_mass={'units': 'lbm', 'val': 0},
-    reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
+    reserve_fuel_additional={'units': 'lbm', 'val': reserve_fuel_additional},
     reserve_fuel_burned={'units': 'lbm', 'val': 0},
 )
 prob.model.post_mission.add_subsystem(
@@ -459,9 +459,8 @@ prob.model.post_mission.add_subsystem(
 )
 
 ecomp = om.ExecComp(
-    'overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
+    'overall_fuel = fuel_burned + reserve_fuel',
     overall_fuel={'units': 'lbm', 'shape': 1},
-    fuel_margin={'units': 'unitless', 'val': 0},
     fuel_burned={'units': 'lbm'},  # from regular_phases only
     reserve_fuel={'units': 'lbm', 'shape': 1},
 )
@@ -469,7 +468,6 @@ prob.model.post_mission.add_subsystem(
     'fuel_calc',
     ecomp,
     promotes_inputs=[
-        ('fuel_margin', Aircraft.Fuel.FUEL_MARGIN),
         ('fuel_burned', Mission.Summary.FUEL_BURNED),
         ('reserve_fuel', Mission.Design.RESERVE_FUEL),
     ],

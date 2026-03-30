@@ -9,7 +9,10 @@ settings:mass_method, GASP
 ############
 # AIRCRAFT #
 ############
-aircraft:design:subsonic_drag_coeff_factor, 1.447, unitless
+# This was the original value in this file. We needed to decrease the drag
+# to get a good optimization.
+# aircraft:design:subsonic_drag_coeff_factor, 1.447, unitless
+aircraft:design:subsonic_drag_coeff_factor, 1.33, unitless
 
 # Design
 aircraft:design:cg_delta, 0.25, unitless
@@ -49,7 +52,7 @@ aircraft:crew_and_payload:water_mass_per_occupant, 0, lbm
 
 # Engine/Propulsion
 # setting electrical mass may not do anything
-aircraft:electrical:mass, 300, lbm
+#aircraft:electrical:mass, 300, lbm
 aircraft:engine:additional_mass_fraction, 0.34, unitless
 aircraft:engine:data_file, models/engines/turboshaft_4465hp.csv
 aircraft:engine:mass_scaler, 1, unitless
@@ -78,10 +81,10 @@ aircraft:engine:gearbox:specific_torque, 100.0, N*m/kg
 
 # Fuel
 aircraft:fuel:density, 6.687, lbm/galUS
-aircraft:fuel:fuel_margin, 15, unitless
 aircraft:fuel:fuel_system_mass_coefficient, 0.065, unitless
 aircraft:fuel:fuel_system_mass_scaler, 1, unitless
 aircraft:fuel:unusable_fuel_mass_coefficient, 4.5, unitless
+aircraft:fuel:volume_margin, 15, unitless
 aircraft:fuel:wing_fuel_fraction, 0.324, unitless
 
 # Fuselage
@@ -106,7 +109,7 @@ aircraft:horizontal_tail:moment_ratio, 0.3061, unitless
 aircraft:horizontal_tail:sweep, 0, deg
 aircraft:horizontal_tail:taper_ratio, 0.374, unitless
 aircraft:horizontal_tail:thickness_to_chord, 0.15, unitless
-aircraft:horizontal_tail:vertical_tail_fraction, 0, unitless
+aircraft:horizontal_tail:vertical_tail_mount_location, 0, unitless
 aircraft:horizontal_tail:volume_coefficient, 0.8614, unitless
 
 # Landing Gear

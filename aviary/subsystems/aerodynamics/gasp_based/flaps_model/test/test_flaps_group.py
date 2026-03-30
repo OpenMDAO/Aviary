@@ -99,25 +99,18 @@ class FlapsGroupTestCaseTripleSlotted(unittest.TestCase):
         self.prob.run_model()
         tol = 6e-4  # checked. high tol for lack of precision in GASP data.
 
-        reg_data = 2.8155
-        ans = self.prob['CL_max']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'CL_max': 2.8155,
+            Dynamic.Atmosphere.MACH: 0.17522,
+            'reynolds': 157.1111,
+            'delta_CD': 0.0406,
+            'delta_CL': 1.0293,
+        }
 
-        reg_data = 0.17522
-        ans = self.prob[Dynamic.Atmosphere.MACH]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 157.1111
-        ans = self.prob['reynolds']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.0406
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.0293
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(method='fd', out_stream=None)
         assert_check_partials(
@@ -207,25 +200,18 @@ class FlapsGroupTestCaseSplit(unittest.TestCase):
         self.prob.run_model()
         tol = 9e-4  # checked. high tol for lack of precision in GASP data.
 
-        reg_data = 2.56197
-        ans = self.prob['CL_max']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'CL_max': 2.56197,
+            Dynamic.Atmosphere.MACH: 0.18368,
+            'reynolds': 164.78406,
+            'delta_CD': 0.0362,
+            'delta_CL': 0.7816,
+        }
 
-        reg_data = 0.18368
-        ans = self.prob[Dynamic.Atmosphere.MACH]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 164.78406
-        ans = self.prob['reynolds']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.0362
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.7816
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(method='fd', out_stream=None)
         assert_check_partials(
@@ -316,25 +302,18 @@ class FlapsGroupTestCaseSingleSlotted(unittest.TestCase):
         self.prob.run_model()
         tol = 6e-4  # checked. high tol for lack of precision in GASP data.
 
-        reg_data = 2.8155
-        ans = self.prob['CL_max']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'CL_max': 2.8155,
+            Dynamic.Atmosphere.MACH: 0.17522,
+            'reynolds': 157.1111,
+            'delta_CD': 0.0406,
+            'delta_CL': 1.0293,
+        }
 
-        reg_data = 0.17522
-        ans = self.prob[Dynamic.Atmosphere.MACH]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 157.1111
-        ans = self.prob['reynolds']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.0406
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.0293
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(method='fd', out_stream=None)
         assert_check_partials(
@@ -424,25 +403,18 @@ class FlapsGroupTestCasePlain(unittest.TestCase):
         self.prob.run_model()
         tol = 9e-4  # checked. high tol for lack of precision in GASP data.
 
-        reg_data = 2.56197
-        ans = self.prob['CL_max']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'CL_max': 2.56197,
+            Dynamic.Atmosphere.MACH: 0.18368,
+            'reynolds': 164.78406,
+            'delta_CD': 0.0362,
+            'delta_CL': 0.7816,
+        }
 
-        reg_data = 0.18368
-        ans = self.prob[Dynamic.Atmosphere.MACH]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 164.78406
-        ans = self.prob['reynolds']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.0362
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.7816
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(method='fd', out_stream=None)
         assert_check_partials(
@@ -532,25 +504,18 @@ class FlapsGroupTestCaseFowler(unittest.TestCase):
         self.prob.run_model()
         tol = 6e-4  # checked. high tol for lack of precision in GASP data.
 
-        reg_data = 2.93271
-        ans = self.prob['CL_max']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'CL_max': 2.93271,
+            Dynamic.Atmosphere.MACH: 0.17168,
+            'reynolds': 154.02686,
+            'delta_CD': 0.1070,
+            'delta_CL': 1.1441,
+        }
 
-        reg_data = 0.17168
-        ans = self.prob[Dynamic.Atmosphere.MACH]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 154.02686
-        ans = self.prob['reynolds']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.1070
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.1441
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(method='fd', out_stream=None)
         assert_check_partials(
@@ -642,25 +607,18 @@ class FlapsGroupTestCaseDoubleFowler(unittest.TestCase):
         self.prob.run_model()
         tol = 6e-4  # checked. high tol for lack of precision in GASP data.
 
-        reg_data = 2.93271
-        ans = self.prob['CL_max']
-        assert_near_equal(ans, reg_data, tol)
+        expected_values = {
+            'CL_max': 2.93271,
+            Dynamic.Atmosphere.MACH: 0.17168,
+            'reynolds': 154.02686,
+            'delta_CD': 0.1070,
+            'delta_CL': 1.1441,
+        }
 
-        reg_data = 0.17168
-        ans = self.prob[Dynamic.Atmosphere.MACH]
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 154.02686
-        ans = self.prob['reynolds']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 0.1070
-        ans = self.prob['delta_CD']
-        assert_near_equal(ans, reg_data, tol)
-
-        reg_data = 1.1441
-        ans = self.prob['delta_CL']
-        assert_near_equal(ans, reg_data, tol)
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                ans = self.prob[var_name]
+                assert_near_equal(ans, reg_data, tol)
 
         data = self.prob.check_partials(method='fd', out_stream=None)
         assert_check_partials(

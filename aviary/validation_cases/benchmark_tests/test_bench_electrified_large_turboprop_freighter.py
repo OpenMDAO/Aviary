@@ -13,6 +13,7 @@ from aviary.subsystems.energy.battery_builder import BatteryBuilder
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
 from aviary.utils.process_input_decks import create_vehicle
+from aviary.utils.functions import get_path
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
@@ -36,7 +37,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )
 
         if mission_method == 'energy':
-            options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
+            options.set_val(Settings.EQUATIONS_OF_MOTION, 'energy_state')
 
         # set up electric propulsion
         # TODO make separate input file for electroprop freighter?
@@ -54,8 +55,13 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # )
         options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
 
+        options.set_val(
+            Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv')
+        )
+
         motor = MotorBuilder(
-            'motor',
+            options=options,
+            name='motor',
         )
 
         electroprop = TurbopropModel('electroprop', options=options, shaft_power_model=motor)

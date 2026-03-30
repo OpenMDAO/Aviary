@@ -130,7 +130,7 @@ def fortran_to_aviary(
 
     # Add settings and engine data file
     if legacy_code is FLOPS:
-        eom = ['height_energy']
+        eom = ['energy_state']
         aero = mass = ['FLOPS']
     if legacy_code is GASP:
         eom = ['2DOF']
@@ -682,22 +682,37 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         num_flap_segments = int(num_flap_segments)
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
 
-    ## Fuel ##
+    ## FUEL RESERVES ##
     reserve_fuel_additional = input_values.get_val(
         Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
     )[0]
     if reserve_fuel_additional <= 0:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+        # This is a percentage of mission fuel
         input_values.set_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION,
-            [-reserve_fuel_additional],
-            units='unitless',
+            Aircraft.Design.RESERVE_FUEL_MARGIN, [-reserve_fuel_additional * 100], units='unitless'
+        )  # flip the value and multipy by 100 because it is a percentage
+        input_values.set_val(
+            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm'
+        )  # then clear out the unused value
+    if reserve_fuel_additional > 0 and reserve_fuel_additional < 10:
+        ValueError(
+            '"FRESF" is not valid between 0 and 10. To set a reserve mission flight time you must setup a reserve mission definition with a target_duration.'
         )
-    elif reserve_fuel_additional >= 10:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless')
-    else:
-        ValueError('"FRESF" is not valid between 0 and 10.')
+        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+    if reserve_fuel_additional >= 10:
+        # we leave reserve_fuel_additional as it is
+        pass
 
+    # Wing Fuel Tank Sizing ##
+    reserve_fuel_volume = input_values.get_val(Aircraft.Fuel.VOLUME_MARGIN, units='unitless')[0]
+
+    if reserve_fuel_volume < 0:
+        ValueError(
+            '"FVOL_MRG" is not valid below 0. Cannot set fuel volume reserves to less than zero'
+        )  #
+        input_values.set_val(Aircraft.Fuel.VOLUME_MARGIN, [0], units='lbm')
+
+    # FLARE LOAD FACTOR ##
     if Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR in input_values:
         if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
             if verbosity > Verbosity.BRIEF:
@@ -817,7 +832,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('PS')
     if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not in input_values:
         missing_vars.append('SAB')
-    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if Aircraft.Wing.TAPER_RATIO not in input_values:
         missing_vars.append('SLM')
@@ -847,7 +862,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('YMG')
     if Aircraft.Engine.WING_LOCATIONS not in input_values:
         missing_vars.append('YP')
-    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
         raise RuntimeError(
@@ -925,7 +940,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.delete(Aircraft.Fuel.WING_FUEL_CAPACITY)
 
     # Set detailed wing flag if model supports it
-    if Aircraft.Wing.INPUT_STATION_DIST in input_values:
+    if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
 
     if Mission.Landing.LIFT_COEFFICIENT_MAX not in input_values:
@@ -951,25 +966,45 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
         # BWB always have detailed wing.
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
-        if Aircraft.Wing.INPUT_STATION_DIST in input_values:
-            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DIST)
-            input_station_dist = [0.0] + input_station_dist
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, input_station_dist)
-            n_dist = len(input_station_dist)
-            chord_per_semispan_dist = input_values.get_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST)
-            chord_per_semispan_dist = [-1.0] + chord_per_semispan_dist[0 : n_dist - 1]
-            input_values.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, chord_per_semispan_dist)
-            load_path_sweep_dist = input_values.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, 'deg')
-            load_path_sweep_dist = [0.0] + load_path_sweep_dist[0 : n_dist - 2]
-            input_values.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, load_path_sweep_dist, 'deg')
-            thickness_to_chord_dist = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST)
-            thickness_to_chord_dist = [-1.0] + thickness_to_chord_dist[0 : n_dist - 1]
-            input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
+        if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
+            input_station_distribution = input_values.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
+            )
+            input_station_distribution = [0.0] + input_station_distribution
+            input_values.set_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION, input_station_distribution
+            )
+            n_dist = len(input_station_distribution)
+            chord_per_semispan_distribution = input_values.get_val(
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
+            )
+            chord_per_semispan_distribution = [-1.0] + chord_per_semispan_distribution[
+                0 : n_dist - 1
+            ]
+            input_values.set_val(
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION, chord_per_semispan_distribution
+            )
+            load_path_sweep_distribution = input_values.get_val(
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, 'deg'
+            )
+            load_path_sweep_distribution = [0.0] + load_path_sweep_distribution[0 : n_dist - 2]
+            input_values.set_val(
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, load_path_sweep_distribution, 'deg'
+            )
+            thickness_to_chord_distribution = input_values.get_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
+            )
+            thickness_to_chord_distribution = [-1.0] + thickness_to_chord_distribution[
+                0 : n_dist - 1
+            ]
+            input_values.set_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION, thickness_to_chord_distribution
+            )
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
         else:
             # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.0, 0.5, 1.0])
 
         if (
             Aircraft.Fuselage.LENGTH in input_values
@@ -1125,7 +1160,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
     # These variables should be removed if they are zero.
     rem_list = [
-        (Aircraft.Design.TOUCHDOWN_MASS, 'lbm'),
+        (Aircraft.Design.LANDING_MASS, 'lbm'),
         (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
         (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),

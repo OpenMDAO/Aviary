@@ -10,7 +10,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.missions.height_energy_default import phase_info as ph_in
+from aviary.models.missions.energy_state_default import phase_info as ph_in
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
@@ -47,12 +47,14 @@ class PreMissionComp(om.ExplicitComponent):
         self.add_output('for_climb', np.ones(shape), units='ft')
         self.add_output('for_cruise', np.ones(shape), units='ft')
         self.add_output('for_descent', np.ones(shape), units='ft')
+        self.add_output('for_post', np.ones((2, 3)), units='rad')
 
     def compute(self, inputs, outputs):
         shape = self.options['shape']
         outputs['for_climb'] = np.random.random(shape)
         outputs['for_cruise'] = np.random.random(shape)
         outputs['for_descent'] = np.random.random(shape)
+        outputs['for_post'] = np.random.random((2, 3))
 
 
 class MissionComp(om.ExplicitComponent):
@@ -83,6 +85,8 @@ class PostMissionComp(om.ExplicitComponent):
         shape = self.options['shape']
         num_nodes = self.options['num_nodes']
         self.add_input('xx', shape=shape, units='ft')
+        self.add_input('from_pre', shape=(2, 3), units='deg')
+
         if self.options['do_the_zz_thing']:
             self.add_input('zz', shape=num_nodes, units='ft')
             self.add_input('velocity', shape=num_nodes, units='ft/s')
@@ -197,6 +201,11 @@ class CustomBuilder(SubsystemBuilder):
                     'units': 'ft',
                     'shape': shape,
                     'phases': ['descent'],
+                },
+                f'{name}.for_post': {
+                    'post_mission_name': [
+                        f'{name}.climb_post_mission.from_pre',
+                    ],
                 },
             }
         return vars_to_connect

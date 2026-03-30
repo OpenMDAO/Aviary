@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.geometry.flops_based.nacelle import Nacelles
+from aviary.subsystems.geometry.flops_based.nacelle import NacelleWettedArea
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import get_flops_options
 from aviary.variable_info.variables import Aircraft
@@ -27,7 +27,7 @@ class NacelleTest(unittest.TestCase):
         }
 
         prob.model.add_subsystem(
-            'nacelles', Nacelles(**options), promotes_outputs=['*'], promotes_inputs=['*']
+            'nacelles', NacelleWettedArea(**options), promotes_outputs=['*'], promotes_inputs=['*']
         )
 
         prob.model_options['*'] = options
@@ -65,7 +65,7 @@ class NacelleTest(unittest.TestCase):
         }
 
         prob.model.add_subsystem(
-            'nacelles', Nacelles(), promotes_outputs=['*'], promotes_inputs=['*']
+            'nacelles', NacelleWettedArea(), promotes_outputs=['*'], promotes_inputs=['*']
         )
 
         prob.model_options['*'] = options

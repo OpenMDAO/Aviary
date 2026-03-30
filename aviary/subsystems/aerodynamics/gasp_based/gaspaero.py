@@ -116,7 +116,7 @@ class WingTailRatios(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, units='unitless')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless')
 
         add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='ft')
 
@@ -145,7 +145,7 @@ class WingTailRatios(om.ExplicitComponent):
         self.declare_partials(
             'hbar',
             [
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.VerticalTail.SPAN,
                 Aircraft.Fuselage.AVG_DIAMETER,
                 Aircraft.Wing.VERTICAL_MOUNT_LOCATION,
@@ -298,7 +298,7 @@ class Xlifts(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless')
 
         add_aviary_input(self, Aircraft.HorizontalTail.SWEEP, units='deg')
 
@@ -326,7 +326,7 @@ class Xlifts(om.ExplicitComponent):
             [
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.SWEEP,
-                Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
                 Aircraft.HorizontalTail.SWEEP,
                 Aircraft.HorizontalTail.MOMENT_RATIO,
                 'sbar',

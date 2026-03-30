@@ -73,7 +73,7 @@ aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3,deg
 aircraft:wing:glove_and_bat,121.05,ft**2
-aircraft:wing:input_station_dist,0.0,0.5,1.0,unitless
+aircraft:wing:input_station_distribution,0.0,0.5,1.0,unitless
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
 aircraft:wing:outboard_semispan,86.75,ft
@@ -93,7 +93,7 @@ mission:landing:initial_velocity,140,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:summary:cruise_mach,0.85,unitless
 settings:aerodynamics_method,FLOPS,unitless
-settings:equations_of_motion,height_energy,unitless
+settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 
 # Unconverted Values
