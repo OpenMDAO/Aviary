@@ -1026,6 +1026,18 @@ class AviaryGroup(om.Group):
                     'aircraft may not have enough space for fuel, so check the value of '
                     'Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
                 )
+        
+        post_mission.add_subsystem(
+            'block_fuel_comp',
+            om.ExecComp(
+            'block_fuel = mission_fuel_burned + fuel_burned_taxi_in',
+            block_fuel={'units': 'lbm'},
+            mission_fuel_burned={'units': 'lbm'},
+            fuel_burned_taxi_in={'units': 'lbm'}),
+            promotes_inputs=[('mission_fuel_burned', Mission.Summary.FUEL_BURNED),
+                             ('fuel_burned_taxi_in', Mission.Taxi.FUEL_BURN_TAXI_IN)],
+            promotes_outputs=[('block_fuel', Mission.Summary.BLOCK_FUEL)]
+        )
 
     def link_phases(self, verbosity=None, comm=None):
         """

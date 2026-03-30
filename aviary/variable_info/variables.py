@@ -706,6 +706,7 @@ class Mission:
         # (whether it is design or off-design). In design these may be constrained to design values,
         # but in off-design they independently represent the final analysis based on the
         # user selection.
+        BLOCK_FUEL = 'mission:summary:block_fuel'
         CRUISE_MACH = 'mission:summary:cruise_mach'
         CRUISE_MASS_FINAL = 'mission:summary:cruise_mass_final'
         FINAL_MASS = 'mission:summary:final_mass'
@@ -750,6 +751,7 @@ class Mission:
 
     class Taxi:
         DURATION = 'mission:taxi:duration'
+        FUEL_BURN_TAXI_IN = 'mission:taxi:fuel_burn_taxi_in'
         FUEL_BURN_TAXI_OUT = 'mission:taxi:fuel_burn_taxi_out'
         MACH = 'mission:taxi:mach'
 
