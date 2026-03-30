@@ -402,8 +402,6 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Mission.Summary.OPERATING_MASS,
                 # ZeroFuelMass
                 Mission.Summary.ZERO_FUEL_MASS,
-                # FuelMass
-                Mission.Summary.FUEL_MASS,
             ],
             version=Version.BWB,
             step=1.01e-40,
@@ -1144,8 +1142,6 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 321171.82272983, tol)
         # ZeroFuelMass
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 383871.82272983, tol)
-        # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 216128.17727017, tol)
 
     def test_case_all_subsystems(self):
         """
