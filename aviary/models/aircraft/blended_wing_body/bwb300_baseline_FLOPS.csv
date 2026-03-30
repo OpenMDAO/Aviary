@@ -194,7 +194,7 @@ mission:takeoff:spoiler_drag_coefficient,0.0,unitless
 mission:takeoff:spoiler_lift_coefficient,0.0,unitless
 mission:takeoff:thrust_incidence,4.0,deg
 settings:aerodynamics_method,FLOPS,unitless
-settings:equations_of_motion,height_energy,unitless
+settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 
 # Unconverted Values
