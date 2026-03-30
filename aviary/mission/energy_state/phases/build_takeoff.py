@@ -25,7 +25,7 @@ class Takeoff:
     def __init__(
         self,
         airport_altitude=None,
-        ramp_mass=None,
+        ramp_mass=None, # why is this even an option?
         num_engines=None,
     ):
         self.airport_altitude = airport_altitude  # ft
