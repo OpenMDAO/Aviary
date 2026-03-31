@@ -836,7 +836,7 @@ class AviaryGroup(om.Group):
             'fuel_burned',
             ecomp,
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
-            promotes_outputs=[('fuel_burned', Mission.FUEL_BURNED)],
+            promotes_outputs=[('fuel_burned', Mission.FUEL)],
         )
 
         self.connect(
@@ -890,7 +890,7 @@ class AviaryGroup(om.Group):
             'fuel_calc',
             ecomp,
             promotes_inputs=[
-                ('fuel_burned', Mission.FUEL_BURNED),
+                ('fuel_burned', Mission.FUEL),
                 ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
             ],
             promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL)],
@@ -1511,7 +1511,7 @@ class AviaryGroup(om.Group):
             Mission.RESERVE_FUEL_MARGIN, units='unitless'
         )
         if reserve_fuel_margin != 0:
-            # Originally tried to reference Mission.FUEL_BURNED for fuel burn but in some tests this led to errors
+            # Originally tried to reference Mission.FUEL for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
                 'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
                 reserve_fuel_margin_mass={'units': 'lbm'},

@@ -656,7 +656,7 @@ class Mission:
     # but in off-design they independently represent the final analysis based on the user selection.
     FINAL_MASS = 'mission:final_mass'
     FINAL_TIME = 'mission:final_time'
-    FUEL_BURNED = 'mission:fuel_burned'
+    FUEL = 'mission:fuel'
     FUEL_FLOW_SCALER = 'mission:fuel_flow_scaler'
     GROSS_MASS = 'mission:gross_mass'
     OPERATING_MASS = 'mission:operating_mass'

@@ -97,13 +97,13 @@ def multi_mission_example():
     # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
     prob.add_composite_objective(
-        ('mission1', Mission.FUEL_BURNED, 2),
-        ('mission2', Mission.FUEL_BURNED, 1),
+        ('mission1', Mission.FUEL, 2),
+        ('mission2', Mission.FUEL, 1),
         ref=1,
     )
     # Adds an objective where mission 1 is flown 2x more times than mission2
     # Alternative way that users could specify the same objective:
-    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL_BURNED],  ref=1)
+    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL],  ref=1)
     # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
     # optimizer and iteration limit are optional provided here
@@ -154,7 +154,7 @@ if __name__ == '__main__':
         (Aircraft.Furnishings.MASS, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, 'lbm'),
         (Mission.GROSS_MASS, 'lbm'),
-        (Mission.FUEL_BURNED, 'lbm'),
+        (Mission.FUEL, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, 'lbm'),
         (Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 'lbm'),
         (Aircraft.CrewPayload.CARGO_MASS, 'lbm'),
