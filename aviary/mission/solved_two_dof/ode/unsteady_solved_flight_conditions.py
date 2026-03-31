@@ -100,7 +100,6 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 desc='flight path angle',
             )
 
-        if not ground_roll:
             self.declare_partials(
                 of='dTAS_dt_approx',
                 wrt=[Dynamic.Mission.FLIGHT_PATH_ANGLE],
