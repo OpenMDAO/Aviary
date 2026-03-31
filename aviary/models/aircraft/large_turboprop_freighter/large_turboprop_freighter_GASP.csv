@@ -78,10 +78,10 @@ aircraft:engine:gearbox:specific_torque, 100.0, N*m/kg
 
 # Fuel
 aircraft:fuel:density, 6.687, lbm/galUS
-aircraft:fuel:fuel_margin, 15, unitless
 aircraft:fuel:fuel_system_mass_coefficient, 0.065, unitless
 aircraft:fuel:fuel_system_mass_scaler, 1, unitless
 aircraft:fuel:unusable_fuel_mass_coefficient, 4.5, unitless
+aircraft:fuel:volume_margin, 15, unitless
 aircraft:fuel:wing_fuel_fraction, 0.324, unitless
 
 # Fuselage
@@ -106,7 +106,7 @@ aircraft:horizontal_tail:moment_ratio, 0.3061, unitless
 aircraft:horizontal_tail:sweep, 0, deg
 aircraft:horizontal_tail:taper_ratio, 0.374, unitless
 aircraft:horizontal_tail:thickness_to_chord, 0.15, unitless
-aircraft:horizontal_tail:vertical_tail_fraction, 0, unitless
+aircraft:horizontal_tail:vertical_tail_mount_location, 0, unitless
 aircraft:horizontal_tail:volume_coefficient, 0.8614, unitless
 
 # Landing Gear

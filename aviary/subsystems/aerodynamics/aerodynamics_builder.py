@@ -35,8 +35,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'aerodynamics'
-
 
 class AerodynamicsBuilder(SubsystemBuilder):
     """
@@ -46,23 +44,9 @@ class AerodynamicsBuilder(SubsystemBuilder):
     -------
     __init__(self, name=None, meta_data=None):
         Initializes the AerodynamicsBuilder object with a given name.
-    mission_inputs(self, **kwargs) -> list:
-        Return mission inputs.
-    mission_outputs(self, **kwargs) -> list:
-        Return mission outputs.
     """
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
-
-        super().__init__(name=name, meta_data=meta_data)
-
-    def mission_inputs(self, **kwargs):
-        return ['*']
-
-    def mission_outputs(self, **kwargs):
-        return ['*']
+    _default_name = 'aerodynamics'
 
 
 class CoreAerodynamicsBuilder(AerodynamicsBuilder):
@@ -86,9 +70,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
     """
 
     def __init__(self, name=None, meta_data=None, code_origin=None, tabular=False):
-        if name is None:
-            name = 'aerodynamics'
-
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
@@ -100,7 +81,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
     def build_pre_mission(self, aviary_inputs, **kwargs):
         # pre-mission is not required when exclusively using tabular aero
         if self.tabular:
-            return
+            return None
 
         code_origin = self.code_origin
         try:
@@ -494,7 +475,15 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         params[Aircraft.Design.LIFT_DEPENDENT_DRAG_POLAR] = opts
 
             if method == 'computed':
-                for var in COMPUTED_CORE_INPUTS:
+                try:
+                    design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+                except KeyError:
+                    design_type = AircraftTypes.TRANSPORT
+                if design_type is AircraftTypes.BLENDED_WING_BODY:
+                    core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                else:
+                    core_inputs_computed = COMPUTED_CORE_INPUTS
+                for var in core_inputs_computed:
                     meta = _MetaData[var]
 
                     val = meta['default_value']
@@ -622,7 +611,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     'tabular_cruise, low_speed, tabular_low_speed)'
                 )
 
-            design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            try:
+                design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
+            except KeyError:
+                design_type = AircraftTypes.TRANSPORT
 
             if design_type is AircraftTypes.BLENDED_WING_BODY:
                 all_vars.add(Aircraft.Fuselage.LIFT_CURVE_SLOPE_MACH0)
@@ -729,6 +721,37 @@ COMPUTED_CORE_INPUTS = [
     Mission.Design.MACH,
 ]
 
+COMPUTED_CORE_INPUTS_BWB = [
+    Aircraft.Design.BASE_AREA,
+    Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,
+    Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
+    Aircraft.Fuselage.CHARACTERISTIC_LENGTH,
+    Aircraft.Fuselage.CROSS_SECTION,
+    Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
+    Aircraft.Fuselage.FINENESS,
+    Aircraft.Fuselage.LAMINAR_FLOW_LOWER,
+    Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
+    Aircraft.Fuselage.LENGTH_TO_DIAMETER,
+    Aircraft.Fuselage.WETTED_AREA,
+    Aircraft.Wing.AREA,
+    Aircraft.Wing.ASPECT_RATIO,
+    Aircraft.Wing.CHARACTERISTIC_LENGTH,
+    Aircraft.Wing.FINENESS,
+    Aircraft.Wing.LAMINAR_FLOW_LOWER,
+    Aircraft.Wing.LAMINAR_FLOW_UPPER,
+    Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+    Aircraft.Wing.SPAN_EFFICIENCY_FACTOR,
+    Aircraft.Wing.SWEEP,
+    Aircraft.Wing.TAPER_RATIO,
+    Aircraft.Wing.THICKNESS_TO_CHORD,
+    Aircraft.Wing.WETTED_AREA,
+    # Mission.Summary.GROSS_MASS,
+    Mission.Design.LIFT_COEFFICIENT,
+    Mission.Design.MACH,
+]
+
 TABULAR_CORE_INPUTS = [
     Aircraft.Wing.AREA,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
@@ -767,7 +790,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.HorizontalTail.MOMENT_RATIO,
     Aircraft.HorizontalTail.SPAN,
     Aircraft.HorizontalTail.SWEEP,
-    Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
     Aircraft.Nacelle.AVG_LENGTH,
     Aircraft.Nacelle.FORM_FACTOR,
     Aircraft.Nacelle.SURFACE_AREA,

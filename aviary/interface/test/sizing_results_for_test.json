@@ -42,7 +42,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:reserve_fuel_fraction",
+        "aircraft:design:reserve_fuel_margin",
         0.0,
         "unitless",
         "<class 'float'>"
@@ -204,7 +204,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:touchdown_mass",
+        "aircraft:design:landing_mass",
         152800.0,
         "lbm",
         "<class 'float'>"
@@ -618,7 +618,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:horizontal_tail:vertical_tail_fraction",
+        "aircraft:horizontal_tail:vertical_tail_mount_location",
         0.0,
         "unitless",
         "<class 'float'>"
@@ -806,7 +806,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:chord_per_semispan_dist",
+        "aircraft:wing:chord_per_semispan_distribution",
         [
             0.31,
             0.23,
@@ -846,7 +846,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:input_station_dist",
+        "aircraft:wing:input_station_distribution",
         [
             0.0,
             0.2759,
@@ -868,7 +868,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:load_path_sweep_dist",
+        "aircraft:wing:load_path_sweep_distribution",
         [
             0.0,
             22.0
@@ -943,7 +943,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:thickness_to_chord_dist",
+        "aircraft:wing:thickness_to_chord_distribution",
         [
             0.145,
             0.115,
@@ -1044,7 +1044,7 @@
     ],
     [
         "settings:equations_of_motion",
-        "HEIGHT_ENERGY",
+        "ENERGY_STATE",
         "unitless",
         "<enum 'EquationsOfMotion'>"
     ],

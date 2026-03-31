@@ -13,22 +13,21 @@ class SubsystemBuilder(ABC):
         Name of subsystem, as it will appear when added to the OpenMDAO problem
     meta_data : dict
         Dictionary containing the variable metadata used by this Aviary problem
-    ```
     """
 
     __slots__ = ('name', 'meta_data')
 
     # derived type customization point
-    default_name = 'default_subsystem_name'
-    default_metadata = _MetaData
+    _default_name = 'default_subsystem_name'
+    _default_metadata = _MetaData
 
     def __init__(self, name=None, meta_data=None):
         if name is None:
-            name = self.default_name
+            name = self._default_name
         self.name = name
 
         if meta_data is None:
-            meta_data = self.default_metadata
+            meta_data = self._default_metadata
         self.meta_data = meta_data
 
     def needs_mission_solver(self, aviary_inputs):
@@ -180,7 +179,7 @@ class SubsystemBuilder(ABC):
     def get_pre_mission_bus_variables(self, aviary_inputs=None):
         """
         Return a dictionary of variables that will be passed from the pre-mission
-        to mission systems.
+        to mission and post-mission systems.
 
         Parameters
         ----------

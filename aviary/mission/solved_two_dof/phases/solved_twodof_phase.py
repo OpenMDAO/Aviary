@@ -44,7 +44,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
             'mass_defect_ref': 1e6,
             'mass_bounds': (0.0, None),
         }
-        self.add_state_options('mass', units='kg', defaults=defaults)
+        self.add_state_options('mass', units='lbm', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
@@ -176,7 +176,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class SolvedTwoDOFPhase(FlightPhaseBase):
-    """A phase builder for a two degree of freedom (2DOF) phase."""
+    """A phase builder for a two-degrees-of-freedom (2DOF) phase."""
 
     default_options_class = SolvedTwoDOFPhaseOptions
 
@@ -219,16 +219,12 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
 
         extra_options = {}
         if not fix_initial:
-            extra_options = {
-                'initial_bounds': initial_bounds,
-                'initial_ref': initial_ref,
-            }
+            extra_options['initial_bounds'] = initial_bounds
+            extra_options['initial_ref'] = initial_ref
 
         if not fix_duration:
-            extra_options = {
-                'duration_bounds': duration_bounds,
-                'duration_ref': duration_ref,
-            }
+            extra_options['duration_bounds'] = duration_bounds
+            extra_options['duration_ref'] = duration_ref
 
         phase.set_time_options(
             fix_initial=fix_initial,

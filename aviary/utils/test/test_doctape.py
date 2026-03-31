@@ -7,6 +7,8 @@ from openmdao.utils.assert_utils import (
     assert_near_equal,
 )
 
+from openmdao.utils.testing_utils import use_tempdirs
+
 from aviary.utils.doctape import (
     check_args,
     check_contains,
@@ -16,7 +18,7 @@ from aviary.utils.doctape import (
     get_previous_line,
     get_value,
     get_variable_name,
-    glue_class_functions,
+    glue_class_methods,
     glue_class_options,
     glue_keys,
     glue_variable,
@@ -35,6 +37,7 @@ except ImportError:
     myst_nb is False,
     'Skipping because myst_nb is not installed for doc testing.',
 )
+@use_tempdirs
 class DocTAPETests(unittest.TestCase):
     """
     Testing the DocTAPE functions to make sure they all run in all supported Python versions
@@ -95,11 +98,11 @@ class DocTAPETests(unittest.TestCase):
     def test_glue_keys(self):
         glue_keys({'d1': {'d2': 2}}, display=False)
 
-    def test_glue_class_functions(self):
+    def test_glue_class_methods(self):
         from aviary.core.aviary_problem import AviaryProblem
 
         curr_glued = []
-        glue_class_functions(AviaryProblem, curr_glued, prefix='zz')
+        glue_class_methods(AviaryProblem, curr_glued, prefix='zz')
 
         self.assertTrue('load_inputs' in curr_glued)
         self.assertTrue('load_inputs()' in curr_glued)

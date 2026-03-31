@@ -73,7 +73,7 @@ class CodeOrigin(Enum):
 class EquationsOfMotion(Enum):
     """Available equations of motion for use during mission analysis."""
 
-    HEIGHT_ENERGY = 'height_energy'
+    ENERGY_STATE = 'energy_state'
     TWO_DEGREES_OF_FREEDOM = '2DOF'
     SOLVED_2DOF = 'solved_2DOF'
     CUSTOM = 'custom'
@@ -170,16 +170,24 @@ class PhaseType(Enum):
     PhaseType is used for replacing a default phase and its equations of motion with a
     different one.
 
-    DEFAULT: Use the default phase builder for this EquationsOfMotion.
+    ACCEL: Use a phase_builder for accelerating level flight.
 
     BREGUET_RANGE: Use a phase builder that implements the Breguet Range equations.
 
+    DEFAULT: Use the default phase builder for this EquationsOfMotion.
+
     SIMPLE_CRUISE: Use a phase builder that implements a single DOF (mass) cruise.
+
+    TWO_DOF_TAKEOFF: Use a phase builder that implements two DOF equations suitable for takeoff
+    phases, including ground_roll and rotation phases. Angle of attack is an additional control
+    unless ground_roll=True.
     """
 
-    DEFAULT = 'default'
+    ACCEL = 'accel'
     BREGUET_RANGE = 'breguet_range'
+    DEFAULT = 'default'
     SIMPLE_CRUISE = 'simple_cruise'
+    TWO_DOF_TAKEOFF = 'two_dof_takeoff'
 
 
 class ProblemType(Enum):

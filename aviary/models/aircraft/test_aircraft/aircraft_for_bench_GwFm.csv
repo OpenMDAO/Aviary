@@ -45,10 +45,10 @@ aircraft:engine:scaled_sls_thrust,28690,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.35,unitless
 aircraft:fuel:density,6.687,lbm/galUS
-aircraft:fuel:fuel_margin,0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.041,unitless
 aircraft:fuel:fuel_system_mass_scaler,1,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12,unitless
+aircraft:fuel:volume_margin,0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6,unitless
 aircraft:furnishings:mass,11192,lbm
 aircraft:fuselage:aisle_width,24,inch
@@ -70,7 +70,7 @@ aircraft:horizontal_tail:moment_ratio,0.2307,unitless
 aircraft:horizontal_tail:sweep,25,deg
 aircraft:horizontal_tail:taper_ratio,0.352,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.12,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0,unitless
 aircraft:horizontal_tail:volume_coefficient,1.189,unitless
 aircraft:hydraulics:flight_control_mass_coefficient,0.112,unitless
 aircraft:hydraulics:gear_mass_coefficient,0.14,unitless
@@ -161,6 +161,6 @@ mission:takeoff:fuel_simple,577,lbm
 mission:takeoff:lift_coefficient_flap_increment,0.4182,unitless
 mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
-settings:equations_of_motion,height_energy
+settings:equations_of_motion,energy_state
 settings:aerodynamics_method,GASP
 settings:mass_method,GASP

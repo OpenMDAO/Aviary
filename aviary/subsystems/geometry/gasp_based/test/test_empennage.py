@@ -29,14 +29,14 @@ class TestTailVolCoef(
             promotes=['aircraft:*'],
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3, units='ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.AVERAGE_CHORD, val=12.615, units='ft')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, 117.8054, units='ft')
@@ -46,8 +46,14 @@ class TestTailVolCoef(
         self.prob.run_model()
 
         # These are not actual GASP values.
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.VOLUME_COEFFICIENT], 1.52233, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.VOLUME_COEFFICIENT], 0.11623, tol)
+        expected_values = {
+            Aircraft.HorizontalTail.VOLUME_COEFFICIENT: 1.52233,
+            Aircraft.VerticalTail.VOLUME_COEFFICIENT: 0.11623,
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
     def test_partials(self):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
@@ -75,14 +81,18 @@ class TestTailComp(
 
         prob.run_model()
 
-        assert_near_equal(prob[Aircraft.HorizontalTail.AREA], 375.9, tol)
-        assert_near_equal(prob[Aircraft.HorizontalTail.SPAN], 42.25, tol)
-
         # (potentially not actual GASP value, it is calculated twice in different places)
-        assert_near_equal(prob[Aircraft.HorizontalTail.ROOT_CHORD], 13.16130387591471, tol)
+        expected_values = {
+            Aircraft.HorizontalTail.AREA: 375.9,
+            Aircraft.HorizontalTail.SPAN: 42.25,
+            Aircraft.HorizontalTail.ROOT_CHORD: 13.16130387591471,
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 9.57573,
+            Aircraft.HorizontalTail.MOMENT_ARM: 54.7,
+        }
 
-        assert_near_equal(prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 9.57573, tol)
-        assert_near_equal(prob[Aircraft.HorizontalTail.MOMENT_ARM], 54.7, tol)
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob[var_name], expected, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
@@ -102,13 +112,18 @@ class TestTailComp(
 
         prob.run_model()
 
-        assert_near_equal(prob[Aircraft.VerticalTail.AREA], 469.3, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.SPAN], 28, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.ROOT_CHORD], 18.61267549773935, tol)
-        assert_near_equal(prob[Aircraft.VerticalTail.AVERAGE_CHORD], 16.83022, tol)
+        # note: MOMENT_ARM slightly different from GASP output value, likely truncation differences, this value is from Kenny
+        expected_values = {
+            Aircraft.VerticalTail.AREA: 469.3,
+            Aircraft.VerticalTail.SPAN: 28,
+            Aircraft.VerticalTail.ROOT_CHORD: 18.61267549773935,
+            Aircraft.VerticalTail.AVERAGE_CHORD: 16.83022,
+            Aircraft.VerticalTail.MOMENT_ARM: 49.87526,
+        }
 
-        # note: slightly different from GASP output value, likely truncation differences, this value is from Kenny
-        assert_near_equal(prob[Aircraft.VerticalTail.MOMENT_ARM], 49.87526, tol)
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob[var_name], expected, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
@@ -156,21 +171,24 @@ class TestEmpennageGroup(
 
         self.prob.run_model()
 
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 375.9, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 42.25, tol)
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 13.16130387591471, tol
-        )  # (potentially not actual GASP value, it is calculated twice in different places)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 9.57573, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 54.7, tol)
+        # Htail AVERAGE_CHORD potentially not actual GASP value, it is calculated twice in different places
+        # note: MOMENT_ARM slightly different from GASP output value, likely numerical diff.s, this value is from Kenny
+        expected_values = {
+            Aircraft.HorizontalTail.AREA: 375.9,
+            Aircraft.HorizontalTail.SPAN: 42.25,
+            Aircraft.HorizontalTail.ROOT_CHORD: 13.16130387591471,
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 9.57573,
+            Aircraft.HorizontalTail.MOMENT_ARM: 54.7,
+            Aircraft.VerticalTail.AREA: 469.3,
+            Aircraft.VerticalTail.SPAN: 28,
+            Aircraft.VerticalTail.ROOT_CHORD: 18.61267549773935,
+            Aircraft.VerticalTail.AVERAGE_CHORD: 16.83022,
+            Aircraft.VerticalTail.MOMENT_ARM: 49.87526,
+        }
 
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 469.3, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 28, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 18.61267549773935, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 16.83022, tol)
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.87526, tol
-        )  # note: slightly different from GASP output value, likely numerical diff.s, this value is from Kenny
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
@@ -184,18 +202,21 @@ class TestEmpennageGroup(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-        self.prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0, units='unitless')
+        self.prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0, units='unitless')
         self.prob.set_val(Aircraft.Fuselage.LENGTH, 129.4, units='ft')
         self.prob.set_val(Aircraft.Fuselage.AVG_DIAMETER, 13.1, units='ft')
 
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.VOLUME_COEFFICIENT], 1.52233, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.VOLUME_COEFFICIENT], 0.11623, tol
-        )  # not actual GASP value
+        # not actual GASP values
+        expected_values = {
+            Aircraft.HorizontalTail.VOLUME_COEFFICIENT: 1.52233,
+            Aircraft.VerticalTail.VOLUME_COEFFICIENT: 0.11623,
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)
@@ -243,17 +264,22 @@ class BWBTestEmpennageGroup(unittest.TestCase):
 
         self.prob.run_model()
 
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
+        expected_values = {
+            Aircraft.HorizontalTail.AREA: 0.00117064,
+            Aircraft.HorizontalTail.SPAN: 0.04467601,
+            Aircraft.HorizontalTail.ROOT_CHORD: 0.03836448,
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 0.02808445,
+            Aircraft.HorizontalTail.MOMENT_ARM: 29.69074172,
+            Aircraft.VerticalTail.AREA: 169.11964286,
+            Aircraft.VerticalTail.SPAN: 16.98084188,
+            Aircraft.VerticalTail.ROOT_CHORD: 14.58190052,
+            Aircraft.VerticalTail.AVERAGE_CHORD: 10.67457744,
+            Aircraft.VerticalTail.MOMENT_ARM: 27.82191598,
+        }
 
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, **partial_tols)

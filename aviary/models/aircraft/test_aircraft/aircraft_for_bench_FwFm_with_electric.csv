@@ -23,7 +23,7 @@ aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
 aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
-aircraft:design:touchdown_mass,152800.0,lbm
+aircraft:design:landing_mass,152800.0,lbm
 aircraft:design:reserve_fuel_additional,3000.,lbm
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
@@ -84,7 +84,7 @@ aircraft:horizontal_tail:aspect_ratio,6.0,unitless
 aircraft:horizontal_tail:mass_scaler,1.2,unitless
 aircraft:horizontal_tail:taper_ratio,0.22,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.125,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:wetted_area,592.65,ft**2
 aircraft:hydraulics:mass_scaler,1.0,unitless
@@ -114,16 +114,16 @@ aircraft:wing:airfoil_technology,1.92669766647637,unitless
 aircraft:wing:area,1370.0,ft**2
 aircraft:wing:aspect_ratio,11.22091,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
-aircraft:wing:chord_per_semispan_dist,0.31,0.23,0.084,unitless
+aircraft:wing:chord_per_semispan_distribution,0.31,0.23,0.084,unitless
 aircraft:wing:composite_fraction,0.2,unitless
 aircraft:wing:control_surface_area,137,ft**2
 aircraft:wing:control_surface_area_ratio,0.1,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:glove_and_bat,134.0,ft**2
-aircraft:wing:input_station_dist,0.,0.2759,0.9367,unitless
+aircraft:wing:input_station_distribution,0.,0.2759,0.9367,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:load_fraction,1.0,unitless
-aircraft:wing:load_path_sweep_dist,0.,22.,deg
+aircraft:wing:load_path_sweep_distribution,0.,22.,deg
 aircraft:wing:mass_scaler,1.23,unitless
 aircraft:wing:max_camber_at_70_semispan,0.0,unitless
 aircraft:wing:misc_mass_scaler,1.0,unitless
@@ -135,7 +135,7 @@ aircraft:wing:strut_bracing_factor,0.0,unitless
 aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:sweep,25.0,deg
 aircraft:wing:taper_ratio,0.278,unitless
-aircraft:wing:thickness_to_chord_dist,0.145,0.115,0.104,unitless
+aircraft:wing:thickness_to_chord_distribution,0.145,0.115,0.104,unitless
 aircraft:wing:thickness_to_chord,0.13,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
@@ -152,6 +152,6 @@ mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:fuel_simple,577,lbm
 mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
-settings:equations_of_motion,height_energy
+settings:equations_of_motion,energy_state
 settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS

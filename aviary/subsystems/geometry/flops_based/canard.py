@@ -9,15 +9,8 @@ from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
-class Canard(om.ExplicitComponent):
+class CanardWettedArea(om.ExplicitComponent):
     """Calculate the wetted area of canard."""
-
-    def initialize(self):
-        self.options.declare(
-            'aviary_options',
-            types=AviaryValues,
-            desc='collection of Aircraft/Mission specific options',
-        )
 
     def setup(self):
         add_aviary_input(self, Aircraft.Canard.AREA, units='ft**2')

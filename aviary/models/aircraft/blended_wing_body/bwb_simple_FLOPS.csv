@@ -41,6 +41,12 @@ aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
+# TODO: Needed to reduce the drag so that engine wasn't full throttle in cruise.
+# There must be something about drag that still isn't working for BWB.
+aircraft:design:subsonic_drag_coeff_factor,0.7,unitless
+# aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
@@ -99,7 +105,7 @@ aircraft:horizontal_tail:mass_scaler,1.0,unitless
 aircraft:horizontal_tail:num_tails,0,unitless
 aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
@@ -130,7 +136,7 @@ aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3.0,deg
 aircraft:wing:glove_and_bat,121.05,ft**2
-aircraft:wing:input_station_dist,0.0,0.5,1.0,unitless
+aircraft:wing:input_station_distribution,0.0,0.5,1.0,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
@@ -161,7 +167,7 @@ mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:summary:cruise_mach,0.85,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
 settings:aerodynamics_method,FLOPS,unitless
-settings:equations_of_motion,height_energy,unitless
+settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 settings:verbosity,1,unitless
 

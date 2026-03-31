@@ -19,10 +19,12 @@ class GearboxBuilder(SubsystemBuilder):
     This is a reduction gearbox, so gear ratio is input_RPM/output_RPM.
     """
 
-    def __init__(self, name='gearbox', include_constraints=True):
+    _default_name = 'gearbox'
+
+    def __init__(self, name=None, meta_data=None, include_constraints=True):
         """Initializes the GearboxBuilder object with a given name."""
         self.include_constraints = include_constraints
-        super().__init__(name)
+        super().__init__(name, meta_data)
 
     def build_pre_mission(self, aviary_inputs):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
@@ -31,6 +33,13 @@ class GearboxBuilder(SubsystemBuilder):
     def build_mission(self, num_nodes, aviary_inputs):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return GearboxMission(num_nodes=num_nodes)
+
+    def mission_inputs(self, **kwargs):
+        inputs = [Aircraft.Engine.Gearbox.GEAR_RATIO, Aircraft.Engine.Gearbox.EFFICIENCY]
+        return inputs
+
+    def mission_outputs(self, **kwargs):
+        return []
 
     def get_design_vars(self):
         """
@@ -82,11 +91,11 @@ class GearboxBuilder(SubsystemBuilder):
                 'units': 'unitless',
                 'static_target': True,
             },
-            Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
-                'val': 1.0,
-                'units': 'kW',
-                'static_target': True,
-            },
+            # Aircraft.Engine.Gearbox.SHAFT_POWER_DESIGN: {
+            #     'val': 1.0,
+            #     'units': 'kW',
+            #     'static_target': True,
+            # },
         }
 
         return parameters
@@ -97,21 +106,22 @@ class GearboxBuilder(SubsystemBuilder):
     def get_timeseries(self):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
             Dynamic.Vehicle.Propulsion.RPM + '_out',
             Dynamic.Vehicle.Propulsion.TORQUE + '_out',
-            Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
+            # Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 
     def get_constraints(self):
         if self.include_constraints:
-            constraints = {
-                Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
-                    'lower': 0.0,
-                    'type': 'path',
-                    'units': 'kW',
-                }
-            }
+            constraints = {}
+            # constraints = {
+            #     Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL: {
+            #         'lower': 0.0,
+            #         'type': 'path',
+            #         'units': 'kW',
+            #     }
+            # }
         else:
             constraints = {}
         return constraints

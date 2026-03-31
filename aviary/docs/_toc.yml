@@ -2,74 +2,78 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: intro
+root: introduction
 parts:
 - caption: Getting Started
   chapters:
+    - file: getting_started/getting_started
     - file: getting_started/installation
-    - file: getting_started/what_aviary_does
-    - file: getting_started/tools_that_aviary_uses
     - file: getting_started/expected_user_knowledge
-    - file: getting_started/onboarding
-      sections:
-        - file: getting_started/onboarding_level1
-        - file: getting_started/onboarding_level2
-        - file: getting_started/onboarding_level3
-        - file: getting_started/onboarding_ext_subsystem
-        - file: getting_started/input_csv_phase_info
-    - file: getting_started/now_what
+    - file: getting_started/tools_that_aviary_uses
+    - file: getting_started/whats_next
 
 - caption: User Guide
   chapters:
-    - file: user_guide/user_interface
+    - file: user_guide/aviary_fundamentals
       sections:
-      - file: user_guide/UI_Levels
-      - file: user_guide/examples_of_the_same_mission_at_different_UI_levels
-      - file: user_guide/aviary_commands
-      - file: user_guide/input_files
-      - file: user_guide/phase_info
-      - file: user_guide/phase_info_detailed
-      - file: user_guide/phase_info_conversion
-    - file: user_guide/drawing_and_running_simple_missions
-    - file: user_guide/pre_mission_and_mission
-    - file: user_guide/postprocessing_and_visualizing_results
-    - file: user_guide/variable_metadata
-    - file: user_guide/features_and_functionalities
+        - file: user_guide/fundamentals/variables
+        - file: user_guide/fundamentals/input_files
+          sections:
+            - file: user_guide/fundamentals/aircraft_definition
+            - file: user_guide/fundamentals/mission_definition
+            - file: user_guide/fundamentals/data_files
+        - file: user_guide_unreviewed/outputs
+        - file: user_guide_unreviewed/UI_levels
+        # - file: user_guide/user_interface
+        # - file: new file with recommended examples to view next
+    - file: user_guide_unreviewed/onboarding_level2
+    - file: user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels
+    - file: user_guide_unreviewed/aviary_commands
+    - file: user_guide_unreviewed/drawing_and_running_simple_missions
+    - file: user_guide_unreviewed/pre_mission_and_mission
+    - file: user_guide_unreviewed/visualizing_results
+    - file: user_guide_unreviewed/features_and_functionalities
+    - file: user_guide_unreviewed/custom_variable_hierarchies
+    - file: user_guide_unreviewed/subsystems/subsystems
       sections:
-      - file: user_guide/aerodynamics
-      - file: user_guide/external_aero
-      - file: user_guide/atmosphere
-      - file: user_guide/propulsion
-        sections:
-          - file: user_guide/creating_a_turboprop_engine.ipynb
-      - file: user_guide/hamilton_standard
-      - file: user_guide/mass
-      - file: user_guide/subsystems
-      - file: user_guide/using_external_subsystems
-      - file: user_guide/step_by_step_external_guide
-      - file: user_guide/battery_subsystem_example
-      - file: user_guide/features/overriding
-      - file: user_guide/FLOPS_based_detailed_takeoff_and_landing
-      - file: user_guide/reserve_missions
-      - file: user_guide/multi_mission
-      - file: user_guide/off_design_missions
-      - file: user_guide/payload_range_functionality
-      - file: user_guide/features/blended_wing_body_GASP
-      - file: user_guide/features/blended_wing_body_FLOPS
-    - file: user_guide/troubleshooting
+        - file: user_guide_unreviewed/subsystems/aerodynamics
+          sections:
+            - file: user_guide_unreviewed/subsystems/external_aero
+        - file: user_guide_unreviewed/subsystems/atmosphere
+        - file: user_guide_unreviewed/subsystems/propulsion
+          sections:
+            - file: user_guide_unreviewed/subsystems/electric_motor
+            - file: user_guide_unreviewed/subsystems/hamilton_standard
+            - file: user_guide_unreviewed/subsystems/creating_a_turboprop_engine
+        - file: user_guide_unreviewed/subsystems/mass
+          sections:
+            - file: user_guide_unreviewed/subsystems/fuel
+            - file: user_guide_unreviewed/subsystems/blended_wing_body_GASP
+            - file: user_guide_unreviewed/subsystems/blended_wing_body_FLOPS
+        - file: user_guide_unreviewed/subsystems/using_external_subsystems
+        - file: user_guide_unreviewed/subsystems/step_by_step_external_guide
+        - file: user_guide_unreviewed/subsystems/battery_subsystem_example
+    - file: user_guide_unreviewed/features/overriding
+    - file: user_guide_unreviewed/FLOPS_based_detailed_takeoff_and_landing
+    - file: user_guide_unreviewed/reserve_missions
+    - file: user_guide_unreviewed/multi_mission
+    - file: user_guide_unreviewed/off_design_missions
+    - file: user_guide_unreviewed/payload_range_functionality
+    - file: user_guide_unreviewed/troubleshooting
 
 - caption: Examples
   chapters:
     - file: examples/intro
-    - file: examples/simple_mission_example
-    - file: examples/more_advanced_example
-    - file: examples/coupled_aircraft_mission_optimization
-    - file: examples/additional_flight_phases
-    - file: examples/reserve_missions
-    - file: examples/multi_mission
-    - file: examples/off_design_example
-    - file: examples/OAS_subsystem
-    - file: examples/level_2_detailed_takeoff_and_landing
+    - file: examples/simple_mission
+    - file: examples/custom_optimization
+    - file: examples/reserve_mission
+    - file: examples_unreviewed/more_advanced_example
+    - file: examples/off_design_missions
+    - file: examples_unreviewed/detailed_takeoff_landing
+    - file: examples_unreviewed/multi_mission
+    - file: examples/external_subsystems
+    - file: examples_unreviewed/OAS_subsystem
+    - file: examples_unreviewed/deconstructed_example
 
 - caption: Theory Guide
   chapters:
@@ -86,30 +90,31 @@ parts:
           - file: theory_guide/turboprop
     - file: theory_guide/optimization_algorithms
     - file: theory_guide/validation
+    - file: theory_guide/comparison_to_flops
     - file: theory_guide/gasp_based_bwb
 
 - caption: Developer Guide
   chapters:
     - file: developer_guide/codebase_overview
     - file: developer_guide/coding_standards
-    - file: developer_guide/ai_policy.md
+    - file: developer_guide/ai_policy
     - file: developer_guide/unit_tests
     - file: developer_guide/contributing_guidelines
     - file: developer_guide/how_to_contribute_docs
       sections:
-      - file: developer_guide/doctape.ipynb
-      - file: developer_guide/doctape_examples.ipynb
+      - file: developer_guide/doctape
+      - file: developer_guide/doctape_examples
     - file: developer_guide/debugging_env_from_github
+
+- caption: Source Docs
+  chapters:
+    - file: source_docs/variable_metadata
+    - file: source_docs/phase_info_detailed
+    - file: source_docs/subsystem_builder
+    - file: _srcdocs/index
 
 - caption: Miscellaneous Resources
   chapters:
-    - file: misc_resources/modeling_exercise
     - file: misc_resources/FAQ
-    - file: misc_resources/glossary
     - file: misc_resources/resources
-    - file: misc_resources/externally_supported_subsystems
-    - file: misc_resources/feature_comparison
-      sections:
-      - file: misc_resources/comparison_to_flops
-    - file: misc_resources/planned_future_features
-    - file: _srcdocs/index
+    - file: misc_resources/phase_info_conversion

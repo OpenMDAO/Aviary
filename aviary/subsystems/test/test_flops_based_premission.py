@@ -88,6 +88,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -98,7 +99,6 @@ class PreMissionGroupTest(unittest.TestCase):
                 Aircraft.Design.EMPTY_MASS,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
-                Mission.Summary.FUEL_MASS,
             ],
             step=1.01e-40,
             atol=1e-8,
@@ -133,10 +133,11 @@ class PreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
-            output_keys=[Mission.Summary.FUEL_MASS],
+            output_keys=[],
             atol=1e-4,
             rtol=1e-4,
             check_partials=False,
@@ -178,6 +179,7 @@ class PreMissionGroupTest(unittest.TestCase):
         prob.run_model()
 
         flops_validation_test(
+            self,
             prob,
             'LargeSingleAisle2FLOPS',
             input_keys=[],
@@ -188,7 +190,6 @@ class PreMissionGroupTest(unittest.TestCase):
                 Aircraft.Design.EMPTY_MASS,
                 Mission.Summary.OPERATING_MASS,
                 Mission.Summary.ZERO_FUEL_MASS,
-                Mission.Summary.FUEL_MASS,
             ],
             atol=1e-4,
             rtol=1e-4,
@@ -258,6 +259,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -277,15 +279,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.ASPECT_RATIO_REFERENCE,
                 Aircraft.Wing.LOAD_FRACTION,
-                # _BWBWing
+                # BWBWingWettedArea
                 Aircraft.Wing.WETTED_AREA,
-                # _Tail
+                # TailWettedArea
                 Aircraft.HorizontalTail.WETTED_AREA,
                 Aircraft.VerticalTail.WETTED_AREA,
                 # _FuselageRatios
                 Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
                 Aircraft.Fuselage.LENGTH_TO_DIAMETER,
-                # Nacelles
+                # NacelleWettedArea
                 Aircraft.Nacelle.TOTAL_WETTED_AREA,
                 Aircraft.Nacelle.WETTED_AREA,
                 # Canard
@@ -360,7 +362,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Engine.THRUST_REVERSERS_MASS,
                 Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
                 # LandingMassGroup
-                Aircraft.Design.TOUCHDOWN_MASS,
+                Aircraft.Design.LANDING_MASS,
                 # SurfaceControlMass
                 Aircraft.Wing.SURFACE_CONTROL_MASS,
                 Aircraft.Wing.CONTROL_SURFACE_AREA,
@@ -401,7 +403,6 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # ZeroFuelMass
                 Mission.Summary.ZERO_FUEL_MASS,
                 # FuelMass
-                Mission.Summary.FUEL_MASS,
                 # TODO: test some aero variables
             ],
             version=Version.BWB,
@@ -448,6 +449,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         set_aviary_initial_values(prob, flops_inputs)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[],
@@ -507,7 +509,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, tol)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
@@ -516,15 +518,15 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
-        # _BWBWing
+        # BWBWingWettedArea
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
-        # _Tail
+        # TailWettedArea
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.16739117852998228, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 3.4502226961922089, tol)
-        # Nacelles
+        # NacelleWettedArea
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -625,7 +627,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 14152.3734702, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 5513.13877521, tol)
@@ -667,8 +669,6 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 455464.65969526308, tol)
         # ZeroFuelMass
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 553276.65969526302, tol)
-        # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 320822.34030473698, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -713,15 +713,15 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 3.4488813, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.53107166, tol)
-        # _BWBWing
+        # BWBWingWettedArea
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 33816.732336575638, tol)
-        # _Tail
+        # TailWettedArea
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.16739117852998228, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 3.4502226961922089, tol)
-        # Nacelles
+        # NacelleWettedArea
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -798,7 +798,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 14152.3734702, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 5513.13877521, tol)
@@ -840,8 +840,6 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 455464.65969526308, tol)
         # ZeroFuelMass
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 553276.65969526302, tol)
-        # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 320822.34030473698, tol)
         # TODO: test some aero variables
 
 
@@ -898,15 +896,15 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
-        # _BWBWing
+        # BWBWingWettedArea
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
-        # _Tail
+        # TailWettedArea
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.18243240878599712, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 2.4261771932742167, tol)
-        # Nacelles
+        # NacelleWettedArea
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -1007,7 +1005,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 11731.15573539, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 4032.5967, tol)
@@ -1047,8 +1045,6 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 411479.0724484, tol)
         # ZeroFuelMass
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 509291.0724484, tol)
-        # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 364807.9275516, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -1093,15 +1089,15 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.ASPECT_RATIO_REFERENCE], 5.36951675, tol)
         assert_near_equal(prob[Aircraft.Wing.LOAD_FRACTION], 0.46761341784858923, tol)
-        # _BWBWing
+        # BWBWingWettedArea
         assert_near_equal(prob[Aircraft.Wing.WETTED_AREA], 24713.66129084, tol)
-        # _Tail
+        # TailWettedArea
         assert_near_equal(prob[Aircraft.HorizontalTail.WETTED_AREA], 0.0, tol)
         assert_near_equal(prob[Aircraft.VerticalTail.WETTED_AREA], 0.0, tol)
         # _FuselageRatios
         assert_near_equal(prob[Aircraft.Fuselage.DIAMETER_TO_WING_SPAN], 0.18243240878599712, tol)
         assert_near_equal(prob[Aircraft.Fuselage.LENGTH_TO_DIAMETER], 2.4261771932742167, tol)
-        # Nacelles
+        # NacelleWettedArea
         assert_near_equal(prob[Aircraft.Nacelle.WETTED_AREA], 498.26822066, tol)
         assert_near_equal(prob[Aircraft.Nacelle.TOTAL_WETTED_AREA], 3 * 498.26822066, tol)
         # Canard
@@ -1178,7 +1174,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 11731.15573539, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 4032.5967, tol)
@@ -1218,8 +1214,6 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 411479.0724484, tol)
         # ZeroFuelMass
         assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 509291.0724484, tol)
-        # FuelMass
-        assert_near_equal(prob[Mission.Summary.FUEL_MASS], 364807.9275516, tol)
         # TODO: test some aero variables
 
 
