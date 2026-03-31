@@ -384,7 +384,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
-        if arref[0] == 0:
+        if arref[0] == 0:  # this could happen if Aircraft.Wing.ASPECT_RATIO is not an input
             arref[0] = ar[0]
             if verbosity >= Verbosity.BRIEF:
                 warnings.warn(
@@ -411,13 +411,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
-        if tcref == 0.0:
-            tcref = tc
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn(
-                    'Assume Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE is the same '
-                    'as Aircraft.Wing.THICKNESS_TO_CHORD'
-                )
         thickness_to_chord_mod = []
         for x in thickness_to_chord:
             thickness_to_chord_mod.append(x * tc[0] / tcref[0])
