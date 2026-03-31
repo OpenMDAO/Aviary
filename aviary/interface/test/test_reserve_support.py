@@ -26,7 +26,7 @@ class ReserveTest(unittest.TestCase):
 
         prob.load_inputs(csv_path, phase_info)
 
-        prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
+        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
         prob.check_and_preprocess_inputs()
 
@@ -67,7 +67,7 @@ class ReserveTest(unittest.TestCase):
         prob.run_model()
 
         reserve_percentage = prob.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless'
+            Mission.RESERVE_FUEL_MARGIN, units='unitless'
         )
 
         td_mass = prob.model.get_val(Mission.FINAL_MASS, units='lbm')

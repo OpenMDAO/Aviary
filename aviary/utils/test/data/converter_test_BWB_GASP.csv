@@ -34,8 +34,8 @@ aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
 aircraft:design:range,3500.0,NM
-aircraft:design:reserve_fuel_additional,0,lbm
-aircraft:design:reserve_fuel_margin,10.0,unitless
+mission:reserve_fuel_additional,0,lbm
+mission:reserve_fuel_margin,10.0,unitless
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,BWB,unitless

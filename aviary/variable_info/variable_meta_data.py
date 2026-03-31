@@ -1695,7 +1695,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_ADDITIONAL,
+    Mission.RESERVE_FUEL_ADDITIONAL,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None, 'LEAPS1': None},
     option=True,
@@ -1705,7 +1705,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_MARGIN,
+    Mission.RESERVE_FUEL_MARGIN,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     option=True,
@@ -7370,7 +7370,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='the total fuel reserves which is the sum of: '
-    'Mission.RESERVE_FUEL, Aircraft.Design.RESERVE_FUEL_ADDITIONAL, Aircraft.Design.RESERVE_FUEL_MARGIN',
+    'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
     default_value=0,
 )
 

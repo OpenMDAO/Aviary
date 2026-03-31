@@ -826,7 +826,7 @@ class AviaryGroup(om.Group):
         ecomp = om.ExecComp(
             'fuel_burned = initial_mass - mass_final',
             # TODO: Fix to include any payloads dropped off during the mission
-            # We execute a similar calculaton a second time when calculating Aircraft.Design.RESERVE_FUEL_MARGIN
+            # We execute a similar calculaton a second time when calculating Mission.RESERVE_FUEL_MARGIN
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
@@ -1508,7 +1508,7 @@ class AviaryGroup(om.Group):
             reserve_calc_location = self.model
 
         reserve_fuel_margin = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless'
+            Mission.RESERVE_FUEL_MARGIN, units='unitless'
         )
         if reserve_fuel_margin != 0:
             # Originally tried to reference Mission.FUEL_BURNED for fuel burn but in some tests this led to errors
@@ -1528,7 +1528,7 @@ class AviaryGroup(om.Group):
                 reserve_fuel_frac,
                 promotes_inputs=[
                     ('initial_mass', Mission.GROSS_MASS),
-                    ('reserve_fuel_margin', Aircraft.Design.RESERVE_FUEL_MARGIN),
+                    ('reserve_fuel_margin', Mission.RESERVE_FUEL_MARGIN),
                 ],
                 promotes_outputs=['reserve_fuel_margin_mass'],
             )
@@ -1540,7 +1540,7 @@ class AviaryGroup(om.Group):
             )
 
         reserve_fuel_additional = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
+            Mission.RESERVE_FUEL_ADDITIONAL, units='lbm'
         )
         reserve_fuel = om.ExecComp(
             'reserve_fuel = reserve_fuel_margin_mass + reserve_fuel_additional + reserve_fuel_burned',
@@ -1555,7 +1555,7 @@ class AviaryGroup(om.Group):
             reserve_fuel,
             promotes_inputs=[
                 'reserve_fuel_margin_mass',
-                ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
+                ('reserve_fuel_additional', Mission.RESERVE_FUEL_ADDITIONAL),
                 ('reserve_fuel_burned', Mission.RESERVE_FUEL),
             ],
             promotes_outputs=[('reserve_fuel', reserves_name)],

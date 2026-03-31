@@ -36,13 +36,13 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:design:reserve_fuel_additional",
+        "mission:reserve_fuel_additional",
         3000.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "aircraft:design:reserve_fuel_margin",
+        "mission:reserve_fuel_margin",
         0.0,
         "unitless",
         "<class 'float'>"
