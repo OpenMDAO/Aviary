@@ -65,8 +65,8 @@ def multi_mission_example():
     prob.promote_inputs(
         ['mission1', 'mission2'],
         [
-            (Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
-            (Mission.Design.RANGE, 'Aircraft1:RANGE'),
+            (Aircraft.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
+            (Aircraft.Design.RANGE, 'Aircraft1:RANGE'),
             (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP'),
         ],
     )
