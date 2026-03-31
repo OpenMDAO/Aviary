@@ -857,7 +857,7 @@ class AviaryGroup(om.Group):
             post_mission.add_subsystem(
                 'reserve_fuel_burned',
                 ecomp,
-                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_BURNED)],
+                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL)],
             )
 
             # timeseries has to be used because Breguet cruise phases don't have
@@ -1556,7 +1556,7 @@ class AviaryGroup(om.Group):
             promotes_inputs=[
                 'reserve_fuel_margin_mass',
                 ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-                ('reserve_fuel_burned', Mission.RESERVE_FUEL_BURNED),
+                ('reserve_fuel_burned', Mission.RESERVE_FUEL),
             ],
             promotes_outputs=[('reserve_fuel', reserves_name)],
         )

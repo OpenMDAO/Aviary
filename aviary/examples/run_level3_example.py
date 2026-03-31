@@ -453,7 +453,7 @@ prob.model.post_mission.add_subsystem(
     promotes_inputs=[
         'reserve_fuel_frac_mass',
         ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-        ('reserve_fuel_burned', Mission.RESERVE_FUEL_BURNED),
+        ('reserve_fuel_burned', Mission.RESERVE_FUEL),
     ],
     promotes_outputs=[('reserve_fuel', Mission.TOTAL_RESERVE_FUEL)],
 )

@@ -7370,12 +7370,12 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='the total fuel reserves which is the sum of: '
-    'Mission.RESERVE_FUEL_BURNED, Aircraft.Design.RESERVE_FUEL_ADDITIONAL, Aircraft.Design.RESERVE_FUEL_MARGIN',
+    'Mission.RESERVE_FUEL, Aircraft.Design.RESERVE_FUEL_ADDITIONAL, Aircraft.Design.RESERVE_FUEL_MARGIN',
     default_value=0,
 )
 
 add_meta_data(
-    Mission.RESERVE_FUEL_BURNED,
+    Mission.RESERVE_FUEL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
