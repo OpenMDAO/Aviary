@@ -51,7 +51,7 @@ class PhaseBuilder(ABC):
     subsystem_options : dict (None)
         dictionary of parameters to be passed to the subsystem builders
 
-    default_name : str
+    _default_name : str
         class attribute: derived type customization point; the default value
         for name
 
@@ -92,7 +92,7 @@ class PhaseBuilder(ABC):
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 
-    default_name = '_unknown phase_'
+    _default_name = '_unknown phase_'
 
     default_ode_class = EnergyStateODE
     default_options_class = om.OptionsDictionary
@@ -114,7 +114,7 @@ class PhaseBuilder(ABC):
         meta_data=None,
     ):
         if name is None:
-            name = self.default_name
+            name = self._default_name
 
         self.name = name
 
