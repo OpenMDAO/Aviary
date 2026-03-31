@@ -10,6 +10,8 @@ Aviary is under active development! While the base features of the code are rela
 
 If you are using Aviary, please [Cite](#citing-aviary) us!
 
+
+
 ## Documentation
 
 [Read the Docs](https://openmdao.github.io/Aviary/introduction.html).
@@ -19,6 +21,8 @@ If you are using Aviary, please [Cite](#citing-aviary) us!
 [Paper by Gratz et al.](https://ntrs.nasa.gov/api/citations/20240007608/downloads/Resubmit_final_62424.pdf) describing aviaries capabilities in detail.
 
 [How NASA uses aviary to model Aircraft by Aretskin-Hariton et al.](https://ntrs.nasa.gov/api/citations/20230016987/downloads/TTBW_SciTech_2024_Final_12_5_2023.pdf) describes how aviary was applied to model a Transonic Truss-Braced Wing (TTBW) aircraft.
+
+
 
 ## Installation
 
@@ -34,6 +38,8 @@ The minimum supported Python version for Aviary is 3.9.
 You can also install aviary as a package/image using docker:
 
     docker pull ghcr.io/openmdao/aviary:latest
+
+
 
 ## Validation
 
@@ -61,18 +67,26 @@ Due to their length, these tests are not run when using the above command.
 Instead, you can use the `run_all_benchmarks.py` file in the `Aviary/aviary` folder, which is just a light wrapper around the `testflo` call.
 This will run all of the longer tests in parallel using all of your available CPU cores.
 
+
+
 ## Package versions
 
 Information on the versions of the packages required for Aviary can be found in the most recent [GitHub Actions runs](https://github.com/OpenMDAO/Aviary/actions).
 We have also provided a static version of the `environment.yml` at the top level of the Aviary repo.
+
+
 
 ## Planned future features
 
 Aviary is in active development.
 We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/Aviary/misc_resources/planned_future_features.html).
 
+
+
 ## Contact Us
 **Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
+
+
 
 ## Citing Aviary
 
@@ -94,6 +108,8 @@ year = {2024},
 }
 ```
 </details>
+
+
 
 ## Contributors ✨
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
