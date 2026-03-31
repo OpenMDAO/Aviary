@@ -31,7 +31,6 @@ aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
 aircraft:design:range,3675.0,NM
-mission:reserve_fuel_additional,4998,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,transport,unitless
@@ -152,6 +151,7 @@ mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900.0,ft/min
 mission:landing:obstacle_height,50.0,ft
 mission:landing:touchdown_sink_rate,5.0,ft/s
+mission:reserve_fuel_additional,4998,lbm
 mission:takeoff:decision_speed_increment,10.0,kn
 mission:takeoff:rotation_speed_increment,5.0,kn
 mission:taxi:duration,0.1677,h
