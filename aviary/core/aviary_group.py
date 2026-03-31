@@ -893,7 +893,7 @@ class AviaryGroup(om.Group):
                 ('fuel_burned', Mission.FUEL_BURNED),
                 ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
             ],
-            promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL_MASS)],
+            promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL)],
         )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
@@ -976,7 +976,7 @@ class AviaryGroup(om.Group):
             ecomp,
             promotes_inputs=[
                 ('operating_empty_mass', Mission.OPERATING_MASS),
-                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.TOTAL_FUEL),
                 ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
                 ('initial_mass', Mission.GROSS_MASS),
             ],
@@ -997,7 +997,7 @@ class AviaryGroup(om.Group):
             promotes_inputs=[
                 ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
                 ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.TOTAL_FUEL),
             ],
             promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
         )

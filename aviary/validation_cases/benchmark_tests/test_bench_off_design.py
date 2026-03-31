@@ -53,7 +53,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         prob_var_list = [
             Aircraft.Design.RANGE,
             Mission.RANGE,
-            Mission.TOTAL_FUEL_MASS,
+            Mission.TOTAL_FUEL,
             Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
@@ -109,7 +109,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         )
         assert_near_equal(prob_fallout.get_val(Mission.RANGE), 2438.6, tolerance=1e-3)
         assert_near_equal(
-            prob_fallout.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.TOTAL_FUEL, 'lbm'),
             29031.53317628,
             tolerance=1e-5,
         )
@@ -194,7 +194,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         )
         assert_near_equal(prob_alternate.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
-            prob_alternate.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.TOTAL_FUEL, 'lbm'),
             23663.00633808,
             tolerance=1e-5,
         )
@@ -293,7 +293,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         # compares provided problem with design problem
         prob_var_list = [
             Mission.RANGE,
-            Mission.TOTAL_FUEL_MASS,
+            Mission.TOTAL_FUEL,
             Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
@@ -347,7 +347,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(prob_fallout.get_val(Mission.RANGE), 3994.25223046, tolerance=1e-4)
         assert_near_equal(
-            prob_fallout.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.TOTAL_FUEL, 'lbm'),
             39909.74193096,
             tolerance=1e-5,
         )
@@ -420,7 +420,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         )
         assert_near_equal(prob_alternate.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
-            prob_alternate.get_val(Mission.TOTAL_FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.TOTAL_FUEL, 'lbm'),
             21484.97566914,
             tolerance=1e-6,
         )

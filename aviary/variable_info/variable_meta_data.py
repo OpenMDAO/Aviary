@@ -7374,7 +7374,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.TOTAL_FUEL_MASS,
+    Mission.TOTAL_FUEL,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
