@@ -10,7 +10,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 import aviary.api as av
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.missions.height_energy_default import phase_info as ph_in
+from aviary.models.missions.energy_state_default import phase_info as ph_in
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
@@ -99,9 +99,9 @@ class PostMissionComp(om.ExplicitComponent):
 
 
 class CustomBuilder(SubsystemBuilder):
-    def __init__(self, name, mangle_names=False):
+    def __init__(self, name=None, meta_data=None, mangle_names=False):
         self.mangle_names = mangle_names
-        super().__init__(name)
+        super().__init__(name, meta_data)
 
     def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         shape = (

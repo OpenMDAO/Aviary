@@ -1,6 +1,5 @@
 import csv
 import json
-import math
 import os
 import warnings
 from copy import deepcopy
@@ -36,14 +35,6 @@ GASP = LegacyCode.GASP
 class AviaryProblem(om.Problem):
     """
     Main class for instantiating, formulating, and solving Aviary problems.
-
-    On a basic level, this problem object is all the conventional user needs
-    to interact with. Looking at the three "levels" of use cases, from simplest
-    to most complicated, we have:
-
-    Level 1: users interact with Aviary through input files (.csv or .yaml, TBD)
-    Level 2: users interact with Aviary through a Python interface
-    Level 3: users can modify Aviary's workings through Python and OpenMDAO
 
     This Problem object is simply a specialized OpenMDAO Problem that has
     additional methods to help users create and solve Aviary problems.
@@ -1595,7 +1586,7 @@ class AviaryProblem(om.Problem):
         # Off-design missions are not tested with 2DOF missions.
         mass_method = self.model.aviary_inputs.get_val(Settings.MASS_METHOD)
         equations_of_motion = self.model.aviary_inputs.get_val(Settings.EQUATIONS_OF_MOTION)
-        if equations_of_motion is EquationsOfMotion.HEIGHT_ENERGY:
+        if equations_of_motion is EquationsOfMotion.ENERGY_STATE:
             # make a copy of the phase_info to avoid modifying the original.
             phase_info = self.model.mission_info.copy()
             phase_info['pre_mission'] = self.model.pre_mission_info.copy()
@@ -1973,6 +1964,9 @@ def reload_aviary_problem(
     ----------
     filename : str, Path
         User specified name and relative path of json file containing the sized aircraft data
+
+    phase_info : dict, Path
+        phase_info dictionary used by the original problem
 
     metadata : dict (optional)
         Custom metadata if needed to read all variables present in the json output file

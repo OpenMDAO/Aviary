@@ -13,7 +13,7 @@ import dymos as dm
 import openmdao.api as om
 import numpy as np
 
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
 from aviary.variable_info.variable_meta_data import _MetaData
@@ -52,7 +52,7 @@ class PhaseBuilder(ABC):
     subsystem_options : dict (None)
         dictionary of parameters to be passed to the subsystem builders
 
-    default_name : str
+    _default_name : str
         class attribute: derived type customization point; the default value
         for name
 
@@ -93,9 +93,9 @@ class PhaseBuilder(ABC):
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 
-    default_name = '_unknown phase_'
+    _default_name = '_unknown phase_'
 
-    default_ode_class = EnergyODE
+    default_ode_class = EnergyStateODE
     default_options_class = om.OptionsDictionary
 
     default_meta_data = _MetaData
@@ -115,7 +115,7 @@ class PhaseBuilder(ABC):
         meta_data=None,
     ):
         if name is None:
-            name = self.default_name
+            name = self._default_name
 
         self.name = name
 

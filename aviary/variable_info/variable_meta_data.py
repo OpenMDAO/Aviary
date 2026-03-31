@@ -1599,16 +1599,13 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_FRACTION,
+    Aircraft.Design.RESERVE_FUEL_MARGIN,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     option=True,
     units='unitless',
-    desc='required fuel reserves: given as a proportion of mission fuel. This value must be nonnegative. '
-    'Mission fuel only includes normal phases and excludes reserve phases. '
-    'If it is 0.5, the reserve fuel is half of the mission fuel (one third of the total fuel). Note '
-    'it can be greater than 1. If it is 2, there would be twice as much reserve fuel as mission fuel '
-    '(the total fuel carried would be 1/3 for the mission and 2/3 for the reserve)',
+    desc='required fuel reserves: given as a precentage of mission fuel.'
+    'Mission fuel only includes normal phases and excludes reserve phases.',
     default_value=0,
 )
 
@@ -2867,16 +2864,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.FUEL_MARGIN,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FVOL_MRG', 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    desc='percentage of excess fuel volume required, essentially the amount of fuel above '
-    'the design point that there has to be volume to carry',
-    default_value=0.0,
-)
-
-add_meta_data(
     # NOTE: user override
     #    - see also: Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER
     Aircraft.Fuel.FUEL_SYSTEM_MASS,
@@ -3039,6 +3026,16 @@ add_meta_data(
     units='unitless',
     desc='scaler for Unusable fuel mass',
     default_value=1.0,
+)
+
+add_meta_data(
+    Aircraft.Fuel.VOLUME_MARGIN,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.FVOL_MRG', 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    desc='Extra volume required in the wing fuel tank as a percentage of design mission fuel mass.'
+    'Only used in GASP wing tank mass and fuel system mass sizing calculations.',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -7356,7 +7353,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='the total fuel reserves which is the sum of: '
-    'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_FRACTION',
+    'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_MARGIN',
     default_value=0,
 )
 
@@ -7633,7 +7630,7 @@ add_meta_data(
     desc='computed mass of aircraft for landing, is only '
     'required to be equal to Aircraft.Design.LANDING_MASS '
     'when the design case is being run '
-    'for HEIGHT_ENERGY missions this is the mass at the end of the last regular phase (non-reserve phase)',
+    'for ENERGY_STATE missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )
 
 add_meta_data(
@@ -7756,32 +7753,6 @@ add_meta_data(
     desc='scale factor on overall fuel flow',
     default_value=1.0,
     option=True,
-)
-
-add_meta_data(
-    Mission.Summary.FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.WFADES',
-        'FLOPS': None,  # ['WSP(38, 2)', '~WEIGHT.FUELM', '~INERT.FUELM'],
-        'LEAPS1': [
-            '(WeightABC)self._fuel_weight',
-            'aircraft.outputs.L0_weights_summary.fuel_weight',
-        ],
-    },
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the mission',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.FUEL_MASS_REQUIRED,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFAREQ', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel carried by the aircraft when it is on the ramp at the beginning of the design '
-    'mission',
-    default_value=0.0,
 )
 
 add_meta_data(

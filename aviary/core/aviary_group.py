@@ -11,7 +11,7 @@ from openmdao.utils.mpi import MPI
 from aviary.core.post_mission_group import PostMissionGroup
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.interface.utils import set_warning_format
-from aviary.mission.height_energy_problem_configurator import HeightEnergyProblemConfigurator
+from aviary.mission.energy_state_problem_configurator import EnergyStateProblemConfigurator
 from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProblemConfigurator
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
@@ -44,7 +44,7 @@ from aviary.variable_info.functions import setup_trajectory_params
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
-HEIGHT_ENERGY = EquationsOfMotion.HEIGHT_ENERGY
+ENERGY_STATE = EquationsOfMotion.ENERGY_STATE
 SOLVED_2DOF = EquationsOfMotion.SOLVED_2DOF
 CUSTOM = EquationsOfMotion.CUSTOM
 
@@ -135,7 +135,7 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         # add a check for traj using hasattr for pre-mission tests.
-        if mission_method is HEIGHT_ENERGY and hasattr(self, 'traj'):
+        if mission_method is ENERGY_STATE and hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
@@ -222,8 +222,8 @@ class AviaryGroup(om.Group):
         self.aero_method = aero_method = aviary_inputs.get_val(Settings.AERODYNAMICS_METHOD)
 
         # Determine which problem configurator to use based on mission_method
-        if mission_method is HEIGHT_ENERGY:
-            self.configurator = HeightEnergyProblemConfigurator()
+        if mission_method is ENERGY_STATE:
+            self.configurator = EnergyStateProblemConfigurator()
         elif mission_method is TWO_DEGREES_OF_FREEDOM:
             self.configurator = TwoDOFProblemConfigurator()
         elif mission_method is SOLVED_2DOF:
@@ -239,7 +239,7 @@ class AviaryGroup(om.Group):
                 )
         else:
             raise ValueError(
-                'settings:equations_of_motion must be one of: height_energy, 2DOF, '
+                'settings:equations_of_motion must be one of: energy_state, 2DOF, '
                 'solved_2DOF, or custom'
             )
 
@@ -826,14 +826,16 @@ class AviaryGroup(om.Group):
             self.regular_phases[0]
         except BaseException:
             raise ValueError(
-                'regular_phases[] dictionary is not accessible. For HEIGHT_ENERGY and '
+                'regular_phases[] dictionary is not accessible. For ENERGY_STATE and '
                 'SOLVED_2DOF missions, check_and_preprocess_inputs() must be called '
                 'before add_post_mission_systems().'
             )
 
         # Fuel burn in regular phases
         ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',  # TODO: Fix to be difference in cumulative fuel burn
+            'fuel_burned = initial_mass - mass_final',
+            # TODO: Fix to include any payloads dropped off during the mission
+            # We execute a similar calculaton a second time when calculating Aircraft.Design.RESERVE_FUEL_MARGIN
             initial_mass={'units': 'lbm'},
             mass_final={'units': 'lbm'},
             fuel_burned={'units': 'lbm'},
@@ -842,22 +844,9 @@ class AviaryGroup(om.Group):
         post_mission.add_subsystem(
             'fuel_burned',
             ecomp,
-            promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
+            promotes_inputs=[('initial_mass', Mission.Summary.GROSS_MASS)],
+            promotes_outputs=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
         )
-
-        if self.pre_mission_info['include_takeoff']:
-            post_mission.promotes(
-                'fuel_burned',
-                [('initial_mass', Mission.Summary.GROSS_MASS)],
-            )
-        else:
-            # timeseries has to be used because Breguet cruise phases don't have
-            # states
-            self.connect(
-                f'traj.{self.regular_phases[0]}.timeseries.mass',
-                'fuel_burned.initial_mass',
-                src_indices=[0],
-            )
 
         self.connect(
             f'traj.{self.regular_phases[-1]}.timeseries.mass',
@@ -899,10 +888,10 @@ class AviaryGroup(om.Group):
         # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
         # also include the unused fuel, and the hierarchy variable name should be
         # more clear
+
         ecomp = om.ExecComp(
-            'overall_fuel = (1 + fuel_margin/100)*fuel_burned + reserve_fuel',
+            'overall_fuel = fuel_burned + reserve_fuel',
             overall_fuel={'units': 'lbm', 'shape': 1},
-            fuel_margin={'units': 'unitless', 'val': 0},
             fuel_burned={'units': 'lbm'},  # from regular_phases only
             reserve_fuel={'units': 'lbm', 'shape': 1},
         )
@@ -910,7 +899,6 @@ class AviaryGroup(om.Group):
             'fuel_calc',
             ecomp,
             promotes_inputs=[
-                ('fuel_margin', Aircraft.Fuel.FUEL_MARGIN),
                 ('fuel_burned', Mission.Summary.FUEL_BURNED),
                 ('reserve_fuel', Mission.Design.RESERVE_FUEL),
             ],
@@ -1315,7 +1303,7 @@ class AviaryGroup(om.Group):
                 )
 
         elif self.mission_method in (
-            HEIGHT_ENERGY,
+            ENERGY_STATE,
             TWO_DEGREES_OF_FREEDOM,
         ):  # TODO: This becomes generic as soon as SOLVED_2DOF is removed
             # vehicle sizing problem
@@ -1544,40 +1532,46 @@ class AviaryGroup(om.Group):
         else:
             reserve_calc_location = self.model
 
-        RESERVE_FUEL_FRACTION = self.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
+        reserve_fuel_margin = self.aviary_inputs.get_val(
+            Aircraft.Design.RESERVE_FUEL_MARGIN, units='unitless'
         )
-        if RESERVE_FUEL_FRACTION != 0:
+        if reserve_fuel_margin != 0:
+            # Originally tried to reference Mission.Summary.FUEL_BURNED for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_frac_mass = reserve_fuel_fraction * (takeoff_mass - final_mass)',
-                reserve_fuel_frac_mass={'units': 'lbm'},
-                reserve_fuel_fraction={
+                'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
+                reserve_fuel_margin_mass={'units': 'lbm'},
+                reserve_fuel_margin={
                     'units': 'unitless',
-                    'val': RESERVE_FUEL_FRACTION,
+                    'val': reserve_fuel_margin,
                 },
+                initial_mass={'units': 'lbm'},
                 final_mass={'units': 'lbm'},
-                takeoff_mass={'units': 'lbm'},
             )
 
             reserve_calc_location.add_subsystem(
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
                 promotes_inputs=[
-                    ('takeoff_mass', Mission.Summary.GROSS_MASS),
-                    ('final_mass', Mission.Landing.TOUCHDOWN_MASS),
-                    ('reserve_fuel_fraction', Aircraft.Design.RESERVE_FUEL_FRACTION),
+                    ('initial_mass', Mission.Summary.GROSS_MASS),
+                    ('reserve_fuel_margin', Aircraft.Design.RESERVE_FUEL_MARGIN),
                 ],
-                promotes_outputs=['reserve_fuel_frac_mass'],
+                promotes_outputs=['reserve_fuel_margin_mass'],
+            )
+            # connect final mass
+            self.connect(
+                f'traj.{self.regular_phases[-1]}.timeseries.mass',
+                'reserve_fuel_frac.final_mass',
+                src_indices=[-1],
             )
 
-        RESERVE_FUEL_ADDITIONAL = self.aviary_inputs.get_val(
+        reserve_fuel_additional = self.aviary_inputs.get_val(
             Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
         )
         reserve_fuel = om.ExecComp(
-            'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
+            'reserve_fuel = reserve_fuel_margin_mass + reserve_fuel_additional + reserve_fuel_burned',
             reserve_fuel={'units': 'lbm', 'shape': 1},
-            reserve_fuel_frac_mass={'units': 'lbm', 'val': 0},
-            reserve_fuel_additional={'units': 'lbm', 'val': RESERVE_FUEL_ADDITIONAL},
+            reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
+            reserve_fuel_additional={'units': 'lbm', 'val': reserve_fuel_additional},
             reserve_fuel_burned={'units': 'lbm', 'val': 0},
         )
 
@@ -1585,7 +1579,7 @@ class AviaryGroup(om.Group):
             'reserve_fuel',
             reserve_fuel,
             promotes_inputs=[
-                'reserve_fuel_frac_mass',
+                'reserve_fuel_margin_mass',
                 ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
                 ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
             ],

@@ -7,7 +7,7 @@ import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
