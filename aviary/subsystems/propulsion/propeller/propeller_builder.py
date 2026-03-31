@@ -33,7 +33,7 @@ class PropellerBuilder(SubsystemBuilder):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
         return
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return PropellerPerformance(
             num_nodes=num_nodes, aviary_options=aviary_inputs, propeller_data=self.data

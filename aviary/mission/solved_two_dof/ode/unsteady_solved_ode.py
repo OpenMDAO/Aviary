@@ -88,6 +88,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         input_speed_type = self.options['input_speed_type']
         aviary_options = self.options['aviary_options']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
         subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
 
@@ -177,15 +178,18 @@ class UnsteadySolvedODE(TwoDOFODE):
             system = subsystem.build_mission(
                 num_nodes=nn,
                 aviary_inputs=aviary_options,
+                user_options=user_options,
                 subsystem_options=kwargs,
             )
             if system is not None:
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 mission_out = subsystem.mission_outputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=kwargs,
                 )
                 if isinstance(subsystem, AerodynamicsBuilder):

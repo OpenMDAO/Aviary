@@ -89,7 +89,10 @@ class TurbopropMissionTest(unittest.TestCase):
         propulsion_group.add_subsystem(
             engine.name,
             subsys=engine.build_mission(
-                num_nodes=num_nodes, aviary_inputs=options, subsystem_options=kwargs
+                num_nodes=num_nodes,
+                aviary_inputs=options,
+                user_options={},
+                subsystem_options=kwargs,
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -354,7 +357,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
 
 class ExamplePropModel(SubsystemBuilder):
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         prop_group = om.Group()
 
         pp = prop_group.add_subsystem(

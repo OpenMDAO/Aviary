@@ -37,11 +37,19 @@ class PropulsionMission(om.Group):
             desc='dictionary of options for each EngineModel',
         )
 
+        self.options.declare(
+            'user_options',
+            types=dict,
+            default={},
+            desc='user_options for this phase',
+        )
+
     def setup(self):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = self.options['engine_models']
         engine_options = self.options['engine_options']
+        user_options = self.options['user_options']
         num_engine_type = len(engine_models)
 
         # Create IndepVarComp to pass maximum throttle to max thrust interpolator
@@ -118,12 +126,14 @@ class PropulsionMission(om.Group):
                     engine_model = engine.build_mission(
                         num_nodes=nn,
                         aviary_inputs=options,
+                        user_options=user_options,
                         subsystem_options={},
                     )
                 else:
                     base_comp = engine.build_mission(
                         num_nodes=nn,
                         aviary_inputs=options,
+                        user_options=user_options,
                         subsystem_options={},
                     )
                     engine_model = om.Group()
@@ -131,6 +141,7 @@ class PropulsionMission(om.Group):
                     max_comp = engine.build_mission(
                         num_nodes=nn,
                         aviary_inputs=options,
+                        user_options=user_options,
                         subsystem_options={},
                     )
 
@@ -186,12 +197,14 @@ class PropulsionMission(om.Group):
                 engine_model = engine.build_mission(
                     num_nodes=nn,
                     aviary_inputs=options,
+                    user_options=user_options,
                     subsystem_options={},
                 )
             else:
                 base_comp = engine.build_mission(
                     num_nodes=nn,
                     aviary_inputs=options,
+                    user_options=user_options,
                     subsystem_options={},
                 )
                 engine_model = om.Group()
@@ -199,6 +212,7 @@ class PropulsionMission(om.Group):
                 max_comp = engine.build_mission(
                     num_nodes=nn,
                     aviary_inputs=options,
+                    user_options=user_options,
                     subsystem_options={},
                 )
 

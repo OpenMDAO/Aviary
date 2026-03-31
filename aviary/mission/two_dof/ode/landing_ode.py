@@ -20,6 +20,7 @@ class LandingSegment(TwoDOFODE):
     def setup(self):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
+        user_options = self.options['user_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -61,7 +62,10 @@ class LandingSegment(TwoDOFODE):
                 }
                 aero_builder = subsystem
                 aero_system = subsystem.build_mission(
-                    num_nodes=1, aviary_inputs=aviary_options, subsystem_options=subsystem_options
+                    num_nodes=1,
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=subsystem_options,
                 )
                 self.add_subsystem(
                     subsystem.name,
@@ -98,6 +102,7 @@ class LandingSegment(TwoDOFODE):
                 propulsion_system = subsystem.build_mission(
                     num_nodes=1,
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options={},
                 )
                 propulsion_mission = self.add_subsystem(
@@ -165,6 +170,7 @@ class LandingSegment(TwoDOFODE):
             aero_builder.build_mission(
                 num_nodes=1,
                 aviary_inputs=aviary_options,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             ),
             promotes_inputs=[

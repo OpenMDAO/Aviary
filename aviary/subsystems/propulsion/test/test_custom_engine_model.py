@@ -106,7 +106,7 @@ class SimpleTestEngine(EngineModel):
     def build_pre_mission(self, aviary_inputs=AviaryValues(), subsystem_options=None):
         return PreMissionEngine()
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return SimpleEngine(num_nodes=num_nodes)
 
     def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):

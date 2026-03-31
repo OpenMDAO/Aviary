@@ -276,6 +276,7 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'input_speed_type': SpeedType.MACH,
             'clean': self.user_options.get_val('clean'),

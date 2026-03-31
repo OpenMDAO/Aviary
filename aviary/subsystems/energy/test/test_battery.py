@@ -46,7 +46,9 @@ class TestBatteryDerivs(unittest.TestCase):
         prob = self.prob
         prob.model.add_subsystem(
             'battery_mission',
-            subsys=self.battery.build_mission(num_nodes=4, aviary_inputs={}, subsystem_options={}),
+            subsys=self.battery.build_mission(
+                num_nodes=4, aviary_inputs={}, user_options={}, subsystem_options={}
+            ),
             promotes=['*'],
         )
 

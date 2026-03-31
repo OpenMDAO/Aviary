@@ -27,7 +27,13 @@ class BaseODE(om.Group):
             'subsystem_options',
             types=dict,
             default={},
-            desc='dictionary of parameters to be passed to the subsystem builders',
+            desc='dictionary of optional arguments for the subsystems in this phase',
+        )
+        self.options.declare(
+            'user_options',
+            types=dict,
+            default={},
+            desc='dictionary of user options for this phase',
         )
         self.options.declare(
             'aviary_options',
@@ -76,6 +82,7 @@ class BaseODE(om.Group):
         aviary_options = self.options['aviary_options']
         all_subsystems = self.options['subsystems']
         all_subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
         use_mission_solver = False
 
         for subsystem in all_subsystems:
@@ -88,6 +95,7 @@ class BaseODE(om.Group):
             subsystem_mission = subsystem.build_mission(
                 num_nodes=nn,
                 aviary_inputs=aviary_options,
+                user_options=user_options,
                 subsystem_options=subsystem_options,
             )
 
@@ -104,10 +112,12 @@ class BaseODE(om.Group):
 
                 mission_in = subsystem.mission_inputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=subsystem_options,
                 )
                 mission_out = subsystem.mission_outputs(
                     aviary_inputs=aviary_options,
+                    user_options=user_options,
                     subsystem_options=subsystem_options,
                 )
                 target.add_subsystem(

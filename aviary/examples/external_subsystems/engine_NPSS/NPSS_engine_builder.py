@@ -60,7 +60,7 @@ class NPSSTabularEngineBuilder(EngineModel):
         """
         return DesignEngineGroup()
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Builds the off-design (mission) engine model.
 

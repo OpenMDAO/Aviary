@@ -97,11 +97,12 @@ class CorePropulsionBuilder(PropulsionBuilder):
             engine_options=subsystem_options,
         )
 
-    def build_mission(self, num_nodes, aviary_inputs, subsystem_options):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return PropulsionMission(
             num_nodes=num_nodes,
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
+            user_options=user_options,
             engine_options=subsystem_options,
         )
 
