@@ -891,7 +891,7 @@ class AviaryGroup(om.Group):
             ecomp,
             promotes_inputs=[
                 ('fuel_burned', Mission.FUEL_BURNED),
-                ('reserve_fuel', Mission.RESERVE_FUEL),
+                ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
             ],
             promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL_MASS)],
         )
@@ -1499,7 +1499,9 @@ class AviaryGroup(om.Group):
                     units=val_dict.get('units', None),
                 )
 
-    def add_fuel_reserve_component(self, post_mission=True, reserves_name=Mission.RESERVE_FUEL):
+    def add_fuel_reserve_component(
+        self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL
+    ):
         if post_mission:
             reserve_calc_location = self.post_mission
         else:

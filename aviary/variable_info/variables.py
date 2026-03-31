@@ -663,7 +663,7 @@ class Mission:
     GROSS_MASS = 'mission:gross_mass'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'
-    RESERVE_FUEL = 'Mission:reserve_fuel'
+    RESERVE_FUEL = 'mission.total_reserve_fuel'
     RESERVE_FUEL_BURNED = 'mission:reserve_fuel_burned'
     TOTAL_FUEL_MASS = 'mission:total_fuel_mass'
     USEFUL_LOAD = 'mission:useful_load'
