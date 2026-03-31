@@ -16,7 +16,9 @@ If you are using Aviary, please [Cite](#citing-aviary) us!
 
 [Read the Docs](https://openmdao.github.io/Aviary/introduction.html).
 
-[Overview Presentation](https://ntrs.nasa.gov/citations/20240009217) is a great place to get started if you are wondering what Aviary is at a high level.
+[Overview Slide Slow](https://ntrs.nasa.gov/citations/20240009217) is a great place to get started if you are wondering what Aviary is at a high level.
+
+[Overview Video](https://www.youtube.com/watch?v=nWh-NcM-84Q) gives a 5 minute introduction to Aviary.
 
 [Paper by Gratz et al.](https://ntrs.nasa.gov/api/citations/20240007608/downloads/Resubmit_final_62424.pdf) describing aviaries capabilities in detail.
 
