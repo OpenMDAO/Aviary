@@ -22,8 +22,6 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.preprocessors import _get_engine_variables
 from aviary.variable_info.variables import Aircraft
 
-_default_name = 'propulsion'
-
 
 class PropulsionBuilder(SubsystemBuilder):
     """
@@ -37,17 +35,11 @@ class PropulsionBuilder(SubsystemBuilder):
 
     Methods
     -------
-    mission_inputs()
-        class method to return mission inputs.
-    mission_outputs()
-        class method to return mission outputs.
+    __init__(self, name=None, meta_data=None):
+        Initializes the PerformanceBuilder object with a given name.
     """
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
-
-        super().__init__(name=name, meta_data=meta_data)
+    _default_name = 'propulsion'
 
 
 class CorePropulsionBuilder(PropulsionBuilder):
@@ -87,9 +79,6 @@ class CorePropulsionBuilder(PropulsionBuilder):
     """
 
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
-        if name is None:
-            name = 'propulsion'
-
         super().__init__(name=name, meta_data=meta_data)
 
         if not isinstance(engine_models, (list, np.ndarray)):
