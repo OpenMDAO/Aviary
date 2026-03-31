@@ -7338,9 +7338,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='NM',
-    desc='actual range that the aircraft flies, whether '
-    'it is a design case or an off design case. Equal '
-    'to Mission.Design.RANGE value in the design case.',
+    desc='actual range that the aircraft flies on this mission. Equal to Aircraft.Design.RANGE value in the design case.',
 )
 
 add_meta_data(
