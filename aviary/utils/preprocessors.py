@@ -49,6 +49,30 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
+    if Aircraft.Wing.ASPECT_RATIO_REFERENCE in aviary_options:
+        arref = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE)
+        if (np.isscalar(arref) and arref == 0) or (not np.isscalar(arref) and arref[0] == 0):
+            if Aircraft.Wing.ASPECT_RATIO in aviary_options:
+                ar = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO)
+                aviary_options.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, ar, 'unitless')
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Assume Aircraft.Wing.ASPECT_RATIO_REFERENCE is the same '
+                        'as Aircraft.Wing.ASPECT_RATIO.'
+                    )
+
+    if Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE in aviary_options:
+        tcref = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE)
+        if (np.isscalar(tcref) and tcref == 0) or (not np.isscalar(tcref) and tcref[0] == 0):
+            if Aircraft.Wing.THICKNESS_TO_CHORD in aviary_options:
+                tc = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD)
+                aviary_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, tc, 'unitless')
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Assume Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE is the same '
+                        'as Aircraft.Wing.THICKNESS_TO_CHORD.'
+                    )
+
 
 # this function is not used
 def remove_preprocessed_options(aviary_options):
