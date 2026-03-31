@@ -71,6 +71,9 @@ We have also provided a static version of the `environment.yml` at the top level
 Aviary is in active development.
 We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/Aviary/misc_resources/planned_future_features.html).
 
+## Contact Us
+**Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
+
 ## Citing Aviary
 
 If you use Aviary in your research, please cite:
@@ -136,6 +139,3 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
-## Contact Us
-**Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
