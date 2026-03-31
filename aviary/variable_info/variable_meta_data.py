@@ -1695,27 +1695,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.RESERVE_FUEL_ADDITIONAL,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='lbm',
-    desc='required fuel reserves: directly in lbm',
-    default_value=0,
-)
-
-add_meta_data(
-    Mission.RESERVE_FUEL_MARGIN,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    desc='required fuel reserves: given as a precentage of mission fuel.'
-    'Mission fuel only includes normal phases and excludes reserve phases.',
-    default_value=0,
-)
-
-add_meta_data(
     Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
@@ -7365,22 +7344,33 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.TOTAL_RESERVE_FUEL,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='the total fuel reserves which is the sum of: '
-    'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
-    default_value=0,
-)
-
-add_meta_data(
     Mission.RESERVE_FUEL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
     default_value=0.0,
+)
+
+add_meta_data(
+    Mission.RESERVE_FUEL_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None, 'LEAPS1': None},
+    option=True,
+    units='lbm',
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
+    Mission.RESERVE_FUEL_MARGIN,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    option=True,
+    units='unitless',
+    desc='required fuel reserves: given as a precentage of mission fuel.'
+    'Mission fuel only includes normal phases and excludes reserve phases.',
+    default_value=0,
 )
 
 add_meta_data(
@@ -7391,6 +7381,16 @@ add_meta_data(
     # Note: In GASP, WFA does not include fuel margin.
     desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
     'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.TOTAL_RESERVE_FUEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='the total fuel reserves which is the sum of: '
+    'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
+    default_value=0,
 )
 
 add_meta_data(
