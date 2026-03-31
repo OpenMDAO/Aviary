@@ -33,7 +33,7 @@ The minimum supported Python version for Aviary is 3.9.
 ### Docker Install
 You can also install aviary as a package/image using docker:
 
-    $ docker pull ghcr.io/openmdao/aviary:latest
+    docker pull ghcr.io/openmdao/aviary:latest
 
 ## Validation
 
