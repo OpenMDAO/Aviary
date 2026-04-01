@@ -57,7 +57,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
         self.include_constraints = include_constraints
         super().__init__(name, meta_data)
 
-    def get_states(self):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of states for the battery subsystem.
 
@@ -87,14 +87,14 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return states_dict
 
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         """
         Return the list of linked variables for the battery subsystem; in this case
         it's our two state variables.
         """
         return [Dynamic.Battery.VOLTAGE_THEVENIN, Dynamic.Battery.STATE_OF_CHARGE]
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 
@@ -107,7 +107,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
         """
         return BatteryPreMission()
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the subsystem.
 
@@ -121,9 +121,18 @@ class DetailedBatteryBuilder(SubsystemBuilder):
         """
         return BatteryMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
 
-    def get_constraints(self):
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of constraints for the battery subsystem.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -159,7 +168,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return constraints
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Return a dictionary of design variables for the battery subsystem.
 
@@ -188,7 +197,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of fixed values exposed to the phases for the battery subsystem.
 
@@ -211,7 +220,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return parameters_dict
 
-    def get_initial_guesses(self):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of initial guesses for the battery subsystem.
 
@@ -236,7 +245,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return initial_guess_dict
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """
         Return a list of names for the battery subsystem.
 
@@ -270,7 +279,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return aviary_inputs
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a list of output names for the battery subsystem.
 
