@@ -10,13 +10,14 @@ from aviary.models.aircraft.large_single_aisle_1.V3_bug_fixed_IO import (
 )
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
-from aviary.utils.aviary_values import get_items
+from aviary.subsystems.mass.gasp_based.mass_summation import StructureMass
+from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
-class MassSummationTestCase1(unittest.TestCase):
+class MassPremissionTestCase1(unittest.TestCase):
     """
     This is the large single aisle 1 V3 bug fixed test case.
     All values are from V3 bug fixed output (or hand calculated from output) unless
@@ -116,7 +117,7 @@ class MassSummationTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
-class MassSummationTestCase2(unittest.TestCase):
+class MassPremissionTestCase2(unittest.TestCase):
     """
     This is the large single aisle 1 V3.5 test case.
     All values are from V3.5 output (or hand calculated from the output, and these cases
@@ -462,10 +463,11 @@ class MassSummationTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
 
 
-class MassSummationTestCase3(unittest.TestCase):
+class MassPremissionTestCase3(unittest.TestCase):
     """
-    This is thelarge single aisle 1V3.6 test case with a fuel margin of 0%, a wing loading of 128 psf, and a SLS thrust of 29500 lbf
-    All values are from V3.6 output (or hand calculated from the output, and these cases are specified).
+    This is the large single aisle 1V3.6 test case with a fuel margin of 0%, a wing loading of 128
+    psf, and a SLS thrust of 29500 lbf. All values are from V3.6 output (or hand calculated from the
+    output, and these cases are specified).
     """
 
     def setUp(self):
@@ -804,7 +806,7 @@ class MassSummationTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
 
 
-class MassSummationTestCase4(unittest.TestCase):
+class MassPremissionTestCase4(unittest.TestCase):
     """
     This is the large single aisle 1V3.6 test case with a fuel margin of 10%, a wing loading of 128 psf, and a SLS thrust of 29500 lbf
     All values are from V3.6 output (or hand calculated from the output, and these cases are specified).
@@ -2974,9 +2976,7 @@ class MassSummationTestCase9(unittest.TestCase):
 
 @use_tempdirs
 class BWBMassSummationTestCase(unittest.TestCase):
-    """
-    GASP BWB model
-    """
+    """GASP BWB model."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -3380,6 +3380,108 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob['extra_fuel_volume'], 169.53050054, tol)
         assert_near_equal(prob['max_extra_fuel_mass'], 8480.29608482, tol)
         assert_near_equal(prob['wingfuel_mass_min'], 11782.58105019, tol)
+
+
+# this is the large single aisle 1 V3 test case
+class StructMassTestCase1(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('struct', StructureMass(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.EMPENNAGE_MASS, val=4572, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
+        )
+
+        setup_model_options(
+            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-4
+        assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 50461.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
+
+
+class StructMassTestCase2(unittest.TestCase):
+    """Test mass-weight conversion."""
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.fuel as fuel
+
+        fuel.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.fuel as fuel
+
+        fuel.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem('struct', StructureMass(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.EMPENNAGE_MASS, val=4572, units='lbm')
+
+        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
+        )
+
+        setup_model_options(
+            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
+
+
+class BWBStructMassTestCase(unittest.TestCase):
+    """Using BWB data."""
+
+    def setUp(self):
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('struct', StructureMass(), promotes=['*'])
+
+        prob.model.set_input_defaults(Aircraft.Fuselage.MASS, 27159.69841266, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Wing.MASS, 7055.90333649, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.EMPENNAGE_MASS, 865.1980613, units='lbm')
+        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, 2230.13208284, units='lbm'
+        )
+        prob.model.set_input_defaults(Aircraft.Design.STRUCTURAL_MASS_INCREMENT, 0.0, units='lbm')
+
+        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 45110.93189329, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':
