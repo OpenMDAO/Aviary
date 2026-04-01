@@ -621,7 +621,7 @@ class AviaryProblem(om.Problem):
             ),
             promotes_inputs=[
                 ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
-                ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+                ('overall_fuel', Mission.TOTAL_FUEL),
             ],
             promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
         )
@@ -636,7 +636,7 @@ class AviaryProblem(om.Problem):
                 actual_range={'val': self.model.target_range, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
             ],
             promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],
@@ -672,7 +672,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective('obj_comp.obj')
 
             elif objective_type == 'fuel_burned':
-                self.model.add_objective(Mission.Summary.FUEL_BURNED, ref=ref)
+                self.model.add_objective(Mission.FUEL, ref=ref)
 
             elif objective_type == 'fuel':
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
@@ -764,7 +764,7 @@ class AviaryProblem(om.Problem):
         for name, group in matching_names:
             target_range, units = group.post_mission_info['target_range']
             design_range.append(convert_units(target_range, units, 'nmi'))
-        # TODO: loop through all the .csv files and extract Mission.Design.RANGE
+        # TODO: loop through all the .csv files and extract Aircraft.Design.RANGE
         design_range_max = np.max(design_range)
         self.set_val(range, val=design_range_max, units='nmi')
 
@@ -788,13 +788,13 @@ class AviaryProblem(om.Problem):
 
             Example inputs can be any of the following:
             ('fuel')
-            (Mission.Summary.FUEL_BURNED)
-            (Mission.Summary.FUEL_BURNED, Mission.Summary.CO2)
-            ('model1', Mission.Summary.FUEL_BURNED)
-            (Mission.Summary.FUEL_BURNED, 1.0)
-            (Mission.Summary.FUEL_BURNED, 1.0), (Mission.Summary.CO2, 2.0)
-            ('model1', Mission.Summary.FUEL_BURNED), ('model2', Mission.Summary.CO2)
-            ('model1', Mission.Summary.FUEL_BURNED, 1.0), ('model2', Mission.Summary.CO2, 2.0)
+            (Mission.FUEL)
+            (Mission.FUEL, Mission.Summary.CO2)
+            ('model1', Mission.FUEL)
+            (Mission.FUEL, 1.0)
+            (Mission.FUEL, 1.0), (Mission.Summary.CO2, 2.0)
+            ('model1', Mission.FUEL), ('model2', Mission.Summary.CO2)
+            ('model1', Mission.FUEL, 1.0), ('model2', Mission.Summary.CO2, 2.0)
 
         ref : float, optional
             Reference value for the final objective for scaling.
@@ -869,7 +869,7 @@ class AviaryProblem(om.Problem):
                 )
             objectives.append((model, output, weight))
             # objectives = [
-            # ('model1', Mission.Summary.FUEL_BURNED, 1),
+            # ('model1', Mission.FUEL, 1),
             # ('model2', Mission.Summary.CO2, 1),
             #  ...
             # ]
@@ -886,7 +886,7 @@ class AviaryProblem(om.Problem):
         objectives_cleaned = []
         for model, output, weight in objectives:
             if output == 'fuel_burned':
-                output = Mission.Summary.FUEL_BURNED
+                output = Mission.FUEL
                 # default scaling is valid only if this is the only argument and the ref has not yet been set
                 if len(args) == 1 and ref == None:
                     # set a default ref
@@ -896,13 +896,13 @@ class AviaryProblem(om.Problem):
                 if len(args) == 1 and ref == None:
                     ref = default_ref_values['fuel']
             elif output == 'mass':
-                output = Mission.Summary.FINAL_MASS
+                output = Mission.FINAL_MASS
                 if len(args) == 1 and ref == None:
                     ref = default_ref_values['mass']
             elif output == 'time':
-                output = Mission.Summary.FINAL_TIME
+                output = Mission.FINAL_TIME
             elif output == 'range':
-                output = Mission.Summary.RANGE  # Unsure if this will work
+                output = Mission.RANGE  # Unsure if this will work
             objectives_cleaned.append((model, output, weight))
 
         # Create the calculation string for the ExecComp() and the promotion reference values
@@ -964,7 +964,7 @@ class AviaryProblem(om.Problem):
             List of subsystem names (e.g., 'model1', 'model2') corresponding to different missions.
 
         outputs : list of str
-            List of output variable names (e.g., Mission.Summary.FUEL_BURNED, Mission.Summary.GROSS_MASS) to be included
+            List of output variable names (e.g., Mission.FUEL, Mission.GROSS_MASS) to be included
             in the objective from each mission.
 
         mission_weights : list of float, optional
@@ -1375,8 +1375,8 @@ class AviaryProblem(om.Problem):
         # Set up problem for mission, such as equations of motion, configurators, etc.
         inputs = deepcopy(self.aviary_inputs)
 
-        design_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
-        inputs.set_val(Mission.Design.GROSS_MASS, design_gross_mass, units='lbm')
+        design_gross_mass = self.get_val(Aircraft.Design.GROSS_MASS, units='lbm')[0]
+        inputs.set_val(Aircraft.Design.GROSS_MASS, design_gross_mass, units='lbm')
 
         if problem_type is not None:
             inputs.set_val(Settings.PROBLEM_TYPE, problem_type)
@@ -1439,7 +1439,7 @@ class AviaryProblem(om.Problem):
                         'Alternate problem type requested with no specified range. Using design '
                         'mission range for the off-design mission.'
                     )
-                mission_range = self.get_val(Mission.Summary.RANGE, units='NM')[0]
+                mission_range = self.get_val(Mission.RANGE, units='NM')[0]
 
             phase_info['post_mission']['target_range'] = (
                 mission_range,
@@ -1453,15 +1453,15 @@ class AviaryProblem(om.Problem):
         # Some Alternate problem changes had to happen before load_inputs, all fallout problem
         # changes must come after load_inputs
         if problem_type is ProblemType.ALTERNATE:
-            off_design_prob.aviary_inputs.set_val(Mission.Summary.RANGE, mission_range, units='NM')
-            # set initial guess for Mission.Summary.GROSS_MASS to help optimizer with new design
+            off_design_prob.aviary_inputs.set_val(Mission.RANGE, mission_range, units='NM')
+            # set initial guess for Mission.GROSS_MASS to help optimizer with new design
             # variable bounds.
             if mission_gross_mass is None:
                 mission_gross_mass = off_design_prob.aviary_inputs.get_val(
-                    Mission.Design.GROSS_MASS, 'lbm'
+                    Aircraft.Design.GROSS_MASS, 'lbm'
                 )
             off_design_prob.aviary_inputs.set_val(
-                Mission.Summary.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
+                Mission.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
             )
 
         elif problem_type is ProblemType.FALLOUT:
@@ -1472,10 +1472,10 @@ class AviaryProblem(om.Problem):
                         'Fallout problem type requested with no specified gross mass. Using design '
                         'takeoff gross mass for the off-design mission.'
                     )
-                mission_gross_mass = self.get_val(Mission.Design.GROSS_MASS, units='lbm')[0]
+                mission_gross_mass = self.get_val(Aircraft.Design.GROSS_MASS, units='lbm')[0]
 
             off_design_prob.aviary_inputs.set_val(
-                Mission.Summary.GROSS_MASS, mission_gross_mass, units='lbm'
+                Mission.GROSS_MASS, mission_gross_mass, units='lbm'
             )
 
         off_design_prob.check_and_preprocess_inputs(verbosity=verbosity)
@@ -1512,7 +1512,7 @@ class AviaryProblem(om.Problem):
                         # We don't know enough about the aircraft to make any informed guesses. Use
                         # arbitrary values
                         control_var = Aircraft.CrewPayload.MISC_CARGO
-                        val = self.get_val(Mission.Design.GROSS_MASS)
+                        val = self.get_val(Aircraft.Design.GROSS_MASS)
                         tol = 0.05
                         inputs.set_val(Aircraft.CrewPayload.CARGO_MASS, 0, 'lbm')
                     else:
@@ -1533,10 +1533,12 @@ class AviaryProblem(om.Problem):
 
         if fill_fuel:
             off_design_prob.model.add_design_var(
-                Mission.Summary.GROSS_MASS,
+                Mission.GROSS_MASS,
                 lower=0,
-                upper=off_design_prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm'),
-                ref=off_design_prob.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+                upper=off_design_prob.aviary_inputs.get_val(
+                    Aircraft.Design.GROSS_MASS, units='lbm'
+                ),
+                ref=off_design_prob.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
             )
 
         off_design_prob.add_objective(verbosity=verbosity)
@@ -1617,16 +1619,16 @@ class AviaryProblem(om.Problem):
             # payload + fuel on the payload and range diagram
             payload_2 = payload_1
 
-            range_2 = float(self.get_val(Mission.Summary.RANGE)[0])
-            gross_mass = float(self.get_val(Mission.Summary.GROSS_MASS)[0])
+            range_2 = float(self.get_val(Mission.RANGE)[0])
+            gross_mass = float(self.get_val(Mission.GROSS_MASS)[0])
             # NOTE this operating mass is based on the previously run mission - assumed this is the
             # design mission!! Includes cargo containers needed for design (max payload)
-            operating_mass = float(self.get_val(Mission.Summary.OPERATING_MASS)[0])
+            operating_mass = float(self.get_val(Mission.OPERATING_MASS)[0])
             fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
             unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
-            fuel_2 = self.get_val(Mission.Summary.FUEL_BURNED)[0]
+            fuel_2 = self.get_val(Mission.FUEL)[0]
 
             # Operating mass includes unusable fuel, don't double count
             max_usable_fuel = fuel_capacity - unusable_fuel
@@ -1685,8 +1687,8 @@ class AviaryProblem(om.Problem):
                     economic_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
                 )
 
-                range_3 = float(economic_range_prob.get_val(Mission.Summary.RANGE))
-                fuel_3 = economic_range_prob.get_val(Mission.Summary.FUEL_BURNED)[0]
+                range_3 = float(economic_range_prob.get_val(Mission.RANGE))
+                fuel_3 = economic_range_prob.get_val(Mission.FUEL)[0]
 
                 prob_3_skip = False
             else:
@@ -1718,8 +1720,8 @@ class AviaryProblem(om.Problem):
             )
 
             payload_4 = float(ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-            range_4 = float(ferry_range_prob.get_val(Mission.Summary.RANGE))
-            fuel_4 = ferry_range_prob.get_val(Mission.Summary.FUEL_BURNED)[0]
+            range_4 = float(ferry_range_prob.get_val(Mission.RANGE))
+            fuel_4 = ferry_range_prob.get_val(Mission.FUEL)[0]
 
             # if economic mission was skipped, economic_range_prob is the same as ferry_range_prob
             if prob_3_skip:
@@ -1771,7 +1773,7 @@ class AviaryProblem(om.Problem):
         ----------
         aviary_problem : AviaryProblem
             Aviary problem object optimized for the aircraft design/sizing mission.
-            Assumed to contain aviary_inputs and Mission.Summary.GROSS_MASS
+            Assumed to contain aviary_inputs and Mission.GROSS_MASS
         json_filename : string
             User specified name and relative path of json file to save the data into.
         save_to_reports : bool
@@ -1786,10 +1788,9 @@ class AviaryProblem(om.Problem):
                 type_value = type(value)
 
                 # Get the gross mass value from the sizing problem and add it to input list
-                if name == Mission.Summary.GROSS_MASS or name == Mission.Design.GROSS_MASS:
-                    Mission_Summary_GROSS_MASS_val = self.get_val(
-                        Mission.Summary.GROSS_MASS, units=units
-                    )
+
+                if name == Mission.GROSS_MASS or name == Aircraft.Design.GROSS_MASS:
+                    Mission_Summary_GROSS_MASS_val = self.get_val(Mission.GROSS_MASS, units=units)
                     Mission_Summary_GROSS_MASS_val_list = Mission_Summary_GROSS_MASS_val.tolist()
                     value = Mission_Summary_GROSS_MASS_val_list[0]
 
@@ -1819,11 +1820,11 @@ class AviaryProblem(om.Problem):
                 # Append the data to the list
                 aviary_input_list.append([name, value, units, str(type_value)])
 
-            if Mission.Design.GROSS_MASS not in self.model.aviary_inputs:
+            if Aircraft.Design.GROSS_MASS not in self.model.aviary_inputs:
                 aviary_input_list.append(
                     [
-                        Mission.Design.GROSS_MASS,
-                        self.get_val(Mission.Design.GROSS_MASS, 'lbm')[0],
+                        Aircraft.Design.GROSS_MASS,
+                        self.get_val(Aircraft.Design.GROSS_MASS, 'lbm')[0],
                         'lbm',
                         str(float),
                     ]
@@ -1842,7 +1843,7 @@ class AviaryProblem(om.Problem):
 
     def _add_hybrid_objective(self, phase_info):
         phases = list(phase_info.keys())
-        takeoff_mass = self.model.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
+        takeoff_mass = self.model.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
         obj_comp = om.ExecComp(
             f'obj = -final_mass / {takeoff_mass} + final_time / 5.',
@@ -2019,8 +2020,6 @@ def reload_aviary_problem(
     prob.final_setup()
 
     # some variables are normally in the problem instead, so add them there too
-    prob.set_val(
-        Mission.Summary.GROSS_MASS, aviary_inputs.get_val(Mission.Summary.GROSS_MASS, 'lbm'), 'lbm'
-    )
+    prob.set_val(Mission.GROSS_MASS, aviary_inputs.get_val(Mission.GROSS_MASS, 'lbm'), 'lbm')
 
     return prob

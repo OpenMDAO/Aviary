@@ -223,7 +223,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
         # This is one of the few places we test energy-state + simple takeoff.
-        overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
+        overall_fuel = prob.get_val(Mission.TOTAL_FUEL)
 
         # Making sure we include the fuel mass consumed in take-off and taxi.
         self.assertGreater(overall_fuel, 40000.0)

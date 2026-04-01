@@ -106,7 +106,7 @@ class TestBatteryMission(unittest.TestCase):
         soc_cruise2 = prob.get_val(
             f'traj.cruise2.timeseries.{av.Dynamic.Vehicle.BATTERY_STATE_OF_CHARGE}',
         )
-        fuel_burned = prob.get_val(av.Mission.Summary.FUEL_BURNED, units='lbm')
+        fuel_burned = prob.get_val(av.Mission.FUEL, units='lbm')
 
         # Check outputs
         # indirectly check mission trajectory by checking total fuel/electric split

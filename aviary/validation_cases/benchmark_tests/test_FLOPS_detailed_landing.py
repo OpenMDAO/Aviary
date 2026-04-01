@@ -81,7 +81,7 @@ class TestFLOPSDetailedLanding(unittest.TestCase):
             'pre_mission',
             CorePreMission(aviary_options=aviary_options, subsystems=default_premission_subsystems),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         # Instantiate the trajectory and add the phases
