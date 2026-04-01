@@ -72,7 +72,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         # Initial guess for gross weight.
         # We set it to an unconverged value to test convergence.
-        prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+        prob.set_val(Aircraft.Design.GROSS_MASS, val=1000.0)
 
         set_aviary_initial_values(prob, flops_inputs)
 
@@ -101,8 +101,8 @@ class PreMissionGroupTest(unittest.TestCase):
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Mission.Summary.OPERATING_MASS,
-                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.OPERATING_MASS,
+                Mission.ZERO_FUEL_MASS,
             ],
             step=1.01e-40,
             atol=1e-8,
@@ -200,8 +200,8 @@ class PreMissionGroupTest(unittest.TestCase):
                 Aircraft.Propulsion.MASS,
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Mission.Summary.OPERATING_MASS,
-                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.OPERATING_MASS,
+                Mission.ZERO_FUEL_MASS,
             ],
             atol=1e-4,
             rtol=1e-4,
@@ -270,7 +270,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         # Initial guess for gross weight.
         # We set it to an unconverged value to test convergence.
-        # prob.set_val(Mission.Design.GROSS_MASS, val=1000.0)
+        # prob.set_val(Aircraft.Design.GROSS_MASS, val=1000.0)
 
         set_aviary_initial_values(prob, flops_inputs)
 
@@ -378,7 +378,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Engine.THRUST_REVERSERS_MASS,
                 Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS,
                 # LandingMassGroup
-                Aircraft.Design.LANDING_MASS,
+                Aircraft.Design.TOUCHDOWN_MASS_MAX,
                 # SurfaceControlMass
                 Aircraft.Wing.SURFACE_CONTROL_MASS,
                 Aircraft.Wing.CONTROL_SURFACE_AREA,
@@ -415,9 +415,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # EmptyMass
                 Aircraft.Design.EMPTY_MASS,
                 # OperatingMass
-                Mission.Summary.OPERATING_MASS,
+                Mission.OPERATING_MASS,
                 # ZeroFuelMass
-                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.ZERO_FUEL_MASS,
                 # FuelMass
                 # TODO: test some aero variables
             ],
@@ -655,7 +655,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS_MAX], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 14152.3734702, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 5513.13877521, tol)
@@ -694,9 +694,9 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 455464.65969526308, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 455464.65969526308, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 553276.65969526302, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 553276.65969526302, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -828,7 +828,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS_MAX], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 14152.3734702, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 5513.13877521, tol)
@@ -867,9 +867,9 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 455464.65969526308, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 455464.65969526308, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 553276.65969526302, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 553276.65969526302, tol)
         # TODO: test some aero variables
 
 
@@ -1043,7 +1043,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS_MAX], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 11731.15573539, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 4032.5967, tol)
@@ -1080,9 +1080,9 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 390482.6804821, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 411479.0724484, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 411479.0724484, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 509291.0724484, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 509291.0724484, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -1214,7 +1214,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 699279.2, tol)
+        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS_MAX], 699279.2, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 11731.15573539, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 4032.5967, tol)
@@ -1251,9 +1251,9 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 390482.6804821, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 411479.0724484, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 411479.0724484, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 509291.0724484, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 509291.0724484, tol)
         # TODO: test some aero variables
 
 

@@ -91,7 +91,7 @@ class TestFLOPSDetailedTakeoff(unittest.TestCase):
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         # Instantiate the trajectory and add the phases

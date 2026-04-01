@@ -77,7 +77,7 @@ class MissionDragTest(unittest.TestCase):
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
@@ -237,7 +237,7 @@ class MissionDragTest(unittest.TestCase):
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
@@ -393,7 +393,7 @@ class MissionDragTest(unittest.TestCase):
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(

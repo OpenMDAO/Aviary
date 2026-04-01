@@ -1,4 +1,4 @@
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.enums import Transcription
 
 # defaults for energy-state based phases
@@ -97,12 +97,13 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         Modified phase_info and post_mission_info that have been changed to match
         the new mission parameters
     """
-    alt_cruise = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
-    mach_cruise = aviary_inputs.get_val(Mission.Summary.CRUISE_MACH)
+
+    alt_cruise = aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
+    mach_cruise = aviary_inputs.get_val(Aircraft.Design.CRUISE_MACH)
 
     # Range
     old_range_cruise, range_units = post_mission_info['target_range']
-    range_cruise = aviary_inputs.get_val(Mission.Design.RANGE, units=range_units)
+    range_cruise = aviary_inputs.get_val(Aircraft.Design.RANGE, units=range_units)
     if range_cruise != old_range_cruise:
         new_val = post_mission_info['target_range'][0] * range_cruise / old_range_cruise
         post_mission_info['target_range'] = (new_val, range_units)

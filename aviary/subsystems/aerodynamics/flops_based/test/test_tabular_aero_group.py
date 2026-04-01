@@ -271,7 +271,7 @@ class ComputedVsTabularTest(unittest.TestCase):
 
         flops_inputs.set_val(Settings.VERBOSITY, 0)
 
-        mass, units = flops_inputs.get_item(Mission.Design.GROSS_MASS)
+        mass, units = flops_inputs.get_item(Aircraft.Design.GROSS_MASS)
         mass = mass * 0.92
 
         alt = 10582
@@ -581,7 +581,7 @@ def _computed_aero_drag_data(flops_inputs: AviaryValues, design_altitude, units)
     CDI_data.set_val('lift_dependent_drag_coefficient', CDI)
 
     # calculate lift-independent drag coefficient table
-    mass, units = flops_inputs.get_item(Mission.Design.GROSS_MASS)
+    mass, units = flops_inputs.get_item(Aircraft.Design.GROSS_MASS)
     mass = mass * 0.9
 
     mach = seed
@@ -691,7 +691,7 @@ class _ComputedAeroHarness(om.Group):
                 subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         subsystem_options = {'method': 'computed', 'gamma': gamma}

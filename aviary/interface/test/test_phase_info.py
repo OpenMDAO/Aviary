@@ -21,7 +21,7 @@ from aviary.models.missions.two_dof_default import (
 )
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.mission.phase_builder import PhaseBuilder as PhaseBuilder
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
@@ -36,10 +36,10 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         prob.load_inputs(csv_path, phase_info)
 
         # We can set some crazy vals, since we aren't going to optimize.
-        prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000, 'km')
-        prob.aviary_inputs.set_val(Mission.Design.CRUISE_ALTITUDE, 31000, units='ft')
-        prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 120000, 'lbm')
-        prob.aviary_inputs.set_val(Mission.Design.MACH, 0.6, 'unitless')
+        prob.aviary_inputs.set_val(Aircraft.Design.RANGE, 5000, 'km')
+        prob.aviary_inputs.set_val(Aircraft.Design.CRUISE_ALTITUDE, 31000, units='ft')
+        prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 120000, 'lbm')
+        prob.aviary_inputs.set_val(Aircraft.Design.MACH, 0.6, 'unitless')
 
         prob.check_and_preprocess_inputs()
 
@@ -74,10 +74,10 @@ class TestParameterizePhaseInfo(unittest.TestCase):
         prob.load_inputs(csv_path, phase_info)
 
         # We can set some crazy vals, since we aren't going to optimize.
-        prob.aviary_inputs.set_val(Mission.Design.RANGE, 5000.0, 'km')
-        prob.aviary_inputs.set_val(Mission.Design.CRUISE_ALTITUDE, 31000.0, units='ft')
-        prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 195000.0, 'lbm')
-        prob.aviary_inputs.set_val(Mission.Summary.CRUISE_MACH, 0.6, 'unitless')
+        prob.aviary_inputs.set_val(Aircraft.Design.RANGE, 5000.0, 'km')
+        prob.aviary_inputs.set_val(Aircraft.Design.CRUISE_ALTITUDE, 31000.0, units='ft')
+        prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 195000.0, 'lbm')
+        prob.aviary_inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.6, 'unitless')
 
         prob.check_and_preprocess_inputs()
 

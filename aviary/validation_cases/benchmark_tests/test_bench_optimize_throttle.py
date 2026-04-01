@@ -138,7 +138,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
 
         self.assertTrue(prob.result.success)
 
-        gross_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
+        gross_mass = prob.get_val(Mission.GROSS_MASS, units='lbm')
         assert_near_equal(gross_mass, 160506.0, tolerance=1e-3)
 
         cruise_throttle = prob.get_val('traj.cruise.timeseries.throttle')
