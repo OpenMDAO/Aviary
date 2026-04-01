@@ -607,6 +607,7 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
+        # This isn't really a fuel objective, it's a hybrid or compound objective
         self.model.add_subsystem(
             'fuel_obj',
             om.ExecComp(

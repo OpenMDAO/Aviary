@@ -191,7 +191,7 @@ class TestBatteryMission(unittest.TestCase):
 
         prob.add_design_variables()
 
-        prob.add_objective('fuel_burned')
+        prob.add_objective('fuel_burned', ref=1e3)
 
         prob.setup()
 
