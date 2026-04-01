@@ -20,7 +20,7 @@ from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 # benchmark for simple sizing problem on the N3CC
