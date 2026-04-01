@@ -262,7 +262,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|####**MISSION SPECIFIC DETAILS:**####|||\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.Summary.USEFUL_LOAD, prob, self.meta_data)
+            val, units = find_variable_in_problem(Mission.USEFUL_LOAD, prob, self.meta_data)
             f.write(f'|Useful Load|{val}|{units}|\n')
 
             val1, units = find_variable_in_problem(
@@ -294,9 +294,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Oil|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.OPERATING_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.OPERATING_MASS, prob, self.meta_data)
             f.write(f'|**Operating Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
@@ -316,11 +314,9 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Cargo|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.ZERO_FUEL_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.ZERO_FUEL_MASS, prob, self.meta_data)
             f.write(f'|**Zero Fuel Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.Summary.GROSS_MASS, prob, self.meta_data)
+            val, units = find_variable_in_problem(Mission.GROSS_MASS, prob, self.meta_data)
             f.write(f'|**Gross Mass**|**{val}**|**{units}**|\n')

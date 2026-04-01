@@ -17,7 +17,7 @@ class HorizontalTailMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.HorizontalTail.MASS_SCALER, units='unitless')
 
         add_aviary_output(self, Aircraft.HorizontalTail.MASS, units='lbm')
@@ -29,7 +29,7 @@ class HorizontalTailMass(om.ExplicitComponent):
         num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
         area = inputs[Aircraft.HorizontalTail.AREA]
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
 
@@ -46,7 +46,7 @@ class HorizontalTailMass(om.ExplicitComponent):
         num_tails = self.options[Aircraft.HorizontalTail.NUM_TAILS]
 
         area = inputs[Aircraft.HorizontalTail.AREA]
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         scaler = inputs[Aircraft.HorizontalTail.MASS_SCALER]
         taper_ratio = inputs[Aircraft.HorizontalTail.TAPER_RATIO]
 
@@ -61,7 +61,7 @@ class HorizontalTailMass(om.ExplicitComponent):
                 0.530 * area * gross_weight_exp * (taper_ratio + 0.50) / GRAV_ENGLISH_LBM
             )
 
-            J[Aircraft.HorizontalTail.MASS, Mission.Design.GROSS_MASS] = (
+            J[Aircraft.HorizontalTail.MASS, Aircraft.Design.GROSS_MASS] = (
                 scaler * 0.106 * area * gross_weight**-0.8 * (taper_ratio + 0.50)
             )
 
@@ -71,7 +71,7 @@ class HorizontalTailMass(om.ExplicitComponent):
         elif num_tails == 0:
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.AREA] = 0.0
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.MASS_SCALER] = 0.0
-            J[Aircraft.HorizontalTail.MASS, Mission.Design.GROSS_MASS] = 0.0
+            J[Aircraft.HorizontalTail.MASS, Aircraft.Design.GROSS_MASS] = 0.0
             J[Aircraft.HorizontalTail.MASS, Aircraft.HorizontalTail.TAPER_RATIO] = 0.0
 
 

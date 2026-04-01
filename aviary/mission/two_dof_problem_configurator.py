@@ -43,12 +43,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_inputs = update_GASP_options(aviary_inputs)
 
         aviary_inputs.set_val(
-            Mission.Summary.CRUISE_MASS_FINAL,
-            val=aviary_group.initialization_guesses['cruise_mass_final'],
-            units='lbm',
-        )
-        aviary_inputs.set_val(
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             val=aviary_group.initialization_guesses['actual_takeoff_mass'],
             units='lbm',
         )
@@ -59,27 +54,25 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.post_mission_info.setdefault('include_landing', True)
 
         # Commonly referenced values
-        aviary_group.cruise_alt = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
+        aviary_group.cruise_alt = aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
         aviary_group.mass_defect = aviary_inputs.get_val('mass_defect', units='lbm')
 
-        aviary_group.cruise_mass_final = aviary_inputs.get_val(
-            Mission.Summary.CRUISE_MASS_FINAL, units='lbm'
-        )
+        aviary_group.cruise_mass_final = aviary_group.initialization_guesses['cruise_mass_final']
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_group.target_range = wrapped_convert_units(
                 aviary_group.post_mission_info['target_range'], 'NM'
             )
-            aviary_inputs.set_val(Mission.Summary.RANGE, aviary_group.target_range, units='NM')
+            aviary_inputs.set_val(Mission.RANGE, aviary_group.target_range, units='NM')
         else:
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
             aviary_inputs.set_val(
-                Mission.Summary.RANGE,
-                aviary_inputs.get_val(Mission.Design.RANGE, units='NM'),
+                Mission.RANGE,
+                aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM'),
                 units='NM',
             )
 
-        aviary_group.cruise_mach = aviary_inputs.get_val(Mission.Design.MACH)
+        aviary_group.cruise_mach = aviary_inputs.get_val(Aircraft.Design.MACH)
         aviary_group.require_range_residual = True
 
     def get_default_phase_info(self, aviary_group):
@@ -131,7 +124,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             Problem that owns this configurator.
         """
         aviary_group.cruise_alt = aviary_group.aviary_inputs.get_val(
-            Mission.Design.CRUISE_ALTITUDE, units='ft'
+            Aircraft.Design.CRUISE_ALTITUDE, units='ft'
         )
 
         # Add event transformation subsystem
@@ -551,12 +544,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
         aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
 
-        aviary_group.connect(
-            f'traj.{aviary_group.regular_phases[-1]}.states:mass',
-            Mission.Landing.TOUCHDOWN_MASS,
-            src_indices=[-1],
-        )
-
         # promote all ParamPort inputs
         param_list = list(ParamPort.param_data)
         aviary_group.promotes('taxi', inputs=param_list)
@@ -642,7 +629,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 range_resid={'val': 30, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 'target_range',
             ],
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
@@ -659,7 +646,7 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             promotes_inputs=[
                 'aircraft:*',
                 'mission:*',
-                (Dynamic.Vehicle.MASS, Mission.Landing.TOUCHDOWN_MASS),
+                (Dynamic.Vehicle.MASS, Mission.FINAL_MASS),
             ],
             promotes_outputs=['mission:*'],
         )

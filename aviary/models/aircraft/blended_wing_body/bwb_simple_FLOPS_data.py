@@ -13,7 +13,7 @@ outputs = BWBsimpleFLOPS['outputs'] = AviaryValues()
 # ---------------------------
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')  # SBASE
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)  # EWMARG
-inputs.set_val(Mission.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
+inputs.set_val(Aircraft.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
@@ -229,9 +229,9 @@ inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, 0.0)  # E
 
 # Mission
 # ---------------------------
-inputs.set_val(Mission.Summary.CRUISE_MACH, 0.85)  # VCMN
-inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)  # FACT
-inputs.set_val(Mission.Design.RANGE, 7750.0, 'NM')  # DESRNG
+inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.85)  # VCMN
+inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)  # FACT
+inputs.set_val(Aircraft.Design.RANGE, 7750.0, 'NM')  # DESRNG
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO
 # inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')  # FTKOFL
 
@@ -241,7 +241,7 @@ inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO
 inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140.0, 'ft/s')  # VAPPR
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf')  # THROFF
+inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf')  # THROFF
 
 # Settings
 # ---------------------------
@@ -258,7 +258,7 @@ outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 273591.31917826, 'lbm')  # WSTRCT
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 98848.9061107412710, 'lbm')  # WSYS
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 35311.53118076, 'ft**2')  # TWET
-outputs.set_val(Aircraft.Design.LANDING_MASS, 699279.2, 'lbm')  # WLDG = GW*WRATIO
+outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 699279.2, 'lbm')  # WLDG = GW*WRATIO
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 4383.96064972, 'lbm')  # WAC
 outputs.set_val(Aircraft.AntiIcing.MASS, 519.37038003, 'lbm')  # WAI
@@ -377,8 +377,8 @@ outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.53107166)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 33816.732336575638, 'ft**2')  # SWET(1)
 outputs.set_val(Aircraft.Wing.SPAN, 238.08, 'ft')  # SPAN = WF+OSSPAN*2
 
-outputs.set_val(Mission.Summary.USEFUL_LOAD, 21427.61093929, 'lbm')
+outputs.set_val(Mission.USEFUL_LOAD, 21427.61093929, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.800)
-outputs.set_val(Mission.Summary.OPERATING_MASS, 455464.65969526308, 'lbm')  # WOWE
-outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 553276.65969526302, 'lbm')  # WZF
+outputs.set_val(Aircraft.Design.MACH, 0.800)
+outputs.set_val(Mission.OPERATING_MASS, 455464.65969526308, 'lbm')  # WOWE
+outputs.set_val(Mission.ZERO_FUEL_MASS, 553276.65969526302, 'lbm')  # WZF

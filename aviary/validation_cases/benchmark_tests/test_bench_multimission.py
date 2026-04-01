@@ -65,8 +65,8 @@ def multi_mission_example():
     prob.promote_inputs(
         ['mission1', 'mission2'],
         [
-            (Mission.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
-            (Mission.Design.RANGE, 'Aircraft1:RANGE'),
+            (Aircraft.Design.GROSS_MASS, 'Aircraft1:GROSS_MASS'),
+            (Aircraft.Design.RANGE, 'Aircraft1:RANGE'),
             (Aircraft.Wing.SWEEP, 'Aircraft1:SWEEP'),
         ],
     )
@@ -91,13 +91,13 @@ def multi_mission_example():
     # This both adds the design variable AND sets the default value. This value can be over-written after-setup using set_val.
 
     prob.add_composite_objective(
-        ('mission1', Mission.Summary.FUEL_BURNED, 2),
-        ('mission2', Mission.Summary.FUEL_BURNED, 1),
+        ('mission1', Mission.FUEL, 2),
+        ('mission2', Mission.FUEL, 1),
         ref=1,
     )
     # Adds an objective where mission 1 is flown 2x more times than mission2
     # Alternative way that users could specify the same objective:
-    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.Summary.FUEL_BURNED],  ref=1)
+    # prob.add_composite_objective_adv(missions=['mission1', 'mission2'], mission_weights=[2,1], outputs=[Mission.FUEL],  ref=1)
     # TODO: MULTI_MISSION cannot handle RANGE objectives correctly at the moment.
 
     # optimizer and iteration limit are optional provided here
@@ -138,10 +138,10 @@ class MultiMissionTestcase(unittest.TestCase):
         objective = prob.get_val('composite_objective', units=None)
         objective_expected_value = 24851.7
 
-        mission1_fuel = prob.get_val('mission1.mission:summary:fuel_burned', units='lbm')
+        mission1_fuel = prob.get_val('mission1.mission:fuel', units='lbm')
         mission1_fuel_expected_value = 26211.5
 
-        mission2_fuel = prob.get_val('mission2.mission:summary:fuel_burned', units='lbm')
+        mission2_fuel = prob.get_val('mission2.mission:fuel', units='lbm')
         mission2_fuel_expected_value = 22132.2
 
         mission1_cargo = prob.get_val(

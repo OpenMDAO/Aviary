@@ -14,7 +14,7 @@ outputs = MultiEngineSingleAisle['outputs'] = AviaryValues()
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.00514)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
-inputs.set_val(Mission.Design.GROSS_MASS, 174200.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 174200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -178,7 +178,7 @@ engine_1_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
 engine_1_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 engine_1_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 engine_1_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
-engine_1_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+engine_1_inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
 
 # Engine 2:
 filename = get_path('models/engines/turbofan_22k.csv')
@@ -211,7 +211,7 @@ engine_2_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, 1.0)
 engine_2_inputs.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, 0.08)
 engine_2_inputs.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 engine_2_inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
-engine_2_inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+engine_2_inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
 
 # Vertical Tail
 # ---------------------------
@@ -262,9 +262,9 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 
 # Mission
 # ---------------------------
-inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)  # was 0.82
-inputs.set_val(Mission.Design.RANGE, 2960.0, 'NM')
-inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)  # was 0.82
+inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
+inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
@@ -280,7 +280,7 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35)
 # never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # lbf TODO: where should this get connected from?
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
+inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, 'lbf')
 
 # Settings
 # ---------------------------
@@ -295,12 +295,12 @@ inputs.set_val(Settings.VERBOSITY, 0)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 92023.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')
-outputs.set_val(Mission.Summary.OPERATING_MASS, 97992.0, 'lbm')
+outputs.set_val(Mission.OPERATING_MASS, 97992.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 16118.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 50736.0, 'lbm')
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 25169.0, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8275.86, 'ft**2')
-outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 135848.0, 'lbm')
+outputs.set_val(Mission.ZERO_FUEL_MASS, 135848.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 1602.0, 'lbm')
 
@@ -422,5 +422,5 @@ outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 894, 'lbm')
 
 outputs.set_val(Aircraft.Wing.MASS, 18268, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.800)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.568)
+outputs.set_val(Aircraft.Design.MACH, 0.800)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.568)

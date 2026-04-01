@@ -19,7 +19,7 @@ class PerformancePremissionTest(unittest.TestCase):
         # arbitrary numbers in roughly correct order of magnitude for testing
         prob.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 32745, 'lbf')
         prob.set_val(Aircraft.Wing.AREA, 1823, 'ft**2')
-        prob.set_val(Mission.Design.GROSS_MASS, 203154, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 203154, 'lbm')
 
         prob.run_model()
 

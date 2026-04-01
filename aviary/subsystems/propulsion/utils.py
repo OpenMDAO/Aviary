@@ -156,9 +156,9 @@ def build_engine_deck(
     EngineDeck
         EngineDeck created using provided options.
     """
-    # Required engine vars include one setting from Mission.Summary
+    # Required engine vars include one setting from Mission.*
     engine_vars = [item for item in Aircraft.Engine.__dict__.values()]
-    engine_vars.append(Mission.Summary.FUEL_FLOW_SCALER)
+    engine_vars.append(Mission.FUEL_FLOW_SCALER)
 
     # Build a single engine deck, currently ignoring vectorization of AviaryValues
     # (use first item in arrays when appropriate)

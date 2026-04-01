@@ -8,7 +8,7 @@ from aviary.mission.problem_configurator import ProblemConfiguratorBase
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.mission.utils import process_guess_var
 
 
@@ -28,9 +28,15 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         """
         # This doesn't really have much value, but is needed for initializing
         # an objective-related component that still lives in level 2.
-        aviary_group.target_range = aviary_group.aviary_inputs.get_val(
-            Mission.Design.RANGE, units='NM'
-        )
+
+        if 'target_range' in aviary_group.post_mission_info:
+            aviary_group.target_range = wrapped_convert_units(
+                aviary_group.post_mission_info['target_range'], 'NM'
+            )
+        else:
+            aviary_group.target_range = aviary_group.aviary_inputs.get_val(
+                Aircraft.Design.RANGE, units='NM'
+            )
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -256,7 +262,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
         """
-        # Add a mass equality constraint to set mission:summary:gross_mass = initial mass state
+        # Add a mass equality constraint to set mission:gross_mass = initial mass state
         first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
         first_flight_phase = aviary_group.traj._phases[first_flight_phase_name]
         first_flight_phase.set_state_options(
@@ -267,7 +273,7 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         eq = aviary_group.add_subsystem(
             f'link_{first_flight_phase_name}_mass',
             om.EQConstraintComp(),
-            promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+            promotes_inputs=[('rhs:mass', Mission.GROSS_MASS)],
         )
 
         # TODO: replace hard_coded ref for this constraint.

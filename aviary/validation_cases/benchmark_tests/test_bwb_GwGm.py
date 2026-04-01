@@ -8,7 +8,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.models.aircraft.blended_wing_body.generic_BWB_2dof_phase_info import phase_info
 
 from aviary.interface.run_aviary import run_aviary
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
@@ -40,19 +40,19 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+            prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
             139803.667415,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+            prob.get_val(Mission.OPERATING_MASS, units='lbm'),
             79873.05255347,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
             26154.38155505,
             tolerance=rtol,
         )
@@ -63,10 +63,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
             tolerance=rtol,
         )
 
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 3500.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 3500.0, tolerance=rtol)
 
         assert_near_equal(
-            prob.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm'),
+            prob.get_val(Mission.FINAL_MASS, units='lbm'),
             116003.31044998,
             tolerance=rtol,
         )

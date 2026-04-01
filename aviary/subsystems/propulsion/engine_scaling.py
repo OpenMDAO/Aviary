@@ -49,7 +49,7 @@ class EngineScaling(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.SCALE_PERFORMANCE)
         add_aviary_option(self, Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER)
         add_aviary_option(self, Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER)
-        add_aviary_option(self, Mission.Summary.FUEL_FLOW_SCALER)
+        add_aviary_option(self, Mission.FUEL_FLOW_SCALER)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -111,7 +111,7 @@ class EngineScaling(om.ExplicitComponent):
         constant_fuel_term = options[Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM]
         linear_fuel_term = options[Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM]
         constant_fuel_flow, _ = options[Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION]
-        mission_fuel_scaler = options[Mission.Summary.FUEL_FLOW_SCALER]
+        mission_fuel_scaler = options[Mission.FUEL_FLOW_SCALER]
 
         # thrust-based engine scaling factor
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]
@@ -225,7 +225,7 @@ class EngineScaling(om.ExplicitComponent):
         supersonic_fuel_factor = options[Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER]
         constant_fuel_term = options[Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM]
         linear_fuel_term = options[Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM]
-        mission_fuel_scaler = options[Mission.Summary.FUEL_FLOW_SCALER]
+        mission_fuel_scaler = options[Mission.FUEL_FLOW_SCALER]
 
         mach_number = inputs[Dynamic.Atmosphere.MACH]
         engine_scale_factor = inputs[Aircraft.Engine.SCALE_FACTOR]

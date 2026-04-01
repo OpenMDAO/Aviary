@@ -42,14 +42,14 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         # Commonly referenced values
         aviary_inputs.set_val(
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             val=aviary_group.initialization_guesses['actual_takeoff_mass'],
             units='lbm',
         )
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_inputs.set_val(
-                Mission.Summary.RANGE,
+                Mission.RANGE,
                 wrapped_convert_units(aviary_group.post_mission_info['target_range'], 'NM'),
                 units='NM',
             )
@@ -61,7 +61,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.require_range_residual = False
             # still instantiate target_range because it is used for default guesses
             # for phase comps
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -378,7 +378,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             eq = aviary_group.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
-                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+                promotes_inputs=[('rhs:mass', Mission.GROSS_MASS)],
             )
 
             # TODO: replace hard_coded ref for this constraint.
@@ -409,7 +409,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 range_resid={'val': 30, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 'target_range',
             ],
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
@@ -495,11 +495,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         last_regular_phase = aviary_group.regular_phases[-1]
         aviary_group.connect(
-            f'traj.{last_regular_phase}.states:mass',
-            Mission.Landing.TOUCHDOWN_MASS,
-            src_indices=[-1],
-        )
-        aviary_group.connect(
             f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
             src_indices=[0],
@@ -543,7 +538,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         guess_dict = deepcopy(guesses)
 
         if 'mass' not in guess_dict:
-            mass_guess = aviary_group.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
+            mass_guess = aviary_group.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
             guess_dict['mass'] = (mass_guess, 'lbm')
 
