@@ -90,7 +90,7 @@ class FinalConditionsTest(unittest.TestCase):
             'mass', val=181200.0, units='lbm'
         )  # check
         self.prob.model.set_input_defaults(
-            Mission.Takeoff.FUEL_BURN, val=577, units='lbm'
+            Mission.Takeoff.FUEL, val=577, units='lbm'
         )  # check
         self.prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY,
@@ -164,7 +164,7 @@ class TakeoffGroupTest(unittest.TestCase):
 
         self.prob.model.set_input_defaults(Mission.GROSS_MASS, val=181200.0, units='lbm')  # check
         self.prob.model.set_input_defaults(
-            Mission.Takeoff.FUEL_BURN, val=577, units='lbm'
+            Mission.Takeoff.FUEL, val=577, units='lbm'
         )  # check
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')  # check
         self.prob.model.set_input_defaults(

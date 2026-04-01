@@ -726,7 +726,7 @@ class Mission:
         FINAL_MACH = 'mission:takeoff:final_mach'
         FINAL_MASS = 'mission:takeoff:final_mass'
         FINAL_VELOCITY = 'mission:takeoff:final_velocity'
-        FUEL_BURN = 'mission:takeoff:fuel_burn'
+        FUEL = 'mission:takeoff:fuel'
         GROUND_DISTANCE = 'mission:takeoff:ground_distance'
         LIFT_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:lift_coefficient_flap_increment'
         LIFT_COEFFICIENT_MAX = 'mission:takeoff:lift_coefficient_max'
@@ -741,8 +741,8 @@ class Mission:
 
     class Taxi:
         DURATION = 'mission:taxi:duration'
-        FUEL_BURN_TAXI_IN = 'mission:taxi:fuel_burn_taxi_in'
-        FUEL_BURN_TAXI_OUT = 'mission:taxi:fuel_burn_taxi_out'
+        FUEL_TAXI_IN = 'mission:taxi:fuel_taxi_in'
+        FUEL_TAXI_OUT = 'mission:taxi:fuel_taxi_out'
         MACH = 'mission:taxi:mach'
 
 

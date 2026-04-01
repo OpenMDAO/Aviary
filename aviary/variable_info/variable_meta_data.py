@@ -7966,7 +7966,7 @@ add_meta_data(
     # Note user override (no scaling)
     # Note FLOPS/LEAPS1 calculated as part of mission analysis, and not as
     # part of takeoff
-    Mission.Takeoff.FUEL_BURN,
+    Mission.Takeoff.FUEL,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -8136,7 +8136,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Taxi.FUEL_BURN_TAXI_IN,
+    Mission.Taxi.FUEL_TAXI_IN,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
@@ -8146,7 +8146,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Taxi.FUEL_BURN_TAXI_OUT,
+    Mission.Taxi.FUEL_TAXI_OUT,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',

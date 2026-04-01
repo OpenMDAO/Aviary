@@ -1034,7 +1034,7 @@ class AviaryGroup(om.Group):
             mission_fuel_burned={'units': 'lbm'},
             fuel_burned_taxi_in={'units': 'lbm'}),
             promotes_inputs=[('mission_fuel_burned', Mission.FUEL),
-                             ('fuel_burned_taxi_in', Mission.Taxi.FUEL_BURN_TAXI_IN)],
+                             ('fuel_burned_taxi_in', Mission.Taxi.FUEL_TAXI_IN)],
             promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)]
         )
 

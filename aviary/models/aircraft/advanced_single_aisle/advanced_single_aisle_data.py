@@ -317,7 +317,7 @@ inputs.set_val(Mission.Landing.OBSTACLE_HEIGHT, 50.0, 'ft')
 inputs.set_val(Mission.Landing.SPOILER_DRAG_COEFFICIENT, 0.085000)
 inputs.set_val(Mission.Landing.SPOILER_LIFT_COEFFICIENT, -0.810000)
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
-inputs.set_val(Mission.Takeoff.FUEL_BURN, 577.0, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL, 577.0, 'lbm')
 
 # Settings
 # ---------------------------

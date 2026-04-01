@@ -157,7 +157,7 @@ mission:fuel_flow_scaler,1.0,unitless
 mission:gross_mass,175400,lbm
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:drag_coefficient_flap_increment,0.0085,unitless
-mission:takeoff:fuel_burn,577,lbm
+mission:takeoff:fuel,577,lbm
 mission:takeoff:lift_coefficient_flap_increment,0.4182,unitless
 mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless

@@ -31,7 +31,7 @@ data.set_val(
 )
 
 data.set_val(
-    Mission.Takeoff.FUEL_BURN,
+    Mission.Takeoff.FUEL,
     val=577,
     units='lbm',
 )

@@ -1025,7 +1025,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:takeoff:fuel_burn",
+        "mission:takeoff:fuel",
         577.0,
         "lbm",
         "<class 'float'>"

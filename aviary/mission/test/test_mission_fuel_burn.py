@@ -21,7 +21,7 @@ class FuelBurnTestCases(unittest.TestCase):
         )
 
         # clear out the takeoff fuel burn because in the csv it's non-zero
-        self.prob.aviary_inputs.set_val(Mission.Takeoff.FUEL_BURN, val=0, units='lbm')
+        self.prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, val=0, units='lbm')
 
         self.prob.check_and_preprocess_inputs()
 
@@ -48,7 +48,7 @@ class FuelBurnTestCases(unittest.TestCase):
 
     def test_takeoff_fuel_burned(self):
 
-        self.prob.aviary_inputs.set_val(Mission.Takeoff.FUEL_BURN, val=500, units='lbm')
+        self.prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, val=500, units='lbm')
 
         self.prob.setup()
         
@@ -63,7 +63,7 @@ class FuelBurnTestCases(unittest.TestCase):
 
     def test_taxi_out_fuel_burned(self):
 
-        self.prob.aviary_inputs.set_val(Mission.Taxi.FUEL_BURN_TAXI_OUT, val=200, units='lbm')
+        self.prob.aviary_inputs.set_val(Mission.Taxi.FUEL_TAXI_OUT, val=200, units='lbm')
 
         self.prob.setup()
         
@@ -78,7 +78,7 @@ class FuelBurnTestCases(unittest.TestCase):
 
     def test_taxi_in_fuel_burned(self):
 
-        self.prob.aviary_inputs.set_val(Mission.Taxi.FUEL_BURN_TAXI_IN, val=100, units='lbm')
+        self.prob.aviary_inputs.set_val(Mission.Taxi.FUEL_TAXI_IN, val=100, units='lbm')
 
         self.prob.setup()
         

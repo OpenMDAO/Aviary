@@ -235,7 +235,7 @@ inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL_BURN, 659, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL, 659, 'lbm')
 # TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
 # TODO: should this come from aero?

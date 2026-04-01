@@ -163,7 +163,7 @@ mission:takeoff:angle_of_attack_runway,0.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
 mission:takeoff:drag_coefficient_min,0.05,unitless
 mission:takeoff:final_altitude,35.0,ft
-mission:takeoff:fuel_burn,0.0,lbm
+mission:takeoff:fuel,0.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 mission:takeoff:spoiler_drag_coefficient,0.085,unitless
