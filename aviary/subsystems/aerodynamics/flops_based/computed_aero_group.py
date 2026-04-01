@@ -73,8 +73,8 @@ class ComputedAeroGroup(om.Group):
                 Dynamic.Atmosphere.MACH,
                 Dynamic.Vehicle.LIFT,
                 Dynamic.Atmosphere.STATIC_PRESSURE,
-                Mission.Design.MACH,
-                Mission.Design.LIFT_COEFFICIENT,
+                Aircraft.Design.MACH,
+                Aircraft.Design.LIFT_COEFFICIENT,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
@@ -105,7 +105,7 @@ class ComputedAeroGroup(om.Group):
             comp,
             promotes_inputs=[
                 Dynamic.Atmosphere.MACH,
-                Mission.Design.MACH,
+                Aircraft.Design.MACH,
                 Aircraft.Design.BASE_AREA,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.ASPECT_RATIO,
@@ -169,7 +169,7 @@ class ComputedAeroGroup(om.Group):
             buf,
             promotes_inputs=[
                 Dynamic.Atmosphere.MACH,
-                Mission.Design.MACH,
+                Aircraft.Design.MACH,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
                 Aircraft.Wing.SWEEP,

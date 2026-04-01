@@ -46,7 +46,7 @@ class TransportAvionicsMassTest(unittest.TestCase):
             input_keys=[
                 Aircraft.Avionics.MASS_SCALER,
                 Aircraft.Fuselage.PLANFORM_AREA,
-                Mission.Design.RANGE,
+                Aircraft.Design.RANGE,
             ],
             output_keys=Aircraft.Avionics.MASS,
             aviary_option_keys=[Aircraft.CrewPayload.NUM_FLIGHT_CREW],
@@ -84,7 +84,7 @@ class TransportAvionicsMassTest2(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Fuselage.PLANFORM_AREA, 1500.0, 'ft**2')
-        prob.set_val(Mission.Design.RANGE, 3500.0, 'nmi')
+        prob.set_val(Aircraft.Design.RANGE, 3500.0, 'nmi')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

@@ -20,26 +20,24 @@ from aviary.variable_info.variables import Aircraft, Mission
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'mass'
-
 
 class MassBuilder(SubsystemBuilder):
-    """Base mass builder."""
+    """
+    Base mass builder.
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the MassBuilder object with a given name.
+    """
 
-        super().__init__(name=name, meta_data=meta_data)
+    _default_name = 'mass'
 
 
 class CoreMassBuilder(MassBuilder):
-    """Core mass subsystem builder."""
+    """Core mass estimation subsystem builder."""
 
     def __init__(self, name=None, meta_data=None, code_origin=None):
-        if name is None:
-            name = 'mass'
-
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
@@ -264,7 +262,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|####**MISSION SPECIFIC DETAILS:**####|||\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.Summary.USEFUL_LOAD, prob, self.meta_data)
+            val, units = find_variable_in_problem(Mission.USEFUL_LOAD, prob, self.meta_data)
             f.write(f'|Useful Load|{val}|{units}|\n')
 
             val1, units = find_variable_in_problem(
@@ -296,9 +294,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Oil|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.OPERATING_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.OPERATING_MASS, prob, self.meta_data)
             f.write(f'|**Operating Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
@@ -318,11 +314,9 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Cargo|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.ZERO_FUEL_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.ZERO_FUEL_MASS, prob, self.meta_data)
             f.write(f'|**Zero Fuel Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.Summary.GROSS_MASS, prob, self.meta_data)
+            val, units = find_variable_in_problem(Mission.GROSS_MASS, prob, self.meta_data)
             f.write(f'|**Gross Mass**|**{val}**|**{units}**|\n')

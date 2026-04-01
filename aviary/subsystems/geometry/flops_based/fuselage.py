@@ -200,7 +200,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.RANGE, units='NM')
+        add_aviary_input(self, Aircraft.Design.RANGE, units='NM')
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
@@ -315,7 +315,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # a flying kitchen or closet or whatever.
         # Note: Some of these may need relaxing for larger aircraft.
         if num_first_class_pax == 0:
-            design_range = inputs[Mission.Design.RANGE]
+            design_range = inputs[Aircraft.Design.RANGE]
             if design_range < 1250.0:
                 max_lav = 2
             else:

@@ -49,7 +49,7 @@ class EngineScalingTest(unittest.TestCase):
 
         preprocess_propulsion(options, [engine1])
 
-        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 10.0)
+        options.set_val(Mission.FUEL_FLOW_SCALER, 10.0)
         engine_variables = {
             EngineModelVariables.THRUST: 'lbf',
             EngineModelVariables.FUEL_FLOW: 'lbm/h',
