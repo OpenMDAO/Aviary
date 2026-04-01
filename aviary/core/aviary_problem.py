@@ -499,6 +499,10 @@ class AviaryProblem(om.Problem):
             driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
             driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
             driver.opt_settings['mu_strategy'] = 'monotone'
+            # Shugo's recommended settings for robustness
+            # driver.opt_settings['mu_init'] = 1.0
+            # driver.opt_settings['nlp_scaling_method'] = 'none'
+            # driver.opt_settings['limited_memory_max_history'] = 50
 
         elif driver.options['optimizer'] == 'SLSQP':
             # Print Options #

@@ -90,6 +90,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         # different constraints/design variables
         prob_fallout = self.prob.run_off_design_mission(problem_type='fallout')
         self.compare_results(prob_fallout)
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_fallout_mission_changed(self):
@@ -168,6 +169,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             81,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -253,6 +255,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             150,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_alternate.result.success)
 
 
 @use_tempdirs
@@ -394,6 +397,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             75,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -401,6 +405,7 @@ class Test2DOFOffDesign(unittest.TestCase):
         # different constraints/design variables
         prob_alternate = self.prob.run_off_design_mission(problem_type='alternate')
         self.compare_results(prob_alternate)
+        self.assertTrue(prob_alternate.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_changed(self):
@@ -467,6 +472,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             150,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_alternate.result.success)
 
 
 @use_tempdirs
@@ -538,13 +544,17 @@ class PayloadRangeTest(unittest.TestCase):
             140541.17160737,
             tolerance=1e-8,
         )
+        self.assertTrue(prob.result.success)
+        self.assertTrue(off_design_probs[0].result.success)
+        self.assertTrue(off_design_probs[1].result.success)
 
 
 if __name__ == '__main__':
     # unittest.main()
     test = Test2DOFOffDesign()
+    # test = TestEnergyStateOffDesign()
     test.setUp()
-    test.test_alternate_mission_changed()
+    test.test_fallout_mission_changed()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()

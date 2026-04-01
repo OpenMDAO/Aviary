@@ -227,6 +227,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
 
         # Making sure we include the fuel mass consumed in take-off and taxi.
         self.assertGreater(overall_fuel, 40000.0)
+        self.assertTrue(prob.result.success)
 
 
 @unittest.skipUnless(MPI and PETScVector, 'MPI and PETSc are required.')
