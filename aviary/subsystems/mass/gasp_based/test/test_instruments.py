@@ -36,7 +36,7 @@ class InstrumentTestCase1(unittest.TestCase):
             Aircraft.Fuselage.LENGTH, val=129.4, units='ft'
         )  # arbitrary - 128
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.83, units='ft')  # arbitrary
         self.prob.model.set_input_defaults(
@@ -83,7 +83,7 @@ class InstrumentTestCase2(unittest.TestCase):
             Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft'
         )  # arbitrary - 128
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=150000.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Wing.SPAN, val=146.38501, units='ft'

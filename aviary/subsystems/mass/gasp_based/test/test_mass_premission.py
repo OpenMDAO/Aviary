@@ -29,7 +29,7 @@ class MassPremissionTestCase1(unittest.TestCase):
         self.prob.model.add_subsystem(
             'gasp_based_geom',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -101,7 +101,7 @@ class MassPremissionTestCase1(unittest.TestCase):
             'fuel_mass_min': 33551.47530728,  # modified from GASP value to account for updated crew mass. GASP value is 32803.6
             Aircraft.Fuel.WING_VOLUME_DESIGN: 871.44181691,  # modified from GASP value to account for updated crew mass. GASP value is 856.4910800459031
             'OEM_fuel_vol': 1591.12164393,  # modified from GASP value to account for updated crew mass. GASP value is 1576.1710061411081
-            Mission.Summary.OPERATING_MASS: 95808.52469272,  # modified from GASP value to account for updated crew mass. GASP value is 96556.0
+            Mission.OPERATING_MASS: 95808.52469272,  # modified from GASP value to account for updated crew mass. GASP value is 96556.0
             'volume_wingfuel_mass': 57066.3,  # extra_fuel_mass calculated differently in this version, so test for payload_mass_max_fuel not included
             'max_wingfuel_mass': 57066.3,
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,  # always zero when no body tank
@@ -129,7 +129,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -148,7 +148,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -165,7 +165,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -448,7 +448,7 @@ class MassPremissionTestCase2(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1594.42528526, tol
         )  # calculated by hand,  #modified from GASP value to account for updated crew mass. GASP value is 1582.2403068511774
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 95643.26913924, tol
+            self.prob[Mission.OPERATING_MASS], 95643.26913924, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96253.0
         # extra_fuel_mass calculated differently in this version, so payload_mass_max_fuel test not included
         assert_near_equal(self.prob['volume_wingfuel_mass'], 55725.1, tol)
@@ -475,7 +475,7 @@ class MassPremissionTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -494,7 +494,7 @@ class MassPremissionTestCase3(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -511,7 +511,7 @@ class MassPremissionTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -789,7 +789,7 @@ class MassPremissionTestCase3(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1594.42528526, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1582.2
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 95643.26913924, tol
+            self.prob[Mission.OPERATING_MASS], 95643.26913924, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96253.0
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 36000, tol
@@ -817,7 +817,7 @@ class MassPremissionTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -836,7 +836,7 @@ class MassPremissionTestCase4(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -853,7 +853,7 @@ class MassPremissionTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -1139,7 +1139,7 @@ class MassPremissionTestCase4(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1590.76554939, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1578.6
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 95826.33734069, tol
+            self.prob[Mission.OPERATING_MASS], 95826.33734069, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 96433.0
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 36000, tol
@@ -1167,7 +1167,7 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1186,7 +1186,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -1203,7 +1203,7 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -1480,7 +1480,7 @@ class MassSummationTestCase5(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1624.4353052, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1627.8
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 94142.100596, tol
+            self.prob[Mission.OPERATING_MASS], 94142.100596, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 93975
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 34594.23826045, tol
@@ -1512,7 +1512,7 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37500, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37500, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -1531,7 +1531,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -1548,7 +1548,7 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=150, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
@@ -1825,7 +1825,7 @@ class MassSummationTestCase6(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1615.4100222, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1618.9
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 94593.56550555, tol
+            self.prob[Mission.OPERATING_MASS], 94593.56550555, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 94417
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 35045.70322352, tol
@@ -1859,7 +1859,7 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=37100, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=37100, units='ft')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
         )
@@ -1877,7 +1877,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -1894,7 +1894,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.12, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=145388.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=145388.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Design.WING_LOADING, val=104.50, units='lbf/ft**2'
         )
@@ -2110,7 +2110,7 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Fuel.VOLUME_MARGIN, val=10.0, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2193,7 +2193,7 @@ class MassSummationTestCase7(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1254.38420994, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1248.0
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 82640.88682213, tol
+            self.prob[Mission.OPERATING_MASS], 82640.88682213, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 82961.0
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 30800.0039, tol
@@ -2228,7 +2228,7 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=43000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=43000, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -2248,7 +2248,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -2464,7 +2464,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=143100.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=143100.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=78.94, units='unitless'
         )
@@ -2488,7 +2488,7 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Strut.MASS_COEFFICIENT, 0.238, units='unitless')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2564,7 +2564,7 @@ class MassSummationTestCase8(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1186.8218412, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1186.9
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 83732.50812502, tol
+            self.prob[Mission.OPERATING_MASS], 83732.50812502, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 83728.0
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 30800.0, tol
@@ -2598,7 +2598,7 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=154, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=154, units='unitless')
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=43000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=43000, units='ft')
         options.set_val(Aircraft.Wing.CHOOSE_FOLD_LOCATION, val=False, units='unitless')
         options.set_val(
             Aircraft.Wing.FOLD_DIMENSIONAL_LOCATION_SPECIFIED, val=True, units='unitless'
@@ -2619,7 +2619,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -2838,7 +2838,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, val=1, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=166100.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=166100.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Wing.MASS_COEFFICIENT, val=78.94, units='unitless'
         )
@@ -2879,7 +2879,7 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults('TMS_spec_mass', 0.125, units='lbm/kW')
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=0.0, units='ft')
-        self.prob.model.set_input_defaults(Mission.Design.MACH, val=0.8, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Design.MACH, val=0.8, units='unitless')
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.3)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9)
@@ -2954,7 +2954,7 @@ class MassSummationTestCase9(unittest.TestCase):
             self.prob['OEM_fuel_vol'], 1268.47495553, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 1273.6
         assert_near_equal(
-            self.prob[Mission.Summary.OPERATING_MASS], 102648.03610637, tol
+            self.prob[Mission.OPERATING_MASS], 102648.03610637, tol
         )  # modified from GASP value to account for updated crew mass. GASP value is 102392.0
         assert_near_equal(
             self.prob['payload_mass_max_fuel'], 30800.0, tol
@@ -3001,7 +3001,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         # options from MassPremission
-        options.set_val(Mission.Design.CRUISE_ALTITUDE, val=41000, units='ft')
+        options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')
         options.set_val(Aircraft.LandingGear.FIXED_GEAR, val=False, units='unitless')
         options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER_WITH_BAGS, val=225, units='lbm')
@@ -3013,7 +3013,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.add_subsystem(
             'size',
             SizeGroup(),
-            promotes_inputs=['aircraft:*', 'mission:*'],
+            promotes_inputs=['aircraft:*'],
             promotes_outputs=[
                 'aircraft:*',
             ],
@@ -3031,7 +3031,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         # prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
         prob.model.set_input_defaults(Aircraft.HorizontalTail.TAPER_RATIO, 0.366, units='unitless')
@@ -3181,7 +3181,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FOLD_MASS_COEFFICIENT, 0.15, units='unitless')
-        prob.model.set_input_defaults(Mission.Design.MACH, 0.8, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Design.MACH, 0.8, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, 0.0001, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, 0.2, units='unitless')
         prob.model.set_input_defaults(Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless')
@@ -3263,7 +3263,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Engine.POSITION_FACTOR -- SKEPOS = 1.05
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS - WFE = 20876.
-        Mission.Summary.USEFUL_LOAD -- WFUL = 5775.
+        Mission.USEFUL_LOAD -- WFUL = 5775.
         Aircraft.Wing.MASS -- WW = 7645.
         Aircraft.Strut.MASS -- WSTRUT = 0
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
@@ -3271,7 +3271,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         fus_mass_full -- WX = 142354.9
         Aircraft.Fuselage.MASS -- WB = 27160
         Aircraft.Fuel.WING_VOLUME_DESIGN -- FVOLREQ = 731.6
-        Mission.Summary.OPERATING_MASS -- OWE = 82982.
+        Mission.OPERATING_MASS -- OWE = 82982.
         fus_mass_full -- WX = 121864
         OEM_wingfuel_mass -- WFWOWE(WFW_MAX) = 67018.2
         OEM_fuel_vol -- FVOLW_MAX = 1339.8
@@ -3342,7 +3342,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21885.38086961, tol)
-        assert_near_equal(prob[Mission.Summary.USEFUL_LOAD], 5961.79463002, tol)
+        assert_near_equal(prob[Mission.USEFUL_LOAD], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         # BWBWingMassGroup
@@ -3370,7 +3370,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob['volume_wingfuel_mass'], 30308.8688, tol)
         assert_near_equal(prob['max_wingfuel_mass'], 30308.86876369, tol)
         assert_near_equal(prob[Aircraft.Fuel.WING_VOLUME_DESIGN], 775.43831801, tol)
-        assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 80987.12286499, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 80987.12286499, tol)
         # BodyTankCalculations
         assert_near_equal(prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 4954.00837132, tol)
 

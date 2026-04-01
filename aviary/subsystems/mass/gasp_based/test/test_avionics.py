@@ -29,7 +29,7 @@ class AvionicsTestCase1(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -70,7 +70,7 @@ class AvionicsTestCase2(unittest.TestCase):
         avionics.GRAV_ENGLISH_LBM = 1.1
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -112,7 +112,7 @@ class AvionicsTestCase3(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=150000, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)

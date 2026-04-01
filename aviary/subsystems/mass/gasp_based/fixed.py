@@ -1009,7 +1009,7 @@ class TailMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.VerticalTail.SWEEP, units='rad')
         add_aviary_input(self, Aircraft.VerticalTail.SPAN, units='ft')
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.HorizontalTail.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.SPAN, units='ft')
@@ -1055,7 +1055,7 @@ class TailMass(om.ExplicitComponent):
             Aircraft.HorizontalTail.MASS,
             [
                 Aircraft.HorizontalTail.AREA,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.HorizontalTail.MASS_COEFFICIENT,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.HorizontalTail.SPAN,
@@ -1071,7 +1071,7 @@ class TailMass(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.VerticalTail.MASS,
             [
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.VerticalTail.MASS_COEFFICIENT,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Wing.SPAN,
@@ -1096,7 +1096,7 @@ class TailMass(om.ExplicitComponent):
         AR_vtail = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
         quarter_sweep_tail = inputs[Aircraft.VerticalTail.SWEEP]
         span_vtail = inputs[Aircraft.VerticalTail.SPAN]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         coef_htail = inputs[Aircraft.HorizontalTail.MASS_COEFFICIENT]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         span_htail = inputs[Aircraft.HorizontalTail.SPAN]
@@ -1173,7 +1173,7 @@ class TailMass(om.ExplicitComponent):
         AR_vtail = inputs[Aircraft.VerticalTail.ASPECT_RATIO]
         quarter_sweep_tail = inputs[Aircraft.VerticalTail.SWEEP]
         span_vtail = inputs[Aircraft.VerticalTail.SPAN]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         coef_htail = inputs[Aircraft.HorizontalTail.MASS_COEFFICIENT]
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         span_htail = inputs[Aircraft.HorizontalTail.SPAN]
@@ -1364,7 +1364,7 @@ class TailMass(om.ExplicitComponent):
             ** 0.54
             * htail_area ** (-0.46)
         )
-        J[Aircraft.HorizontalTail.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.HorizontalTail.MASS, Aircraft.Design.GROSS_MASS] = (
             350.0
             * 0.54
             * (
@@ -1500,7 +1500,7 @@ class TailMass(om.ExplicitComponent):
             ** 0.54
         )
 
-        J[Aircraft.VerticalTail.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.VerticalTail.MASS, Aircraft.Design.GROSS_MASS] = (
             temp
             * 0.54
             * (FV + htail_loc * FH / 2.0) ** (-0.46)
@@ -2523,7 +2523,7 @@ class ControlMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         self.add_input('min_dive_vel', val=700, units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, units='unitless')
@@ -2547,7 +2547,7 @@ class ControlMass(om.ExplicitComponent):
             [
                 Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT,
                 Aircraft.Wing.AREA,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Wing.ULTIMATE_LOAD_FACTOR,
                 'min_dive_vel',
                 Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT,
@@ -2560,7 +2560,7 @@ class ControlMass(om.ExplicitComponent):
         c_mass_trend_wing_control = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT]
 
         wing_area = inputs[Aircraft.Wing.AREA]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
 
         c_mass_trend_cockpit_control = inputs[Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT]
@@ -2600,7 +2600,7 @@ class ControlMass(om.ExplicitComponent):
         c_mass_trend_wing_control = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT]
 
         wing_area = inputs[Aircraft.Wing.AREA]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
 
         c_mass_trend_cockpit_control = inputs[Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT]
@@ -2688,9 +2688,9 @@ class ControlMass(om.ExplicitComponent):
 
         J[Aircraft.Controls.MASS, Aircraft.Wing.AREA] = CK18 * dSCW_dWA / GRAV_ENGLISH_LBM
 
-        J[Aircraft.Wing.SURFACE_CONTROL_MASS, Mission.Design.GROSS_MASS] = CK18 * dSCW_dWG
+        J[Aircraft.Wing.SURFACE_CONTROL_MASS, Aircraft.Design.GROSS_MASS] = CK18 * dSCW_dWG
 
-        J[Aircraft.Controls.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Controls.MASS, Aircraft.Design.GROSS_MASS] = (
             0.41
             * CK15
             * (
@@ -2756,7 +2756,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT, units='unitless')
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(
             self,
             Aircraft.Nacelle.CLEARANCE_RATIO,
@@ -2773,7 +2773,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
             Aircraft.LandingGear.TOTAL_MASS,
             [
                 Aircraft.LandingGear.MASS_COEFFICIENT,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Nacelle.CLEARANCE_RATIO,
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.LandingGear.TOTAL_MASS_SCALER,
@@ -2783,7 +2783,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         CK12 = inputs[Aircraft.LandingGear.TOTAL_MASS_SCALER]
@@ -2816,7 +2816,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
@@ -2874,7 +2874,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
             dLGW_dND / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Mission.Design.GROSS_MASS] = c_gear_mass_modified
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Design.GROSS_MASS] = c_gear_mass_modified
 
         J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.TOTAL_MASS_SCALER] = (
             c_gear_mass_modified * gross_wt_initial

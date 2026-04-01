@@ -69,7 +69,7 @@ class FurnishingMass(om.ExplicitComponent):
         self.options.declare('mu', default=1.0, types=float)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
@@ -81,7 +81,7 @@ class FurnishingMass(om.ExplicitComponent):
             Aircraft.Furnishings.MASS,
             [
                 Aircraft.Fuselage.AVG_DIAMETER,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Furnishings.MASS_SCALER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.CABIN_AREA,
@@ -99,7 +99,7 @@ class FurnishingMass(om.ExplicitComponent):
         num_flight_attendants = get_num_of_flight_attendent(PAX)
         lavatories = get_num_of_lavatories(PAX)
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
@@ -165,7 +165,7 @@ class FurnishingMass(om.ExplicitComponent):
         num_flight_attendants = get_num_of_flight_attendent(PAX)
         lavatories = get_num_of_lavatories(PAX)
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
@@ -280,7 +280,7 @@ class FurnishingMass(om.ExplicitComponent):
                 dfurnishing_wt_dscaler = 0.0
                 dfurnishing_wt_dacabin = 0.0
 
-        partials[Aircraft.Furnishings.MASS, Mission.Design.GROSS_MASS] = (
+        partials[Aircraft.Furnishings.MASS, Aircraft.Design.GROSS_MASS] = (
             dfurnishing_wt_dgross_wt_initial
         )
         partials[Aircraft.Furnishings.MASS, Aircraft.Fuselage.AVG_DIAMETER] = (
@@ -310,7 +310,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
         self.options.declare('mu', default=1.0, types=float)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
@@ -322,7 +322,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
             Aircraft.Furnishings.MASS,
             [
                 Aircraft.Fuselage.HYDRAULIC_DIAMETER,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Furnishings.MASS_SCALER,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.CABIN_AREA,
@@ -340,7 +340,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
         num_flight_attendants = get_num_of_flight_attendent(PAX)
         lavatories = get_num_of_lavatories(PAX)
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
@@ -405,7 +405,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
         num_flight_attendants = get_num_of_flight_attendent(PAX)
         lavatories = get_num_of_lavatories(PAX)
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
@@ -520,7 +520,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
                 dfurnishing_wt_dscaler = 0.0
                 dfurnishing_wt_dacabin = 0.0
 
-        partials[Aircraft.Furnishings.MASS, Mission.Design.GROSS_MASS] = (
+        partials[Aircraft.Furnishings.MASS, Aircraft.Design.GROSS_MASS] = (
             dfurnishing_wt_dgross_wt_initial
         )
         partials[Aircraft.Furnishings.MASS, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = (

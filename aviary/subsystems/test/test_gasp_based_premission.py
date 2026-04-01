@@ -93,7 +93,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS: 6366.3591,
             # GASP original 21078.3911, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 24_897.7475,
-            Mission.Summary.USEFUL_LOAD: 5341.4317956,
+            Mission.USEFUL_LOAD: 5341.4317956,
             Aircraft.Engine.ADDITIONAL_MASS: 850.90095,
             Aircraft.Wing.MASS: 16206.8122,
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1740.2606,
@@ -101,7 +101,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.Fuselage.MASS: 18673.0352,
             Aircraft.Propulsion.MASS: 16048.0025,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 848.5301,
-            Mission.Summary.OPERATING_MASS: 96954.6194,
+            Mission.OPERATING_MASS: 96954.6194,
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,
         }
 
@@ -178,7 +178,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS: 6366.3591,
             # GASP original 21078.3911, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 24_897.7475,
-            Mission.Summary.USEFUL_LOAD: 5332.684,
+            Mission.USEFUL_LOAD: 5332.684,
             Aircraft.Engine.ADDITIONAL_MASS: 827.5372,
             Aircraft.Wing.MASS: 15651.64198957,
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1779.06667944,
@@ -186,7 +186,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.Fuselage.MASS: 18675.0408,
             Aircraft.Propulsion.MASS: 15694.0515,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 867.4514906,
-            Mission.Summary.OPERATING_MASS: 96008.12976964,
+            Mission.OPERATING_MASS: 96008.12976964,
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,
         }
 
@@ -229,7 +229,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.AirConditioning.MASS -- WAC = 1301.57
         Aircraft.Furnishings.MASS -- 11269.88
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS -- WFE = 20876.
-        Mission.Summary.USEFUL_LOAD -- WFUL = 5775.
+        Mission.USEFUL_LOAD -- WFUL = 5775.
         Aircraft.Engine.ADDITIONAL_MASS -- not in GASP
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
         Aircraft.Wing.MASS -- WW = 7645.
@@ -243,7 +243,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.Propulsion.MASS tol -- WP = 8592.
         FUEL_MASS -- WFADES = 33268.2
         Aircraft.Fuel.WING_VOLUME_DESIGN -- FVOLREQ = 731.6
-        Mission.Summary.OPERATING_MASS tol -- OWE = 82982.
+        Mission.OPERATING_MASS tol -- OWE = 82982.
         Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY -- not in GASP.
         """
         prob = self.prob
@@ -314,7 +314,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Furnishings.MASS: 11269.876,
             # GASP original 20876.453, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 22_991.435,
-            Mission.Summary.USEFUL_LOAD: 5971.7946,
+            Mission.USEFUL_LOAD: 5971.7946,
             Aircraft.Engine.ADDITIONAL_MASS: 153.1677,
             Aircraft.Wing.FOLD_MASS: 107.8736151,
             Aircraft.Wing.MASS: 6962.31442344,
@@ -323,7 +323,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Fuselage.MASS: 27159.693,
             Aircraft.Propulsion.MASS: 8627.6738,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 751.74213602,
-            Mission.Summary.OPERATING_MASS: 82064.29761786,
+            Mission.OPERATING_MASS: 82064.29761786,
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 3876.43000743,
         }
 
@@ -460,7 +460,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Furnishings.MASS: 11269.876,
             # GASP original 20876.453, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 22_991.435,
-            Mission.Summary.USEFUL_LOAD: 5971.7946,
+            Mission.USEFUL_LOAD: 5971.7946,
             Aircraft.Engine.ADDITIONAL_MASS: 153.1677,
             Aircraft.Wing.FOLD_MASS: 107.8335,
             Aircraft.Wing.MASS: 6959.7262,
@@ -469,7 +469,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Fuselage.MASS: 27159.693,
             Aircraft.Propulsion.MASS: 8627.72,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 751.7973,
-            Mission.Summary.OPERATING_MASS: 82062.193,
+            Mission.OPERATING_MASS: 82062.193,
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 3878.938,
         }
 

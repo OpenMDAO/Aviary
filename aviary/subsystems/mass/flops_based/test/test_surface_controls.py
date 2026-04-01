@@ -41,7 +41,7 @@ class SurfaceCtrlMassTest(unittest.TestCase):
             case_name,
             input_keys=[
                 Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO,
                 Aircraft.Wing.AREA,
             ],
@@ -76,7 +76,7 @@ class SurfaceCtrlMassTest2(unittest.TestCase):
         prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Mission.Design.GROSS_MASS, 130000, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 130000, 'lbm')
         prob.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 1, 'unitless')
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
 

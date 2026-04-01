@@ -18,7 +18,7 @@ class WingMassSolve(om.ImplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_input(
             'c_strut_braced',
@@ -53,7 +53,7 @@ class WingMassSolve(om.ImplicitComponent):
         self.declare_partials('isolated_wing_mass', '*')
 
     def apply_nonlinear(self, inputs, outputs, residuals):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         high_lift_wt = inputs[Aircraft.Wing.HIGH_LIFT_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
@@ -82,7 +82,7 @@ class WingMassSolve(om.ImplicitComponent):
         residuals['isolated_wing_mass'] = (isolated_wing_wt - wing_wt_guess) / GRAV_ENGLISH_LBM
 
     def linearize(self, inputs, outputs, J):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
@@ -98,7 +98,7 @@ class WingMassSolve(om.ImplicitComponent):
 
         foo = (c_strut_braced * ULF * (gross_wt_initial - 0.8 * isolated_wing_wt)) ** 0.757
 
-        J['isolated_wing_mass', Mission.Design.GROSS_MASS] = (
+        J['isolated_wing_mass', Aircraft.Design.GROSS_MASS] = (
             -(
                 c_wing_mass
                 * c_material
@@ -399,7 +399,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_input(
             'c_strut_braced',
@@ -438,7 +438,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         self.declare_partials('isolated_wing_mass', '*')
 
     def apply_nonlinear(self, inputs, outputs, residuals):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         high_lift_wt = inputs[Aircraft.Wing.HIGH_LIFT_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
@@ -472,7 +472,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         residuals['isolated_wing_mass'] = (isolated_wing_wt - wing_wt_guess) / GRAV_ENGLISH_LBM
 
     def linearize(self, inputs, outputs, J):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_strut_braced = inputs['c_strut_braced']
         ULF = inputs[Aircraft.Wing.ULTIMATE_LOAD_FACTOR]
         c_wing_mass = inputs[Aircraft.Wing.MASS_COEFFICIENT]
@@ -493,7 +493,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         foo = (foo_numer / foo_denom) ** 0.757
         wingspan_mod = wingspan - cabin_width  # modification for BWB
 
-        J['isolated_wing_mass', Mission.Design.GROSS_MASS] = (
+        J['isolated_wing_mass', Aircraft.Design.GROSS_MASS] = (
             -(
                 c_wing_mass
                 * c_material

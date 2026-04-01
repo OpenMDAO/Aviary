@@ -241,7 +241,6 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     Dynamic.Atmosphere.TEMPERATURE,
                     Dynamic.Vehicle.MASS,
                     'aircraft:*',
-                    'mission:*',
                 ]
 
             elif method == 'low_speed':
@@ -716,9 +715,9 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Wing.TAPER_RATIO,
     Aircraft.Wing.THICKNESS_TO_CHORD,
     Aircraft.Wing.WETTED_AREA,
-    # Mission.Summary.GROSS_MASS,
-    Mission.Design.LIFT_COEFFICIENT,
-    Mission.Design.MACH,
+    # Mission.GROSS_MASS,
+    Aircraft.Design.LIFT_COEFFICIENT,
+    Aircraft.Design.MACH,
 ]
 
 COMPUTED_CORE_INPUTS_BWB = [
@@ -747,9 +746,9 @@ COMPUTED_CORE_INPUTS_BWB = [
     Aircraft.Wing.TAPER_RATIO,
     Aircraft.Wing.THICKNESS_TO_CHORD,
     Aircraft.Wing.WETTED_AREA,
-    # Mission.Summary.GROSS_MASS,
-    Mission.Design.LIFT_COEFFICIENT,
-    Mission.Design.MACH,
+    # Mission.GROSS_MASS,
+    Aircraft.Design.LIFT_COEFFICIENT,
+    Aircraft.Design.MACH,
 ]
 
 TABULAR_CORE_INPUTS = [
@@ -825,12 +824,12 @@ AERO_LS_2DOF_INPUTS = [
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,
     Aircraft.Wing.HEIGHT,
     Aircraft.Wing.FLAP_CHORD_RATIO,
-    Mission.Design.GROSS_MASS,
+    Aircraft.Design.GROSS_MASS,
 ]
 
 AERO_CLEAN_2DOF_INPUTS = [
     Aircraft.Design.DRAG_DIVERGENCE_SHIFT,  # super drag shift?
-    Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+    Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
     Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR,

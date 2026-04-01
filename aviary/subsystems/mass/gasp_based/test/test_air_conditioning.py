@@ -26,7 +26,7 @@ class ACMassTestCase1(unittest.TestCase):
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )  # large_single_aisle_1_GASP
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.LENGTH, val=129.4, units='ft'
@@ -81,7 +81,7 @@ class ACMassTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.AirConditioning.MASS_COEFFICIENT, val=1.65, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, val=7.5, units='psi'
@@ -122,7 +122,7 @@ class BWBACMassTestCase1(unittest.TestCase):
             units='unitless',  # generic_BWB_GASP.csv
         )
         prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, 150000.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, 150000.0, units='lbm'
         )  # generic_BWB_GASP.csv
         prob.model.set_input_defaults(
             Aircraft.Fuselage.LENGTH, 71.52455, units='ft'

@@ -18,7 +18,7 @@ class DuplicateHierarchy:
 
     class Design:
         CRUISE_MACH = 'mission:design:cruise_mach'
-        RANGE = 'mission:design:range'
+        RANGE = 'aircraft:design:range'
 
     class OperatingLimits:
         MAX_MACH = 'mission:design:cruise_mach'  # this is a duplicate

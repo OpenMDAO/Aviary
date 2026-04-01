@@ -25,7 +25,7 @@ class FurnishingMassTestCase1(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft'
@@ -84,7 +84,7 @@ class FurnishingMassTestCase2(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
@@ -123,7 +123,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AVG_DIAMETER, val=19.365, units='ft'
@@ -191,7 +191,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, 150000, units='lbm'
+            Aircraft.Design.GROSS_MASS, 150000, units='lbm'
         )  # generic_BWB_GASP.csv
         prob.model.set_input_defaults(
             Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
@@ -293,7 +293,7 @@ class BWBFurnishingMassTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 9999.0, units='lbm')  # arbitrary
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 9999.0, units='lbm')  # arbitrary
         prob.model.set_input_defaults(
             Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
         )  # arbitrary

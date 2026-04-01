@@ -1311,6 +1311,40 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.CRUISE_ALTITUDE,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
+    units='ft',
+    option=True,
+    default_value=25000.0,
+    desc='design mission cruise altitude',
+)
+
+add_meta_data(
+    Aircraft.Design.CRUISE_MACH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'CONFIN.VCMN',
+        #  [  # inputs
+        #      '&DEFINE.CONFIN.VCMN', 'PARVAR.DVD(1,8)',
+        #      # outputs
+        #      'CONFIG.VCMN', 'CONFIG.DVA(8)', '~FLOPS.DVA(8)', '~ANALYS.DVA(8)',
+        #      # other
+        #      'MISSA.VCMIN',
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_design_variables.cruise_mach',
+            'aircraft.outputs.L0_design_variables.cruise_mach',
+            'aircraft.outputs.L0_design_variables.mission_cruise_mach',
+        ],
+    },
+    units='unitless',
+    desc='aircraft cruise Mach number',
+    default_value=0.0,  # TODO: required
+)
+
+add_meta_data(
     Aircraft.Design.DRAG_COEFFICIENT_INCREMENT,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DELCD', 'FLOPS': None, 'LEAPS1': None},
@@ -1437,6 +1471,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.GROSS_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.WG',
+        # ['&DEFINE.WTIN.DGW', 'WTS.DGW', '~WEIGHT.DG', '~WWGHT.DG'],
+        'FLOPS': 'WTIN.DGW',
+        'LEAPS1': [  # TODO: 'aircraft.inputs.L0_weights.design_ramp_weight_fraction' ???
+            #    - design_ramp_weight_fraction has a default: 1.0
+            #    - design_ramp_weight does not have an explicit default
+            #        - design_ramp_weight has an implicit default, by way of
+            #          design_ramp_weight_fraction:
+            #          [L0_design_variables] ramp_weight
+            'aircraft.inputs.L0_weights.design_ramp_weight',
+            '(weightABC)self._design_gross_weight',
+        ],
+    },
+    units='lbm',
+    desc='Design gross mass of the aircraft. Includes zero fuel mass plus useable fuel.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.IJEFF', 'FLOPS': None, 'LEAPS1': None},
@@ -1472,28 +1528,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    # NOTE: user override (no scaling)
-    Aircraft.Design.LANDING_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.WLDG',
-        #  [  # inputs
-        #      '&DEFINE.WTIN.WLDG', 'WTS.WLDG',
-        #      # outputs
-        #      'CMODLW.WLDGO',
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_landing_gear.design_landing_weight',
-            'aircraft.outputs.L0_landing_gear.design_landing_weight',
-        ],
-    },
-    units='lbm',
-    desc='design landing mass',
-    default_value=0.0,
-)
-
-add_meta_data(
     # Note user override (no scaling)
     Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO,
     meta_data=_MetaData,
@@ -1504,6 +1538,42 @@ add_meta_data(
     },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
+    default_value=0.0,
+)
+
+add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'AERIN.FCLDES',
+        #  [  # inputs
+        #      '&DEFINE.AERIN.FCLDES', 'OSWALD.FCLDES',
+        #      # outputs
+        #      '~EDET.CLDES', '~CLDESN.CLDES', '~MDESN.CLDES'
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_aerodynamics.design_lift_coeff',
+            'aircraft.outputs.L0_aerodynamics.design_lift_coeff',
+        ],
+    },
+    units='unitless',
+    desc='Fixed design lift coefficient. If input, overrides design lift '
+    'coefficient computed by EDET.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': ['INGASP.CLMWFU', 'INGASP.CLMAX'],
+        'FLOPS': None,
+        'LEAPS1': None,
+    },
+    units='unitless',
+    desc='maximum lift coefficient from flaps model when flaps are up (not deployed)',
     default_value=0.0,
 )
 
@@ -1560,6 +1630,28 @@ add_meta_data(
 )
 
 add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.MACH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.CRMACH',
+        'FLOPS': 'AERIN.FMDES',
+        #  [  # inputs
+        #      '&DEFINE.AERIN.FMDES', 'OSWALD.FMDES'
+        #      # outputs
+        #      '~EDET.DESM', '~MDESN.DESM'
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_design_variables.design_mach',
+            'aircraft.outputs.L0_design_variables.design_mach',
+        ],
+    },
+    units='unitless',
+    desc='aircraft design Mach number',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.MAX_FUSELAGE_PITCH_ANGLE,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.THEMAX', 'FLOPS': None, 'LEAPS1': None},
@@ -1589,24 +1681,17 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_ADDITIONAL,
+    Aircraft.Design.RANGE,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='lbm',
-    desc='required fuel reserves: directly in lbm',
-    default_value=0,
-)
-
-add_meta_data(
-    Aircraft.Design.RESERVE_FUEL_MARGIN,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='unitless',
-    desc='required fuel reserves: given as a precentage of mission fuel.'
-    'Mission fuel only includes normal phases and excludes reserve phases.',
-    default_value=0,
+    historical_name={
+        'GASP': 'INGASP.ARNGE',
+        # ['&DEFINE.CONFIN.DESRNG', 'CONFIG.DESRNG'],
+        'FLOPS': 'CONFIN.DESRNG',
+        'LEAPS1': 'aircraft.inputs.L0_configuration.design_range',
+    },
+    units='NM',
+    desc='The design range of the aircraft used for sizing of FLOPS based subsystems and mission target length if not provided in phase_info',
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -1716,6 +1801,24 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'AERIN.THROFF',
+        # LEAPS1 used the average thrust_takeoff of all operational engines
+        # actually on the airplane, possibly after resizing (as with FLOPS)
+        'LEAPS1': [
+            'aircraft.inputs.L0_engine.thrust_takeoff',
+            '(SimpleTakeoff)self.thrust',
+        ],
+    },
+    units='lbf',
+    desc='Thrust per engine, used for energy state simple takeoff calculation',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Design.THRUST_TO_WEIGHT_RATIO,
     meta_data=_MetaData,
     historical_name={
@@ -1743,6 +1846,28 @@ add_meta_data(
     },
     units='ft**2',
     desc='total aircraft wetted area',
+    default_value=0.0,
+)
+
+add_meta_data(
+    # NOTE: user override (no scaling)
+    Aircraft.Design.TOUCHDOWN_MASS_MAX,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'WTIN.WLDG',
+        #  [  # inputs
+        #      '&DEFINE.WTIN.WLDG', 'WTS.WLDG',
+        #      # outputs
+        #      'CMODLW.WLDGO',
+        #  ],
+        'LEAPS1': [
+            'aircraft.inputs.L0_landing_gear.design_landing_weight',
+            'aircraft.outputs.L0_landing_gear.design_landing_weight',
+        ],
+    },
+    units='lbm',
+    desc='Maximum mass at touchdown used to size landing gear',
     default_value=0.0,
 )
 
@@ -7156,6 +7281,163 @@ add_meta_data(
 #  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'  '----------------'
 #  ============================================================================================================================================
 
+add_meta_data(
+    Mission.FINAL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='lbm',
+    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
+)
+
+add_meta_data(
+    Mission.FINAL_TIME,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
+    units='min',
+    desc='Total mission time from the start of the first regular_phase'
+    'to the end of the last regular_phase (does not include reserve phases).',
+)
+
+add_meta_data(
+    Mission.FUEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='fuel burned during regular phases, this does not include fuel burned in reserve phases',
+)
+
+# NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
+#      to FFFSUB/FFFSUP
+# CKFF is consistent for one aircraft over all missions, once the vehicle is sized
+# can we map it to both FFFSUB and FFFSUP?
+add_meta_data(
+    Mission.FUEL_FLOW_SCALER,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': 'INGASP.CKFF',
+        'FLOPS': 'MISSIN.FACT',  # ['&DEFMSS.MISSIN.FACT', 'TRNSF.FACT'],
+        'LEAPS1': ['aircraft.inputs.L0_fuel_flow.overall_factor'],
+    },
+    units='unitless',
+    desc='scale factor on overall fuel flow',
+    default_value=1.0,
+    option=True,
+)
+
+add_meta_data(
+    Mission.GROSS_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Gross takeoff mass of aircraft for the mission being flown.'
+    'May differ from Aircraft.Design.GROSS_MASS for off-design missions.',
+)
+
+add_meta_data(
+    Mission.OPERATING_MASS,
+    meta_data=_MetaData,
+    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
+    # defined the same way
+    historical_name={
+        'GASP': 'INGASP.OWE',
+        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
+        'FLOPS': 'MISSIN.DOWE',
+        'LEAPS1': [
+            '(WeightABC)self._operating_weight_empty',
+            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
+        ],
+    },
+    units='lbm',
+    desc='Operating mass of the aircraft. Includes structure mass, crew (and crew baggage), unusable '
+    'fuel, oil, and operational items like cargo containers and passenger service mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.RANGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='NM',
+    desc='actual range that the aircraft flies on this mission. Equal to Aircraft.Design.RANGE value in the design case.',
+)
+
+add_meta_data(
+    Mission.RESERVE_FUEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.RESERVE_FUEL_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None, 'LEAPS1': None},
+    option=True,
+    units='lbm',
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
+    Mission.RESERVE_FUEL_MARGIN,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    option=True,
+    units='unitless',
+    desc='required fuel reserves: given as a precentage of mission fuel.'
+    'Mission fuel only includes normal phases and excludes reserve phases.',
+    default_value=0,
+)
+
+add_meta_data(
+    Mission.TOTAL_FUEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    # Note: In GASP, WFA does not include fuel margin.
+    desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
+    'reserve fuel and fuel margin',
+)
+
+add_meta_data(
+    Mission.TOTAL_RESERVE_FUEL,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='the total fuel reserves which is the sum of: '
+    'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
+    default_value=0,
+)
+
+add_meta_data(
+    Mission.USEFUL_LOAD,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.ZERO_FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
+        'FLOPS': None,
+        'LEAPS1': [
+            '(WeightABC)self._zero_fuel_weight',
+            'aircraft.outputs.L0_weights.zero_fuel_weight',
+            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
+        ],
+    },
+    units='lbm',
+    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, and cargo.',
+    default_value=0.0,
+)
+
 #   _____                         _                    _           _
 #  / ____|                       | |                  (_)         | |
 # | |        ___    _ __    ___  | |_   _ __    __ _   _   _ __   | |_   ___
@@ -7209,7 +7491,7 @@ add_meta_data(
     },
     units='unitless',
     desc='aircraft cruise Mach number',
-    # TODO: derived default value: Mission.Summary.CRUISE_MACH ???
+    # TODO: derived default value: Aircraft.Design.CRUISE_MACH ???
     default_value=0.0,
     option=True,
 )
@@ -7243,164 +7525,6 @@ add_meta_data(
 #                             __/ |
 #                            |___/
 # =========================================
-
-add_meta_data(
-    Mission.Design.CRUISE_ALTITUDE,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.CRALT', 'FLOPS': None, 'LEAPS1': None},
-    units='ft',
-    option=True,
-    default_value=25000.0,
-    desc='design mission cruise altitude',
-)
-
-add_meta_data(
-    Mission.Design.CRUISE_RANGE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='NM',
-    desc='the distance flown by the aircraft during cruise',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.GROSS_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.WG',
-        # ['&DEFINE.WTIN.DGW', 'WTS.DGW', '~WEIGHT.DG', '~WWGHT.DG'],
-        'FLOPS': 'WTIN.DGW',
-        'LEAPS1': [  # TODO: 'aircraft.inputs.L0_weights.design_ramp_weight_fraction' ???
-            #    - design_ramp_weight_fraction has a default: 1.0
-            #    - design_ramp_weight does not have an explicit default
-            #        - design_ramp_weight has an implicit default, by way of
-            #          design_ramp_weight_fraction:
-            #          [L0_design_variables] ramp_weight
-            'aircraft.inputs.L0_weights.design_ramp_weight',
-            '(weightABC)self._design_gross_weight',
-        ],
-    },
-    units='lbm',
-    desc='Design gross mass of the aircraft. Includes zero fuel mass plus useable fuel.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # NOTE: user override (no scaling)
-    Mission.Design.LIFT_COEFFICIENT,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'AERIN.FCLDES',
-        #  [  # inputs
-        #      '&DEFINE.AERIN.FCLDES', 'OSWALD.FCLDES',
-        #      # outputs
-        #      '~EDET.CLDES', '~CLDESN.CLDES', '~MDESN.CLDES'
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_aerodynamics.design_lift_coeff',
-            'aircraft.outputs.L0_aerodynamics.design_lift_coeff',
-        ],
-    },
-    units='unitless',
-    desc='Fixed design lift coefficient. If input, overrides design lift '
-    'coefficient computed by EDET.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': ['INGASP.CLMWFU', 'INGASP.CLMAX'],
-        'FLOPS': None,
-        'LEAPS1': None,
-    },
-    units='unitless',
-    desc='maximum lift coefficient from flaps model when flaps are up (not deployed)',
-    default_value=0.0,
-)
-
-add_meta_data(
-    # NOTE: user override (no scaling)
-    Mission.Design.MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.CRMACH',
-        'FLOPS': 'AERIN.FMDES',
-        #  [  # inputs
-        #      '&DEFINE.AERIN.FMDES', 'OSWALD.FMDES'
-        #      # outputs
-        #      '~EDET.DESM', '~MDESN.DESM'
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_design_variables.design_mach',
-            'aircraft.outputs.L0_design_variables.design_mach',
-        ],
-    },
-    units='unitless',
-    desc='aircraft design Mach number',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.RANGE,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.ARNGE',
-        # ['&DEFINE.CONFIN.DESRNG', 'CONFIG.DESRNG'],
-        'FLOPS': 'CONFIN.DESRNG',
-        'LEAPS1': 'aircraft.inputs.L0_configuration.design_range',
-    },
-    units='NM',
-    desc='the aircraft target distance',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.RATE_OF_CLIMB_AT_TOP_OF_CLIMB,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.ROCTOC', 'FLOPS': None, 'LEAPS1': None},
-    option=True,
-    units='ft/min',
-    desc='The required rate of climb at top of climb',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Design.RESERVE_FUEL,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='the total fuel reserves which is the sum of: '
-    'RESERVE_FUEL_BURNED, RESERVE_FUEL_ADDITIONAL, RESERVE_FUEL_MARGIN',
-    default_value=0,
-)
-
-add_meta_data(
-    # TODO move to Engine?
-    # TODO this isn't actually tied to the engines in any way - user provided value is
-    #      arbitrary and will not update as engines resize
-    Mission.Design.THRUST_TAKEOFF_PER_ENG,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # FLOPS may scale the input value as it resizes the engine if requested by
-        # the user
-        # ['&DEFINE.AERIN.THROFF', 'LANDG.THROFF'],
-        'FLOPS': 'AERIN.THROFF',
-        # LEAPS1 uses the average thrust_takeoff of all operational engines
-        # actually on the airplane, possibly after resizing (as with FLOPS)
-        'LEAPS1': [
-            'aircraft.inputs.L0_engine.thrust_takeoff',
-            '(SimpleTakeoff)self.thrust',
-        ],
-    },
-    units='lbf',
-    # need better description of what state. rolling takeoff condition? alt? mach?
-    desc='thrust on the aircraft for takeoff',
-    default_value=0.0,
-)
 
 #  _                            _   _
 # | |                          | | (_)
@@ -7648,7 +7772,7 @@ add_meta_data(
     },
     units='lbm',
     desc='computed mass of aircraft for landing, is only '
-    'required to be equal to Aircraft.Design.LANDING_MASS '
+    'required to be equal to Aircraft.Design.TOUCHDOWN_MASS_MAX '
     'when the design case is being run '
     'for ENERGY_STATE missions this is the mass at the end of the last regular phase (non-reserve phase)',
 )
@@ -7688,178 +7812,6 @@ add_meta_data(
     units='unitless',
     desc='regularized objective that maximizes range subject to other necessary additions',
 )
-
-#   _____
-#  / ____|
-# | (___    _   _   _ __ ___    _ __ ___     __ _   _ __   _   _
-#  \___ \  | | | | | '_ ` _ \  | '_ ` _ \   / _` | | '__| | | | |
-#  ____) | | |_| | | | | | | | | | | | | | | (_| | | |    | |_| |
-# |_____/   \__,_| |_| |_| |_| |_| |_| |_|  \__,_| |_|     \__, |
-#                                                           __/ |
-#                                                          |___/
-# ===============================================================
-
-add_meta_data(
-    Mission.Summary.CRUISE_MACH,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'CONFIN.VCMN',
-        #  [  # inputs
-        #      '&DEFINE.CONFIN.VCMN', 'PARVAR.DVD(1,8)',
-        #      # outputs
-        #      'CONFIG.VCMN', 'CONFIG.DVA(8)', '~FLOPS.DVA(8)', '~ANALYS.DVA(8)',
-        #      # other
-        #      'MISSA.VCMIN',
-        #  ],
-        'LEAPS1': [
-            'aircraft.inputs.L0_design_variables.cruise_mach',
-            'aircraft.outputs.L0_design_variables.cruise_mach',
-            'aircraft.outputs.L0_design_variables.mission_cruise_mach',
-        ],
-    },
-    units='unitless',
-    desc='aircraft cruise Mach number',
-    default_value=0.0,  # TODO: required
-)
-
-add_meta_data(
-    Mission.Summary.CRUISE_MASS_FINAL,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='mass of the aircraft at the end of cruise',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.FINAL_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
-    units='lbm',
-    desc='The final weight of the vehicle at the end of the last regular_phase (does not include reserve phases).',
-)
-
-add_meta_data(
-    Mission.Summary.FINAL_TIME,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'None', 'FLOPS': None, 'LEAPS1': None},  # TODO: Check on these
-    units='min',
-    desc='Total mission time from the start of the first regular_phase'
-    'to the end of the last regular_phase (does not include reserve phases).',
-)
-
-add_meta_data(
-    Mission.Summary.FUEL_BURNED,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel burned during regular phases, this does not include fuel burned in reserve phases',
-)
-
-# NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
-#      to FFFSUB/FFFSUP
-# CKFF is consistent for one aircraft over all missions, once the vehicle is sized
-# can we map it to both FFFSUB and FFFSUP?
-add_meta_data(
-    Mission.Summary.FUEL_FLOW_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.CKFF',
-        'FLOPS': 'MISSIN.FACT',  # ['&DEFMSS.MISSIN.FACT', 'TRNSF.FACT'],
-        'LEAPS1': ['aircraft.inputs.L0_fuel_flow.overall_factor'],
-    },
-    units='unitless',
-    desc='scale factor on overall fuel flow',
-    default_value=1.0,
-    option=True,
-)
-
-add_meta_data(
-    Mission.Summary.GROSS_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='Gross takeoff mass of aircraft for the mission being flown. May differ from design gross '
-    'mass for off-design missions. Includes zero fuel mass plus useable fuel.',
-)
-
-add_meta_data(
-    Mission.Summary.OPERATING_MASS,
-    meta_data=_MetaData,
-    # TODO: check with Aviary and GASPy engineers to ensure these are indeed
-    # defined the same way
-    historical_name={
-        'GASP': 'INGASP.OWE',
-        # ['WTS.WSP(33, 2)', '~WEIGHT.WOWE', '~WTSTAT.WSP(33, 2)'],
-        'FLOPS': 'MISSIN.DOWE',
-        'LEAPS1': [
-            '(WeightABC)self._operating_weight_empty',
-            'aircraft.outputs.L0_weights_summary.operating_weight_empty',
-        ],
-    },
-    units='lbm',
-    desc='Operating mass of the aircraft. Includes structure mass, crew (and crew baggage), unusable '
-    'fuel, oil, and operational items like cargo containers and passenger service mass.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.RANGE,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='NM',
-    desc='actual range that the aircraft flies, whether '
-    'it is a design case or an off design case. Equal '
-    'to Mission.Design.RANGE value in the design case.',
-)
-
-add_meta_data(
-    Mission.Summary.RESERVE_FUEL_BURNED,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.TOTAL_FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    # Note: In GASP, WFA does not include fuel margin.
-    desc='total fuel carried at the beginnning of a mission includes fuel burned in the mission, '
-    'reserve fuel and fuel margin',
-)
-
-add_meta_data(
-    Mission.Summary.USEFUL_LOAD,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None, 'LEAPS1': None},
-    units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.Summary.ZERO_FUEL_MASS,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        # ['WTS.WSP(37,2)', '~WEIGHT.WZF', '~WTSTAT.WSP(37,2)'],
-        'FLOPS': None,
-        'LEAPS1': [
-            '(WeightABC)self._zero_fuel_weight',
-            'aircraft.outputs.L0_weights.zero_fuel_weight',
-            'aircraft.outputs.L0_weights_summary.zero_fuel_weight',
-        ],
-    },
-    units='lbm',
-    desc='Aircraft zero fuel mass. Includes operating mass, passengers, baggage, and cargo.',
-    default_value=0.0,
-)
-
 
 #  _______           _                      __    __
 # |__   __|         | |                    / _|  / _|
