@@ -22,7 +22,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 # with alpha > alpha_stall
 
 
-class PreMissionAero(om.Group):
+class PreMissionGASPAero(om.Group):
     """Takeoff and landing flaps modeling."""
 
     def setup(self):
