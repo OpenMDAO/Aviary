@@ -341,3 +341,5 @@ class MassPremission(om.Group):
         self.add_subsystem(
             'mass_summation', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*']
         )
+
+        self.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.7, units='lbm/galUS')

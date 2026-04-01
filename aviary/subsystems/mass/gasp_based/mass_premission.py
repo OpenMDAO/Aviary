@@ -10,7 +10,6 @@ from aviary.subsystems.mass.gasp_based.fuel import (
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
-    StructMass,
 )
 from aviary.subsystems.mass.gasp_based.mass_summation import MassSummation
 from aviary.subsystems.mass.gasp_based.wing import BWBWingMassGroup, WingMassGroup
@@ -129,13 +128,6 @@ class MassPremission(om.Group):
             )
 
         self.add_subsystem(
-            'struct',
-            StructMass(),
-            promotes_inputs=['*'],
-            promotes_outputs=['*'],
-        )
-
-        self.add_subsystem(
             'fuel',
             FuelMass(),
             promotes_inputs=['*'],
@@ -143,7 +135,7 @@ class MassPremission(om.Group):
         )
 
         self.add_subsystem(
-            'fuel_and_oem',
+            'fuel_components',
             FuelComponents(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -162,6 +154,8 @@ class MassPremission(om.Group):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        self.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
 
         newton = self.nonlinear_solver = om.NewtonSolver()
         newton.options['atol'] = 1e-9

@@ -1,11 +1,10 @@
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.subsystems.mass.gasp_based.air_conditioning import ACMass, BWBACMass
 from aviary.subsystems.mass.gasp_based.anti_icing import AntiIcingMass
 from aviary.subsystems.mass.gasp_based.apu import APUMass
 from aviary.subsystems.mass.gasp_based.avionics import AvionicsMass
-from aviary.subsystems.mass.gasp_based.cargo import CargoContainerMass
+from aviary.subsystems.mass.gasp_based.cargo_containers import CargoContainerMass
 from aviary.subsystems.mass.gasp_based.crew import CabinCrewMass, FlightCrewMass
 from aviary.subsystems.mass.gasp_based.electrical import ElectricalMass
 from aviary.subsystems.mass.gasp_based.emergency_equipment import EmergencyEquipment

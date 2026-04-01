@@ -50,7 +50,6 @@ class MassSummation(om.Group):
 
 class EmpennageMass(om.ExplicitComponent):
     def setup(self):
-        add_aviary_input(self, Aircraft.Canard.MASS, units='lbm')
         add_aviary_input(self, Aircraft.HorizontalTail.MASS, units='lbm')
         add_aviary_input(self, Aircraft.VerticalTail.MASS, units='lbm')
 
@@ -67,34 +66,24 @@ class EmpennageMass(om.ExplicitComponent):
 
 
 class StructureMass(om.ExplicitComponent):
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
-
     def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
         add_aviary_input(self, Aircraft.Design.EMPENNAGE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.MASS, units='lbm')
         add_aviary_input(self, Aircraft.LandingGear.TOTAL_MASS, units='lbm')
-        add_aviary_input(self, Aircraft.Nacelle.MASS, shape=num_engine_type, units='lbm')
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.STRUCTURAL_MASS_INCREMENT, units='lbm')
 
         add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
 
     def setup_partials(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
-        self.declare_partials(
-            Aircraft.Design.STRUCTURE_MASS, Aircraft.Nacelle.MASS, val=np.ones(num_engine_type)
-        )
 
     def compute(self, inputs, outputs):
         empennage_mass = inputs[Aircraft.Design.EMPENNAGE_MASS]
         fuselage_mass = inputs[Aircraft.Fuselage.MASS]
         landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
-        nacelle_mass = inputs[Aircraft.Nacelle.MASS]
+        pod_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS]
         wing_mass = inputs[Aircraft.Wing.MASS]
         delta_struct_wt = inputs[Aircraft.Design.STRUCTURAL_MASS_INCREMENT]
 
@@ -103,7 +92,7 @@ class StructureMass(om.ExplicitComponent):
             + empennage_mass
             + fuselage_mass
             + landing_gear_mass
-            + np.sum(nacelle_mass)
+            + pod_mass
             + delta_struct_wt
         )
 
@@ -234,3 +223,41 @@ class UsefulLoadMass(om.ExplicitComponent):
             + cargo_container_mass
             + emergency_equip_mass
         )
+
+
+class OperatingMass(om.ExplicitComponent):
+    def setup(self):
+        add_aviary_input(self, Aircraft.Design.EMPTY_MASS, units='lbm')
+        add_aviary_input(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+
+        add_aviary_output(self, Mission.Summary.OPERATING_MASS, units='lbm')
+
+    def setup_partials(self):
+        self.declare_partials(Mission.Summary.OPERATING_MASS, '*', val=1)
+
+    def compute(self, inputs, outputs):
+        useful_load = inputs[Mission.Summary.USEFUL_LOAD]
+        empty_mass = inputs[Aircraft.Design.EMPTY_MASS]
+
+        outputs[Mission.Summary.OPERATING_MASS] = empty_mass + useful_load
+
+
+class ZeroFuelMass(om.ExplicitComponent):
+    def setup(self):
+        add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
+        add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
+
+        add_aviary_output(self, Mission.Summary.ZERO_FUEL_MASS, units='lbm')
+
+    def setup_partials(self):
+        self.declare_partials(Mission.Summary.ZERO_FUEL_MASS, '*', val=1)
+
+    def compute(self, inputs, outputs):
+        pass_mass = inputs[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL]
+        bag_mass = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
+        cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
+        operating_mass = inputs[Mission.Summary.OPERATING_MASS]
+
+        outputs[Mission.Summary.ZERO_FUEL_MASS] = operating_mass + pass_mass + bag_mass + cargo_mass

@@ -3176,7 +3176,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         prob.model.set_input_defaults(Aircraft.VerticalTail.MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS_SCALER, 1, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, 1, units='unitless')
+        # prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Design.STRUCTURAL_MASS_INCREMENT, 0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.MASS_COEFFICIENT, 75.78, units='unitless')
@@ -3283,7 +3283,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         FUEL_MASS_REQUIRED -- WFAREQ = 36595.0
         fuel_mass_min -- WFAMIN = 18268.2
         fuel_mass.wingfuel_mass_min -- WFWMIN = 11982.2
-        Aircraft.Fuel.TOTAL_CAPACITY -- WFAMAX = 33268.2
+        Aircraft.Fuel.TOTAL_CAPACITY -- WFAMAX = 33268.2.
         """
         prob = self.prob
         prob.run_model()
@@ -3341,7 +3341,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS], 1686.626, tol)
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
-        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 19770.39927907, tol)
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21885.38086961, tol)
         assert_near_equal(prob[Mission.Summary.USEFUL_LOAD], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 

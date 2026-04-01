@@ -11,7 +11,6 @@ from aviary.subsystems.mass.gasp_based.fuel import (
     FuelMass,
     FuelSysAndFullFuselageMass,
     FuselageMass,
-    StructMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
@@ -572,100 +571,100 @@ class FuselageMassTestCase2(unittest.TestCase):
 
 
 # this is the large single aisle 1 V3 test case
-class StructMassTestCase1(unittest.TestCase):
-    def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
+# class StructMassTestCase1(unittest.TestCase):
+#     def setUp(self):
+#         self.prob = om.Problem()
+#         self.prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS, val=2275, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.MASS, val=2297, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
-        )
+#         self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
+#         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
+#         self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
+#         )
+#         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS, val=2275, units='lbm')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.VerticalTail.MASS_SCALER, val=1, units='unitless'
+#         )
+#         self.prob.model.set_input_defaults(Aircraft.VerticalTail.MASS, val=2297, units='lbm')
+#         self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, val=1, units='unitless')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1, units='unitless'
+#         )
+#         self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
+#         self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, val=1, units='unitless')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
+#         )
+#         self.prob.model.set_input_defaults(
+#             Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
+#         )
 
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
+#         setup_model_options(
+#             self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+#         )
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+#         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
-        self.prob.run_model()
+#     def test_case1(self):
+#         self.prob.run_model()
 
-        tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 50461.0, tol)
+#         tol = 1e-4
+#         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 50461.0, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
+#         partial_data = self.prob.check_partials(out_stream=None, method='cs')
+#         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
-class StructMassTestCase2(unittest.TestCase):
-    """Test mass-weight conversion."""
+# class StructMassTestCase2(unittest.TestCase):
+#     """Test mass-weight conversion."""
 
-    def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+#     def setUp(self):
+#         import aviary.subsystems.mass.gasp_based.fuel as fuel
 
-        fuel.GRAV_ENGLISH_LBM = 1.1
+#         fuel.GRAV_ENGLISH_LBM = 1.1
 
-    def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
+#     def tearDown(self):
+#         import aviary.subsystems.mass.gasp_based.fuel as fuel
 
-        fuel.GRAV_ENGLISH_LBM = 1.0
+#         fuel.GRAV_ENGLISH_LBM = 1.0
 
-    def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
+#     def test_case1(self):
+#         self.prob = om.Problem()
+#         self.prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS, val=2275, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.VerticalTail.MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.VerticalTail.MASS, val=2297, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, val=1, units='unitless')
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
-        )
+#         self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
+#         self.prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, val=1, units='unitless')
+#         self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.HorizontalTail.MASS_SCALER, val=1, units='unitless'
+#         )
+#         self.prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS, val=2275, units='lbm')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.VerticalTail.MASS_SCALER, val=1, units='unitless'
+#         )
+#         self.prob.model.set_input_defaults(Aircraft.VerticalTail.MASS, val=2297, units='lbm')
+#         self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, val=1, units='unitless')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.LandingGear.TOTAL_MASS_SCALER, val=1, units='unitless'
+#         )
+#         self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
+#         self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, val=1, units='unitless')
+#         self.prob.model.set_input_defaults(
+#             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
+#         )
+#         self.prob.model.set_input_defaults(
+#             Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
+#         )
 
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
+#         setup_model_options(
+#             self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+#         )
 
-        self.prob.setup(check=False, force_alloc_complex=True)
+#         self.prob.setup(check=False, force_alloc_complex=True)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
+#         partial_data = self.prob.check_partials(out_stream=None, method='cs')
+#         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
 class FuelMassTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
@@ -1230,41 +1229,41 @@ class BWBFuselageMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-11, rtol=1e-12)
 
 
-class BWBStructMassTestCase(unittest.TestCase):
-    """Using BWB data."""
+# class BWBStructMassTestCase(unittest.TestCase):
+#     """Using BWB data."""
 
-    def setUp(self):
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
+#     def setUp(self):
+#         prob = self.prob = om.Problem()
+#         prob.model.add_subsystem('struct', StructMass(), promotes=['*'])
 
-        prob.model.set_input_defaults(Aircraft.Fuselage.MASS, 27159.69841266, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Wing.MASS, 7055.90333649, units='lbm')
-        prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS, 1.02401953, units='lbm')
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.VerticalTail.MASS, 864.17404177, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, 2230.13208284, units='lbm'
-        )
-        prob.model.set_input_defaults(Aircraft.Design.STRUCTURAL_MASS_INCREMENT, 0.0, units='lbm')
+#         prob.model.set_input_defaults(Aircraft.Fuselage.MASS, 27159.69841266, units='lbm')
+#         prob.model.set_input_defaults(Aircraft.Wing.MASS_SCALER, 1.0, units='unitless')
+#         prob.model.set_input_defaults(Aircraft.Wing.MASS, 7055.90333649, units='lbm')
+#         prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS_SCALER, 1.0, units='unitless')
+#         prob.model.set_input_defaults(Aircraft.HorizontalTail.MASS, 1.02401953, units='lbm')
+#         prob.model.set_input_defaults(Aircraft.VerticalTail.MASS_SCALER, 1.0, units='unitless')
+#         prob.model.set_input_defaults(Aircraft.VerticalTail.MASS, 864.17404177, units='lbm')
+#         prob.model.set_input_defaults(Aircraft.Fuselage.MASS_SCALER, 1.0, units='unitless')
+#         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS_SCALER, 1.0, units='unitless')
+#         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
+#         prob.model.set_input_defaults(Aircraft.Engine.POD_MASS_SCALER, 1.0, units='unitless')
+#         prob.model.set_input_defaults(
+#             Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, 2230.13208284, units='lbm'
+#         )
+#         prob.model.set_input_defaults(Aircraft.Design.STRUCTURAL_MASS_INCREMENT, 0.0, units='lbm')
 
-        setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
+#         setup_model_options(prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')}))
 
-        prob.setup(check=False, force_alloc_complex=True)
+#         prob.setup(check=False, force_alloc_complex=True)
 
-    def test_case1(self):
-        self.prob.run_model()
+#     def test_case1(self):
+#         self.prob.run_model()
 
-        tol = 1e-7
-        assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 45110.93189329, tol)
+#         tol = 1e-7
+#         assert_near_equal(self.prob[Aircraft.Design.STRUCTURE_MASS], 45110.93189329, tol)
 
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
+#         partial_data = self.prob.check_partials(out_stream=None, method='cs')
+#         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
 
 
 class BWBFuelMassTestCase(unittest.TestCase):

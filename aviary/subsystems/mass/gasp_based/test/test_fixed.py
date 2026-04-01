@@ -497,7 +497,7 @@ class EngineTestCase2(unittest.TestCase):
             Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            'prop_mass', val=0, units='lbm'
+            Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             'aug_mass', val=0, units='lbm'
@@ -1408,7 +1408,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            'prop_mass', val=0, units='lbm'
+            Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1)
         self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
@@ -1555,7 +1555,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
                 Aircraft.Engine.MASS_SCALER: (np.array([1.05]), 'unitless'),
                 Aircraft.Propulsion.MISC_MASS_SCALER: (1.06, 'unitless'),
                 Aircraft.Engine.WING_LOCATIONS: (np.array([0.35]), 'unitless'),
-                'prop_mass': (0.5, 'lbm'),
+                Aircraft.Engine.Propeller.MASS: (0.5, 'lbm'),
                 Aircraft.VerticalTail.TAPER_RATIO: (0.26, 'unitless'),
                 Aircraft.VerticalTail.ASPECT_RATIO: (5.0, 'unitless'),
                 Aircraft.VerticalTail.SWEEP: (25.0, 'deg'),
@@ -2118,7 +2118,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Controls.MASS: 2114.98158947,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 7005.15475443,
             Aircraft.Nacelle.MASS: 549.8807447,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2230.13208284,
+            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2230.13208284,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
             'pylon_mass': 565.18529673,
             'eng_comb_mass': 7311.49017184,

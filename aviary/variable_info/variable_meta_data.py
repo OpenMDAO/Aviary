@@ -2703,6 +2703,19 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.Propeller.MASS,
+    meta_data=_MetaData,
+    # TODO Check if GASP has a variable for this
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='mass of propellers on engine (sum of all blades)',
+    option=False,
+    types=float,
+    multivalue=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.Engine.Propeller.NUM_BLADES,
     meta_data=_MetaData,
     historical_name={'GASP': 'INPROP.BL', 'FLOPS': None, 'LEAPS1': None},
@@ -3192,6 +3205,9 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO the GASP use of this variable is misleading (optional coefficient for additional
+#      furnishing mass, which is activated by Aircraft.Furnishings.USE_EMPERICAL_EQUATION). Create
+#      new variable (Aircraft.Furnishings.MASS_COEFFICIENT?) for GASP side
 add_meta_data(
     Aircraft.Furnishings.MASS_SCALER,
     meta_data=_MetaData,
@@ -3207,6 +3223,9 @@ add_meta_data(
     default_value=1.0,
 )
 
+# Misnamed. This sets if Aircraft.Furnishings.MASS_SCALER is used as a coefficient for additional
+# furnishings weight and the alternative (False) is to use the emperical equation. The variable toggle
+# based on gross mass and num_pax is bad Aviary behavior and should occur in fortran_to_aviary instead
 add_meta_data(
     Aircraft.Furnishings.USE_EMPIRICAL_EQUATION,
     meta_data=_MetaData,
