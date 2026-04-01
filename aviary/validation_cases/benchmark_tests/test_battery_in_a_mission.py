@@ -66,7 +66,7 @@ class TestBatteryMission(unittest.TestCase):
     def test_subsystems_in_a_mission(self):
         phase_info = deepcopy(self.phase_info)
 
-        prob = av.AviaryProblem(verbosity=0)
+        prob = av.AviaryProblem(verbosity=1)
 
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwFm_with_electric.csv',
@@ -172,7 +172,7 @@ class TestBatteryMission(unittest.TestCase):
     def test_subsystems_in_a_mission_2dof(self):
         phase_info = deepcopy(twodof_phase_info)
 
-        prob = av.AviaryProblem(verbosity=0)
+        prob = av.AviaryProblem(verbosity=1)
 
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',

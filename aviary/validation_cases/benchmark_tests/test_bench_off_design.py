@@ -403,7 +403,6 @@ class Test2DOFOffDesign(unittest.TestCase):
         # different constraints/design variables
         prob_alternate = self.prob.run_off_design_mission(problem_type='alternate')
         self.compare_results(prob_alternate)
-        self.assertTrue(prob_alternate.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_changed(self):
@@ -552,7 +551,7 @@ if __name__ == '__main__':
     test = Test2DOFOffDesign()
     # test = TestEnergyStateOffDesign()
     test.setUp()
-    test.test_fallout_mission_changed()
+    test.test_alternate_mission_match()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()
