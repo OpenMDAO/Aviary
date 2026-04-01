@@ -893,7 +893,7 @@ class AviaryGroup(om.Group):
                 reserve_fuel={'units': 'lbm'}),
             promotes_inputs=[('total_fuel_mass', Mission.TOTAL_FUEL),
                              ('mission_fuel_burned', Mission.FUEL),
-                             ('reserve_fuel', Mission.RESERVE_FUEL)],
+                             ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL)],
             promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)])
         # Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission
         # requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer
