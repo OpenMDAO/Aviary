@@ -23,7 +23,7 @@ class TakeoffPhaseTest(unittest.TestCase):
         prob = om.Problem()
         prob.model = takeoff
         prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
-        prob.model.set_input_defaults(Mission.Summary.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Mission.GROSS_MASS, 150000, units='lbm')
         prob.setup(force_alloc_complex=True)
         prob.run_model()
         partial_data = prob.check_partials(

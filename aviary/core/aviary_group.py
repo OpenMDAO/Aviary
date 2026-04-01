@@ -564,7 +564,7 @@ class AviaryGroup(om.Group):
         if self.pre_mission_info['include_takeoff']:
             self.configurator.add_takeoff_systems(self)
 
-        # Calculate Mission.Summary.TOTAL_FUEL_MASS
+        # Calculate Mission.TOTAL_FUEL
         pre_mission.add_subsystem(
             'total_fuel_mass_comp',
             om.ExecComp(
@@ -572,8 +572,8 @@ class AviaryGroup(om.Group):
                 total_fuel_mass={'units': 'lbm'},
                 gross_mass={'units': 'lbm'},
                 zero_fuel_mass={'units': 'lbm'}),
-            promotes_inputs=[('gross_mass', Mission.Summary.GROSS_MASS),('zero_fuel_mass', Mission.Summary.ZERO_FUEL_MASS)],
-            promotes_outputs=[('total_fuel_mass', Mission.Summary.TOTAL_FUEL_MASS)])
+            promotes_inputs=[('gross_mass', Mission.GROSS_MASS),('zero_fuel_mass', Mission.ZERO_FUEL_MASS)],
+            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL)])
 
     def _add_premission_external_subsystem_masses(self):
         """
@@ -1033,9 +1033,9 @@ class AviaryGroup(om.Group):
             block_fuel={'units': 'lbm'},
             mission_fuel_burned={'units': 'lbm'},
             fuel_burned_taxi_in={'units': 'lbm'}),
-            promotes_inputs=[('mission_fuel_burned', Mission.Summary.FUEL_BURNED),
+            promotes_inputs=[('mission_fuel_burned', Mission.FUEL),
                              ('fuel_burned_taxi_in', Mission.Taxi.FUEL_BURN_TAXI_IN)],
-            promotes_outputs=[('block_fuel', Mission.Summary.BLOCK_FUEL)]
+            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)]
         )
 
     def link_phases(self, verbosity=None, comm=None):

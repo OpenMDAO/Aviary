@@ -126,8 +126,8 @@ class MassPremission(om.Group):
                         operating_mass={'units': 'lbm'}),
             promotes_inputs=[('pax_payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
                              ('cargo_mass', Aircraft.CrewPayload.CARGO_MASS),
-                             ('operating_mass', Mission.Summary.OPERATING_MASS)],
-            promotes_outputs=[('zero_fuel', Mission.Summary.ZERO_FUEL_MASS)]
+                             ('operating_mass', Mission.OPERATING_MASS)],
+            promotes_outputs=[('zero_fuel', Mission.ZERO_FUEL_MASS)]
         )
 
         self.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=1)

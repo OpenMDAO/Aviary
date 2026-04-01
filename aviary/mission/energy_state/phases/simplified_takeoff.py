@@ -350,7 +350,7 @@ class TakeoffGroup(om.Group):
                         end_of_taxi_mass={'units':'lbm'},
                         gross_mass={'units':'lbm'},
                         taxi_out_fuel_burned={'units':'lbm'}),
-            promotes_inputs=[('gross_mass', Mission.Summary.GROSS_MASS),
+            promotes_inputs=[('gross_mass', Mission.GROSS_MASS),
                              ('taxi_out_fuel_burned', Mission.Taxi.FUEL_BURN_TAXI_OUT)],
             promotes_outputs=['end_of_taxi_mass']            
         )

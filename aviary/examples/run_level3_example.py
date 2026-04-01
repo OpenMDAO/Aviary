@@ -55,7 +55,7 @@ prob.model.mission_info = {}
 for phase_name in phase_info:
     if phase_name not in ['pre_mission', 'post_mission']:
         prob.model.mission_info[phase_name] = phase_info[phase_name]
-aviary_inputs.set_val(Mission.Summary.RANGE, 1906.0, units='NM')
+aviary_inputs.set_val(Mission.RANGE, 1906.0, units='NM')
 prob.require_range_residual = True
 prob.target_range = 1906.0
 
@@ -381,7 +381,7 @@ descent.set_time_options(
 eq = prob.model.add_subsystem(
     f'link_climb_mass',
     om.EQConstraintComp(),
-    promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+    promotes_inputs=[('rhs:mass', Mission.GROSS_MASS)],
 )
 
 eq.add_eq_output('mass', eq_units='lbm', normalize=False, ref=100000.0, add_constraint=True)
@@ -402,7 +402,7 @@ prob.model.add_subsystem(
         range_resid={'val': 30, 'units': 'NM'},
     ),
     promotes_inputs=[
-        ('actual_range', Mission.Summary.RANGE),
+        ('actual_range', Mission.RANGE),
         'target_range',
     ],
     promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
@@ -418,7 +418,7 @@ ecomp = om.ExecComp(
 prob.model.post_mission.add_subsystem(
     'fuel_burned',
     ecomp,
-    promotes=[('fuel_burned', Mission.Summary.FUEL_BURNED)],
+    promotes=[('fuel_burned', Mission.FUEL)],
 )
 
 prob.model.connect(
@@ -434,7 +434,7 @@ prob.model.connect(
 )
 
 reserve_fuel_additional = prob.aviary_inputs.get_val(
-    Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
+    Mission.RESERVE_FUEL_ADDITIONAL, units='lbm'
 )
 
 reserve_fuel = om.ExecComp(
@@ -449,10 +449,10 @@ prob.model.post_mission.add_subsystem(
     reserve_fuel,
     promotes_inputs=[
         'reserve_fuel_frac_mass',
-        ('reserve_fuel_additional', Aircraft.Design.RESERVE_FUEL_ADDITIONAL),
-        ('reserve_fuel_burned', Mission.Summary.RESERVE_FUEL_BURNED),
+        ('reserve_fuel_additional', Mission.RESERVE_FUEL_ADDITIONAL),
+        ('reserve_fuel_burned', Mission.RESERVE_FUEL),
     ],
-    promotes_outputs=[('reserve_fuel', Mission.Design.RESERVE_FUEL)],
+    promotes_outputs=[('reserve_fuel', Mission.RESERVE_FUEL)],
 )
 
 ecomp = om.ExecComp(
@@ -465,10 +465,10 @@ prob.model.post_mission.add_subsystem(
     'fuel_calc',
     ecomp,
     promotes_inputs=[
-        ('fuel_burned', Mission.Summary.FUEL_BURNED),
-        ('reserve_fuel', Mission.Design.RESERVE_FUEL),
+        ('fuel_burned', Mission.FUEL),
+        ('reserve_fuel', Mission.RESERVE_FUEL),
     ],
-    promotes_outputs=[('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS)],
+    promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL)],
 )
 
 # If target distances have been set per phase then there is a block of code to add here.
@@ -497,7 +497,7 @@ prob.model.post_mission.add_subsystem(
     promotes_inputs=[
         ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
         ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+        ('overall_fuel', Mission.TOTAL_FUEL),
     ],
     promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
 )
@@ -515,7 +515,7 @@ prob.traj.link_phases(phase_list, [Dynamic.Vehicle.MASS], ref=None, connected=Tr
 prob.traj.link_phases(phase_list, [Dynamic.Mission.DISTANCE], ref=None, connected=True)
 prob.model.connect(
     f'traj.descent.timeseries.distance',
-    Mission.Summary.RANGE,
+    Mission.RANGE,
     src_indices=[-1],
     flat_src_indices=True,
 )
@@ -563,14 +563,14 @@ prob.driver.options['print_results'] = 'minimal'
 #####
 # prob.add_design_variables()
 prob.model.add_design_var(
-    Mission.Design.GROSS_MASS,
+    Aircraft.Design.GROSS_MASS,
     lower=100000.0,
     upper=None,
     units='lbm',
     ref=175e3,
 )
 prob.model.add_design_var(
-    Mission.Summary.GROSS_MASS,
+    Mission.GROSS_MASS,
     lower=100000.0,
     upper=None,
     units='lbm',
@@ -586,8 +586,8 @@ prob.model.add_subsystem(
         add_constraint=True,
     ),
     promotes_inputs=[
-        ('lhs:GTOW', Mission.Design.GROSS_MASS),
-        ('rhs:GTOW', Mission.Summary.GROSS_MASS),
+        ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
+        ('rhs:GTOW', Mission.GROSS_MASS),
     ],
 )
 prob.model.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=10)
@@ -604,7 +604,7 @@ prob.model.add_subsystem(
     ),
     promotes_inputs=[
         ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
-        ('overall_fuel', Mission.Summary.TOTAL_FUEL_MASS),
+        ('overall_fuel', Mission.TOTAL_FUEL),
     ],
     promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
 )
@@ -619,7 +619,7 @@ prob.model.add_subsystem(
         actual_range={'val': prob.target_range, 'units': 'NM'},
     ),
     promotes_inputs=[
-        ('actual_range', Mission.Summary.RANGE),
+        ('actual_range', Mission.RANGE),
         ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
     ],
     promotes_outputs=[('reg_objective', Mission.Objectives.RANGE)],
@@ -680,8 +680,8 @@ descent.set_control_val(
 )
 descent.set_state_val('mass', 125000, units='lbm')
 
-prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
-prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
+prob.set_val(Aircraft.Design.GROSS_MASS, 175400, units='lbm')
+prob.set_val(Mission.GROSS_MASS, 175400, units='lbm')
 
 prob.verbosity = Verbosity.BRIEF
 

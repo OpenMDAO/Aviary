@@ -40,8 +40,8 @@ class FuelBurnTestCases(unittest.TestCase):
         tol = 1e-4
         self.prob.run_aviary_problem()
 
-        fuel_burned = self.prob.get_val(Mission.Summary.FUEL_BURNED,units='lbm')
-        block_fuel = self.prob.get_val(Mission.Summary.BLOCK_FUEL,units='lbm')
+        fuel_burned = self.prob.get_val(Mission.FUEL,units='lbm')
+        block_fuel = self.prob.get_val(Mission.BLOCK_FUEL,units='lbm')
 
         assert_near_equal(fuel_burned, 13234.43186723, tol)
         assert_near_equal(block_fuel, 13234.43186723, tol)
@@ -55,8 +55,8 @@ class FuelBurnTestCases(unittest.TestCase):
         tol = 1e-4
         self.prob.run_aviary_problem()
 
-        fuel_burned = self.prob.get_val(Mission.Summary.FUEL_BURNED,units='lbm')
-        block_fuel = self.prob.get_val(Mission.Summary.BLOCK_FUEL,units='lbm')
+        fuel_burned = self.prob.get_val(Mission.FUEL,units='lbm')
+        block_fuel = self.prob.get_val(Mission.BLOCK_FUEL,units='lbm')
 
         assert_near_equal(fuel_burned, 13736.6226374, tol)
         assert_near_equal(block_fuel, 13736.6226374, tol)
@@ -70,8 +70,8 @@ class FuelBurnTestCases(unittest.TestCase):
         tol = 1e-4
         self.prob.run_aviary_problem()
 
-        fuel_burned = self.prob.get_val(Mission.Summary.FUEL_BURNED,units='lbm')
-        block_fuel = self.prob.get_val(Mission.Summary.BLOCK_FUEL,units='lbm')
+        fuel_burned = self.prob.get_val(Mission.FUEL,units='lbm')
+        block_fuel = self.prob.get_val(Mission.BLOCK_FUEL,units='lbm')
 
         assert_near_equal(fuel_burned, 13435.30839861, tol)
         assert_near_equal(block_fuel, 13435.30839861, tol)
@@ -85,8 +85,8 @@ class FuelBurnTestCases(unittest.TestCase):
         tol = 1e-4
         self.prob.run_aviary_problem()
 
-        fuel_burned = self.prob.get_val(Mission.Summary.FUEL_BURNED,units='lbm')
-        block_fuel = self.prob.get_val(Mission.Summary.BLOCK_FUEL,units='lbm')
+        fuel_burned = self.prob.get_val(Mission.FUEL,units='lbm')
+        block_fuel = self.prob.get_val(Mission.BLOCK_FUEL,units='lbm')
 
         assert_near_equal(fuel_burned, 13234.43186723, tol)
         assert_near_equal(block_fuel, 13334.43186723, tol)
