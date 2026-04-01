@@ -130,7 +130,8 @@ class CoreGeometryBuilder(GeometryBuilder):
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.SWEEP,
         ]
-        htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
+        htail_outputs = [Aircraft.HorizontalTail.AREA]
+        vtail_outputs = [Aircraft.VerticalTail.AREA]
         fuselage_outputs = [Aircraft.Fuselage.LENGTH]
 
         if self.code_origin is FLOPS or self.use_both_geometries:
@@ -149,5 +150,7 @@ class CoreGeometryBuilder(GeometryBuilder):
             f.write('\n## Empennage\n')
             f.write('### Horizontal Tail')
             write_markdown_variable_table(f, prob, htail_outputs, self.meta_data)
+            f.write('### Vertical Tail')
+            write_markdown_variable_table(f, prob, vtail_outputs, self.meta_data)
             f.write('\n## Fuselage')
             write_markdown_variable_table(f, prob, fuselage_outputs, self.meta_data)
