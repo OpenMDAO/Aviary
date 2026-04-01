@@ -41,6 +41,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(prob.get_val(var_name, units=units), expected_val, tolerance=rtol)
 
+        # Due to a bug, this constraint was unconnected. Test it explicitly.
+        t1 = prob.get_val('ascent_initial_time_slack_constraint.initial_time', units='s')
+        t2 = prob.get_val(Mission.Takeoff.ASCENT_T_INITIAL, units='s')
+        assert_near_equal(t1, t2, tolerance=rtol)
+
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_GwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
