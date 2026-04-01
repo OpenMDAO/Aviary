@@ -16,7 +16,7 @@ For example, you might have a climb phase, a cruise phase, and a descent phase.
 If you wanted to climb first at a specific rate-of-climb, then after that climb to a specific altitude at some fixed Mach number, those would be two separate phases within the mission.
 An extremely simple mission, showing its climb, cruise, and descent phases, is shown below.
 
-![simple mission](images/mission_simple.png)
+![simple mission](./images/mission_simple.png)
 
 Breaking the mission down into phases allows us to have more control over the control schemes, constraints, and modeling options for each of the flight phases.
 For example, the climb portion of the flight might feature a nonlinear optimal flight path, whereas the cruise phase is simpler because you might be flying at a constant altitude.
@@ -85,4 +85,4 @@ where $L$, $D$, $T$, and $W$ are the forces of lift, drag, thrust, and weight re
 
 The following figure shows how these forces are oriented relative to an aircraft in flight.
 
-![aircraft force diagram](images/aircraft_force_diagram.png)
+![aircraft force diagram](./images/aircraft_force_diagram.png)

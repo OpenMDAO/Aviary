@@ -16,7 +16,7 @@ def skipIfMissingDependencies(builder):
 
 class TestSubsystemBuilder(unittest.TestCase):
     @staticmethod
-    def import_builder(path_to_builder: str, base_package='aviary.examples.external_subsystems'):
+    def import_builder(path_to_builder: str, base_package='aviary.models.external_subsystems'):
         """
         Import a subsystem builder.
 
@@ -405,7 +405,7 @@ class TestSubsystemBuilder(unittest.TestCase):
 
         inputs = prob.model.list_inputs(out_stream=None, prom_name=True)
         outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
-        name = self.subsystem_builder.default_name
+        name = self.subsystem_builder._default_name
 
         for key, value in constraints.items():
             # Check constraint existence

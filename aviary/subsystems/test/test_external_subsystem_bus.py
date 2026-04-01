@@ -99,9 +99,9 @@ class PostMissionComp(om.ExplicitComponent):
 
 
 class CustomBuilder(SubsystemBuilder):
-    def __init__(self, name, mangle_names=False):
+    def __init__(self, name=None, meta_data=None, mangle_names=False):
         self.mangle_names = mangle_names
-        super().__init__(name)
+        super().__init__(name, meta_data)
 
     def build_pre_mission(self, aviary_inputs):
         shape = (

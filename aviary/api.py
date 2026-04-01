@@ -26,6 +26,7 @@ from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.functions import (
     add_aviary_input,
     add_aviary_output,
+    add_aviary_option,
     get_units,
     override_aviary_vars,
     setup_model_options,
@@ -51,7 +52,6 @@ from aviary.models.missions.two_dof_default import phase_info as default_2DOF_ph
 from aviary.models.missions.energy_state_default import (
     phase_info as default_energy_state_phase_info,
 )
-from aviary.interface.run_aviary import run_aviary_cmd
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem, reload_aviary_problem
 from aviary.utils.engine_deck_conversion import convert_engine_deck

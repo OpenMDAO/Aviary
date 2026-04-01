@@ -1382,7 +1382,11 @@ class AviaryGroup(om.Group):
                     promotes_outputs=['gross_mass_resid'],
                 )
 
-                self.add_constraint('gross_mass_resid', lower=0)
+                # ref scales gross_mass_resid = design_mass - actual_mass to O(1).
+                # For fleet missions much lighter than design, residuals can be
+                # 10-20% of design mass. GROSS_MASS/4 puts scaled values ~0.2-0.6.
+                _gm_ref = self.aviary_inputs.get_val(Mission.Design.GROSS_MASS, 'kg') / 4.0
+                self.add_constraint('gross_mass_resid', lower=0, ref=_gm_ref)
 
             if self.mission_method is TWO_DEGREES_OF_FREEDOM:
                 # TODO: This should be moved into the problem configurator b/c it's 2DOF specific

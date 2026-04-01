@@ -19,10 +19,12 @@ class GearboxBuilder(SubsystemBuilder):
     This is a reduction gearbox, so gear ratio is input_RPM/output_RPM.
     """
 
-    def __init__(self, name='gearbox', include_constraints=True):
+    _default_name = 'gearbox'
+
+    def __init__(self, name=None, meta_data=None, include_constraints=True):
         """Initializes the GearboxBuilder object with a given name."""
         self.include_constraints = include_constraints
-        super().__init__(name)
+        super().__init__(name, meta_data)
 
     def build_pre_mission(self, aviary_inputs):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""

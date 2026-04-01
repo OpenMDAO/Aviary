@@ -19,8 +19,6 @@ from aviary.variable_info.variables import Aircraft
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'geometry'
-
 
 class GeometryBuilder(SubsystemBuilder):
     """
@@ -30,17 +28,9 @@ class GeometryBuilder(SubsystemBuilder):
     -------
     __init__(self, name=None, meta_data=None):
         Initializes the GeometryBuilder object with a given name.
-    mission_inputs(self, **kwargs) -> list:
-        Return mission inputs.
-    mission_outputs(self, **kwargs) -> list:
-        Return mission outputs.
     """
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
-
-        super().__init__(name=name, meta_data=meta_data)
+    _default_name = 'geometry'
 
 
 class CoreGeometryBuilder(GeometryBuilder):

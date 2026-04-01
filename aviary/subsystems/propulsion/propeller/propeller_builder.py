@@ -22,9 +22,11 @@ class PropellerBuilder(SubsystemBuilder):
         (Aircraft.Engine.Propeller.DATA_FILE).
     """
 
-    def __init__(self, name='propeller', data: NamedValues = None):
+    _default_name = 'propeller'
+
+    def __init__(self, name=None, meta_data=None, data: NamedValues = None):
         """Initializes the PropellerBuilder object with a given name."""
-        super().__init__(name)
+        super().__init__(name, meta_data)
         self.data = data
 
     def build_pre_mission(self, aviary_inputs):

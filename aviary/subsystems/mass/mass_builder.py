@@ -20,26 +20,24 @@ from aviary.variable_info.variables import Aircraft, Mission
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'mass'
-
 
 class MassBuilder(SubsystemBuilder):
-    """Base mass builder."""
+    """
+    Base mass builder.
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the MassBuilder object with a given name.
+    """
 
-        super().__init__(name=name, meta_data=meta_data)
+    _default_name = 'mass'
 
 
 class CoreMassBuilder(MassBuilder):
-    """Core mass subsystem builder."""
+    """Core mass estimation subsystem builder."""
 
     def __init__(self, name=None, meta_data=None, code_origin=None):
-        if name is None:
-            name = 'mass'
-
         if code_origin not in (FLOPS, GASP):
             raise ValueError('Code origin is not one of the following: (FLOPS, GASP)')
 
