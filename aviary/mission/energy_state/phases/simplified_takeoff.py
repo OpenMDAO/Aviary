@@ -346,13 +346,17 @@ class TakeoffGroup(om.Group):
 
         self.add_subsystem(
             'taxi_comp',
-            om.ExecComp('end_of_taxi_mass = gross_mass - taxi_out_fuel_burned',
-                        end_of_taxi_mass={'units':'lbm'},
-                        gross_mass={'units':'lbm'},
-                        taxi_out_fuel_burned={'units':'lbm'}),
-            promotes_inputs=[('gross_mass', Mission.GROSS_MASS),
-                             ('taxi_out_fuel_burned', Mission.Taxi.FUEL_TAXI_OUT)],
-            promotes_outputs=['end_of_taxi_mass']            
+            om.ExecComp(
+                'end_of_taxi_mass = gross_mass - taxi_out_fuel_burned',
+                end_of_taxi_mass={'units': 'lbm'},
+                gross_mass={'units': 'lbm'},
+                taxi_out_fuel_burned={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('gross_mass', Mission.GROSS_MASS),
+                ('taxi_out_fuel_burned', Mission.Taxi.FUEL_TAXI_OUT),
+            ],
+            promotes_outputs=['end_of_taxi_mass'],
         )
 
         self.add_subsystem(
@@ -374,7 +378,7 @@ class TakeoffGroup(om.Group):
             FinalTakeoffConditions(num_engines=self.options['num_engines']),
             promotes_inputs=[
                 'v_stall',
-                ('mass','end_of_taxi_mass'),
+                ('mass', 'end_of_taxi_mass'),
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Takeoff.FUEL,

@@ -463,7 +463,7 @@ class MassSummationTestCase2(unittest.TestCase):
 
         assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 36000.0, tol)
         #                   operating mass + pax mass+ cargo_mass)
-        zero_fuel = (95643.26913924 + 36000.0 + 0.0)
+        zero_fuel = 95643.26913924 + 36000.0 + 0.0
         assert_near_equal(self.prob[Mission.ZERO_FUEL_MASS], zero_fuel, tol)
 
 

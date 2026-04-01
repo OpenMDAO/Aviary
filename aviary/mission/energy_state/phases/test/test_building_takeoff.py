@@ -32,7 +32,9 @@ class TakeoffPhaseTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         tol = 1e-5
-        assert_near_equal(prob[Mission.Takeoff.GROUND_DISTANCE], 2811.50257923, tol) # this check value requires GROSS_MASS of 150,000 but ramp_mass listed as 181200
+        assert_near_equal(
+            prob[Mission.Takeoff.GROUND_DISTANCE], 2811.50257923, tol
+        )  # this check value requires GROSS_MASS of 150,000 but ramp_mass listed as 181200
 
 
 if __name__ == '__main__':

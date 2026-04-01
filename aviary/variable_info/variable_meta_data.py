@@ -7267,7 +7267,7 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='Fuel burned from taxi out of the gate through the regular missions to taxi into the gate.'
-      'This does not include fuel burned in reserve phases. This works for energy-state EOM. Not used in 2DOF EOM',
+    'This does not include fuel burned in reserve phases. This works for energy-state EOM. Not used in 2DOF EOM',
 )
 
 add_meta_data(
@@ -7293,10 +7293,10 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='Fuel burned from taxi-out through all regular phases of the mission (e.g. takeoff, climb, cruse, descent, landing).'
-        'This does not include fuel burned in reserve phases.'
-        'The only time taxi-in would be included in this is if the user uses 2DOF EOM and'
-        'specifies a taxi phase at the end of the regular mission.'
-        'Otherwise taxi-in fuel is not included',
+    'This does not include fuel burned in reserve phases.'
+    'The only time taxi-in would be included in this is if the user uses 2DOF EOM and'
+    'specifies a taxi phase at the end of the regular mission.'
+    'Otherwise taxi-in fuel is not included',
 )
 
 # NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map

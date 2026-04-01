@@ -571,9 +571,14 @@ class AviaryGroup(om.Group):
                 'total_fuel_mass = gross_mass - zero_fuel_mass',
                 total_fuel_mass={'units': 'lbm'},
                 gross_mass={'units': 'lbm'},
-                zero_fuel_mass={'units': 'lbm'}),
-            promotes_inputs=[('gross_mass', Mission.GROSS_MASS),('zero_fuel_mass', Mission.ZERO_FUEL_MASS)],
-            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL)])
+                zero_fuel_mass={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('gross_mass', Mission.GROSS_MASS),
+                ('zero_fuel_mass', Mission.ZERO_FUEL_MASS),
+            ],
+            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL)],
+        )
 
     def _add_premission_external_subsystem_masses(self):
         """
@@ -840,7 +845,8 @@ class AviaryGroup(om.Group):
                 'fuel_burned = initial_mass - mass_final',
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
-                fuel_burned={'units': 'lbm'}),
+                fuel_burned={'units': 'lbm'},
+            ),
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
             promotes_outputs=[('fuel_burned', Mission.FUEL)],
         )
@@ -854,7 +860,7 @@ class AviaryGroup(om.Group):
         # Fuel burn in reserve phases
         if self.reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final', 
+                'reserve_fuel_burned = initial_mass - mass_final',
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
@@ -881,7 +887,7 @@ class AviaryGroup(om.Group):
 
         self.add_fuel_reserve_component()
 
-        # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel 
+        # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel
         # The aircraft will naturally try to mimize 'total_fuel_mass_constraint' so it's not carrying extra unnecessary fuel
         post_mission.add_subsystem(
             'total_fuel_mass_con',
@@ -890,19 +896,23 @@ class AviaryGroup(om.Group):
                 total_fuel_mass_constraint={'units': 'lbm'},
                 total_fuel_mass={'units': 'lbm'},
                 mission_fuel_burned={'units': 'lbm'},
-                reserve_fuel={'units': 'lbm'}),
-            promotes_inputs=[('total_fuel_mass', Mission.TOTAL_FUEL),
-                             ('mission_fuel_burned', Mission.FUEL),
-                             ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL)],
-            promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)])
+                reserve_fuel={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('total_fuel_mass', Mission.TOTAL_FUEL),
+                ('mission_fuel_burned', Mission.FUEL),
+                ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
+            ],
+            promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)],
+        )
         # Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission
         # requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer
         # may not try as hard as needed to minimize this.
         self.add_constraint(
-                    Mission.Constraints.MASS_RESIDUAL,
-                    equals=0.0,
-                    ref=1e5,
-                )
+            Mission.Constraints.MASS_RESIDUAL,
+            equals=0.0,
+            ref=1e5,
+        )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
         # measured from the start of this phase to the end of this phase
@@ -1025,17 +1035,20 @@ class AviaryGroup(om.Group):
                     'aircraft may not have enough space for fuel, so check the value of '
                     'Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
                 )
-        
+
         post_mission.add_subsystem(
             'block_fuel_comp',
             om.ExecComp(
-            'block_fuel = mission_fuel_burned + fuel_burned_taxi_in',
-            block_fuel={'units': 'lbm'},
-            mission_fuel_burned={'units': 'lbm'},
-            fuel_burned_taxi_in={'units': 'lbm'}),
-            promotes_inputs=[('mission_fuel_burned', Mission.FUEL),
-                             ('fuel_burned_taxi_in', Mission.Taxi.FUEL_TAXI_IN)],
-            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)]
+                'block_fuel = mission_fuel_burned + fuel_burned_taxi_in',
+                block_fuel={'units': 'lbm'},
+                mission_fuel_burned={'units': 'lbm'},
+                fuel_burned_taxi_in={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('mission_fuel_burned', Mission.FUEL),
+                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_TAXI_IN),
+            ],
+            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)],
         )
 
     def link_phases(self, verbosity=None, comm=None):

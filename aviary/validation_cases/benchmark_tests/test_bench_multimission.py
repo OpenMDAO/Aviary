@@ -139,10 +139,10 @@ class MultiMissionTestcase(unittest.TestCase):
         objective_expected_value = 25517.15
 
         mission1_fuel = prob.get_val('mission1.mission:fuel', units='lbm')
-        mission1_fuel_expected_value = 26877.7 # includes takeoff
+        mission1_fuel_expected_value = 26877.7  # includes takeoff
 
         mission2_fuel = prob.get_val('mission2.mission:fuel', units='lbm')
-        mission2_fuel_expected_value = 22795.9 # includes takeoff
+        mission2_fuel_expected_value = 22795.9  # includes takeoff
 
         mission1_cargo = prob.get_val(
             'mission1.aircraft:crew_and_payload:total_payload_mass', units='lbm'

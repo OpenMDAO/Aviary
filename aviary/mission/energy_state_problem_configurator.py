@@ -367,14 +367,18 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             # Calculate how much fuel is burned in taxi and takeoff
             aviary_group.add_subsystem(
                 'takeoff_mass_comp',
-                om.ExecComp('takeoff_mass = gross_mass - taxi_out_fuel_burn - takeoff_fuel_burn',
+                om.ExecComp(
+                    'takeoff_mass = gross_mass - taxi_out_fuel_burn - takeoff_fuel_burn',
                     takeoff_mass={'units': 'lbm'},
                     gross_mass={'units': 'lbm'},
-                    taxi_out_fuel_burn={'units':'lbm'},
-                    takeoff_fuel_burn={'units': 'lbm'}),
-                promotes_inputs=[('gross_mass', Mission.GROSS_MASS),
+                    taxi_out_fuel_burn={'units': 'lbm'},
+                    takeoff_fuel_burn={'units': 'lbm'},
+                ),
+                promotes_inputs=[
+                    ('gross_mass', Mission.GROSS_MASS),
                     ('taxi_out_fuel_burn', Mission.Taxi.FUEL_TAXI_OUT),
-                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL)],
+                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL),
+                ],
                 promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
             )
 
@@ -387,7 +391,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             first_flight_phase.set_state_options(
                 Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
             )
-  
+
             # connect summary mass to the initial guess of mass in the first phase
             eq = aviary_group.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',

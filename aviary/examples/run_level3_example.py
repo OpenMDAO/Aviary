@@ -433,9 +433,7 @@ prob.model.connect(
     src_indices=[-1],
 )
 
-reserve_fuel_additional = prob.aviary_inputs.get_val(
-    Mission.RESERVE_FUEL_ADDITIONAL, units='lbm'
-)
+reserve_fuel_additional = prob.aviary_inputs.get_val(Mission.RESERVE_FUEL_ADDITIONAL, units='lbm')
 
 reserve_fuel = om.ExecComp(
     'reserve_fuel = reserve_fuel_frac_mass + reserve_fuel_additional + reserve_fuel_burned',
