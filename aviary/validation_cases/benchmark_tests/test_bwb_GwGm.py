@@ -8,7 +8,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.models.aircraft.blended_wing_body.generic_BWB_2dof_phase_info import phase_info
 
 from aviary.interface.run_aviary import run_aviary
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
