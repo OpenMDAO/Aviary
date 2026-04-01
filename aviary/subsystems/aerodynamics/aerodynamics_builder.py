@@ -15,11 +15,12 @@ import openmdao.api as om
 
 # from dymos.utils.misc import _unspecified
 from aviary.subsystems.aerodynamics.flops_based.computed_aero_group import ComputedAeroGroup
-from aviary.subsystems.aerodynamics.flops_based.design import Design
+
+from aviary.subsystems.aerodynamics.flops_based.premission_aero import PreMissionFLOPSAero
 from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import TabularAeroGroup
 from aviary.subsystems.aerodynamics.flops_based.takeoff_aero_group import TakeoffAeroGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import CruiseAero, LowSpeedAero
-from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionAero
+from aviary.subsystems.aerodynamics.gasp_based.premission_aero import PreMissionGASPAero
 from aviary.subsystems.aerodynamics.gasp_based.table_based import (
     TabularCruiseAero,
     TabularLowSpeedAero,
@@ -93,10 +94,10 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
             return None
 
         if code_origin is GASP:
-            return PreMissionAero()
+            return PreMissionGASPAero()
 
         elif code_origin is FLOPS:
-            return Design()
+            return PreMissionFLOPSAero()
 
     def build_mission(self, num_nodes, aviary_inputs, **kwargs):
         aero_opts = kwargs.copy()
