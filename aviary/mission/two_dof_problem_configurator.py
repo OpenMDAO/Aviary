@@ -525,11 +525,17 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             'ascent_initial_time_slack_constraint',
             comp,
             promotes_inputs=[
-                ('initial_time', 'ascent.t_initial'),
                 ('initial_time_slack', Mission.Takeoff.ASCENT_T_INITIAL),
             ],
         )
-        aviary_group.add_constraint('ascent_initial_time_slack_constraint.con_val', ref=30.0)
+        aviary_group.connect(
+            'traj.ascent.t_initial', 'ascent_initial_time_slack_constraint.initial_time'
+        )
+        aviary_group.add_constraint(
+            'ascent_initial_time_slack_constraint.con_val',
+            equals=0.0,
+            ref=30.0,
+        )
 
         # imitate input_initial for taxi -> groundroll
         eq = aviary_group.add_subsystem('taxi_groundroll_mass_constraint', om.EQConstraintComp())
