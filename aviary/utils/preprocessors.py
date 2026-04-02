@@ -481,8 +481,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
         if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options:
             baggage_mass_per_pax = 35.0
-            if Mission.Design.RANGE in aviary_options:
-                design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
+            if Aircraft.Design.RANGE in aviary_options:
+                design_range = aviary_options.get_val(Aircraft.Design.RANGE, 'nmi')
 
                 if design_range <= 900.0:
                     baggage_mass_per_pax = 35.0
@@ -836,8 +836,8 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
 
-    if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
-        aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+    if Mission.FUEL_FLOW_SCALER not in aviary_options:
+        aviary_options.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
 
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))

@@ -1,24 +1,34 @@
 # Aviary -- NASA's aircraft design tool
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-**Check out the Aviary [documentation](https://openmdao.github.io/Aviary/intro.html)**
-
-**[NASA's Aviary Takes Flight](https://ntrs.nasa.gov/citations/20240009217) (Presented at EAA AirVenture 2024)**
-
-**Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
-
-## Description
-
-This repository is an [OpenMDAO](https://openmdao.org/)-based aircraft modeling tool that incorporates aircraft sizing equations from its predecessors [GASP (General Aviation Synthesis Program)](https://ntrs.nasa.gov/api/citations/19810010563/downloads/19810010563.pdf) and [FLOPS (Flight Optimization System)](https://software.nasa.gov/software/LAR-18934-1).
+Aviary is an aircraft analysis, design, and optimization tool built on top of the Python-based optimization framework [OpenMDAO](https://github.com/OpenMDAO/OpenMDAO). 
+Aviary incorporates aircraft sizing equations from its predecessors [GASP (General Aviation Synthesis Program)](https://ntrs.nasa.gov/api/citations/19810010563/downloads/19810010563.pdf) and [FLOPS (Flight Optimization System)](https://software.nasa.gov/software/LAR-18934-1).
 There are two options for the mission analysis portion of this code, a two-degrees-of-freedom (2DOF) approach, and an energy-state approach.
 The user can select which type of mission analysis to use, as well as whether to use the FLOPS-based code or the GASP-based code for the weight, sizing, and aerodynamic relations.
+Aviary provides a flexible and user-friendly optimization platform for conceptual aircraft design. 
+This tool is being used by college level senior design courses, NASA internally, a industry partners. 
+Aviary is under active development! While the base features of the code are relatively stable, new releases may make changes that require users on the bleeding-edge to update their models.
 
-Aviary is currently in a beta state. The code is under active development, and frequent changes should be expected.
+If you are using Aviary, please [Cite](#citing-aviary) us!
+
+
+
+## Documentation
+
+[Read the Docs](https://openmdao.github.io/Aviary/introduction.html).
+
+[Overview Slide Slow](https://ntrs.nasa.gov/citations/20240009217) is a great place to get started if you are wondering what Aviary is at a high level.
+
+[Overview Video](https://www.youtube.com/watch?v=nWh-NcM-84Q) gives a 5 minute introduction to Aviary.
+
+[Paper by Gratz et al.](https://ntrs.nasa.gov/api/citations/20240007608/downloads/Resubmit_final_62424.pdf) describing aviaries capabilities in detail.
+
+[How NASA uses aviary to model Aircraft by Aretskin-Hariton et al.](https://ntrs.nasa.gov/api/citations/20230016987/downloads/TTBW_SciTech_2024_Final_12_5_2023.pdf) describes how aviary was applied to model a Transonic Truss-Braced Wing (TTBW) aircraft.
+
+
 
 ## Installation
 
+### Pip Install
 The simplest installation method for users is to install via pip:
 
     pip install aviary
@@ -26,9 +36,12 @@ The simplest installation method for users is to install via pip:
 Please see the [installation doc page](https://openmdao.github.io/Aviary/getting_started/installation.html) for more detailed instructions.
 The minimum supported Python version for Aviary is 3.9.
 
-## Documentation
+### Docker Install
+You can also install aviary as a package/image using docker:
 
-The Aviary documentation is located [here](https://openmdao.github.io/Aviary/intro.html).
+    docker pull ghcr.io/openmdao/aviary:latest
+
+
 
 ## Validation
 
@@ -56,17 +69,54 @@ Due to their length, these tests are not run when using the above command.
 Instead, you can use the `run_all_benchmarks.py` file in the `Aviary/aviary` folder, which is just a light wrapper around the `testflo` call.
 This will run all of the longer tests in parallel using all of your available CPU cores.
 
+
+
 ## Package versions
 
 Information on the versions of the packages required for Aviary can be found in the most recent [GitHub Actions runs](https://github.com/OpenMDAO/Aviary/actions).
 We have also provided a static version of the `environment.yml` at the top level of the Aviary repo.
+
+
 
 ## Planned future features
 
 Aviary is in active development.
 We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/Aviary/misc_resources/planned_future_features.html).
 
+
+
+## Contact Us
+**Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
+
+
+
+## Citing Aviary
+
+If you use Aviary in your research, please cite:
+
+Gratz, J., Kirk, J., Recine, C., Jasa, J., Aretskin-Hariton, E., Moore, K., & Marfatia, K. (2024). [Aviary: An Open-Source Multidisciplinary Design, Analysis, and Optimization Tool for Modeling Aircraft With Analytic Gradients](https://arc.aiaa.org/doi/abs/10.2514/6.2024-4219). *AIAA AVIATION FORUM AND ASCEND 2024*. https://doi.org/10.2514/6.2024-4219
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inbook{doi:10.2514/6.2024-4219,
+author = {Jennifer Gratz and Jason Kirk and Carl Recine and John Jasa and Eliot Aretskin-Hariton and Kenneth Moore and Kiran Marfatia},
+title = {Aviary: An Open-Source Multidisciplinary Design, Analysis, and Optimization Tool for Modeling Aircraft With Analytic Gradients},
+booktitle = {AIAA AVIATION FORUM AND ASCEND 2024},
+doi = {10.2514/6.2024-4219},
+URL = {https://arc.aiaa.org/doi/abs/10.2514/6.2024-4219},
+year = {2024},
+}
+```
+</details>
+
+
+
 ## Contributors ✨
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 

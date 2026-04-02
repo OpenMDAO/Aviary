@@ -51,7 +51,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
             shape=num_input_stations,
             units='unitless',
         )
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REFERENCE, units='unitless')
@@ -98,7 +98,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION]
         chord = inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION]
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         # NOTE pod mass assumed the same for wing/non-wing mounted engines, only using
         #      wing mounted pods here
         pod_mass = inputs[Aircraft.Engine.POD_MASS]
@@ -308,7 +308,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         self.add_input(
             'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
         )
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO_REFERENCE, units='unitless')
@@ -401,7 +401,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         chord_mod = np.array(chord_mod)
 
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         # NOTE pod mass assumed the same for wing/non-wing mounted engines, only using
         #      wing mounted pods here
         pod_mass = inputs[Aircraft.Engine.POD_MASS]
