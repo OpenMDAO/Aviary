@@ -246,7 +246,7 @@ class GASPEngineSize(om.ExplicitComponent):
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
         coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
@@ -280,14 +280,14 @@ class GASPEngineSize(om.ExplicitComponent):
         ddiam_engine_dgross_mass = 2 / np.pi / diam_engine * darea_engine_dgross_mass
         ddiam_nacelle_dgross_mass = core_diam_ratio * ddiam_engine_dgross_mass
         ddiam_nacelle_dcore_diam_ratio = diam_engine
-        J[Aircraft.Nacelle.AVG_DIAMETER, Mission.Design.GROSS_MASS] = ddiam_nacelle_dgross_mass
+        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Design.GROSS_MASS] = ddiam_nacelle_dgross_mass
         J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = (
             ddiam_nacelle_dcore_diam_ratio
         )
         dlen_nacelle_dgross_mass = fineness_nac * ddiam_nacelle_dgross_mass
         dlen_nacelle_dcore_diam_ratio = fineness_nac * ddiam_nacelle_dcore_diam_ratio
         dlen_nacelle_dfineness_nac = diam_nacelle
-        J[Aircraft.Nacelle.AVG_LENGTH, Mission.Design.GROSS_MASS] = dlen_nacelle_dgross_mass
+        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Design.GROSS_MASS] = dlen_nacelle_dgross_mass
         J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = (
             dlen_nacelle_dcore_diam_ratio
         )
@@ -309,7 +309,7 @@ class GASPEngineSize(om.ExplicitComponent):
             np.pi * pct_exposed * diam_nacelle * dlen_nacelle_dfineness_nac
         )
         dwet_area_nacelle_dpct_exposed = np.pi * diam_nacelle * len_nacelle
-        J[Aircraft.Nacelle.SURFACE_AREA, Mission.Design.GROSS_MASS] = dwet_area_nacelle_dgross_mass
+        J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Design.GROSS_MASS] = dwet_area_nacelle_dgross_mass
         J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = (
             dwet_area_nacelle_dcore_diam_ratio
         )

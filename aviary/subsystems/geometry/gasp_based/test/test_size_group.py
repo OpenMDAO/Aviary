@@ -38,7 +38,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -163,7 +163,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Strut.ATTACHMENT_LOCATION, val=12, units='ft')
         self.prob.model.set_input_defaults(
@@ -296,7 +296,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=25, units='ft')
         self.prob.model.set_input_defaults(
@@ -428,7 +428,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0, units='unitless'
@@ -564,7 +564,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless'

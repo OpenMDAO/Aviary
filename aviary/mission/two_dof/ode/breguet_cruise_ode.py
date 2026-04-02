@@ -21,6 +21,7 @@ class BreguetCruiseODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -37,33 +38,46 @@ class BreguetCruiseODE(TwoDOFODE):
         prop_group = om.Group()
 
         for subsystem in subsystems:
-            kwargs = {}
-
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs = subsystem_options[subsystem.name]
+            else:
+                kwargs = {}
+
             if isinstance(subsystem, AerodynamicsBuilder):
                 # set default options for Aero if not specified by user
                 base_kwargs = {'method': 'cruise', 'output_alpha': True}
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
-                    prop_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = prop_group
                 else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = self
+
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                target.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
@@ -163,6 +177,8 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
         nn = self.options['num_nodes']
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
+        subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -178,29 +194,46 @@ class ElectricBreguetCruiseODE(TwoDOFODE):
 
         prop_group = om.Group()
 
-        kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
-            'method': 'cruise',
-            'output_alpha': True,
-        }
         for subsystem in subsystems:
-            system = subsystem.build_mission(**kwargs)
+            # check if subsystem_options has entry for a subsystem of this name
+            if subsystem.name in subsystem_options:
+                kwargs = subsystem_options[subsystem.name]
+            else:
+                kwargs = {}
+
+            if isinstance(subsystem, AerodynamicsBuilder):
+                # set default options for Aero if not specified by user
+                base_kwargs = {'method': 'cruise', 'output_alpha': True}
+                kwargs.update(base_kwargs)
+
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
                 if isinstance(subsystem, PropulsionBuilder):
-                    prop_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = prop_group
                 else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = self
+
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                target.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,

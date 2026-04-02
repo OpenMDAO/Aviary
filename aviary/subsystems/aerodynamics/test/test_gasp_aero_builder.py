@@ -27,12 +27,12 @@ class TestAeroBuilder(av.TestSubsystemBuilder):
         return super().test_build_mission(**kwargs)
 
     def test_get_parameters(self):
-        kwargs = {'method': 'cruise'}
-        return super().test_get_parameters(**kwargs)
+        subsystem_options = {'method': 'cruise'}
+        return super().test_get_parameters(subsystem_options=subsystem_options)
 
     def test_check_parameters(self):
-        kwargs = {'method': 'cruise'}
-        return super().test_check_parameters(**kwargs)
+        subsystem_options = {'method': 'cruise'}
+        return super().test_check_parameters(subsystem_options=subsystem_options)
 
 
 if __name__ == '__main__':

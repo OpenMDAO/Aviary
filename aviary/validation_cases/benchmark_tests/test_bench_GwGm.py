@@ -33,8 +33,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
             (Mission.Summary.OPERATING_MASS, 'lbm'): 94986.583699,
             (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40451.68735078,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
-            (Mission.Summary.RANGE, 'NM'): 3675.0,
-            (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136087.98897716,
+            (Mission.RANGE, 'NM'): 3675.0,
+            (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
         }
 
         for (var_name, units), expected_val in expected_values.items():

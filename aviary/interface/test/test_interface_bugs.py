@@ -30,7 +30,13 @@ class WingWeightBuilder(SubsystemBuilder):
 
     _default_name = 'wing_weight'
 
-    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths):
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
         """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 

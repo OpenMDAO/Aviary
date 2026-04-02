@@ -24,7 +24,7 @@ class TestAeroCoeffs(unittest.TestCase):
         prob.set_val(Aircraft.VerticalTail.SWEEP, 15, units='deg')
         prob.set_val(Aircraft.HorizontalTail.SWEEP, 10, units='deg')
         prob.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0)
-        prob.set_val(Mission.Design.MACH, 0.6)
+        prob.set_val(Aircraft.Design.MACH, 0.6)
         prob.set_val(Aircraft.Nacelle.AVG_DIAMETER, 6)
         prob.set_val(Aircraft.Nacelle.AVG_LENGTH, 10)
 
