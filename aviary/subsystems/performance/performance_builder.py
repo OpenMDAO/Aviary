@@ -21,5 +21,5 @@ class CorePerformanceBuilder(PerformanceBuilder):
     def __init__(self, name=None, meta_data=None):
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         return PerformancePremission()

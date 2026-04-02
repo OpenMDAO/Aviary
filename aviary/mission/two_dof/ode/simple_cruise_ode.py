@@ -21,6 +21,7 @@ class SimpleCruiseODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -47,22 +48,37 @@ class SimpleCruiseODE(TwoDOFODE):
                 base_kwargs = {'method': 'cruise', 'output_alpha': True}
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
                 if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
                 else:
                     self.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
 
         bal = om.BalanceComp(
