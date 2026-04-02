@@ -544,11 +544,7 @@ class FuelComponents(om.ExplicitComponent):
             'OEM_fuel_vol',
             [
                 Aircraft.Design.GROSS_MASS,
-                Aircraft.Propulsion.MASS,
-                Aircraft.Controls.MASS,
-                Aircraft.Design.STRUCTURE_MASS,
-                Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
-                Mission.USEFUL_LOAD,
+                Mission.OPERATING_MASS,
                 Aircraft.Fuel.DENSITY,
             ],
         )
@@ -1265,7 +1261,7 @@ class FuelMass(om.ExplicitComponent):
         J['fuel_mass', Aircraft.Design.GROSS_MASS] = 1 / (
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
-        J['fuel_mass', Mission.Summary.OPERATING_MASS] = -1 / (
+        J['fuel_mass', Mission.OPERATING_MASS] = -1 / (
             1.0 + CK21 * c_mass_trend_fuel_sys * (1 + fuel_margin / 100) * 6.687 / rho_fuel
         )
         J['fuel_mass', 'payload_mass_des'] = -1 / (

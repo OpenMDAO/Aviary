@@ -785,12 +785,12 @@ class AviaryProblem(om.Problem):
             Example inputs can be any of the following:
             ('fuel')
             (Mission.FUEL)
-            (Mission.FUEL, Mission.Summary.CO2)
+            (Mission.FUEL, Mission.CO2)
             ('model1', Mission.FUEL)
             (Mission.FUEL, 1.0)
-            (Mission.FUEL, 1.0), (Mission.Summary.CO2, 2.0)
-            ('model1', Mission.FUEL), ('model2', Mission.Summary.CO2)
-            ('model1', Mission.FUEL, 1.0), ('model2', Mission.Summary.CO2, 2.0)
+            (Mission.FUEL, 1.0), (Mission.CO2, 2.0)
+            ('model1', Mission.FUEL), ('model2', Mission.CO2)
+            ('model1', Mission.FUEL, 1.0), ('model2', Mission.CO2, 2.0)
 
         ref : float, optional
             Reference value for the final objective for scaling.
@@ -866,7 +866,7 @@ class AviaryProblem(om.Problem):
             objectives.append((model, output, weight))
             # objectives = [
             # ('model1', Mission.FUEL, 1),
-            # ('model2', Mission.Summary.CO2, 1),
+            # ('model2', Mission.CO2, 1),
             #  ...
             # ]
 
