@@ -275,7 +275,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             totals.set_val(
                 'Total Fuel Burn',
-                prob.get_val(f'{var_name}mission:summary:fuel_burned', units='lbm')[0],
+                prob.get_val(f'{var_name}mission:fuel', units='lbm')[0],
                 units='lbm',
             )
 

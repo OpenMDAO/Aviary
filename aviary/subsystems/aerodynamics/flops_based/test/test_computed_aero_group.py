@@ -71,14 +71,23 @@ class MissionDragTest(unittest.TestCase):
         # Upstream pre-mission analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
             'aero',
-            aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
+            aero.build_mission(
+                num_nodes=nn,
+                aviary_inputs=flops_inputs,
+                user_options={},
+                subsystem_options={'method': 'computed'},
+            ),
             promotes=['*'],
         )
 
@@ -222,14 +231,23 @@ class MissionDragTest(unittest.TestCase):
         # Upstream pre-mission analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
             'aero',
-            aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
+            aero.build_mission(
+                num_nodes=nn,
+                aviary_inputs=flops_inputs,
+                user_options={},
+                subsystem_options={'method': 'computed'},
+            ),
             promotes=['*'],
         )
 
@@ -369,14 +387,23 @@ class MissionDragTest(unittest.TestCase):
         # Upstream pre-mission analysis for aero
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         model.add_subsystem(
             'aero',
-            aero.build_mission(num_nodes=nn, aviary_inputs=flops_inputs, **{'method': 'computed'}),
+            aero.build_mission(
+                num_nodes=nn,
+                aviary_inputs=flops_inputs,
+                user_options={},
+                subsystem_options={'method': 'computed'},
+            ),
             promotes=['*'],
         )
 

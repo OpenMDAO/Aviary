@@ -109,7 +109,7 @@ class PreMissionAero(om.Group):
                 ('flap_defl', 'flap_defl_up'),
                 ('slat_defl', 'slat_defl_up'),
             ],
-            promotes_outputs=[('CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP)],
+            promotes_outputs=[('CL_max', Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP)],
         )
         self.add_subsystem(
             'flaps_takeoff',

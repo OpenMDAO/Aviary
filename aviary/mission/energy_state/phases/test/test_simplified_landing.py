@@ -20,7 +20,7 @@ class LandingCalcTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Landing.TOUCHDOWN_MASS, val=152800.0, units='lbm'
+            Mission.FINAL_MASS, val=152800.0, units='lbm'
         )  # check (this is the design landing mass)
         self.prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY,
@@ -89,7 +89,7 @@ class LandingGroupTest(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Landing.TOUCHDOWN_MASS, val=152800.0, units='lbm'
+            Mission.FINAL_MASS, val=152800.0, units='lbm'
         )  # check (this is the design landing mass)
         self.prob.model.set_input_defaults(
             Mission.Landing.INITIAL_ALTITUDE, val=35, units='ft'
