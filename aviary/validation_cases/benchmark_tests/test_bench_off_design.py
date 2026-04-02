@@ -547,8 +547,8 @@ class PayloadRangeTest(unittest.TestCase):
             tolerance=1e-8,
         )
         self.assertTrue(prob.result.success)
-        self.assertTrue(off_design_probs[0].result.success)
-        self.assertTrue(off_design_probs[1].result.success)
+        self.assertTrue(prob.economic_range_prob.result.success)
+        self.assertTrue(prob.ferry_range_prob.result.success)
 
 
 if __name__ == '__main__':
