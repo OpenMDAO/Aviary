@@ -155,8 +155,6 @@ class MassPremission(om.Group):
             promotes_outputs=['*'],
         )
 
-        self.set_input_defaults(Aircraft.Fuel.DENSITY, val=6.687, units='lbm/galUS')
-
         newton = self.nonlinear_solver = om.NewtonSolver()
         newton.options['atol'] = 1e-9
         newton.options['rtol'] = 1e-9
