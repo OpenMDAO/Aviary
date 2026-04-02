@@ -89,7 +89,7 @@ class TestEngine(
 
         self.prob.model.add_subsystem('engsz', GASPEngineSize(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults('percent_exposed', 1.0)
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
@@ -155,7 +155,7 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
         prob.model.add_subsystem('cable', GASPEngineSize(), promotes=['*'])
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         prob.model.set_input_defaults('percent_exposed', [1.0, 1.0])
         prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, np.array([1.25, 1.02]), units='unitless'

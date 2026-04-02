@@ -49,7 +49,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -175,7 +175,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -311,7 +311,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
         )
@@ -448,7 +448,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
