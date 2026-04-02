@@ -173,7 +173,7 @@ class GASPEngineSize(om.ExplicitComponent):
     def setup(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(
             self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, shape=num_engine_type, units='unitless'
         )
@@ -192,7 +192,7 @@ class GASPEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.AVG_DIAMETER,
             [
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
             rows=shape,
             cols=nn,
@@ -200,7 +200,7 @@ class GASPEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.AVG_LENGTH,
             [
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
             rows=shape,
             cols=nn,
@@ -208,7 +208,7 @@ class GASPEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.SURFACE_AREA,
             [
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
             rows=shape,
             cols=nn,
@@ -265,7 +265,7 @@ class GASPEngineSize(om.ExplicitComponent):
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
         coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         gross_mass = np.full(len(num_engine), gross_mass)
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
