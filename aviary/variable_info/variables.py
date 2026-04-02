@@ -216,7 +216,6 @@ class Aircraft:
         RPM_DESIGN = 'aircraft:engine:rpm_design'
         SCALE_FACTOR = 'aircraft:engine:scale_factor'
         SCALE_MASS = 'aircraft:engine:scale_mass'
-        SCALE_PERFORMANCE = 'aircraft:engine:scale_performance'
         SCALED_SLS_THRUST = 'aircraft:engine:scaled_sls_thrust'
         SUBSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:subsonic_fuel_flow_scaler'
         SUPERSONIC_FUEL_FLOW_SCALER = 'aircraft:engine:supersonic_fuel_flow_scaler'
