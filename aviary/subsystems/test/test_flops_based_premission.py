@@ -417,7 +417,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # OperatingMass
                 Mission.OPERATING_MASS,
                 # ZeroFuelMass
-                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.ZERO_FUEL_MASS,
             ],
             version=Version.BWB,
             step=1.01e-40,
@@ -728,8 +728,8 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST], 70000.0 * 3, tol)
         # Aerodynamics
         # Design
-        assert_near_equal(prob[Mission.Design.MACH], 0.91589163, tol)
-        assert_near_equal(prob[Mission.Design.LIFT_COEFFICIENT], 0.3487563, tol)
+        assert_near_equal(prob[Aircraft.Design.MACH], 0.91589163, tol)
+        assert_near_equal(prob[Aircraft.Design.LIFT_COEFFICIENT], 0.3487563, tol)
 
 
 @use_tempdirs
@@ -975,8 +975,8 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST], 70000.0 * 3, tol)
         # Aerodynamics
         # Design
-        assert_near_equal(prob[Mission.Design.MACH], 0.89489036, tol)
-        assert_near_equal(prob[Mission.Design.LIFT_COEFFICIENT], 0.42836987, tol)
+        assert_near_equal(prob[Aircraft.Design.MACH], 0.89489036, tol)
+        assert_near_equal(prob[Aircraft.Design.LIFT_COEFFICIENT], 0.42836987, tol)
 
 
 @use_tempdirs
@@ -1003,7 +1003,11 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_subsystem),
+            CorePreMission(
+                aviary_options=self.flops_inputs,
+                subsystems=geom_subsystem,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -1074,7 +1078,11 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_mass_subsystems),
+            CorePreMission(
+                aviary_options=self.flops_inputs,
+                subsystems=geom_mass_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -1142,7 +1150,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.THRUST_REVERSERS_MASS], 0.0, tol)
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS], 0.0, tol)
         # LandingMassGroup
-        assert_near_equal(prob[Aircraft.Design.LANDING_MASS], 420000.0, tol)
+        assert_near_equal(prob[Aircraft.Design.TOUCHDOWN_MASS_MAX], 420000.0, tol)
         # SurfaceControlMass
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 8093.1997108029764, tol)
         assert_near_equal(prob[Aircraft.Wing.CONTROL_SURFACE_AREA], 2526.5144041515805, tol)
@@ -1179,9 +1187,9 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 286969.99768419, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.Summary.OPERATING_MASS], 321171.82272983, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 321171.82272983, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.Summary.ZERO_FUEL_MASS], 383871.82272983, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 383871.82272983, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -1197,7 +1205,9 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(
-                aviary_options=self.flops_inputs, subsystems=default_premission_subsystems
+                aviary_options=self.flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -1211,8 +1221,8 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
         tol = 1e-4
         # Design
-        assert_near_equal(prob[Mission.Design.MACH], 0.89939238, tol)
-        assert_near_equal(prob[Mission.Design.LIFT_COEFFICIENT], 0.40810915, tol)
+        assert_near_equal(prob[Aircraft.Design.MACH], 0.89939238, tol)
+        assert_near_equal(prob[Aircraft.Design.LIFT_COEFFICIENT], 0.40810915, tol)
 
 
 if __name__ == '__main__':
