@@ -8192,7 +8192,7 @@ add_meta_data(
     option=True,
     default_value=False,
     types=bool,
-    desc='if True, run a set of off-design missions to create a payload range diagram.',
+    desc='for SIZING missions only. If True, run a set of off-design missions to create a payload range diagram. Assumes SIZING mission describes the max payload + fuel point',
 )
 
 add_meta_data(
