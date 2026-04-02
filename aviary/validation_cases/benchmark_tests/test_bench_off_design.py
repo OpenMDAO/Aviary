@@ -532,12 +532,12 @@ class PayloadRangeTest(unittest.TestCase):
 
         # verify TOGW for each payload range problem
         assert_near_equal(
-            off_design_probs[0].get_val(Mission.GROSS_MASS, 'lbm'),
+            prob.economic_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             165899.19090919,
             tolerance=1e-8,
         )
         assert_near_equal(
-            off_design_probs[1].get_val(Mission.GROSS_MASS, 'lbm'),
+            prob.ferry_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             140541.17160737,
             tolerance=1e-8,
         )
