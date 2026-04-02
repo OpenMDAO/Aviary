@@ -1253,12 +1253,8 @@ class AviaryProblem(om.Problem):
             with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
-        if self.generate_payload_range:
-            self.aviary_inputs.set_val(
-                Settings.PAYLOAD_RANGE, False
-            )  # prevent recursive payload range runs
+        if self.generate_payload_range and self.problem_type == ProblemType.SIZING:
             self.run_payload_range()
-            self.aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)  # correct value after run
 
     def run_off_design_mission(
         self,
