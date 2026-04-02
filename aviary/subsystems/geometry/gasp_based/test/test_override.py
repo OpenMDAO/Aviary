@@ -37,7 +37,11 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
+            CorePreMission(
+                aviary_options=aviary_inputs,
+                subsystems=subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'],
         )

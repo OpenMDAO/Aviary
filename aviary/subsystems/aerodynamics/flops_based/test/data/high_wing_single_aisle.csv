@@ -127,13 +127,13 @@ aircraft:wing:thickness_to_chord_reference,0.01,unitless   #check
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.01,unitless   #check
 mission:constraints:max_mach,0.85,unitless
-mission:design:cruise_altitude,38000,ft
-mission:design:gross_mass,150000.0,lbm
-mission:design:range,3500,NM
-mission:design:thrust_takeoff_per_eng,23000.0,lbf
+aircraft:design:cruise_altitude,38000,ft
+aircraft:design:gross_mass,150000.0,lbm
+aircraft:design:range,3500,NM
+aircraft:design:thrust_takeoff_per_eng,23000.0,lbf
 mission:landing:lift_coefficient_max,2.7,unitless
-mission:summary:cruise_mach,0.8,unitless
-mission:summary:fuel_flow_scaler,1.01,unitless   #check
+aircraft:design:cruise_mach,0.8,unitless
+mission:fuel_flow_scaler,1.01,unitless   #check
 mission:takeoff:fuel_simple,400,lbm
 mission:takeoff:lift_coefficient_max,2.55,unitless
 mission:takeoff:lift_over_drag,25,unitless

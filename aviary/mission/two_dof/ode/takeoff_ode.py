@@ -61,6 +61,7 @@ class TakeOffODE(TwoDOFODE):
         input_speed_type = self.options['input_speed_type']
         ground_roll = self.options['ground_roll']
         rotation = self.options['rotation']
+        user_options = self.options['user_options']
 
         EOM_inputs = [
             Dynamic.Vehicle.MASS,
@@ -153,22 +154,37 @@ class TakeOffODE(TwoDOFODE):
             if name in subsystem_options:
                 kwargs.update(subsystem_options[name])
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
                 if isinstance(subsystem, PropulsionBuilder):
                     self.add_subsystem(
                         name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
                 else:
                     self.add_subsystem(
                         name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
 
         if ground_roll:

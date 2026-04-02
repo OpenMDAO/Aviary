@@ -99,7 +99,7 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.set_val('t_curr', [0.0, 1.0, 2.0, 3.0])
         prob.set_val(Dynamic.Mission.ALTITUDE, 0)
         prob.set_val(Dynamic.Atmosphere.MACH, [0.0, 0.009, 0.018, 0.026])
-        prob.set_val(Mission.Design.GROSS_MASS, 175400.0)
+        prob.set_val(Aircraft.Design.GROSS_MASS, 175400.0)
         prob.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 0)
         # TODO set q if we want to test lift/drag forces
 
@@ -154,7 +154,7 @@ class TestLowSpeedAero(unittest.TestCase):
         prob.set_val('flap_defl', self.flap_defl_to)
         prob.set_val('t_init_gear', self.t_init_gear_to)
         prob.set_val('t_init_flaps', self.t_init_flaps_to)
-        prob.set_val(Mission.Design.GROSS_MASS, 175400.0)
+        prob.set_val(Aircraft.Design.GROSS_MASS, 175400.0)
         prob.run_model()
 
         cl_exp = np.array([1.3734, 1.3489, 1.3179, 1.2979, 1.1356, 1.0645, 0.9573, 0.8876])
@@ -186,7 +186,7 @@ class GearDragIncrementTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Mission.Design.GROSS_MASS, 175000, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 175000, 'lbm')
         prob.set_val(Aircraft.Wing.AREA, 1000, 'ft**2')
         prob.set_val('flap_defl', [0.0, 0.3], 'deg')
         prob.run_model()
@@ -219,7 +219,7 @@ class GearDragIncrementTest2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3)
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Mission.Design.GROSS_MASS, 175400.0)
+        prob.set_val(Aircraft.Design.GROSS_MASS, 175400.0)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

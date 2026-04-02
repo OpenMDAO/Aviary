@@ -151,9 +151,9 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS)
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_CONTAINER_MASS)
 
-        add_aviary_output(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+        add_aviary_output(self, Mission.USEFUL_LOAD, units='lbm')
 
-        self.declare_partials(Mission.Summary.USEFUL_LOAD, '*')
+        self.declare_partials(Mission.USEFUL_LOAD, '*')
 
     def compute(self, inputs, outputs):
         pilot_wt = inputs[Aircraft.CrewPayload.FLIGHT_CREW_MASS]
@@ -174,16 +174,16 @@ class UsefulLoadMass(om.ExplicitComponent):
             + cargo_handling_wt
         )
 
-        outputs[Mission.Summary.USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
+        outputs[Mission.USEFUL_LOAD] = useful_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.FLIGHT_CREW_MASS] = 1
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.CABIN_CREW_MASS] = 1
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = 1
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = 1
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = 1
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS] = 1
-        J[Mission.Summary.USEFUL_LOAD, Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.CrewPayload.FLIGHT_CREW_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.CrewPayload.CABIN_CREW_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.Design.EMERGENCY_EQUIPMENT_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.Fuel.UNUSABLE_FUEL_MASS] = 1
+        J[Mission.USEFUL_LOAD, Aircraft.CrewPayload.CARGO_CONTAINER_MASS] = 1
 
 
 class UsefulLoadMassGroup(om.Group):

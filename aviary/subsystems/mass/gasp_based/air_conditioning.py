@@ -12,7 +12,7 @@ class ACMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_COEFFICIENT, units='unitless')
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
@@ -26,12 +26,12 @@ class ACMass(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.AVG_DIAMETER,
                 Aircraft.Fuselage.PRESSURE_DIFFERENTIAL,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
         )
 
     def compute(self, inputs, outputs):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -48,7 +48,7 @@ class ACMass(om.ExplicitComponent):
         outputs[Aircraft.AirConditioning.MASS] = air_conditioning_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
@@ -81,7 +81,7 @@ class ACMass(om.ExplicitComponent):
             dac_wt_dcabin_width = 0.0
             dac_wt_dac_coeff = 0.0
 
-        J[Aircraft.AirConditioning.MASS, Mission.Design.GROSS_MASS] = dac_wt_dgross_wt
+        J[Aircraft.AirConditioning.MASS, Aircraft.Design.GROSS_MASS] = dac_wt_dgross_wt
         J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.LENGTH] = (
             dac_wt_dfus_len / GRAV_ENGLISH_LBM
         )
@@ -103,7 +103,7 @@ class BWBACMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.AirConditioning.MASS_COEFFICIENT, units='unitless')
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft')
@@ -117,12 +117,12 @@ class BWBACMass(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Fuselage.HYDRAULIC_DIAMETER,
                 Aircraft.Fuselage.PRESSURE_DIFFERENTIAL,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
         )
 
     def compute(self, inputs, outputs):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
@@ -139,7 +139,7 @@ class BWBACMass(om.ExplicitComponent):
         outputs[Aircraft.AirConditioning.MASS] = air_conditioning_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         p_diff_fus = inputs[Aircraft.Fuselage.PRESSURE_DIFFERENTIAL]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
@@ -172,7 +172,7 @@ class BWBACMass(om.ExplicitComponent):
             dac_wt_dcabin_width = 0.0
             dac_wt_dac_coeff = 0.0
 
-        J[Aircraft.AirConditioning.MASS, Mission.Design.GROSS_MASS] = dac_wt_dgross_wt
+        J[Aircraft.AirConditioning.MASS, Aircraft.Design.GROSS_MASS] = dac_wt_dgross_wt
         J[Aircraft.AirConditioning.MASS, Aircraft.Fuselage.LENGTH] = (
             dac_wt_dfus_len / GRAV_ENGLISH_LBM
         )
