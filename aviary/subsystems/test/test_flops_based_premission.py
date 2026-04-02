@@ -51,7 +51,11 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -121,7 +125,11 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -163,7 +171,11 @@ class PreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'mass_and_aero_premission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes=['*'],
         )
 
@@ -237,7 +249,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -436,7 +452,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=flops_inputs, subsystems=default_premission_subsystems),
+            CorePreMission(
+                aviary_options=flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -489,7 +509,11 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_subsystem),
+            CorePreMission(
+                aviary_options=self.flops_inputs,
+                subsystems=geom_subsystem,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -557,7 +581,11 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_mass_subsystems),
+            CorePreMission(
+                aviary_options=self.flops_inputs,
+                subsystems=geom_mass_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -684,7 +712,9 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(
-                aviary_options=self.flops_inputs, subsystems=default_premission_subsystems
+                aviary_options=self.flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -867,7 +897,11 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_subsystem),
+            CorePreMission(
+                aviary_options=self.flops_inputs,
+                subsystems=geom_subsystem,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -935,7 +969,11 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=self.flops_inputs, subsystems=geom_mass_subsystems),
+            CorePreMission(
+                aviary_options=self.flops_inputs,
+                subsystems=geom_mass_subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -1060,7 +1098,9 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         prob.model.add_subsystem(
             'pre_mission',
             CorePreMission(
-                aviary_options=self.flops_inputs, subsystems=default_premission_subsystems
+                aviary_options=self.flops_inputs,
+                subsystems=default_premission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],

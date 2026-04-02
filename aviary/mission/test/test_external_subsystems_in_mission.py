@@ -155,20 +155,20 @@ class ExternNoSolve(om.ExplicitComponent):
 class NoSolverBuilder(SubsystemBuilder):
     """Mission only. No solver."""
 
-    def needs_mission_solver(self, aviary_options):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         return False
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return ExternNoSolve()
 
 
 class SolverBuilder(SubsystemBuilder):
     """Mission only. Solver."""
 
-    def needs_mission_solver(self, aviary_options):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         return True
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return ExternNoSolve()
 
 

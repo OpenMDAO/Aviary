@@ -85,6 +85,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
             CorePreMission(
                 aviary_options=aviary_options,
                 subsystems=default_mission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
             promotes_outputs=['aircraft:*'],
