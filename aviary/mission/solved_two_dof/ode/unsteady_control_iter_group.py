@@ -40,7 +40,14 @@ class UnsteadyControlIterGroup(om.Group):
             'subsystem_options',
             types=dict,
             default={},
-            desc='dictionary of parameters to be passed to the subsystem builders',
+            desc='dictionary of optional arguments for the subsystems in this phase',
+        )
+
+        self.options.declare(
+            'user_options',
+            types=dict,
+            default={},
+            desc='dictionary of user options for this phase',
         )
 
     def setup(self):
@@ -49,24 +56,43 @@ class UnsteadyControlIterGroup(om.Group):
         clean = self.options['clean']
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
+        subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options}
+        kwargs = {}
 
         if clean:
-            kwargs['method'] = 'low_speed'
+            subsystem_options['method'] = 'low_speed'
         else:
-            kwargs['method'] = 'cruise'
+            subsystem_options['method'] = 'cruise'
 
         for subsystem in subsystems:
-            system = subsystem.build_mission(**kwargs)
+            if subsystem.name in subsystem_options:
+                kwargs.update(subsystem_options[subsystem.name])
+
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
                 self.add_subsystem(
                     subsystem.name,
                     system,
-                    promotes_inputs=subsystem.mission_inputs(**kwargs),
-                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
                 )
-
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
 
         self.add_subsystem(
