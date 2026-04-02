@@ -1476,9 +1476,11 @@ class LandingTrajectory:
 
             aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
-            args = {'method': 'low_speed'}
+            subsystem_options = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, **args)
+            params = aero.get_parameters(
+                aviary_inputs=aviary_options, subsystem_options=subsystem_options
+            )
 
             # takeoff introduces this one.
             params[Mission.Landing.LIFT_COEFFICIENT_MAX] = {

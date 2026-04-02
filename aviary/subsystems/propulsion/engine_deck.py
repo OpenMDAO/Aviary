@@ -802,7 +802,7 @@ class EngineDeck(EngineModel):
         # Re-normalize throttle since "dummy" idle values were used
         self._normalize_throttle()
 
-    def build_pre_mission(self, aviary_inputs, **kwargs) -> om.ExplicitComponent:
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None) -> om.ExplicitComponent:
         """
         Build components to be added to pre-mission propulsion subsystem.
 
@@ -885,7 +885,7 @@ class EngineDeck(EngineModel):
 
         return engine
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs) -> om.Group:
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options) -> om.Group:
         """
         Creates interpolator objects to be added to mission-level propulsion subsystem.
         Interpolators must be re-generated for each ODE due to potentially different
@@ -895,6 +895,12 @@ class EngineDeck(EngineModel):
         ----------
         num_nodes : int
             Number of nodes present in the current Dymos phase of mission analysis.
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -1201,15 +1207,7 @@ class EngineDeck(EngineModel):
 
         return engine_group
 
-    def mission_inputs(self, **kwargs):
-        inputs = [inp.value for inp in self.inputs]
-        return inputs
-
-    def mission_outputs(self, **kwargs):
-        outputs = [out.value for out in self.outputs]
-        return outputs
-
-    def get_parameters(self):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
                 'val': 1.0,
@@ -1218,6 +1216,14 @@ class EngineDeck(EngineModel):
             }
         }
         return params
+
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        inputs = [inp.value for inp in self.inputs]
+        return inputs
+
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        outputs = [out.value for out in self.outputs]
+        return outputs
 
     def report(self, problem, reports_file, **kwargs):
         meta_data = kwargs['meta_data']

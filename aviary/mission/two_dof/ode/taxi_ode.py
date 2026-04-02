@@ -17,6 +17,7 @@ class TaxiSegment(TwoDOFODE):
     def setup(self):
         options: AviaryValues = self.options['aviary_options']
         subsystems = self.options['subsystems']
+        user_options = self.options['user_options']
 
         self.add_subsystem('params', ParamPort(), promotes=['*'])
 
@@ -55,7 +56,12 @@ class TaxiSegment(TwoDOFODE):
 
         for subsystem in subsystems:
             if isinstance(subsystem, PropulsionBuilder):
-                system = subsystem.build_mission(num_nodes=1, aviary_inputs=options)
+                system = subsystem.build_mission(
+                    num_nodes=1,
+                    aviary_inputs=options,
+                    user_options=user_options,
+                    subsystem_options={},
+                )
 
                 self.add_subsystem(
                     subsystem.name,

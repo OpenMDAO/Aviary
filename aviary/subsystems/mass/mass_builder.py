@@ -45,10 +45,10 @@ class CoreMassBuilder(MassBuilder):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         code_origin = self.code_origin
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         mass_group = None
@@ -62,16 +62,18 @@ class CoreMassBuilder(MassBuilder):
 
         return mass_group
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         # by default there is no mass mission, but call super for safety/future-proofing
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         mass_group = None
 
         if method != 'external':
-            mass_group = super().build_mission(num_nodes, aviary_inputs)
+            mass_group = super().build_mission(
+                num_nodes, aviary_inputs, user_options, subsystem_options
+            )
 
         return mass_group
 
