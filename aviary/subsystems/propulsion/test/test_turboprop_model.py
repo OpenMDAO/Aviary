@@ -40,7 +40,7 @@ class TurbopropMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
         options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
-        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+        options.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -88,7 +88,12 @@ class TurbopropMissionTest(unittest.TestCase):
         propulsion_group = self.prob.model.add_subsystem('propulsion', om.Group(), promotes=['*'])
         propulsion_group.add_subsystem(
             engine.name,
-            subsys=engine.build_mission(num_nodes=num_nodes, aviary_inputs=options, **kwargs),
+            subsys=engine.build_mission(
+                num_nodes=num_nodes,
+                aviary_inputs=options,
+                user_options={},
+                subsystem_options=kwargs,
+            ),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
@@ -352,7 +357,7 @@ class TurbopropMissionTest(unittest.TestCase):
 
 
 class ExamplePropModel(SubsystemBuilder):
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         prop_group = om.Group()
 
         pp = prop_group.add_subsystem(

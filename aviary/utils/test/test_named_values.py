@@ -238,7 +238,7 @@ _data1 = {
     'NUM_FUSELAGES': (1, 'unitless'),
     'NUM_ENGINES': (2, 'unitless'),
     Aircraft.CrewPayload.BAGGAGE_MASS: (7500, 'lbm'),
-    Mission.Design.RANGE: (3500, 'NM'),
+    Aircraft.Design.RANGE: (3500, 'NM'),
 }
 
 

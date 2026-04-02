@@ -1245,7 +1245,7 @@ class DragCoef(om.ExplicitComponent):
 
         # user inputs
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
 
         self.add_input('flap_defl', val=10.0, units='deg', desc='Full flap deflection')
 
@@ -1328,14 +1328,14 @@ class DragCoef(om.ExplicitComponent):
             method='cs',
         )
         # self.declare_partials(
-        #     "CD_base", [Mission.Design.GROSS_MASS, "dCD_flaps_model", "wing_area"], val=0
+        #     "CD_base", [Aircraft.Design.GROSS_MASS, "dCD_flaps_model", "wing_area"], val=0
         # )
 
         self.declare_partials('dCD_flaps_full', ['dCD_flaps_model'], val=1)
 
         self.declare_partials(
             'dCD_gear_full',
-            [Mission.Design.GROSS_MASS, Aircraft.Wing.AREA, 'flap_defl'],
+            [Aircraft.Design.GROSS_MASS, Aircraft.Wing.AREA, 'flap_defl'],
             method='cs',
         )
 
@@ -2095,7 +2095,7 @@ class LiftCoeffClean(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg', desc='ALPHL0')
 
-        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
+        add_aviary_input(self, Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
 
         self.add_output('alpha_stall', shape=nn, units='deg', desc='Stall angle of attack')
         self.add_output('CL_max', units='unitless', shape=nn, desc='Max lift coefficient')
@@ -2129,13 +2129,13 @@ class LiftCoeffClean(om.ExplicitComponent):
         self.declare_partials(
             'alpha_stall',
             [
-                Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+                Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
                 Aircraft.Wing.ZERO_LIFT_ANGLE,
             ],
         )
 
         self.declare_partials('CL_max', ['lift_ratio'], rows=ar, cols=ar)
-        self.declare_partials('CL_max', [Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
+        self.declare_partials('CL_max', [Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
 
     def compute(self, inputs, outputs):
         _, lift_curve_slope, lift_ratio, alpha0, CL_max_flaps = inputs.values()
@@ -2154,14 +2154,14 @@ class LiftCoeffClean(om.ExplicitComponent):
         lift_curve_slope = inputs['lift_curve_slope']
         lift_ratio = inputs['lift_ratio']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
-        CL_max_flaps = inputs[Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
+        CL_max_flaps = inputs[Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
 
-        J['alpha_stall', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = (
+        J['alpha_stall', Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = (
             180.0 / np.pi / lift_curve_slope
         )
         J['alpha_stall', 'lift_curve_slope'] = -180.0 / np.pi * CL_max_flaps / lift_curve_slope**2
         J['alpha_stall', Aircraft.Wing.ZERO_LIFT_ANGLE] = 1
-        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1 + lift_ratio
+        J['CL_max', Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1 + lift_ratio
         J['CL_max', 'lift_ratio'] = CL_max_flaps
 
         if self.options['output_alpha']:
@@ -2221,7 +2221,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
             desc='CLALPH_B: Lift-curve slope of fuselage for the given Mach',
         )
         add_aviary_input(self, Aircraft.Wing.ZERO_LIFT_ANGLE, units='deg', desc='ALPHL0')
-        add_aviary_input(self, Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
+        add_aviary_input(self, Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP, units='unitless')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2', desc='SREF')
         add_aviary_input(self, Aircraft.Wing.EXPOSED_AREA, units='ft**2', desc='SW_EXP')
@@ -2302,14 +2302,14 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         self.declare_partials(
             'alpha_stall',
             [
-                Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
+                Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP,
                 Aircraft.Wing.ZERO_LIFT_ANGLE,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.EXPOSED_AREA,
             ],
         )
 
-        self.declare_partials('CL_max', [Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
+        self.declare_partials('CL_max', [Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -2317,7 +2317,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         lift_curve_slope = inputs['lift_curve_slope']
         body_lift_curve_slope = inputs['body_lift_curve_slope']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
-        CL_max_flaps = inputs[Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
+        CL_max_flaps = inputs[Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
         wing_area = inputs[Aircraft.Wing.AREA]
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
@@ -2354,7 +2354,7 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
         lift_curve_slope = inputs['lift_curve_slope']
         body_lift_curve_slope = inputs['body_lift_curve_slope']
         alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
-        CL_max_flaps = inputs[Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
+        CL_max_flaps = inputs[Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
         wing_area = inputs[Aircraft.Wing.AREA]
         exp_wing_area = inputs[Aircraft.Wing.EXPOSED_AREA]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
@@ -2433,12 +2433,12 @@ class BWBLiftCoeffClean(om.ExplicitComponent):
                 planform / wing_area * np.pi / 180.0 * (alpha - alpha0)
             )
 
-        J['alpha_stall', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = (
+        J['alpha_stall', Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = (
             180.0 / np.pi / lift_curve_slope
         )
         J['alpha_stall', 'lift_curve_slope'] = -180.0 / np.pi * CL_max_flaps / lift_curve_slope**2
         J['alpha_stall', Aircraft.Wing.ZERO_LIFT_ANGLE] = 1
-        J['CL_max', Mission.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1
+        J['CL_max', Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP] = 1
 
 
 class CruiseAero(om.Group):

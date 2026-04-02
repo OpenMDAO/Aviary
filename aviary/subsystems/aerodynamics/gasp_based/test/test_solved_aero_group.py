@@ -318,7 +318,7 @@ class FakeDragPolarBuilder(SubsystemBuilder):
         self.mach = np.unique(mach)
         self.alpha = np.unique(alpha)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 

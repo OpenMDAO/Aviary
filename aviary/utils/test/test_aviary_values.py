@@ -125,12 +125,12 @@ class TestTypes(unittest.TestCase):
         vals = AviaryValues()
 
         try:
-            vals.set_val(Mission.Design.CRUISE_ALTITUDE, val=35000, units='ft')
+            vals.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=35000, units='ft')
         except:
             self.fail('Expecting correct units and type to pass.')
 
         try:
-            vals.set_val(Mission.Design.CRUISE_ALTITUDE, val=35000.01, units='ft')
+            vals.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=35000.01, units='ft')
         except:
             self.fail('Expecting correct units and type to pass.')
 
