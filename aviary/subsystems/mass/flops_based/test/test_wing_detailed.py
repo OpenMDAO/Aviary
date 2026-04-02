@@ -646,7 +646,6 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=600000.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 5.4252, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 0.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
@@ -699,7 +698,4 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBDetailedWingBendingTest()
-    test.setUp()
-    test.test_case2()
+    unittest.main()
