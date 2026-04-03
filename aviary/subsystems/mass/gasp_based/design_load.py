@@ -1624,6 +1624,7 @@ class BWBLoadFactors(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         ULF_from_maneuver = self.options[Aircraft.Design.ULF_CALCULATED_FROM_MANEUVER]
+        max_maneuver_factor = inputs['max_maneuver_factor']
 
         if ULF_from_maneuver == True:
             ULF = 1.5 * max_maneuver_factor
@@ -1640,7 +1641,6 @@ class BWBLoadFactors(om.ExplicitComponent):
             density_ratio = inputs['density_ratio']
             V9 = inputs['V9']
             min_dive_vel = inputs['min_dive_vel']
-            max_maneuver_factor = inputs['max_maneuver_factor']
             avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
             Cl_alpha = inputs[Aircraft.Design.LIFT_CURVE_SLOPE]
 
