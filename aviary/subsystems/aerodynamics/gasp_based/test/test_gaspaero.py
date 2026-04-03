@@ -85,6 +85,11 @@ class GASPAeroTest(unittest.TestCase):
 
                 prob.run_model()
 
+                import pdb
+
+                x = prob[Aircraft.Fuselage.FORM_FACTOR]
+                print(f'x = {x}')
+                pdb.set_trace()
                 assert_near_equal(prob['CL'][0], row['cl'], tolerance=self.cruise_tol)
                 assert_near_equal(prob['CD'][0], row['cd'], tolerance=self.cruise_tol)
 
@@ -1887,7 +1892,7 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    test = BWBLowSpeedAeroTest3()
+    # unittest.main()
+    test = GASPAeroTest()
     test.setUp()
-    # test.test_case1()
+    test.test_cruise()
