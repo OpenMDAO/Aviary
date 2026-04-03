@@ -8173,14 +8173,14 @@ add_meta_data(
     option=True,
     default_value=False,
     types=bool,
-    desc='if True, run a set of off-design missions to create a payload range diagram.',
+    desc='for SIZING missions only. If True, run a set of off-design missions to create a payload range diagram. Assumes SIZING mission describes the max payload + fuel point',
 )
 
 add_meta_data(
     Settings.PROBLEM_TYPE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
-    desc="Select from Aviary's built in problem types: Sizing, Alternate, and Fallout",
+    desc="Select from Aviary's built in problem types: SIZING, ALTERNATE, FALLOUT and MULTI_MISSION",
     option=True,
     types=ProblemType,
     default_value=None,

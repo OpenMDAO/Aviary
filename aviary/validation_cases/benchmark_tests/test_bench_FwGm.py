@@ -84,6 +84,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                 else:
                     assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
 
+        self.assertTrue(prob.result.success)
+
 
 if __name__ == '__main__':
     test = ProblemPhaseTestCase()
