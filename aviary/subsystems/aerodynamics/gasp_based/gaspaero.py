@@ -1213,7 +1213,7 @@ class AeroSetup(om.Group):
                 ],
             )
 
-        self.add_subsystem('form_factor', FormFactor(), promotes=['*'])
+        # self.add_subsystem('form_factor', FormFactor(), promotes=['*'])
         self.add_subsystem('siwbcomp', SIWB(), promotes=['*'])
         self.add_subsystem('geom', AeroGeom(num_nodes=nn), promotes=['*'])
 
@@ -1273,7 +1273,7 @@ class BWBAeroSetup(om.Group):
                 ],
             )
 
-        self.add_subsystem('form_factor', BWBFormFactor(), promotes=['*'])
+        # self.add_subsystem('form_factor', BWBFormFactor(), promotes=['*'])
         self.add_subsystem('siwbcomp', BWBSIWB(), promotes=['*'])
         self.add_subsystem('geom', AeroGeom(num_nodes=nn), promotes=['*'])
 
