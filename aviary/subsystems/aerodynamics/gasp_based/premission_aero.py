@@ -10,17 +10,12 @@ from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
     BasicFlapsGeometry,
 )
-from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
-    BWBFormFactorAndSIWB,
-    FormFactorAndSIWB,
-)
 from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
     WingFuselageInterferencePremission,
 )
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.variable_info.enums import AircraftTypes, SpeedType
-from aviary.variable_info.functions import add_aviary_option
+from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 # TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
@@ -29,9 +24,6 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 class PreMissionAero(om.Group):
     """Takeoff and landing flaps modeling."""
-
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
         self.add_subsystem(
@@ -157,22 +149,6 @@ class PreMissionAero(om.Group):
         self.set_input_defaults('flap_defl_up', 0)
         self.set_input_defaults('slat_defl_up', 0)
         self.set_input_defaults(Aircraft.Wing.SWEEP, units='deg')
-
-        design_type = self.options[Aircraft.Design.TYPE]
-        if design_type is AircraftTypes.BLENDED_WING_BODY:
-            self.add_subsystem(
-                'form_factor',
-                BWBFormFactorAndSIWB(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
-        else:
-            self.add_subsystem(
-                'form_factor',
-                FormFactorAndSIWB(),
-                promotes_inputs=['*'],
-                promotes_outputs=['*'],
-            )
 
     def configure(self):
         # set default trailing edge deflection angle per GASP
