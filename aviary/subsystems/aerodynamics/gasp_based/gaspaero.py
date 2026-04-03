@@ -410,9 +410,9 @@ class Xlifts(om.ExplicitComponent):
         outputs['lift_ratio'] = lift_ratio
 
 
-class FormFactorAndSIWB(om.ExplicitComponent):
+class FormFactor(om.ExplicitComponent):
     """
-    Compute body form factor and SIWB for tube+wing aircraft
+    Compute body form factor
     Incompressible form factor for streamlined bodies. From Hoerner's "Fluid Dynamic Drag", p. 6-17.
     """
 
@@ -422,18 +422,12 @@ class FormFactorAndSIWB(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft', desc='SWF')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft', desc='ELF')
-        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
 
         add_aviary_output(
             self,
             Aircraft.Fuselage.FORM_FACTOR,
             units='unitless',
             desc='FFFUS: fuselage form factor',
-        )
-        self.add_output(
-            'siwb',
-            units='unitless',
-            desc='SIWB: curve fitting correction factor for Oswald efficiency',
         )
 
     def setup_partials(self):
@@ -444,6 +438,57 @@ class FormFactorAndSIWB(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
             ],
         )
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
+        cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+
+        if fus_len == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn('Aircraft.Fuselage.LENGTH should not be 0.0 in FormFactor.')
+
+        # fuselage form drag factor
+        fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
+        outputs[Aircraft.Fuselage.FORM_FACTOR] = fffus
+
+    def compute_partials(self, inputs, J):
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
+        cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
+
+        dfffus_dcabin_width = (
+            2.25 * (cabin_width / fus_len) ** 0.5 / fus_len
+            + 21 * (cabin_width / fus_len) ** 2.0 / fus_len
+        )
+        dfffus_dfus_len = (
+            -2.25 * (cabin_width / fus_len) ** 0.5 * cabin_width / fus_len**2.0
+            - 21.0 * (cabin_width / fus_len) ** 2.0 * cabin_width / fus_len**2.0
+        )
+
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.AVG_DIAMETER] = dfffus_dcabin_width
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
+
+
+class SIWB(om.ExplicitComponent):
+    """
+    Compute SIWB for tube+wing aircraft
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft', desc='SWF')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
+
+        self.add_output(
+            'siwb',
+            units='unitless',
+            desc='SIWB: curve fitting correction factor for Oswald efficiency',
+        )
+
+    def setup_partials(self):
         self.declare_partials(
             'siwb',
             [
@@ -455,20 +500,12 @@ class FormFactorAndSIWB(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
 
-        fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
-        if fus_len == 0.0:
-            if verbosity > Verbosity.BRIEF:
-                warnings.warn('Aircraft.Fuselage.LENGTH should not be 0.0 in FormFactorAndSIWB.')
         if wingspan == 0.0:
             if verbosity > Verbosity.BRIEF:
-                warnings.warn('Aircraft.Wing.SPAN should not be 0.0 in FormFactorAndSIWB.')
-
-        # fuselage form drag factor
-        fffus = 1 + 1.5 * (cabin_width / fus_len) ** 1.5 + 7 * (cabin_width / fus_len) ** 3
-        outputs[Aircraft.Fuselage.FORM_FACTOR] = fffus
+                warnings.warn('Aircraft.Wing.SPAN should not be 0.0 in SIWB.')
 
         # fuselage width over wing span
         wfob = cabin_width / wingspan
@@ -476,18 +513,8 @@ class FormFactorAndSIWB(om.ExplicitComponent):
         outputs['siwb'] = siwb
 
     def compute_partials(self, inputs, J):
-        fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
-
-        dfffus_dcabin_width = (
-            2.25 * (cabin_width / fus_len) ** 0.5 / fus_len
-            + 21 * (cabin_width / fus_len) ** 2.0 / fus_len
-        )
-        dfffus_dfus_len = (
-            -2.25 * (cabin_width / fus_len) ** 0.5 * cabin_width / fus_len**2.0
-            - 21.0 * (cabin_width / fus_len) ** 2.0 * cabin_width / fus_len**2.0
-        )
 
         wfob = cabin_width / wingspan
         # siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
@@ -506,13 +533,11 @@ class FormFactorAndSIWB(om.ExplicitComponent):
             - 4 * 6.0606 * wfob**3 * cabin_width / wingspan**2
         )
 
-        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.AVG_DIAMETER] = dfffus_dcabin_width
-        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
         J['siwb', Aircraft.Fuselage.AVG_DIAMETER] = dsiwb_dcabin_width
         J['siwb', Aircraft.Wing.SPAN] = dsiwb_dwingspan
 
 
-class BWBFormFactorAndSIWB(om.ExplicitComponent):
+class BWBFormFactor(om.ExplicitComponent):
     """
     Compute body form factor and SIWB for BWB aircraft
     Incompressible form factor for streamlined bodies. From Hoerner's "Fluid Dynamic Drag", p. 6-17.
@@ -524,17 +549,11 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft', desc='DHYDRAL')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft', desc='ELF')
-        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
 
         self.add_output(
             Aircraft.Fuselage.FORM_FACTOR,
             units='unitless',
             desc='FFFUS: fuselage form factor',
-        )
-        self.add_output(
-            'siwb',
-            units='unitless',
-            desc='SIWB: curve fitting correction factor for Oswald efficiency',
         )
 
     def setup_partials(self):
@@ -545,6 +564,57 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
             ],
         )
+
+    def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
+        diam = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
+
+        if fus_len == 0.0:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn('Aircraft.Fuselage.LENGTH should not be 0.0 in BWBFormFactor.')
+
+        # fuselage form drag factor
+        fffus = 1 + 1.5 * (diam / fus_len) ** 1.5 + 7 * (diam / fus_len) ** 3
+        outputs[Aircraft.Fuselage.FORM_FACTOR] = fffus
+
+    def compute_partials(self, inputs, J):
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
+        diam = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
+
+        dfffus_ddiam = (
+            2.25 * (diam / fus_len) ** 0.5 / fus_len + 21 * (diam / fus_len) ** 2.0 / fus_len
+        )
+        dfffus_dfus_len = (
+            -2.25 * (diam / fus_len) ** 0.5 * diam / fus_len**2.0
+            - 21.0 * (diam / fus_len) ** 2.0 * diam / fus_len**2.0
+        )
+
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dfffus_ddiam
+        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
+
+
+class BWBSIWB(om.ExplicitComponent):
+    """
+    Compute body form factor and SIWB for BWB aircraft
+    Incompressible form factor for streamlined bodies. From Hoerner's "Fluid Dynamic Drag", p. 6-17.
+    """
+
+    def initialize(self):
+        add_aviary_option(self, Settings.VERBOSITY)
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft', desc='DHYDRAL')
+        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft', desc='B')
+
+        self.add_output(
+            'siwb',
+            units='unitless',
+            desc='SIWB: curve fitting correction factor for Oswald efficiency',
+        )
+
+    def setup_partials(self):
         self.declare_partials(
             'siwb',
             [
@@ -556,20 +626,12 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
 
-        fus_len = inputs[Aircraft.Fuselage.LENGTH]
         diam = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
 
-        if fus_len == 0.0:
-            if verbosity > Verbosity.BRIEF:
-                warnings.warn('Aircraft.Fuselage.LENGTH should not be 0.0 in FormFactorAndSIWB.')
         if wingspan == 0.0:
             if verbosity > Verbosity.BRIEF:
-                warnings.warn('Aircraft.Wing.SPAN should not be 0.0 in FormFactorAndSIWB.')
-
-        # fuselage form drag factor
-        fffus = 1 + 1.5 * (diam / fus_len) ** 1.5 + 7 * (diam / fus_len) ** 3
-        outputs[Aircraft.Fuselage.FORM_FACTOR] = fffus
+                warnings.warn('Aircraft.Wing.SPAN should not be 0.0 in BWBSIWB.')
 
         # hydraulic diameter over wing span
         wfob = diam / wingspan
@@ -577,17 +639,8 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
         outputs['siwb'] = siwb
 
     def compute_partials(self, inputs, J):
-        fus_len = inputs[Aircraft.Fuselage.LENGTH]
         diam = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         wingspan = inputs[Aircraft.Wing.SPAN]
-
-        dfffus_ddiam = (
-            2.25 * (diam / fus_len) ** 0.5 / fus_len + 21 * (diam / fus_len) ** 2.0 / fus_len
-        )
-        dfffus_dfus_len = (
-            -2.25 * (diam / fus_len) ** 0.5 * diam / fus_len**2.0
-            - 21.0 * (diam / fus_len) ** 2.0 * diam / fus_len**2.0
-        )
 
         wfob = diam / wingspan
         # siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
@@ -606,8 +659,6 @@ class BWBFormFactorAndSIWB(om.ExplicitComponent):
             - 4 * 6.0606 * wfob**3 * diam / wingspan**2
         )
 
-        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dfffus_ddiam
-        J[Aircraft.Fuselage.FORM_FACTOR, Aircraft.Fuselage.LENGTH] = dfffus_dfus_len
         J['siwb', Aircraft.Fuselage.HYDRAULIC_DIAMETER] = dsiwb_ddiam
         J['siwb', Aircraft.Wing.SPAN] = dsiwb_dwingspan
 
@@ -1162,7 +1213,8 @@ class AeroSetup(om.Group):
                 ],
             )
 
-        self.add_subsystem('form_factor', FormFactorAndSIWB(), promotes=['*'])
+        self.add_subsystem('form_factor', FormFactor(), promotes=['*'])
+        self.add_subsystem('siwbcomp', SIWB(), promotes=['*'])
         self.add_subsystem('geom', AeroGeom(num_nodes=nn), promotes=['*'])
 
 
@@ -1221,7 +1273,8 @@ class BWBAeroSetup(om.Group):
                 ],
             )
 
-        self.add_subsystem('form_factor', BWBFormFactorAndSIWB(), promotes=['*'])
+        self.add_subsystem('form_factor', BWBFormFactor(), promotes=['*'])
+        self.add_subsystem('siwbcomp', BWBSIWB(), promotes=['*'])
         self.add_subsystem('geom', AeroGeom(num_nodes=nn), promotes=['*'])
 
 
