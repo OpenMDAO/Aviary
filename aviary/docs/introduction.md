@@ -12,7 +12,7 @@ If you find a bug, please [submit an issue on GitHub](https://github.com/OpenMDA
 
 ## Getting Started
 <!-- TODO: Return to this section and provide better descriptions and more specific links once those sections have been completed -->
-For new users, reading the **Getting Started** section should be your first step. This contains background information on what Aviary does, and installation instructions.
+For new users, reading the [Getting Started](./getting_started/getting_started) section should be your first step. This contains background information on what Aviary does, and installation instructions.
 
 ## User Guide
 The [User Guide](./user_guide/aviary_fundamentals.md) provides tutorials and explanations on how to use Aviary for various types of aircraft design problems.
