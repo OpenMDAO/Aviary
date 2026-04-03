@@ -5,7 +5,7 @@ from copy import deepcopy
 import numpy as np
 
 import aviary.api as av
-from aviary.examples.variables_extension import Aircraft, Mission
+from aviary.utils.test.data.variables_extension import Aircraft, Mission
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.

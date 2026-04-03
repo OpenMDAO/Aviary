@@ -3,10 +3,10 @@ import unittest
 import numpy as np
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.examples.variable_meta_data_extension import ExtendedMetaData
-from aviary.examples.variables_extension import Aircraft as ExtendedAircraft
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
+from aviary.utils.test.data.variable_meta_data_extension import ExtendedMetaData
+from aviary.utils.test.data.variables_extension import Aircraft as ExtendedAircraft
 from aviary.variable_info.enums import FlapType, GASPEngineType
 from aviary.variable_info.variables import Aircraft, Mission
 
