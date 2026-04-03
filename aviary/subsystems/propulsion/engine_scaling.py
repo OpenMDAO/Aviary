@@ -226,8 +226,6 @@ class EngineScaling(om.ExplicitComponent):
 
         fuel_flow_deriv = np.ones(nn, dtype=engine_scale_factor.dtype)
         fuel_flow_scale_deriv = np.zeros(nn, dtype=engine_scale_factor.dtype)
-        scale_factor = 1
-        deriv_factor = 0
 
         if FUEL_FLOW in engine_variables:
             # Calculate fuel flow rate scaling factor using FLOPS-derived equation
@@ -254,9 +252,6 @@ class EngineScaling(om.ExplicitComponent):
                 )
             )
 
-            scale_factor = engine_scale_factor
-            deriv_factor = 1.0
-
         for variable in engine_variables:
             if variable not in skip_variables:
                 if variable is FUEL_FLOW:
@@ -269,13 +264,15 @@ class EngineScaling(om.ExplicitComponent):
                         Aircraft.Engine.SCALE_FACTOR,
                     ] = fuel_flow_scale_deriv
                 else:
-                    J[variable.value, variable.value + '_unscaled'] = scale_factor
-                    J[variable.value, Aircraft.Engine.SCALE_FACTOR] = (
-                        inputs[variable.value + '_unscaled'] * deriv_factor
-                    )
+                    J[variable.value, variable.value + '_unscaled'] = engine_scale_factor
+                    J[variable.value, Aircraft.Engine.SCALE_FACTOR] = inputs[
+                        variable.value + '_unscaled'
+                    ]
 
                     if variable in max_variables:
-                        J[variable.value + '_max', variable.value + '_max_unscaled'] = scale_factor
-                        J[variable.value + '_max', Aircraft.Engine.SCALE_FACTOR] = (
-                            inputs[variable.value + '_max_unscaled'] * deriv_factor
+                        J[variable.value + '_max', variable.value + '_max_unscaled'] = (
+                            engine_scale_factor
                         )
+                        J[variable.value + '_max', Aircraft.Engine.SCALE_FACTOR] = inputs[
+                            variable.value + '_max_unscaled'
+                        ]
