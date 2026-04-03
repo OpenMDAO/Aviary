@@ -29,7 +29,7 @@ class ElectricalTestCase1(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -69,7 +69,7 @@ class ElectricalTestCase2(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -110,7 +110,7 @@ class ElectricalTestCase3(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=11.45, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=150000.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)

@@ -10,7 +10,7 @@ from aviary.variable_info.enums import Verbosity
 
 def run_aviary(
     aircraft_data,
-    phase_info,
+    phase_info=None,
     optimizer=None,
     objective_type=None,
     subsystems=[],
@@ -34,9 +34,9 @@ def run_aviary(
     aircraft_data: str, Path, AviaryValues
         Filename from which to load the aircraft and options data, either as a string or
         Path object, or an AviaryValues object containing that information.
-    phase_info : dict
+    phase_info : dict, optional
         Information about the phases of the mission.
-    optimizer : str
+    optimizer : str, optional
         The optimizer to use.
     objective_type : str, optional
         Type of the optimization objective.
