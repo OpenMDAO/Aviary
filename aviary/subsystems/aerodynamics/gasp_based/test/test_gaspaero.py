@@ -6,25 +6,28 @@ import numpy as np
 import openmdao.api as om
 import pandas as pd
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     AeroGeom,
     CruiseAero,
     DragCoef,
     DragCoefClean,
-    FormFactorAndSIWB,
+    FormFactor,
     GroundEffect,
     LiftCoeff,
     LiftCoeffClean,
     LowSpeedAero,
+    SIWB,
     UFac,
     Xlifts,
     WingTailRatios,
     BWBBodyLiftCurveSlope,
-    BWBFormFactorAndSIWB,
+    BWBFormFactor,
     BWBLiftCoeff,
     BWBLiftCoeffClean,
     BWBAeroSetup,
+    BWBSIWB,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -38,6 +41,7 @@ with open(os.path.join(here, 'data', 'aero_data_setup.json')) as file:
     setup_data = json.load(file)
 
 
+@use_tempdirs
 class GASPAeroTest(unittest.TestCase):
     """
     Test overall pre-mission and mission aero systems in cruise and near-ground flight.
@@ -537,54 +541,100 @@ class UFacTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
-class FormFactorAndSIWBTest(unittest.TestCase):
+class FormFactorTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation"""
 
     def test_case1(self):
         prob = om.Problem()
 
         prob.model.add_subsystem(
-            'form_factor',
-            FormFactorAndSIWB(),
+            'formfactor',
+            FormFactor(),
             promotes=['*'],
         )
 
         prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=19.365, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
         tol = 1e-5
         assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024726, tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class SIWBTest(unittest.TestCase):
+    """Test fuselage form factor computation and SIWB computation"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'siwb_comp',
+            SIWB(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=19.365, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-5
         assert_near_equal(prob['siwb'], 0.964972794, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
-class BWBFormFactorAndSIWBTest(unittest.TestCase):
+class BWBFormFactorTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation"""
 
     def test_case1(self):
         prob = om.Problem()
 
         prob.model.add_subsystem(
-            'form_factor',
-            BWBFormFactorAndSIWB(),
+            'formfactor',
+            BWBFormFactor(),
             promotes=['*'],
         )
 
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.365, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.run_model()
 
         tol = 1e-5
         assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024726, tol)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
+
+
+class BWBSIWBTest(unittest.TestCase):
+    """Test fuselage form factor computation and SIWB computation"""
+
+    def test_case1(self):
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'siwb_comp',
+            BWBSIWB(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.365, units='ft')
+        prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=146.38501, units='ft')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+
+        tol = 1e-5
         assert_near_equal(prob['siwb'], 0.964972794, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
@@ -750,7 +800,7 @@ class BWBAeroSetupTest(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless'
         )
 
-        # BWBFormFactorAndSIWB
+        # BWBFormFactor
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
 
@@ -1242,7 +1292,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless'
         )
 
-        # BWBAeroSetup/BWBFormFactorAndSIWB
+        # BWBAeroSetup/BWBFormFactor
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
 
@@ -1427,7 +1477,7 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless'
         )
 
-        # BWBAeroSetup/BWBFormFactorAndSIWB
+        # BWBAeroSetup/BWBFormFactor
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
 
@@ -1567,7 +1617,7 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless'
         )
 
-        # BWBAeroSetup/BWBFormFactorAndSIWB
+        # BWBAeroSetup/BWBFormFactor
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
 
@@ -1716,7 +1766,7 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
             Aircraft.HorizontalTail.MOMENT_RATIO, 0.5463, units='unitless'
         )
 
-        # BWBAeroSetup/BWBFormFactorAndSIWB
+        # BWBAeroSetup/BWBFormFactor
         prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.3650932, units='ft')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
 
