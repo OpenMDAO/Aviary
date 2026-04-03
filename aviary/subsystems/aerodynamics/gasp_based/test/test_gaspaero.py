@@ -1389,6 +1389,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Dynamic.Vehicle.ANGLE_OF_ATTACK, [3.611767, 3.611767], units='deg'
         )
+        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35024721, units='unitless')
 
         setup_model_options(prob, options)
 
@@ -1423,6 +1424,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
 
         # CLFromLift
         prob.model.set_input_defaults('lift_req', [817.74, 817.74], units='lbf')
+        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35024721, units='unitless')
 
         setup_model_options(prob, options)
 
@@ -1558,6 +1560,8 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
             promotes=['*'],
         )
 
+        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35024721, units='unitless')
+
         setup_model_options(prob, options)
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -1684,6 +1688,7 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
 
         # AeroForces
         prob.model.set_input_defaults(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [1.0, 1.0], units='psf')
+        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35024721, units='unitless')
 
         options = self.options
         setup_model_options(prob, options)
@@ -1833,6 +1838,7 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
 
         # AeroForces
         prob.model.set_input_defaults(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [1.0, 1.0], units='psf')
+        prob.model.set_input_defaults(Aircraft.Fuselage.FORM_FACTOR, 1.35024721, units='unitless')
 
         options = self.options
         setup_model_options(prob, options)
@@ -1881,7 +1887,7 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBCruiseAeroTest()
+    unittest.main()
+    test = BWBLowSpeedAeroTest3()
     test.setUp()
-    test.test_case1()
+    # test.test_case1()
