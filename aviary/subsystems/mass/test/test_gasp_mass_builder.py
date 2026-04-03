@@ -87,9 +87,7 @@ class TestGASPMassBuilderHybrid(av.TestSubsystemBuilder):
         prob = om.Problem(group)
 
         setup_model_options(prob, self.aviary_values)
-        prob.model.set_input_defaults(
-            f'pre_mission_sys.{Aircraft.Fuel.DENSITY}', val=6.687, units='lbm/galUS'
-        )
+        prob.model.set_input_defaults(f'{Aircraft.Fuel.DENSITY}', val=6.687, units='lbm/galUS')
 
         prob.setup()
         prob.final_setup()
@@ -175,9 +173,7 @@ class TestGASPMassBuilder(av.TestSubsystemBuilder):
         prob = om.Problem(group)
 
         setup_model_options(prob, self.aviary_values)
-        prob.model.set_input_defaults(
-            f'pre_mission_sys.{Aircraft.Fuel.DENSITY}', val=6.687, units='lbm/galUS'
-        )
+        prob.model.set_input_defaults(f'{Aircraft.Fuel.DENSITY}', val=6.687, units='lbm/galUS')
 
         prob.setup()
         prob.final_setup()
