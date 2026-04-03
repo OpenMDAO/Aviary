@@ -52,7 +52,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('IPOPT', max_iter=100, verbosity=1)
+        prob.add_driver('SNOPT', max_iter=20, verbosity=1)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
