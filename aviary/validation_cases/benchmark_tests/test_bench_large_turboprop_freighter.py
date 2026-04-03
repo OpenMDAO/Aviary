@@ -52,7 +52,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('IPOPT', max_iter=100, verbosity=0)
+        prob.add_driver('IPOPT', max_iter=100, verbosity=1)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
@@ -64,11 +64,15 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
 
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
+        self.assertTrue(prob.result.success)
+
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
+        self.assertTrue(prob.result.success)
+
         # TODO asserts
 
 

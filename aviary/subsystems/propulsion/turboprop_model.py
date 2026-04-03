@@ -123,7 +123,7 @@ class TurbopropModel(EngineModel):
             )
             if shp_model_pre_mission is not None:
                 turboprop_group.add_subsystem(
-                    shp_model_pre_mission.name, subsys=shp_model_pre_mission, promotes=['*']
+                    shp_model.name, subsys=shp_model_pre_mission, promotes=['*']
                 )
 
         gearbox_model_pre_mission = gearbox_model.build_pre_mission(
@@ -131,7 +131,7 @@ class TurbopropModel(EngineModel):
         )
         if gearbox_model_pre_mission is not None:
             turboprop_group.add_subsystem(
-                gearbox_model_pre_mission.name,
+                gearbox_model.name,
                 subsys=gearbox_model_pre_mission,
                 promotes=['*'],
             )
@@ -141,7 +141,7 @@ class TurbopropModel(EngineModel):
         )
         if propeller_model_pre_mission is not None:
             turboprop_group.add_subsystem(
-                propeller_model_pre_mission.name,
+                propeller_model.name,
                 subsys=propeller_model_pre_mission,
                 promotes=['*'],
             )
@@ -571,7 +571,7 @@ class TurbopropMission(om.Group):
                 shp_outputs.append(
                     (
                         Dynamic.Vehicle.Propulsion.RPM,
-                        'AIRCRAFT_DATA_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM,
+                        'INTERNAL_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM,
                     )
                 )
                 shp_output_list.remove(Dynamic.Vehicle.Propulsion.RPM)
@@ -596,7 +596,7 @@ class TurbopropMission(om.Group):
                 shp_input_list.remove(Dynamic.Vehicle.Propulsion.RPM)
         else:
             rpm_ivc.add_output(
-                'AIRCRAFT_DATA_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm'
+                'INTERNAL_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm'
             )
             if has_gearbox and Dynamic.Vehicle.Propulsion.RPM + '_in' in gearbox_input_list:
                 if Dynamic.Vehicle.Propulsion.RPM in shp_output_list:

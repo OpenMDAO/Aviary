@@ -12,12 +12,12 @@ from aviary.models.aircraft.large_turboprop_freighter.electrified_phase_info imp
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
-from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.functions import get_path
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.utils.process_input_decks import create_vehicle
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
-@use_tempdirs
+# @use_tempdirs
 @require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values
 class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
@@ -27,6 +27,10 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         elif mission_method == '2DOF':
             phase_info = deepcopy(two_dof_phase_info)
+
+        # remove descent until RPM can be controlled for that phase
+        del phase_info['desc1']
+        del phase_info['desc2']
 
         # Build problem
         prob = AviaryProblem(verbosity=0)
@@ -60,7 +64,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )
 
         motor = MotorBuilder(
-            options=options,
             name='motor',
         )
 
@@ -72,8 +75,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info,
         )
         prob.load_external_subsystems([electroprop])
-
-        prob.aviary_inputs.set_val(Settings.VERBOSITY, 0)
 
         # if mission_method == 'energy':
         #     # FLOPS aero specific stuff? Best guesses for values here
@@ -92,7 +93,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('SNOPT', verbosity=0)
+        prob.add_driver('SNOPT', verbosity=1)
         prob.add_design_variables()
         prob.model.add_design_var(
             Aircraft.Engine.SCALE_FACTOR,
@@ -106,18 +107,18 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.setup()
 
-        self.assertTrue(prob.result.success)
-
         prob.run_aviary_problem()
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
+        self.assertTrue(prob.result.success)
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
+        self.assertTrue(prob.result.success)
         # TODO asserts
 
 

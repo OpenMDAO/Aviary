@@ -94,6 +94,20 @@ class MotorBuilder(SubsystemBuilder):
 
     #     return DVs
 
+    # def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    #     if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
+    #         controls_dict = {
+    #             Dynamic.Vehicle.Propulsion.RPM: {
+    #                 'units': 'RPM',
+    #                 'lower': 0.0,
+    #                 'upper': 6000,
+    #                 'control_type': 'polynomial',
+    #                 'order': 3,
+    #                 'opt': True,
+    #             },
+    #         }
+    #     return controls_dict
+
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
