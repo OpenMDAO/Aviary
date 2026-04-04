@@ -49,6 +49,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
         self.prob.set_val(Dynamic.Mission.VELOCITY, [75, 150], units='kn')
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
 
@@ -105,6 +106,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
 
         set_params_for_unit_tests(self.prob)
 
@@ -166,6 +168,7 @@ class AscentODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
 
         set_params_for_unit_tests(self.prob)
 
