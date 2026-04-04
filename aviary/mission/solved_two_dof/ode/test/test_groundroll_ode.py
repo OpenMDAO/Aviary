@@ -47,7 +47,6 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
-        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
 
         self.prob.run_model()
 

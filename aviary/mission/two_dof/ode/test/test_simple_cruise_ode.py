@@ -48,7 +48,6 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.set_val('time', np.array([0, 8280.30660691]), units='s')
 
         set_params_for_unit_tests(self.prob)
-        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
 
         self.prob.run_model()
 
