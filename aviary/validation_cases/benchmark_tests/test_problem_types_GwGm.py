@@ -39,6 +39,9 @@ class TestOffDesign(TwoDOFTestCase):
             'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
         prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
+        prob_fallout.aviary_inputs.set_val(
+            'aircraft:fuselage:form_factor', 1.05557953, units='unitless'
+        )
 
         prob_fallout.check_and_preprocess_inputs()
 
