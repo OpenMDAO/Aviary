@@ -22,7 +22,7 @@ aircraft:design:drag_coefficient_increment,0.00175,unitless
 aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-aircraft:design:reserve_fuel_additional,4998,lbm
+mission:reserve_fuel_additional,4998,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:drag_divergence_shift,0.033,unitless
@@ -45,10 +45,10 @@ aircraft:engine:scaled_sls_thrust,28690,lbf
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.35,unitless
 aircraft:fuel:density,6.687,lbm/galUS
-aircraft:fuel:fuel_margin,0,unitless
 aircraft:fuel:fuel_system_mass_coefficient,0.041,unitless
 aircraft:fuel:fuel_system_mass_scaler,1,unitless
 aircraft:fuel:unusable_fuel_mass_coefficient,12,unitless
+aircraft:fuel:volume_margin,0,unitless
 aircraft:fuel:wing_fuel_fraction,0.6,unitless
 aircraft:furnishings:mass,11192,lbm
 aircraft:fuselage:aisle_width,24,inch
@@ -142,19 +142,19 @@ aircraft:wing:thickness_to_chord_root,0.15,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:constraints:max_mach,0.785,unitless
-mission:design:cruise_altitude,37500,ft # double check against phase_info
-mission:design:gross_mass,175400.0,lbm
-mission:design:lift_coefficient_max_flaps_up,1.2596,unitless
-mission:design:mach,0.8,unitless
-mission:design:range,3500,NM
-mission:design:thrust_takeoff_per_eng,28928.1,lbf
+aircraft:design:cruise_altitude,37500,ft # double check against phase_info
+aircraft:design:gross_mass,175400.0,lbm
+aircraft:design:lift_coefficient_max_flaps_up,1.2596,unitless
+aircraft:design:mach,0.8,unitless
+aircraft:design:range,3500,NM
+aircraft:design:thrust_takeoff_per_eng,28928.1,lbf
 mission:landing:airport_altitude,0,ft
 mission:landing:drag_coefficient_flap_increment,0.0406,unitless
 mission:landing:lift_coefficient_flap_increment,1.0293,unitless
 mission:landing:lift_coefficient_max,2.8155,unitless
-mission:summary:cruise_mach,0.785,unitless
-mission:summary:fuel_flow_scaler,1.0,unitless
-mission:summary:gross_mass,175400,lbm
+aircraft:design:cruise_mach,0.785,unitless
+mission:fuel_flow_scaler,1.0,unitless
+mission:gross_mass,175400,lbm
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:drag_coefficient_flap_increment,0.0085,unitless
 mission:takeoff:fuel_simple,577,lbm

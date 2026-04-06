@@ -3,10 +3,10 @@ import unittest
 import numpy as np
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.examples.variable_meta_data_extension import ExtendedMetaData
-from aviary.examples.variables_extension import Aircraft as ExtendedAircraft
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
+from aviary.utils.test.data.variable_meta_data_extension import ExtendedMetaData
+from aviary.utils.test.data.variables_extension import Aircraft as ExtendedAircraft
 from aviary.variable_info.enums import FlapType, GASPEngineType
 from aviary.variable_info.variables import Aircraft, Mission
 
@@ -125,12 +125,12 @@ class TestTypes(unittest.TestCase):
         vals = AviaryValues()
 
         try:
-            vals.set_val(Mission.Design.CRUISE_ALTITUDE, val=35000, units='ft')
+            vals.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=35000, units='ft')
         except:
             self.fail('Expecting correct units and type to pass.')
 
         try:
-            vals.set_val(Mission.Design.CRUISE_ALTITUDE, val=35000.01, units='ft')
+            vals.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=35000.01, units='ft')
         except:
             self.fail('Expecting correct units and type to pass.')
 

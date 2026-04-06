@@ -27,7 +27,10 @@ class TestSubsystemsMission(unittest.TestCase):
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
+                'subsystem_options': {
+                    'aerodynamics': {'method': 'cruise', 'solve_alpha': True},
+                    'additional_array_guess': {'enable_control': True},
+                },
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,

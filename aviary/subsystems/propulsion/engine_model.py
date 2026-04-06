@@ -38,7 +38,7 @@ class EngineModel(SubsystemBuilder):
     update
     """
 
-    default_name = 'engine_model'
+    _default_name = 'engine_model'
     # Flag that sets if this engine computes maximum values (e.g. max thrust, shaft power) for a
     # given flight condition. If False, during mission Aviary will create a duplicate copy of the
     # engine that is given max throttle and hybrid throttle (1.0) to compute max values.
@@ -71,7 +71,7 @@ class EngineModel(SubsystemBuilder):
         )
         self._preprocess_inputs()
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the engine model,
         such as sizing.
@@ -88,7 +88,7 @@ class EngineModel(SubsystemBuilder):
         """
         return None
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the engine model.
 
@@ -109,7 +109,11 @@ class EngineModel(SubsystemBuilder):
         )
 
     def build_post_mission(
-        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
     ):
         """
         Build an OpenMDAO system for the post-mission computations of the engine model.

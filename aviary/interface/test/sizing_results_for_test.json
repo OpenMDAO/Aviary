@@ -36,19 +36,19 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:design:reserve_fuel_additional",
+        "mission:reserve_fuel_additional",
         3000.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "aircraft:design:reserve_fuel_fraction",
+        "mission:reserve_fuel_margin",
         0.0,
         "unitless",
         "<class 'float'>"
     ],
     [
-        "mission:design:cruise_altitude",
+        "aircraft:design:cruise_altitude",
         35000.0,
         "ft",
         "<class 'float'>"
@@ -204,7 +204,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:landing_mass",
+        "aircraft:design:touchdown_mass_max",
         152800.0,
         "lbm",
         "<class 'float'>"
@@ -989,19 +989,19 @@
         "<class 'float'>"
     ],
     [
-        "mission:design:gross_mass",
+        "aircraft:design:gross_mass",
         175400.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "mission:design:range",
+        "aircraft:design:range",
         3500.0,
         "NM",
         "<class 'float'>"
     ],
     [
-        "mission:design:thrust_takeoff_per_eng",
+        "aircraft:design:thrust_takeoff_per_eng",
         28928.1,
         "lbf",
         "<class 'float'>"
@@ -1013,13 +1013,13 @@
         "<class 'float'>"
     ],
     [
-        "mission:summary:cruise_mach",
+        "aircraft:design:cruise_mach",
         0.785,
         "unitless",
         "<class 'float'>"
     ],
     [
-        "mission:summary:fuel_flow_scaler",
+        "mission:fuel_flow_scaler",
         1.0,
         "unitless",
         "<class 'float'>"
@@ -1139,13 +1139,13 @@
         "<class 'int'>"
     ],
     [
-        "mission:summary:gross_mass",
+        "mission:gross_mass",
         175400.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "mission:summary:range",
+        "mission:range",
         1906.0,
         "NM",
         "<class 'float'>"

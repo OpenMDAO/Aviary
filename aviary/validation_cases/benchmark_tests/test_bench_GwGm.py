@@ -29,17 +29,22 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Mission.Design.GROSS_MASS, 'lbm'): 171595.06049335,
-            (Mission.Summary.OPERATING_MASS, 'lbm'): 95089.98897716,
-            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
+            (Aircraft.Design.GROSS_MASS, 'lbm'): 171595.06049335,
+            (Mission.OPERATING_MASS, 'lbm'): 95089.98897716,
+            (Mission.TOTAL_FUEL, 'lbm'): 40505.07151619,
             (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
-            (Mission.Summary.RANGE, 'NM'): 3675.0,
-            (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136087.98897716,
+            (Mission.RANGE, 'NM'): 3675.0,
+            (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
         }
 
         for (var_name, units), expected_val in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob.get_val(var_name, units=units), expected_val, tolerance=rtol)
+
+        # Due to a bug, this constraint was unconnected. Test it explicitly.
+        t1 = prob.get_val('ascent_initial_time_slack_constraint.initial_time', units='s')
+        t2 = prob.get_val(Mission.Takeoff.ASCENT_T_INITIAL, units='s')
+        assert_near_equal(t1, t2, tolerance=rtol)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_GwGm_IPOPT(self):

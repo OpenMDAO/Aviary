@@ -13,39 +13,53 @@ class SubsystemBuilder(ABC):
         Name of subsystem, as it will appear when added to the OpenMDAO problem
     meta_data : dict
         Dictionary containing the variable metadata used by this Aviary problem
-    ```
     """
 
     __slots__ = ('name', 'meta_data')
 
     # derived type customization point
-    default_name = 'default_subsystem_name'
-    default_metadata = _MetaData
+    _default_name = 'default_subsystem_name'
+    _default_metadata = _MetaData
 
     def __init__(self, name=None, meta_data=None):
         if name is None:
-            name = self.default_name
+            name = self._default_name
         self.name = name
 
         if meta_data is None:
-            meta_data = self.default_metadata
+            meta_data = self._default_metadata
         self.meta_data = meta_data
 
-    def needs_mission_solver(self, aviary_inputs):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is
         True.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
+
         """
         return True
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO System for the pre-mission computations of the subsystem.
 
         Required for subsystems with pre-mission computations.
 
         Used in level3.py to build the pre-mission system.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in pre-mission.
 
         Returns
         -------
@@ -56,9 +70,9 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def get_states(self):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of states defined by this subsystem.
+        Return a dictionary of dynamic states defined by this subsystem. (Optional)
 
         Required for subsystems with mission-based dynamics.
 
@@ -66,11 +80,18 @@ class SubsystemBuilder(ABC):
         derivative of each state. The recommended convention is to name the output
         f"{state_name}_rate", where `state_name` is the name of the state variable.
 
-        Use in the phase builders when other states are added to the phase.
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        states : dict
+        dict
             A dictionary where the keys are the names of the state variables
             and the values are dictionaries with the following keys:
 
@@ -81,58 +102,55 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_controls(self, phase_name=None):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of control variables for the subsystem.
+        Return a dictionary of control variables for the subsystem. (Optional)
 
         Parameters
         ----------
-        phase_name : str, optional
-            Name of the flight phase. This allows for different control variables to be used in
-            different flight phases. You can add branching logic however you want based on the
-            phase_name within a builder.
-
-        Notes
-        -----
-        This method is optional, used if subsystems have control variables.
-        Used in the phase builders when other controls are added to the phase.
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        controls : dict
+        dict
             A dictionary where the keys are the names of the control variables
             and the values are dictionaries with the following keys:
 
             - 'units': str
                 The units for the control variable.
+            - 'opt': bool
+                When True, this control becomes an optimizer design variable.
             - any additional keyword arguments required by OpenMDAO for the control variable.
         """
         return {}
 
-    def get_parameters(self, aviary_inputs=None, **kwargs):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of fixed values for the subsystem.
+        Return a dictionary of parameters for the subsystem. (Optional)
 
-        Optional, used if subsystems have fixed values.
-
-        Used in the phase builders when other parameters are added to the
-        phase.
-
-        This is distinct from `get_design_vars` in a nuanced way. Design variables are variables
-        that are optimized by the problem that are not at the phase level. An example would be
-        something that occurs in the pre-mission level of the problem. Parameters are fixed values
-        that are held constant throughout a phase, but if `opt=True`, they are able to change during
-        the optimization.
+        A parameter is a value that does not vary over the trajectory. Adding a variable name to
+        this list promotes the input to the top of the Aviary model, where it is either implicitly
+        connected to any pre-mission component that produces it, or it assumes the value set in
+        the csv file.
 
         Parameters
         ----------
         aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        fixed_values : dict
-            A dictionary where the keys are the names of the fixed variables and the values are
+        dict
+            A dictionary where the keys are the names of the fixed parameters and the values are
             dictionaries with the following keys:
 
             - 'value': float or array
@@ -143,18 +161,24 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_constraints(self):
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of constraints for the subsystem.
 
-        Optional, used if subsystems have path or boundary constraints.
+        Use when subsystems have path or boundary constraints in the phases.
 
-        Used in the phase builders when other constraints are added to the
-        phase.
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        constraints : dict
+        dict
             A dictionary where the keys are the names of the constraint variables and the values are
             dictionaries with the following keys:
 
@@ -165,11 +189,14 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         """
         Return a list of variable names that will be linked between phases.
 
-        Optional
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------
@@ -177,7 +204,16 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_bus_variables(self, aviary_inputs=None):
+        # This is an error instead of a warning because it has potential to cause your model to
+        # fail in ways that are difficult to debug.
+        raise RuntimeError(
+            '"get_bus_variables()" has been renamed to "get_pre_mission_bus_variables()" to '
+            'differentiate it from "get_post_mission_bus_variables()". Please rename this method '
+            'in your subsytem builders.'
+        )
+
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """
         Return a dictionary of variables that will be passed from the pre-mission
         to mission and post-mission systems.
@@ -186,6 +222,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
+        mission_info : dict
+            The mission_info dict containing the phase_info for each phase.
 
         Returns
         -------
@@ -205,13 +243,24 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO System for the mission computations of the subsystem.
 
         Required for subsystems with mission-based dynamics.
 
         Used in the ODE class definition (e.g. mission_ODE.py) to build the mission system.
+
+        Parameters
+        ----------
+        num_nodes : int
+            Number of nodes present in the current Dymos phase of mission analysis.
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
@@ -222,46 +271,56 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Returns list of mission inputs to be promoted out of the external subsystem. By default, all
         inputs are promoted. Used when only a subset of inputs should be promoted.
-        """
-        return ['*']
 
-    def mission_outputs(self, **kwargs):
-        """
-        Returns list of mission outputs to be promoted out of the external subsystem. By default,
-        all outputs are promoted. Used when only a subset of outputs should be promoted.
-        """
-        return ['*']
-
-    def define_order(self):
-        """
-        Return a list of subsystem names that must be defined before this one. E.g., must go before
-        or after aero or prop.
-
-        Optional
-
-        This will be made easier once an upcoming POEM about reordering systems in OM is integrated.
-
-        Not needed yet, but will be useful when subsystem order matters, like for certain aero-prop
-        cases.
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        order : list of str
-            A list of subsystem names that this subsystem depends on.
+        list
+            List of all mission inputs.
         """
-        return []
+        return ['*']
 
-    def get_design_vars(self):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        """
+        Returns list of mission outputs to be promoted out of the external subsystem. By default,
+        all outputs are promoted. Used when only a subset of outputs should be promoted.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
+
+        Returns
+        -------
+        list
+            List of all mission outputs.
+        """
+        return ['*']
+
+    def get_design_vars(self, aviary_inputs=None):
         """
         Return a dictionary of design variables for the subsystem.
 
-        Optional
-
-        Not currently used.
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------
@@ -273,15 +332,22 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_initial_guesses(self):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a dictionary of initial guesses for the subsystem.
 
-        Optional
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        initial_guesses : dict
+        dict
             A dictionary where the keys are the names of the variables and the values are
             dictionaries with the following keys:
 
@@ -293,9 +359,14 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """
         Return a list of names of the mass variables for the subsystem.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
 
         Returns
         -------
@@ -304,7 +375,7 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def preprocess_inputs(self, aviary_inputs):
+    def preprocess_inputs(self, aviary_inputs=None):
         """
         Preprocess the inputs to the subsystem, returning a modified AviaryValues object.
 
@@ -325,14 +396,28 @@ class SubsystemBuilder(ABC):
         )
         return self.get_timeseries()
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a list of outputs to add to the Dymos timeseries outputs for use when graphing or
         post-processing the mission.
+
+        Parameters
+        ----------
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
+
+        Returns
+        -------
+        list
+            List of outputs to add to the timeseries.
         """
         return []
 
-    def get_post_mission_bus_variables(self, aviary_inputs=None, phase_info=None):
+    def get_post_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """
         Return a dict mapping phase names to a dict mapping mission variable names to (a list of)
         post-mission variable names.
@@ -346,8 +431,8 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info dict for all phases
+        mission_info : dict
+            The mission_info dict containing the phase_info for each phase.
 
         Returns
         -------
@@ -358,32 +443,15 @@ class SubsystemBuilder(ABC):
                 Names of the input variable to be connected in the post-mission subsystem
             - 'src_indices': int or list of ints or tuple of ints or int ndarray or Iterable or None
                 Indices of the mission variable for connection
-
-        Example
-        -------
-        bus_variables = {}
-        if phase_info:
-            for phase_name, phase_data in phase_info.items():
-                phase_d = {}
-                if phase_data["do_the_thing"]:
-                    phase_d[f"{self.name}.mission_variable_a"] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_variable_a", "src_indices": -1}
-                    phase_d[f"{self.name}.mission_variable_b"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_b_name1", f"{self.name}.{phase_name}_post_mission_variable_b_name2"]}
-                    phase_d[f"{self.name}.mission_variable_c"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_c_name1"]}
-                    phase_d[Dynamic.Mission.VELOCITY] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_velocity_name1"}
-                if phase_data["do_the_other_thing"]:
-                    phase_d[f"{self.name}.mission_variable_d"] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_variable_d", "src_indices": [0, 1]}
-                    phase_d[f"{self.name}.mission_variable_e"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_e_name1", f"{self.name}.{phase_name}_post_mission_variable_e_name2"]}
-                    phase_d[f"{self.name}.mission_variable_f"] = {"post_mission_name": [f"{self.name}.{phase_name}_post_mission_variable_f_name1"]}
-                    phase_d[Dynamic.Atmosphere.KINEMATIC_VISCOSITY] = {"post_mission_name": f"{self.name}.{phase_name}_post_mission_nu_name1"}
-
-                bus_variables[phase_name] = phase_d
-
-        return bus_variables
         """
         return {}
 
     def build_post_mission(
-        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
     ):
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
@@ -394,8 +462,10 @@ class SubsystemBuilder(ABC):
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
-        phase_info : dict
-            The phase_info dict for all phases
+        mission_info : dict
+            The mission_info dict containing the phase_info for each phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in post_mission.
         phase_mission_bus_lengths : dict
             Mapping from phase names to the lengths of the phase's "mission_bus_variables"
             timeseries

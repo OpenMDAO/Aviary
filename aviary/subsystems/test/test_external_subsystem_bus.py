@@ -99,11 +99,11 @@ class PostMissionComp(om.ExplicitComponent):
 
 
 class CustomBuilder(SubsystemBuilder):
-    def __init__(self, name, mangle_names=False):
+    def __init__(self, name=None, meta_data=None, mangle_names=False):
         self.mangle_names = mangle_names
-        super().__init__(name)
+        super().__init__(name, meta_data)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),
@@ -125,7 +125,7 @@ class CustomBuilder(SubsystemBuilder):
             sys = PreMissionComp(shape=shape)
         return sys
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         sub_group = om.Group()
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
@@ -149,7 +149,7 @@ class CustomBuilder(SubsystemBuilder):
             )
         return sub_group
 
-    def get_pre_mission_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),
@@ -210,12 +210,14 @@ class CustomBuilder(SubsystemBuilder):
             }
         return vars_to_connect
 
-    def get_post_mission_bus_variables(self, aviary_inputs, phase_info):
+    def get_post_mission_bus_variables(self, aviary_inputs, mission_info):
         name = self.name
         out = {}
-        for phase_name, phase_data in phase_info.items():
+        for phase_name, phase_data in mission_info.items():
             phase_d = {}
-            if phase_data.get('do_the_zz_thing', False):
+            all_subsystem_options = phase_data.get('subsystem_options', {})
+            subsystem_options = all_subsystem_options.get(name, {})
+            if subsystem_options.get('do_the_zz_thing', False):
                 if self.mangle_names:
                     phase_d[f'{name}_zz'] = {'post_mission_name': f'{name}.{phase_name}_{name}_zz'}
                     phase_d[Dynamic.Mission.VELOCITY] = {
@@ -229,15 +231,23 @@ class CustomBuilder(SubsystemBuilder):
             out[phase_name] = phase_d
         return out
 
-    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
         shape = (
             aviary_inputs.get_val('the_shape_for_the_thing_dim0'),
             aviary_inputs.get_val('the_shape_for_the_thing_dim1'),
         )
         group = om.Group()
         name = self.name
-        for phase_name, phase_data in phase_info.items():
-            do_the_zz_thing = phase_data.get('do_the_zz_thing', False)
+        for phase_name, phase_data in mission_info.items():
+            all_subsystem_options = phase_data.get('subsystem_options', {})
+            subsystem_options = all_subsystem_options.get(name, {})
+            do_the_zz_thing = subsystem_options.get('do_the_zz_thing', False)
             num_nodes = phase_mission_bus_lengths[phase_name]
             comp = PostMissionComp(
                 num_nodes=num_nodes, shape=shape, do_the_zz_thing=do_the_zz_thing
@@ -265,8 +275,10 @@ class TestExternalSubsystemBus(unittest.TestCase):
     def test_external_subsystem_bus(self):
         phase_info = deepcopy(ph_in)
 
-        phase_info['climb']['do_the_zz_thing'] = True
-        phase_info['descent']['do_the_zz_thing'] = False
+        phase_info['climb']['subsystem_options']['test'] = {'do_the_zz_thing': True}
+        phase_info['descent']['subsystem_options']['test'] = {'do_the_zz_thing': False}
+        phase_info['climb']['subsystem_options']['test2'] = {'do_the_zz_thing': True}
+        phase_info['descent']['subsystem_options']['test2'] = {'do_the_zz_thing': False}
 
         prob = AviaryProblem()
 

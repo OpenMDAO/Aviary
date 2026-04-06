@@ -2807,11 +2807,11 @@ class TakeoffTrajectory:
 
     MappedPhase = namedtuple('MappedPhase', ('phase', 'phase_type'))
 
-    default_name = 'detailed_takeoff'
+    _default_name = 'detailed_takeoff'
 
     def __init__(self, name=None):
         if name is None:
-            name = self.default_name
+            name = self._default_name
 
         self.name = name
 
@@ -2996,9 +2996,11 @@ class TakeoffTrajectory:
 
             aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
-            kwargs = {'method': 'low_speed'}
+            subsystem_options = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, **kwargs)
+            params = aero.get_parameters(
+                aviary_inputs=aviary_options, subsystem_options=subsystem_options
+            )
 
             # takeoff introduces this one.
             params[Mission.Takeoff.LIFT_COEFFICIENT_MAX] = {

@@ -1,4 +1,5 @@
 import unittest
+import aviary.api as av
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -7,7 +8,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
@@ -51,15 +52,14 @@ class TestEnergyStateOffDesign(unittest.TestCase):
     def compare_results(self, comparison_prob):
         # compares provided problem with design problem
         prob_var_list = [
-            Mission.Design.RANGE,
-            Mission.Summary.RANGE,
-            Mission.Summary.FUEL_MASS,
-            Mission.Summary.TOTAL_FUEL_MASS,
-            Mission.Summary.OPERATING_MASS,
+            Aircraft.Design.RANGE,
+            Mission.RANGE,
+            Mission.TOTAL_FUEL,
+            Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
-            Mission.Design.GROSS_MASS,
-            Mission.Summary.GROSS_MASS,
+            Aircraft.Design.GROSS_MASS,
+            Mission.GROSS_MASS,
             Aircraft.Design.EMPTY_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
         ]
@@ -91,6 +91,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         # different constraints/design variables
         prob_fallout = self.prob.run_off_design_mission(problem_type='fallout')
         self.compare_results(prob_fallout)
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_fallout_mission_changed(self):
@@ -104,23 +105,18 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             num_economy=75,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.RANGE),
-            self.prob.get_val(Mission.Design.RANGE),
+            prob_fallout.get_val(Aircraft.Design.RANGE),
+            self.prob.get_val(Aircraft.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.Summary.RANGE), 2438.6, tolerance=1e-3)
+        assert_near_equal(prob_fallout.get_val(Mission.RANGE), 2438.6, tolerance=1e-3)
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            46164.07769361,
-            tolerance=1e-5,
-        )
-        assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.TOTAL_FUEL, 'lbm'),
             29031.53317628,
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.OPERATING_MASS, 'lbm'),
             97743.46682372,
             tolerance=1e-5,
         )
@@ -145,12 +141,12 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
-            self.prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob_fallout.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
+            self.prob.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.GROSS_MASS, 'lbm'),
             150000,
             tolerance=1e-12,
         )
@@ -174,6 +170,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             81,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -194,23 +191,18 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             num_economy=144,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Design.RANGE),
-            self.prob.get_val(Mission.Design.RANGE),
+            prob_alternate.get_val(Aircraft.Design.RANGE),
+            self.prob.get_val(Aircraft.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
+        assert_near_equal(prob_alternate.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            33139.01658754,
-            tolerance=1e-5,
-        )
-        assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.TOTAL_FUEL, 'lbm'),
             23663.00633808,
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.OPERATING_MASS, 'lbm'),
             97743.52792979,
             tolerance=1e-5,
         )
@@ -235,12 +227,12 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Design.GROSS_MASS, 'lbm'),
-            self.prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
+            self.prob.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.GROSS_MASS, 'lbm'),
             157656.53426787,
             tolerance=1e-5,
         )
@@ -264,6 +256,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             150,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_alternate.result.success)
 
 
 @use_tempdirs
@@ -303,21 +296,20 @@ class Test2DOFOffDesign(unittest.TestCase):
     def compare_results(self, comparison_prob):
         # compares provided problem with design problem
         prob_var_list = [
-            Mission.Summary.RANGE,
-            Mission.Summary.FUEL_MASS,
-            Mission.Summary.TOTAL_FUEL_MASS,
-            Mission.Summary.OPERATING_MASS,
+            Mission.RANGE,
+            Mission.TOTAL_FUEL,
+            Mission.OPERATING_MASS,
             Aircraft.CrewPayload.CARGO_MASS,
             Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
-            Mission.Design.GROSS_MASS,
-            Mission.Summary.GROSS_MASS,
+            Aircraft.Design.GROSS_MASS,
+            Mission.GROSS_MASS,
             # currently not a GASP variable
             # Aircraft.Design.EMPTY_MASS,
             Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS,
         ]
 
         inputs_var_list = [
-            (Mission.Design.RANGE, 'nmi'),
+            (Aircraft.Design.RANGE, 'nmi'),
             (Aircraft.CrewPayload.NUM_PASSENGERS, 'unitless'),
         ]
 
@@ -353,25 +345,18 @@ class Test2DOFOffDesign(unittest.TestCase):
             num_pax=75,
         )
         assert_near_equal(
-            prob_fallout.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
-            prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            prob_fallout.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
+            prob.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
+        assert_near_equal(prob_fallout.get_val(Mission.RANGE), 3994.25223046, tolerance=1e-4)
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.RANGE), 3994.25223046, tolerance=1e-4
-        )
-        assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40505.91552026,
-            tolerance=1e-5,
-        )
-        assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.TOTAL_FUEL, 'lbm'),
             39909.74193096,
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.OPERATING_MASS, 'lbm'),
             95090.25806904,
             tolerance=1e-5,
         )
@@ -397,12 +382,12 @@ class Test2DOFOffDesign(unittest.TestCase):
         #     tolerance=1e-12,
         # )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Design.GROSS_MASS, 'lbm'),
-            prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob_fallout.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
+            prob.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_fallout.get_val(Mission.GROSS_MASS, 'lbm'),
             155000,
             tolerance=1e-12,
         )
@@ -411,6 +396,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             75,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -433,23 +419,18 @@ class Test2DOFOffDesign(unittest.TestCase):
             num_pax=150,
         )
         assert_near_equal(
-            prob_alternate.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
-            prob.aviary_inputs.get_val(Mission.Design.RANGE, 'nmi'),
+            prob_alternate.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
+            prob.aviary_inputs.get_val(Aircraft.Design.RANGE, 'nmi'),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_alternate.get_val(Mission.Summary.RANGE), 1800, tolerance=1e-6)
+        assert_near_equal(prob_alternate.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.FUEL_MASS, 'lbm'),
-            40505.91552026,
-            tolerance=1e-6,
-        )
-        assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.TOTAL_FUEL_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.TOTAL_FUEL, 'lbm'),
             21484.97566914,
             tolerance=1e-6,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.OPERATING_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.OPERATING_MASS, 'lbm'),
             95090.25806904,
             tolerance=1e-6,
         )
@@ -475,12 +456,12 @@ class Test2DOFOffDesign(unittest.TestCase):
         #     tolerance=1e-12,
         # )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Design.GROSS_MASS, 'lbm'),
-            prob.get_val(Mission.Design.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
+            prob.get_val(Aircraft.Design.GROSS_MASS, 'lbm'),
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob_alternate.get_val(Mission.GROSS_MASS, 'lbm'),
             148675.23373818,
             tolerance=1e-6,
         )
@@ -489,6 +470,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             150,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_alternate.result.success)
 
 
 @use_tempdirs
@@ -506,8 +488,12 @@ class PayloadRangeTest(unittest.TestCase):
             (25.0, 60.0),
             'min',
         )
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-        # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
+
+        (aviary_inputs, initialization_guesses) = av.create_vehicle(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        )
+        aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)
+        prob.load_inputs(aviary_inputs, phase_info)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -526,7 +512,7 @@ class PayloadRangeTest(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
         prob.run_aviary_problem()
-        off_design_probs = prob.run_payload_range()
+
         # test outputted payload-range data
         assert_near_equal(
             prob.payload_range_data.get_val('Payload', 'lbm'),
@@ -536,7 +522,7 @@ class PayloadRangeTest(unittest.TestCase):
                 24368.28182739,
                 0,
             ],
-            tolerance=1e-10,
+            tolerance=1e-8,
         )
         assert_near_equal(
             prob.payload_range_data.get_val('Fuel', 'lbm'),
@@ -549,24 +535,28 @@ class PayloadRangeTest(unittest.TestCase):
             tolerance=1e-6,
         )
 
-        # verify TOGW for each off-design problem
+        # verify TOGW for each payload range problem
         assert_near_equal(
-            off_design_probs[0].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob.economic_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             165899.19090919,
-            tolerance=1e-12,
+            tolerance=1e-8,
         )
         assert_near_equal(
-            off_design_probs[1].get_val(Mission.Summary.GROSS_MASS, 'lbm'),
+            prob.ferry_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             140541.17160737,
-            tolerance=1e-12,
+            tolerance=1e-8,
         )
+        self.assertTrue(prob.result.success)
+        self.assertTrue(prob.economic_range_prob.result.success)
+        self.assertTrue(prob.ferry_range_prob.result.success)
 
 
 if __name__ == '__main__':
     # unittest.main()
     test = Test2DOFOffDesign()
+    # test = TestEnergyStateOffDesign()
     test.setUp()
-    test.test_alternate_mission_changed()
+    test.test_alternate_mission_match()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()

@@ -50,7 +50,7 @@ outputs = N3CC['outputs'] = AviaryValues()
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.01498)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
-inputs.set_val(Mission.Design.GROSS_MASS, 129734.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 129734.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.93)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 0.95)
@@ -294,9 +294,9 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 
 # Mission
 # ---------------------------
-inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)
-inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
-inputs.set_val(Mission.Design.RANGE, 3500, 'NM')
+inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
+inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(Aircraft.Design.RANGE, 3500, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 inputs.set_val(Mission.Landing.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
@@ -333,16 +333,15 @@ inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.SIZING)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 67542.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 996.88, 'lbm')
-outputs.set_val(Aircraft.Design.LANDING_MASS, 108976.4, 'lbm')
+outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 108976.4, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3322, 'lbm')
-outputs.set_val(Mission.Summary.OPERATING_MASS, 72642.0, 'lbm')
+outputs.set_val(Mission.OPERATING_MASS, 72642.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 13105.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 29336.0, 'lbm')
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 24105.0, 'lbm')
-outputs.set_val(Mission.Summary.USEFUL_LOAD, 5100, 'lbm')
+outputs.set_val(Mission.USEFUL_LOAD, 5100, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 7956.515738, 'ft**2')
-outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 103442.0, 'lbm')
-outputs.set_val(Mission.Summary.FUEL_MASS, 26292.0, 'lbm')
+outputs.set_val(Mission.ZERO_FUEL_MASS, 103442.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 1541.0, 'lbm')
 
@@ -441,8 +440,8 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4329.9, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 2741.0, 'lbm')
 outputs.set_val(Aircraft.Wing.MASS, 8911.0, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.779)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
+outputs.set_val(Aircraft.Design.MACH, 0.779)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
 engines = [build_engine_deck(options=inputs)]
@@ -507,7 +506,7 @@ takeoff_brake_release_initial_guesses.set_val('distance', [0.0, 4100.0], 'ft')
 takeoff_brake_release_initial_guesses.set_val('velocity', [0.01, 150.0], 'kn')
 
 gross_mass_units = 'lbm'
-gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
+gross_mass = inputs.get_val(Aircraft.Design.GROSS_MASS, gross_mass_units)
 takeoff_brake_release_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 takeoff_brake_release_initial_guesses.set_val('throttle', 1.0)

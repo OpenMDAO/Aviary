@@ -63,7 +63,7 @@ class BWBWingGroupTest(unittest.TestCase):
             case_name,
             input_keys=[
                 # EnginePodMass
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Electrical.MASS,
                 Aircraft.Fuel.FUEL_SYSTEM_MASS,
                 Aircraft.Hydraulics.MASS,

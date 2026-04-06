@@ -21,6 +21,7 @@ from aviary.variable_info.variable_meta_data import _MetaData
 _require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
     '_require_new_initial_guesses_meta_data_class_attr_', ()
 )
+analytic_args = ['name', 'state_name', 'units', 'shape']
 
 
 class PhaseBuilder(ABC):
@@ -36,7 +37,10 @@ class PhaseBuilder(ABC):
         list of SubsystemBuilder objects that will be added to the phase ODE
 
     user_options : OptionsDictionary (<empty>)
-        state/path constraint values and flags
+        Processsed phase options for his phase.
+
+    user_options_dict : dict
+        dictionary of user options from the phase_info, as specified by user
 
     initial_guesses : AviaryValues (<empty>)
         state/path beginning values to be set on the problem
@@ -51,7 +55,7 @@ class PhaseBuilder(ABC):
     subsystem_options : dict (None)
         dictionary of parameters to be passed to the subsystem builders
 
-    default_name : str
+    _default_name : str
         class attribute: derived type customization point; the default value
         for name
 
@@ -82,6 +86,7 @@ class PhaseBuilder(ABC):
         'subsystems',
         'subsystem_options',
         'user_options',
+        'user_options_dict',
         'initial_guesses',
         'ode_class',
         'transcription',
@@ -92,7 +97,7 @@ class PhaseBuilder(ABC):
 
     _initial_guesses_meta_data_ = _require_new_initial_guesses_meta_data_class_attr_()
 
-    default_name = '_unknown phase_'
+    _default_name = '_unknown phase_'
 
     default_ode_class = EnergyStateODE
     default_options_class = om.OptionsDictionary
@@ -114,7 +119,7 @@ class PhaseBuilder(ABC):
         meta_data=None,
     ):
         if name is None:
-            name = self.default_name
+            name = self._default_name
 
         self.name = name
 
@@ -128,6 +133,7 @@ class PhaseBuilder(ABC):
 
         self.subsystem_options = subsystem_options
 
+        self.user_options_dict = user_options
         self.user_options = self.default_options_class(user_options)
 
         if initial_guesses is None:
@@ -521,6 +527,83 @@ class PhaseBuilder(ABC):
         # Add a final constraint.
         if opt and final is not None:
             phase.add_boundary_constraint(target, loc='final', equals=final, units=units, ref=ref)
+
+    def add_subsystem_variables_to_phase(self, phase, aviary_inputs):
+        """
+        Add subsystem states, controls, and constraints to this phase.
+
+        Parameters
+        ----------
+        phase : object
+            The phase object to which variables are to be added.
+        aviary_inputs : dict
+            A dictionary containing the inputs to the subsystem.
+
+        Returns
+        -------
+        phase : object
+            The modified phase object with added variables.
+        """
+        phase_name = self.name
+        subsystems = self.subsystems
+        user_options = self.user_options
+        all_subsystem_options = self.subsystem_options
+
+        # Loop through each subsystem in the list of external_subsystems
+        for subsystem in subsystems:
+            if subsystem.name in all_subsystem_options:
+                subsystem_options = all_subsystem_options[subsystem.name]
+            else:
+                subsystem_options = {}
+
+            # Fetch the states from the current subsystem
+            subsystem_states = subsystem.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+
+            # Add each state and its corresponding arguments to the phase
+            for state_name in subsystem_states:
+                kwargs = subsystem_states[state_name]
+                # analytic phase states only accept a limit number of arguments
+                if isinstance(phase, dm.AnalyticPhase):
+                    new_kwargs = {}
+                    for arg in analytic_args:
+                        if arg in kwargs:
+                            new_kwargs[arg] = kwargs[arg]
+                    kwargs = new_kwargs
+                phase.add_state(state_name, **kwargs)
+
+            controls = subsystem.get_controls(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+
+            for control_name in controls:
+                kwargs = controls[control_name]
+                phase.add_control(control_name, **kwargs)
+
+            constraints = subsystem.get_constraints(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+
+            # Add each constraint and its corresponding arguments to the phase
+            for constraint_name in constraints:
+                con_args = constraints[constraint_name].copy()
+                con_type = con_args.pop('type')
+                if con_type == 'boundary':
+                    phase.add_boundary_constraint(constraint_name, **con_args)
+                elif con_type == 'path':
+                    phase.add_path_constraint(constraint_name, **con_args)
+                else:
+                    raise ValueError(
+                        f'Invalid type "{con_type}" in builder for {subsystem.pathname}.'
+                    )
+        return phase
 
 
 _registered_phase_builder_types = []
