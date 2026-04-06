@@ -6,3 +6,89 @@
   max-width: 100%;  /* default is 88rem */
 }
 
+/* ============================================================
+ * Collapsible headers
+ * Each h2-h6 section is automatically wrapped in a <details>
+ * element by collapsible_headers.js. The rules below style
+ * those wrappers. They use PyData Sphinx Theme CSS custom
+ * properties (--pst-*) for colours, with plain hex fallbacks
+ * for any browser that does not support the variables.
+ * ============================================================ */
+
+/* Outer <details> container: subtle border and rounded corners
+ * to visually group the heading with its content. */
+details.aviary-collapsible-section {
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--pst-color-border, #d0d7de);
+  border-radius: 0.3rem;
+  background-color: var(--pst-color-surface, #ffffff);
+}
+
+/* <summary> bar that the user clicks to toggle the section.
+ * Flex layout places the disclosure triangle, then the heading,
+ * side-by-side and vertically centred. */
+details.aviary-collapsible-section > summary.aviary-collapsible-summary {
+  cursor: pointer;
+  list-style: none;       /* removes the default bullet in Firefox */
+  padding: 0.45rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Remove the built-in WebKit disclosure triangle so our custom
+ * ::before triangle is the only indicator shown. */
+details.aviary-collapsible-section > summary.aviary-collapsible-summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Disclosure triangle drawn with a clip-path polygon rather than
+ * a Unicode glyph.  A clip-path triangle fills its bounding box
+ * precisely, so transform-origin: center center rotates around
+ * the true visual centre of the triangle — something a text glyph
+ * cannot guarantee because glyphs rarely fill their em-box evenly.
+ *
+ * The polygon() points describe a right-pointing triangle:
+ *   top-left → right-middle → bottom-left
+ *
+ * When the section is open the triangle is rotated 90° to point
+ * downward.  The CSS transition animates the rotation smoothly. */
+details.aviary-collapsible-section > summary.aviary-collapsible-summary::before {
+  content: "";                        /* no text; shape comes from clip-path */
+  flex-shrink: 0;                     /* never let the flex container squash it */
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: var(--pst-color-text-muted, #57606a);
+  clip-path: polygon(0% 0%, 100% 50%, 0% 100%); /* right-pointing triangle */
+  transform-origin: center center;    /* rotates around true geometric centre */
+  transition: transform 0.15s ease-in-out;
+  transform: rotate(90deg);           /* default (open) state: pointing down */
+}
+
+/* Closed state: triangle returns to pointing right (0°),
+ * signalling that clicking will expand the section. */
+details.aviary-collapsible-section:not([open]) > summary.aviary-collapsible-summary::before {
+  transform: rotate(0deg);
+}
+
+/* Heading elements inside <summary> fill the remaining width
+ * (flex: 1) and have their default top/bottom margin removed
+ * so the summary bar stays compact. */
+details.aviary-collapsible-section > summary.aviary-collapsible-summary > h2,
+details.aviary-collapsible-section > summary.aviary-collapsible-summary > h3,
+details.aviary-collapsible-section > summary.aviary-collapsible-summary > h4,
+details.aviary-collapsible-section > summary.aviary-collapsible-summary > h5,
+details.aviary-collapsible-section > summary.aviary-collapsible-summary > h6 {
+  display: block;
+  margin: 0;
+  flex: 1;
+}
+
+/* Body wrapper div that holds all section content below the
+ * heading.  Padding keeps content from touching the container
+ * edges while the top is left at 0 to sit flush with the summary. */
+details.aviary-collapsible-section > .aviary-collapsible-body {
+  padding: 0 0.9rem 0.9rem;
+}
+
