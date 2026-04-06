@@ -22,22 +22,24 @@ class PropellerBuilder(SubsystemBuilder):
         (Aircraft.Engine.Propeller.DATA_FILE).
     """
 
-    def __init__(self, name='propeller', data: NamedValues = None):
+    _default_name = 'propeller'
+
+    def __init__(self, name=None, meta_data=None, data: NamedValues = None):
         """Initializes the PropellerBuilder object with a given name."""
-        super().__init__(name)
+        super().__init__(name, meta_data)
         self.data = data
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """Builds an OpenMDAO system for the pre-mission computations of the subsystem."""
         return
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """Builds an OpenMDAO system for the mission computations of the subsystem."""
         return PropellerPerformance(
             num_nodes=num_nodes, aviary_options=aviary_inputs, propeller_data=self.data
         )
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, subsystem_options=None):
         inputs = [
             Dynamic.Atmosphere.MACH,
             Aircraft.Engine.Propeller.TIP_SPEED_MAX,
@@ -57,7 +59,7 @@ class PropellerBuilder(SubsystemBuilder):
         outputs = [Dynamic.Vehicle.Propulsion.THRUST]
         return outputs
 
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """
         Design vars are only tested to see if they exist in pre_mission
         Returns a dictionary of design variables for the propeller subsystem, where the keys are the
@@ -93,7 +95,7 @@ class PropellerBuilder(SubsystemBuilder):
         }
         return DVs
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Parameters are only tested to see if they exist in mission.
         The value doesn't change throughout the mission.
@@ -136,10 +138,10 @@ class PropellerBuilder(SubsystemBuilder):
 
         return parameters
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         return []
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return [
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',

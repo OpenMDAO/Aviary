@@ -75,7 +75,7 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in = deepcopy(phase_info)
 
-        polar_builder = FakeDragPolarBuilder(name='aero', altitude=ALTITUDE, mach=MACH, alpha=ALPHA)
+        polar_builder = FakeDragPolarBuilder(altitude=ALTITUDE, mach=MACH, alpha=ALPHA)
         aero_data = NamedValues()
         aero_data.set_val('altitude', ALTITUDE, 'ft')
         aero_data.set_val('mach', MACH, 'unitless')
@@ -206,7 +206,7 @@ class TestSolvedAero(unittest.TestCase):
         mach = np.array([0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9])
         alpha = np.array([-2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0])
 
-        polar_builder = FakeDragPolarBuilder(name='aero', altitude=alt, mach=mach, alpha=alpha)
+        polar_builder = FakeDragPolarBuilder(altitude=alt, mach=mach, alpha=alpha)
         aero_data = NamedValues()
         aero_data.set_val('altitude', alt, 'ft')
         aero_data.set_val('mach', mach, 'unitless')
@@ -310,13 +310,15 @@ class FakeDragPolarBuilder(SubsystemBuilder):
         List of angles of attack in ascending order. (Optional)
     """
 
-    def __init__(self, name='aero', altitude=None, mach=None, alpha=None):
-        super().__init__(name)
+    _default_name = 'aero'
+
+    def __init__(self, altitude=None, mach=None, alpha=None):
+        super().__init__()
         self.altitude = np.unique(altitude)
         self.mach = np.unique(mach)
         self.alpha = np.unique(alpha)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 

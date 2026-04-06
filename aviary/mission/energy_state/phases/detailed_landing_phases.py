@@ -1349,11 +1349,11 @@ class LandingTrajectory:
 
     MappedPhase = _TakeoffTrajectory.MappedPhase
 
-    default_name = 'detailed_landing'
+    _default_name = 'detailed_landing'
 
     def __init__(self, name=None):
         if name is None:
-            name = self.default_name
+            name = self._default_name
 
         self.name = name
 
@@ -1476,9 +1476,11 @@ class LandingTrajectory:
 
             aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
 
-            args = {'method': 'low_speed'}
+            subsystem_options = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, **args)
+            params = aero.get_parameters(
+                aviary_inputs=aviary_options, subsystem_options=subsystem_options
+            )
 
             # takeoff introduces this one.
             params[Mission.Landing.LIFT_COEFFICIENT_MAX] = {

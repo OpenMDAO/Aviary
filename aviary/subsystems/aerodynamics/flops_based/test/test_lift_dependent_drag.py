@@ -36,8 +36,8 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
 
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.123)
-        prob.set_val(Mission.Design.LIFT_COEFFICIENT, val=1.28)
-        prob.set_val(Mission.Design.MACH, val=0.765)
+        prob.set_val(Aircraft.Design.LIFT_COEFFICIENT, val=1.28)
+        prob.set_val(Aircraft.Design.MACH, val=0.765)
 
         prob.run_model()
 
@@ -75,8 +75,8 @@ class LiftDependentDragTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05 * 0.5)
 
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.132)
-        prob.set_val(Mission.Design.LIFT_COEFFICIENT, val=0.1234)
-        prob.set_val(Mission.Design.MACH, val=0.4321)
+        prob.set_val(Aircraft.Design.LIFT_COEFFICIENT, val=0.1234)
+        prob.set_val(Aircraft.Design.MACH, val=0.4321)
 
         prob.run_model()
 

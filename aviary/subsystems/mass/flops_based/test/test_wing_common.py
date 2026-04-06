@@ -49,7 +49,7 @@ class WingShearControlMassTest(unittest.TestCase):
                 Aircraft.Wing.COMPOSITE_FRACTION,
                 Aircraft.Wing.CONTROL_SURFACE_AREA,
                 Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
             output_keys=Aircraft.Wing.SHEAR_CONTROL_MASS,
             atol=1e-11,
@@ -84,7 +84,7 @@ class WingShearControlMassTest2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
         prob.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 400, 'ft**2')
-        prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 100000, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
@@ -186,7 +186,7 @@ class WingBendingMassTest(unittest.TestCase):
                 Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER,
                 Aircraft.Wing.COMPOSITE_FRACTION,
                 Aircraft.Wing.ENG_POD_INERTIA_FACTOR,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Wing.LOAD_FRACTION,
                 Aircraft.Wing.MISC_MASS,
                 Aircraft.Wing.MISC_MASS_SCALER,
@@ -233,7 +233,7 @@ class WingBendingMassTest2(unittest.TestCase):
         prob.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 10, 'unitless')
         prob.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.333, 'unitless')
         prob.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1, 'unitless')
-        prob.set_val(Mission.Design.GROSS_MASS, 100000, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 100000, 'lbm')
         prob.set_val(Aircraft.Wing.LOAD_FRACTION, 1, 'unitless')
         prob.set_val(Aircraft.Wing.MISC_MASS, 2000, 'lbm')
         prob.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4000, 'lbm')
@@ -294,7 +294,7 @@ class BWBShearControlMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.CONTROL_SURFACE_AREA, 5513.13877521, units='ft**2'
@@ -331,7 +331,7 @@ class BWBWingBendingMassTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 874099.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
         prob.model.set_input_defaults(
             Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0, units='unitless'

@@ -25,7 +25,7 @@ class PassengerServiceMass(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, units='unitless')
-        add_aviary_input(self, Mission.Design.RANGE, units='NM')
+        add_aviary_input(self, Aircraft.Design.RANGE, units='NM')
 
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')
 
@@ -37,7 +37,7 @@ class PassengerServiceMass(om.ExplicitComponent):
         business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         economy_class_count = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
 
-        design_range = inputs[Mission.Design.RANGE]
+        design_range = inputs[Aircraft.Design.RANGE]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         passenger_service_mass_scaler = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER]
@@ -56,12 +56,12 @@ class PassengerServiceMass(om.ExplicitComponent):
         business_class_count = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         economy_class_count = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
 
-        design_range = inputs[Mission.Design.RANGE]
+        design_range = inputs[Aircraft.Design.RANGE]
         max_mach = self.options[Mission.Constraints.MAX_MACH]
 
         passenger_service_mass_scaler = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER]
 
-        J[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, Mission.Design.RANGE] = (
+        J[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, Aircraft.Design.RANGE] = (
             passenger_service_mass_scaler
             * (
                 5.164 * first_class_count

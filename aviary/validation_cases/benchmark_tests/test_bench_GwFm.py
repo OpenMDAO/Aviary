@@ -136,10 +136,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
             self.phase_info,
             max_iter=50,
             optimizer='SNOPT',
-            verbosity=0,
+            verbosity=1,
         )
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
+        self.assertTrue(prob.result.success)
 
 
 if __name__ == '__main__':

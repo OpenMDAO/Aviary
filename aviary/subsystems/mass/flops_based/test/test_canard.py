@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Aircraft, Mission
 canard_test_data = {}
 canard_test_data['1'] = AviaryValues(
     {
-        Mission.Design.GROSS_MASS: (100000, 'lbm'),
+        Aircraft.Design.GROSS_MASS: (100000, 'lbm'),
         Aircraft.Canard.AREA: (250.00, 'ft**2'),
         Aircraft.Canard.TAPER_RATIO: (0.330, 'unitless'),
         Aircraft.Canard.MASS_SCALER: (1.0, 'unitless'),
@@ -51,7 +51,7 @@ class CanardMassTest(unittest.TestCase):
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Canard.AREA,
                 Aircraft.Canard.TAPER_RATIO,
                 Aircraft.Canard.MASS_SCALER,
@@ -88,7 +88,7 @@ class CanardMassTest2(unittest.TestCase):
             promotes_outputs=['*'],
         )
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Mission.Design.GROSS_MASS, 100000.0, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 100000.0, 'lbm')
         prob.set_val(Aircraft.Canard.AREA, 250.00, 'ft**2')
         prob.set_val(Aircraft.Canard.TAPER_RATIO, 0.330, 'unitless')
         prob.set_val(Aircraft.Canard.MASS_SCALER, 1.0, 'unitless')

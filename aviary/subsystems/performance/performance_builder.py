@@ -2,14 +2,24 @@ from aviary.subsystems.performance.performance_premission import PerformancePrem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
-class CorePerformanceBuilder(SubsystemBuilder):
+class PerformanceBuilder(SubsystemBuilder):
+    """
+    Base performance builder.
+
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the PerformanceBuilder object with a given name.
+    """
+
+    _default_name = 'mass'
+
+
+class CorePerformanceBuilder(PerformanceBuilder):
     """Core performance analysis subsystem builder."""
 
     def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = 'core_performance'
-
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         return PerformancePremission()
