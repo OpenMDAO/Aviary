@@ -52,7 +52,7 @@ aircraft:fuel:wing_fuel_fraction,0.6,unitless
 aircraft:fuselage:aisle_width,24,inch
 aircraft:fuselage:delta_diameter,4.5,ft
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
-aircraft:fuselage:form_factor,1.25,unitless
+aircraft:fuselage:form_factor,1.05557953,unitless
 aircraft:fuselage:mass_coefficient,128,unitless
 aircraft:fuselage:nose_fineness,1,unitless
 aircraft:fuselage:num_aisles,1,unitless
