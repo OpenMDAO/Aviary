@@ -13,7 +13,6 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     CruiseAero,
     DragCoef,
     DragCoefClean,
-    FormFactor,
     GroundEffect,
     LiftCoeff,
     LiftCoeffClean,
@@ -23,12 +22,12 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     Xlifts,
     WingTailRatios,
     BWBBodyLiftCurveSlope,
-    BWBFormFactor,
     BWBLiftCoeff,
     BWBLiftCoeffClean,
     BWBAeroSetup,
     BWBSIWB,
 )
+from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import FormFactor, BWBFormFactor
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
@@ -547,31 +546,6 @@ class UFacTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
 
-class FormFactorTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
-
-    def test_case1(self):
-        prob = om.Problem()
-
-        prob.model.add_subsystem(
-            'formfactor',
-            FormFactor(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=19.365, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
-
-        tol = 1e-5
-        assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024726, tol)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
-
-
 class SIWBTest(unittest.TestCase):
     """Test fuselage form factor computation and SIWB computation"""
 
@@ -592,31 +566,6 @@ class SIWBTest(unittest.TestCase):
 
         tol = 1e-5
         assert_near_equal(prob['siwb'], 0.964972794, tol)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
-
-
-class BWBFormFactorTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
-
-    def test_case1(self):
-        prob = om.Problem()
-
-        prob.model.add_subsystem(
-            'formfactor',
-            BWBFormFactor(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Aircraft.Fuselage.HYDRAULIC_DIAMETER, val=19.365, units='ft')
-        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=71.5245514, units='ft')
-
-        prob.setup(check=False, force_alloc_complex=True)
-        prob.run_model()
-
-        tol = 1e-5
-        assert_near_equal(prob[Aircraft.Fuselage.FORM_FACTOR], 1.35024726, tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
