@@ -1,4 +1,5 @@
 import unittest
+import aviary.api as av
 from copy import deepcopy
 
 from openmdao.utils.assert_utils import assert_near_equal
@@ -7,7 +8,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as twodof_phase_info
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
@@ -90,6 +91,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         # different constraints/design variables
         prob_fallout = self.prob.run_off_design_mission(problem_type='fallout')
         self.compare_results(prob_fallout)
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_fallout_mission_changed(self):
@@ -168,6 +170,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             81,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -253,6 +256,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             150,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_alternate.result.success)
 
 
 @use_tempdirs
@@ -270,6 +274,8 @@ class Test2DOFOffDesign(unittest.TestCase):
         prob.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', copy_twodof_phase_info
         )
+
+        prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, val=150000, units='lbm')
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -392,6 +398,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             75,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_fallout.result.success)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_alternate_mission_match(self):
@@ -465,6 +472,7 @@ class Test2DOFOffDesign(unittest.TestCase):
             150,
             tolerance=1e-12,
         )
+        self.assertTrue(prob_alternate.result.success)
 
 
 @use_tempdirs
@@ -482,8 +490,12 @@ class PayloadRangeTest(unittest.TestCase):
             (25.0, 60.0),
             'min',
         )
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-        # prob.aviary_inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, True)
+
+        (aviary_inputs, initialization_guesses) = av.create_vehicle(
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        )
+        aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)
+        prob.load_inputs(aviary_inputs, phase_info)
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
@@ -502,7 +514,7 @@ class PayloadRangeTest(unittest.TestCase):
         prob.setup()
         prob.set_initial_guesses()
         prob.run_aviary_problem()
-        off_design_probs = prob.run_payload_range()
+
         # test outputted payload-range data
         assert_near_equal(
             prob.payload_range_data.get_val('Payload', 'lbm'),
@@ -525,24 +537,28 @@ class PayloadRangeTest(unittest.TestCase):
             tolerance=1e-3,
         )
 
-        # verify TOGW for each off-design problem
+        # verify TOGW for each payload range problem
         assert_near_equal(
-            off_design_probs[0].get_val(Mission.GROSS_MASS, 'lbm'),
+            prob.economic_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             166539.46027154,
             tolerance=1e-8,
         )
         assert_near_equal(
-            off_design_probs[1].get_val(Mission.GROSS_MASS, 'lbm'),
+            prob.ferry_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             140596.07154268,
             tolerance=1e-8,
         )
+        self.assertTrue(prob.result.success)
+        self.assertTrue(prob.economic_range_prob.result.success)
+        self.assertTrue(prob.ferry_range_prob.result.success)
 
 
 if __name__ == '__main__':
     # unittest.main()
     test = Test2DOFOffDesign()
+    # test = TestEnergyStateOffDesign()
     test.setUp()
-    test.test_alternate_mission_changed()
+    test.test_alternate_mission_match()
 
     # test = PayloadRangeTest()
     # test.test_payload_range()

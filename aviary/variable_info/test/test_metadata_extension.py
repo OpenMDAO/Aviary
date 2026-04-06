@@ -1,7 +1,7 @@
 import unittest
 
-from aviary.examples.variable_meta_data_extension import ExtendedMetaData
-from aviary.examples.variables_extension import Aircraft
+from aviary.utils.test.data.variable_meta_data_extension import ExtendedMetaData
+from aviary.utils.test.data.variables_extension import Aircraft
 
 
 class MetaDataExtensionTest(unittest.TestCase):

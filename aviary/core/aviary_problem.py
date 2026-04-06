@@ -400,7 +400,7 @@ class AviaryProblem(om.Problem):
         else:
             self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=50, verbosity=None):
+    def add_driver(self, optimizer=None, use_coloring=None, max_iter=None, verbosity=None):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -440,11 +440,13 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        # Set defaults for optimizer and use_coloring
+        # Set defaults for optimizer, use_coloring and max_iter
         if optimizer is None:
             optimizer = 'IPOPT'
         if use_coloring is None:
             use_coloring = True
+        if max_iter is None:
+            max_iter = 50
 
         # check if optimizer is SLSQP
         if optimizer == 'SLSQP':
@@ -499,6 +501,10 @@ class AviaryProblem(om.Problem):
             driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
             driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
             driver.opt_settings['mu_strategy'] = 'monotone'
+            # Shugo's recommended settings for robustness
+            # driver.opt_settings['mu_init'] = 1.0
+            # driver.opt_settings['nlp_scaling_method'] = 'none'
+            # driver.opt_settings['limited_memory_max_history'] = 50
 
         elif driver.options['optimizer'] == 'SLSQP':
             # Print Options #
@@ -1252,7 +1258,7 @@ class AviaryProblem(om.Problem):
             with open(Path(self.get_reports_dir()) / 'output_list.txt', 'w') as outfile:
                 self.model.list_outputs(out_stream=outfile)
 
-        if self.generate_payload_range:
+        if self.generate_payload_range and self.problem_type == ProblemType.SIZING:
             self.run_payload_range()
 
     def run_off_design_mission(
@@ -1487,7 +1493,18 @@ class AviaryProblem(om.Problem):
                 optimizer = self.driver.options['optimizer']
             except KeyError:
                 optimizer = None
-        off_design_prob.add_driver(optimizer, verbosity=verbosity)
+        try:
+            if optimizer == 'SNOPT':
+                max_iter = self.driver.opt_settings['Major iterations limit']
+            elif optimizer == 'IPOPT':
+                max_iter = self.driver.opt_settings['max_iter']
+            elif optimizer == 'SLSQP':
+                max_iter = self.driver.opt_settings['maxiter']
+            else:
+                max_iter = None
+        except KeyError:
+            max_iter = None
+        off_design_prob.add_driver(optimizer=optimizer, max_iter=max_iter, verbosity=verbosity)
         off_design_prob.add_design_variables(verbosity=verbosity)
 
         # Handle edge case for payload-range diagrams
@@ -1666,7 +1683,7 @@ class AviaryProblem(om.Problem):
                 # Passenger number rounding and potentially cargo container mass changing means
                 # we don't know if we actually filled the aircraft to exactly TOGW yet. Need to use
                 # "fill_cargo" flag in off-design call
-                economic_range_prob = self.run_off_design_mission(
+                economic_range_prob = self.economic_range_prob = self.run_off_design_mission(
                     problem_type=ProblemType.FALLOUT,
                     phase_info=phase_info,
                     num_first_class=economic_mission_num_first,
@@ -1701,7 +1718,7 @@ class AviaryProblem(om.Problem):
             else:
                 ferry_cargo_mass = None
             ferry_range_gross_mass = operating_mass + max_usable_fuel
-            ferry_range_prob = self.run_off_design_mission(
+            ferry_range_prob = self.ferry_range_prob = self.run_off_design_mission(
                 problem_type=ProblemType.FALLOUT,
                 phase_info=phase_info,
                 num_first_class=0,
