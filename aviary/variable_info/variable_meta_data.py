@@ -2284,14 +2284,7 @@ add_meta_data(
     option=True,
     default_value=0.0002,  # default in GASP
     types=float,
-    desc='engine inlet area coefficient. suggested values: '
-    'Lower end (~0.00035): Smaller engines, lower bypass ratio (e.g., regional jets) '
-    'Middle (~0.0004): Typical narrow-body aircraft (most common choice) '
-    'Upper end (~0.0005): Large, high-bypass engines (wide-body aircraft) '
-    'BWB (0.0004 - 0.0006): '
-    '   0.0004 -> clean, podded engines (BWB but conventional nacelles) '
-    '   0.00045 -> 0.0005 → mild boundary layer ingestion '
-    '   0.0005 -> 0.0006 → strong BLI / embedded engines.',
+    desc='engine inlet area coefficient. suggested values: 0.000375.',
     multivalue=True,
 )
 
