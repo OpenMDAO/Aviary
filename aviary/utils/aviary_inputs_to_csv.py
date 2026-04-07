@@ -1,6 +1,4 @@
 import csv
-# import openmdao.api as om
-# from aviary.utils.aviary_values import AviaryValues
 
 
 def save_to_csv_file(filename, aviary_inputs):
