@@ -24,12 +24,44 @@ details.aviary-collapsible-section {
   background-color: var(--pst-color-surface, #ffffff);
 }
 
-/* <summary> bar that the user clicks to toggle the section.
- * Flex layout places the disclosure triangle, then the heading,
- * side-by-side and vertically centred. */
+/* <summary> bar that the user clicks to toggle the section open or closed.
+ *
+ * The summary contains two children arranged horizontally by flexbox:
+ *   1. The disclosure triangle  (::before pseudo-element, defined below)
+ *   2. The heading element      (h2–h6, moved here by collapsible_headers.js)
+ *
+ * Property-by-property explanation:
+ *
+ *   cursor: pointer
+ *     Changes the mouse cursor to a hand on hover, making it obvious the
+ *     bar is interactive — the same affordance used on <button> and <a>.
+ *
+ *   list-style: none
+ *     Browsers (notably Firefox) render a <summary> with a list-item
+ *     bullet by default.  This removes it so only our custom triangle
+ *     is shown.
+ *
+ *   padding: 0.45rem 0.75rem
+ *     Adds breathing room around the triangle and heading text so the
+ *     click target is comfortable and the heading does not touch the
+ *     border of the enclosing <details> box.
+ *
+ *   display: flex
+ *     Switches the summary's layout to flexbox so its children (triangle
+ *     and heading) can be placed side-by-side and aligned on the same
+ *     baseline rather than flowing as inline text.
+ *
+ *   align-items: center
+ *     Vertically centres the triangle and heading relative to each other.
+ *     Without this the triangle would sit at the top of the summary bar
+ *     when the heading text wraps to multiple lines.
+ *
+ *   gap: 0.45rem
+ *     Adds a consistent small space between the triangle and the start
+ *     of the heading text without needing margin on either element. */
 details.aviary-collapsible-section > summary.aviary-collapsible-summary {
   cursor: pointer;
-  list-style: none;       /* removes the default bullet in Firefox */
+  list-style: none;
   padding: 0.45rem 0.75rem;
   display: flex;
   align-items: center;
@@ -53,6 +85,12 @@ details.aviary-collapsible-section > summary.aviary-collapsible-summary::-webkit
  *
  * When the section is open the triangle is rotated 90° to point
  * downward.  The CSS transition animates the rotation smoothly. */
+
+ /* Insert a generated element at the very beginning of our custom summary bar,
+  * but only when that summary bar sits directly inside our custom collapsible details block.
+  * The ::before pseudo-element is what lets us draw the triangle purely in CSS without adding
+  * any extra HTML markup.
+*/
 details.aviary-collapsible-section > summary.aviary-collapsible-summary::before {
   content: "";                        /* no text; shape comes from clip-path */
   flex-shrink: 0;                     /* never let the flex container squash it */
@@ -68,6 +106,12 @@ details.aviary-collapsible-section > summary.aviary-collapsible-summary::before 
 
 /* Closed state: triangle returns to pointing right (0°),
  * signalling that clicking will expand the section. */
+/* The only property in this rule is transform: rotate(0deg), which returns
+* the triangle to pointing right. Combined with the open-state rule above it
+* (transform: rotate(90deg)), this is how the triangle animates between right (closed)
+* and down (open) — the two rules define the two states, and the transition on the
+* ::before element smoothly interpolates between them when open is added or removed.
+*/
 details.aviary-collapsible-section:not([open]) > summary.aviary-collapsible-summary::before {
   transform: rotate(0deg);
 }

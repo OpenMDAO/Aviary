@@ -123,10 +123,20 @@
    * openParentsForHash
    *
    * When a page is loaded with a URL fragment (e.g. page.html#my-section),
-   * the target element may be inside a collapsed <details> block, making it
-   * invisible.  This function walks up the DOM from the target and forces
-   * every ancestor <details> element to be open so the anchor destination
-   * is always reachable.
+   * the target element may be inside a collapsed <details> block, making its
+   * content invisible.  This function ensures the anchor destination is always
+   * fully visible in two steps:
+   *
+   *   Step 1 — Open the section the anchor belongs to.
+   *     In Sphinx/JupyterBook the anchor id is placed on the <section> element
+   *     itself, not on the heading.  After our JS transformation the <details>
+   *     block is a direct child of that <section>, so we look for it with
+   *     :scope > details and open it so the section body is revealed.
+   *
+   *   Step 2 — Open all ancestor <details> blocks.
+   *     If the target section is nested inside another collapsed section we
+   *     walk up the DOM and force every <details> ancestor open too, ensuring
+   *     the full path from the page root to the destination is visible.
    *
    * Also registered as a "hashchange" listener so in-page navigation
    * (e.g. clicking a TOC link) triggers the same behaviour.
@@ -141,6 +151,16 @@
       return;
     }
 
+    /* Step 1: if the anchor points at a <section> whose content was wrapped
+     * in a <details> child by buildCollapsibleSection, open that details so
+     * the body of the destination section is expanded and visible. */
+    var ownDetails = target.querySelector(":scope > details.aviary-collapsible-section");
+    if (ownDetails) {
+      ownDetails.open = true;
+    }
+
+    /* Step 2: walk up the DOM and open every enclosing <details> block so
+     * that any parent sections hiding this target are also expanded. */
     var node = target;
     while (node) {
       if (node.tagName === "DETAILS") {
