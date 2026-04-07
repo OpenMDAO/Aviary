@@ -48,6 +48,25 @@ class ElectricalTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
+    def test_turboprop_derivs(self):
+        eng = EngineOilMass()
+        eng.options[Aircraft.Engine.TYPE] = [GASPEngineType.TURBOPROP]
+        eng.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 2
+
+        prob = om.Problem()
+        prob.model.add_subsystem('engine_oil_mass', eng, promotes=['*'])
+
+        prob.model.set_input_defaults(
+            Aircraft.Engine.SCALED_SLS_THRUST, val=29500, units='lbf'
+        )  # generic_BWB_GASP.csv - 11.45
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
 
 class ElectricalTestCase2(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""

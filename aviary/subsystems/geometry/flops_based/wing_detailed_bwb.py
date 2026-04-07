@@ -423,7 +423,7 @@ class BWBWingPrelim(om.ExplicitComponent):
                 print('Aircraft.Wing.SPAN must be positive.')
         rate_span = (wingspan - width) / wingspan
 
-        # This part is repeated in _BWBWing()
+        # This part is repeated in BWBWingWettedArea()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
         bwb_input_station_dist = np.array(
             self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float

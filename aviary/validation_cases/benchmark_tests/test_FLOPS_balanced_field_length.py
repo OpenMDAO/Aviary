@@ -85,9 +85,10 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
             CorePreMission(
                 aviary_options=aviary_options,
                 subsystems=default_mission_subsystems,
+                subsystem_options={},
             ),
             promotes_inputs=['aircraft:*'],
-            promotes_outputs=['aircraft:*', 'mission:*'],
+            promotes_outputs=['aircraft:*'],
         )
 
         # Instantiate the trajectory and add the phases
@@ -155,7 +156,7 @@ class TestFLOPSBalancedFieldLength(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    use_SNOPT = True
+    use_SNOPT = False
 
     z = TestFLOPSBalancedFieldLength()
 

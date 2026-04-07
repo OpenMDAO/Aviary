@@ -37,7 +37,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         turboprop = TurbopropModel('turboprop', options=options)
 
         if mission_method == 'energy':
-            options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
+            options.set_val(Settings.EQUATIONS_OF_MOTION, 'energy_state')
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(

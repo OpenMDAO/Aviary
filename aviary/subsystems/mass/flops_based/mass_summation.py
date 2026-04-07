@@ -71,8 +71,6 @@ class MassSummation(om.Group):
             'zero_fuel_mass', ZeroFuelMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
-        self.add_subsystem('fuel_mass', FuelMass(), promotes_inputs=['*'], promotes_outputs=['*'])
-
 
 class EmpennageMass(om.ExplicitComponent):
     def setup(self):
@@ -371,10 +369,10 @@ class UsefulLoadMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
 
-        add_aviary_output(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+        add_aviary_output(self, Mission.USEFUL_LOAD, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Mission.Summary.USEFUL_LOAD, '*', val=1)
+        self.declare_partials(Mission.USEFUL_LOAD, '*', val=1)
 
     def compute(self, inputs, outputs):
         cargo_container_mass = inputs[Aircraft.CrewPayload.CARGO_CONTAINER_MASS]
@@ -384,7 +382,7 @@ class UsefulLoadMass(om.ExplicitComponent):
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
 
-        outputs[Mission.Summary.USEFUL_LOAD] = (
+        outputs[Mission.USEFUL_LOAD] = (
             cabin_crew_mass
             + flight_crew_mass
             + unusable_fuel_mass
@@ -397,18 +395,18 @@ class UsefulLoadMass(om.ExplicitComponent):
 class OperatingMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Design.EMPTY_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.USEFUL_LOAD, units='lbm')
+        add_aviary_input(self, Mission.USEFUL_LOAD, units='lbm')
 
-        add_aviary_output(self, Mission.Summary.OPERATING_MASS, units='lbm')
+        add_aviary_output(self, Mission.OPERATING_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Mission.Summary.OPERATING_MASS, '*', val=1)
+        self.declare_partials(Mission.OPERATING_MASS, '*', val=1)
 
     def compute(self, inputs, outputs):
-        useful_load = inputs[Mission.Summary.USEFUL_LOAD]
+        useful_load = inputs[Mission.USEFUL_LOAD]
         empty_mass = inputs[Aircraft.Design.EMPTY_MASS]
 
-        outputs[Mission.Summary.OPERATING_MASS] = empty_mass + useful_load
+        outputs[Mission.OPERATING_MASS] = empty_mass + useful_load
 
 
 class ZeroFuelMass(om.ExplicitComponent):
@@ -416,37 +414,17 @@ class ZeroFuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.OPERATING_MASS, units='lbm')
+        add_aviary_input(self, Mission.OPERATING_MASS, units='lbm')
 
-        add_aviary_output(self, Mission.Summary.ZERO_FUEL_MASS, units='lbm')
+        add_aviary_output(self, Mission.ZERO_FUEL_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Mission.Summary.ZERO_FUEL_MASS, '*', val=1)
+        self.declare_partials(Mission.ZERO_FUEL_MASS, '*', val=1)
 
     def compute(self, inputs, outputs):
         pass_mass = inputs[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL]
         bag_mass = inputs[Aircraft.CrewPayload.BAGGAGE_MASS]
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
-        operating_mass = inputs[Mission.Summary.OPERATING_MASS]
+        operating_mass = inputs[Mission.OPERATING_MASS]
 
-        outputs[Mission.Summary.ZERO_FUEL_MASS] = operating_mass + pass_mass + bag_mass + cargo_mass
-
-
-# TODO DO NOT CALCULATE MISSION FUEL THIS WAY!!! ONLY COMPUTE DIRECTLY FROM INTEGRATING FUEL BURN
-# TODO This should also probably not go in mass summation
-class FuelMass(om.ExplicitComponent):
-    def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
-        add_aviary_input(self, Mission.Summary.ZERO_FUEL_MASS, units='lbm')
-
-        add_aviary_output(self, Mission.Summary.FUEL_MASS, units='lbm')
-
-    def setup_partials(self):
-        self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Design.GROSS_MASS, val=1)
-        self.declare_partials(Mission.Summary.FUEL_MASS, Mission.Summary.ZERO_FUEL_MASS, val=-1)
-
-    def compute(self, inputs, outputs):
-        zero_fuel_mass = inputs[Mission.Summary.ZERO_FUEL_MASS]
-        gross_mass = inputs[Mission.Design.GROSS_MASS]
-
-        outputs[Mission.Summary.FUEL_MASS] = gross_mass - zero_fuel_mass
+        outputs[Mission.ZERO_FUEL_MASS] = operating_mass + pass_mass + bag_mass + cargo_mass

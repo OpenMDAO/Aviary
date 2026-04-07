@@ -6,7 +6,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.run_aviary import run_aviary
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
@@ -87,7 +87,7 @@ phase_info = {
 class BWBProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a BWB aircraft using FLOPS mass and aero method
-    and HEIGHT_ENERGY mission method. Expected outputs based on
+    and ENERGY_STATE mission method. Expected outputs based on
     'models/aircraft/blended_wing_body/bwb_simple_FLOPS.csv' model.
     """
 
@@ -109,24 +109,24 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         assert_near_equal(
-            prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+            prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
             782430.3,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+            prob.get_val(Mission.OPERATING_MASS, units='lbm'),
             445429.9,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
             239188.4,
             tolerance=rtol,
         )
 
-        assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
+        assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
     # @require_pyoptsparse(optimizer='IPOPT')
     # def test_bench_bwb_FwFm_IPOPT(self):
@@ -147,24 +147,24 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
 
     # # There are no truth values for these.
     # assert_near_equal(
-    # prob.get_val(Mission.Design.GROSS_MASS, units='lbm'),
+    # prob.get_val(Aircraft.Design.GROSS_MASS, units='lbm'),
     # 789473.7,
     # tolerance=rtol,
     # )
 
     # assert_near_equal(
-    # prob.get_val(Mission.Summary.OPERATING_MASS, units='lbm'),
+    # prob.get_val(Mission.OPERATING_MASS, units='lbm'),
     # 446218.2,
     # tolerance=rtol,
     # )
 
     # assert_near_equal(
-    # prob.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm'),
+    # prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
     # 245443.5,
     # tolerance=rtol,
     # )
 
-    # assert_near_equal(prob.get_val(Mission.Summary.RANGE, units='NM'), 7750.0, tolerance=rtol)
+    # assert_near_equal(prob.get_val(Mission.RANGE, units='NM'), 7750.0, tolerance=rtol)
 
 
 if __name__ == '__main__':

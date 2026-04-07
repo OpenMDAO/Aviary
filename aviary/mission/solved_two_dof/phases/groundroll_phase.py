@@ -6,7 +6,6 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder, register
-from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
@@ -70,7 +69,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
 @register
 class GroundrollPhase(PhaseBuilder):
     """
-    A phase builder for a two degree of freedom (2DOF) ground roll phase.
+    A phase builder for a two-degrees-of-freedom (2DOF) ground roll phase.
 
     This is used exclusively by the Solved 2DOF Phase Builder.
     """
@@ -110,7 +109,7 @@ class GroundrollPhase(PhaseBuilder):
         duration_ref = user_options.get_val('time_duration_ref', units='kn')
         constraints = user_options.get_val('constraints')
 
-        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
+        phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
         phase.set_time_options(
             fix_initial=True,
@@ -195,6 +194,7 @@ class GroundrollPhase(PhaseBuilder):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'set_input_defaults': False,
         }

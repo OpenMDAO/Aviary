@@ -5,9 +5,9 @@ from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
-from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import CustomAeroBuilder
+from aviary.models.external_subsystems.simple_aero.simple_aero_builder import SimpleAeroBuilder
 
-phase_info = deepcopy(av.default_height_energy_phase_info)
+phase_info = deepcopy(av.default_energy_state_phase_info)
 
 
 @use_tempdirs
@@ -35,7 +35,7 @@ class TestExternalAero(av.TestSubsystemBuilder):
 
         # Load aircraft and options data from user
         prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
-        prob.load_external_subsystems([CustomAeroBuilder()])
+        prob.load_external_subsystems([SimpleAeroBuilder()])
         prob.check_and_preprocess_inputs()
 
         prob.build_model()

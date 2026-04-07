@@ -1,11 +1,7 @@
 import dymos as dm
 import numpy as np
 
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.mission.phase_utils import (
-    add_subsystem_variables_to_phase,
-    get_initial,
-)
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.mission.initial_guess_builders import (
     InitialGuessState,
     InitialGuessControl,
@@ -17,7 +13,7 @@ from aviary.variable_info.enums import EquationsOfMotion, ThrottleAllocation, Tr
 from aviary.variable_info.variable_meta_data import _MetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-# Height Energy and Solved2DOF use this builder
+# energy-state and Solved2DOF use this builder
 
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()
@@ -177,7 +173,7 @@ class FlightPhaseBase(PhaseBuilder):
 
     _initial_guesses_meta_data_ = {}
     default_name = 'cruise'
-    default_ode_class = EnergyODE
+    default_ode_class = EnergyStateODE
     default_options_class = FlightPhaseOptions
 
     default_meta_data = _MetaData
@@ -185,7 +181,7 @@ class FlightPhaseBase(PhaseBuilder):
     def build_phase(
         self,
         aviary_options: AviaryValues = None,
-        phase_type=EquationsOfMotion.HEIGHT_ENERGY,
+        phase_type=EquationsOfMotion.ENERGY_STATE,
     ):
         """
         Return a new energy phase for analysis using these constraints.
@@ -220,22 +216,22 @@ class FlightPhaseBase(PhaseBuilder):
         ##############
         # Add States #
         ##############
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+        if phase_type is EquationsOfMotion.ENERGY_STATE:
             rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = 'dmass_dr'
 
         self.add_state('mass', Dynamic.Vehicle.MASS, rate_source)
 
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+        if phase_type is EquationsOfMotion.ENERGY_STATE:
             self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        phase = add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
+        phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
         ################
         # Add Controls #
         ################
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+        if phase_type is EquationsOfMotion.ENERGY_STATE:
             rate_targets = [Dynamic.Atmosphere.MACH_RATE]
         else:
             rate_targets = ['dmach_dr']
@@ -247,7 +243,7 @@ class FlightPhaseBase(PhaseBuilder):
             add_constraints=Dynamic.Atmosphere.MACH not in constraints,
         )
 
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY and not ground_roll:
+        if phase_type is EquationsOfMotion.ENERGY_STATE and not ground_roll:
             rate_targets = [Dynamic.Mission.ALTITUDE_RATE]
             rate2_targets = None
         else:
@@ -271,7 +267,7 @@ class FlightPhaseBase(PhaseBuilder):
             )
 
         # For heterogeneous-engine cases, we may have throttle allocation control.
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
+        if phase_type is EquationsOfMotion.ENERGY_STATE and num_engine_type > 1:
             allocation = user_options['throttle_allocation']
 
             # Allocation should default to an even split so that we don't start
@@ -314,7 +310,7 @@ class FlightPhaseBase(PhaseBuilder):
             Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
         )
 
-        if phase_type is EquationsOfMotion.HEIGHT_ENERGY:
+        if phase_type is EquationsOfMotion.ENERGY_STATE:
             phase.add_timeseries_output(
                 Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
                 output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
@@ -449,6 +445,7 @@ class FlightPhaseBase(PhaseBuilder):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'throttle_enforcement': self.user_options['throttle_enforcement'],
             'throttle_allocation': self.user_options['throttle_allocation'],

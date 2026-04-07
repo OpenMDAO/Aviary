@@ -158,17 +158,17 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
-mission:design:gross_mass,874099.0,lbm
-mission:design:range,7750.0,NM
-mission:design:thrust_takeoff_per_eng,0.25,lbf
+aircraft:design:gross_mass,874099.0,lbm
+aircraft:design:range,7750.0,NM
+aircraft:design:thrust_takeoff_per_eng,0.25,lbf
 mission:landing:initial_velocity,140.0,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:landing:rolling_friction_coefficient,0.025,unitless
 mission:takeoff:lift_coefficient_max,2.0,unitless
-mission:summary:cruise_mach,0.85,unitless
-mission:summary:fuel_flow_scaler,1.0,unitless
+aircraft:design:cruise_mach,0.85,unitless
+mission:fuel_flow_scaler,1.0,unitless
 settings:aerodynamics_method,FLOPS,unitless
-settings:equations_of_motion,height_energy,unitless
+settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 settings:verbosity,1,unitless
 

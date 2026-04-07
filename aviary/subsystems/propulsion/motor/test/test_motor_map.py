@@ -16,7 +16,11 @@ class TestGearbox(unittest.TestCase):
 
         prob = om.Problem()
 
-        prob.model.add_subsystem('motor_map', MotorMap(num_nodes=3), promotes=['*'])
+        motor_map = MotorMap(num_nodes=3)
+        motor_map.options[Aircraft.Engine.Motor.DATA_FILE] = (
+            'aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'
+        )
+        prob.model.add_subsystem('motor_map', motor_map, promotes=['*'])
 
         prob.setup(force_alloc_complex=True)
 
@@ -27,7 +31,7 @@ class TestGearbox(unittest.TestCase):
         prob.run_model()
 
         torque = prob.get_val(Dynamic.Vehicle.Propulsion.TORQUE)
-        efficiency = prob.get_val('motor_efficiency')
+        efficiency = prob.get_val('efficiency')
 
         torque_expected = np.array([0.0, 900.0, 1800.0]) * 1.12
         eff_expected = [0.871, 0.958625, 0.954]

@@ -24,7 +24,7 @@ It is important to note when writing docstrings that the docstrings must be in n
 
 Sometimes when building the docs, you may see a warning like this:
 
->```checking consistency... /home/user/Work/OpenMDAO/plugins/aviary/aviary/docs/user_guide/external_aero.ipynb: WARNING: document isn't included in any toctree```
+>```checking consistency... /home/user/Work/OpenMDAO/plugins/aviary/aviary/docs/user_guide_unreviewed/external_aero.ipynb: WARNING: document isn't included in any toctree```
 
 This is because the notebook is not in a table of contents.
 It isn't always ideal to put everything in the toc, so you can choose to omit a notebook by adding the `"orphan": true` to the metadata at the bottom of the file.

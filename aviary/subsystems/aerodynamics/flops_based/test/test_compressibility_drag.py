@@ -42,7 +42,7 @@ class CompressibilityDragTest(unittest.TestCase):
                 Aircraft.Fuselage.CROSS_SECTION,
                 Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
                 Aircraft.Fuselage.LENGTH_TO_DIAMETER,
-                Mission.Design.MACH,
+                Aircraft.Design.MACH,
             ],
             promotes_outputs=['compress_drag_coeff'],
         )
@@ -50,7 +50,7 @@ class CompressibilityDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('LID.mach', mach)
-        prob.set_val(Mission.Design.MACH, 0.8 - delta)
+        prob.set_val(Aircraft.Design.MACH, 0.8 - delta)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.13)
         prob.set_val(Aircraft.Fuselage.CROSS_SECTION, 128.2)
         prob.set_val(Aircraft.Design.BASE_AREA, 0.01)

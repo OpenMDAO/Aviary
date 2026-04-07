@@ -176,7 +176,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class SolvedTwoDOFPhase(FlightPhaseBase):
-    """A phase builder for a two degree of freedom (2DOF) phase."""
+    """A phase builder for a two-degrees-of-freedom (2DOF) phase."""
 
     default_options_class = SolvedTwoDOFPhaseOptions
 
@@ -276,6 +276,7 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'input_speed_type': SpeedType.MACH,
             'clean': self.user_options.get_val('clean'),

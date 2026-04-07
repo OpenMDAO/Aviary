@@ -26,7 +26,7 @@ class ReserveTest(unittest.TestCase):
 
         prob.load_inputs(csv_path, phase_info)
 
-        prob.aviary_inputs.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
+        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
 
         prob.check_and_preprocess_inputs()
 
@@ -39,8 +39,8 @@ class ReserveTest(unittest.TestCase):
 
         prob.run_model()
 
-        fuel_burned = prob.model.get_val(Mission.Summary.FUEL_BURNED, units='lbm')
-        total_fuel = prob.model.get_val(Mission.Summary.TOTAL_FUEL_MASS, units='lbm')
+        fuel_burned = prob.model.get_val(Mission.FUEL, units='lbm')
+        total_fuel = prob.model.get_val(Mission.TOTAL_FUEL, units='lbm')
 
         assert_near_equal(total_fuel - fuel_burned, 10000.0, 1e-3)
 
@@ -53,7 +53,7 @@ class ReserveTest(unittest.TestCase):
 
         prob.load_inputs(csv_path, phase_info)
 
-        prob.aviary_inputs.set_val(Mission.Summary.GROSS_MASS, 140000.0, units='lbm')
+        prob.aviary_inputs.set_val(Mission.GROSS_MASS, 140000.0, units='lbm')
 
         prob.check_and_preprocess_inputs()
 
@@ -66,12 +66,13 @@ class ReserveTest(unittest.TestCase):
 
         prob.run_model()
 
-        res_frac = prob.aviary_inputs.get_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION, units='unitless'
+        reserve_percentage = prob.aviary_inputs.get_val(
+            Mission.RESERVE_FUEL_MARGIN, units='unitless'
         )
-        td_mass = prob.model.get_val(Mission.Landing.TOUCHDOWN_MASS, units='lbm')
-        reserve = prob.model.get_val(Mission.Design.RESERVE_FUEL, units='lbm')
-        assert_near_equal(reserve, res_frac * (140000.0 - td_mass), 1e-3)
+
+        td_mass = prob.model.get_val(Mission.FINAL_MASS, units='lbm')
+        reserve = prob.model.get_val(Mission.TOTAL_RESERVE_FUEL, units='lbm')
+        assert_near_equal(reserve, reserve_percentage / 100 * (140000.0 - td_mass), 1e-3)
 
 
 if __name__ == '__main__':

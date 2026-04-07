@@ -26,6 +26,7 @@ from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.functions import (
     add_aviary_input,
     add_aviary_output,
+    add_aviary_option,
     get_units,
     override_aviary_vars,
     setup_model_options,
@@ -48,10 +49,9 @@ from aviary.variable_info.enums import (
     Verbosity,
 )
 from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
-from aviary.models.missions.height_energy_default import (
-    phase_info as default_height_energy_phase_info,
+from aviary.models.missions.energy_state_default import (
+    phase_info as default_energy_state_phase_info,
 )
-from aviary.interface.run_aviary import run_aviary_cmd
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem, reload_aviary_problem
 from aviary.utils.engine_deck_conversion import convert_engine_deck
@@ -100,15 +100,15 @@ from aviary.utils.process_input_decks import create_vehicle
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP
 from aviary.mission.base_ode import BaseODE
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.mission.height_energy.ode.landing_ode import LandingODE as DetailedLandingODE
-from aviary.mission.height_energy.ode.landing_ode import FlareODE as DetailedFlareODE
-from aviary.mission.height_energy.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE
-from aviary.mission.height_energy.phases.simplified_takeoff import (
-    TakeoffGroup as HeightEnergySimplifiedTakeoff,
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
+from aviary.mission.energy_state.ode.landing_ode import LandingODE as DetailedLandingODE
+from aviary.mission.energy_state.ode.landing_ode import FlareODE as DetailedFlareODE
+from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE
+from aviary.mission.energy_state.phases.simplified_takeoff import (
+    TakeoffGroup as EnergyStateSimplifiedTakeoff,
 )
-from aviary.mission.height_energy.phases.simplified_landing import (
-    LandingGroup as HeightEnergySimplifiedLanding,
+from aviary.mission.energy_state.phases.simplified_landing import (
+    LandingGroup as EnergyStateSimplifiedLanding,
 )
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.two_dof.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
@@ -123,18 +123,18 @@ from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment as AnalyticTaxi
 from aviary.mission.phase_builder import PhaseBuilder
 
 # note that this is only for simplified right now
-from aviary.mission.height_energy.phases.energy_phase import (
-    EnergyPhase as HeightEnergyPhaseBuilder,
+from aviary.mission.energy_state.phases.energy_phase import (
+    EnergyPhase as EnergyStatePhaseBuilder,
 )
-from aviary.mission.height_energy.phases.build_landing import (
-    Landing as HeightEnergyLandingPhaseBuilder,
+from aviary.mission.energy_state.phases.build_landing import (
+    Landing as EnergyStateLandingPhaseBuilder,
 )
 
 # note that this is only for simplified right now
-from aviary.mission.height_energy.phases.build_takeoff import (
-    Takeoff as HeightEnergyTakeoffPhaseBuilder,
+from aviary.mission.energy_state.phases.build_takeoff import (
+    Takeoff as EnergyStateTakeoffPhaseBuilder,
 )
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingApproachToMicP3 as DetailedLandingApproachToMicP3PhaseBuilder,
     LandingMicP3ToObstacle as DetailedLandingMicP3ToObstaclePhaseBuilder,
     LandingObstacleToFlare as DetailedLandingObstacleToFlarePhaseBuilder,
@@ -142,7 +142,7 @@ from aviary.mission.height_energy.phases.detailed_landing_phases import (
     LandingTouchdownToNoseDown as DetailedLandingTouchdownToNoseDownPhaseBuilder,
     LandingNoseDownToStop as DetailedLandingNoseDownToStopPhaseBuilder,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffBrakeReleaseToDecisionSpeed as DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder,
     TakeoffDecisionSpeedToRotate as DetailedTakeoffDecisionSpeedToRotatePhaseBuilder,
     TakeoffDecisionSpeedBrakeDelay as DetailedTakeoffDecisionSpeedBrakeDelayPhaseBuilder,
@@ -162,10 +162,10 @@ from aviary.mission.two_dof.phases.flight_phase import FlightPhase as TwoDOFFlig
 from aviary.mission.two_dof.phases.takeoff_phase import TakeoffPhase as TwoDOFTakeoffPhase
 
 # Trajectory builders
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingTrajectory as DetailedLandingTrajectoryBuilder,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as DetailedTakeoffTrajectoryBuilder,
 )
 
