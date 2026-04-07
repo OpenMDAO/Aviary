@@ -847,13 +847,13 @@ class AviaryGroup(om.Group):
                 'before add_post_mission_systems().'
             )
 
-        # Fuel burn in regular phases
+        # Fuel burn in taxi + takeoff + regular phases
         post_mission.add_subsystem(
             'fuel_burned',
             om.ExecComp(
                 'fuel_burned = initial_mass - mass_final',
                 initial_mass={'units': 'lbm'},
-                mass_final={'units': 'lbm'},
+                mass_final={'units': 'lbm'}, # this final mass already includes fuel burned in taxi and takeoff
                 fuel_burned={'units': 'lbm'},
             ),
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
@@ -996,15 +996,6 @@ class AviaryGroup(om.Group):
                     equals=0.0,
                     ref=1e2,
                 )
-
-        ecomp = om.ExecComp(
-            'mass_resid = operating_empty_mass + overall_fuel + payload_mass - initial_mass',
-            operating_empty_mass={'units': 'lbm'},
-            overall_fuel={'units': 'lbm'},
-            payload_mass={'units': 'lbm'},
-            initial_mass={'units': 'lbm'},
-            mass_resid={'units': 'lbm'},
-        )
 
         ecomp = om.ExecComp(
             'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
