@@ -30,6 +30,6 @@ def _exec_EDC(args, user_args):
     convert_engine_deck(
         input_file=args.input_file,
         output_file=args.output_file,
-        data_format=args.data_format,
+        data_format=args.format,
         round_data=args.round,
     )

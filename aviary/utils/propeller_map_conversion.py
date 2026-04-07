@@ -175,7 +175,7 @@ def _exec_PMC(args, user_args):
     convert_propeller_map(
         input_file=args.input_file,
         output_file=args.output_file,
-        # data_format=args.data_format,
+        # data_format=args.format,
         round_data=args.round,
     )
 

@@ -1360,4 +1360,4 @@ def _exec_F2A(args, user_args):
     # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
-    fortran_to_aviary(filepath, args.legacy_code, args.output_file, args.force, verbosity)
+    fortran_to_aviary(filepath, args.format, args.output_file, args.force, verbosity)
