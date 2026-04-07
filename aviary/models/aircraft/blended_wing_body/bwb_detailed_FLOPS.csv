@@ -7,7 +7,7 @@ aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
 aircraft:avionics:mass_scaler,1.0,unitless
 aircraft:blended_wing_body_design:detailed_wing_provided,True,unitless
-aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45,deg
+aircraft:blended_wing_body_design:passenger_leading_edge_sweep,45.0,deg
 aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
@@ -21,9 +21,9 @@ aircraft:crew_and_payload:design:num_seats_abreast_business,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
 aircraft:crew_and_payload:design:num_economy_class,340,unitless
-aircraft:crew_and_payload:design:seat_pitch_business,39,inch
-aircraft:crew_and_payload:design:seat_pitch_first,61,inch
-aircraft:crew_and_payload:design:seat_pitch_economy,32,inch
+aircraft:crew_and_payload:design:seat_pitch_business,39.0,inch
+aircraft:crew_and_payload:design:seat_pitch_first,61.0,inch
+aircraft:crew_and_payload:design:seat_pitch_economy,32.0,inch
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:misc_cargo,0.0,lbm
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
@@ -64,7 +64,7 @@ aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
-aircraft:engine:mass_scaler,1,unitless
+aircraft:engine:mass_scaler,1.0,unitless
 # aircraft:engine:num_engines,3,unitless
 aircraft:engine:num_fuselage_engines,3,unitless
 aircraft:engine:num_wing_engines,0,unitless
@@ -73,7 +73,7 @@ aircraft:engine:reference_sls_thrust,86459.2,lbf
 aircraft:engine:scale_factor,0.8096304384,unitless
 aircraft:engine:scale_mass,True,unitless
 aircraft:engine:scale_performance,True,unitless
-aircraft:engine:scaled_sls_thrust,70000,lbf
+aircraft:engine:scaled_sls_thrust,70000.0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:thrust_reversers_mass_scaler,0.0,unitless
@@ -119,7 +119,7 @@ aircraft:nacelle:wetted_area_scaler,1.0,unitless
 aircraft:paint:mass_per_unit_area,0.0,lbm/ft**2
 aircraft:propulsion:engine_oil_mass_scaler,1.0,unitless
 aircraft:propulsion:misc_mass_scaler,0.0,unitless
-aircraft:vertical_tail:area,0,ft**2
+aircraft:vertical_tail:area,0.0,ft**2
 aircraft:vertical_tail:aspect_ratio,0,unitless
 aircraft:vertical_tail:mass_scaler,1.0,unitless
 aircraft:vertical_tail:num_tails,0,unitless
@@ -130,7 +130,7 @@ aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,2.0,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan_distribution,-1.0,58.03,0.4491,0.3884,0.3317,0.2886,0.2537,0.2269,0.2121,0.1983,0.1843,0.1704,0.1565,0.1426,0.1287,unitless
-aircraft:wing:composite_fraction,1,unitless
+aircraft:wing:composite_fraction,1.0,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3.0,deg
@@ -138,8 +138,8 @@ aircraft:wing:glove_and_bat,121.05,ft**2
 aircraft:wing:input_station_distribution,0.0,0.35,0.4,0.45,0.5,0.55,0.6,0.6499,0.7,0.75,0.8,0.85,0.8999,0.95,1,unitless
 aircraft:wing:load_path_sweep_distribution,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,42.9,42.9,42.9,42.9,42.9,42.9,deg
 aircraft:wing:load_distribution_control,2.0,unitless
-aircraft:wing:mass_scaler,1,unitless
-aircraft:wing:max_camber_at_70_semispan,2,unitless
+aircraft:wing:mass_scaler,1.0,unitless
+aircraft:wing:max_camber_at_70_semispan,2.0,unitless
 aircraft:wing:misc_mass_scaler,1.0,unitless
 aircraft:wing:num_integration_stations,50,unitless
 aircraft:wing:outboard_semispan,86.75,ft
@@ -158,10 +158,10 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
-mission:design:gross_mass,874099,lbm
-mission:design:range,7750,NM
+mission:design:gross_mass,874099.0,lbm
+mission:design:range,7750.0,NM
 mission:design:thrust_takeoff_per_eng,0.25,lbf
-mission:landing:initial_velocity,140,ft/s
+mission:landing:initial_velocity,140.0,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:landing:rolling_friction_coefficient,0.025,unitless
 mission:takeoff:lift_coefficient_max,2.0,unitless
