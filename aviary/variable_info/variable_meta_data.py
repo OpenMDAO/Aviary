@@ -1471,7 +1471,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.Fuselage_AREO_TECH_FACTOR,
+    Aircraft.Design.Fuselage_AERO_TECH_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFFT'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
@@ -1513,7 +1513,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.HorizontalTail_AREO_TECH_FACTOR,
+    Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFHTT'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
@@ -1730,7 +1730,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.Nacelle_AREO_TECH_FACTOR,
+    Aircraft.Design.Nacelle_AERO_TECH_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFNT'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
@@ -1990,7 +1990,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.VerticalTail_AREO_TECH_FACTOR,
+    Aircraft.Design.VerticalTail_AERO_TECH_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFVTT'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
@@ -2025,7 +2025,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.Wing_AREO_TECH_FACTOR,
+    Aircraft.Design.Wing_AERO_TECH_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFWT'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
