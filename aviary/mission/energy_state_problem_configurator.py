@@ -364,6 +364,15 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(aviary_group)
         else:
+            # Since we don't have the simple_takeoff subsystem, we need to use Mission.Takeoff.FINAL_MASS as the
+            # source for the mass at the beginning of the first flight phase. It turns out to be
+            # more robust to use a constraint rather than connecting it directly.
+            first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
+            first_flight_phase = aviary_group.traj._phases[first_flight_phase_name]
+            first_flight_phase.set_state_options(
+                Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+            )
+
             # Calculate how much fuel is burned in taxi and takeoff
             aviary_group.add_subsystem(
                 'takeoff_mass_comp',
@@ -380,16 +389,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                     ('takeoff_fuel_burn', Mission.Takeoff.FUEL),
                 ],
                 promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
-            )
-
-            first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
-
-            # Since we don't have the takeoff subsystem, we need to use the gross mass as the
-            # source for the mass at the beginning of the first flight phase. It turns out to be
-            # more robust to use a constraint rather than connecting it directly.
-            first_flight_phase = aviary_group.traj._phases[first_flight_phase_name]
-            first_flight_phase.set_state_options(
-                Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
             )
 
             # connect summary mass to the initial guess of mass in the first phase
