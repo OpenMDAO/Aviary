@@ -1471,6 +1471,26 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.Fuselage_AREO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFFT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='fuselage aero technology factor',
+)
+
+add_meta_data(
+    Aircraft.Design.Fuselage_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFFC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='fuselage drag factor',
+)
+
+add_meta_data(
     Aircraft.Design.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={
@@ -1493,12 +1513,52 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.HorizontalTail_AREO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFHTT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='horizontal tail aero technology factor',
+)
+
+add_meta_data(
+    Aircraft.Design.HorizontalTail_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFHTC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='horizontal tail drag factor',
+)
+
+add_meta_data(
     Aircraft.Design.IJEFF,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.IJEFF', 'FLOPS': None, 'LEAPS1': None},
     desc='A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the '
     'development of GASP. This flag is planted here to thank him for his hard work and dedication, '
     "Aviary wouldn't be what it is today without his help.",
+)
+
+add_meta_data(
+    Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCKIT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='interference aero technology factor',
+)
+
+add_meta_data(
+    Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCKIC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='interference drag factor',
 )
 
 # TODO expected types and default value?
@@ -1667,6 +1727,25 @@ add_meta_data(
     units='mi/h',
     desc='maximum structural design flight speed in miles per hour',
     default_value=0,
+)
+
+add_meta_data(
+    Aircraft.Design.Nacelle_AREO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFNT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='nacelle aero technology factor',
+)
+add_meta_data(
+    Aircraft.Design.Nacelle_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFNC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='nacelle drag factor',
 )
 
 add_meta_data(
@@ -1911,6 +1990,26 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.VerticalTail_AREO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFVTT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='vertical tail aero technology factor',
+)
+
+add_meta_data(
+    Aircraft.Design.VerticalTail_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFVTC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='vertical tail drag factor',
+)
+
+add_meta_data(
     Aircraft.Design.WETTED_AREAS,
     meta_data=_MetaData,
     historical_name={
@@ -1923,6 +2022,26 @@ add_meta_data(
     },
     units='ft**2',
     desc='table of component wetted areas',
+)
+
+add_meta_data(
+    Aircraft.Design.Wing_AREO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFWT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='wing aero technology factor',
+)
+
+add_meta_data(
+    Aircraft.Design.Wing_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFWC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='wing drag factor',
 )
 
 add_meta_data(
