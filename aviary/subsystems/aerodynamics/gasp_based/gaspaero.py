@@ -740,6 +740,20 @@ class AeroGeom(om.ExplicitComponent):
         self.options.declare('num_nodes', default=1, types=int)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
+        # drag factors
+        add_aviary_option(self, Aircraft.Design.Fuselage_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.Wing_DRAG_FACTOR)
+        # aero technology factos
+        add_aviary_option(self, Aircraft.Design.Fuselage_AERO_TECH_FACTOR)
+        add_aviary_option(self, Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR)
+        add_aviary_option(self, Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR)
+        add_aviary_option(self, Aircraft.Design.Nacelle_AERO_TECH_FACTOR)
+        add_aviary_option(self, Aircraft.Design.VerticalTail_AERO_TECH_FACTOR)
+        add_aviary_option(self, Aircraft.Design.Wing_AERO_TECH_FACTOR)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -999,8 +1013,30 @@ class AeroGeom(om.ExplicitComponent):
             areashieldwf,
             siwb,
         ) = inputs.values()
+        # drag factors
+        fcfft = self.options[Aircraft.Design.Fuselage_DRAG_FACTOR]
+        fcfhtt = self.options[Aircraft.Design.HorizontalTail_DRAG_FACTOR]
+        self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
+        fcfnt = self.options[Aircraft.Design.Nacelle_DRAG_FACTOR]
+        fcfstrt = self.options[Aircraft.Design.STRUT_DRAG_FACTOR]
+        fcfvtt = self.options[Aircraft.Design.VerticalTail_DRAG_FACTOR]
+        fcfwt = self.options[Aircraft.Design.Wing_DRAG_FACTOR]
+        # aero technology factors
+        fcffc = self.options[Aircraft.Design.Fuselage_AERO_TECH_FACTOR]
+        fcfhtc = self.options[Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR]
+        self.options[Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR]
+        fcfnc = self.options[Aircraft.Design.Nacelle_AERO_TECH_FACTOR]
+        fcfstrc = self.options[Aircraft.Design.STRUT_AERO_TECH_FACTOR]
+        fcfvtc = self.options[Aircraft.Design.VerticalTail_AERO_TECH_FACTOR]
+        fcfwc = self.options[Aircraft.Design.Wing_AERO_TECH_FACTOR]
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
+        cdfi = fcffc * fcfft * cf
+        cdhti = fcfhtc * fcfhtt * cf
+        cdni = fcfnc * fcfnt * cf
+        cdstrti = fcfstrc * fcfstrt * cf 
+        cdvti = fcfvtc * fcfvtt * cf
+        cdwi = fcfwc * fcfwt * cf
 
         t = cs.abs(np.tan(deg2rad(sweep_c4)))
         yale05 = (1 - taper_ratio) / (1 + taper_ratio)
@@ -1046,13 +1082,13 @@ class AeroGeom(om.ExplicitComponent):
 
         # flat plate equivalent areas
         # GASP uses different values of cf for wing, nacelle, fuselage, etc.
-        fef = fus_SA * cf * ffre * ff_fus + fe_fus_inc
-        few = ff_wing * wing_area * cf * fwre
+        fef = fus_SA * cdfi * ffre * ff_fus + fe_fus_inc
+        few = ff_wing * wing_area * cdwi * fwre
         # TODO replace 2 with num_engines
-        fen = 2 * ff_nac * nacelle_area * cf * fnre
-        fevt = ff_vtail * vtail_area * cf * fvtre
-        feht = ff_htail * htail_area * cf * fhtre
-        festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cf * fstrtre
+        fen = 2 * ff_nac * nacelle_area * cdni * fnre
+        fevt = ff_vtail * vtail_area * cdvti * fvtre
+        feht = ff_htail * htail_area * cdhti * fhtre
+        festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cdstrti * fstrtre
 
         # begin INTERFERENCE - get flat plate equivalent for wing-fuselage interference
         # wing profile drag coefficient
@@ -1063,11 +1099,8 @@ class AeroGeom(om.ExplicitComponent):
         # end INTERFERENCE
 
         # total flat plate equivalent area
-        # In GASP, nacelle is excluded.
+        # In GASP, nacelle is excluded. It's kepy here because nacelle dimension is done in premission.
         fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area
-
-        # wfob = cabin_width / wingspan
-        # siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
 
         # wing-free profile drag coefficient
         cdpo = (fe - few) / wing_area

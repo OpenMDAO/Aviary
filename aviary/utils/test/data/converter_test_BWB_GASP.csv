@@ -32,8 +32,8 @@ aircraft:design:emergency_equipment_mass,100.0,lbm
 aircraft:design:fuselage_aero_tech_factor,0.93,unitless
 aircraft:design:fuselage_drag_factor,0.885,unitless
 aircraft:design:gross_mass,150000.0,lbm
-aircraft:design:horizontal_tail_aero_tech_factor,0.926,unitless
-aircraft:design:horizontal_tail_drag_factor,0.75,unitless
+aircraft:design:horizontaltail_aero_tech_factor,0.926,unitless
+aircraft:design:horizontaltail_drag_factor,0.75,unitless
 aircraft:design:interference_aero_tech_factor,1.0,unitless
 aircraft:design:interference_drag_factor,1.0,unitless
 aircraft:design:mach,0.8,unitless
@@ -44,9 +44,11 @@ aircraft:design:part25_structural_category,3.0,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
+aircraft:design:strut_aero_tech_factor,0.926,unitless
+aircraft:design:strut_drag_factor,0.9,unitless
 aircraft:design:type,BWB,unitless
-aircraft:design:vertical_tail_aero_tech_factor,0.926,unitless
-aircraft:design:vertical_tail_drag_factor,0.9,unitless
+aircraft:design:verticaltail_aero_tech_factor,0.926,unitless
+aircraft:design:verticaltail_drag_factor,0.9,unitless
 aircraft:design:wing_aero_tech_factor,0.926,unitless
 aircraft:design:wing_drag_factor,0.906,unitless
 aircraft:design:wing_loading,70.0,lbf/ft**2

@@ -1487,7 +1487,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=1.0,
-    desc='fuselage drag factor',
+    desc='fuselage aero calibration factor',
 )
 
 add_meta_data(
@@ -1529,7 +1529,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=1.0,
-    desc='horizontal tail drag factor',
+    desc='horizontal tail aero calibration factor',
 )
 
 add_meta_data(
@@ -1558,7 +1558,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=1.0,
-    desc='interference drag factor',
+    desc='interference aero calibration factor',
 )
 
 # TODO expected types and default value?
@@ -1745,7 +1745,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=1.0,
-    desc='nacelle drag factor',
+    desc='nacelle aero calibration factor',
 )
 
 add_meta_data(
@@ -1818,6 +1818,26 @@ add_meta_data(
     desc='Total structure group mass. Includes the following groups: wing, epennage, fuselage, '
     'landing gear, air induction.',
     default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Design.STRUT_AERO_TECH_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFVTT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='strut aero technology factor',
+)
+
+add_meta_data(
+    Aircraft.Design.STRUT_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FCFVTC'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='strut aero calibration factor',
 )
 
 add_meta_data(
@@ -2006,7 +2026,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=1.0,
-    desc='vertical tail drag factor',
+    desc='vertical tail aero calibration factor',
 )
 
 add_meta_data(
@@ -2041,7 +2061,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=1.0,
-    desc='wing drag factor',
+    desc='wing aero calibration factor',
 )
 
 add_meta_data(

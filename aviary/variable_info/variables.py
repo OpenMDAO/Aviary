@@ -168,6 +168,8 @@ class Aircraft:
         STATIC_MARGIN = 'aircraft:design:static_margin'
         STRUCTURAL_MASS_INCREMENT = 'aircraft:design:structural_mass_increment'
         STRUCTURE_MASS = 'aircraft:design:structure_mass'
+        STRUT_AERO_TECH_FACTOR = 'aircraft:design:strut_aero_tech_factor'
+        STRUT_DRAG_FACTOR = 'aircraft:design:strut_drag_factor'
         SUBSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:subsonic_drag_coeff_factor'
         SUPERSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:supersonic_drag_coeff_factor'
         SYSTEMS_AND_EQUIPMENT_MASS = 'aircraft:design:systems_and_equipment_mass'
