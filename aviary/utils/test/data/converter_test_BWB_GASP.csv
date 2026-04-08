@@ -25,6 +25,7 @@ aircraft:crew_and_payload:uld_mass_per_passenger,0.0667,lbm
 aircraft:crew_and_payload:water_mass_per_occupant,3.0,lbm
 aircraft:design:cg_delta,0.25,unitless
 aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
+aircraft:design:compressibility_drag_factor,1.0,unitless
 aircraft:design:cruise_altitude,41000.0,ft
 aircraft:design:drag_coefficient_increment,0.00025,unitless
 aircraft:design:drag_divergence_shift,0.025,unitless
@@ -204,7 +205,6 @@ INGASP.DCDSE,0.001
 INGASP.DYR,12
 INGASP.EL_FLGC,8
 INGASP.EMCRU,0.8
-INGASP.FCMPC,1
 INGASP.FCSF,2.5
 INGASP.FEXCRT,0.8
 INGASP.FPYLND,1.15

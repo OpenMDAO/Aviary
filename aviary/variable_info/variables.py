@@ -125,6 +125,7 @@ class Aircraft:
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
         COCKPIT_CONTROL_MASS_COEFFICIENT = 'aircraft:design:cockpit_control_mass_coefficient'
+        COMPRESSIBILITY_DRAG_FACTOR = 'aircraft:design:compressibility_drag_factor'
         COMPUTE_HTAIL_VOLUME_COEFF = 'aircraft:design:compute_htail_volume_coeff'
         COMPUTE_VTAIL_VOLUME_COEFF = 'aircraft:design:compute_vtail_volume_coeff'
         CRUISE_ALTITUDE = 'aircraft:design:cruise_altitude'

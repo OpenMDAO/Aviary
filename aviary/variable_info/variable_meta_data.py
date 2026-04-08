@@ -1287,6 +1287,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.FCMPC', 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='compressibility aero calibration factor',
+)
+
+add_meta_data(
     Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},

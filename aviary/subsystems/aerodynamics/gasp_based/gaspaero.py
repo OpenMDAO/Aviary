@@ -1425,6 +1425,7 @@ class DragCoefClean(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
+        add_aviary_option(self, Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -1483,6 +1484,7 @@ class DragCoefClean(om.ExplicitComponent):
             SA6,
             SA7,
         ) = inputs.values()
+        fcmpc = self.options[Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR]
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
@@ -1498,7 +1500,7 @@ class DragCoefClean(om.ExplicitComponent):
         # induced drag
         cdi = SA7 * CL**2
 
-        CD = cd0 * zero_lift_factor + cdi * lift_factor + delcdm
+        CD = cd0 * zero_lift_factor + cdi * lift_factor + fcmpc * delcdm
 
         # scale drag
         idx_sup = np.where(mach >= 1.0)
