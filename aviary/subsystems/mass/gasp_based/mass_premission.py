@@ -132,4 +132,4 @@ class MassPremission(om.Group):
             promotes_outputs=[('zero_fuel', Mission.ZERO_FUEL_MASS)],
         )
 
-        self.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=1)
+        self.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0)
