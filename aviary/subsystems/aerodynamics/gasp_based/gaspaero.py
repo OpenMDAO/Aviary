@@ -1018,7 +1018,7 @@ class AeroGeom(om.ExplicitComponent):
         # drag factors
         fcfft = self.options[Aircraft.Design.Fuselage_DRAG_FACTOR]
         fcfhtt = self.options[Aircraft.Design.HorizontalTail_DRAG_FACTOR]
-        self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
+        fckit = self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
         fcfnt = self.options[Aircraft.Design.Nacelle_DRAG_FACTOR]
         fcfstrt = self.options[Aircraft.Design.STRUT_DRAG_FACTOR]
         fcfvtt = self.options[Aircraft.Design.VerticalTail_DRAG_FACTOR]
@@ -1026,7 +1026,7 @@ class AeroGeom(om.ExplicitComponent):
         # aero technology factors
         fcffc = self.options[Aircraft.Design.Fuselage_AERO_TECH_FACTOR]
         fcfhtc = self.options[Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR]
-        self.options[Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR]
+        fckic = self.options[Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR]
         fcfnc = self.options[Aircraft.Design.Nacelle_AERO_TECH_FACTOR]
         fcfstrc = self.options[Aircraft.Design.STRUT_AERO_TECH_FACTOR]
         fcfvtc = self.options[Aircraft.Design.VerticalTail_AERO_TECH_FACTOR]
@@ -1097,7 +1097,7 @@ class AeroGeom(om.ExplicitComponent):
         cdw0 = few / wing_area
         # interference drag independent of shielded area
         feshieldwf = cdw0 * areashieldwf
-        feiwf = wing_fus_intf * (feintwf - feshieldwf)
+        feiwf = fckic * fckit * (wing_fus_intf * (feintwf - feshieldwf))
         # end INTERFERENCE
 
         # total flat plate equivalent area
