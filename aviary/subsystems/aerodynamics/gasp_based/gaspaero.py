@@ -745,7 +745,7 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.STRUT_DRAG_FACTOR_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.STRUT_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.Wing_DRAG_FACTOR)
         # aero technology factos
