@@ -560,7 +560,7 @@ class AviaryProblem(om.Problem):
         and another for the gross mass of the aircraft computed during the mission. A constraint is
         also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        If solving an OFF_DESIGN_MIN_FUEL problem, only a design variable for the gross mass of the aircraft
         computed during the mission is added. A constraint is also added to ensure that the residual
         range is zero.
 
@@ -786,7 +786,7 @@ class AviaryProblem(om.Problem):
             If 1-tuple: (output) or 'fuel', 'fuel_burned', 'mass', 'range', 'time'
             If empty, information will be populated based on problem_type:
             - If ProblemType = OFF_DESIGN_MAX_RANGE, objective = Mission.Objectives.RANGE
-            - If ProblemType = Sizing or Alternate, objective = Mission.Objectives.FUEL
+            - If ProblemType = Sizing or OFF_DESIGN_MIN_FUEL, objective = Mission.Objectives.FUEL
 
             Example inputs can be any of the following:
             ('fuel')
@@ -867,7 +867,7 @@ class AviaryProblem(om.Problem):
                     f'Each argument must be one of the following: '
                     f'(output), (output, weight), (model, output), or (model, output, weight).'
                     f'Outputs can be from the variable meta data, or can be: fuel_burned, fuel'
-                    f'Or problem type must be set to SIZING, ALTERNATE, or OFF_DESIGN_MAX_RANGE'
+                    f'Or problem type must be set to SIZING, OFF_DESIGN_MIN_FUEL, or OFF_DESIGN_MAX_RANGE'
                 )
             objectives.append((model, output, weight))
             # objectives = [
@@ -1320,10 +1320,10 @@ class AviaryProblem(om.Problem):
             for total cargo mass.
         mission_gross_mass : float, optional
             Gross mass of aircraft flying off-design mission, in pounds-mass. Defaults to design
-            gross mass. For missions where mass is solved for (such as ALTERNATE missions), this is
+            gross mass. For missions where mass is solved for (such as OFF_DESIGN_MIN_FUEL missions), this is
             the initial guess.
         mission_range : float, optional
-            [ALTERNATE missions only]
+            [OFF_DESIGN_MIN_FUEL missions only]
             Sets fixed range of flown off-design mission, in nautical miles. Unused for other
             mission types.
         optimizer : string, optional
@@ -1438,7 +1438,7 @@ class AviaryProblem(om.Problem):
             if mission_range is None:
                 if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(
-                        'Alternate problem type requested with no specified range. Using design '
+                        'OFF_DESIGN_MIN_FUEL problem type requested with no specified range. Using design '
                         'mission range for the off-design mission.'
                     )
                 mission_range = self.get_val(Mission.RANGE, units='NM')[0]
@@ -1452,7 +1452,7 @@ class AviaryProblem(om.Problem):
         off_design_prob.load_inputs(inputs, phase_info, verbosity=verbosity)
 
         # Update inputs that are specific to problem type
-        # Some Alternate problem changes had to happen before load_inputs, all OFF_DESIGN_MAX_RANGE problem
+        # Some OFF_DESIGN_MIN_FUEL problem changes had to happen before load_inputs, all OFF_DESIGN_MAX_RANGE problem
         # changes must come after load_inputs
         if problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
             off_design_prob.aviary_inputs.set_val(Mission.RANGE, mission_range, units='NM')

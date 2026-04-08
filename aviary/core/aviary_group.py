@@ -1268,7 +1268,7 @@ class AviaryGroup(om.Group):
         and another for the gross mass of the aircraft computed during the mission. A constraint is
         also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        If solving an OFF_DESIGN_MIN_FUEL problem, only a design variable for the gross mass of the aircraft
         computed during the mission is added. A constraint is also added to ensure that the residual
         range is zero.
 

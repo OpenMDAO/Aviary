@@ -53,11 +53,11 @@ class TestSizingResults(unittest.TestCase):
         )
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_alternate(self):
+    def test_off_design_min_fuel(self):
         local_phase_info = deepcopy(phase_info)
 
         prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
-        prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
+        prob.run_off_design_mission(problem_type='off_design_min_fuel', phase_info=local_phase_info)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_off_design_max_range(self):

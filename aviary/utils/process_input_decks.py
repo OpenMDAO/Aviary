@@ -39,7 +39,7 @@ operation_dict = {
 }
 problem_types = {
     'sizing': ProblemType.SIZING,
-    'alternate': ProblemType.OFF_DESIGN_MIN_FUEL,
+    'off_design_min_fuel': ProblemType.OFF_DESIGN_MIN_FUEL,
     'off_design_max_range': ProblemType.OFF_DESIGN_MAX_RANGE,
 }
 
