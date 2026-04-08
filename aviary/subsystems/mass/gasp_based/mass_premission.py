@@ -120,15 +120,13 @@ class MassPremission(om.Group):
         self.add_subsystem(
             'zero_fuel_comp',
             om.ExecComp(
-                'zero_fuel = pax_payload_mass + cargo_mass + operating_mass',
+                'zero_fuel = payload_mass + operating_mass',
                 zero_fuel={'units': 'lbm'},
-                pax_payload_mass={'units': 'lbm'},
-                cargo_mass={'units': 'lbm'},
+                payload_mass={'units': 'lbm'},
                 operating_mass={'units': 'lbm'},
             ),
             promotes_inputs=[
-                ('pax_payload_mass', Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS),
-                ('cargo_mass', Aircraft.CrewPayload.CARGO_MASS),
+                ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
                 ('operating_mass', Mission.OPERATING_MASS),
             ],
             promotes_outputs=[('zero_fuel', Mission.ZERO_FUEL_MASS)],
