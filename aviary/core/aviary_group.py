@@ -853,7 +853,9 @@ class AviaryGroup(om.Group):
             om.ExecComp(
                 'fuel_burned = initial_mass - mass_final',
                 initial_mass={'units': 'lbm'},
-                mass_final={'units': 'lbm'}, # this final mass already includes fuel burned in taxi and takeoff
+                mass_final={
+                    'units': 'lbm'
+                },  # this final mass already includes fuel burned in taxi and takeoff
                 fuel_burned={'units': 'lbm'},
             ),
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
