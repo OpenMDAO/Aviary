@@ -20,34 +20,38 @@ class TwoDOFTestCase(unittest.TestCase):
 class TestOffDesign(TwoDOFTestCase):
     """
     Build the model using a large single aisle commercial transport aircraft data using
-    GASP mass method and TWO_DEGREES_OF_FREEDOM mission method. Run a fallout mission to test off design.
+    GASP mass method and TWO_DEGREES_OF_FREEDOM mission method. Run a OFF_DESIGN_MAX_RANGE mission to test off design.
     """
 
     @require_pyoptsparse(optimizer='IPOPT')
     def test_off_design_IPOPT(self):
-        # Fallout Mission
-        prob_fallout = av.AviaryProblem()
-        prob_fallout.load_inputs(
+        # OFF_DESIGN_MAX_RANGE Mission
+        prob_off_design_max_range = av.AviaryProblem()
+        prob_off_design_max_range.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
 
-        prob_fallout.problem_type = ProblemType.FALLOUT
-        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
-        prob_fallout.aviary_inputs.set_val(
+        prob_off_design_max_range.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
+        prob_off_design_max_range.aviary_inputs.set_val(
+            'problem_type', ProblemType.OFF_DESIGN_MAX_RANGE, units='unitless'
+        )
+        prob_off_design_max_range.aviary_inputs.set_val(
             'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
-        prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
+        prob_off_design_max_range.aviary_inputs.set_val(
+            'mission:gross_mass', self.sized_mass, units='lbm'
+        )
 
-        prob_fallout.check_and_preprocess_inputs()
+        prob_off_design_max_range.check_and_preprocess_inputs()
 
-        prob_fallout.build_model()
-        prob_fallout.add_driver('IPOPT', max_iter=100)
-        prob_fallout.add_design_variables()
-        prob_fallout.add_objective()
-        prob_fallout.setup()
-        prob_fallout.run_aviary_problem()
+        prob_off_design_max_range.build_model()
+        prob_off_design_max_range.add_driver('IPOPT', max_iter=100)
+        prob_off_design_max_range.add_design_variables()
+        prob_off_design_max_range.add_objective()
+        prob_off_design_max_range.setup()
+        prob_off_design_max_range.run_aviary_problem()
 
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
@@ -56,9 +60,9 @@ class TestOffDesign(TwoDOFTestCase):
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
-        prob_alternate.problem_type = ProblemType.ALTERNATE
+        prob_alternate.problem_type = ProblemType.OFF_DESIGN_MIN_FUEL
         prob_alternate.aviary_inputs.set_val(
-            'problem_type', ProblemType.ALTERNATE, units='unitless'
+            'problem_type', ProblemType.OFF_DESIGN_MIN_FUEL, units='unitless'
         )
 
         prob_alternate.aviary_inputs.set_val(
@@ -74,35 +78,39 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.setup()
         prob_alternate.run_aviary_problem()
 
-        fallout_range = prob_fallout.get_val(av.Mission.RANGE)
+        off_design_max_range_range = prob_off_design_max_range.get_val(av.Mission.RANGE)
         alternate_mass = prob_alternate.get_val(av.Mission.GROSS_MASS)
-        assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
+        assert_near_equal(off_design_max_range_range, self.sized_range, tolerance=0.02)
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 
     @require_pyoptsparse(optimizer='SNOPT')
     def test_off_design_SNOPT(self):
-        # Fallout Mission
-        prob_fallout = av.AviaryProblem()
-        prob_fallout.load_inputs(
+        # off_design_max_range Mission
+        prob_off_design_max_range = av.AviaryProblem()
+        prob_off_design_max_range.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
 
-        prob_fallout.problem_type = ProblemType.FALLOUT
-        prob_fallout.aviary_inputs.set_val('problem_type', ProblemType.FALLOUT, units='unitless')
-        prob_fallout.aviary_inputs.set_val(
+        prob_off_design_max_range.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
+        prob_off_design_max_range.aviary_inputs.set_val(
+            'problem_type', ProblemType.OFF_DESIGN_MAX_RANGE, units='unitless'
+        )
+        prob_off_design_max_range.aviary_inputs.set_val(
             'aircraft:design:gross_mass', self.sized_mass, units='lbm'
         )
-        prob_fallout.aviary_inputs.set_val('mission:gross_mass', self.sized_mass, units='lbm')
+        prob_off_design_max_range.aviary_inputs.set_val(
+            'mission:gross_mass', self.sized_mass, units='lbm'
+        )
 
-        prob_fallout.check_and_preprocess_inputs()
-        prob_fallout.build_model()
-        prob_fallout.add_driver('SNOPT', max_iter=100)
-        prob_fallout.add_design_variables()
-        prob_fallout.add_objective()
-        prob_fallout.setup()
-        prob_fallout.run_aviary_problem()
+        prob_off_design_max_range.check_and_preprocess_inputs()
+        prob_off_design_max_range.build_model()
+        prob_off_design_max_range.add_driver('SNOPT', max_iter=100)
+        prob_off_design_max_range.add_design_variables()
+        prob_off_design_max_range.add_objective()
+        prob_off_design_max_range.setup()
+        prob_off_design_max_range.run_aviary_problem()
 
         # Alternate Mission
         prob_alternate = av.AviaryProblem()
@@ -111,9 +119,9 @@ class TestOffDesign(TwoDOFTestCase):
             self.phase_info,
             verbosity=Verbosity.QUIET,
         )
-        prob_alternate.problem_type = ProblemType.ALTERNATE
+        prob_alternate.problem_type = ProblemType.OFF_DESIGN_MIN_FUEL
         prob_alternate.aviary_inputs.set_val(
-            'problem_type', ProblemType.ALTERNATE, units='unitless'
+            'problem_type', ProblemType.OFF_DESIGN_MIN_FUEL, units='unitless'
         )
 
         prob_alternate.aviary_inputs.set_val(
@@ -129,9 +137,9 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.setup()
         prob_alternate.run_aviary_problem()
 
-        fallout_range = prob_fallout.get_val(av.Mission.RANGE)
+        off_design_max_range_range = prob_off_design_max_range.get_val(av.Mission.RANGE)
         alternate_mass = prob_alternate.get_val(av.Mission.GROSS_MASS)
-        assert_near_equal(fallout_range, self.sized_range, tolerance=0.02)
+        assert_near_equal(off_design_max_range_range, self.sized_range, tolerance=0.02)
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 
 

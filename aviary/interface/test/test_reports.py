@@ -149,7 +149,7 @@ class TestReports(unittest.TestCase):
         prob.add_objective()
         prob.setup()
         prob.run_aviary_problem()
-        prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
+        prob.run_off_design_mission(problem_type='off_design_max_range', mission_gross_mass=115000)
         prob.run_off_design_mission(problem_type='alternate', mission_range=1250)
         assert Path('testflo_off_design_1_out').is_dir()
         assert Path('testflo_off_design_out').is_dir()

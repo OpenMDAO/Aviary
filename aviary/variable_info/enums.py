@@ -204,7 +204,7 @@ class ProblemType(Enum):
     and actual gross weight until the range closes to the off-design
     range.
 
-    FALLOUT: Requires a pre-sized aircraft. It holds the design gross
+    OFF_DESIGN_MAX_RANGE: Requires a pre-sized aircraft. It holds the design gross
     weight and empty weight constant. Using the specified actual
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
@@ -219,7 +219,7 @@ class ProblemType(Enum):
 
     SIZING = 'sizing'
     ALTERNATE = 'alternate'
-    FALLOUT = 'fallout'
+    OFF_DESIGN_MAX_RANGE = 'off_design_max_range'
     MULTI_MISSION = 'multimission'
 
 

@@ -60,11 +60,13 @@ class TestSizingResults(unittest.TestCase):
         prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_fallout(self):
+    def test_off_design_max_range(self):
         local_phase_info = deepcopy(phase_info)
 
         prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
-        prob.run_off_design_mission(problem_type='fallout', phase_info=local_phase_info)
+        prob.run_off_design_mission(
+            problem_type='off_design_max_range', phase_info=local_phase_info
+        )
 
     def compare_files(self, test_file, validation_file):
         """
@@ -98,4 +100,4 @@ if __name__ == '__main__':
 
     # test = TestSizingResults()
     # test.test_save_json()
-    # test.test_fallout()
+    # test.test_off_design_max_range()

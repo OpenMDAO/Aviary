@@ -1342,7 +1342,7 @@ class AviaryGroup(om.Group):
                 if self.require_range_residual:
                     self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
-            elif problem_type is ProblemType.ALTERNATE:
+            elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 # target range problem
                 # fixed vehicle (design GTOW) but variable actual GTOW for off-design
                 # get the design gross mass and set as the upper bound for the gross mass design variable
@@ -1357,10 +1357,12 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
-            elif problem_type is ProblemType.FALLOUT:
+            elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
                 if verbosity >= Verbosity.VERBOSE:
-                    print('No additional aircraft design variables added for Fallout missions')
+                    print(
+                        'No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions'
+                    )
 
             elif problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(

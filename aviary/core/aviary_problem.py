@@ -693,10 +693,10 @@ class AviaryProblem(om.Problem):
             if self.problem_type is ProblemType.SIZING:
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-            elif self.problem_type is ProblemType.ALTERNATE:
+            elif self.problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
 
-            elif self.problem_type is ProblemType.FALLOUT:
+            elif self.problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # if ref > 0:
                 #    # Maximize range.
                 #    ref = -ref
@@ -785,7 +785,7 @@ class AviaryProblem(om.Problem):
             If 2-tuple: (model, output) or (output, weight)
             If 1-tuple: (output) or 'fuel', 'fuel_burned', 'mass', 'range', 'time'
             If empty, information will be populated based on problem_type:
-            - If ProblemType = FALLOUT, objective = Mission.Objectives.RANGE
+            - If ProblemType = OFF_DESIGN_MAX_RANGE, objective = Mission.Objectives.RANGE
             - If ProblemType = Sizing or Alternate, objective = Mission.Objectives.FUEL
 
             Example inputs can be any of the following:
@@ -857,9 +857,9 @@ class AviaryProblem(om.Problem):
             # in some cases the users provides no input and we can derive the objectie from the problem type:
             elif self.model.problem_type is ProblemType.SIZING:
                 model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
-            elif self.model.problem_type is ProblemType.ALTERNATE:
+            elif self.model.problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 model, output, weight = default_model, Mission.Objectives.FUEL, default_weight
-            elif self.model.problem_type is ProblemType.FALLOUT:
+            elif self.model.problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 model, output, weight = default_model, Mission.Objectives.RANGE, default_weight
             else:
                 raise ValueError(
@@ -867,7 +867,7 @@ class AviaryProblem(om.Problem):
                     f'Each argument must be one of the following: '
                     f'(output), (output, weight), (model, output), or (model, output, weight).'
                     f'Outputs can be from the variable meta data, or can be: fuel_burned, fuel'
-                    f'Or problem type must be set to SIZING, ALTERNATE, or FALLOUT'
+                    f'Or problem type must be set to SIZING, ALTERNATE, or OFF_DESIGN_MAX_RANGE'
                 )
             objectives.append((model, output, weight))
             # objectives = [
@@ -1433,7 +1433,7 @@ class AviaryProblem(om.Problem):
         # NOTE once load_inputs is run, phase info details are stored in prob.model.configurator,
         #      meaning any phase_info changes that happen after load inputs is ignored
 
-        if problem_type is ProblemType.ALTERNATE:
+        if problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
             # Set mission range, aviary will calculate required fuel
             if mission_range is None:
                 if verbosity >= Verbosity.VERBOSE:
@@ -1452,9 +1452,9 @@ class AviaryProblem(om.Problem):
         off_design_prob.load_inputs(inputs, phase_info, verbosity=verbosity)
 
         # Update inputs that are specific to problem type
-        # Some Alternate problem changes had to happen before load_inputs, all fallout problem
+        # Some Alternate problem changes had to happen before load_inputs, all OFF_DESIGN_MAX_RANGE problem
         # changes must come after load_inputs
-        if problem_type is ProblemType.ALTERNATE:
+        if problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
             off_design_prob.aviary_inputs.set_val(Mission.RANGE, mission_range, units='NM')
             # set initial guess for Mission.GROSS_MASS to help optimizer with new design
             # variable bounds.
@@ -1466,12 +1466,12 @@ class AviaryProblem(om.Problem):
                 Mission.GROSS_MASS, mission_gross_mass * 0.9, units='lbm'
             )
 
-        elif problem_type is ProblemType.FALLOUT:
+        elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
             # Set mission fuel and calculate gross weight, aviary will calculate range
             if mission_gross_mass is None:
                 if verbosity >= Verbosity.VERBOSE:
                     warnings.warn(
-                        'Fallout problem type requested with no specified gross mass. Using design '
+                        'OFF_DESIGN_MAX_RANGE problem type requested with no specified gross mass. Using design '
                         'takeoff gross mass for the off-design mission.'
                     )
                 mission_gross_mass = self.get_val(Aircraft.Design.GROSS_MASS, units='lbm')[0]
@@ -1683,7 +1683,7 @@ class AviaryProblem(om.Problem):
                 # we don't know if we actually filled the aircraft to exactly TOGW yet. Need to use
                 # "fill_cargo" flag in off-design call
                 economic_range_prob = self.economic_range_prob = self.run_off_design_mission(
-                    problem_type=ProblemType.FALLOUT,
+                    problem_type=ProblemType.OFF_DESIGN_MAX_RANGE,
                     phase_info=phase_info,
                     num_first_class=economic_mission_num_first,
                     num_business=economic_mission_num_bus,
@@ -1695,7 +1695,7 @@ class AviaryProblem(om.Problem):
                     verbosity=verbosity,
                 )
 
-                # Pull the payload and range values from the fallout mission
+                # Pull the payload and range values from the OFF_DESIGN_MAX_RANGE mission
                 payload_3 = float(
                     economic_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
                 )
@@ -1718,7 +1718,7 @@ class AviaryProblem(om.Problem):
                 ferry_cargo_mass = None
             ferry_range_gross_mass = operating_mass + max_usable_fuel
             ferry_range_prob = self.ferry_range_prob = self.run_off_design_mission(
-                problem_type=ProblemType.FALLOUT,
+                problem_type=ProblemType.OFF_DESIGN_MAX_RANGE,
                 phase_info=phase_info,
                 num_first_class=0,
                 num_business=0,
@@ -1742,7 +1742,7 @@ class AviaryProblem(om.Problem):
                 payload_3 = payload_4
                 range_3 = range_4
 
-            # Check if fallout missions ran successfully before writing to csv file
+            # Check if OFF_DESIGN_MAX_RANGE missions ran successfully before writing to csv file
             # If both missions ran successfully, writes the payload/range data to a csv file
             self.payload_range_data = payload_range_data = NamedValues()
             if ferry_range_prob.result.success and economic_range_prob.result.success:
@@ -1769,7 +1769,7 @@ class AviaryProblem(om.Problem):
                 return (economic_range_prob, ferry_range_prob)
             else:
                 warnings.warn(
-                    'One or both of the fallout missions did not run successfully; payload/range '
+                    'One or both of the OFF_DESIGN_MAX_RANGE missions did not run successfully; payload/range '
                     'diagram was not generated.'
                 )
         else:
