@@ -635,10 +635,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
         )
 
-        aviary_group.post_mission.add_constraint(
-            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5
-        )
-
     def _add_landing_systems(self, aviary_group):
         aviary_group.add_subsystem(
             'landing',
