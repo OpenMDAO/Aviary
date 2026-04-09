@@ -439,7 +439,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         if phase_options.get('mach_optimize', False):
             # Create an ExecComp to compute the difference in mach
             mach_diff_comp = om.ExecComp(
-                'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
+                'mach_resid_for_connecting_takeoff = final_mach - initial_mach',
+                initial_mach={'units': 'unitless'},
+                final_mach={'units': 'unitless'},
             )
             aviary_group.add_subsystem('mach_diff_comp', mach_diff_comp)
 
