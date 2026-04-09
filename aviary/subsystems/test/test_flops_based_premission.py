@@ -1095,6 +1095,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
         prob.run_model()
 
+        # Only masses are checked because geometry is checked in test_case_geom() already.
         tol = 1e-4
         # Mass
         # CargoMass
@@ -1219,6 +1220,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
         prob.run_model()
 
+        # Only aero parameters are checked because geometry and mass are checked in test_case_geom() already.
         tol = 1e-4
         # Design
         assert_near_equal(prob[Aircraft.Design.MACH], 0.89939238, tol)
