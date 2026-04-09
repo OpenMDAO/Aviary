@@ -37,6 +37,7 @@ class Aircraft:
 
     class BWB:
         DETAILED_WING_PROVIDED = 'aircraft:blended_wing_body_design:detailed_wing_provided'
+        MAX_BAY_WIDTH = 'aircraft:blended_wing_body_design:max_bay_width'
         MAX_NUM_BAYS = 'aircraft:blended_wing_body_design:max_num_bays'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
