@@ -1562,6 +1562,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.INDUCED_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FSA7C'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='induced drag factor',
+)
+
+add_meta_data(
     Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR,
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCKIT'], 'FLOPS': None, 'LEAPS1': None},

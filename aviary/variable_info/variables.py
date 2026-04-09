@@ -147,6 +147,7 @@ class Aircraft:
         HorizontalTail_AERO_TECH_FACTOR = 'aircraft:design:horizontaltail_aero_tech_factor'
         HorizontalTail_DRAG_FACTOR = 'aircraft:design:horizontaltail_drag_factor'
         IJEFF = 'ijeff'
+        INDUCED_DRAG_FACTOR = 'aircraft:design:induced_drag_factor'
         INTERFERENCE_AERO_TECH_FACTOR = 'aircraft:design:interference_aero_tech_factor'
         INTERFERENCE_DRAG_FACTOR = 'aircraft:design:interference_drag_factor'
         LAMINAR_FLOW_LOWER = 'aircraft:design:laminar_flow_lower'

@@ -36,6 +36,7 @@ aircraft:design:fuselage_drag_factor,0.885,unitless
 aircraft:design:gross_mass,150000.0,lbm
 aircraft:design:horizontaltail_aero_tech_factor,0.926,unitless
 aircraft:design:horizontaltail_drag_factor,0.75,unitless
+aircraft:design:induced_drag_factor,0.85,unitless
 aircraft:design:interference_aero_tech_factor,1.0,unitless
 aircraft:design:interference_drag_factor,1.0,unitless
 aircraft:design:mach,0.8,unitless
@@ -208,7 +209,6 @@ INGASP.DYR,12
 INGASP.EL_FLGC,8
 INGASP.EMCRU,0.8
 INGASP.FCSF,2.5
-INGASP.FSA7C,0.85
 INGASP.HBTP,0.465
 INGASP.HIR,0.015
 INGASP.HNCRU,41000
