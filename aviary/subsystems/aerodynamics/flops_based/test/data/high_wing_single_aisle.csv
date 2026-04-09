@@ -134,7 +134,7 @@ aircraft:design:thrust_takeoff_per_eng,23000.0,lbf
 mission:landing:lift_coefficient_max,2.7,unitless
 aircraft:design:cruise_mach,0.8,unitless
 mission:fuel_flow_scaler,1.01,unitless   #check
-mission:takeoff:fuel_simple,400,lbm
+mission:takeoff:fuel,400,lbm
 mission:takeoff:lift_coefficient_max,2.55,unitless
 mission:takeoff:lift_over_drag,25,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
