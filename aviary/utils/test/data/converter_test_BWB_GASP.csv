@@ -30,6 +30,7 @@ aircraft:design:cruise_altitude,41000.0,ft
 aircraft:design:drag_coefficient_increment,0.00025,unitless
 aircraft:design:drag_divergence_shift,0.025,unitless
 aircraft:design:emergency_equipment_mass,100.0,lbm
+aircraft:design:excrescence_drag_factor,0.8,unitless
 aircraft:design:fuselage_aero_tech_factor,0.93,unitless
 aircraft:design:fuselage_drag_factor,0.885,unitless
 aircraft:design:gross_mass,150000.0,lbm
@@ -207,7 +208,6 @@ INGASP.DYR,12
 INGASP.EL_FLGC,8
 INGASP.EMCRU,0.8
 INGASP.FCSF,2.5
-INGASP.FEXCRT,0.8
 INGASP.FSA7C,0.85
 INGASP.HBTP,0.465
 INGASP.HIR,0.015

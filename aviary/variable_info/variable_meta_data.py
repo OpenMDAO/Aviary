@@ -1451,6 +1451,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FEXCRT'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='excrescence aero drag factor',
+)
+
+add_meta_data(
     Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS,
     historical_name={
         'GASP': None,
@@ -1768,6 +1778,16 @@ add_meta_data(
     types=int,
     units='unitless',
     desc='part 25 structural category',
+)
+
+add_meta_data(
+    Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.PCT_EXCR'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=0.0,
+    desc='percentage of excrescence drag as of fuselage, wing, nacelle, (winglet), empennage and strut',
 )
 
 add_meta_data(

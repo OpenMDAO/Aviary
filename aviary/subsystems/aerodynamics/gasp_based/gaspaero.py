@@ -749,6 +749,8 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.STRUT_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.Wing_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
         # aero technology factos
         add_aviary_option(self, Aircraft.Design.Fuselage_AERO_TECH_FACTOR)
         add_aviary_option(self, Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR)
@@ -1017,22 +1019,24 @@ class AeroGeom(om.ExplicitComponent):
             siwb,
         ) = inputs.values()
         # drag factors
-        fcfft = self.options[Aircraft.Design.Fuselage_DRAG_FACTOR]
-        fcfhtt = self.options[Aircraft.Design.HorizontalTail_DRAG_FACTOR]
-        fckit = self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
-        fcfnt = self.options[Aircraft.Design.Nacelle_DRAG_FACTOR]
+        fcffc = self.options[Aircraft.Design.Fuselage_DRAG_FACTOR]
+        fcfhtc = self.options[Aircraft.Design.HorizontalTail_DRAG_FACTOR]
+        fckic = self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
+        fcfnc = self.options[Aircraft.Design.Nacelle_DRAG_FACTOR]
         fpylnd = self.options[Aircraft.Design.PYLON_DRAG_FACTOR]
-        fcfstrt = self.options[Aircraft.Design.STRUT_DRAG_FACTOR]
-        fcfvtt = self.options[Aircraft.Design.VerticalTail_DRAG_FACTOR]
-        fcfwt = self.options[Aircraft.Design.Wing_DRAG_FACTOR]
+        fcfstrc = self.options[Aircraft.Design.STRUT_DRAG_FACTOR]
+        fcfvtc = self.options[Aircraft.Design.VerticalTail_DRAG_FACTOR]
+        fcfwc = self.options[Aircraft.Design.Wing_DRAG_FACTOR]
+        fexcrt = self.options[Aircraft.Design.EXCRESCENCE_DRAG_FACTOR]
+        pct_excr = self.options[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
         # aero technology factors
-        fcffc = self.options[Aircraft.Design.Fuselage_AERO_TECH_FACTOR]
-        fcfhtc = self.options[Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR]
-        fckic = self.options[Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR]
-        fcfnc = self.options[Aircraft.Design.Nacelle_AERO_TECH_FACTOR]
-        fcfstrc = self.options[Aircraft.Design.STRUT_AERO_TECH_FACTOR]
-        fcfvtc = self.options[Aircraft.Design.VerticalTail_AERO_TECH_FACTOR]
-        fcfwc = self.options[Aircraft.Design.Wing_AERO_TECH_FACTOR]
+        fcfft = self.options[Aircraft.Design.Fuselage_AERO_TECH_FACTOR]
+        fcfhtt = self.options[Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR]
+        fckit = self.options[Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR]
+        fcfnt = self.options[Aircraft.Design.Nacelle_AERO_TECH_FACTOR]
+        fcfstrt = self.options[Aircraft.Design.STRUT_AERO_TECH_FACTOR]
+        fcfvtt = self.options[Aircraft.Design.VerticalTail_AERO_TECH_FACTOR]
+        fcfwt = self.options[Aircraft.Design.Wing_AERO_TECH_FACTOR]
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
         cdfi = fcffc * fcfft * cf
@@ -1102,9 +1106,13 @@ class AeroGeom(om.ExplicitComponent):
         feiwf = fckic * fckit * (wing_fus_intf * (feintwf - feshieldwf))
         # end INTERFERENCE
 
+        # Excrescence Drag
+        feexcr = fexcrt * pct_excr * (few + fef + fevt + feht + fen + festrt)
+
         # total flat plate equivalent area
-        # In GASP, nacelle is excluded. It's kepy here because nacelle dimension is done in premission.
-        fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area
+        # In GASP, nacelle is excluded. It's kept here because nacelle dimension is 
+        # done in premission and hence does not size.
+        fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area + feexcr
 
         # wing-free profile drag coefficient
         cdpo = (fe - few) / wing_area
