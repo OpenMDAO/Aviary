@@ -57,7 +57,7 @@ class MotorMap(om.Group):
         )
         efficiency_units = units_dict['efficiency']
 
-        motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=False)
+        motor = om.MetaModelStructuredComp(method='slinear', vec_size=n, extrapolate=True)
         motor.add_input(
             Dynamic.Vehicle.Propulsion.RPM,
             val=np.ones(n),

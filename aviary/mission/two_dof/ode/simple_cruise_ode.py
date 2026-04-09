@@ -84,8 +84,8 @@ class SimpleCruiseODE(TwoDOFODE):
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
             val=np.ones(nn),
-            upper=1.0,
-            lower=0.0,
+            #upper=1.0,
+            #lower=0.0,
             units='unitless',
             lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             rhs_name=Dynamic.Vehicle.DRAG,

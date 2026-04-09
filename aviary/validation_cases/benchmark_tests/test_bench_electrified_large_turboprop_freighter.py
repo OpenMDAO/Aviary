@@ -102,10 +102,13 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             upper=2,
             ref=1,
         )
-        prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=0, upper=10000)
+        prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10000)
         prob.add_objective()
 
         prob.setup()
+
+        # initial guess for pack mass.
+        prob.set_val(Aircraft.Battery.PACK_MASS, val=1000.0, units='lbm')
 
         prob.run_aviary_problem()
 
