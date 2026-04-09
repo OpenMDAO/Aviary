@@ -235,7 +235,7 @@ inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 659, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL, 659, 'lbm')
 
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
