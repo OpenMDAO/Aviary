@@ -545,6 +545,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         self.add_input(
             'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
         )
+        add_aviary_input(self, Aircraft.BWB.MAX_BAY_WIDTH, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
@@ -553,6 +554,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
+        self.add_output('bay_width', units='ft', desc='BAYW')
 
     def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
@@ -564,8 +566,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         tan_sweep = np.tan(sweep / 57.296)
 
         bay_width_nom = 12.0  # ft
-        # Do not set max bay width for now. Later can create an Aviary variable for BAYWMX
-        bay_width_max = 0.0
+        bay_width_max = inputs[Aircraft.BWB.MAX_BAY_WIDTH]
         num_bays = 0
         num_bays_loc = num_bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
@@ -669,7 +670,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
                 num_bays_tmp = 0.999 + max_width / bay_width
                 if num_bays_tmp.real > num_bays_max and num_bays_max > 0:
                     num_bays = num_bays_max
-                    max_width = bay_width_max * bay_width
+                    max_width = num_bays_max * bay_width
                     pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0
                     root_chord = pax_compart_length - tan_sweep * max_width / 2.0
                 else:
@@ -687,6 +688,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.MAX_WIDTH] = max_width
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
+        outputs['bay_width'] = bay_width
 
         # TODO: For the int calls, I see that those are part of a while loop that solves
         # a nonlinear equation by Gauss-Siedel until it converges. The interesting part is

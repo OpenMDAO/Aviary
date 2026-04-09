@@ -146,7 +146,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [7], tolerance=1e-9)
+        assert_near_equal(num_bays, 7, tolerance=1e-9)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
         assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)
@@ -198,7 +198,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(fuselage_width, 49.77182929, tolerance=1e-9)
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [4], tolerance=1e-9)
+        assert_near_equal(num_bays, 4, tolerance=1e-9)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
         assert_near_equal(fuselage_length, 116.57609631, tolerance=1e-9)
@@ -214,6 +214,59 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
 
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
+
+    def test_case3(self):
+        """bwb300_baseline, MAX_NUM_BAYS=4, MAX_BAY_WIDTH=10.0"""
+        prob = self.prob
+        options = self.aviary_options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 1, units='unitless')
+
+        options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 76, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 24, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 200, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 0, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 0, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 0, units='unitless')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 0.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, units='inch')
+        options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 4, units='unitless')
+
+        prob.model.add_subsystem(
+            'layout', BWBDetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
+        # prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=50.0, units='ft')
+        prob.set_val(Aircraft.BWB.MAX_BAY_WIDTH, val=10.0, units='ft')
+        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.run_model()
+
+        bay_width = prob.get_val('bay_width')
+        assert_near_equal(bay_width, 10.0, tolerance=1e-9)
+
+        fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
+        assert_near_equal(fuselage_width, 40.0, tolerance=1e-9)
+
+        num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
+        assert_near_equal(num_bays, 4.0, tolerance=1e-9)
+
+        fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
+        assert_near_equal(fuselage_length, 131.4890549, tolerance=1e-9)
+
+        pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
+        assert_near_equal(pax_compart_length, 92.04233843, tolerance=1e-9)
+
+        fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
+        assert_near_equal(fuselage_height, 14.46379604, tolerance=1e-9)
+
+        cabin_area = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
+        assert_near_equal(cabin_area, 2988.87966179, tolerance=1e-9)
+
+        root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
+        assert_near_equal(root_chord, 57.40164466, tolerance=1e-9)
 
 
 @use_tempdirs
