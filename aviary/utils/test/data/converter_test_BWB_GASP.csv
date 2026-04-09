@@ -42,6 +42,7 @@ aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:nacelle_aero_tech_factor,0.95,unitless
 aircraft:design:nacelle_drag_factor,1.15,unitless
 aircraft:design:part25_structural_category,3.0,unitless
+aircraft:design:pylon_drag_factor,1.15,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
@@ -207,7 +208,6 @@ INGASP.EL_FLGC,8
 INGASP.EMCRU,0.8
 INGASP.FCSF,2.5
 INGASP.FEXCRT,0.8
-INGASP.FPYLND,1.15
 INGASP.FSA7C,0.85
 INGASP.HBTP,0.465
 INGASP.HIR,0.015

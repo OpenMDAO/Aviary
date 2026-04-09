@@ -1748,6 +1748,7 @@ add_meta_data(
     default_value=1.0,
     desc='nacelle aero technology factor',
 )
+
 add_meta_data(
     Aircraft.Design.Nacelle_DRAG_FACTOR,
     meta_data=_MetaData,
@@ -1767,6 +1768,16 @@ add_meta_data(
     types=int,
     units='unitless',
     desc='part 25 structural category',
+)
+
+add_meta_data(
+    Aircraft.Design.PYLON_DRAG_FACTOR,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['INGASP.FPYLND'], 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=1.0,
+    desc='pylon aero calibration factor',
 )
 
 add_meta_data(

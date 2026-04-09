@@ -164,6 +164,7 @@ class Aircraft:
         Nacelle_AERO_TECH_FACTOR = 'aircraft:design:nacelle_aero_tech_factor'
         Nacelle_DRAG_FACTOR = 'aircraft:design:nacelle_drag_factor'
         PART25_STRUCTURAL_CATEGORY = 'aircraft:design:part25_structural_category'
+        PYLON_DRAG_FACTOR = 'aircraft:design:pylon_drag_factor'
         RANGE = 'aircraft:design:range'
         SMOOTH_MASS_DISCONTINUITIES = 'aircraft:design:smooth_mass_discontinuities'
         STATIC_MARGIN = 'aircraft:design:static_margin'

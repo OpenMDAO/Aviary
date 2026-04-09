@@ -745,6 +745,7 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
+        add_aviary_option(self, Aircraft.Design.PYLON_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.STRUT_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.Wing_DRAG_FACTOR)
@@ -1020,6 +1021,7 @@ class AeroGeom(om.ExplicitComponent):
         fcfhtt = self.options[Aircraft.Design.HorizontalTail_DRAG_FACTOR]
         fckit = self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
         fcfnt = self.options[Aircraft.Design.Nacelle_DRAG_FACTOR]
+        fpylnd = self.options[Aircraft.Design.PYLON_DRAG_FACTOR]
         fcfstrt = self.options[Aircraft.Design.STRUT_DRAG_FACTOR]
         fcfvtt = self.options[Aircraft.Design.VerticalTail_DRAG_FACTOR]
         fcfwt = self.options[Aircraft.Design.Wing_DRAG_FACTOR]
@@ -1087,7 +1089,7 @@ class AeroGeom(om.ExplicitComponent):
         fef = fus_SA * cdfi * ffre * ff_fus + fe_fus_inc
         few = ff_wing * wing_area * cdwi * fwre
         # TODO replace 2 with num_engines
-        fen = 2 * ff_nac * nacelle_area * cdni * fnre
+        fen = fpylnd * 2 * ff_nac * nacelle_area * cdni * fnre
         fevt = ff_vtail * vtail_area * cdvti * fvtre
         feht = ff_htail * htail_area * cdhti * fhtre
         festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cdstrti * fstrtre
