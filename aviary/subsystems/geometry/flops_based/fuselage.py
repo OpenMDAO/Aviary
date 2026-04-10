@@ -554,7 +554,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_output(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_output(self, Aircraft.BWB.NUM_BAYS, units='unitless')
-        self.add_output('bay_width', units='ft', desc='BAYW')
+        self.add_output('bay_width', units='ft', desc='BAYW')  # for testing purpose
 
     def setup_partials(self):
         self.declare_partials('*', '*', method='cs')
