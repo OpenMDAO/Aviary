@@ -637,6 +637,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             num_bays = num_bays_max
 
         num_bays_loc = num_bays
+        iter = 0
         while True:
             num_bays_loc = num_bays
             # Cabin area wasted due to slanted  != side wall
@@ -676,8 +677,10 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
                 else:
                     num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
 
+            iter = iter + 1
             # If number of bays has changed, recalculate cabin area
-            if num_bays_loc == num_bays:
+            if num_bays_loc == num_bays or iter > 100:
+                warnings.warn(f'Number of iteration exceeded 100.')
                 break
 
         length = pax_compart_length / rear_spar_percent_chord
