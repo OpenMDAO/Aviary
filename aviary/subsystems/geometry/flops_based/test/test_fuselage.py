@@ -231,6 +231,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 0.0, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 0.0, units='inch')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 4, units='unitless')
+        options.set_val(Aircraft.BWB.MAX_BAY_WIDTH, 10.0, units='ft')
 
         prob.model.add_subsystem(
             'layout', BWBDetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
@@ -240,7 +241,6 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         # prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=50.0, units='ft')
-        prob.set_val(Aircraft.BWB.MAX_BAY_WIDTH, val=10.0, units='ft')
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 

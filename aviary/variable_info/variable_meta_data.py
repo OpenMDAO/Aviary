@@ -364,6 +364,7 @@ add_meta_data(
     units='ft',
     desc='maximum bay width',
     types=float,
+    option=True,
     default_value=0,
 )
 

@@ -538,6 +538,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
         add_aviary_option(self, Aircraft.BWB.MAX_NUM_BAYS)
+        add_aviary_option(self, Aircraft.BWB.MAX_BAY_WIDTH)
 
     def setup(self):
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
@@ -545,7 +546,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         self.add_input(
             'Rear_spar_percent_chord', 0.7, units='unitless', desc='RSPCHD at fuselage centerline'
         )
-        add_aviary_input(self, Aircraft.BWB.MAX_BAY_WIDTH, units='ft')
 
         add_aviary_output(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_output(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
@@ -566,7 +566,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         tan_sweep = np.tan(sweep / 57.296)
 
         bay_width_nom = 12.0  # ft
-        bay_width_max = inputs[Aircraft.BWB.MAX_BAY_WIDTH]
+        bay_width_max, _ = self.options[Aircraft.BWB.MAX_BAY_WIDTH]
         num_bays = 0
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
         root_chord_min = 38.5  # ft
