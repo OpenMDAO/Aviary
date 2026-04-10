@@ -568,7 +568,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         bay_width_nom = 12.0  # ft
         bay_width_max = inputs[Aircraft.BWB.MAX_BAY_WIDTH]
         num_bays = 0
-        num_bays_loc = num_bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
         root_chord_min = 38.5  # ft
         width_lava = 36.0  # inch
@@ -637,7 +636,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
-        while num_bays_loc != num_bays:
+        num_bays_loc = num_bays
+        while True:
             num_bays_loc = num_bays
             # Cabin area wasted due to slanted  != side wall
             area_waste = num_bays * tan_sweep * (bay_width_nom / 2.0) ** 2
@@ -677,6 +677,8 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
                     num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
 
             # If number of bays has changed, recalculate cabin area
+            if num_bays_loc == num_bays:
+                break
 
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
