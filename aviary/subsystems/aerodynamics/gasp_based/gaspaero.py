@@ -743,7 +743,6 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
         # drag factors
-        add_aviary_option(self, Aircraft.Design.Fuselage_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
@@ -853,6 +852,26 @@ class AeroGeom(om.ExplicitComponent):
             units='unitless',
             desc='SIWB: curve fitting correction factor for Oswald efficiency',
         )
+
+        # drag factors
+        add_aviary_input(self, Aircraft.Design.Fuselage_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.PYLON_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.STRUT_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.Wing_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
+        # aero technology factos
+        add_aviary_input(self, Aircraft.Design.Fuselage_AERO_TECH_FACTOR)
+        add_aviary_input(self, Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR)
+        add_aviary_input(self, Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR)
+        add_aviary_input(self, Aircraft.Design.Nacelle_AERO_TECH_FACTOR)
+        add_aviary_input(self, Aircraft.Design.STRUT_AERO_TECH_FACTOR)
+        add_aviary_input(self, Aircraft.Design.VerticalTail_AERO_TECH_FACTOR)
+        add_aviary_input(self, Aircraft.Design.Wing_AERO_TECH_FACTOR)
 
         # outputs
         self.add_output('SA1', units='unitless', shape=nn, desc='SA1: drag param')
@@ -1019,26 +1038,24 @@ class AeroGeom(om.ExplicitComponent):
             feintwf,
             areashieldwf,
             siwb,
+            fcffc,
+            fcfhtc,
+            fckic,
+            fcfnc,
+            fpylnd,
+            fcfstrc,
+            fcfvtc,
+            fcfwc,
+            fexcrt,
+            pct_excr,
+            fcfft,
+            fcfhtt,
+            fckit,
+            fcfnt,
+            fcfstrt,
+            fcfvtt,
+            fcfwt,
         ) = inputs.values()
-        # drag factors
-        fcffc = self.options[Aircraft.Design.Fuselage_DRAG_FACTOR]
-        fcfhtc = self.options[Aircraft.Design.HorizontalTail_DRAG_FACTOR]
-        fckic = self.options[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
-        fcfnc = self.options[Aircraft.Design.Nacelle_DRAG_FACTOR]
-        fpylnd = self.options[Aircraft.Design.PYLON_DRAG_FACTOR]
-        fcfstrc = self.options[Aircraft.Design.STRUT_DRAG_FACTOR]
-        fcfvtc = self.options[Aircraft.Design.VerticalTail_DRAG_FACTOR]
-        fcfwc = self.options[Aircraft.Design.Wing_DRAG_FACTOR]
-        fexcrt = self.options[Aircraft.Design.EXCRESCENCE_DRAG_FACTOR]
-        pct_excr = self.options[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
-        # aero technology factors
-        fcfft = self.options[Aircraft.Design.Fuselage_AERO_TECH_FACTOR]
-        fcfhtt = self.options[Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR]
-        fckit = self.options[Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR]
-        fcfnt = self.options[Aircraft.Design.Nacelle_AERO_TECH_FACTOR]
-        fcfstrt = self.options[Aircraft.Design.STRUT_AERO_TECH_FACTOR]
-        fcfvtt = self.options[Aircraft.Design.VerticalTail_AERO_TECH_FACTOR]
-        fcfwt = self.options[Aircraft.Design.Wing_AERO_TECH_FACTOR]
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
         cdfi = fcffc * fcfft * cf
@@ -1094,8 +1111,9 @@ class AeroGeom(om.ExplicitComponent):
         # GASP uses different values of cf for wing, nacelle, fuselage, etc.
         fef = fus_SA * cdfi * ffre * ff_fus + fe_fus_inc
         few = ff_wing * wing_area * cdwi * fwre
-        # TODO replace 2 with num_engines
-        fen = fpylnd * 2 * ff_nac * nacelle_area * cdni * fnre
+        # Replaced 2 with total_num_engines. Need to check. See issue #1080
+        total_num_engines = sum(self.options[Aircraft.Engine.NUM_ENGINES])
+        fen = fpylnd * total_num_engines * ff_nac * nacelle_area * cdni * fnre
         fevt = ff_vtail * vtail_area * cdvti * fvtre
         feht = ff_htail * htail_area * cdhti * fhtre
         festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cdstrti * fstrtre
@@ -1437,8 +1455,6 @@ class DragCoefClean(om.ExplicitComponent):
 
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
-        add_aviary_option(self, Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.INDUCED_DRAG_FACTOR)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -1453,6 +1469,8 @@ class DragCoefClean(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Design.INDUCED_DRAG_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR, units='unitless')
 
         # from aero setup
         self.add_input(
@@ -1479,7 +1497,15 @@ class DragCoefClean(om.ExplicitComponent):
             cols=ar,
             method='cs',
         )
-        self.declare_partials('CD', [Aircraft.Design.DRAG_DIVERGENCE_SHIFT], method='cs')
+        self.declare_partials(
+            'CD',
+            [
+                Aircraft.Design.DRAG_DIVERGENCE_SHIFT,
+                Aircraft.Design.INDUCED_DRAG_FACTOR,
+                Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR,
+            ],
+            method='cs',
+        )
 
     def compute(self, inputs, outputs):
         (
@@ -1490,6 +1516,8 @@ class DragCoefClean(om.ExplicitComponent):
             supersonic_factor,
             lift_factor,
             zero_lift_factor,
+            fsa7c,
+            fcmpc,
             cf,
             SA1,
             SA2,
@@ -1497,8 +1525,6 @@ class DragCoefClean(om.ExplicitComponent):
             SA6,
             SA7,
         ) = inputs.values()
-        fcmpc = self.options[Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR]
-        fsa7c = self.options[Aircraft.Design.INDUCED_DRAG_FACTOR]
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 

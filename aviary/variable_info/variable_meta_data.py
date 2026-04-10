@@ -1291,7 +1291,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.FCMPC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='compressibility aero calibration factor',
 )
@@ -1455,7 +1454,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FEXCRT'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='excrescence aero drag factor',
 )
@@ -1505,7 +1503,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFFC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='fuselage aero calibration factor',
 )
@@ -1547,7 +1544,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFHTC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='horizontal tail aero calibration factor',
 )
@@ -1566,7 +1562,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FSA7C'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='induced drag factor',
 )
@@ -1586,7 +1581,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCKIC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='interference aero calibration factor',
 )
@@ -1774,7 +1768,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFNC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='nacelle aero calibration factor',
 )
@@ -1805,7 +1798,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FPYLND'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='pylon aero calibration factor',
 )
@@ -1886,7 +1878,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFVTC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='strut aero calibration factor',
 )
@@ -2075,7 +2066,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFVTC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='vertical tail aero calibration factor',
 )
@@ -2110,7 +2100,6 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': ['INGASP.FCFWC'], 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
-    option=True,
     default_value=1.0,
     desc='wing aero calibration factor',
 )
