@@ -372,7 +372,9 @@ class Xlifts(om.ExplicitComponent):
 
         delta = (static_margin + delta_cg) * h_tail_moment
 
-        # TODO handle xt < 0?
+        if h_tail_moment.real < 0.0:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(f'Aircraft.HorizontalTail.MOMENT_RATIO is {h_tail_moment}.')
         xt = 1 / h_tail_moment
 
         art = AR * bbar**2 / sbar
