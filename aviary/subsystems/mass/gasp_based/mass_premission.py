@@ -11,7 +11,7 @@ from aviary.subsystems.mass.gasp_based.fuel import FuelMassGroup
 from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, BWBWingMassGroup
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_option
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassPremission(om.Group):
@@ -116,3 +116,20 @@ class MassPremission(om.Group):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        self.add_subsystem(
+            'zero_fuel_comp',
+            om.ExecComp(
+                'zero_fuel = payload_mass + operating_mass',
+                zero_fuel={'units': 'lbm'},
+                payload_mass={'units': 'lbm'},
+                operating_mass={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
+                ('operating_mass', Mission.OPERATING_MASS),
+            ],
+            promotes_outputs=[('zero_fuel', Mission.ZERO_FUEL_MASS)],
+        )
+
+        self.set_input_defaults(Aircraft.CrewPayload.CARGO_MASS, val=0)
