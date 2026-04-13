@@ -263,13 +263,10 @@ class EngineDeck(EngineModel):
             # Allowing idle fractions to be equal, i.e. fixing flight idle conditions instead of
             # extrapolation
             if idle_min > idle_max:
-                if self.get_val(Settings.VERBOSITY).value >= Verbosity.BRIEF:
-                    warnings.warn(
-                        f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
-                        'flight idle fraction. Values for min and max fraction will be flipped.'
-                    )
-                self.set_val(Aircraft.Engine.FLIGHT_IDLE_MIN_FRACTION, val=idle_max)
-                self.set_val(Aircraft.Engine.FLIGHT_IDLE_MAX_FRACTION, val=idle_min)
+                raise UserWarning(
+                    f'EngineDeck <{self.name}>: Minimum flight idle fraction exceeds maximum '
+                    'flight idle fraction.'
+                )
 
         # Check validity of interp_sort.
         # TODO: support this as an enum instead.
@@ -1332,8 +1329,9 @@ class EngineDeck(EngineModel):
                     # user wants scaling but provided conflicting inputs, cannot be resolved
                     raise AttributeError(
                         f'EngineDeck <{self.name}>: Conflicting values provided for '
-                        'aircraft:engine:scale_factor and aircraft:engine:scaled_sls_thrust when '
-                        'compared against aircraft:engine:reference_sls_thrust'
+                        f'aircraft:engine:scale_factor {scale_factor} and '
+                        f'aircraft:engine:scaled_sls_thrust {scaled_thrust} when compared against '
+                        f'aircraft:engine:reference_sls_thrust {ref_thrust}'
                     )
                 # get thrust target & scale factor matching exactly. Scale factor is design
                 # variable, so don't touch it!! Instead change output thrust
