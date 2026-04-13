@@ -561,13 +561,13 @@ class TurbopropModel(EngineModel):
             )
         return new_bus
 
-    def report(self, prob, reports_folder):
+    def report(self, prob, reports_folder, **kwargs):
         if self.shaft_power_model is not None:
-            self.shaft_power_model.report(prob, reports_folder)
+            self.shaft_power_model.report(prob, reports_folder, **kwargs)
         if self.gearbox_model is not None:
-            self.gearbox_model.report(prob, reports_folder)
+            self.gearbox_model.report(prob, reports_folder, **kwargs)
         if self.propeller_model is not None:
-            self.propeller_model.report(prob, reports_folder)
+            self.propeller_model.report(prob, reports_folder, **kwargs)
 
 
 class TurbopropMission(om.Group):
