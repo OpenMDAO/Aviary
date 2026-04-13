@@ -111,14 +111,14 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             self.prob.get_val(Aircraft.Design.RANGE),
             tolerance=1e-12,
         )
-        assert_near_equal(prob_fallout.get_val(Mission.RANGE), 2377.4, tolerance=1e-3)
+        assert_near_equal(prob_off_design_max_range.get_val(Mission.RANGE), 2377.4, tolerance=1e-3)
         assert_near_equal(
-            prob_fallout.get_val(Mission.TOTAL_FUEL, 'lbm'),
+            prob_off_design_max_range.get_val(Mission.TOTAL_FUEL, 'lbm'),
             28976.71270599,
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_fallout.get_val(Mission.OPERATING_MASS, 'lbm'),
+            prob_off_design_max_range.get_val(Mission.OPERATING_MASS, 'lbm'),
             97798.28729401,
             tolerance=1e-5,
         )
@@ -203,12 +203,12 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         )
         assert_near_equal(prob_off_design_min_fuel.get_val(Mission.RANGE), 1800, tolerance=1e-6)
         assert_near_equal(
-            prob_alternate.get_val(Mission.TOTAL_FUEL, 'lbm'),
+            prob_off_design_min_fuel.get_val(Mission.TOTAL_FUEL, 'lbm'),
             24245.7724282,
             tolerance=1e-5,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.OPERATING_MASS, 'lbm'),
+            prob_off_design_min_fuel.get_val(Mission.OPERATING_MASS, 'lbm'),
             97798.34840008,
             tolerance=1e-5,
         )
@@ -238,7 +238,7 @@ class TestEnergyStateOffDesign(unittest.TestCase):
             tolerance=1e-12,
         )
         assert_near_equal(
-            prob_alternate.get_val(Mission.GROSS_MASS, 'lbm'),
+            prob_off_design_min_fuel.get_val(Mission.GROSS_MASS, 'lbm'),
             158294.12082828,
             tolerance=1e-5,
         )
