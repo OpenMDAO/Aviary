@@ -99,14 +99,14 @@ class MotorBuilder(SubsystemBuilder):
         if aviary_inputs is not None:
             if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
                 if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
-                    rpm_limit = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')
+                    rpm_limit = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
                 else:
                     rpm_limit = 6000
                 controls_dict = {
                     Dynamic.Vehicle.Propulsion.RPM: {
                         'units': 'rpm',
                         'lower': 0.0,
-                        'upper': rpm_limit,
+                        'upper': 6000,
                         'control_type': 'polynomial',
                         'order': 3,
                         'opt': True,

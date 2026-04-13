@@ -39,6 +39,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         options, _ = create_vehicle(
             'models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv'
         )
+        options.set_val(Settings.PROBLEM_TYPE, 'SIZING')
 
         if mission_method == 'energy':
             options.set_val(Settings.EQUATIONS_OF_MOTION, 'energy_state')
@@ -47,7 +48,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # TODO make separate input file for electroprop freighter?
         # scale_factor = 17.77  # target is ~32 kN*m torque
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
-        options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
+        options.delete(Aircraft.Engine.FIXED_RPM)
+        # options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
@@ -93,6 +95,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
+
         prob.add_driver('SNOPT', max_iter=20, verbosity=1)
         prob.add_design_variables()
         prob.model.add_design_var(
@@ -106,7 +109,9 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_objective()
 
         prob.setup()
+        import openmdao.api as om
 
+        om.n2(prob, show_browser=False)
         # initial guess for pack mass.
         prob.set_val(Aircraft.Battery.PACK_MASS, val=1000.0, units='lbm')
 
