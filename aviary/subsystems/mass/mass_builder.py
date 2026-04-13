@@ -108,7 +108,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'# Mass estimation: {method}')
 
             f.write('||||\n')
-            f.write(f'|####**AIRCRAFT DESIGN DETAILS:**####|||\n')
+            f.write('|####**AIRCRAFT DESIGN DETAILS:**####|||\n')
             f.write('||||\n')
 
             f.write('\n| Name | Value | Units |\n')
@@ -166,6 +166,12 @@ class CoreMassBuilder(MassBuilder):
                 val = [val]
             f.write(f'|Nacelles|{np.dot(val, num_engines)}|{units}|\n')
             f.write('||||\n')
+
+            val, units = find_variable_in_problem(
+                Aircraft.Design.STRUCTURAL_MASS_INCREMENT, prob, self.meta_data
+            )
+            if val != 0.0 or val != 'Not Found in Model':
+                f.write(f'|{tab}Nose Gear|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.Design.STRUCTURE_MASS, prob, self.meta_data
@@ -241,6 +247,9 @@ class CoreMassBuilder(MassBuilder):
 
             val, units = find_variable_in_problem(Aircraft.AntiIcing.MASS, prob, self.meta_data)
             f.write(f'|{tab}Anti-Icing|{val}|{units}|\n')
+
+            val, units = find_variable_in_problem(Aircraft.OxygenSystem.MASS, prob, self.meta_data)
+            f.write(f'|{tab}Oxygen System|{val}|{units}|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(
