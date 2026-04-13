@@ -655,6 +655,7 @@ class Mission:
     # These values are inputs and outputs to/from mission analysis for the given mission
     # (whether it is design or off-design). In design these may be constrained to design values,
     # but in off-design they independently represent the final analysis based on the user selection.
+    BLOCK_FUEL = 'mission:block_fuel'
     FINAL_MASS = 'mission:final_mass'
     FINAL_TIME = 'mission:final_time'
     FUEL = 'mission:fuel'
@@ -726,7 +727,7 @@ class Mission:
         FINAL_MACH = 'mission:takeoff:final_mach'
         FINAL_MASS = 'mission:takeoff:final_mass'
         FINAL_VELOCITY = 'mission:takeoff:final_velocity'
-        FUEL_SIMPLE = 'mission:takeoff:fuel_simple'
+        FUEL = 'mission:takeoff:fuel'
         GROUND_DISTANCE = 'mission:takeoff:ground_distance'
         LIFT_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:lift_coefficient_flap_increment'
         LIFT_COEFFICIENT_MAX = 'mission:takeoff:lift_coefficient_max'
@@ -741,6 +742,8 @@ class Mission:
 
     class Taxi:
         DURATION = 'mission:taxi:duration'
+        FUEL_TAXI_IN = 'mission:taxi:fuel_taxi_in'
+        FUEL_TAXI_OUT = 'mission:taxi:fuel_taxi_out'
         MACH = 'mission:taxi:mach'
 
 

@@ -462,6 +462,11 @@ class MassPremissionTestCase2(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
 
+        assert_near_equal(self.prob[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS], 36000.0, tol)
+        #                   operating mass + pax mass+ cargo_mass)
+        zero_fuel = 95643.26913924 + 36000.0 + 0.0
+        assert_near_equal(self.prob[Mission.ZERO_FUEL_MASS], zero_fuel, tol)
+
 
 class MassPremissionTestCase3(unittest.TestCase):
     """

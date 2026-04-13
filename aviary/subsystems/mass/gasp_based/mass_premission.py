@@ -15,7 +15,7 @@ from aviary.subsystems.mass.gasp_based.mass_summation import MassSummation
 from aviary.subsystems.mass.gasp_based.wing import BWBWingMassGroup, WingMassGroup
 from aviary.variable_info.enums import AircraftTypes
 from aviary.variable_info.functions import add_aviary_option
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class MassPremission(om.Group):
