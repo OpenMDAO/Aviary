@@ -94,19 +94,26 @@ class MotorBuilder(SubsystemBuilder):
 
     #     return DVs
 
-    # def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
-    #     if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
-    #         controls_dict = {
-    #             Dynamic.Vehicle.Propulsion.RPM: {
-    #                 'units': 'RPM',
-    #                 'lower': 0.0,
-    #                 'upper': 6000,
-    #                 'control_type': 'polynomial',
-    #                 'order': 3,
-    #                 'opt': True,
-    #             },
-    #         }
-    #     return controls_dict
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        controls_dict = {}
+        if aviary_inputs is not None:
+            if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
+                if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
+                    rpm_limit = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')
+                else:
+                    rpm_limit = 6000
+                controls_dict = {
+                    Dynamic.Vehicle.Propulsion.RPM: {
+                        'units': 'rpm',
+                        'lower': 0.0,
+                        'upper': rpm_limit,
+                        'control_type': 'polynomial',
+                        'order': 3,
+                        'opt': True,
+                    },
+                }
+
+        return controls_dict
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = {
@@ -138,7 +145,7 @@ class MotorBuilder(SubsystemBuilder):
         mass_names : list
             A list of names for the motor subsystem.
         """
-        return [Aircraft.Engine.Motor.MASS, Aircraft.Engine.Gearbox.MASS]
+        return [Aircraft.Engine.Motor.MASS]
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
@@ -150,8 +157,8 @@ class MotorBuilder(SubsystemBuilder):
             A list of variable names for the motor subsystem.
         """
         return [
-            Dynamic.Vehicle.Propulsion.TORQUE,
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
-            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
+            # Dynamic.Vehicle.Propulsion.TORQUE,
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+            # Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
         ]

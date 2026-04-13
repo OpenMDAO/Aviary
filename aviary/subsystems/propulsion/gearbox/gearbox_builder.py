@@ -105,10 +105,10 @@ class GearboxBuilder(SubsystemBuilder):
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return [
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
             # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
-            Dynamic.Vehicle.Propulsion.RPM + '_out',
-            Dynamic.Vehicle.Propulsion.TORQUE + '_out',
+            # Dynamic.Vehicle.Propulsion.RPM + '_out',
+            # Dynamic.Vehicle.Propulsion.TORQUE + '_out',
             # Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]
 

@@ -16,8 +16,9 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 class TurbopropModel(EngineModel):
     """
-    EngineModel that combines a model for shaft power generation (default is EngineDeck) and a model
-    for propeller performance (default is Hamilton Standard).
+    EngineModel that combines a model for shaft power generation (default is EngineDeck), a gearbox
+    model (default is simple gearbox), and a model for propeller performance (default is Hamilton
+    Standard).
 
     Attributes
     ----------
@@ -28,20 +29,32 @@ class TurbopropModel(EngineModel):
     shaft_power_model : SubsystemBuilder (<empty>)
         Subsystem builder for the shaft power generating component. If None, an EngineDeck built
         using provided options is used.
+    gearbox_model : SubsystemBuilder (<empty>)
+        Subsystem builder used for the gearbox. If None, the simple gearbox model is used.
     propeller_model : SubsystemBuilder (<empty>)
         Subsystem builder for the propeller. If None, the Hamilton Standard methodology is used to
         model the propeller.
-    gearbox_model : SubsystemBuilder (<empty>)
-        Subsystem builder used for the gearbox. If None, the simple gearbox model is used.
 
     Methods
     -------
-    build_pre_mission
-    build_mission
-    build_post_mission
-    get_val
-    set_val
-    update
+    - build_pre_mission
+    - build_mission
+    - build_post_mission
+    - needs_mission_solver
+    - get_states
+    - get_controls
+    - get_parameters
+    - get_constraints
+    - get_bus_variables
+    - get_pre_mission_bus_variables
+    - get_linked_variables
+    - get_design_vars
+    - get_initial_guesses
+    - get_mass_names
+    - get_val
+    - get_item
+    - set_val
+    - update
     """
 
     def __init__(
@@ -233,7 +246,6 @@ class TurbopropModel(EngineModel):
             turboprop_group.add_subsystem(
                 shp_model.name,
                 subsys=shp_model_post_mission,
-                aviary_options=aviary_inputs,
             )
 
         gearbox_model_post_mission = gearbox_model.build_post_mission(
@@ -247,7 +259,6 @@ class TurbopropModel(EngineModel):
             turboprop_group.add_subsystem(
                 gearbox_model.name,
                 subsys=gearbox_model_post_mission,
-                aviary_options=aviary_inputs,
             )
 
         propeller_model_post_mission = propeller_model.build_post_mission(
@@ -261,10 +272,115 @@ class TurbopropModel(EngineModel):
             turboprop_group.add_subsystem(
                 propeller_model.name,
                 subsys=propeller_model_post_mission,
-                aviary_options=aviary_inputs,
             )
 
         return turboprop_group
+
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        states = super().get_states(
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        )
+
+        if self.shaft_power_model is not None:
+            extra_states = self.shaft_power_model.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            states.update(extra_states)
+
+        if self.gearbox_model is not None:
+            extra_states = self.gearbox_model.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            states.update(extra_states)
+
+        if self.propeller_model is not None:
+            extra_states = self.propeller_model.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            states.update(extra_states)
+
+        return states
+
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        controls = super().get_states(
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        )
+
+        if self.shaft_power_model is not None:
+            extra_controls = self.shaft_power_model.get_controls(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            controls.update(extra_controls)
+
+        if self.gearbox_model is not None:
+            extra_controls = self.gearbox_model.get_controls(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            controls.update(extra_controls)
+
+        if self.propeller_model is not None:
+            extra_controls = self.propeller_model.get_controls(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            controls.update(extra_controls)
+
+        # RPM control needs special handling, which is done automatically in configure step of
+        # Mission group
+        if Dynamic.Vehicle.Propulsion.RPM in controls:
+            controls[f'{Dynamic.Vehicle.Propulsion.RPM}_control'] = controls.pop(
+                Dynamic.Vehicle.Propulsion.RPM
+            )
+
+        return controls
+
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        constraints = super().get_constraints(
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        )  # calls from EngineModel
+
+        if self.shaft_power_model is not None:
+            extra_constraints = self.shaft_power_model.get_constraints(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            constraints.update(extra_constraints)
+
+        if self.gearbox_model is not None:
+            extra_constraints = self.gearbox_model.get_constraints(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            constraints.update(extra_constraints)
+
+        if self.propeller_model is not None:
+            extra_constraints = self.propeller_model.get_constraints(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            constraints.update(extra_constraints)
+
+        return constraints
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = super().get_parameters(
@@ -299,6 +415,53 @@ class TurbopropModel(EngineModel):
 
         return params
 
+    def get_linked_variables(self, aviary_inputs=None):
+        linked_vars = super().get_linked_variables()  # calls from EngineModel
+        if self.shaft_power_model is not None:
+            linked_vars += self.shaft_power_model.get_linked_variables(aviary_inputs=aviary_inputs)
+        if self.gearbox_model is not None:
+            linked_vars += self.gearbox_model.get_linked_variables(aviary_inputs=aviary_inputs)
+        if self.propeller_model is not None:
+            linked_vars += self.propeller_model.get_linked_variables(aviary_inputs=aviary_inputs)
+
+        return linked_vars
+
+    def get_bus_variables(self, aviary_inputs=None):
+        busvars = super().get_bus_variables()  # calls from EngineModel
+        if self.shaft_power_model is not None:
+            busvars.update(self.shaft_power_model.get_bus_variables(aviary_inputs=aviary_inputs))
+        if self.gearbox_model is not None:
+            busvars.update(self.gearbox_model.get_bus_variables(aviary_inputs=aviary_inputs))
+        if self.propeller_model is not None:
+            busvars.update(self.propeller_model.get_bus_variables(aviary_inputs=aviary_inputs))
+        return busvars
+
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
+        bus_vars = super().get_pre_mission_bus_variables(
+            aviary_inputs=aviary_inputs,
+            mission_info=mission_info,
+        )  # calls from EngineModel
+
+        if self.shaft_power_model is not None:
+            extra_bus_vars = self.shaft_power_model.get_pre_mission_bus_variables(
+                aviary_inputs=aviary_inputs, mission_info=mission_info
+            )
+            bus_vars.update(extra_bus_vars)
+
+        if self.gearbox_model is not None:
+            extra_bus_vars = self.gearbox_model.get_pre_mission_bus_variables(
+                aviary_inputs=aviary_inputs, mission_info=mission_info
+            )
+            bus_vars.update(extra_bus_vars)
+
+        if self.propeller_model is not None:
+            extra_bus_vars = self.propeller_model.get_pre_mission_bus_variables(
+                aviary_inputs=aviary_inputs, mission_info=mission_info
+            )
+            bus_vars.update(extra_bus_vars)
+
+        return bus_vars
+
     def get_design_vars(self, aviary_inputs=None):
         desvars = super().get_design_vars()  # calls from EngineModel
         if self.shaft_power_model is not None:
@@ -308,6 +471,103 @@ class TurbopropModel(EngineModel):
         if self.propeller_model is not None:
             desvars.update(self.propeller_model.get_design_vars(aviary_inputs=aviary_inputs))
         return desvars
+
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        guesses = super().get_states(
+            aviary_inputs=aviary_inputs,
+            user_options=user_options,
+            subsystem_options=subsystem_options,
+        )
+
+        if self.shaft_power_model is not None:
+            extra_guesses = self.shaft_power_model.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            guesses.update(extra_guesses)
+
+        if self.gearbox_model is not None:
+            extra_guesses = self.gearbox_model.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            guesses.update(extra_guesses)
+
+        if self.propeller_model is not None:
+            extra_guesses = self.propeller_model.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
+            guesses.update(extra_guesses)
+
+        return guesses
+
+    def get_mass_names(self, aviary_inputs=None):
+        mass_names = super().get_mass_names()  # calls from EngineModel
+        if self.shaft_power_model is not None:
+            mass_names += self.shaft_power_model.get_mass_names(aviary_inputs=aviary_inputs)
+        if self.gearbox_model is not None:
+            mass_names += self.gearbox_model.get_mass_names(aviary_inputs=aviary_inputs)
+        if self.propeller_model is not None:
+            mass_names += self.propeller_model.get_mass_names(aviary_inputs=aviary_inputs)
+        return mass_names
+
+    def preprocess_inputs(self, aviary_inputs=None):
+        new_inputs = super().preprocess_inputs(aviary_inputs)
+        if self.shaft_power_model is not None:
+            new_inputs.update(self.shaft_power_model.preprocess_inputs(aviary_inputs=new_inputs))
+        if self.gearbox_model is not None:
+            new_inputs.update(self.gearbox_model.get_mass_names(aviary_inputs=new_inputs))
+        if self.propeller_model is not None:
+            new_inputs.update(self.propeller_model.get_mass_names(aviary_inputs=new_inputs))
+        return new_inputs
+
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        new_timeseries = super().get_timeseries(
+            aviary_inputs, user_options, subsystem_options
+        )  # calls from EngineModel
+        if self.shaft_power_model is not None:
+            new_timeseries += self.shaft_power_model.get_timeseries(
+                aviary_inputs, user_options, subsystem_options
+            )
+        if self.gearbox_model is not None:
+            new_timeseries += self.gearbox_model.get_timeseries(
+                aviary_inputs, user_options, subsystem_options
+            )
+        if self.propeller_model is not None:
+            new_timeseries += self.propeller_model.get_timeseries(
+                aviary_inputs, user_options, subsystem_options
+            )
+        return new_timeseries
+
+    def get_post_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
+        new_bus = super().get_post_mission_bus_variables(
+            aviary_inputs, mission_info
+        )  # calls from EngineModel
+        if self.shaft_power_model is not None:
+            new_bus.update(
+                self.shaft_power_model.get_post_mission_bus_variables(aviary_inputs, mission_info)
+            )
+        if self.gearbox_model is not None:
+            new_bus.update(
+                self.gearbox_model.get_post_mission_bus_variables(aviary_inputs, mission_info)
+            )
+        if self.propeller_model is not None:
+            new_bus.update(
+                self.propeller_model.get_post_mission_bus_variables(aviary_inputs, mission_info)
+            )
+        return new_bus
+
+    def report(self, prob, reports_folder):
+        if self.shaft_power_model is not None:
+            self.shaft_power_model.report(prob, reports_folder)
+        if self.gearbox_model is not None:
+            self.gearbox_model.report(prob, reports_folder)
+        if self.propeller_model is not None:
+            self.propeller_model.report(prob, reports_folder)
 
 
 class TurbopropMission(om.Group):
@@ -331,9 +591,21 @@ class TurbopropMission(om.Group):
         kwargs = self.options['kwargs']
         aviary_inputs = self.options['aviary_inputs']
 
-        # NOTE this subsystem is a empty component that has fixed RPM added as an output in
-        #      configure() if provided in aviary_inputs
-        self.add_subsystem('fixed_rpm_source', subsys=om.IndepVarComp())
+        if Aircraft.Engine.FIXED_RPM in aviary_inputs:
+            # NOTE this subsystem is a empty component that has fixed RPM added as an output in
+            #      configure() if provided in aviary_inputs
+            self.add_subsystem('rpm_source', subsys=om.IndepVarComp())
+        else:
+            # passthrough component so RPM can be used as a control
+            self.add_subsystem(
+                'rpm_source',
+                subsys=om.ExecComp(
+                    'RPM=RPM_control',
+                    RPM={'val': np.zeros(num_nodes), 'units': 'rpm'},
+                    RPM_control={'val': np.zeros(num_nodes), 'units': 'rpm'},
+                    has_diag_partials=True,
+                ),
+            )
 
         # Shaft Power Model
         try:
@@ -556,7 +828,10 @@ class TurbopropMission(om.Group):
         ########################
         # If fixed RPM is requested by the user, use that value. Override RPM output from shaft
         # power model if present, warning user
-        rpm_ivc = self._get_subsystem('fixed_rpm_source')
+        # If no fixed RPM requested, then check if SHP model outputs it - if not, then make promotions/
+        # connections from passthrough component, which will get added as a control by the turboprop
+        # model if any sub-builders request it as a control
+        rpm_source_comp = self._get_subsystem('rpm_source')
 
         if Aircraft.Engine.FIXED_RPM in aviary_inputs:
             fixed_rpm = aviary_inputs.get_val(Aircraft.Engine.FIXED_RPM, units='rpm')
@@ -576,38 +851,72 @@ class TurbopropMission(om.Group):
                 )
                 shp_output_list.remove(Dynamic.Vehicle.Propulsion.RPM)
 
-            rpm_ivc.add_output(
+            rpm_source_comp.add_output(
                 Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * fixed_rpm, units='rpm'
             )
-            if has_gearbox and Dynamic.Vehicle.Propulsion.RPM + '_in' in gearbox_input_list:
+            # If gearbox exists, don't promote RPM from source because gearbox will modify it
+            # If no gearbox, just promote RPM and let OM connect it everywhere
+            if has_gearbox and f'{Dynamic.Vehicle.Propulsion.RPM}_in' in gearbox_input_list:
                 self.connect(
-                    f'fixed_rpm_source.{Dynamic.Vehicle.Propulsion.RPM}',
+                    f'rpm_source.{Dynamic.Vehicle.Propulsion.RPM}',
                     f'{gearbox_model.name}.{Dynamic.Vehicle.Propulsion.RPM}_in',
                 )
-                gearbox_input_list.remove(Dynamic.Vehicle.Propulsion.RPM + '_in')
+                gearbox_input_list.remove(f'{Dynamic.Vehicle.Propulsion.RPM}_in')
             else:
-                self.promotes('fixed_rpm_source', ['*'])
+                self.promotes('rpm_source', ['*'])
             # models such as motor take RPM as input
             if Dynamic.Vehicle.Propulsion.RPM in shp_input_list:
                 self.connect(
-                    f'fixed_rpm_source.{Dynamic.Vehicle.Propulsion.RPM}',
+                    f'rpm_source.{Dynamic.Vehicle.Propulsion.RPM}',
                     f'{shp_model.name}.{Dynamic.Vehicle.Propulsion.RPM}',
                 )
                 shp_input_list.remove(Dynamic.Vehicle.Propulsion.RPM)
         else:
-            rpm_ivc.add_output(
-                'INTERNAL_OVERRIDE:' + Dynamic.Vehicle.Propulsion.RPM, 1.0, units='rpm'
-            )
-            if has_gearbox and Dynamic.Vehicle.Propulsion.RPM + '_in' in gearbox_input_list:
+            if Dynamic.Vehicle.Propulsion.RPM not in shp_output_list:
+                # There is no defined source for RPM, so if any component needs it, we use the
+                # passthrough component so an "external" source, like a Dymos control, can be connected
+                if (
+                    Dynamic.Vehicle.Propulsion.RPM in shp_input_list
+                    or (
+                        has_gearbox and f'{Dynamic.Vehicle.Propulsion.RPM}_in' in gearbox_input_list
+                    )
+                    or Dynamic.Vehicle.Propulsion.RPM in propeller_input_list
+                ):
+                    # expose RPM input so Dymos can control it
+                    self.promotes(
+                        'rpm_source',
+                        inputs=[('RPM_control', f'{Dynamic.Vehicle.Propulsion.RPM}_control')],
+                    )
+            # Go through all sub-systems and connect RPM inputs as needed
+            if Dynamic.Vehicle.Propulsion.RPM in shp_input_list:
+                self.connect(
+                    'rpm_source.RPM',
+                    f'{shp_model.name}.{Dynamic.Vehicle.Propulsion.RPM}',
+                )
+                shp_input_list.remove(Dynamic.Vehicle.Propulsion.RPM)
+
+            if has_gearbox and f'{Dynamic.Vehicle.Propulsion.RPM}_in' in gearbox_input_list:
                 if Dynamic.Vehicle.Propulsion.RPM in shp_output_list:
                     self.connect(
                         f'{shp_model.name}.{Dynamic.Vehicle.Propulsion.RPM}',
                         f'{gearbox_model.name}.{Dynamic.Vehicle.Propulsion.RPM}_in',
                     )
-
+                    gearbox_input_list.remove(f'{Dynamic.Vehicle.Propulsion.RPM}_in')
                     shp_output_list.remove(Dynamic.Vehicle.Propulsion.RPM)
+                else:
+                    self.connect(
+                        'rpm_source.RPM',
+                        f'{gearbox_model.name}.{Dynamic.Vehicle.Propulsion.RPM}_in',
+                    )
 
                 gearbox_input_list.remove(Dynamic.Vehicle.Propulsion.RPM + '_in')
+
+            if Dynamic.Vehicle.Propulsion.RPM in propeller_input_list:
+                self.connect(
+                    'rpm_source.RPM',
+                    f'{propeller_model.name}.{Dynamic.Vehicle.Propulsion.RPM}',
+                )
+                propeller_input_list.remove(Dynamic.Vehicle.Propulsion.RPM)
 
         # All other shp model inputs/outputs that don't interact with other components will be promoted
         for var in shp_input_list:

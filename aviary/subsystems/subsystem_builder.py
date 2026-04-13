@@ -484,7 +484,7 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def report(self, prob, reports_folder, **kwargs):
+    def report(self, prob, reports_folder):
         """
         Generates report file for this subsystem. If this subsystem doesn't need a
         report, do nothing.

@@ -111,6 +111,9 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.set_val(Aircraft.Battery.PACK_MASS, val=1000.0, units='lbm')
 
         prob.run_aviary_problem()
+        import openmdao.api as om
+
+        om.n2(prob, show_browser=False)
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
     def test_bench_2DOF(self):
