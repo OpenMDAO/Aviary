@@ -104,7 +104,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             Aircraft.Engine.SCALE_FACTOR,
             units='unitless',
             lower=0.25,
-            upper=2,
+            upper=5,
             ref=1,
         )
         prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10000)

@@ -911,7 +911,16 @@ class TurbopropMission(om.Group):
 
                 gearbox_input_list.remove(Dynamic.Vehicle.Propulsion.RPM + '_in')
 
-            if Dynamic.Vehicle.Propulsion.RPM in propeller_input_list:
+            # only connect RPM source to propeller if: 1. SHP or gearbox do not output it, and
+            # 2. propeller has it as an input
+            if (
+                Dynamic.Vehicle.Propulsion.RPM not in shp_output_list
+                and (
+                    has_gearbox
+                    and f'{Dynamic.Vehicle.Propulsion.RPM}_out' not in gearbox_output_list
+                )
+                and Dynamic.Vehicle.Propulsion.RPM in propeller_input_list
+            ):
                 self.connect(
                     'rpm_source.RPM',
                     f'{propeller_model.name}.{Dynamic.Vehicle.Propulsion.RPM}',
