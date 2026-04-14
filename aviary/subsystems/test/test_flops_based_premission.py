@@ -699,7 +699,6 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
     def test_case_all_subsystems(self):
         """
         premission: propulsion + geometry + aerodynamics + mass
-        Note: not checking propulsion and aerodynamics
         """
         prob = self.prob
 
@@ -946,7 +945,6 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
     def test_case_all_subsystems(self):
         """
         premission: propulsion + geometry + aerodynamics + mass
-        Note: not checking propulsion and aerodynamics
         """
         prob = self.prob
 
@@ -1195,7 +1193,6 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
     def test_case_all_subsystems(self):
         """
         premission: propulsion + geometry + aerodynamics + mass
-        Note: not checking propulsion and aerodynamics
         """
         prob = self.prob
 
