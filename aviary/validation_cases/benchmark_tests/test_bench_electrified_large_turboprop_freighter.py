@@ -98,7 +98,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('SNOPT', max_iter=20, verbosity=1)
+        prob.add_driver('SNOPT', max_iter=50, verbosity=1)
         prob.add_design_variables()
         prob.model.add_design_var(
             Aircraft.Engine.SCALE_FACTOR,
@@ -121,7 +121,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.run_aviary_problem()
         import openmdao.api as om
 
-        om.n2(prob, show_browser=False)
+        # om.n2(prob, show_browser=False)
+        # prob.model.list_vars(units=True, print_arrays=True)
         return prob
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
