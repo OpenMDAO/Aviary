@@ -677,9 +677,10 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
                 else:
                     num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
 
+            if num_bays_loc == num_bays:
+                break
             iter = iter + 1
-            # If number of bays has changed, recalculate cabin area
-            if num_bays_loc == num_bays or iter > 100:
+            if iter > 100:
                 warnings.warn(f'Number of iteration exceeded 100.')
                 break
 
