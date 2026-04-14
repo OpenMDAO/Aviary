@@ -1431,6 +1431,8 @@ class DragCoef(om.ExplicitComponent):
         cd0 = SA5 + SA6 * cf
 
         # induced drag
+        # fsa7c is not applied to SA7 here based on GASP logic.
+        # Hopefully dCL_flaps_coef and CDI_factor cover the “FSA7C” correction.
         cdi = SA7 * (CL - dCL_flaps_coef * dCL_flaps_model) ** 2 / CDI_factor
 
         # ground effects - direct increment to CD
