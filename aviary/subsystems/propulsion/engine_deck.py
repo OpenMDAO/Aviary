@@ -1316,6 +1316,14 @@ class EngineDeck(EngineModel):
             scale_factor = self.get_val(Aircraft.Engine.SCALE_FACTOR)
             # both scale factor and target thrust provided:
             if thrust_provided:
+                if self.get_val(Settings.VERBOSITY) >= Verbosity.BRIEF:
+                    warnings.warn(
+                        f'EngineDeck {self.name} has values provided for both SCALE_FACTOR and '
+                        'SCALED_SLS_THRUST. In the future, only SCALE_FACTOR will be accepted and '
+                        'errors may be raised if both are provided. We recommend removing '
+                        'SCALED_SLS_THRUST from your model and adjusting SCALE_FACTOR as needed.',
+                        DeprecationWarning,
+                    )
                 scaled_thrust = self.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf')
                 # Check if target thrust and ref thrust * scale factor match using rough tolerance
                 # Tolerance is arbitrary, but designed to handle thrusts in the hundreds of
@@ -1337,7 +1345,7 @@ class EngineDeck(EngineModel):
                 # variable, so don't touch it!! Instead change output thrust
                 else:
                     target_thrust = ref_thrust * scale_factor
-                    if self.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
+                    if self.get_val(Settings.VERBOSITY) is Verbosity.DEBUG:
                         warnings.warn(
                             f'EngineDeck <{self.name}>: aircraft:engine:scaled_sls_thrust and '
                             'product of aircraft:engine_scale_factor and '
