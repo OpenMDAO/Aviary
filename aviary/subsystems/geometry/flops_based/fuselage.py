@@ -696,11 +696,4 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
         outputs['bay_width'] = bay_width
 
-        # TODO: For the int calls, I see that those are part of a while loop that solves
-        # a nonlinear equation by Gauss-Siedel until it converges. The interesting part is
-        # that it solves int(x) = f(int(x)) instead of x=f(x). if we smooth any of the ints,
-        # the algorithm will probably take many more iteratiions. I wonder if it would still
-        # converge. One solution might be to rewrite this using an openmado solver, solve for
-        # a real-valued num_bays, then use a smoothed int afterwards. FLOPS did something similar
-        # with the skin friction calculation, except there were no ints. I rewrote the equations
-        # in residual form and used a Newton solver on them. (Ken)
+        # For improvement on using int function on num_bays, see issue #1084.
