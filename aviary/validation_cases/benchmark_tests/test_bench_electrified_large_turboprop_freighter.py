@@ -32,7 +32,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # del phase_info['desc1']
         # del phase_info['desc2']
 
-        del phase_info['descent']
+        # del phase_info['descent']
 
         # Build problem
         prob = AviaryProblem(verbosity=0)

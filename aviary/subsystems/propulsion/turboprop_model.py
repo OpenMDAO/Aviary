@@ -310,7 +310,7 @@ class TurbopropModel(EngineModel):
         return states
 
     def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
-        controls = super().get_states(
+        controls = super().get_controls(
             aviary_inputs=aviary_inputs,
             user_options=user_options,
             subsystem_options=subsystem_options,
@@ -473,14 +473,14 @@ class TurbopropModel(EngineModel):
         return desvars
 
     def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
-        guesses = super().get_states(
+        guesses = super().get_initial_guesses(
             aviary_inputs=aviary_inputs,
             user_options=user_options,
             subsystem_options=subsystem_options,
         )
 
         if self.shaft_power_model is not None:
-            extra_guesses = self.shaft_power_model.get_states(
+            extra_guesses = self.shaft_power_model.get_initial_guesses(
                 aviary_inputs=aviary_inputs,
                 user_options=user_options,
                 subsystem_options=subsystem_options,
@@ -488,7 +488,7 @@ class TurbopropModel(EngineModel):
             guesses.update(extra_guesses)
 
         if self.gearbox_model is not None:
-            extra_guesses = self.gearbox_model.get_states(
+            extra_guesses = self.gearbox_model.get_initial_guesses(
                 aviary_inputs=aviary_inputs,
                 user_options=user_options,
                 subsystem_options=subsystem_options,
@@ -496,7 +496,7 @@ class TurbopropModel(EngineModel):
             guesses.update(extra_guesses)
 
         if self.propeller_model is not None:
-            extra_guesses = self.propeller_model.get_states(
+            extra_guesses = self.propeller_model.get_initial_guesses(
                 aviary_inputs=aviary_inputs,
                 user_options=user_options,
                 subsystem_options=subsystem_options,
