@@ -29,8 +29,10 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             phase_info = deepcopy(two_dof_phase_info)
 
         # remove descent until RPM can be controlled for that phase
-        del phase_info['desc1']
-        del phase_info['desc2']
+        # del phase_info['desc1']
+        # del phase_info['desc2']
+
+        del phase_info['descent']
 
         # Build problem
         prob = AviaryProblem(verbosity=0)
@@ -109,6 +111,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.add_objective()
 
         prob.setup()
+        prob.final_setup()
         import openmdao.api as om
 
         om.n2(prob, show_browser=False)
@@ -119,6 +122,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         import openmdao.api as om
 
         om.n2(prob, show_browser=False)
+        return prob
 
     @unittest.skip('Skipping until subsystems with states can be used in 2DOF cruise')
     def test_bench_2DOF(self):
@@ -129,6 +133,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
+        prob.model.list_vars()
         self.assertTrue(prob.result.success)
         # TODO asserts
 
@@ -136,4 +141,4 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = LargeElectrifiedTurbopropFreighterBenchmark()
-    test.build_and_run_problem('2DOF')
+    test.build_and_run_problem('energy')
