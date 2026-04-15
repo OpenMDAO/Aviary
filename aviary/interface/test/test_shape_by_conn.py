@@ -16,7 +16,6 @@ from aviary.variable_info.variables import Aircraft
 
 @use_tempdirs
 class TestShapebyConn(unittest.TestCase):
-
     def test_shape_bug(self):
         # Verifies that shape_by_conn variables no longer raise an exception during
         # setup.
