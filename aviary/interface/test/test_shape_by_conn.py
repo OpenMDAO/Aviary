@@ -62,7 +62,11 @@ class TestShapebyConn(unittest.TestCase):
             _default_name = 'cg_sub'
 
             def build_post_mission(
-                self, aviary_inputs=None, mission_info=None, subsystem_options=None, phase_mission_bus_lengths=None
+                self,
+                aviary_inputs=None,
+                mission_info=None,
+                subsystem_options=None,
+                phase_mission_bus_lengths=None,
             ):
                 grp = om.Group()
                 grp.add_subsystem(
@@ -70,7 +74,7 @@ class TestShapebyConn(unittest.TestCase):
                     SBC(),
                     promotes_inputs=[
                         ExtendedAircraft.Wing.CG1,
-                        ('cg_promote_me', ExtendedAircraft.Wing.CG2)
+                        ('cg_promote_me', ExtendedAircraft.Wing.CG2),
                     ],
                 )
                 return grp
