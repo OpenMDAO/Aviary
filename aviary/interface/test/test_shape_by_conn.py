@@ -57,7 +57,6 @@ class TestShapebyConn(unittest.TestCase):
                 pass
 
         class CGBuilder(SubsystemBuilder):
-
             _default_name = 'cg_sub'
 
             def build_post_mission(
