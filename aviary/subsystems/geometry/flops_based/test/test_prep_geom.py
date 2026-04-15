@@ -63,8 +63,7 @@ wetted_area_overide = get_flops_case_names(
 bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
 
-# TODO: We have no integration tests for canard, so canard-related names are commented
-# out.
+# for integration tests for canard, see issue #1091.
 @use_tempdirs
 class PrepGeomTest(unittest.TestCase):
     """Test computation of derived values of aircraft geometry for aerodynamics analysis."""
