@@ -23,9 +23,6 @@ from aviary.variable_info.enums import AircraftTypes, SpeedType
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
-# TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
-# with alpha > alpha_stall
-
 
 class PreMissionAero(om.Group):
     """Takeoff and landing flaps modeling."""
@@ -94,7 +91,7 @@ class PreMissionAero(om.Group):
         )
 
         # Flaps geometry
-        # TODO: maybe this should move to geometry.
+        # should this be moved to geometry? See issue #1086
         self.add_subsystem(
             'BasicFlapsGeometry',
             BasicFlapsGeometry(),
