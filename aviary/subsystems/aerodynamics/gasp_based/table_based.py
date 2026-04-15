@@ -355,7 +355,7 @@ class TabularLowSpeedAero(om.Group):
             # takeoff defaults
             self.set_input_defaults('dt_gear', 7)
         else:
-            # TODO default gear duration for landing?
+            # should set default gear duration for landing? See issue # 1087
             pass
 
         if self.options['retract_flaps']:
@@ -365,7 +365,7 @@ class TabularLowSpeedAero(om.Group):
         else:
             # landing defaults
             self.set_input_defaults('flap_defl', 40 * np.ones(nn))
-            # TODO default flap duration for landing?
+            # should set default flap duration for landing? See issue # 1087
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
         self.set_input_defaults(Dynamic.Atmosphere.MACH, np.zeros(nn))
