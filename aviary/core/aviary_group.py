@@ -109,13 +109,11 @@ class AviaryGroup(om.Group):
         # Find all variables that are shape_by_conn so we don't set their shape with a stale value
         # from the default metadata. We can only find these on the next level down because
         # aviary_group's setup is not complete until after configure.
-        sub_names = ['pre_mission', 'traj', 'post_mission']
-        svt_vars = []
-        for sub_name in sub_names:
-            sub = getattr(self, sub_name)
-            prom2abs = sub._resolver.prom2abs_iter('input')
+        sbc_vars = []
+        for sub in self.system_iter(recurse=False, typ=om.Group):
+            pr2abs = sub._resolver.prom2abs_iter('input')
             sub_inputs = [
-                (k, v[0]) for k, v in prom2abs if k.startswith('aircraft') or k.startswith('mission')
+                (k, v[0]) for k, v in pr2abs if k.startswith('aircraft') or k.startswith('mission')
             ]
             abs2meta = sub._var_abs2meta['input']
 
@@ -123,7 +121,7 @@ class AviaryGroup(om.Group):
                 prom_name, abs_name = data
                 meta = abs2meta[abs_name]
                 if meta.get('shape_by_conn') is True:
-                    svt_vars.append(prom_name)
+                    sbc_vars.append(prom_name)
 
         for key in aviary_metadata:
             if ':' not in key or key.startswith('dynamic:'):
@@ -146,10 +144,8 @@ class AviaryGroup(om.Group):
                     # optional, but no default value
                     continue
 
-            kwargs = {
-                'units': units,
-            }
-            if key not in svt_vars:
+            kwargs = {'units': units}
+            if key not in sbc_vars:
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val
 
