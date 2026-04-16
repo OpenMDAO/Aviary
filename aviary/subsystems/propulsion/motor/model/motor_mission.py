@@ -39,7 +39,7 @@ class MotorMission(om.Group):
             motor_group.add_subsystem(
                 'rpm_calc',
                 om.ExecComp(
-                    'RPM = max_RPM * throttle',
+                    'RPM = max_RPM * power(throttle, 0.5)',
                     RPM={'val': np.ones(nn), 'units': 'rpm'},
                     max_RPM={'val': np.ones(nn), 'units': 'rpm'},
                     throttle={'val': np.ones(nn), 'units': 'unitless'},

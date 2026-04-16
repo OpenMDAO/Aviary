@@ -28,6 +28,9 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         elif mission_method == '2DOF':
             phase_info = deepcopy(two_dof_phase_info)
 
+        # del phase_info['climb']
+        # del phase_info['descent']
+
         # Build problem
         prob = AviaryProblem(verbosity=0)
 
@@ -42,14 +45,14 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # set up electric propulsion
         # TODO make separate input file for electroprop freighter?
-        options.set_val(Aircraft.Engine.SCALE_FACTOR, 2)
-        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
+        options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 6_000, 'rpm')  # max RPM of motor map
         options.delete(Aircraft.Engine.FIXED_RPM)
         # options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
+        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 550, 'kW*h/kg')
 
         options.set_val(
             Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv')
@@ -74,7 +77,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.build_model()
 
-        prob.add_driver('SNOPT', max_iter=50, verbosity=1)
+        prob.add_driver('SNOPT', max_iter=100, verbosity=1)
         prob.add_design_variables()
         prob.model.add_design_var(
             Aircraft.Engine.SCALE_FACTOR,
@@ -83,13 +86,22 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             upper=2,
             ref=1,
         )
-        prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10000)
-        prob.add_objective('mass')
+        prob.model.add_design_var(
+            Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10_000, ref=1_000
+        )
+
+        final_phase_name = prob.model.regular_phases[-1]
+        prob.model.add_objective(
+            f'traj.{final_phase_name}.timeseries.cumulative_electric_energy_used',
+            index=-1,
+            ref=1e6,
+        )
+        # prob.add_objective('mass')
 
         prob.setup()
 
         # initial guess for pack mass.
-        prob.set_val(Aircraft.Battery.PACK_MASS, val=1000.0, units='lbm')
+        prob.set_val(Aircraft.Battery.PACK_MASS, val=100.0, units='lbm')
 
         prob.run_aviary_problem()
 
