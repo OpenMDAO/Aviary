@@ -8,6 +8,8 @@ from aviary.subsystems.mass.flops_based.distributed_prop import (
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
+DEG2RAD = np.pi / 180.0
+
 
 class NoseGearLength(om.ExplicitComponent):
     """
