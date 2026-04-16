@@ -1189,6 +1189,8 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Mission.OPERATING_MASS], 321171.82272983, tol)
         # ZeroFuelMass
         assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 383871.82272983, tol)
+        # FinMass
+        assert_near_equal(prob[Aircraft.Fins.MASS], 2822.14154503, tol)
 
     def test_case_all_subsystems(self):
         """
