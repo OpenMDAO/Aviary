@@ -43,6 +43,8 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         if mission_method == 'energy':
             options.set_val(Settings.EQUATIONS_OF_MOTION, 'energy_state')
 
+        options.set_val(Aircraft.CrewPayload.CARGO_MASS, 0, 'lbm')
+
         # set up electric propulsion
         # TODO make separate input file for electroprop freighter?
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
@@ -52,7 +54,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 550, 'kW*h/kg')
+        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1_000, 'W*h/kg')
 
         options.set_val(
             Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv')
@@ -87,7 +89,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             ref=1,
         )
         prob.model.add_design_var(
-            Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10_000, ref=1_000
+            Aircraft.Battery.PACK_MASS, units='lbm', lower=10_000, upper=75_000, ref=10_000
         )
 
         final_phase_name = prob.model.regular_phases[-1]
@@ -101,7 +103,7 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         prob.setup()
 
         # initial guess for pack mass.
-        prob.set_val(Aircraft.Battery.PACK_MASS, val=100.0, units='lbm')
+        prob.set_val(Aircraft.Battery.PACK_MASS, val=25_000.0, units='lbm')
 
         prob.run_aviary_problem()
 

@@ -298,7 +298,7 @@ add_meta_data(
         'FLOPS': None,
         'LEAPS1': 'aircraft.inputs.L0_battery.energy_density',
     },
-    units='kW*h/kg',
+    units='W*h/kg',
     desc='specific energy density of the battery pack',
     default_value=1.0,
 )
