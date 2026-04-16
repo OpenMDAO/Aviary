@@ -88,7 +88,7 @@ class TurbopropModel(EngineModel):
         #      configure - need to figure out when user wants gearbox without having to directly
         #      pass builder
         if gearbox_model is None:
-            # TODO where can we bring in include_constraints? kwargs in init is an option, but that
+            # TODO where can we bring in include_constraints? subsystem_options in init is an option, but that
             #      still requires the L2 interface
             self.gearbox_model = GearboxBuilder(name='gearbox', include_constraints=True)
 
@@ -121,7 +121,7 @@ class TurbopropModel(EngineModel):
         return mission_solver
 
     # BUG if using multiple custom subsystems that happen to share a kwarg but need different values,
-    #     this breaks - look into "nested" kwargs with separate dict per turboprop subsystem?
+    #     this breaks - look into "nested" subsystem options with separate dict per turboprop subsystem?
     def build_pre_mission(self, aviary_inputs=None, subsystem_options=None):
         shp_model = self.shaft_power_model
         propeller_model = self.propeller_model
@@ -170,7 +170,7 @@ class TurbopropModel(EngineModel):
             propeller_model=self.propeller_model,
             gearbox_model=self.gearbox_model,
             aviary_inputs=self.options,
-            kwargs=subsystem_options,
+            subsystem_options=subsystem_options,
         )
 
         return turboprop_group
@@ -180,20 +180,20 @@ class TurbopropModel(EngineModel):
         # input/output for the TurbopropModel as a whole, commenting this out for now
         # inputs = []
         # if self.shaft_power_model is not None:
-        #     if self.shaft_power_model.name in kwargs:
-        #         subsys_args = kwargs[self.shaft_power_model.name]
+        #     if self.shaft_power_model.name in subsystem_options:
+        #         subsys_args = subsystem_options[self.shaft_power_model.name]
         #     else:
         #         subsys_args = {}
         #     inputs += self.shaft_power_model.mission_inputs(**subsys_args)
         # if self.gearbox_model is not None:
-        #     if self.gearbox_model.name in kwargs:
-        #         subsys_args = kwargs[self.gearbox_model.name]
+        #     if self.gearbox_model.name in subsystem_options:
+        #         subsys_args = subsystem_options[self.gearbox_model.name]
         #     else:
         #         subsys_args = {}
         #     inputs += self.gearbox_model.mission_inputs(**subsys_args)
         # if self.propeller_model is not None:
-        #     if self.propeller_model.name in kwargs:
-        #         subsys_args = kwargs[self.propeller_model.name]
+        #     if self.propeller_model.name in subsystem_options:
+        #         subsys_args = subsystem_options[self.propeller_model.name]
         #     else:
         #         subsys_args = {}
         #     inputs += self.propeller_model.mission_inputs(**subsys_args)
@@ -205,20 +205,20 @@ class TurbopropModel(EngineModel):
         # input/output for the TurbopropModel as a whole, commenting this out for now
         # outputs = []
         # if self.shaft_power_model is not None:
-        #     if self.shaft_power_model.name in kwargs:
-        #         subsys_args = kwargs[self.shaft_power_model.name]
+        #     if self.shaft_power_model.name in subsystem_options:
+        #         subsys_args = subsystem_options[self.shaft_power_model.name]
         #     else:
         #         subsys_args = {}
         #     outputs += self.shaft_power_model.mission_outputs(**subsys_args)
         # if self.gearbox_model is not None:
-        #     if self.gearbox_model.name in kwargs:
-        #         subsys_args = kwargs[self.gearbox_model.name]
+        #     if self.gearbox_model.name in subsystem_options:
+        #         subsys_args = subsystem_options[self.gearbox_model.name]
         #     else:
         #         subsys_args = {}
         #     outputs += self.gearbox_model.mission_outputs(**subsys_args)
         # if self.propeller_model is not None:
-        #     if self.propeller_model.name in kwargs:
-        #         subsys_args = kwargs[self.propeller_model.name]
+        #     if self.propeller_model.name in subsystem_options:
+        #         subsys_args = subsystem_options[self.propeller_model.name]
         #     else:
         #         subsys_args = {}
         #     outputs += self.propeller_model.mission_outputs(**subsys_args)
@@ -580,7 +580,9 @@ class TurbopropMission(om.Group):
         self.options.declare('shaft_power_model', desc='shaft power generation model')
         self.options.declare('propeller_model', desc='propeller model')
         self.options.declare('gearbox_model', desc='gearbox model')
-        self.options.declare('kwargs', desc='kwargs for turboprop mission model')
+        self.options.declare(
+            'subsystem_options', desc='subsystem options for turboprop mission model'
+        )
         self.options.declare('aviary_inputs', desc='aviary inputs for turboprop mission model')
 
     def setup(self):
@@ -590,7 +592,7 @@ class TurbopropMission(om.Group):
         shp_model = self.options['shaft_power_model']
         propeller_model = self.options['propeller_model']
         gearbox_model = self.options['gearbox_model']
-        kwargs = self.options['kwargs']
+        subsystem_options = self.options['subsystem_options']
         aviary_inputs = self.options['aviary_inputs']
 
         if Aircraft.Engine.FIXED_RPM in aviary_inputs:
@@ -611,52 +613,52 @@ class TurbopropMission(om.Group):
 
         # Shaft Power Model
         try:
-            subsystem_options = kwargs[shp_model.name]
+            shp_options = subsystem_options[shp_model.name]
         except (AttributeError, KeyError):
-            subsystem_options = {}
+            shp_options = {}
         shp_model_mission = shp_model.build_mission(
             num_nodes=num_nodes,
             aviary_inputs=aviary_inputs,
             user_options={},
-            subsystem_options=subsystem_options,
+            subsystem_options=shp_options,
         )
         if shp_model_mission is not None:
             self.add_subsystem(shp_model.name, subsys=shp_model_mission)
 
         # Gearbox Model
         try:
-            gearbox_kwargs = kwargs[gearbox_model.name]
+            gearbox_options = subsystem_options[gearbox_model.name]
         except (AttributeError, KeyError):
-            gearbox_kwargs = {}
+            gearbox_options = {}
         if gearbox_model is not None:
             gearbox_model_mission = gearbox_model.build_mission(
                 num_nodes=num_nodes,
                 aviary_inputs=aviary_inputs,
                 user_options={},
-                subsystem_options=gearbox_kwargs,
+                subsystem_options=gearbox_options,
             )
             if gearbox_model_mission is not None:
                 self.add_subsystem(gearbox_model.name, subsys=gearbox_model_mission)
 
         # Propeller Model
         try:
-            propeller_kwargs = kwargs[propeller_model.name]
+            propeller_options = subsystem_options[propeller_model.name]
         except (AttributeError, KeyError):
-            propeller_kwargs = {}
+            propeller_options = {}
 
         propeller_model_mission = propeller_model.build_mission(
             num_nodes=num_nodes,
             aviary_inputs=aviary_inputs,
             user_options={},
-            subsystem_options=propeller_kwargs,
+            subsystem_options=propeller_options,
         )
 
         if isinstance(propeller_model, PropellerBuilder):
             # use the Hamilton Standard model
             try:
-                propeller_kwargs = kwargs['hamilton_standard']
+                propeller_options = subsystem_options['hamilton_standard']
             except KeyError:
-                propeller_kwargs = {}
+                propeller_options = {}
 
             self.add_subsystem(propeller_model.name, propeller_model_mission)
 
