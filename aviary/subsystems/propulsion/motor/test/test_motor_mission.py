@@ -12,25 +12,26 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.utils.functions import get_path
 
 
+@use_tempdirs
 class TestMotorMission(unittest.TestCase):
-    @use_tempdirs
     def test_motor_mission(self):
         nn = 3
 
         filename = 'electric_motor_1800Nm_6000rpm.csv'
         options = AviaryValues()
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(filename))
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
 
         prob = om.Problem()
 
-        prob.model.add_subsystem('motor_map', MotorMission(num_nodes=nn), promotes=['*'])
+        prob.model.add_subsystem('motor_mission', MotorMission(num_nodes=nn), promotes=['*'])
 
         setup_model_options(prob, options)
 
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, np.linspace(0, 1, nn))
-        prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.linspace(0, 6000, nn))
+        # prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.linspace(0, 6000, nn))
         # prob.set_val('torque_unscaled', np.linspace(0, 1800, nn), 'N*m')
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1.12)
 
@@ -47,7 +48,7 @@ class TestMotorMission(unittest.TestCase):
         max_torque_expected = [2016, 2016, 2016]
         eff_expected = [0.871, 0.958625, 0.954]
         shp_expected = [0.0, 316.67253948185123, 1266.690157927405]
-        max_shp_expected = [0.0, 633.3450789637025, 1266.690157927405]
+        max_shp_expected = [1266.69015793, 1266.69015793, 1266.69015793]
         power = [0.0, 330.3403723894654, 1327.7674611398375]
 
         assert_near_equal(torque, torque_expected, tolerance=1e-9)

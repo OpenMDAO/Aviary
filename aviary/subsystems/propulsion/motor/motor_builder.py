@@ -94,26 +94,26 @@ class MotorBuilder(SubsystemBuilder):
 
     #     return DVs
 
-    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
-        controls_dict = {}
-        if aviary_inputs is not None:
-            if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
-                if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
-                    rpm_limit = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
-                else:
-                    rpm_limit = 6000
-                controls_dict = {
-                    Dynamic.Vehicle.Propulsion.RPM: {
-                        'units': 'rpm',
-                        'lower': 1.0,
-                        'upper': rpm_limit,
-                        'control_type': 'polynomial',
-                        'order': 3,
-                        'opt': True,
-                    },
-                }
+    # def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    # controls_dict = {}
+    # if aviary_inputs is not None:
+    #     if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
+    #         if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
+    #             rpm_limit = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
+    #         else:
+    #             rpm_limit = 6000
+    #         controls_dict = {
+    #             Dynamic.Vehicle.Propulsion.RPM: {
+    #                 'units': 'rpm',
+    #                 'lower': 1.0,
+    #                 'upper': rpm_limit,
+    #                 'control_type': 'polynomial',
+    #                 'order': 3,
+    #                 'opt': True,
+    #             },
+    #         }
 
-        return controls_dict
+    # return controls_dict
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = {
@@ -125,23 +125,23 @@ class MotorBuilder(SubsystemBuilder):
         }
         return params
 
-    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
-        initial_guess_dict = {}
-        if aviary_inputs is not None:
-            if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
-                if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
-                    rpm_guess = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
-                else:
-                    rpm_guess = 6000
-                initial_guess_dict = {
-                    f'{Dynamic.Vehicle.Propulsion.RPM}_control': {
-                        'units': 'rpm',
-                        'type': 'control',
-                        'val': rpm_guess,
-                    },
-                }
+    # def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    #     initial_guess_dict = {}
+    #     if aviary_inputs is not None:
+    #         if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
+    #             if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
+    #                 rpm_guess = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
+    #             else:
+    #                 rpm_guess = 6000
+    #             initial_guess_dict = {
+    #                 f'{Dynamic.Vehicle.Propulsion.RPM}_control': {
+    #                     'units': 'rpm',
+    #                     'type': 'control',
+    #                     'val': rpm_guess,
+    #                 },
+    #             }
 
-        return initial_guess_dict
+    #     return initial_guess_dict
 
     def get_mass_names(self, aviary_inputs=None):
         """

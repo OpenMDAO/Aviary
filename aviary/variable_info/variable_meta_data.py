@@ -2102,6 +2102,7 @@ add_meta_data(
     'engine model or chosen by optimizer. Typically used when pairing a motor or '
     'turboshaft using a fixed operating RPM with a propeller.',
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -2508,6 +2509,7 @@ add_meta_data(
     units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(

@@ -28,12 +28,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         elif mission_method == '2DOF':
             phase_info = deepcopy(two_dof_phase_info)
 
-        # remove descent until RPM can be controlled for that phase
-        # del phase_info['desc1']
-        # del phase_info['desc2']
-
-        # del phase_info['descent']
-
         # Build problem
         prob = AviaryProblem(verbosity=0)
 
@@ -48,19 +42,13 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         # set up electric propulsion
         # TODO make separate input file for electroprop freighter?
-        # scale_factor = 17.77  # target is ~32 kN*m torque
+        options.set_val(Aircraft.Engine.SCALE_FACTOR, 2)
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')  # max RPM of motor map
         options.delete(Aircraft.Engine.FIXED_RPM)
         # options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
         # match propeller RPM of gas turboprop
         options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
         options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        # options.set_val(Aircraft.Engine.SCALE_FACTOR, scale_factor)  # 11.87)
-        # options.set_val(
-        #     Aircraft.Engine.REFERENCE_SLS_THRUST,
-        #     options.get_val(Aircraft.Engine.SCALED_SLS_THRUST, 'lbf') / scale_factor,
-        #     'lbf',
-        # )
         options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1000, 'kW*h/kg')
 
         options.set_val(
@@ -80,18 +68,6 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
         )
         prob.load_external_subsystems([electroprop])
 
-        # if mission_method == 'energy':
-        #     # FLOPS aero specific stuff? Best guesses for values here
-        #     prob.aviary_inputs.set_val(Mission.Constraints.MAX_MACH, 0.5)
-        #     prob.aviary_inputs.set_val(Aircraft.Wing.AREA, 1744.59, 'ft**2')
-        #     # prob.aviary_inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 10.078)
-        #     prob.aviary_inputs.set_val(
-        #         Aircraft.Wing.THICKNESS_TO_CHORD, 0.1500
-        #     )  # average between root and chord T/C
-        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 4.3, 'm')
-        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 3.95, 'm')
-        #     prob.aviary_inputs.set_val(Aircraft.Fuselage.REF_DIAMETER, 4.125, 'm')
-
         prob.load_external_subsystems([BatteryBuilder()])
 
         prob.check_and_preprocess_inputs()
@@ -100,28 +76,23 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.add_driver('SNOPT', max_iter=50, verbosity=1)
         prob.add_design_variables()
-        prob.model.add_design_var(
-            Aircraft.Engine.SCALE_FACTOR,
-            units='unitless',
-            lower=0.25,
-            upper=5,
-            ref=1,
-        )
+        # prob.model.add_design_var(
+        #     Aircraft.Engine.SCALE_FACTOR,
+        #     units='unitless',
+        #     lower=0.25,
+        #     upper=2,
+        #     ref=1,
+        # )
         prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10000)
         prob.add_objective()
 
         prob.setup()
-        prob.final_setup()
-        import openmdao.api as om
 
-        om.n2(prob, show_browser=False)
         # initial guess for pack mass.
         prob.set_val(Aircraft.Battery.PACK_MASS, val=1000.0, units='lbm')
 
         prob.run_aviary_problem()
-        import openmdao.api as om
 
-        # om.n2(prob, show_browser=False)
         # prob.model.list_vars(units=True, print_arrays=True)
         return prob
 

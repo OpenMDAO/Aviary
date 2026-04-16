@@ -197,8 +197,7 @@ class TurbopropMissionTest(unittest.TestCase):
                 idx = list(expected_values.keys()).index(point_name)
                 assert_near_equal(results[idx], expected, tolerance=1.5e-10)
 
-        # because Hamilton Standard model uses fd method, the following may not be
-        # accurate.
+        # because Hamilton Standard model uses fd method, the following may not be accurate.
         partial_data = self.prob.check_partials(out_stream=None, form='central')
         assert_check_partials(partial_data, atol=0.2, rtol=0.2)
 
@@ -244,8 +243,6 @@ class TurbopropMissionTest(unittest.TestCase):
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
-        # self.prob.set_val(Dynamic.Mission.PERCENT_ROTOR_RPM_CORRECTED,
-        #                   np.array([1,1,0.7]), units='unitless')
         self.prob.set_val(
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units='unitless'
         )
@@ -334,20 +331,19 @@ class TurbopropMissionTest(unittest.TestCase):
                 idx = list(expected_values.keys()).index(point_name)
                 assert_near_equal(results[idx], expected, tolerance=1.5e-10)
 
-        # Note: There isn't much point in checking the partials of a component
-        # that computes them with FD.
+        # NOTE: There isn't much point in checking the partials of a component that computes them with FD.
         partial_data = self.prob.check_partials(out_stream=None, form='forward', step=1.01e-6)
         assert_check_partials(partial_data, atol=1e10, rtol=1e-3)
 
-    def test_electroprop(self):
-        # test case using electric motor and default HS prop model.
+    def test_electroprop_fixed_RPM(self):
+        # test case using electric motor and default HS prop model and fixed RPM.
         test_points = [(0, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
-        num_nodes = len(test_points)
 
         options = get_option_defaults()
 
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
         options.set_val(
             Aircraft.Engine.FIXED_RPM,
             1455.13090827,
@@ -355,8 +351,6 @@ class TurbopropMissionTest(unittest.TestCase):
         )
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
-
-        self.prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.ones(num_nodes) * 2000.0, units='rpm')
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
@@ -388,21 +382,71 @@ class TurbopropMissionTest(unittest.TestCase):
                 actual = self.prob.get_val(var_name, units=units)
                 assert_near_equal(actual, expected, tolerance=tol)
 
-        # Note: There isn't much point in checking the partials of a component
-        # that computes them with FD.
+        # NOTE: There isn't much point in checking the partials of a component that computes them
+        # with FD.
         partial_data = self.prob.check_partials(out_stream=None, form='forward', step=1.01e-6)
         assert_check_partials(partial_data, atol=1e10, rtol=1e-3)
 
-    def test_control_rpm_electoprop(self):
-        # based on test_electroprop, but simulating RPM as a dymos control
-        test_points = [(0.6, 25000, 1), (0.6, 25000, 1), (0.6, 25000, 1)]
+    def test_electroprop_calc_RPM(self):
+        # test case using electric motor and default HS prop model and RPM that scales with throttle.
+        test_points = [(0, 0, 0.01), (0, 0, 0.5), (0, 0, 1)]
 
         options = get_option_defaults()
 
         shp_file = get_path('electric_motor_1800Nm_6000rpm.csv')
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, shp_file)
+        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
 
         self.prepare_model(options, test_points, shp_model=MotorBuilder(), input_rpm=True)
+
+        self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
+        self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
+        self.prob.set_val(
+            Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT, 0.5, units='unitless'
+        )
+
+        self.prob.set_val(Aircraft.Engine.Propeller.TIP_SPEED_MAX, 800, units='ft/s')
+
+        self.prob.run_model()
+
+        shp_expected = [0.151665999, 379.164998, 1516.65999]
+        prop_thrust_expected = total_thrust_expected = [
+            8.20491214,
+            2594.01215,
+            10376.0486,
+        ]
+        electric_power_expected = [0.129792551, 294.946761, 1185.50666]
+        expected_values = {
+            Dynamic.Vehicle.Propulsion.SHAFT_POWER: (shp_expected, 'hp', 1e-8),
+            Dynamic.Vehicle.Propulsion.THRUST: (total_thrust_expected, 'lbf', 1e-8),
+            'thrust_summation.propeller_thrust': (prop_thrust_expected, 'lbf', 1e-8),
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN: (electric_power_expected, 'kW', 2e-7),
+        }
+
+        for var_name, (expected, units, tol) in expected_values.items():
+            with self.subTest(var=var_name):
+                actual = self.prob.get_val(var_name, units=units)
+                assert_near_equal(actual, expected, tolerance=tol)
+
+        # NOTE: There isn't much point in checking the partials of a component that computes them
+        # with FD.
+        partial_data = self.prob.check_partials(out_stream=None, form='forward', step=1.01e-6)
+        assert_check_partials(partial_data, atol=1e10, rtol=1e-3)
+
+    def test_control_rpm_turboprop(self):
+        # based on test_case_2, but simulating RPM as a dymos control
+        filename = get_path('models/engines/turboshaft_1120hp.csv')
+        test_points = [(0.001, 0, 0), (0, 0, 1), (0.6, 25000, 1)]
+        truth_vals = [
+            (111.99507922, 37.507376, 910.70245568, 948.20983168, -195.78762),
+            (1119.99609612, 136.3, 2752.73508087, 2889.03508087, -644),
+            (778.21130479, 21.3, 558.33650216, 579.63650216, -839.7),
+        ]
+
+        options = get_option_defaults()
+        options.set_val(Aircraft.Engine.DATA_FILE, filename)
+
+        self.prepare_model(options, test_points)
 
         self.prob.set_val(Aircraft.Engine.Propeller.DIAMETER, 10.5, units='ft')
         self.prob.set_val(Aircraft.Engine.Propeller.ACTIVITY_FACTOR, 114.0, units='unitless')
@@ -421,35 +465,25 @@ class TurbopropMissionTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        shp_expected = [183.91156919, 275.86735378, 367.82313837]
-        prop_thrust_expected = total_thrust_expected = [87.15691683, 164.22051903, 184.42047241]
-        electric_power_expected = [164.66385039, 233.10905408, 303.31010941]
+        results = self.get_results()
 
         expected_values = {
-            Dynamic.Vehicle.Propulsion.RPM: (
-                rpm_control,
-                'rpm',
-                1e-8,
-            ),
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER: (shp_expected, 'hp', 1e-8),
-            Dynamic.Vehicle.Propulsion.THRUST: (total_thrust_expected, 'lbf', 1e-8),
-            'thrust_summation.propeller_thrust': (prop_thrust_expected, 'lbf', 1e-8),
-            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN: (
-                electric_power_expected,
-                'kW',
-                2e-7,
-            ),
+            'point_0 (M=0.001, alt=0, idle)': truth_vals[0],
+            'point_1 (M=0, alt=0, SLS)': truth_vals[1],
+            'point_2 (M=0.6, alt=25k, TOC)': truth_vals[2],
         }
 
-        for var_name, (expected, units, tol) in expected_values.items():
-            with self.subTest(var=var_name):
-                actual = self.prob.get_val(var_name, units=units)
-                assert_near_equal(actual, expected, tolerance=tol)
+        for point_name, expected in expected_values.items():
+            with self.subTest(var=point_name):
+                idx = list(expected_values.keys()).index(point_name)
+                assert_near_equal(results[idx], expected, tolerance=1.5e-10)
 
-        # Note: There isn't much point in checking the partials of a component
-        # that computes them with FD.
-        partial_data = self.prob.check_partials(out_stream=None, form='forward', step=1.01e-6)
-        assert_check_partials(partial_data, atol=1e10, rtol=1e-3)
+        with self.subTest(var='rotations_per_minute'):
+            actual = self.prob.get_val(Dynamic.Vehicle.Propulsion.RPM, units='rpm')
+            assert_near_equal(actual, rpm_control, tolerance=1e-8)
+
+        partial_data = self.prob.check_partials(out_stream=None, form='central')
+        assert_check_partials(partial_data, atol=0.15, rtol=0.15)
 
 
 class ExamplePropModel(SubsystemBuilder):
@@ -489,3 +523,6 @@ class ExamplePropModel(SubsystemBuilder):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TurbopropMissionTest()
+    # test.setUp()
+    # test.test_electroprop_calc_RPM()

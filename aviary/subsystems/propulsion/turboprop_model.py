@@ -95,7 +95,7 @@ class TurbopropModel(EngineModel):
         if propeller_model is None:
             self.propeller_model = PropellerBuilder(name='propeller')
 
-    def needs_mission_solver(self, aviary_inputs, subsystem_options):
+    def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None):
         if self.shaft_power_model is not None:
             shp_solver = self.shaft_power_model.needs_mission_solver(
                 aviary_inputs=aviary_inputs,
@@ -122,7 +122,7 @@ class TurbopropModel(EngineModel):
 
     # BUG if using multiple custom subsystems that happen to share a kwarg but need different values,
     #     this breaks - look into "nested" kwargs with separate dict per turboprop subsystem?
-    def build_pre_mission(self, aviary_inputs, subsystem_options) -> om.Group:
+    def build_pre_mission(self, aviary_inputs=None, subsystem_options=None):
         shp_model = self.shaft_power_model
         propeller_model = self.propeller_model
         gearbox_model = self.gearbox_model
@@ -161,7 +161,9 @@ class TurbopropModel(EngineModel):
 
         return turboprop_group
 
-    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
+    def build_mission(
+        self, num_nodes, aviary_inputs=None, user_options=None, subsystem_options=None
+    ):
         turboprop_group = TurbopropMission(
             num_nodes=num_nodes,
             shaft_power_model=self.shaft_power_model,
@@ -815,7 +817,11 @@ class TurbopropMission(om.Group):
             for var in shp_output_list.copy():
                 # Check if var is output from both shp_model and gearbox model
                 # RPM has special handling, so skip it here
-                if var in gearbox_output_list or var + '_out' in gearbox_output_list:
+                if (
+                    var in gearbox_output_list
+                    or var + '_out' in gearbox_output_list
+                    and var != Dynamic.Vehicle.Propulsion.RPM
+                ):
                     shp_output_list.remove(var)
                 # if var is shp_output and gearbox input, connect on shp -> gearbox side
                 if var + '_in' in gearbox_input_list and var != Dynamic.Vehicle.Propulsion.RPM:
@@ -908,8 +914,7 @@ class TurbopropMission(om.Group):
                         'rpm_source.RPM',
                         f'{gearbox_model.name}.{Dynamic.Vehicle.Propulsion.RPM}_in',
                     )
-
-                gearbox_input_list.remove(Dynamic.Vehicle.Propulsion.RPM + '_in')
+                    gearbox_input_list.remove(Dynamic.Vehicle.Propulsion.RPM + '_in')
 
             # only connect RPM source to propeller if: 1. SHP or gearbox do not output it, and
             # 2. propeller has it as an input
