@@ -76,15 +76,15 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         prob.add_driver('SNOPT', max_iter=50, verbosity=1)
         prob.add_design_variables()
-        # prob.model.add_design_var(
-        #     Aircraft.Engine.SCALE_FACTOR,
-        #     units='unitless',
-        #     lower=0.25,
-        #     upper=2,
-        #     ref=1,
-        # )
+        prob.model.add_design_var(
+            Aircraft.Engine.SCALE_FACTOR,
+            units='unitless',
+            lower=0.25,
+            upper=2,
+            ref=1,
+        )
         prob.model.add_design_var(Aircraft.Battery.PACK_MASS, units='lbm', lower=10, upper=10000)
-        prob.add_objective()
+        prob.add_objective('mass')
 
         prob.setup()
 
