@@ -560,6 +560,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 'unitless'
         )[0]
         num_seat_abreast_economy = int(num_seat_abreast_economy)
+        if num_seat_abreast_economy == 0:
+            num_seat_abreast_economy = 6
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, [num_seat_abreast_economy]
         )
@@ -569,6 +571,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 'unitless'
                 )[0]
             )
+            if num_seat_abreast_first == 0:
+                num_seat_abreast_first = 4
             input_values.set_val(
                 Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, [num_seat_abreast_first]
             )
@@ -580,8 +584,43 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 'unitless'
                 )[0]
             )
+            if num_seat_abreast_business == 0:
+                num_seat_abreast_business = 5
             input_values.set_val(
                 Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, [num_seat_abreast_business]
+            )
+        except:
+            pass
+        try:
+            seat_pitch_business = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch')[0]
+            )
+            if seat_pitch_business == 0.0:
+                seat_pitch_business = 39.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, [seat_pitch_business], 'inch'
+            )
+        except:
+            pass
+        try:
+            seat_pitch_economy = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch')[0]
+            )
+            if seat_pitch_economy == 0.0:
+                seat_pitch_economy = 32.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, [seat_pitch_economy], 'inch'
+            )
+        except:
+            pass
+        try:
+            seat_pitch_first = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch')[0]
+            )
+            if seat_pitch_first == 0.0:
+                seat_pitch_first = 61.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, [seat_pitch_first], 'inch'
             )
         except:
             pass
