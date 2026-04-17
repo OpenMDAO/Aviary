@@ -56,8 +56,8 @@ class CabinCrewMass(om.ExplicitComponent):
             + galley_crew_count * mass_per_galley_crew
         )
 
-    _mass_per_flight_attendant = 155.0  # lbm (on GASP side, 177.0 lbm)
-    _mass_per_galley_crew = 200.0  # lbm (on GASP side, 240.0 lbm?)
+    _mass_per_flight_attendant = 155.0  # lbm
+    _mass_per_galley_crew = 200.0  # lbm
 
 
 class FlightCrewMass(om.ExplicitComponent):
