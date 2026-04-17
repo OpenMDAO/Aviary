@@ -1232,7 +1232,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH', 'LEAPS1': None},
     units='inch',
-    desc='pitch of the first class seats. If 0, use default.',
+    desc='pitch of the first class seats.',
     option=True,
     default_value=61.0,
 )
