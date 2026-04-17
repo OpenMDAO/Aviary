@@ -62,7 +62,7 @@ class MainGearMass(om.ExplicitComponent):
     equations, modified to output mass instead of weight.
     """
 
-    # TODO: add in aircraft type and carrier factors as options and modify equations
+    # add in aircraft type and carrier factors as options and modify equations, see issue #1094.
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.MAIN_GEAR_OLEO_LENGTH, units='inch')
@@ -125,7 +125,7 @@ class NoseGearMass(om.ExplicitComponent):
     equations, modified to output mass instead of weight.
     """
 
-    # TODO: add in aircraft type and carrier factors as options and modify equations
+    # add in aircraft type and carrier factors as options and modify equations, see issue #1094.
 
     def setup(self):
         add_aviary_input(self, Aircraft.LandingGear.NOSE_GEAR_OLEO_LENGTH, units='inch')
