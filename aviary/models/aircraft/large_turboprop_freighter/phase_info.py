@@ -4,7 +4,7 @@ from aviary.variable_info.enums import PhaseType, SpeedType
 energy_phase_info = {
     'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -26,7 +26,7 @@ energy_phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -47,7 +47,7 @@ energy_phase_info = {
         },
     },
     'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
