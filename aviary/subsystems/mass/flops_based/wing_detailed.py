@@ -388,8 +388,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             arref[0] = ar[0]
             if verbosity >= Verbosity.BRIEF:
                 warnings.warn(
-                    'Assume Aircraft.Wing.ASPECT_RATIO_REFERENCE is the same '
-                    'as Aircraft.Wing.ASPECT_RATIO'
+                    'Aircraft.Wing.ASPECT_RATIO_REFERENCE is not provided. '
+                    'Assume it is the same as Aircraft.Wing.ASPECT_RATIO.'
                 )
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
