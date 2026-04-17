@@ -2284,7 +2284,7 @@ add_meta_data(
     option=True,
     default_value=0.0002,  # default in GASP
     types=float,
-    desc='engine inlet area coefficient. suggested values: 0.000375.',
+    desc='engine inlet area coefficient. Suggested values: 0.000375 for modern engines.',
     multivalue=True,
 )
 
