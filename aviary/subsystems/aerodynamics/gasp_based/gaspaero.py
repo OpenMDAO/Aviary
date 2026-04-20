@@ -752,14 +752,6 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.Wing_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
         add_aviary_option(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
-        # aero technology factos
-        add_aviary_option(self, Aircraft.Design.Fuselage_AERO_TECH_FACTOR)
-        add_aviary_option(self, Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR)
-        add_aviary_option(self, Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR)
-        add_aviary_option(self, Aircraft.Design.Nacelle_AERO_TECH_FACTOR)
-        add_aviary_option(self, Aircraft.Design.STRUT_AERO_TECH_FACTOR)
-        add_aviary_option(self, Aircraft.Design.VerticalTail_AERO_TECH_FACTOR)
-        add_aviary_option(self, Aircraft.Design.Wing_AERO_TECH_FACTOR)
 
     def setup(self):
         nn = self.options['num_nodes']
@@ -864,14 +856,6 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.Wing_DRAG_FACTOR)
         add_aviary_input(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
         add_aviary_input(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
-        # aero technology factos
-        add_aviary_input(self, Aircraft.Design.Fuselage_AERO_TECH_FACTOR)
-        add_aviary_input(self, Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR)
-        add_aviary_input(self, Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR)
-        add_aviary_input(self, Aircraft.Design.Nacelle_AERO_TECH_FACTOR)
-        add_aviary_input(self, Aircraft.Design.STRUT_AERO_TECH_FACTOR)
-        add_aviary_input(self, Aircraft.Design.VerticalTail_AERO_TECH_FACTOR)
-        add_aviary_input(self, Aircraft.Design.Wing_AERO_TECH_FACTOR)
 
         # outputs
         self.add_output('SA1', units='unitless', shape=nn, desc='SA1: drag param')
@@ -1048,22 +1032,15 @@ class AeroGeom(om.ExplicitComponent):
             fcfwc,
             fexcrt,
             pct_excr,
-            fcfft,
-            fcfhtt,
-            fckit,
-            fcfnt,
-            fcfstrt,
-            fcfvtt,
-            fcfwt,
         ) = inputs.values()
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
-        cdfi = fcffc * fcfft * cf
-        cdhti = fcfhtc * fcfhtt * cf
-        cdni = fcfnc * fcfnt * cf
-        cdstrti = fcfstrc * fcfstrt * cf 
-        cdvti = fcfvtc * fcfvtt * cf
-        cdwi = fcfwc * fcfwt * cf
+        cdfi = fcffc * cf
+        cdhti = fcfhtc * cf
+        cdni = fcfnc * cf
+        cdstrti = fcfstrc * cf 
+        cdvti = fcfvtc * cf
+        cdwi = fcfwc * cf
 
         t = cs.abs(np.tan(deg2rad(sweep_c4)))
         yale05 = (1 - taper_ratio) / (1 + taper_ratio)
@@ -1123,7 +1100,7 @@ class AeroGeom(om.ExplicitComponent):
         cdw0 = few / wing_area
         # interference drag independent of shielded area
         feshieldwf = cdw0 * areashieldwf
-        feiwf = fckic * fckit * (wing_fus_intf * (feintwf - feshieldwf))
+        feiwf = fckic * (wing_fus_intf * (feintwf - feshieldwf))
         # end INTERFERENCE
 
         # Excrescence Drag
@@ -1471,7 +1448,6 @@ class DragCoefClean(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, units='unitless')
-        add_aviary_input(self, Aircraft.Design.INDUCED_DRAG_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR, units='unitless')
 
         # from aero setup
@@ -1503,7 +1479,6 @@ class DragCoefClean(om.ExplicitComponent):
             'CD',
             [
                 Aircraft.Design.DRAG_DIVERGENCE_SHIFT,
-                Aircraft.Design.INDUCED_DRAG_FACTOR,
                 Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR,
             ],
             method='cs',
@@ -1518,7 +1493,6 @@ class DragCoefClean(om.ExplicitComponent):
             supersonic_factor,
             lift_factor,
             zero_lift_factor,
-            fsa7c,
             fcmpc,
             cf,
             SA1,
@@ -1540,7 +1514,7 @@ class DragCoefClean(om.ExplicitComponent):
         # profile drag
         cd0 = SA5 + SA6 * cf
         # induced drag
-        cdi = fsa7c * SA7 * CL**2
+        cdi = SA7 * CL**2
 
         CD = cd0 * zero_lift_factor + cdi * lift_factor + fcmpc * delcdm
 

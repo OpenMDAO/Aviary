@@ -1452,7 +1452,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FEXCRT'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
     desc='excrescence aero drag factor',
@@ -1489,22 +1489,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.Fuselage_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFFT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='fuselage aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.Fuselage_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFFC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFFC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='fuselage aero calibration factor',
+    desc='fuselage aero calibration factor (include technology factor INGASP.FCFFT)',
 )
 
 add_meta_data(
@@ -1530,22 +1520,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.HorizontalTail_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFHTT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='horizontal tail aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.HorizontalTail_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFHTC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFHTC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='horizontal tail aero calibration factor',
+    desc='horizontal tail aero calibration factor (including technology factor INGASP.FCFHTT)',
 )
 
 add_meta_data(
@@ -1558,31 +1538,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.INDUCED_DRAG_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FSA7C'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    default_value=1.0,
-    desc='induced drag factor',
-)
-
-add_meta_data(
-    Aircraft.Design.INTERFERENCE_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCKIT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='interference aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCKIC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCKIC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='interference aero calibration factor',
+    desc='interference aero calibration factor (including technology factor INGASP.FCKIT)',
 )
 
 # TODO expected types and default value?
@@ -1674,7 +1635,7 @@ add_meta_data(
     Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.FSA7C',
         'FLOPS': 'MISSIN.FCDI',  # '~DRGFCT.FCDI',
         'LEAPS1': 'aircraft.outputs.L0_aerodynamics.induced_drag_coeff_fact',
     },
@@ -1754,22 +1715,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.Nacelle_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFNT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='nacelle aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.Nacelle_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFNC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFNC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='nacelle aero calibration factor',
+    desc='nacelle aero calibration factor (including technology factor INGASP.FCFNT)',
 )
 
 add_meta_data(
@@ -1786,7 +1737,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.PCT_EXCR'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.PCT_EXCR', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     option=True,
     default_value=0.0,
@@ -1796,7 +1747,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.PYLON_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FPYLND'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FPYLND', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
     desc='pylon aero calibration factor',
@@ -1864,22 +1815,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.STRUT_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFVTT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='strut aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.STRUT_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFVTC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='strut aero calibration factor',
+    desc='strut aero calibration factor (including technology factor INGASP.FCFVTT)',
 )
 
 add_meta_data(
@@ -2015,7 +1956,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.TYPE,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.IHWB'], 'FLOPS': ['OPTION.IFITE'], 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.IHWB', 'FLOPS': ['OPTION.IFITE'], 'LEAPS1': None},
     units='unitless',
     types=AircraftTypes,
     option=True,
@@ -2052,22 +1993,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.VerticalTail_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFVTT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='vertical tail aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.VerticalTail_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFVTC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='vertical tail aero calibration factor',
+    desc='vertical tail aero calibration factor (including technology factor INGASP.FCFVTT)',
 )
 
 add_meta_data(
@@ -2086,22 +2017,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.Wing_AERO_TECH_FACTOR,
-    meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFWT'], 'FLOPS': None, 'LEAPS1': None},
-    units='unitless',
-    option=True,
-    default_value=1.0,
-    desc='wing aero technology factor',
-)
-
-add_meta_data(
     Aircraft.Design.Wing_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': ['INGASP.FCFWC'], 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFWC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='wing aero calibration factor',
+    desc='wing aero calibration factor (including technology factor INGASP.FCFWT)',
 )
 
 add_meta_data(
