@@ -2,6 +2,8 @@
 # FLOPS-derived aircraft input deck
 
 # Input Values
+# aircraft:crew_and_payload:design:num_passengers,468,unitless
+# aircraft:crew_and_payload:num_passengers,468,unitless
 aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
@@ -12,42 +14,45 @@ aircraft:canard:area,0.0,ft**2
 aircraft:canard:aspect_ratio,0.0,unitless
 aircraft:canard:thickness_to_chord,0.0,unitless
 aircraft:crew_and_payload:baggage_mass_per_passenger,44.0,lbm
+aircraft:crew_and_payload:cabin_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:design:num_business_class,100,unitless
+aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_first_class,28,unitless
-# aircraft:crew_and_payload:design:num_passengers,468,unitless
-aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_business,4,unitless
-aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
-aircraft:crew_and_payload:design:num_economy_class,340,unitless
+aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
 aircraft:crew_and_payload:design:seat_pitch_business,39.0,inch
-aircraft:crew_and_payload:design:seat_pitch_first,61.0,inch
 aircraft:crew_and_payload:design:seat_pitch_economy,32.0,inch
+aircraft:crew_and_payload:design:seat_pitch_first,61.0,inch
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
-aircraft:crew_and_payload:misc_cargo,0.0,lbm
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
+aircraft:crew_and_payload:misc_cargo,0.0,lbm
+aircraft:crew_and_payload:num_business_class,100,unitless
+aircraft:crew_and_payload:num_economy_class,340,unitless
+aircraft:crew_and_payload:num_first_class,28,unitless
 aircraft:crew_and_payload:num_flight_attendants,22,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,2,unitless
-# aircraft:crew_and_payload:num_passengers,468,unitless
-aircraft:crew_and_payload:num_business_class,100,unitless
-aircraft:crew_and_payload:num_first_class,28,unitless
-aircraft:crew_and_payload:num_economy_class,340,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
+aircraft:design:cruise_mach,0.85,unitless
 aircraft:design:empty_mass_margin_scaler,0.0,unitless
+aircraft:design:gross_mass,874099.0,lbm
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
-aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+aircraft:design:range,7750.0,NM
+#aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 
 # TODO: Needed to reduce the drag so that engine wasn't full throttle in cruise.
 # There must be something about drag that still isn't working for BWB.
 aircraft:design:subsonic_drag_coeff_factor,0.7,unitless
 # aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 
+# aircraft:engine:num_engines,3,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
+aircraft:design:thrust_takeoff_per_eng,0.25,lbf
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,1.0,unitless
@@ -65,7 +70,6 @@ aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1.0,unitless
-# aircraft:engine:num_engines,3,unitless
 aircraft:engine:num_fuselage_engines,3,unitless
 aircraft:engine:num_wing_engines,0,unitless
 aircraft:engine:reference_mass,22017.0,lbm
@@ -79,17 +83,17 @@ aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:thrust_reversers_mass_scaler,0.0,unitless
 aircraft:engine:wing_locations,0.0,unitless
 aircraft:fins:area,184.89,ft**2
+aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
-aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
 aircraft:fuel:density,6.7,lbm/galUS
-aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
-aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
-aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
+aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
+aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
+aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
 aircraft:fuselage:height_to_width_ratio,0.11,unitless
 aircraft:fuselage:length,137.5,ft
@@ -110,10 +114,10 @@ aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
 aircraft:instruments:mass_scaler,1.0,unitless
-aircraft:landing_gear:main_gear_oleo_length,85.0,inch
 aircraft:landing_gear:main_gear_mass_scaler,1.0,unitless
-aircraft:landing_gear:nose_gear_oleo_length,87.0,inch
+aircraft:landing_gear:main_gear_oleo_length,85.0,inch
 aircraft:landing_gear:nose_gear_mass_scaler,1.0,unitless
+aircraft:landing_gear:nose_gear_oleo_length,87.0,inch
 aircraft:nacelle:avg_diameter,12.608,ft
 aircraft:nacelle:avg_length,17.433,ft
 aircraft:nacelle:mass_scaler,0.0,unitless
@@ -122,7 +126,7 @@ aircraft:paint:mass_per_unit_area,0.0,lbm/ft**2
 aircraft:propulsion:engine_oil_mass_scaler,1.0,unitless
 aircraft:propulsion:misc_mass_scaler,0.0,unitless
 aircraft:vertical_tail:area,0.0,ft**2
-aircraft:vertical_tail:aspect_ratio,0,unitless
+aircraft:vertical_tail:aspect_ratio,0.0,unitless
 aircraft:vertical_tail:mass_scaler,1.0,unitless
 aircraft:vertical_tail:num_tails,0,unitless
 aircraft:vertical_tail:taper_ratio,0.0,unitless
@@ -157,15 +161,12 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
-aircraft:design:gross_mass,874099.0,lbm
-aircraft:design:range,7750.0,NM
-aircraft:design:thrust_takeoff_per_eng,0.25,lbf
+mission:fuel_flow_scaler,1.0,unitless
 mission:landing:initial_velocity,140.0,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:landing:rolling_friction_coefficient,0.025,unitless
 mission:takeoff:lift_coefficient_max,2.0,unitless
-aircraft:design:cruise_mach,0.85,unitless
-mission:fuel_flow_scaler,1.0,unitless
+mission:takeoff:rolling_friction_coefficient,0.025,unitless
 settings:aerodynamics_method,FLOPS,unitless
 settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless

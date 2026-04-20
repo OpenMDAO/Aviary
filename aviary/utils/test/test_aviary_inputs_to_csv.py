@@ -6,39 +6,14 @@ from aviary.utils.aviary_inputs_to_csv import save_to_csv_file
 
 from openmdao.utils.testing_utils import use_tempdirs
 
-base_path = 'aviary/models/aircraft/'
-
-# Need to find a way to make this flexible and not hardcode existing CSVs in here
-existing_csvs = {
-    'advanced_single_aisle_data.csv': base_path
-    + 'advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
-    'bwb_detailed_FLOPS_data.csv': base_path + 'blended_wing_body/bwb_detailed_FLOPS.csv',
-    'bwb_simple_FLOPS_data.csv': base_path + 'blended_wing_body/bwb_simple_FLOPS.csv',
-}
-
 
 # @use_tempdirs
 class PythonModelToCSV(unittest.TestCase):
-    def test_python_models_to_csv(self):
-        python_file_inputs = PythonModelToCSV.find_all_inputs('aviary/models/aircraft')
-
-        for mod_name, input_data in python_file_inputs.items():
-            csv_filename = mod_name + '.csv'
-            save_to_csv_file(csv_filename, input_data)
-
-            if csv_filename in existing_csvs:
-                no_match = PythonModelToCSV.comp_files(
-                    csv_filename, existing_csvs.get(csv_filename)
-                )
-                if no_match:
-                    exc_string = (
-                        f'Error between {csv_filename} and {existing_csvs.get(csv_filename)}'
-                    )
-                    print(exc_string)
-                    # raise Exception(exc_string)
-
-    # This function collects all specified 'inputs' from python modules in the specified directory (recursively)
-    def find_all_inputs(directory_path):
+    def find_all_inputs(self, directory_path):
+        """
+        This function collects all specified 'inputs' from python modules in the specified directory (recursively)
+        The output is a dict containing the names of the modules storing 'inputs', and the values of the 'inputs'
+        """
         # variable storing all inputs and their original module names
         collected_inputs = {}
 
@@ -60,23 +35,76 @@ class PythonModelToCSV(unittest.TestCase):
                         if hasattr(module, 'inputs'):
                             collected_inputs[module_name] = module.inputs
                         else:
+                            # Probably can remove this to clean up terminal line spam?
                             print('No inputs directory found in ' + file)
 
         return collected_inputs
 
-    def comp_files(generated_csv, existing_csv):
-        with open(generated_csv, 'r') as generated, open(existing_csv, 'r') as existing:
-            gen = generated.readlines()
-            exi = existing.readlines()
+    def compare_files(self, filepath, validation_data, skip_list=['#']):
+        """
+        Compares the converted file with a validation file.
 
-        diff_file = existing_csv.replace('.csv', '_diff.csv')
-        with open(diff_file, 'w') as out:
-            for line in gen:
-                if line not in exi:
-                    out.write(line)
-                    # print(line)
+        Use the `skip_list` input to specify strings that are in lines you want
+        to skip. This is useful for skipping data that Aviary might need but
+        Fortran-based tools do not.
+        """
+        filename = filepath.split('.')[0] + '.csv'
 
-        return os.path.isfile(diff_file) and os.path.getsize(diff_file) > 0
+        # Open the converted and validation files
+        with open(filename, 'r') as f_in, open(validation_data, 'r') as expected:
+            for line in f_in:
+                if any(s in line for s in skip_list):
+                    # expected.readline()
+                    continue
+
+                expected_line = ''
+                # Skip any lines that are empty, have a comment indicator to start, or have members in the 'skip_list'
+                while (
+                    expected_line.__len__() == 0
+                    or expected_line.find('#') != -1
+                    or any(s in expected_line for s in skip_list)
+                ):
+                    expected_line = ''.join(expected.readline().split())
+                line_no_whitespace = ''.join(line.split())
+
+                # Assert that the lines are equal
+                try:
+                    self.assertEqual(line_no_whitespace.count(expected_line), 1)
+
+                except Exception:
+                    exc_string = (
+                        f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
+                    )
+                    raise Exception(exc_string)
+
+    def test_python_models_to_csv(self):
+        """
+        This is the test portion of the class that provides function arguments to 'find_all_inputs' and 'compare_functions'.
+        The program checks for all 'inputs' in aviary/models/aircraft, then compares them to the specified CSVs below.
+        """
+
+        base_path = 'aviary/models/aircraft/'
+
+        # Need to find a way to make this flexible and not hardcode existing CSVs in here
+        existing_csvs = {
+            'advanced_single_aisle_data.csv': base_path
+            + 'advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
+            'bwb_detailed_FLOPS_data.csv': base_path + 'blended_wing_body/bwb_detailed_FLOPS.csv',
+            'bwb_simple_FLOPS_data.csv': base_path + 'blended_wing_body/bwb_simple_FLOPS.csv',
+        }
+
+        # Finding all 'inputs' through this function call
+        python_file_inputs = self.find_all_inputs('aviary/models/aircraft')
+        # Specifying the string tags to ignore in the line-by-line comparison of the CSVs
+        excluded_lines = ['#', 'engine:data_file']
+
+        for mod_name, input_data in python_file_inputs.items():
+            csv_filename = mod_name + '.csv'
+            # Function call to generate CSVs from the AviaryInputs
+            save_to_csv_file(csv_filename, input_data)
+
+            if csv_filename in existing_csvs:
+                self.compare_files(csv_filename, existing_csvs.get(csv_filename), excluded_lines)
 
 
 if __name__ == '__main__':
