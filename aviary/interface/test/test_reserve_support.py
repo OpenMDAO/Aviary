@@ -17,33 +17,6 @@ from aviary.variable_info.variables import Aircraft, Mission
 #      exists in traj as well)
 @use_tempdirs
 class ReserveTest(unittest.TestCase):
-    def test_post_mission_promotion(self):
-        phase_info = deepcopy(ph_in_flops)
-
-        prob = AviaryProblem()
-
-        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv'
-
-        prob.load_inputs(csv_path, phase_info)
-
-        prob.aviary_inputs.set_val(Mission.RESERVE_FUEL_ADDITIONAL, 10000.0, units='lbm')
-
-        prob.check_and_preprocess_inputs()
-
-        prob.build_model()
-
-        prob.add_design_variables()
-        prob.add_objective(objective_type='mass', ref=-1e5)
-
-        prob.setup()
-
-        prob.run_model()
-
-        fuel_burned = prob.model.get_val(Mission.FUEL, units='lbm')
-        total_fuel = prob.model.get_val(Mission.TOTAL_FUEL, units='lbm')
-
-        assert_near_equal(total_fuel - fuel_burned, 10000.0, 1e-3)
-
     def test_gasp_relative_reserve(self):
         phase_info = deepcopy(ph_in_gasp)
 

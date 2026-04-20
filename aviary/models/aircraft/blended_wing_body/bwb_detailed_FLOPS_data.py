@@ -287,7 +287,7 @@ inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.85)  # VCMN
 inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)  # FACT
 inputs.set_val(Aircraft.Design.RANGE, 7750.0, 'NM')  # DESRNG
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO
-# inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577, 'lbm')  # FTKOFL
+# inputs.set_val(Mission.Takeoff.FUEL, 577, 'lbm')  # FTKOFL
 
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3.0)  # CLLDM
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM
