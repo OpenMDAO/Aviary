@@ -183,7 +183,7 @@ def _setup_run_aviary_parser(parser):
         choices=(0, 1, 2, 3),
     )
     parser.add_argument(
-        '--real_time_plotting',
+        '--rtplot',
         action='store_true',
         help='Enable realtime plotting option',
     )
@@ -203,5 +203,5 @@ def _exec_run_aviary(args, user_args):
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
-        real_time_plotting=args.real_time_plotting,
+        real_time_plotting=args.rtplot,
     )
