@@ -418,7 +418,7 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 34867.592407371565, 'lbm')  # 
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 11731.15573539, 'lbm')  # WSC
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 5.36951675)  # AR
 outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 5.36951675)  # ARREF
-outputs.set_val(Aircraft.Wing.MASS, 68922.20579045, 'lbm')  # WWING 68995.460470895763
+outputs.set_val(Aircraft.Wing.MASS, 68995.43251482, 'lbm')  # WWING 68995.460470895763
 outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 12109.879719468739, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.46761341784858923)  # PCTL
