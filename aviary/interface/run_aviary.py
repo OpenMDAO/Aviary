@@ -123,7 +123,12 @@ def run_aviary(
 
 
 def run_aviary_cmd(
-    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF, real_time_plotting=False
+    input_deck,
+    optimizer='IPOPT',
+    phase_info=None,
+    max_iter=50,
+    verbosity=Verbosity.BRIEF,
+    real_time_plotting=False,
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
