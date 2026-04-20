@@ -402,6 +402,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 Aircraft.Wing.SHEAR_CONTROL_MASS,
                 # WingBendingMass
                 Aircraft.Wing.BENDING_MATERIAL_MASS,
+                Aircraft.Wing.MASS,
                 # BWBAftBodyMass
                 Aircraft.Fuselage.AFTBODY_MASS,
                 Aircraft.Wing.BWB_AFTBODY_MASS,
