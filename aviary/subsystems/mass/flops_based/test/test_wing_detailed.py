@@ -603,7 +603,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 3.93931503  # FLOPS BT = 3.9724796254619563
+        BENDING_MATERIAL_FACTOR_expected = 3.97247765  # FLOPS BT = 3.9724796254619563
         pod_inertia_expected = 1.0
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
         assert_near_equal(prob.get_val('calculated_wing_area'), 5399.4057051, tolerance=1e-9)
@@ -689,7 +689,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 4.53053124  # Real FLOPS BT = 5.998060404
+        BENDING_MATERIAL_FACTOR_expected = 5.98133918  # Real FLOPS BT = 5.998060404
         pod_inertia_expected = 1.0
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
         assert_near_equal(prob.get_val('calculated_wing_area'), 4151.88659141, tolerance=1e-9)

@@ -299,9 +299,9 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 # ---------------------------
 
 # In FLOPS, DOWE = 411552.31557733245 because DOWE = WOWE
-outputs.set_val(Aircraft.Design.EMPTY_MASS, 390482.6804821, 'lbm')  # DOWE
+outputs.set_val(Aircraft.Design.EMPTY_MASS, 390555.9072055, 'lbm')  # DOWE
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
-outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 240915.88664709, 'lbm')  # WSTRCT 240989.14132753
+outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 240989.11337145, 'lbm')  # WSTRCT 240989.14132753
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 90644.95111232, 'lbm')  # WSYS
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 26208.46595187, 'ft**2')  # TWET
 outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 699279.2, 'lbm')  # WLDG = GW*WRATIO
@@ -407,8 +407,8 @@ outputs.set_val(Aircraft.VerticalTail.MASS, 0.0, 'lbm')  # WVT
 outputs.set_val(Aircraft.VerticalTail.WETTED_AREA, 0.0, 'ft**2')
 
 outputs.set_val(Aircraft.Wing.BWB_AFTBODY_MASS, 15551.33657368, 'lbm')  # W4
-outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 3.93743732)  # FLOPS BT = 3.9724796254619563
-outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 8782.85692049, 'lbm')  # W1
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 3.9705868)  # FLOPS BT = 3.9724796254619563
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 8856.083631, 'lbm')  # W1
 outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 47.72916456, 'ft')  # EL(1)
 outputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 4032.5967, 'ft**2')  # SFLAP
 outputs.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1.0)  # CAYE
@@ -428,5 +428,5 @@ outputs.set_val(Aircraft.Wing.SPAN, 253.720756, 'ft')  # SPAN = WF+OSSPAN*2
 outputs.set_val(Mission.USEFUL_LOAD, 20996.3933862, 'lbm')
 
 outputs.set_val(Aircraft.Design.MACH, 0.800)
-outputs.set_val(Mission.OPERATING_MASS, 411479.0724484, 'lbm')  # WOWE
-outputs.set_val(Mission.ZERO_FUEL_MASS, 509291.0724484, 'lbm')  # WZF
+outputs.set_val(Mission.OPERATING_MASS, 411552.29917206, 'lbm')  # WOWE
+outputs.set_val(Mission.ZERO_FUEL_MASS, 509364.29917206, 'lbm')  # WZF

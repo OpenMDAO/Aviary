@@ -917,30 +917,30 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fins.MASS], 3159.3781042368792, tol)
         # WingMassGroup
         # BWBDetailedWingBendingFact
-        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_FACTOR], 3.93743732, tol)
+        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_FACTOR], 3.9705868, tol)
         assert_near_equal(prob[Aircraft.Wing.ENG_POD_INERTIA_FACTOR], 1.0, tol)
         # BWBWingMiscMass
         assert_near_equal(prob[Aircraft.Wing.MISC_MASS], 9720.4199027685518, tol)
         # WingShearControlMass
         assert_near_equal(prob[Aircraft.Wing.SHEAR_CONTROL_MASS], 34867.592407371565, tol)
         # WingBendingMass
-        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 8782.85692049, tol)
+        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 8856.01080887, tol)
         # BWBAftBodyMass
         assert_near_equal(prob[Aircraft.Fuselage.AFTBODY_MASS], 18736.55008878, tol)
         assert_near_equal(prob[Aircraft.Wing.BWB_AFTBODY_MASS], 15551.33657368, tol)
         # MassSummation
         # StructureMass
-        assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 240915.88664709, tol)
+        assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 240989.04053718, tol)
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 58921.857380417721, tol)
         # SystemsEquipMass
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 90644.95111232, tol)
         # EmptyMass
-        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 390482.6804821, tol)
+        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 390555.83436783, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.OPERATING_MASS], 411479.0724484, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 411552.22633412, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 509291.0724484, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 509364.22633412, tol)
 
     def test_case_all_subsystems(self):
         """
@@ -1165,30 +1165,30 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fins.MASS], 2822.1415450307886, tol)
         # WingMassGroup
         # BWBDetailedWingBendingFact, In FLOPS run, 6.7996347825592336
-        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_FACTOR], 5.20084141, tol)
+        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_FACTOR], 6.79961928, tol)
         assert_near_equal(prob[Aircraft.Wing.ENG_POD_INERTIA_FACTOR], 1.0, tol)
         # BWBWingMiscMass
         assert_near_equal(prob[Aircraft.Wing.MISC_MASS], 6975.77622754, tol)
         # WingShearControlMass
         assert_near_equal(prob[Aircraft.Wing.SHEAR_CONTROL_MASS], 24461.161868706797, tol)
         # WingBendingMass
-        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 13872.4182868, tol)
+        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 18001.88182061, tol)
         # BWBAftBodyMass
         assert_near_equal(prob[Aircraft.Fuselage.AFTBODY_MASS], 10384.964957095559, tol)
         assert_near_equal(prob[Aircraft.Wing.BWB_AFTBODY_MASS], 8884.3375208, tol)
         # MassSummation
         # StructureMass 158921.83401643133
-        assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 162969.90469722, tol)
+        assert_near_equal(prob[Aircraft.Design.STRUCTURE_MASS], 167099.36823103, tol)
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 48198.583985444384, tol)
         # SystemsEquipMass
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 75801.466406974854, tol)
         # EmptyMass
-        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 286969.99768419, tol)
+        assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 291099.46121048, tol)
         # OperatingMass
-        assert_near_equal(prob[Mission.OPERATING_MASS], 321171.82272983, tol)
+        assert_near_equal(prob[Mission.OPERATING_MASS], 325301.28625612, tol)
         # ZeroFuelMass
-        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 383871.82272983, tol)
+        assert_near_equal(prob[Mission.ZERO_FUEL_MASS], 388001.28625612, tol)
         # FinMass
         assert_near_equal(prob[Aircraft.Fins.MASS], 2822.14154503, tol)
 
@@ -1228,3 +1228,6 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    test = BWBPreMissionGroupTest()
+    test.setUp()
+    # test.test_case_all_subsystems()
