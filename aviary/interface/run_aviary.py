@@ -23,7 +23,7 @@ def run_aviary(
     make_plots=True,
     phase_info_parameterization=None,
     verbosity=None,
-    rt=False,
+    real_time_plotting=False,
 ):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
@@ -116,14 +116,14 @@ def run_aviary(
         run_driver=run_driver,
         make_plots=make_plots,
         verbosity=verbosity,
-        rt=rt,
+        real_time_plotting=real_time_plotting,
     )
 
     return prob
 
 
 def run_aviary_cmd(
-    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF, rt=False
+    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF, real_time_plotting=False
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
@@ -133,7 +133,7 @@ def run_aviary_cmd(
         'max_iter': max_iter,
         'optimizer': optimizer,
         'verbosity': Verbosity(verbosity),
-        'rt': rt,
+        'real_time_plotting': real_time_plotting,
     }
 
     if isinstance(phase_info, str):
@@ -178,7 +178,7 @@ def _setup_run_aviary_parser(parser):
         choices=(0, 1, 2, 3),
     )
     parser.add_argument(
-        '--rt',
+        '--real_time_plotting',
         action='store_true',
         help='Enable realtime plotting option',
     )
@@ -198,5 +198,5 @@ def _exec_run_aviary(args, user_args):
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
-        rt=args.rt,
+        real_time_plotting=args.real_time_plotting,
     )

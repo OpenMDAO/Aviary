@@ -1180,7 +1180,7 @@ class AviaryProblem(om.Problem):
         simulate=False,
         make_plots=True,
         verbosity=None,
-        rt=False,
+        real_time_plotting=False,
     ):
         """
         This function actually runs the Aviary problem, which could be a simulation,
@@ -1207,6 +1207,8 @@ class AviaryProblem(om.Problem):
             If True (default), Dymos html plots will be generated as part of the output.
         verbosity : Verbosity or int, optional
             Controls the level of printouts for this method.
+        real_time_plotting : bool, optional
+            If True, enables real-time plotting of the optimization progress.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1217,8 +1219,8 @@ class AviaryProblem(om.Problem):
             verbosity = self.verbosity  # defaults to BRIEF
 
         if (
-            verbosity >= Verbosity.VERBOSE or rt
-        ):  # rt needs a driver recorder file to run the realtime plot server
+            verbosity >= Verbosity.VERBOSE or real_time_plotting
+        ):  # If real_time_plotting needs a driver recorder file to run the realtime plot server
             recorder = om.SqliteRecorder('optimization_history.db')
             self.driver.add_recorder(recorder)
             self.final_setup()
@@ -1244,7 +1246,7 @@ class AviaryProblem(om.Problem):
                 )
 
         # register the hook to stat up the real-time plot server
-        if rt:
+        if real_time_plotting:
             if not self.driver:
                 raise RuntimeError(
                     'Unable to run realtime optimization progress plot because no Driver'
