@@ -515,6 +515,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
                     elif num_horizontal_tails == 0:
                         core_inputs_computed = COMPUTED_CORE_INPUTS_BWB + VERTICAL_TAIL_INPUTS
+                    elif num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB + HORIZONTAL_TAIL_INPUTS
                     else:
                         core_inputs_computed = (
                             COMPUTED_CORE_INPUTS_BWB + HORIZONTAL_TAIL_INPUTS + VERTICAL_TAIL_INPUTS
@@ -524,6 +526,8 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         core_inputs_computed = COMPUTED_CORE_INPUTS
                     elif num_horizontal_tails == 0:
                         core_inputs_computed = COMPUTED_CORE_INPUTS + VERTICAL_TAIL_INPUTS
+                    elif num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS + HORIZONTAL_TAIL_INPUTS
                     else:
                         core_inputs_computed = (
                             COMPUTED_CORE_INPUTS + HORIZONTAL_TAIL_INPUTS + VERTICAL_TAIL_INPUTS
