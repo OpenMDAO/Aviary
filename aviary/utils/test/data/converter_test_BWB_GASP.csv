@@ -31,22 +31,16 @@ aircraft:design:drag_coefficient_increment,0.00025,unitless
 aircraft:design:drag_divergence_shift,0.025,unitless
 aircraft:design:emergency_equipment_mass,100.0,lbm
 aircraft:design:excrescence_drag_factor,0.8,unitless
-aircraft:design:fuselage_drag_factor,0.82305,unitless
 aircraft:design:gross_mass,150000.0,lbm
-aircraft:design:horizontaltail_drag_factor,0.6945,unitless
 aircraft:design:interference_drag_factor,1.0,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,0.85,unitless
 aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
-aircraft:design:nacelle_drag_factor,1.0925,unitless
 aircraft:design:part25_structural_category,3.0,unitless
-aircraft:design:pylon_drag_factor,1.15,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
 aircraft:design:type,BWB,unitless
-aircraft:design:verticaltail_drag_factor,0.8334,unitless
-aircraft:design:wing_drag_factor,0.838956,unitless
 aircraft:design:wing_loading,70.0,lbf/ft**2
 aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
@@ -71,6 +65,7 @@ aircraft:furnishings:mass_scaler,40.0,lbm
 aircraft:fuselage:aftbody_mass_per_unit_area,5.0,lbm/ft**2
 aircraft:fuselage:aisle_width,22.0,inch
 aircraft:fuselage:delta_diameter,5.0,ft
+aircraft:fuselage:drag_factor,0.82305,unitless
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
 aircraft:fuselage:height_to_width_ratio,0.2597,unitless
 aircraft:fuselage:lift_coefficient_ratio_body_to_wing,0.35,unitless
@@ -86,6 +81,7 @@ aircraft:fuselage:tail_fineness,1.75,unitless
 aircraft:fuselage:wetted_area_ratio_aftbody_to_total,0.2,unitless
 aircraft:fuselage:wetted_area_scaler,1.0001,unitless
 aircraft:horizontal_tail:aspect_ratio,1.705,unitless
+aircraft:horizontal_tail:drag_factor,0.6945,unitless
 aircraft:horizontal_tail:mass_coefficient,0.124,unitless
 aircraft:horizontal_tail:moment_ratio,0.5463,unitless
 aircraft:horizontal_tail:sweep,45.0,deg
@@ -104,10 +100,12 @@ aircraft:landing_gear:tail_hook_mass_scaler,1.0,unitless
 aircraft:landing_gear:total_mass_scaler,1.0,unitless
 aircraft:nacelle:clearance_ratio,0.2,unitless
 aircraft:nacelle:core_diameter_ratio,1.2205,unitless
+aircraft:nacelle:drag_factor,1.0925,unitless
 aircraft:nacelle:fineness,1.3588,unitless
 aircraft:nacelle:form_factor,1.2,unitless
 aircraft:nacelle:mass_specific,2.5,lbm/ft**2
 aircraft:nacelle:percent_diam_buried_in_fuselage,0.0,unitless
+aircraft:nacelle:pylon_drag_factor,1.15,unitless
 aircraft:strut:area_ratio,0.0,unitless
 aircraft:strut:attachment_location,0.0,ft
 aircraft:strut:attachment_location_dimensionless,0.0,unitless
@@ -116,6 +114,7 @@ aircraft:strut:fuselage_interference_factor,1.0,unitless
 aircraft:strut:mass_coefficient,0.0,unitless
 aircraft:strut:thickness_to_chord,0.0,unitless
 aircraft:vertical_tail:aspect_ratio,1.705,unitless
+aircraft:vertical_tail:drag_factor,0.8334,unitless
 aircraft:vertical_tail:mass_coefficient,0.119,unitless
 aircraft:vertical_tail:moment_ratio,5.2615,unitless
 aircraft:vertical_tail:sweep,35.0,deg
@@ -125,6 +124,7 @@ aircraft:vertical_tail:volume_coefficient,0.015,unitless
 aircraft:wing:aspect_ratio,10.0,unitless
 aircraft:wing:center_distance,0.463,unitless
 aircraft:wing:choose_fold_location,True,unitless
+aircraft:wing:drag_factor,0.838956,unitless
 aircraft:wing:flap_chord_ratio,0.2,unitless
 aircraft:wing:flap_deflection_landing,25.0,deg
 aircraft:wing:flap_deflection_takeoff,15.0,deg

@@ -836,14 +836,14 @@ class AeroGeom(om.ExplicitComponent):
         )
 
         # drag factors
-        add_aviary_input(self, Aircraft.Design.Fuselage_DRAG_FACTOR)
-        add_aviary_input(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Fuselage.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.HorizontalTail.DRAG_FACTOR)
         add_aviary_input(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
-        add_aviary_input(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
-        add_aviary_input(self, Aircraft.Design.PYLON_DRAG_FACTOR)
-        add_aviary_input(self, Aircraft.Design.STRUT_DRAG_FACTOR)
-        add_aviary_input(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
-        add_aviary_input(self, Aircraft.Design.Wing_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Nacelle.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Nacelle.PYLON_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Strut.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.VerticalTail.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.DRAG_FACTOR)
         add_aviary_input(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
         add_aviary_input(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
 
