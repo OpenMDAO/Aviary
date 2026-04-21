@@ -967,6 +967,19 @@ class AeroGeom(om.ExplicitComponent):
             'drag_loss_due_to_shielded_wing_area',
         ]
         self.declare_partials('SA5', most_params, method='cs')
+        drag_factors = [
+            Aircraft.Fuselage.DRAG_FACTOR,
+            Aircraft.HorizontalTail.DRAG_FACTOR,
+            Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
+            Aircraft.Nacelle.DRAG_FACTOR,
+            Aircraft.Nacelle.PYLON_DRAG_FACTOR,
+            Aircraft.Strut.DRAG_FACTOR,
+            Aircraft.VerticalTail.DRAG_FACTOR,
+            Aircraft.Wing.DRAG_FACTOR,
+            Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
+            Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
+        ]
+        self.declare_partials('SA5', drag_factors, method='cs')
         self.declare_partials(
             'SA6', [Aircraft.Wing.FORM_FACTOR, Aircraft.Wing.AVERAGE_CHORD], method='cs'
         )
