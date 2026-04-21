@@ -742,16 +742,6 @@ class AeroGeom(om.ExplicitComponent):
         self.options.declare('num_nodes', default=1, types=int)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
-        # drag factors
-        add_aviary_option(self, Aircraft.Design.HorizontalTail_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.Nacelle_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.PYLON_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.STRUT_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.VerticalTail_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.Wing_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
-        add_aviary_option(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
 
     def setup(self):
         nn = self.options['num_nodes']
