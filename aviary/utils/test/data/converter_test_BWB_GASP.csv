@@ -44,7 +44,6 @@ aircraft:design:pylon_drag_factor,1.15,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
-aircraft:design:strut_drag_factor,0.8334,unitless
 aircraft:design:type,BWB,unitless
 aircraft:design:verticaltail_drag_factor,0.8334,unitless
 aircraft:design:wing_drag_factor,0.838956,unitless
