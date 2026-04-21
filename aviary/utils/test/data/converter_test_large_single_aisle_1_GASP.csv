@@ -30,7 +30,6 @@ aircraft:design:gross_mass,175400.0,lbm
 aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
-aircraft:design:pylon_drag_factor,1.0,unitless
 aircraft:design:range,3675.0,NM
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
@@ -91,6 +90,7 @@ aircraft:nacelle:core_diameter_ratio,1.25,unitless
 aircraft:nacelle:fineness,2.0,unitless
 aircraft:nacelle:form_factor,1.5,unitless
 aircraft:nacelle:mass_specific,3.0,lbm/ft**2
+aircraft:nacelle:pylon_drag_factor,1.0,unitless
 aircraft:strut:area_ratio,0.0,unitless
 aircraft:strut:attachment_location,0.0,ft
 aircraft:strut:attachment_location_dimensionless,0.0,unitless

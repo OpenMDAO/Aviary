@@ -1714,7 +1714,7 @@ add_meta_data(
     units='unitless',
     option=True,
     default_value=0.0,
-    desc='percentage of excrescence drag as of fuselage, wing, nacelle, (winglet), empennage and strut',
+    desc='excrescence drag as percentage of fuselage, wing, nacelle, (winglet), empennage and strut',
 )
 
 add_meta_data(
