@@ -1494,7 +1494,7 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.FCFFC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='fuselage aero calibration factor (include technology factor INGASP.FCFFT)',
+    desc='fuselage aero calibration factor (including technology factor INGASP.FCFFT)',
 )
 
 add_meta_data(
@@ -1817,10 +1817,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.STRUT_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFSTRC', 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     default_value=1.0,
-    desc='strut aero calibration factor (including technology factor INGASP.FCFVTT)',
+    desc='strut aero calibration factor (including technology factor INGASP.FCFSTRT)',
 )
 
 add_meta_data(
