@@ -121,13 +121,13 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
     # Check if input file exists
     if not data_file.exists():
         raise FileNotFoundError(
-            f'Engine deck file not found: {data_file}\n'
+            f'Engine deck file not found: {data_file}. '
             f'Please check that the file path is correct and the file exists.'
         )
 
     if not data_file.is_file():
         raise ValueError(
-            f'Path is not a file: {data_file}\nPlease provide a path to a valid engine deck file.'
+            f'Path is not a file: {data_file}. Please provide a path to a valid engine deck file.'
         )
 
     legacy_code = data_format.value
