@@ -1,11 +1,22 @@
 import csv
-from enum import Enum
 import numpy as np
+import getpass
+from enum import Enum
+from pathlib import Path
+from datetime import datetime
 
 
 def save_to_csv_file(filename, aviary_inputs):
+    filename = Path(filename)
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
+
+        timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
+        user = getpass.getuser()
+
+        writer.writerow([f'# created {timestamp} by {user}'])
+        writer.writerow([f'# Aviary Inputs CSV converted from {filename.name}'])
+        writer.writerow([])
 
         for name, (value, units) in sorted(aviary_inputs):
             output = [name]

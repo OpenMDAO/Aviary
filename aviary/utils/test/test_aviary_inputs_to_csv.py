@@ -56,6 +56,8 @@ class PythonModelToCSV(unittest.TestCase):
                 if any(s in line for s in skip_list):
                     # expected.readline()
                     continue
+                if line.startswith('\n'):
+                    continue
 
                 expected_line = ''
                 # Skip any lines that are empty, have a comment indicator to start, or have members in the 'skip_list'
