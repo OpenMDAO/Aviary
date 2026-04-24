@@ -12,6 +12,7 @@ from aviary.models.aircraft.large_turboprop_freighter.electrified_phase_info imp
 from aviary.subsystems.energy.battery_builder import BatteryBuilder
 from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
@@ -20,7 +21,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 # @use_tempdirs
 @require_pyoptsparse(optimizer='IPOPT')
 # TODO need to add asserts with "truth" values
-class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
+class LargeHybridTurbopropFreighterBenchmark(unittest.TestCase):
     def build_and_run_problem(self, mission_method):
         if mission_method == 'energy':
             phase_info = deepcopy(energy_phase_info)
@@ -45,18 +46,24 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
         options.set_val(Aircraft.CrewPayload.CARGO_MASS, 0, 'lbm')
 
-        # set up electric propulsion
-        # TODO make separate input file for electroprop freighter?
-        options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
-        options.set_val(Aircraft.Engine.RPM_DESIGN, 6_000, 'rpm')  # max RPM of motor map
-        options.delete(Aircraft.Engine.FIXED_RPM)
-        # options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
-        # match propeller RPM of gas turboprop
-        options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
-        options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
-        options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1_000, 'W*h/kg')
+        # build up electroprop
+        electroprop_options = AviaryValues()
+        electroprop_options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
+        electroprop_options.set_val(
+            Aircraft.Engine.RPM_DESIGN, 6_000, 'rpm'
+        )  # max RPM of motor map
+        # electroprop_options.delete(Aircraft.Engine.FIXED_RPM)
+        options.set_val(Aircraft.Engine.FIXED_RPM, 6000, 'rpm')
+        electroprop_options.set_val(Aircraft.Engine.Gearbox.GEAR_RATIO, 5.88)
+        electroprop_options.set_val(Aircraft.Engine.Gearbox.EFFICIENCY, 1.0)
+        electroprop_options.set_val(Aircraft.Battery.PACK_ENERGY_DENSITY, 1_000, 'W*h/kg')
 
-        options.set_val(
+        # Setup partial engine set
+        electroprop_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        electroprop_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
+        electroprop_options.set_val(Aircraft.Engine.WING_LOCATIONS, [0.57])
+
+        electroprop_options.set_val(
             Aircraft.Engine.Motor.DATA_FILE, get_path('electric_motor_1800Nm_6000rpm.csv')
         )
 
@@ -64,14 +71,26 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
             name='motor',
         )
 
-        electroprop = TurbopropModel('electroprop', options=options, shaft_power_model=motor)
+        electroprop = TurbopropModel(
+            'electroprop', options=electroprop_options, shaft_power_model=motor
+        )
+
+        # build fuel turboprop
+        turboprop_options = options.deepcopy()
+
+        # Setup partial engine set
+        turboprop_options.set_val(Aircraft.Engine.NUM_ENGINES, 2)
+        turboprop_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
+        turboprop_options.set_val(Aircraft.Engine.WING_LOCATIONS, [0.19])
+
+        turboprop = TurbopropModel('turboprop', options=turboprop_options)
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
             options,  # "models/aircraft/large_turboprop_freighter/large_turboprop_freighter_GASP.csv",
             phase_info,
         )
-        prob.load_external_subsystems([electroprop])
+        prob.load_external_subsystems([turboprop, electroprop])
 
         prob.load_external_subsystems([BatteryBuilder()])
 
@@ -126,5 +145,5 @@ class LargeElectrifiedTurbopropFreighterBenchmark(unittest.TestCase):
 
 if __name__ == '__main__':
     # unittest.main()
-    test = LargeElectrifiedTurbopropFreighterBenchmark()
+    test = LargeHybridTurbopropFreighterBenchmark()
     test.build_and_run_problem('energy')
