@@ -496,8 +496,10 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         # current BWB data set does not check the following
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-10, rtol=1e-10)
 
-@use_tempdirs
+
 class BWBDetailedWingBendingTest(unittest.TestCase):
     """The BWB detailed wing bending material factor when detailed wing data is provided."""
 
@@ -610,6 +612,15 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         # current BWB data set does not check the following
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method='fd',
+        )
+        assert_check_partials(partial_data, atol=1e-3, rtol=1e-4)
+
     def test_case2(self):
         """
         bwb300_baseline
@@ -696,6 +707,137 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         # current BWB data set does not check the following
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method='fd',
+        )
+        assert_check_partials(partial_data, atol=1e-3, rtol=1e-4)
+
+    def test_case3(self):
+        """
+        bwb detailed
+        """
+        prob = self.prob
+
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [3], units='unitless')
+        aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, [0], units='unitless')
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
+        aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
+            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1.0],
+            units='unitless',
+        )
+        aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
+        aviary_options.set_val(
+            Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless'
+        )  # 100 okay
+        aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
+
+        prob.model.add_subsystem(
+            'bending',
+            BWBDetailedWingBendingFact(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 5.37550108, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 0.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
+
+        setup_model_options(self.prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Engine.POD_MASS, np.array([19301.2621248]), units='lbm')
+        prob.set_val(Aircraft.Wing.SPAN, val=252.96979495033787)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 79.46979495033786, 'ft')
+
+        wing_location = np.zeros(0)
+        wing_location = np.append(wing_location, [0.0])
+        prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_location)
+
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
+            [
+                111.763796,
+                55.0000000,
+                0.308016418,
+                0.266385163,
+                0.227497318,
+                0.197937070,
+                0.174000813,
+                0.155619962,
+                0.145469344,
+                0.136004577,
+                0.126402640,
+                0.116869289,
+                0.107335937,
+                0.0978025855,
+                0.0882692339,
+            ],
+            units='unitless',
+        )
+        prob.set_val(
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
+            [
+                0.11,
+                0.11,
+                0.1132,
+                0.0928,
+                0.0822,
+                0.0764,
+                0.0742,
+                0.0746,
+                0.0758,
+                0.0758,
+                0.0756,
+                0.0756,
+                0.0758,
+                0.076,
+                0.076,
+            ],
+            units='unitless',
+        )
+        prob.set_val(
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
+            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            units='deg',
+        )
+
+        prob.run_model()
+
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+
+        BENDING_MATERIAL_FACTOR_expected = 3.98518394
+        pod_inertia_expected = 1.0
+        assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
+        assert_near_equal(prob.get_val('calculated_wing_area'), 5399.40570654, tolerance=1e-9)
+        # current BWB data set does not check the following
+        assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
+
+        partial_data = prob.check_partials(
+            out_stream=None,
+            compact_print=True,
+            show_only_incorrect=True,
+            form='central',
+            method='fd',
+        )
+        assert_check_partials(partial_data, atol=1e-3, rtol=1e-4)
+
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBDetailedWingBendingTest()
+    test.setUp()
+    test.test_case4()

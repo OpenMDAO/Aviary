@@ -334,6 +334,15 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
         self.add_output('calculated_wing_area', units='ft**2')
 
+        # self.add_output('btb', units='unitless')
+        # self.add_output('den', units='unitless')
+        self.add_output('pm', units='unitless')
+        # self.add_output('del_load', units='unitless')
+        # self.add_output('del_moment', units='unitless')
+        # self.add_output('calc_ar', units='unitless')
+        # self.add_output('csw', shape=48, units='unitless')
+        # self.add_output('total_moment', shape=50, units='unitless')
+
     def setup_partials(self):
         # TODO: Analytic derivs will be challenging, but possible.
         self.declare_partials('*', '*', method='cs')
@@ -361,6 +370,9 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             bwb_input_station_dist[0] = 0.0
             bwb_input_station_dist[1] = width / 2.0
         inp_stations_mod = []
+        import pdb
+
+        # pdb.set_trace()
         for x in bwb_input_station_dist:
             if x > 1.0:
                 inp_stations_mod.append(2 * x / wingspan)
@@ -521,6 +533,15 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         )
         bt = btb / den
 
+        # pdb.set_trace()
+        # outputs['del_load'] = del_load
+        # outputs['del_moment'] = del_moment
+        # outputs['total_moment'] = total_moment
+        # outputs['csw'] = csw
+        # outputs['calc_ar'] = calc_ar
+        outputs['pm'] = pm
+        # outputs['btb'] = btb
+        # outputs['den'] = den
         outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt
 
         engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]

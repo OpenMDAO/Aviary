@@ -299,17 +299,17 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 # ---------------------------
 
 # In FLOPS, DOWE = 411552.31557733245 because DOWE = WOWE
-outputs.set_val(Aircraft.Design.EMPTY_MASS, 390555.9072055, 'lbm')  # DOWE
+outputs.set_val(Aircraft.Design.EMPTY_MASS, 387978.09236156, 'lbm')  # DOWE
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 0.0, 'lbm')  # WMARG
-outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 240989.11337145, 'lbm')  # WSTRCT 240989.14132753
-outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 90644.95111232, 'lbm')  # WSYS
-outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 26208.46595187, 'ft**2')  # TWET
+outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 238976.54475555, 'lbm')  # WSTRCT 240989.14132753
+outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 90114.25264997, 'lbm')  # WSYS
+outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 26036.62112878, 'ft**2')  # TWET
 outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 699279.2, 'lbm')  # WLDG = GW*WRATIO
 
-outputs.set_val(Aircraft.AirConditioning.MASS, 3897.6527857555625, 'lbm')  # WAC
-outputs.set_val(Aircraft.AntiIcing.MASS, 562.09100951165135, 'lbm')  # WAI
-outputs.set_val(Aircraft.APU.MASS, 2125.8280135763703, 'lbm')  # WAPU
-outputs.set_val(Aircraft.Avionics.MASS, 2778.5110590964073, 'lbm')  # WAVONC
+outputs.set_val(Aircraft.AirConditioning.MASS, 3871.27698278, 'lbm')  # WAC
+outputs.set_val(Aircraft.AntiIcing.MASS, 560.04037229, 'lbm')  # WAI
+outputs.set_val(Aircraft.APU.MASS, 2122.95946345, 'lbm')  # WAPU
+outputs.set_val(Aircraft.Avionics.MASS, 2763.47804131, 'lbm')  # WAVONC
 
 outputs.set_val(Aircraft.BWB.NUM_BAYS, 7.0, 'unitless')  # NBAY
 outputs.set_val(Aircraft.Canard.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL[-1]
@@ -327,31 +327,31 @@ outputs.set_val(Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, 77220.0, 'lbm')  # WP
 outputs.set_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, 97812.0, 'lbm')  # WPASS+WPBAG+WCARGO
 outputs.set_val(Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, 97812.0, 'lbm')  # WPASS+WPBAG
 
-outputs.set_val(Aircraft.Electrical.MASS, 4291.4778106479534, 'lbm')  # WELEC
+outputs.set_val(Aircraft.Electrical.MASS, 4277.63057018, 'lbm')  # WELEC
 
-outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 1197720.2419621395, 'lbm')  # FMXTOT
-outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 5444.9572934402777, 'lbm')  # WFSYS
+outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 1184642.3647993, 'lbm')  # FMXTOT
+outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 5410.39486929, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1732.78186198, 'lbm')  # WUF
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 1197720.2419621395, 'lbm')  # FULWMX
+outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 1184642.3647993, 'lbm')  # FULWMX
 
 outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
-outputs.set_val(Aircraft.Furnishings.MASS, 57747.97136452, 'lbm')  # WFURN
+outputs.set_val(Aircraft.Furnishings.MASS, 57402.19908931, 'lbm')  # WFURN
 
-outputs.set_val(Aircraft.Fuselage.CABIN_AREA, 4697.33181006, 'ft**2')  # ACABIN
-ref_diameter = 46.2868886894979
+outputs.set_val(Aircraft.Fuselage.CABIN_AREA, 4638.43963915, 'ft**2')  # ACABIN
+ref_diameter = 45.88190626
 outputs.set_val(Aircraft.Fuselage.REF_DIAMETER, ref_diameter, 'ft')  # XD
-outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 112.3001936860821, 'ft')  # EL(4)
+outputs.set_val(Aircraft.Fuselage.CHARACTERISTIC_LENGTH, 111.76379613, 'ft')  # EL(4)
 outputs.set_val(Aircraft.Fuselage.CROSS_SECTION, np.pi * (ref_diameter / 2.0) ** 2.0, 'ft**2')
-outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.18243240878599712)  # DB
-outputs.set_val(Aircraft.Fuselage.FINENESS, 2.4261771932742167)  # FR(4)
-outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 2.4261771932742167)  # BODYLD
-outputs.set_val(Aircraft.Fuselage.MASS, 137935.30594648936, 'lbm')  # WFUSE
-outputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 12.35302131, 'ft')  # DF
-outputs.set_val(Aircraft.Fuselage.PLANFORM_AREA, 6710.4740143724875, 'ft**2')  # FPAREA
-outputs.set_val(Aircraft.Fuselage.AFTBODY_MASS, 18736.55008878, 'lbm')  # WAFTB
+outputs.set_val(Aircraft.Fuselage.DIAMETER_TO_WING_SPAN, 0.18137306)  # DB
+outputs.set_val(Aircraft.Fuselage.FINENESS, 2.43590132)  # FR(4)
+outputs.set_val(Aircraft.Fuselage.LENGTH_TO_DIAMETER, 2.43590132)  # BODYLD
+outputs.set_val(Aircraft.Fuselage.MASS, 136102.89191481, 'lbm')  # WFUSE
+outputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 12.29401757, 'ft')  # DF
+outputs.set_val(Aircraft.Fuselage.PLANFORM_AREA, 6626.34234164, 'ft**2')  # FPAREA
+outputs.set_val(Aircraft.Fuselage.AFTBODY_MASS, 18545.58195235, 'lbm')  # WAFTB
 outputs.set_val(Aircraft.Fuselage.LENGTH, 112.3001936860821, 'ft')  # XL
 outputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 80.220756073526772, 'ft')  # WF
-outputs.set_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 78.61013558, 'ft')  # XLP
+outputs.set_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 78.23465729, 'ft')  # XLP
 
 outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(2)
 outputs.set_val(Aircraft.HorizontalTail.FINENESS, 0.11)  # FR(2)
@@ -360,9 +360,9 @@ outputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 0.0, 'ft**2')  # SWTHT
 
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3159.3781042368792, 'lbm')
 
-outputs.set_val(Aircraft.Hydraulics.MASS, 6200.37391189, 'lbm')  # WHYD
+outputs.set_val(Aircraft.Hydraulics.MASS, 6133.98944949, 'lbm')  # WHYD
 
-outputs.set_val(Aircraft.Instruments.MASS, 1309.88942193, 'lbm')  # WIN
+outputs.set_val(Aircraft.Instruments.MASS, 1300.50317605, 'lbm')  # WIN
 
 outputs.set_val(Aircraft.LandingGear.MAIN_GEAR_MASS, 28200.322805698346, 'lbm')  # WLGM
 outputs.set_val(Aircraft.LandingGear.NOSE_GEAR_MASS, 2698.6740002098945, 'lbm')  # WLGN
@@ -377,7 +377,7 @@ outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 3 * nacelle_wetted_area, 'ft
 
 outputs.set_val(Aircraft.Paint.MASS, 0.0, 'lbm')  # WPAINT, WTPNT
 
-outputs.set_val(Aircraft.Propulsion.MASS, 58921.857380417721, 'lbm')  # WPRO
+outputs.set_val(Aircraft.Propulsion.MASS, 58887.29495605, 'lbm')  # WPRO
 outputs.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 70000.0 * 3, 'lbf')
 outputs.set_val(Aircraft.Propulsion.TOTAL_NUM_ENGINES, 3)
 outputs.set_val(Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, 346.93557352, 'lbm')  # WOIL
@@ -406,27 +406,27 @@ outputs.set_val(Aircraft.VerticalTail.FINENESS, 0.11)  # FR(3)
 outputs.set_val(Aircraft.VerticalTail.MASS, 0.0, 'lbm')  # WVT
 outputs.set_val(Aircraft.VerticalTail.WETTED_AREA, 0.0, 'ft**2')
 
-outputs.set_val(Aircraft.Wing.BWB_AFTBODY_MASS, 15551.33657368, 'lbm')  # W4
-outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 3.9705868)  # FLOPS BT = 3.9724796254619563
-outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 8856.083631, 'lbm')  # W1
-outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 47.72916456, 'ft')  # EL(1)
-outputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 4032.5967, 'ft**2')  # SFLAP
+outputs.set_val(Aircraft.Wing.BWB_AFTBODY_MASS, 15392.83302045, 'lbm')  # W4
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR, 3.98518394)  # FLOPS BT = 3.9724796254619563
+outputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS, 8916.98295485, 'lbm')  # W1
+outputs.set_val(Aircraft.Wing.CHARACTERISTIC_LENGTH, 47.53827645, 'ft')  # EL(1)
+outputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA, 4004.57409956, 'ft**2')  # SFLAP
 outputs.set_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR, 1.0)  # CAYE
 outputs.set_val(Aircraft.Wing.FINENESS, 0.11)  # FR(1)
 outputs.set_val(Aircraft.Wing.MISC_MASS, 9720.4199027685518, 'lbm')  # W3
-outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 34867.592407371565, 'lbm')  # W2
-outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 11731.15573539, 'lbm')  # WSC
-outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 5.36951675)  # AR
-outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 5.36951675)  # ARREF
-outputs.set_val(Aircraft.Wing.MASS, 68995.43251482, 'lbm')  # WWING 68995.460470895763
+outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 34785.04205251, 'lbm')  # W2
+outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 11682.1755051, 'lbm')  # WSC
+outputs.set_val(Aircraft.Wing.ASPECT_RATIO, 5.37550108)  # AR
+outputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 5.37550108)  # ARREF
+outputs.set_val(Aircraft.Wing.MASS, 68815.27793059, 'lbm')  # WWING 68995.460470895763
 outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
-outputs.set_val(Aircraft.Wing.AREA, 12109.879719468739, 'ft**2')  # SW
-outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.46761341784858923)  # PCTL
-outputs.set_val(Aircraft.Wing.WETTED_AREA, 24713.661297561481, 'ft**2')  # SWET(1)
+outputs.set_val(Aircraft.Wing.AREA, 12025.74804674, 'ft**2')  # SW
+outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.47039383)  # PCTL
+outputs.set_val(Aircraft.Wing.WETTED_AREA, 24541.8164668, 'ft**2')  # SWET(1)
 outputs.set_val(Aircraft.Wing.SPAN, 253.720756, 'ft')  # SPAN = WF+OSSPAN*2
 
 outputs.set_val(Mission.USEFUL_LOAD, 20996.3933862, 'lbm')
 
 outputs.set_val(Aircraft.Design.MACH, 0.800)
-outputs.set_val(Mission.OPERATING_MASS, 411552.29917206, 'lbm')  # WOWE
-outputs.set_val(Mission.ZERO_FUEL_MASS, 509364.29917206, 'lbm')  # WZF
+outputs.set_val(Mission.OPERATING_MASS, 408966.86445029, 'lbm')  # WOWE
+outputs.set_val(Mission.ZERO_FUEL_MASS, 506778.86445029, 'lbm')  # WZF

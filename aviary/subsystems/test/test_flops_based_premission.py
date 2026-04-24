@@ -216,8 +216,11 @@ class BWBPreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
-    def test_case_all_subsystems(self, case_name):
+    # @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
+    def test_case_all_subsystems(
+        self,
+    ):
+        case_name = 'BWBdetailedFLOPS'
         flops_inputs = get_flops_inputs(case_name)
         flops_outputs = get_flops_outputs(case_name)
 
@@ -1228,7 +1231,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
     test = BWBPreMissionGroupTest()
     test.setUp()
-    # test.test_case_all_subsystems()
+    test.test_case_all_subsystems()

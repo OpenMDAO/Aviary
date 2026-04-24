@@ -632,7 +632,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         area_service = num_lavas * area_lava + num_galleys * area_galley + num_closets * area_closet
 
         # Estimate number of bays based on these areas
-        num_bays = int(0.5 + (area_seats + area_service) / 550.0)
+        num_bays = (area_seats + area_service) / 550.0
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
@@ -658,32 +658,33 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays_tmp = 0.5 + max_width / bay_width_nom
+            num_bays_tmp = max_width / bay_width_nom
             if num_bays_tmp[0].real > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
             else:
-                num_bays = int(num_bays_tmp[0].real)
+                num_bays = num_bays_tmp[0].real
 
             # Enforce maximum bay width
             bay_width = max_width / num_bays
             if bay_width > bay_width_max and bay_width_max > 0.0:
                 bay_width = bay_width_max
-                num_bays_tmp = 0.999 + max_width / bay_width
+                num_bays_tmp = max_width / bay_width
                 if num_bays_tmp.real > num_bays_max and num_bays_max > 0:
                     num_bays = num_bays_max
                     max_width = num_bays_max * bay_width
                     pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0
                     root_chord = pax_compart_length - tan_sweep * max_width / 2.0
                 else:
-                    num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
+                    num_bays = num_bays_tmp
 
-            if num_bays_loc == num_bays:
+            if np.abs(num_bays_loc - num_bays) < 0.00001:
                 break
             iter = iter + 1
             if iter > 100:
                 warnings.warn(f'Number of iteration exceeded 100.')
                 break
 
+        num_bays = smooth_int_tanh(num_bays, mu=40.0)
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
         outputs[Aircraft.BWB.NUM_BAYS] = num_bays
