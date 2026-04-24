@@ -551,7 +551,7 @@ class PayloadRangeTest(unittest.TestCase):
 
         # verify TOGW for each payload range problem
         assert_near_equal(
-            prob.economic_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
+            prob.max_fuel_pyld_range_prob.get_val(Mission.GROSS_MASS, 'lbm'),
             166539.46027154,
             tolerance=1e-8,
         )
@@ -561,7 +561,7 @@ class PayloadRangeTest(unittest.TestCase):
             tolerance=1e-8,
         )
         self.assertTrue(prob.result.success)
-        self.assertTrue(prob.economic_range_prob.result.success)
+        self.assertTrue(prob.max_fuel_pyld_range_prob.result.success)
         self.assertTrue(prob.ferry_range_prob.result.success)
 
 

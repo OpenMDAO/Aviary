@@ -1567,10 +1567,10 @@ class AviaryProblem(om.Problem):
         """
         This function runs Payload/Range analysis for the aircraft model.
 
-        For an aircraft model that has been sized with a mission has has successfully converged,
+        For an aircraft model that has been sized with a mission and has successfully converged,
         this function will adjust the given phase information, assuming that there is a phase named
         'cruise' and elongates the duration bounds to allow the optimizer
-        to converge for the max economic and ferry missions.
+        to converge for the 'max fuel + payload' and 'ferry' missions.
 
         Parameters
         ----------
@@ -1580,7 +1580,7 @@ class AviaryProblem(om.Problem):
         Returns
         -------
         payload_range_problems : tuple
-            Tuple containing the off-design AviaryProblems for the max economic and ferry ranges
+            Tuple containing the off-design AviaryProblems for the 'max fuel + payload' and 'ferry' ranges
 
         TODO currently does not account for reserve fuel
         """
@@ -1612,7 +1612,7 @@ class AviaryProblem(om.Problem):
             phase_info['pre_mission'] = self.model.pre_mission_info.copy()
             phase_info['post_mission'] = self.model.post_mission_info.copy()
             # This checks if the 'cruise' phase exists, then automatically extends duration bounds
-            # of the cruise stage to allow for the longer economic and ferry missions.
+            # of the cruise stage to allow for the longer off design missions.
             if phase_info['cruise']:
                 min_duration = phase_info['cruise']['user_options']['time_duration_bounds'][0][0]
                 max_duration = phase_info['cruise']['user_options']['time_duration_bounds'][0][1]
@@ -1648,34 +1648,34 @@ class AviaryProblem(om.Problem):
             max_usable_fuel = fuel_capacity - unusable_fuel
 
             # An aircraft may be designed with fuel tank capacity that, if fully filled, would
-            # exceed MTOW. In that scenario, Max Economic Range and Ferry Range are the same, and
+            # exceed MTOW. In that scenario, 'Max Fuel + Payload' range and 'Ferry' range are the same, and
             # the point only needs to be run once.
             if operating_mass + max_usable_fuel < gross_mass:
-                # Point 3 (Max Economic Range): max fuel and remaining payload capacity
+                # Point 3 (Max Fuel + Payload Range): max fuel and remaining payload capacity
                 # Assume proportional decrease in all cargo types (including number of passengers)
                 # to make room for maximum fuel. Round pax count down to avoid loading over TOGW
 
-                economic_mission_total_payload = gross_mass - operating_mass - max_usable_fuel
-                payload_frac = economic_mission_total_payload / max_payload
+                max_fuel_pyld_total_payload = gross_mass - operating_mass - max_usable_fuel
+                payload_frac = max_fuel_pyld_total_payload / max_payload
 
                 # Calculates Different payload quantities
-                economic_mission_wing_cargo = (
+                max_fuel_pyld_wing_cargo = (
                     self.model.aviary_inputs.get_val(Aircraft.CrewPayload.WING_CARGO, 'lbm')
                     * payload_frac
                 )
-                economic_mission_misc_cargo = (
+                max_fuel_pyld_misc_cargo = (
                     self.model.aviary_inputs.get_val(Aircraft.CrewPayload.MISC_CARGO, 'lbm')
                     * payload_frac
                 )
-                economic_mission_num_first = int(
+                max_fuel_pyld_num_first = int(
                     self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
                     * payload_frac
                 )
-                economic_mission_num_bus = int(
+                max_fuel_pyld_num_bus = int(
                     self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
                     * payload_frac
                 )
-                economic_mission_num_economy = int(
+                max_fuel_pyld_num_economy = int(
                     self.model.aviary_inputs.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
                     * payload_frac
                 )
@@ -1683,26 +1683,28 @@ class AviaryProblem(om.Problem):
                 # Passenger number rounding and potentially cargo container mass changing means
                 # we don't know if we actually filled the aircraft to exactly TOGW yet. Need to use
                 # "fill_cargo" flag in off-design call
-                economic_range_prob = self.economic_range_prob = self.run_off_design_mission(
-                    problem_type=ProblemType.OFF_DESIGN_MAX_RANGE,
-                    phase_info=phase_info,
-                    num_first_class=economic_mission_num_first,
-                    num_business=economic_mission_num_bus,
-                    num_economy=economic_mission_num_economy,
-                    wing_cargo=economic_mission_wing_cargo,
-                    misc_cargo=economic_mission_misc_cargo,
-                    name=self._name + '_max_economic_range',
-                    fill_cargo=True,
-                    verbosity=verbosity,
+                max_fuel_pyld_range_prob = self.max_fuel_pyld_range_prob = (
+                    self.run_off_design_mission(
+                        problem_type=ProblemType.OFF_DESIGN_MAX_RANGE,
+                        phase_info=phase_info,
+                        num_first_class=max_fuel_pyld_num_first,
+                        num_business=max_fuel_pyld_num_bus,
+                        num_economy=max_fuel_pyld_num_economy,
+                        wing_cargo=max_fuel_pyld_wing_cargo,
+                        misc_cargo=max_fuel_pyld_misc_cargo,
+                        name=self._name + '_max_fuel_plus_payload_range',
+                        fill_cargo=True,
+                        verbosity=verbosity,
+                    )
                 )
 
                 # Pull the payload and range values from the OFF_DESIGN_MAX_RANGE mission
-                payload_3 = float(
-                    economic_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)
-                )
+                payload_3 = max_fuel_pyld_range_prob.get_val(
+                    Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS
+                )[0]
 
-                range_3 = float(economic_range_prob.get_val(Mission.RANGE))
-                fuel_3 = economic_range_prob.get_val(Mission.FUEL)[0]
+                range_3 = max_fuel_pyld_range_prob.get_val(Mission.RANGE)[0]
+                fuel_3 = max_fuel_pyld_range_prob.get_val(Mission.FUEL)[0]
 
                 prob_3_skip = False
             else:
@@ -1733,23 +1735,23 @@ class AviaryProblem(om.Problem):
                 verbosity=verbosity,
             )
 
-            payload_4 = float(ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS))
-            range_4 = float(ferry_range_prob.get_val(Mission.RANGE))
+            payload_4 = ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0]
+            range_4 = ferry_range_prob.get_val(Mission.RANGE)[0]
             fuel_4 = ferry_range_prob.get_val(Mission.FUEL)[0]
 
-            # if economic mission was skipped, economic_range_prob is the same as ferry_range_prob
+            # if max fuel + payload mission was skipped, max_fuel_pyld_range_prob is the same as ferry_range_prob
             if prob_3_skip:
-                economic_range_prob = ferry_range_prob
+                max_fuel_pyld_range_prob = ferry_range_prob
                 payload_3 = payload_4
                 range_3 = range_4
 
             # Check if OFF_DESIGN_MAX_RANGE missions ran successfully before writing to csv file
             # If both missions ran successfully, writes the payload/range data to a csv file
             self.payload_range_data = payload_range_data = NamedValues()
-            if ferry_range_prob.result.success and economic_range_prob.result.success:
+            if ferry_range_prob.result.success and max_fuel_pyld_range_prob.result.success:
                 payload_range_data.set_val(
                     'Mission Name',
-                    ['Zero Fuel', 'Design Mission', 'Max Economic Mission', 'Ferry Mission'],
+                    ['Zero Fuel', 'Design Mission', 'Max Fuel + Payload Mission', 'Ferry Mission'],
                 )
                 payload_range_data.set_val(
                     'Payload', [payload_1, payload_2, payload_3, payload_4], 'lbm'
@@ -1767,7 +1769,7 @@ class AviaryProblem(om.Problem):
                     for item in payload_range_data:
                         print(f'{item[0]} ({item[1][1]}): {item[1][0]}')
 
-                return (economic_range_prob, ferry_range_prob)
+                return (max_fuel_pyld_range_prob, ferry_range_prob)
             else:
                 warnings.warn(
                     'One or both of the OFF_DESIGN_MAX_RANGE missions did not run successfully; payload/range '
