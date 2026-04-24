@@ -51,7 +51,6 @@ aircraft:engine:generate_flight_idle,True,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
 aircraft:engine:interpolation_method,slinear,unitless
-aircraft:engine:mass,6293.8,lbm
 aircraft:engine:mass_scaler,1.15,unitless
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_fuselage_engines,0,unitless
@@ -60,18 +59,12 @@ aircraft:engine:reference_mass,6293.8,lbm
 aircraft:engine:reference_sls_thrust,22200.5,lbf
 aircraft:engine:scale_factor,0.99997747798473,unitless
 aircraft:engine:scale_mass,True,unitless
-aircraft:engine:scale_performance,True,unitless
 aircraft:engine:scaled_sls_thrust,22200.0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
-aircraft:engine:thrust_reversers_mass_scaler,0.0,unitless
 aircraft:engine:wing_locations,0.289682918,unitless
-aircraft:fins:area,0.0,ft**2
-aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
-aircraft:fins:taper_ratio,-10.0,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:num_tanks,7,unitless
@@ -89,9 +82,7 @@ aircraft:fuselage:max_width,12.3,ft
 aircraft:fuselage:military_cargo_floor,False,unitless
 aircraft:fuselage:num_fuselages,1,unitless
 aircraft:fuselage:passenger_compartment_length,97.5,ft
-aircraft:fuselage:planform_area,1537.5,ft**2
 aircraft:fuselage:wetted_area,4235.082096,ft**2
-aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,349.522730527158,ft**2
 aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
 aircraft:horizontal_tail:laminar_flow_lower,0.0,unitless
@@ -189,7 +180,7 @@ mission:landing:spoiler_lift_coefficient,-0.81,unitless
 mission:takeoff:airport_altitude,0.0,ft
 mission:takeoff:angle_of_attack_runway,0.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
-mission:takeoff:drag_coefficient_min,0.05,unitless
+mission:takeoff:drag_coefficient_min,0.045,unitless
 mission:takeoff:final_altitude,35.0,ft
 mission:takeoff:fuel,577.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
@@ -202,7 +193,6 @@ settings:aerodynamics_method,FLOPS,unitless
 settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 settings:problem_type,sizing,unitless
-settings:verbosity,0
 
 # Unconverted Values
 AERIN.clapp,2

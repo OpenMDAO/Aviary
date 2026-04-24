@@ -1,3 +1,6 @@
+# created 04/24/26 at 16:26 by nperreau
+# Aviary Inputs CSV converted from large_single_aisle_1_FLOPS_data.csv
+
 aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.1,unitless
@@ -38,7 +41,7 @@ aircraft:design:zero_lift_drag_coeff_factor,0.930890028006548,unitless
 aircraft:electrical:mass_scaler,1.25,unitless
 aircraft:engine:additional_mass_fraction,0.0,unitless
 aircraft:engine:constant_fuel_consumption,0.0,lbm/h
-aircraft:engine:data_file,/aviary/models/engines/turbofan_28k.csv,unitless
+aircraft:engine:data_file,/home/nperreau/workspace/Aviary/aviary/models/engines/turbofan_28k.csv,unitless
 aircraft:engine:flight_idle_max_fraction,1.0,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:flight_idle_thrust_fraction,0.0,unitless
@@ -151,7 +154,7 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.785,unitless
 mission:fuel_flow_scaler,1.0,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
-mission:takeoff:fuel_simple,577.0,lbm
+mission:takeoff:fuel,577.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless

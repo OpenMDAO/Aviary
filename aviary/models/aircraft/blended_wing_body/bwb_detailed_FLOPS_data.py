@@ -68,7 +68,7 @@ inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)  # WFLCRB
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 2)  # NGALC
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')  # CARGOF
-inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
+# inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)  # WSRV
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')  # WPPASS
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')  # CARGOW
@@ -295,7 +295,7 @@ inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO
 inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140.0, 'ft/s')  # VAPPR
 inputs.set_val(Mission.Landing.ROLLING_FRICTION_COEFFICIENT, 0.025)
-inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
+# inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
 inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf')  # THROFF
 
 # Settings

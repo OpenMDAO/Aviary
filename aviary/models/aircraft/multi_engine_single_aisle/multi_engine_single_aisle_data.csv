@@ -1,3 +1,6 @@
+# created 04/24/26 at 16:26 by nperreau
+# Aviary Inputs CSV converted from multi_engine_single_aisle_data.csv
+
 aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
 aircraft:apu:mass_scaler,1.0,unitless
@@ -124,7 +127,7 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.82,unitless
 mission:fuel_flow_scaler,1.0,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
-mission:takeoff:fuel_simple,577.0,lbm
+mission:takeoff:fuel,577.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:takeoff:lift_over_drag,17.35,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless

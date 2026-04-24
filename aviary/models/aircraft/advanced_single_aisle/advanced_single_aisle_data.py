@@ -6,8 +6,6 @@ FLOPS derived input/output for use with Aviary unit tests and benchmarks
 - FLOPS engine deck: "turbofan_22k.csv".
 """
 
-from re import A
-
 import numpy as np
 
 from aviary.mission.energy_state.phases.detailed_landing_phases import (
@@ -110,14 +108,12 @@ inputs.set_val(Aircraft.Electrical.MASS_SCALER, 1.1976)
 # Fins
 # ---------------------------
 inputs.set_val(Aircraft.Fins.NUM_FINS, 0)
-inputs.set_val(Aircraft.Fins.AREA, 0, 'ft**2')
-inputs.set_val(Aircraft.Fins.MASS_SCALER, 1)
-inputs.set_val(Aircraft.Fins.TAPER_RATIO, -10)
+
 # Fuel
 # ---------------------------
 inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.7752)
-inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
+# inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 0.93202)
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
@@ -143,14 +139,14 @@ fuselage_max_width_units = 'ft'
 inputs.set_val(Aircraft.Fuselage.MAX_WIDTH, fuselage_max_width, fuselage_max_width_units)
 inputs.set_val(Aircraft.Fuselage.NUM_FUSELAGES, 1)
 inputs.set_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 97.5, 'ft')
-inputs.set_val(
-    Aircraft.Fuselage.PLANFORM_AREA,
-    fuselage_length * fuselage_max_width,
-    f'{fuselage_length_units}**2',
-)
+# inputs.set_val(
+#    Aircraft.Fuselage.PLANFORM_AREA,
+#    fuselage_length * fuselage_max_width,
+#    f'{fuselage_length_units}**2',
+# )
 inputs.set_val(Aircraft.Fuselage.MASS_SCALER, 0.69981)
 inputs.set_val(Aircraft.Fuselage.WETTED_AREA, 4235.082096, 'ft**2')  # Override
-inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)
+# inputs.set_val(Aircraft.Fuselage.WETTED_AREA_SCALER, 1.0)
 inputs.set_val(Aircraft.Fuselage.MILITARY_CARGO_FLOOR, False)
 
 # Horizontal Tail
@@ -218,17 +214,17 @@ inputs.set_val(Aircraft.Propulsion.TOTAL_STARTER_MASS, 0.0, 'lbm')
 filename = get_path('models/engines/turbofan_22k.csv')
 
 inputs.set_val(Aircraft.Engine.DATA_FILE, filename)
-inputs.set_val(Aircraft.Engine.MASS, 6293.8, 'lbm')
+# inputs.set_val(Aircraft.Engine.MASS, 6293.8, 'lbm')
 inputs.set_val(Aircraft.Engine.REFERENCE_MASS, 6293.8, 'lbm')
 inputs.set_val(Aircraft.Engine.SCALE_FACTOR, 0.99997747798473)
-inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
+# inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 0.0)
 inputs.set_val(Aircraft.Engine.NUM_ENGINES, 2)
 inputs.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 0)
 inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0.289682918)
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
-inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
+# inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
 inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
@@ -319,7 +315,7 @@ inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 inputs.set_val(Mission.Landing.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.5, 'unitless')
 inputs.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0.0, 'ft')
-inputs.set_val(Mission.Takeoff.DRAG_COEFFICIENT_MIN, 0.05, 'unitless')
+inputs.set_val(Mission.Takeoff.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
 inputs.set_val(Mission.Takeoff.OBSTACLE_HEIGHT, 35.0, 'ft')
 inputs.set_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 0.0, 'deg')
@@ -344,7 +340,7 @@ inputs.set_val(Mission.Takeoff.FINAL_ALTITUDE, 35.0, 'ft')
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
-inputs.set_val(Settings.VERBOSITY, 0)
+# inputs.set_val(Settings.VERBOSITY, 0)
 inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.SIZING)
 
 # ---------------------------
