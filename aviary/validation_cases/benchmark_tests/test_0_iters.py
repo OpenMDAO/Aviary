@@ -12,11 +12,13 @@ from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_i
 class BaseProblemPhaseTestCase(unittest.TestCase):
     """Test the setup and run of a simple energy method and 2DOF mission (no optimization, single iteration)."""
 
-    def build_and_run_problem(self, input_filename, phase_info, objective_type=None):
+    def build_and_run_problem(
+        self, input_filename, phase_info, phase_info_modifier=None, objective_type=None
+    ):
         # Build problem
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(input_filename, phase_info)
+        prob.load_inputs(input_filename, phase_info, phase_info_modifier)
 
         prob.check_and_preprocess_inputs()
 
@@ -50,6 +52,6 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TwoDOFZeroItersTestCase()
-    # test.test_zero_iters_2DOF()
+    # unittest.main()
+    test = TwoDOFZeroItersTestCase()
+    test.test_zero_iters_2DOF()

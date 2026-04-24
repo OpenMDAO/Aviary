@@ -5,8 +5,8 @@ import warnings
 from copy import deepcopy
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 from itertools import count
+from pathlib import Path
 
 import dymos as dm
 import numpy as np
@@ -124,6 +124,7 @@ class AviaryProblem(om.Problem):
         aircraft_data,
         phase_info=None,
         problem_configurator=None,
+        phase_info_modifier=None,
         meta_data=None,
         verbosity=None,
     ):
@@ -145,6 +146,9 @@ class AviaryProblem(om.Problem):
             motion is used.
         problem_configurator : ProblemConfigurator, optional
             Custom problem configurator, required when using custom equations of motion.
+        phase_info_modifier : callable, optional
+            A function that takes the ``phase_info`` dictionary and aviary_inputs and returns a modified
+            phase_info.
         meta_data : dict, optional
             Custom variable metadata. If provided, replaces the metadata currently stored on this
             problem.
@@ -176,6 +180,7 @@ class AviaryProblem(om.Problem):
             aircraft_data=aircraft_data,
             phase_info=phase_info,
             problem_configurator=problem_configurator,
+            phase_info_modifier=phase_info_modifier,
             verbosity=verbosity,
         )
 
@@ -253,6 +258,9 @@ class AviaryProblem(om.Problem):
         problem_configurator : ProblemConfigurator, optional
             Required when using custom equations of motion. See ``TwoDOFProblemConfigurator`` for an
             example.
+        phase_info_modifier : callable, optional
+            A function that takes the ``phase_info`` dictionary and aviary_inputs and returns a modified
+            phase_info.
         verbosity : Verbosity or int, optional
             Controls the level of terminal output for this method. Defaults to ``Verbosity.BRIEF``.
 
@@ -285,6 +293,7 @@ class AviaryProblem(om.Problem):
             aircraft_data=aircraft,
             phase_info=phase_info,
             problem_configurator=problem_configurator,
+            phase_info_modifier=phase_info_modifier,
             verbosity=verbosity,
         )
 
@@ -372,7 +381,6 @@ class AviaryProblem(om.Problem):
 
     def add_phases(
         self,
-        phase_info_parameterization=None,
         parallel_phases=True,
         verbosity=None,
     ):
@@ -384,9 +392,6 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        phase_info_parameterization : callable, optional
-            A function that takes the phase_info dictionary and aviary_inputs and returns a modified
-            phase_info. Defaults to None.
         parallel_phases : bool, optional
             If True, the top-level container of all phases will be a ParallelGroup; otherwise it
             will be a standard OpenMDAO Group. Defaults to True.
@@ -410,14 +415,12 @@ class AviaryProblem(om.Problem):
         if self.problem_type == ProblemType.MULTI_MISSION:
             for name, group in self.aviary_groups_dict.items():
                 Traj = group.add_phases(
-                    phase_info_parameterization=phase_info_parameterization,
                     parallel_phases=parallel_phases,
                     verbosity=verbosity,
                     comm=self.comm,
                 )
         else:
             Traj = self.model.add_phases(
-                phase_info_parameterization=phase_info_parameterization,
                 parallel_phases=parallel_phases,
                 verbosity=verbosity,
                 comm=self.comm,
@@ -1174,8 +1177,6 @@ class AviaryProblem(om.Problem):
         var_pairs : list of tuple of (str, str)
             Each pair is ``(input_name_in_group, top_level_name_to_use)``.
         """
-
-        #
         for name, group in self.aviary_groups_dict.items():
             for mission_name in mission_names:
                 if name == mission_name:
