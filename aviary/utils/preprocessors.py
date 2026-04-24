@@ -62,6 +62,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
                         'as Aircraft.Wing.ASPECT_RATIO.'
                     )
 
+    # TODO also move zero value behavior to fortran_to_aviary and rewrite this case to cover when variable is not provided
     if Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE in aviary_options:
         tcref = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE)
         if (np.isscalar(tcref) and tcref == 0) or (not np.isscalar(tcref) and tcref[0] == 0):
