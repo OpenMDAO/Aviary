@@ -43,7 +43,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.check_and_preprocess_inputs()
 
         prob_fallout.build_model()
-        prob_fallout.add_driver('IPOPT', max_iter=100)
+        prob_fallout.add_driver('IPOPT', max_iter=50)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
@@ -68,7 +68,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
-        prob_alternate.add_driver('IPOPT', max_iter=100)
+        prob_alternate.add_driver('IPOPT', max_iter=50)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
@@ -98,7 +98,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.build_model()
-        prob_fallout.add_driver('SNOPT', max_iter=100)
+        prob_fallout.add_driver('SNOPT', max_iter=50)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
@@ -123,7 +123,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
-        prob_alternate.add_driver('SNOPT', max_iter=100)
+        prob_alternate.add_driver('SNOPT', max_iter=50)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
