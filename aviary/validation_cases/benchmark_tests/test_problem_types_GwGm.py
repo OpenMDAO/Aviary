@@ -24,13 +24,13 @@ class TestOffDesign(TwoDOFTestCase):
     """
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_off_design_IPOPT(self):
+    def bench_test_off_design_IPOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -54,7 +54,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -80,13 +80,13 @@ class TestOffDesign(TwoDOFTestCase):
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_off_design_SNOPT(self):
+    def bench_test_off_design_SNOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -109,7 +109,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -139,5 +139,5 @@ if __name__ == '__main__':
     unittest.main()
     # test = TestOffDesign()
     # test.setUp()
-    # test.test_off_design_SNOPT()
-    # test.test_off_design_IPOPT()
+    # test.bench_test_off_design_SNOPT()
+    # test.bench_test_off_design_IPOPT()
