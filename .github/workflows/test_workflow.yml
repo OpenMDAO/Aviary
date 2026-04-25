@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.11'
     - uses: pre-commit/action@v3.0.1
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
@@ -86,7 +86,7 @@ jobs:
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions

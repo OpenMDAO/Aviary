@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
@@ -62,7 +62,7 @@ jobs:
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
