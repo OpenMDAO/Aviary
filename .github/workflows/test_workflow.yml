@@ -18,7 +18,7 @@ jobs:
 
   pre_commit:
     # run pre-commit checks
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v6
@@ -28,7 +28,7 @@ jobs:
     - uses: pre-commit/action@v3.0.1
 
   test_ubuntu:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
