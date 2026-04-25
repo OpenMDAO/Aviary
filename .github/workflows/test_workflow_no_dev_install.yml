@@ -32,7 +32,7 @@ run-name:  ${{ inputs.run_name }}
 jobs:
 
   test_ubuntu_no_dev_install:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
 
     timeout-minutes: 90
 
