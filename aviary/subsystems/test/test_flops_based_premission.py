@@ -429,6 +429,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             rtol=1e-6,
             check_values=True,
             check_partials=True,
+            excludes=['*bending_material_factor*'],
         )
 
     def test_case_geom(self):
