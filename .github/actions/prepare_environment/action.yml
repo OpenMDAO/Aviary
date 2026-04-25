@@ -144,7 +144,7 @@ runs:
         fi
 
     - name: Checkout Aviary
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Install Aviary
       shell: bash -l {0}
