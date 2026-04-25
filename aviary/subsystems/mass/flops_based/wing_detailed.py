@@ -363,11 +363,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             2 * bwb_input_station_dist / wingspan,
             bwb_input_station_dist,
         )
-        # for x in bwb_input_station_dist:
-        #     if x > 1.0:
-        #         inp_stations_mod.append(2 * x / wingspan)
-        #     else:
-        #         inp_stations_mod.append(x)
         inp_stations_mod = np.array(inp_stations_mod)
         # For BWB, always start from inp_stations_mod[1], not inp_stations_mod[0]
         inp_stations_mod = inp_stations_mod[1:]
@@ -400,12 +395,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             2 * chord / wingspan,
             chord,
         )
-        # for x in chord:
-        #     if x > 5.0:
-        #         chord_mod.append(2 * x / wingspan)
-        #     else:
-        #         chord_mod.append(x * arref[0] / ar[0])
-        # chord_mod = np.array(chord_mod)
 
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
@@ -592,76 +581,3 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             inertia_factor_prod = 1.0
 
         outputs[Aircraft.Wing.ENG_POD_INERTIA_FACTOR] = inertia_factor_prod
-
-
-class Temp(om.ExplicitComponent):
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
-        add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
-        add_aviary_option(self, Settings.VERBOSITY)
-
-    def setup(self):
-        input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        num_input_stations = len(input_station_distribution)
-
-        self.add_input(
-            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations - 1, units='deg'
-        )
-        add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
-        add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
-
-        self.add_output('sum_csw', units='unitless')
-
-    def setup_partials(self):
-        # TODO: Analytic derivs will be challenging, but possible.
-        self.declare_partials('*', '*', method='cs')
-
-    def compute(self, inputs, outputs):
-        num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
-        width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
-        wingspan = inputs[Aircraft.Wing.SPAN][0]
-        rate_span = (wingspan - width) / wingspan
-
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
-        )
-
-        bwb_input_station_dist = np.where(
-            bwb_input_station_dist <= 1.0,
-            bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-            bwb_input_station_dist + width / 2.0,  # else
-        )
-        bwb_input_station_dist[0] = 0.0
-        bwb_input_station_dist[1] = width / 2.0
-
-        inp_stations_mod = np.where(
-            bwb_input_station_dist > 1.0,
-            2 * bwb_input_station_dist / wingspan,
-            bwb_input_station_dist,
-        )
-        inp_stations_mod = np.array(inp_stations_mod)
-        # For BWB, always start from inp_stations_mod[1], not inp_stations_mod[0]
-        inp_stations_mod = inp_stations_mod[1:]
-
-        load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION']
-        load_path_sweep_mod = np.array(load_path_sweep[1:])
-
-        target_dy = (inp_stations_mod[-1] - inp_stations_mod[0]) / num_integration_stations
-        stations_per_section = np.floor(np.abs(np.diff(inp_stations_mod) / target_dy + 0.5))
-        stations_per_section[-1] += 1  # add one more point to the last section
-        integration_stations = np.empty(0, dtype=load_path_sweep.dtype)
-        sweep_int_stations = np.empty(0, dtype=load_path_sweep.dtype)
-
-        for i, val in enumerate(inp_stations_mod[1:]):
-            endpoint = i == len(inp_stations_mod) - 2
-            per_section = int(stations_per_section[i])
-            integration_stations = np.append(
-                integration_stations,
-                np.linspace(inp_stations_mod[i], val, per_section, endpoint=endpoint),
-            )
-            sweep_int_stations = np.append(
-                sweep_int_stations, load_path_sweep_mod[i] * np.ones(per_section)
-            )
-
-        csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
-        outputs['sum_csw'] = np.sum(csw)
