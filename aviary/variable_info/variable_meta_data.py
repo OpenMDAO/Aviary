@@ -2364,21 +2364,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.SCALE_PERFORMANCE,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': None,
-    },
-    desc='Toggle for enabling scaling of engine performance including thrust, fuel flow, '
-    'and electric power using Aircraft.Engine.SCALE_FACTOR',
-    option=True,
-    types=bool,
-    multivalue=True,
-    default_value=True,
-)
-
-add_meta_data(
     Aircraft.Engine.SCALED_SLS_THRUST,
     meta_data=_MetaData,
     historical_name={
