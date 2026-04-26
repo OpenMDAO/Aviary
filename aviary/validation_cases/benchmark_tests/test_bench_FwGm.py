@@ -27,7 +27,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
             local_phase_info,
-            max_iter=100,
+            max_iter=50,
             verbosity=0,
             optimizer='IPOPT',
         )
