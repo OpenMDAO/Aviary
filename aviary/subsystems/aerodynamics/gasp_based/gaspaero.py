@@ -372,7 +372,9 @@ class Xlifts(om.ExplicitComponent):
 
         delta = (static_margin + delta_cg) * h_tail_moment
 
-        # TODO handle xt < 0?
+        if h_tail_moment.real < 0.0:
+            if verbosity > Verbosity.BRIEF:
+                warnings.warn(f'Aircraft.HorizontalTail.MOMENT_RATIO is {h_tail_moment}.')
         xt = 1 / h_tail_moment
 
         art = AR * bbar**2 / sbar
@@ -766,6 +768,18 @@ class AeroGeom(om.ExplicitComponent):
             desc='SIWB: curve fitting correction factor for Oswald efficiency',
         )
 
+        # drag factors
+        add_aviary_input(self, Aircraft.Fuselage.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.HorizontalTail.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.INTERFERENCE_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Nacelle.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Nacelle.PYLON_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Strut.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.VerticalTail.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Wing.DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.EXCRESCENCE_DRAG_FACTOR)
+        add_aviary_input(self, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG)
+
         # outputs
         self.add_output('SA1', units='unitless', shape=nn, desc='SA1: drag param')
         self.add_output('SA2', units='unitless', shape=nn, desc='SA2: drag param')
@@ -886,6 +900,19 @@ class AeroGeom(om.ExplicitComponent):
             'drag_loss_due_to_shielded_wing_area',
         ]
         self.declare_partials('SA5', most_params, method='cs')
+        drag_factors = [
+            Aircraft.Fuselage.DRAG_FACTOR,
+            Aircraft.HorizontalTail.DRAG_FACTOR,
+            Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
+            Aircraft.Nacelle.DRAG_FACTOR,
+            Aircraft.Nacelle.PYLON_DRAG_FACTOR,
+            Aircraft.Strut.DRAG_FACTOR,
+            Aircraft.VerticalTail.DRAG_FACTOR,
+            Aircraft.Wing.DRAG_FACTOR,
+            Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
+            Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
+        ]
+        self.declare_partials('SA5', drag_factors, method='cs')
         self.declare_partials(
             'SA6', [Aircraft.Wing.FORM_FACTOR, Aircraft.Wing.AVERAGE_CHORD], method='cs'
         )
@@ -931,9 +958,25 @@ class AeroGeom(om.ExplicitComponent):
             feintwf,
             areashieldwf,
             siwb,
+            fcffc,
+            fcfhtc,
+            fckic,
+            fcfnc,
+            fpylnd,
+            fcfstrc,
+            fcfvtc,
+            fcfwc,
+            fexcrt,
+            pct_excr,
         ) = inputs.values()
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
+        cdfi = fcffc * cf
+        cdhti = fcfhtc * cf
+        cdni = fcfnc * cf
+        cdstrti = fcfstrc * cf 
+        cdvti = fcfvtc * cf
+        cdwi = fcfwc * cf
 
         t = cs.abs(np.tan(deg2rad(sweep_c4)))
         yale05 = (1 - taper_ratio) / (1 + taper_ratio)
@@ -979,28 +1022,30 @@ class AeroGeom(om.ExplicitComponent):
 
         # flat plate equivalent areas
         # GASP uses different values of cf for wing, nacelle, fuselage, etc.
-        fef = fus_SA * cf * ffre * ff_fus + fe_fus_inc
-        few = ff_wing * wing_area * cf * fwre
-        # TODO replace 2 with num_engines
-        fen = 2 * ff_nac * nacelle_area * cf * fnre
-        fevt = ff_vtail * vtail_area * cf * fvtre
-        feht = ff_htail * htail_area * cf * fhtre
-        festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cf * fstrtre
+        fef = fus_SA * cdfi * ffre * ff_fus + fe_fus_inc
+        few = ff_wing * wing_area * cdwi * fwre
+        # Replaced 2 with total_num_engines. Need to check. See issue #1080
+        total_num_engines = sum(self.options[Aircraft.Engine.NUM_ENGINES])
+        fen = fpylnd * total_num_engines * ff_nac * nacelle_area * cdni * fnre
+        fevt = ff_vtail * vtail_area * cdvti * fvtre
+        feht = ff_htail * htail_area * cdhti * fhtre
+        festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cdstrti * fstrtre
 
         # begin INTERFERENCE - get flat plate equivalent for wing-fuselage interference
         # wing profile drag coefficient
         cdw0 = few / wing_area
         # interference drag independent of shielded area
         feshieldwf = cdw0 * areashieldwf
-        feiwf = wing_fus_intf * (feintwf - feshieldwf)
+        feiwf = fckic * (wing_fus_intf * (feintwf - feshieldwf))
         # end INTERFERENCE
 
-        # total flat plate equivalent area
-        # In GASP, nacelle is excluded.
-        fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area
+        # Excrescence Drag
+        feexcr = fexcrt * pct_excr * (few + fef + fevt + feht + fen + festrt)
 
-        # wfob = cabin_width / wingspan
-        # siwb = 1 - 0.0088 * wfob - 1.7364 * wfob**2 - 2.303 * wfob**3 + 6.0606 * wfob**4
+        # total flat plate equivalent area
+        # In GASP, nacelle is excluded. It's kept here because nacelle dimension is 
+        # done in premission and hence does not size.
+        fe = few + fef + fevt + feht + fen + feiwf + festrt + cd0_inc * wing_area + feexcr
 
         # wing-free profile drag coefficient
         cdpo = (fe - few) / wing_area
@@ -1301,6 +1346,8 @@ class DragCoef(om.ExplicitComponent):
         cd0 = SA5 + SA6 * cf
 
         # induced drag
+        # fsa7c is not applied to SA7 here based on GASP logic.
+        # Hopefully dCL_flaps_coef and CDI_factor cover the “FSA7C” correction.
         cdi = SA7 * (CL - dCL_flaps_coef * dCL_flaps_model) ** 2 / CDI_factor
 
         # ground effects - direct increment to CD
@@ -1339,6 +1386,7 @@ class DragCoefClean(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, units='unitless')
         add_aviary_input(self, Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, units='unitless')
+        add_aviary_input(self, Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR, units='unitless')
 
         # from aero setup
         self.add_input(
@@ -1365,7 +1413,14 @@ class DragCoefClean(om.ExplicitComponent):
             cols=ar,
             method='cs',
         )
-        self.declare_partials('CD', [Aircraft.Design.DRAG_DIVERGENCE_SHIFT], method='cs')
+        self.declare_partials(
+            'CD',
+            [
+                Aircraft.Design.DRAG_DIVERGENCE_SHIFT,
+                Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR,
+            ],
+            method='cs',
+        )
 
     def compute(self, inputs, outputs):
         (
@@ -1376,6 +1431,7 @@ class DragCoefClean(om.ExplicitComponent):
             supersonic_factor,
             lift_factor,
             zero_lift_factor,
+            fcmpc,
             cf,
             SA1,
             SA2,
@@ -1398,7 +1454,7 @@ class DragCoefClean(om.ExplicitComponent):
         # induced drag
         cdi = SA7 * CL**2
 
-        CD = cd0 * zero_lift_factor + cdi * lift_factor + delcdm
+        CD = cd0 * zero_lift_factor + cdi * lift_factor + fcmpc * delcdm
 
         # scale drag
         idx_sup = np.where(mach >= 1.0)

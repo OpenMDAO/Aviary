@@ -24,13 +24,13 @@ class TestOffDesign(TwoDOFTestCase):
     """
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_off_design_IPOPT(self):
+    def bench_test_off_design_IPOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -46,7 +46,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_fallout.check_and_preprocess_inputs()
 
         prob_fallout.build_model()
-        prob_fallout.add_driver('IPOPT', max_iter=100)
+        prob_fallout.add_driver('IPOPT', max_iter=50)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
@@ -57,7 +57,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -71,7 +71,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
-        prob_alternate.add_driver('IPOPT', max_iter=100)
+        prob_alternate.add_driver('IPOPT', max_iter=50)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
@@ -83,13 +83,13 @@ class TestOffDesign(TwoDOFTestCase):
         assert_near_equal(alternate_mass, self.sized_mass, tolerance=0.02)
 
     @require_pyoptsparse(optimizer='SNOPT')
-    def test_off_design_SNOPT(self):
+    def bench_test_off_design_SNOPT(self):
         # Fallout Mission
         prob_fallout = av.AviaryProblem()
         prob_fallout.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
 
         prob_fallout.problem_type = ProblemType.FALLOUT
@@ -101,7 +101,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_fallout.check_and_preprocess_inputs()
         prob_fallout.build_model()
-        prob_fallout.add_driver('SNOPT', max_iter=100)
+        prob_fallout.add_driver('SNOPT', max_iter=50)
         prob_fallout.add_design_variables()
         prob_fallout.add_objective()
         prob_fallout.setup()
@@ -112,7 +112,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_alternate.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
         prob_alternate.problem_type = ProblemType.ALTERNATE
         prob_alternate.aviary_inputs.set_val(
@@ -126,7 +126,7 @@ class TestOffDesign(TwoDOFTestCase):
 
         prob_alternate.check_and_preprocess_inputs()
         prob_alternate.build_model()
-        prob_alternate.add_driver('SNOPT', max_iter=100)
+        prob_alternate.add_driver('SNOPT', max_iter=50)
         prob_alternate.add_design_variables()
         prob_alternate.add_objective()
         prob_alternate.setup()
@@ -142,5 +142,5 @@ if __name__ == '__main__':
     unittest.main()
     # test = TestOffDesign()
     # test.setUp()
-    # test.test_off_design_SNOPT()
-    # test.test_off_design_IPOPT()
+    # test.bench_test_off_design_SNOPT()
+    # test.bench_test_off_design_IPOPT()
