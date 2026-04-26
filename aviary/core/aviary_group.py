@@ -106,6 +106,23 @@ class AviaryGroup(om.Group):
             # Under MPI, promotion info only lives on rank 0, so broadcast.
             all_prom_inputs = self.comm.bcast(all_prom_inputs, root=0)
 
+        # Find all variables that are shape_by_conn so we don't set their shape with a stale value
+        # from the default metadata. We can only find these on the next level down because
+        # aviary_group's setup is not complete until after configure.
+        sbc_vars = []
+        for sub in self.system_iter(recurse=False, typ=om.Group):
+            pr2abs = sub._resolver.prom2abs_iter('input')
+            sub_inputs = [
+                (k, v[0]) for k, v in pr2abs if k.startswith('aircraft') or k.startswith('mission')
+            ]
+            abs2meta = sub._var_abs2meta['input']
+
+            for data in sub_inputs:
+                prom_name, abs_name = data
+                meta = abs2meta[abs_name]
+                if meta.get('shape_by_conn') is True:
+                    sbc_vars.append(prom_name)
+
         for key in aviary_metadata:
             if ':' not in key or key.startswith('dynamic:'):
                 continue
@@ -127,7 +144,12 @@ class AviaryGroup(om.Group):
                     # optional, but no default value
                     continue
 
-            self.set_input_defaults(key, val=val, units=units)
+            kwargs = {'units': units}
+            if key not in sbc_vars:
+                # Default val if var doesn't use shape_by_conn.
+                kwargs['val'] = val
+
+            self.set_input_defaults(key, **kwargs)
 
         # try to get all the possible EOMs from the Enums rather than specifically calling the names here
         # This will require some modifications to the enums
@@ -573,6 +595,22 @@ class AviaryGroup(om.Group):
         if self.pre_mission_info['include_takeoff']:
             self.configurator.add_takeoff_systems(self)
 
+        # Calculate Mission.TOTAL_FUEL
+        pre_mission.add_subsystem(
+            'total_fuel_mass_comp',
+            om.ExecComp(
+                'total_fuel_mass = gross_mass - zero_fuel_mass',
+                total_fuel_mass={'units': 'lbm'},
+                gross_mass={'units': 'lbm'},
+                zero_fuel_mass={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('gross_mass', Mission.GROSS_MASS),
+                ('zero_fuel_mass', Mission.ZERO_FUEL_MASS),
+            ],
+            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL)],
+        )
+
     def _add_premission_external_subsystem_masses(self):
         """
         This private method adds a mass component that captures external subsystem masses for use in
@@ -831,19 +869,17 @@ class AviaryGroup(om.Group):
                 'before add_post_mission_systems().'
             )
 
-        # Fuel burn in regular phases
-        ecomp = om.ExecComp(
-            'fuel_burned = initial_mass - mass_final',
-            # TODO: Fix to include any payloads dropped off during the mission
-            # We execute a similar calculaton a second time when calculating Mission.RESERVE_FUEL_MARGIN
-            initial_mass={'units': 'lbm'},
-            mass_final={'units': 'lbm'},
-            fuel_burned={'units': 'lbm'},
-        )
-
+        # Fuel burn in taxi + takeoff + regular phases
         post_mission.add_subsystem(
             'fuel_burned',
-            ecomp,
+            om.ExecComp(
+                'fuel_burned = initial_mass - mass_final',
+                initial_mass={'units': 'lbm'},
+                mass_final={
+                    'units': 'lbm'
+                },  # this final mass already includes fuel burned in taxi and takeoff
+                fuel_burned={'units': 'lbm'},
+            ),
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
             promotes_outputs=[('fuel_burned', Mission.FUEL)],
         )
@@ -857,7 +893,7 @@ class AviaryGroup(om.Group):
         # Fuel burn in reserve phases
         if self.reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final',  # TODO: Fix to be different in cumulative fuel burn
+                'reserve_fuel_burned = initial_mass - mass_final',
                 initial_mass={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
@@ -884,26 +920,40 @@ class AviaryGroup(om.Group):
 
         self.add_fuel_reserve_component()
 
-        # TODO: need to add some sort of check that this value is less than the fuel capacity
-        # TODO: the overall_fuel variable is the burned fuel plus the reserve, but should
-        # also include the unused fuel, and the hierarchy variable name should be
-        # more clear
-
-        ecomp = om.ExecComp(
-            'overall_fuel = fuel_burned + reserve_fuel',
-            overall_fuel={'units': 'lbm', 'shape': 1},
-            fuel_burned={'units': 'lbm'},  # from regular_phases only
-            reserve_fuel={'units': 'lbm', 'shape': 1},
-        )
+        # Ensure that the usable fuel loaded onto the aircraft is greater or equal to the mission fuel + reserve fuel
+        # The aircraft will naturally try to mimize 'total_fuel_mass_constraint' so it's not carrying extra unnecessary fuel
         post_mission.add_subsystem(
-            'fuel_calc',
-            ecomp,
+            'total_fuel_mass_con',
+            om.ExecComp(
+                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel',
+                total_fuel_mass_constraint={'units': 'lbm'},
+                total_fuel_mass={'units': 'lbm'},
+                mission_fuel_burned={'units': 'lbm'},
+                reserve_fuel={'units': 'lbm'},
+            ),
             promotes_inputs=[
-                ('fuel_burned', Mission.FUEL),
+                ('total_fuel_mass', Mission.TOTAL_FUEL),
+                ('mission_fuel_burned', Mission.FUEL),
                 ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
             ],
-            promotes_outputs=[('overall_fuel', Mission.TOTAL_FUEL)],
+            promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)],
         )
+        # Users can set the below constraint to lower=0.0, which will allow for more fuel on the aircraft than the mission
+        # requires. however, caution will need to be taken to ensure the ref is of the right magnitude otherwise the optimizer
+        # may not try as hard as needed to minimize this.
+        if Settings.EQUATIONS_OF_MOTION is SOLVED_2DOF:
+            # For missions where we are allowed to have more fuel in the tanks than we burn during the mission.
+            self.add_constraint(
+                Mission.Constraints.MASS_RESIDUAL,
+                lower=0.0,
+                ref=1e5,
+            )
+        else:
+            self.add_constraint(
+                Mission.Constraints.MASS_RESIDUAL,
+                equals=0.0,
+                ref=1e5,
+            )
 
         # If a target distance (or time) has been specified for this phase distance (or time) is
         # measured from the start of this phase to the end of this phase
@@ -972,27 +1022,6 @@ class AviaryGroup(om.Group):
                 )
 
         ecomp = om.ExecComp(
-            'mass_resid = operating_empty_mass + overall_fuel + payload_mass - initial_mass',
-            operating_empty_mass={'units': 'lbm'},
-            overall_fuel={'units': 'lbm'},
-            payload_mass={'units': 'lbm'},
-            initial_mass={'units': 'lbm'},
-            mass_resid={'units': 'lbm'},
-        )
-
-        post_mission.add_subsystem(
-            'mass_constraint',
-            ecomp,
-            promotes_inputs=[
-                ('operating_empty_mass', Mission.OPERATING_MASS),
-                ('overall_fuel', Mission.TOTAL_FUEL),
-                ('payload_mass', Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS),
-                ('initial_mass', Mission.GROSS_MASS),
-            ],
-            promotes_outputs=[('mass_resid', Mission.Constraints.MASS_RESIDUAL)],
-        )
-
-        ecomp = om.ExecComp(
             'excess_fuel_capacity = total_fuel_capacity - unusable_fuel - overall_fuel',
             total_fuel_capacity={'units': 'lbm'},
             unusable_fuel={'units': 'lbm'},
@@ -1038,6 +1067,21 @@ class AviaryGroup(om.Group):
                     'aircraft may not have enough space for fuel, so check the value of '
                     'Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
                 )
+
+        post_mission.add_subsystem(
+            'block_fuel_comp',
+            om.ExecComp(
+                'block_fuel = mission_fuel_burned + fuel_burned_taxi_in',
+                block_fuel={'units': 'lbm'},
+                mission_fuel_burned={'units': 'lbm'},
+                fuel_burned_taxi_in={'units': 'lbm'},
+            ),
+            promotes_inputs=[
+                ('mission_fuel_burned', Mission.FUEL),
+                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_TAXI_IN),
+            ],
+            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)],
+        )
 
     def link_phases(self, verbosity=None, comm=None):
         """
