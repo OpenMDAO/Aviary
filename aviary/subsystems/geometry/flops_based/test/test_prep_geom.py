@@ -98,6 +98,7 @@ class PrepGeomTest(unittest.TestCase):
             Aircraft.Engine.NUM_ENGINES,
             Aircraft.Propulsion.TOTAL_NUM_ENGINES,
             Aircraft.Engine.REFERENCE_SLS_THRUST,
+            Aircraft.Engine.NUM_WING_ENGINES,
         ]
 
         options = get_flops_data(case_name, preprocess=True, keys=keys)
