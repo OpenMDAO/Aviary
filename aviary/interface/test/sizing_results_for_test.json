@@ -408,14 +408,6 @@
         "<class 'list'>"
     ],
     [
-        "aircraft:engine:scale_performance",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
         "aircraft:engine:scaled_sls_thrust",
         [
             28928.1
