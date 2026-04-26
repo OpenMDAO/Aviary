@@ -281,7 +281,6 @@ def run_command_no_file_error(command: str, verbose=False):
     # Save the current directory
     original_cwd = os.getcwd()
 
-
     rc = subprocess.run(command.split(), capture_output=True, text=True)
     if rc.returncode:
         err, info = rc.stderr.split('\n')[-2].split(':', 1)
@@ -292,10 +291,6 @@ def run_command_no_file_error(command: str, verbose=False):
         else:
             print(rc.stderr)
             rc.check_returncode()
-
-
-
-
 
     # try:
     #     with tempfile.TemporaryDirectory() as tempdir:
