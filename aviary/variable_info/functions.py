@@ -600,7 +600,6 @@ def setup_model_options(
         # EngineDeck required options), so custom multiengine works
         opt_names = [
             Aircraft.Engine.Motor.DATA_FILE,
-            Aircraft.Engine.SCALE_PERFORMANCE,
             Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
             Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
             Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,

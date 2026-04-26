@@ -786,6 +786,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
     Aircraft.Fuselage.LENGTH,
     Aircraft.Fuselage.WETTED_AREA,
+    Aircraft.Fuselage.FORM_FACTOR,
     Aircraft.HorizontalTail.AREA,
     Aircraft.HorizontalTail.AVERAGE_CHORD,
     Aircraft.HorizontalTail.FORM_FACTOR,
