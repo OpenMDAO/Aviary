@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
@@ -53,7 +53,7 @@ jobs:
           testflo . --timeout=900 --testmatch=bench_test*
 
       - name: Checkout actions (again)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
