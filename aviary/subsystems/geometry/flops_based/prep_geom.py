@@ -1,14 +1,9 @@
 """
 Define utilities to prepare derived values of aircraft geometry for
 aerodynamics analysis.
-
-TODO: blended-wing-body support
-TODO: multiple engine model support
 """
 
-import numpy as np
 import openmdao.api as om
-from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,
@@ -24,6 +19,7 @@ from aviary.subsystems.geometry.flops_based.fuselage import (
     FuselagePrelim,
     SimpleCabinLayout,
 )
+from aviary.subsystems.geometry.flops_based.landing_gear import MainGearLength, NoseGearLength
 from aviary.subsystems.geometry.flops_based.wetted_area_total import WettedAreaGroup
 from aviary.subsystems.geometry.flops_based.wetted_area_total import TotalWettedArea
 from aviary.subsystems.geometry.flops_based.wing import WingPrelim
@@ -160,6 +156,20 @@ class PrepGeom(om.Group):
 
         self.add_subsystem(
             'total_wetted_area', TotalWettedArea(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
+        self.add_subsystem(
+            'main_landing_gear_length',
+            MainGearLength(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'nose_landing_gear_length',
+            NoseGearLength(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
 

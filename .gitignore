@@ -135,7 +135,6 @@ reports/
 aviary/reports/
 *.openmdao_out
 *.out
-*.png
 *.sql
 *.db
 *.pdf
