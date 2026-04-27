@@ -1,14 +1,9 @@
 """
 Define utilities to prepare derived values of aircraft geometry for
 aerodynamics analysis.
-
-TODO: blended-wing-body support
-TODO: multiple engine model support
 """
 
-import numpy as np
 import openmdao.api as om
-from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     BWBWingCharacteristicLength,

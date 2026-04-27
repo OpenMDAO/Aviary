@@ -41,7 +41,7 @@ GASP = LegacyCode.GASP
 def fortran_to_aviary(
     fortran_deck: str,
     legacy_code=None,
-    out_file=None,
+    output_file=None,
     force=False,
     verbosity=Verbosity.BRIEF,
 ):
@@ -75,11 +75,11 @@ def fortran_to_aviary(
         f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}'
     )
 
-    if out_file:
-        out_file = Path(out_file)
+    if output_file:
+        output_file = Path(output_file)
     else:
         name = fortran_deck.stem
-        out_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
+        output_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
 
     # create dictionary to convert legacy code variables to Aviary variables
     # key: variable name, value: either None or relevant historical_name
@@ -139,26 +139,26 @@ def fortran_to_aviary(
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
     vehicle_data['input_values'].set_val(Settings.AERODYNAMICS_METHOD, aero)
 
-    if not out_file.is_file():
+    if not output_file.is_file():
         # default outputted file to be in same directory as input
-        out_file = fortran_deck.parent / out_file
+        output_file = fortran_deck.parent / output_file
 
-    if out_file.is_file():
+    if output_file.is_file():
         if not force:
-            raise RuntimeError(f'{out_file} already exists. Choose a new name or enable --force')
+            raise RuntimeError(f'{output_file} already exists. Choose a new name or enable --force')
         elif verbosity >= Verbosity.BRIEF:
-            print(f'Overwriting existing file: {out_file.name}')
+            print(f'Overwriting existing file: {output_file.name}')
 
     else:
         # create any directories defined by the new filename if they don't already exist
-        out_file.parent.mkdir(parents=True, exist_ok=True)
+        output_file.parent.mkdir(parents=True, exist_ok=True)
         if verbosity >= Verbosity.VERBOSE:
-            print('Writing to:', out_file)
+            print('Writing to:', output_file)
 
     # TODO Use the existing utilities to write this input file? It will be much more
     #      human-readable
     # open the file in write mode
-    with open(out_file, 'w', newline='') as f:
+    with open(output_file, 'w', newline='') as f:
         writer = csv.writer(f)
         # Write header info and comments
         for comment in comments:
@@ -560,6 +560,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 'unitless'
         )[0]
         num_seat_abreast_economy = int(num_seat_abreast_economy)
+        if num_seat_abreast_economy == 0:
+            num_seat_abreast_economy = 6
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, [num_seat_abreast_economy]
         )
@@ -569,6 +571,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 'unitless'
                 )[0]
             )
+            if num_seat_abreast_first == 0:
+                num_seat_abreast_first = 4
             input_values.set_val(
                 Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, [num_seat_abreast_first]
             )
@@ -580,8 +584,43 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 'unitless'
                 )[0]
             )
+            if num_seat_abreast_business == 0:
+                num_seat_abreast_business = 5
             input_values.set_val(
                 Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, [num_seat_abreast_business]
+            )
+        except:
+            pass
+        try:
+            seat_pitch_business = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch')[0]
+            )
+            if seat_pitch_business == 0.0:
+                seat_pitch_business = 39.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, [seat_pitch_business], 'inch'
+            )
+        except:
+            pass
+        try:
+            seat_pitch_economy = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch')[0]
+            )
+            if seat_pitch_economy == 0.0:
+                seat_pitch_economy = 32.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, [seat_pitch_economy], 'inch'
+            )
+        except:
+            pass
+        try:
+            seat_pitch_first = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch')[0]
+            )
+            if seat_pitch_first == 0.0:
+                seat_pitch_first = 61.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, [seat_pitch_first], 'inch'
             )
         except:
             pass
@@ -771,8 +810,6 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.set_val(
                 Aircraft.Engine.NUM_FUSELAGE_ENGINES, [num_fuselage_engines], 'unitless'
             )
-            # BWB engine sizing algorithm does not use reference diameter
-            input_values.delete(Aircraft.Engine.REFERENCE_DIAMETER)
     else:
         input_values.set_val(Aircraft.Design.TYPE, 'transport')
     if Aircraft.Engine.TYPE in input_values:
@@ -1236,11 +1273,24 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
         (Aircraft.Fuselage.LENGTH, 'ft'),
         (Aircraft.Fuselage.MAX_WIDTH, 'ft'),
+        (Aircraft.Design.EMPTY_MASS, 'lbm'),
     ]
     for var in rem_list:
         try:
             val = input_values.get_val(var[0], var[1])[0]
             if val == 0.0:
+                input_values.delete(var[0])
+        except:
+            pass
+
+    # These variables should be removed if they are negative.
+    rem_list = [
+        (Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm'),
+    ]
+    for var in rem_list:
+        try:
+            val = input_values.get_val(var[0], var[1])[0]
+            if val < 0.0:
                 input_values.delete(var[0])
         except:
             pass
@@ -1395,14 +1445,14 @@ def _setup_F2A_parser(parser):
         help='Filename of vehicle input deck, including partial or complete path.',
     )
     parser.add_argument(
-        '-o',
-        '--out_file',
-        default=None,
+        'output_file',
+        type=str,
+        nargs='?',
         help='Filename for converted input deck, including partial or complete path.',
     )
     parser.add_argument(
-        '-l',
-        '--legacy_code',
+        '-f',
+        '--format',
         type=LegacyCode,
         help='Name of the legacy code the deck originated from',
         choices=set(LegacyCode),
@@ -1432,4 +1482,4 @@ def _exec_F2A(args, user_args):
     # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
-    fortran_to_aviary(filepath, args.legacy_code, args.out_file, args.force, verbosity)
+    fortran_to_aviary(filepath, args.format, args.output_file, args.force, verbosity)

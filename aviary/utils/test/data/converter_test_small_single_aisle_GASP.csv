@@ -15,7 +15,7 @@ aircraft:crew_and_payload:design:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:design:max_cargo_mass,8598.0,lbm
 aircraft:crew_and_payload:design:num_passengers,96,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_economy,4,unitless
-aircraft:crew_and_payload:design:seat_pitch_economy,31,inch
+aircraft:crew_and_payload:design:seat_pitch_economy,31.0,inch
 aircraft:crew_and_payload:mass_per_passenger_with_bags,210.0,lbm
 aircraft:crew_and_payload:passenger_service_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:uld_mass_per_passenger,0.11,lbm
@@ -43,7 +43,6 @@ aircraft:engine:mass_specific,0.2153,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1.0,unitless
 aircraft:engine:pylon_factor,0.6,unitless
-aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_sls_thrust,28690.0,lbf
 aircraft:engine:scaled_sls_thrust,23800.0,lbf
 aircraft:engine:type,7,unitless
