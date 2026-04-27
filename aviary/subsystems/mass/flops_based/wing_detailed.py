@@ -1,9 +1,11 @@
+import warnings
 import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
+from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class DetailedWingBendingFact(om.ExplicitComponent):
@@ -289,6 +291,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
         add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         input_station_distribution = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
@@ -336,6 +339,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
         num_wing_engines = self.options[Aircraft.Engine.NUM_WING_ENGINES]
         num_engine_type = len(num_wing_engines)
@@ -380,6 +384,13 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         ar = inputs[Aircraft.Wing.ASPECT_RATIO]
         arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
+        if arref[0] == 0:  # this could happen if Aircraft.Wing.ASPECT_RATIO is not an input
+            arref[0] = ar[0]
+            if verbosity >= Verbosity.BRIEF:
+                warnings.warn(
+                    'Aircraft.Wing.ASPECT_RATIO_REFERENCE is not provided. '
+                    'Assume it is the same as Aircraft.Wing.ASPECT_RATIO.'
+                )
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
         for x in chord:
@@ -389,11 +400,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                 chord_mod.append(x * arref[0] / ar[0])
         chord_mod = np.array(chord_mod)
 
-        engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
-        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
-        # NOTE pod mass assumed the same for wing/non-wing mounted engines, only using
-        #      wing mounted pods here
-        pod_mass = inputs[Aircraft.Engine.POD_MASS]
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
 
@@ -403,7 +409,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord_mod = []
         for x in thickness_to_chord:
             thickness_to_chord_mod.append(x * tc[0] / tcref[0])
-        thickness_to_chord_mod = np.array(thickness_to_chord_mod)
+        thickness_to_chord_mod = np.array(thickness_to_chord_mod)[1:]
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
@@ -475,16 +481,18 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         )
 
         load_path_length = np.flip(
-            np.append(np.zeros(1, chord.dtype), np.cumsum(np.flip(del_load)[:-1]))
+            np.append(np.zeros(1, chord.dtype), np.cumsum(np.flip(del_load)))
         )
         csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
-        emi = (del_moment + dy * load_path_length) * csw
-        # em = np.sum(emi)
+        emi = (del_moment + dy * load_path_length[1:]) * csw
+        em = np.sum(emi)
 
         tc_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
         )
-        tc_int_stations = tc_interp.evaluate_spline(thickness_to_chord, compute_derivative=False)
+        tc_int_stations = tc_interp.evaluate_spline(
+            thickness_to_chord_mod, compute_derivative=False
+        )
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
 
@@ -515,6 +523,11 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
 
         outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt
 
+        engine_locations = inputs[Aircraft.Engine.WING_LOCATIONS]
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
+        # NOTE pod mass assumed the same for wing/non-wing mounted engines, only using
+        #      wing mounted pods here
+        pod_mass = inputs[Aircraft.Engine.POD_MASS]
         if np.sum(num_wing_engines) > 0:
             # TODO: the rest is not checked.
             inertia_factor = np.zeros(num_engine_type, dtype=chord.dtype)

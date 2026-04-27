@@ -244,12 +244,7 @@ class EmpennageSize(om.Group):
         add_aviary_option(self, Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF)
 
     def setup(self):
-        # TODO: For cruciform/T-tail configurations, GASP checks to make sure the V tail
-        # chord at the H tail location is greater than the H tail root chord. If not, it
-        # overrides the H tail taper ratio so they match. If that leads to a H tail root
-        # chord greater than the H tail tip chord, it sets the taper ratio to 1 and
-        # overrides the H tail aspect ratio. H tail taper ratio is used in landing gear
-        # mass calculation.
+        # For cruciform/T-tail configurations, see issue #1089
 
         if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
             self.add_subsystem(

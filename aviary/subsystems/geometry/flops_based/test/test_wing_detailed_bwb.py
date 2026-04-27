@@ -84,9 +84,8 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=80.220756073526772)
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=112.3001936860821)
-        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
-        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
         prob.run_model()
 
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
@@ -136,6 +135,55 @@ class BWBUpdateDetailedWingDistTest(unittest.TestCase):
         # partial_data = self.prob.check_partials(out_stream=None, method='cs')
         # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
 
+    def test_case2(self):
+        """bwb300_baseline"""
+        prob = self.prob
+        options = self.aviary_options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        options.set_val(
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
+            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            units='unitless',
+        )  # ETAW
+        prob.model.add_subsystem(
+            'dist', BWBUpdateDetailedWingDist(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+            val=[-1.0, 48.25, 33.20, 18.97, 14.19, 10.20, 3.220],
+        )  # CHD
+        prob.set_val(
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            val=[-1.0, 0.125, 0.125, 0.076, 0.076, 0.076, 0.06],
+        )  # TOC
+        prob.set_val(
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            val=[0.0, 0.0, 0.0, 17.0, 17.0, 17.0],
+        )  # SWL
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=49.77182929)
+        prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=68.43)
+        prob.set_val(Aircraft.Fuselage.LENGTH, val=116.57609631)
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.1792)
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, 38.5)
+        prob.run_model()
+
+        out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')
+        exp1 = [116.57609631, 55.0, 33.2, 18.97, 14.19, 10.2, 2.36127568]
+        assert_near_equal(out1, exp1, tolerance=1e-8)
+
+        out2 = prob.get_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION')
+        exp2 = [0.1792, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06]
+        assert_near_equal(out2, exp2, tolerance=1e-10)
+
+        out3 = prob.get_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION')
+        exp3 = [0.0, 0.0, 0.0, 17.0, 17.0, 17.0]
+        assert_near_equal(out3, exp3, tolerance=1e-10)
+
+        # partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        # assert_check_partials(partial_data, atol=1e-9, rtol=1e-8)
+
 
 @use_tempdirs
 class BWBComputeDetailedWingDistTest(unittest.TestCase):
@@ -168,6 +216,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Fuselage.LENGTH, val=137.5)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
+        prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11)
         prob.set_val(Aircraft.Wing.ROOT_CHORD, 63.96)
         prob.set_val(Aircraft.Wing.SWEEP, 35.7, units='deg')
         prob.run_model()
@@ -278,6 +327,39 @@ class BWBWingPrelimTest(unittest.TestCase):
         )
         assert_near_equal(
             prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.46761341784858923, tolerance=1e-9
+        )
+
+    def test_case3(self):
+        """Provided detailed wing case for bwb300_baseline"""
+        prob = self.prob
+        self.aviary_options = AviaryValues()
+        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        self.aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
+            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            units='unitless',
+        )
+        prob.model.add_subsystem(
+            'dist', BWBWingPrelim(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, self.aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=49.77182929)
+        prob.set_val(Aircraft.Wing.GLOVE_AND_BAT, val=1230.5)
+        prob.set_val(Aircraft.Wing.SPAN, val=186.631829293424)
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
+            val=[116.57609631, 55.0, 33.2, 18.97, 14.19, 10.2, 2.36127568],
+        )
+        prob.run_model()
+
+        assert_near_equal(prob.get_val(Aircraft.Wing.AREA), 8421.7146805052689, tolerance=1e-9)
+        assert_near_equal(prob.get_val(Aircraft.Wing.ASPECT_RATIO), 4.84361005, tolerance=1e-9)
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE), 4.84361005, tolerance=1e-9
+        )
+        assert_near_equal(
+            prob.get_val(Aircraft.Wing.LOAD_FRACTION), 0.53775151869737092, tolerance=1e-9
         )
 
 

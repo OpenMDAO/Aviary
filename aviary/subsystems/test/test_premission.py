@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.aircraft.large_single_aisle_1.V3_bug_fixed_IO import (
     V3_bug_fixed_non_metadata,
@@ -41,6 +42,7 @@ def setup_options(priority_data, backfill_data):
     return full_data
 
 
+@use_tempdirs
 class PreMissionTestCase(unittest.TestCase):
     def setUp(self):
         # set up inputs such that GASP inputs take priority
