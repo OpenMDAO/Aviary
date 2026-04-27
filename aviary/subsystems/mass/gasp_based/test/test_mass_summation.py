@@ -16,6 +16,7 @@ from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class MassSummationTestCase1(unittest.TestCase):
     """
     This is the large single aisle 1 V3 bug fixed test case.
@@ -45,6 +46,7 @@ class MassSummationTestCase1(unittest.TestCase):
         input_options.delete(Aircraft.Avionics.MASS)
         input_options.delete(Aircraft.Design.EMERGENCY_EQUIPMENT_MASS)
         input_options.delete(Aircraft.Furnishings.MASS)
+        input_options.delete(Aircraft.Engine.SCALE_FACTOR)
 
         for key, (val, units) in get_items(input_options):
             if not is_option(key):
@@ -52,6 +54,8 @@ class MassSummationTestCase1(unittest.TestCase):
 
         for key, (val, units) in get_items(V3_bug_fixed_non_metadata):
             self.prob.model.set_input_defaults(key, val=val, units=units)
+
+        input_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 
         self.prob.model.set_input_defaults(
             Aircraft.Design.MAX_STRUCTURAL_SPEED, val=402.5, units='mi/h'
@@ -116,6 +120,7 @@ class MassSummationTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class MassSummationTestCase2(unittest.TestCase):
     """
     This is the large single aisle 1 V3.5 test case.
@@ -142,6 +147,8 @@ class MassSummationTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -217,11 +224,9 @@ class MassSummationTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -467,6 +472,7 @@ class MassSummationTestCase2(unittest.TestCase):
         assert_near_equal(self.prob[Mission.ZERO_FUEL_MASS], zero_fuel, tol)
 
 
+@use_tempdirs
 class MassSummationTestCase3(unittest.TestCase):
     """
     This is thelarge single aisle 1V3.6 test case with a fuel margin of 0%, a wing loading of 128 psf, and a SLS thrust of 29500 lbf
@@ -492,6 +498,8 @@ class MassSummationTestCase3(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -567,11 +575,9 @@ class MassSummationTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -809,6 +815,7 @@ class MassSummationTestCase3(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class MassSummationTestCase4(unittest.TestCase):
     """
     This is the large single aisle 1V3.6 test case with a fuel margin of 10%, a wing loading of 128 psf, and a SLS thrust of 29500 lbf
@@ -834,6 +841,8 @@ class MassSummationTestCase4(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -909,11 +918,9 @@ class MassSummationTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -1159,6 +1166,7 @@ class MassSummationTestCase4(unittest.TestCase):
         assert_check_partials(partial_data, atol=2e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class MassSummationTestCase5(unittest.TestCase):
     """
     This is thelarge single aisle 1V3.6 test case with a fuel margin of 0%, a wing loading of 150 psf, and a SLS thrust of 29500 lbf
@@ -1184,6 +1192,8 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1259,11 +1269,9 @@ class MassSummationTestCase5(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -1504,6 +1512,7 @@ class MassSummationTestCase5(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class MassSummationTestCase6(unittest.TestCase):
     """
     This is thelarge single aisle 1V3.6 test case with a fuel margin of 10%, a wing loading of 150 psf, and a SLS thrust of 29500 lbf
@@ -1529,6 +1538,8 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1604,11 +1615,9 @@ class MassSummationTestCase6(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28690, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.02823, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -1849,6 +1858,7 @@ class MassSummationTestCase6(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
 
 
+@use_tempdirs
 class MassSummationTestCase7(unittest.TestCase):
     """
     This is the Advanced Tube and Wing V3.6 test case.
@@ -1875,6 +1885,8 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.165, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.0003482075, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1953,11 +1965,9 @@ class MassSummationTestCase7(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 7.36, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.594, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2095, units='unitless'
         )
@@ -2205,10 +2215,10 @@ class MassSummationTestCase7(unittest.TestCase):
         assert_near_equal(self.prob['max_wingfuel_mass'], 33892.8, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
         assert_near_equal(
-            self.prob['extra_fuel_volume'], 24.96997827, tol
+            self.prob['extra_fuel_volume'], 24.8957623, tol
         )  # note: higher tol because slightly different from GASP value, likely numerical issues,  #modified from GASP value to account for updated crew mass. GASP value is 17.9
         assert_near_equal(
-            self.prob['max_extra_fuel_mass'], 1249.05434887, tol
+            self.prob['max_extra_fuel_mass'], 1245.34189936, tol
         )  # note: higher tol because slightly different from GASP value, likely numerical issues,  #modified from GASP value to account for updated crew mass. GASP value is 897.2
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX], 677.554, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 677.554, tol)
@@ -2217,6 +2227,7 @@ class MassSummationTestCase7(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
 
 
+@use_tempdirs
 class MassSummationTestCase8(unittest.TestCase):
     """
     This is the Trans-sonic Truss-Braced Wing V3.6 test case
@@ -2246,6 +2257,8 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000474, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2277,11 +2290,9 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 7.642, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620.0, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 1.35255, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2095, units='unitless'
         )
@@ -2343,7 +2354,6 @@ class MassSummationTestCase8(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Engine.SCALED_SLS_THRUST, val=21160.0, units='lbf'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.73934, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.5625, units='unitless'
         )
@@ -2588,6 +2598,7 @@ class MassSummationTestCase8(unittest.TestCase):
         assert_check_partials(partial_data, atol=3e-9, rtol=6e-11)
 
 
+@use_tempdirs
 class MassSummationTestCase9(unittest.TestCase):
     """
     This is the electrified Trans-sonic Truss-Braced Wing V3.6 test case
@@ -2617,6 +2628,8 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000557, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -2648,11 +2661,9 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 8.425, units='ft')
         # self.prob.model.set_input_defaults(
         #     Aircraft.Engine.REFERENCE_SLS_THRUST, 28620, units='lbf'
         # )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.73934, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2095, units='unitless'
         )
@@ -2714,7 +2725,6 @@ class MassSummationTestCase9(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Engine.SCALED_SLS_THRUST, val=23750.0, units='lbf'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, 0.82984, units='unitless')
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, 0.5936, units='unitless'
         )
