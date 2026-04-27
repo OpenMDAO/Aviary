@@ -3,11 +3,12 @@ import unittest
 import importlib.util
 
 from aviary.utils.aviary_inputs_to_csv import save_to_csv_file
+from aviary.utils.functions import get_path
 
 from openmdao.utils.testing_utils import use_tempdirs
 
 
-# @use_tempdirs
+@use_tempdirs
 class PythonModelToCSV(unittest.TestCase):
     def find_all_inputs(self, directory_path):
         """
@@ -17,26 +18,38 @@ class PythonModelToCSV(unittest.TestCase):
         # variable storing all inputs and their original module names
         collected_inputs = {}
 
+        python_inputs = {
+            'large_single_aisle_1_FLOPS_data.py',
+            'large_single_aisle_2_FLOPS_data.py',
+            'large_single_aisle_2_altwt_FLOPS_data.py',
+            'large_single_aisle_2_detailwing_FLOPS_data.py',
+            'multi_engine_single_aisle_data.py',
+        }
+
         # recursively walk through all the files in the specified directory
-        for subdir, dirs, files in os.walk(directory_path):
-            for file in files:
-                # check for appropriate python files and generate the spec for the loader to use
-                if file.endswith('.py') and not file.startswith('__'):
-                    module_name = file[:-3]
-                    file_path = os.path.join(subdir, file)
-                    spec = importlib.util.spec_from_file_location(module_name, file_path)
+        # for subdir, dirs, files in os.walk(directory_path):
+        #    for file in files:
+        # check for appropriate python files and generate the spec for the loader to use
+        #        if file.endswith('.py') and not file.startswith('__'):
+        #            module_name = file[:-3]
+        #            file_path = os.path.join(subdir, file)
 
-                    # import the module from the spec and execute it to load its material
-                    if spec and spec.loader:
-                        module = importlib.util.module_from_spec(spec)
-                        spec.loader.exec_module(module)
+        for file in python_inputs:
+            module_name = file[:-3]
+            file_path = get_path(file)
+            spec = importlib.util.spec_from_file_location(module_name, file_path)
 
-                        # check if the module has a variable called 'inputs' & add it to the output of the function
-                        if hasattr(module, 'inputs'):
-                            collected_inputs[module_name] = module.inputs
-                        else:
-                            # Probably can remove this to clean up terminal line spam?
-                            print('No inputs directory found in ' + file)
+            # import the module from the spec and execute it to load its material
+            if spec and spec.loader:
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+
+                # check if the module has a variable called 'inputs' & add it to the output of the function
+                if hasattr(module, 'inputs'):
+                    collected_inputs[module_name] = module.inputs
+                else:
+                    # Probably can remove this to clean up terminal line spam?
+                    print('No inputs directory found in ' + file)
 
         return collected_inputs
 
@@ -50,8 +63,11 @@ class PythonModelToCSV(unittest.TestCase):
         """
         filename = filepath.split('.')[0] + '.csv'
 
+        filename_path = get_path(filename)
+        validation_data_path = get_path(validation_data)
+
         # Open the converted and validation files
-        with open(filename, 'r') as f_in, open(validation_data, 'r') as expected:
+        with open(filename, 'r') as f_in, open(validation_data_path, 'r') as expected:
             for line in f_in:
                 if any(s in line for s in skip_list):
                     # expected.readline()
@@ -89,10 +105,16 @@ class PythonModelToCSV(unittest.TestCase):
 
         # Need to find a way to make this flexible and not hardcode existing CSVs in here
         existing_csvs = {
-            'advanced_single_aisle_data.csv': base_path
-            + 'advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
-            'bwb_detailed_FLOPS_data.csv': base_path + 'blended_wing_body/bwb_detailed_FLOPS.csv',
-            'bwb_simple_FLOPS_data.csv': base_path + 'blended_wing_body/bwb_simple_FLOPS.csv',
+            'large_single_aisle_1_FLOPS_data_test.csv': base_path
+            + 'large_single_aisle_1/large_single_aisle_1_FLOPS_data.csv',
+            'large_single_aisle_2_FLOPS_data_test.csv': base_path
+            + 'large_single_aisle_2/large_single_aisle_2_FLOPS_data.csv',
+            'large_single_aisle_2_altwt_FLOPS_data_test.csv': base_path
+            + 'large_single_aisle_2/large_single_aisle_2_altwt_FLOPS_data.csv',
+            'large_single_aisle_2_detailwing_FLOPS_data_test.csv': base_path
+            + 'large_single_aisle_2/large_single_aisle_2_detailwing_FLOPS_data.csv',
+            'multi_engine_single_aisle_data_test.csv': base_path
+            + 'multi_engine_single_aisle/multi_engine_single_aisle_data.csv',
         }
 
         # Finding all 'inputs' through this function call
@@ -101,7 +123,7 @@ class PythonModelToCSV(unittest.TestCase):
         excluded_lines = ['#', 'engine:data_file']
 
         for mod_name, input_data in python_file_inputs.items():
-            csv_filename = mod_name + '.csv'
+            csv_filename = mod_name + '_test.csv'
             # Function call to generate CSVs from the AviaryInputs
             save_to_csv_file(csv_filename, input_data)
 
