@@ -330,6 +330,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.BWB.MAX_BAY_WIDTH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.BAYWMX',
+        'LEAPS1': None,
+    },
+    units='ft',
+    desc='maximum bay width',
+    types=float,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.MAX_NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -1053,7 +1068,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR'},
     units='unitless',
-    desc='Number of business class passengers abreast',
+    desc='Number of business class seats abreast.',
     types=int,
     option=True,
     default_value=5,
@@ -1064,7 +1079,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR'},
     units='unitless',
-    desc='Number of economy class passengers abreast',
+    desc='Number of economy class seats abreast.',
     types=int,
     option=True,
     default_value=6,
@@ -1075,7 +1090,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR'},
     units='unitless',
-    desc='Number of first class passengers abreast',
+    desc='Number of first class seats abreast.',
     types=int,
     option=True,
     default_value=4,
@@ -1086,9 +1101,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
-    desc='pitch of the business class seats',
+    desc='pitch of the business class seats.',
     option=True,
-    default_value=0.0,
+    default_value=39.0,
 )
 
 add_meta_data(
@@ -1096,9 +1111,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
-    desc='pitch of the economy class seats',
+    desc='pitch of the economy class seats.',
     option=True,
-    default_value=0.0,
+    default_value=32.0,
 )
 
 add_meta_data(
@@ -1106,9 +1121,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
-    desc='pitch of the first class seats',
+    desc='pitch of the first class seats.',
     option=True,
-    default_value=0.0,
+    default_value=61.0,
 )
 
 #  _____                 _
@@ -3530,6 +3545,15 @@ add_meta_data(
     units='inch',
     desc='width of the economy class seats',
     option=True,
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.TCSOB', 'LEAPS1': None},
+    units='unitless',
+    desc='fuselage thickness/chord ratio at side of body',
     default_value=0.0,
 )
 

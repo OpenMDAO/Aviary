@@ -18,6 +18,7 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft, Mission
 
+
 fin_test_data = {}
 fin_test_data['1'] = AviaryValues(
     {
