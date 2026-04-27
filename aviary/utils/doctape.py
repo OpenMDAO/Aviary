@@ -510,7 +510,9 @@ def get_function_names(file_path) -> set:
     return set(function_names)
 
 
-def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True):
+def glue_actions(
+    cmd, curr_glued=None, glue_default=False, glue_choices=False, md_code=True, command_map=None
+):
     """
     Glue all Aviary CLI options.
 
@@ -522,11 +524,18 @@ def glue_actions(cmd, curr_glued=None, glue_default=False, glue_choices=False, m
         the parameters that have been glued
     glue_default: boolean
         flag whether the default values should be glued
+    command_map: boolean
+        flag whether the default values should be glued
     """
+    if command_map is None:
+        from aviary.interface.cmd_entry_points import _command_map
+
+        command_map = _command_map
     if curr_glued is None:
         curr_glued = []
     parser = argparse.ArgumentParser()
-    _command_map[cmd][0](parser)
+    command_map[cmd][0](parser)
+
     actions = [*parser._get_optional_actions(), *parser._get_positional_actions()]
     for action in actions:
         opt_list = action.option_strings

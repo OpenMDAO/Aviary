@@ -1,7 +1,10 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
+from importlib.util import spec_from_file_location, module_from_spec
+import os
+from pathlib import Path
+import subprocess
 import sys
-from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 from aviary.utils.functions import get_path
@@ -20,6 +23,7 @@ def run_aviary(
     make_plots=True,
     phase_info_parameterization=None,
     verbosity=None,
+    real_time_plotting=False,
 ):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
@@ -112,19 +116,30 @@ def run_aviary(
         run_driver=run_driver,
         make_plots=make_plots,
         verbosity=verbosity,
+        real_time_plotting=real_time_plotting,
     )
 
     return prob
 
 
 def run_aviary_cmd(
-    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF
+    input_deck,
+    optimizer='IPOPT',
+    phase_info=None,
+    max_iter=50,
+    verbosity=Verbosity.BRIEF,
+    real_time_plotting=False,
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
     usage: aviary run_mission [input_deck] [opt_args].
     """
-    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity)}
+    kwargs = {
+        'max_iter': max_iter,
+        'optimizer': optimizer,
+        'verbosity': Verbosity(verbosity),
+        'real_time_plotting': real_time_plotting,
+    }
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
@@ -167,6 +182,11 @@ def _setup_run_aviary_parser(parser):
         help='verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug',
         choices=(0, 1, 2, 3),
     )
+    parser.add_argument(
+        '--rtplot',
+        action='store_true',
+        help='Enable realtime plotting option',
+    )
 
 
 def _exec_run_aviary(args, user_args):
@@ -183,4 +203,5 @@ def _exec_run_aviary(args, user_args):
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
+        real_time_plotting=args.rtplot,
     )
