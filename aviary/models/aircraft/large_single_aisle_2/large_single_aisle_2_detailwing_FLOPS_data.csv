@@ -38,7 +38,7 @@ aircraft:design:zero_lift_drag_coeff_factor,0.945,unitless
 aircraft:electrical:mass_scaler,1.0,unitless
 aircraft:engine:additional_mass_fraction,0.0,unitless
 aircraft:engine:constant_fuel_consumption,0.0,lbm/h
-aircraft:engine:data_file,/home/nperreau/workspace/Aviary/aviary/models/engines/turbofan_24k_1.csv,unitless
+aircraft:engine:data_file,aviary/models/engines/turbofan_24k_1.csv,unitless
 aircraft:engine:flight_idle_max_fraction,1.0,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:flight_idle_thrust_fraction,0.0,unitless

@@ -16,7 +16,7 @@ inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.0)  # EWMARG
 inputs.set_val(Aircraft.Design.GROSS_MASS, 874099.0, 'lbm')  # DGW
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)  # FCDI
-inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 0.7)  # FCDSUB
+inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUB
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)  # FCDSUP
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)  # FCDO
 inputs.set_val(Aircraft.Design.TYPE, AircraftTypes.BLENDED_WING_BODY)
@@ -68,7 +68,7 @@ inputs.set_val(Aircraft.CrewPayload.NUM_FLIGHT_CREW, 2)  # NFLCR
 inputs.set_val(Aircraft.CrewPayload.FLIGHT_CREW_MASS_SCALER, 1.0)  # WFLCRB
 inputs.set_val(Aircraft.CrewPayload.NUM_GALLEY_CREW, 2)  # NGALC
 inputs.set_val(Aircraft.CrewPayload.MISC_CARGO, 0.0, 'lbm')  # CARGOF
-# inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
+inputs.set_val(Aircraft.CrewPayload.CABIN_CREW_MASS_SCALER, 1.0)  # WSTUAB
 inputs.set_val(Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, 1.0)  # WSRV
 inputs.set_val(Aircraft.CrewPayload.MASS_PER_PASSENGER, 165.0, 'lbm')  # WPPASS
 inputs.set_val(Aircraft.CrewPayload.WING_CARGO, 0.0, 'lbm')  # CARGOW
@@ -121,7 +121,6 @@ inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.11)  # TCHT
 # inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)  # HHT
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)  # FRHT
 inputs.set_val(Aircraft.HorizontalTail.NUM_TAILS, 0)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)  # SWETH
 # inputs.set_val(Aircraft.HorizontalTail.SWEEP, 0.0)  # SWPHT
 
@@ -189,7 +188,7 @@ inputs.set_val(Aircraft.Engine.INTERPOLATION_METHOD, 'slinear')
 # ---------------------------
 inputs.set_val(Aircraft.VerticalTail.NUM_TAILS, 0)  # NVERT
 inputs.set_val(Aircraft.VerticalTail.AREA, 0.0, 'ft**2')  # SVT
-inputs.set_val(Aircraft.VerticalTail.ASPECT_RATIO, 0.0)  # ARVT
+inputs.set_val(Aircraft.VerticalTail.ASPECT_RATIO, 0.1)  # ARVT
 inputs.set_val(Aircraft.VerticalTail.TAPER_RATIO, 0.0)  # TRVT
 inputs.set_val(Aircraft.VerticalTail.THICKNESS_TO_CHORD, 0.11)  # TCVT
 inputs.set_val(Aircraft.VerticalTail.MASS_SCALER, 1.0)  # FRVT
@@ -214,7 +213,6 @@ inputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS_SCALER, 1.0)  # FRWI2
 inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)  # FLAPR
 inputs.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75, 'ft')  # OSSPAN
 inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_REDUCTION, False)  # MIKE
-inputs.set_val(Aircraft.Wing.SPAN, 238.08, 'ft')
 inputs.set_val(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0)  # FSTRT
 inputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.0)  # FRSC
 inputs.set_val(Aircraft.Wing.SWEEP, 35.7, 'deg')  # SWEEP
@@ -242,16 +240,13 @@ inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM
 # inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.354)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO
 inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140.0, 'ft/s')  # VAPPR
-inputs.set_val(Mission.Landing.ROLLING_FRICTION_COEFFICIENT, 0.025)
-# inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
+inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
 inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf')  # THROFF
 
 # Settings
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
-inputs.set_val(Settings.VERBOSITY, 1)
-inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
 #          OUTPUTS
