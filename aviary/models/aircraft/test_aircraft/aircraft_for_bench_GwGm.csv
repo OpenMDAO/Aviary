@@ -31,6 +31,7 @@ aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:additional_mass_fraction,0.135,unitless
 aircraft:engine:data_file,models/engines/turbofan_23k_1.csv,unitless
 aircraft:engine:global_throttle, True, unitless
+aircraft:engine:inlet_area_coefficient,0.000301265,unitless
 aircraft:engine:mass_scaler,1,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:mass_scaler,1,unitless
@@ -38,7 +39,6 @@ aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
-aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_sls_thrust,28690,lbf
 aircraft:engine:scale_factor,1.0,unitless
 aircraft:engine:scaled_sls_thrust,28690,lbf

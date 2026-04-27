@@ -2131,6 +2131,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.INLET_AREA_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=0.0002,  # default in GASP
+    types=float,
+    desc='engine inlet area coefficient. Suggested values: 0.000375 for modern engines.',
+    multivalue=True,
+)
+
+add_meta_data(
     Aircraft.Engine.INTERPOLATION_METHOD,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
@@ -2292,19 +2304,6 @@ add_meta_data(
     units='unitless',
     desc='factor for turbofan engine pylon mass',
     default_value=0.7,
-    multivalue=True,
-)
-
-add_meta_data(
-    Aircraft.Engine.REFERENCE_DIAMETER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.DIAM_REF',
-        'FLOPS': None,
-    },  # no DIAM_REF in GASP
-    units='ft',
-    desc='engine reference diameter',
-    default_value=0.0,
     multivalue=True,
 )
 

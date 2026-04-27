@@ -810,8 +810,6 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.set_val(
                 Aircraft.Engine.NUM_FUSELAGE_ENGINES, [num_fuselage_engines], 'unitless'
             )
-            # BWB engine sizing algorithm does not use reference diameter
-            input_values.delete(Aircraft.Engine.REFERENCE_DIAMETER)
     else:
         input_values.set_val(Aircraft.Design.TYPE, 'transport')
     if Aircraft.Engine.TYPE in input_values:

@@ -64,7 +64,6 @@ aircraft:engine:propeller:diameter, 13.5, ft
 aircraft:engine:propeller:integrated_lift_coefficient, 0.5, unitless
 aircraft:engine:propeller:tip_speed_max, 720, ft/s
 aircraft:engine:pylon_factor, 0.7, unitless
-aircraft:engine:reference_diameter, 5.8, ft
 aircraft:engine:reference_sls_thrust, 5000, lbf
 aircraft:engine:rpm_design, 13820, rpm
 aircraft:engine:fixed_rpm, 13820, rpm

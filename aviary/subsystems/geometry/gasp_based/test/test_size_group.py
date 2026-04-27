@@ -23,6 +23,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -48,7 +49,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -75,7 +76,6 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -145,6 +145,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -174,7 +175,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -204,7 +205,6 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -281,6 +281,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -310,7 +311,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
         )
@@ -340,7 +341,6 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -413,6 +413,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -447,7 +448,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -474,7 +475,6 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )

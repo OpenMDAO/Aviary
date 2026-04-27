@@ -72,7 +72,7 @@ V3_bug_fixed_options.set_val(Aircraft.Fuselage.TAIL_FINENESS, 3, units='unitless
 V3_bug_fixed_options.set_val(Aircraft.Fuselage.WETTED_AREA, 4000, units='ft**2')
 V3_bug_fixed_options.set_val(Aircraft.VerticalTail.MOMENT_RATIO, 2.362, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless')
-V3_bug_fixed_options.set_val(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
+V3_bug_fixed_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Nacelle.FINENESS, 2, units='unitless')
 
