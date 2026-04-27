@@ -165,7 +165,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
             fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
 
-        outputs[Aircraft.Fuel.WING_FUEL_CAPACITY] = fuel_cap_wing
+        outputs[Aircraft.Fuel.WING_FUEL_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
         wing_ref_cap_terma = inputs[Aircraft.Fuel.WING_REF_CAPACITY_TERM_A]

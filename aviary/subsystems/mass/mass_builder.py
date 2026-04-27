@@ -154,6 +154,7 @@ class CoreMassBuilder(MassBuilder):
             )
             if val != 0.0 or val != 'Not Found in Model':
                 f.write(f'|{tab}Main Gear|{val}|{units}|\n')
+
             val, units = find_variable_in_problem(
                 Aircraft.LandingGear.NOSE_GEAR_MASS, prob, self.meta_data
             )
@@ -171,7 +172,7 @@ class CoreMassBuilder(MassBuilder):
                 Aircraft.Design.STRUCTURAL_MASS_INCREMENT, prob, self.meta_data
             )
             if val != 0.0 or val != 'Not Found in Model':
-                f.write(f'|{tab}Nose Gear|{val}|{units}|\n')
+                f.write(f'|{tab}Additional Structural Mass|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.Design.STRUCTURE_MASS, prob, self.meta_data
