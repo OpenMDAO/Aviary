@@ -839,6 +839,78 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         except:
             pass
 
+    # Friction factors (combine drag factor and technology factor into one factor)
+    round_position = 6
+    if Aircraft.Fuselage.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Fuselage.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFFT')[0][0]
+            unused_values.delete('INGASP.FCFFT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Fuselage.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.HorizontalTail.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.HorizontalTail.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFHTT')[0][0]
+            unused_values.delete('INGASP.FCFHTT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.HorizontalTail.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Design.INTERFERENCE_DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Design.INTERFERENCE_DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCKIT')[0][0]
+            unused_values.delete('INGASP.FCKIT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Design.INTERFERENCE_DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Nacelle.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Nacelle.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFNT')[0][0]
+            unused_values.delete('INGASP.FCFNT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Nacelle.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Strut.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Strut.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFSTRT')[0][0]
+            unused_values.delete('INGASP.FCFSTRT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Strut.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.VerticalTail.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.VerticalTail.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFVTT')[0][0]
+            unused_values.delete('INGASP.FCFVTT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.VerticalTail.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Wing.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Wing.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFWT')[0][0]
+            unused_values.delete('INGASP.FCFWT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Wing.DRAG_FACTOR, [drag_scaler], 'unitless')
+
     # Variables required by GASP, but no default values are provided in GASP
     missing_vars = []
     if Aircraft.Wing.ZERO_LIFT_ANGLE not in input_values:
