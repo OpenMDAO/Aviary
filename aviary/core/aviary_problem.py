@@ -1,20 +1,23 @@
 import csv
 import json
 import os
+import subprocess
 import warnings
 from copy import deepcopy
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from packaging import version
+
+import numpy as np
 from itertools import count
 
 import dymos as dm
-import numpy as np
 import openmdao
 import openmdao.api as om
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
-from packaging import version
+import openmdao.utils.hooks as hooks
 
 from aviary.core.aviary_group import AviaryGroup
 from aviary.interface.utils import set_warning_format
@@ -1177,6 +1180,7 @@ class AviaryProblem(om.Problem):
         simulate=False,
         make_plots=True,
         verbosity=None,
+        real_time_plotting=False,
     ):
         """
         This function actually runs the Aviary problem, which could be a simulation,
@@ -1203,6 +1207,8 @@ class AviaryProblem(om.Problem):
             If True (default), Dymos html plots will be generated as part of the output.
         verbosity : Verbosity or int, optional
             Controls the level of printouts for this method.
+        real_time_plotting : bool, optional
+            If True, enables real-time plotting of the optimization progress.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
@@ -1212,13 +1218,44 @@ class AviaryProblem(om.Problem):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
+        if (
+            verbosity >= Verbosity.VERBOSE or real_time_plotting
+        ):  # If real_time_plotting needs a driver recorder file to run the realtime plot server
+            recorder = om.SqliteRecorder('optimization_history.db')
+            self.driver.add_recorder(recorder)
             self.final_setup()
+
+        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
             with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
                 self.model.list_inputs(out_stream=outfile)
 
-            recorder = om.SqliteRecorder('optimization_history.db')
-            self.driver.add_recorder(recorder)
+        def _view_realtime_plot_hook(driver):
+            case_recorder_file = str(driver._rec_mgr._recorders[0]._filepath)
+
+            cmd = ['openmdao', 'realtime_plot', '--pid', str(os.getpid()), case_recorder_file]
+            cp = subprocess.Popen(cmd)  # nosec: trusted input
+
+            # Do a quick non-blocking check to see if it immediately failed
+            # This will catch immediate failures but won't wait for the process to finish
+            quick_check = cp.poll()
+            if quick_check is not None and quick_check != 0:
+                # Process already terminated with an error
+                stderr = cp.stderr.read().decode()
+                raise RuntimeError(
+                    f'Failed to start up the realtime plot server with code {quick_check}: {stderr}.'
+                )
+
+        # register the hook to stat up the real-time plot server
+        if real_time_plotting:
+            if not self.driver:
+                raise RuntimeError(
+                    'Unable to run realtime optimization progress plot because no Driver'
+                )
+
+            hooks._register_hook(
+                '_setup_recording', 'Driver', post=_view_realtime_plot_hook, ncalls=1
+            )
+            hooks._setup_hooks(self.driver)
 
         if suppress_solver_print:
             self.set_solver_print(level=0)

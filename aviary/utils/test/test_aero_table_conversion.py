@@ -165,7 +165,7 @@ class TestAeroTableConversion(unittest.TestCase):
 
     #     args.input_file = 'subsystems/aerodynamics/gasp_based/data/GASP_aero_flaps.txt'
     #     args.output_file = str(Path.cwd() / Path('TEST_' + Path(args.input_file).name))
-    #     args.data_format = 'GASP'
+    #     args.format = 'GASP'
     #     _exec_ATC(args, None)
 
     #     validation_data = get_path(
@@ -200,7 +200,7 @@ class TestAeroTableConversion(unittest.TestCase):
 
     #     args.input_file = 'utils/test/data/flops_test_polar.txt'
     #     args.output_file = str(Path(tempdir, 'TEST_' + Path(args.input_file).name))
-    #     args.data_format = 'FLOPS'
+    #     args.format = 'FLOPS'
     #     _exec_ATC(args, None)
 
     #     # Only testing that this runs without an error, not comparing the resulting data
