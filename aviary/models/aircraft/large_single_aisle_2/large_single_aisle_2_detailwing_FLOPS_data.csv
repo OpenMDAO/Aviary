@@ -1,4 +1,4 @@
-# created 04/27/26 at 16:50 by nperreau
+# created 04/27/26 at 16:50
 # Aviary Inputs CSV converted from large_single_aisle_2_detailwing_FLOPS_data_test.csv
 
 aircraft:air_conditioning:mass_scaler,1.0,unitless

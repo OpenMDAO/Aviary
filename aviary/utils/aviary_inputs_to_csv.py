@@ -15,7 +15,6 @@ def save_to_csv_file(filename, aviary_inputs):
         user = getpass.getuser()
 
         writer.writerow([f'# created {timestamp} by {user}'])
-        writer.writerow([f'# Aviary Inputs CSV converted from {filename.name}'])
         writer.writerow([])
 
         for name, (value, units) in sorted(aviary_inputs):
