@@ -1,5 +1,5 @@
-# created 04/24/26 at 16:26 by nperreau
-# Aviary Inputs CSV converted from large_single_aisle_2_altwt_FLOPS_data.csv
+# created 04/27/26 at 16:52 by nperreau
+# Aviary Inputs CSV converted from large_single_aisle_2_altwt_FLOPS_data_test.csv
 
 aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
@@ -61,7 +61,6 @@ aircraft:engine:reference_mass,8071.35,lbm
 aircraft:engine:reference_sls_thrust,27301.0,lbf
 aircraft:engine:scale_factor,1.0,unitless
 aircraft:engine:scale_mass,True,unitless
-aircraft:engine:scale_performance,True,unitless
 aircraft:engine:scaled_sls_thrust,27301.0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
