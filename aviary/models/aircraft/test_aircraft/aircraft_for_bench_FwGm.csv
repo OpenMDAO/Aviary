@@ -22,6 +22,7 @@ aircraft:engine:fuel_flow_scaler_constant_term,0.,unitless
 aircraft:engine:fuel_flow_scaler_linear_term,0.,unitless
 aircraft:engine:geopotential_alt,False,unitless
 aircraft:engine:ignore_negative_thrust,False,unitless
+aircraft:engine:inlet_area_coefficient,0.00030975,unitless
 aircraft:engine:interpolation_method,slinear,unitless
 aircraft:engine:mass_scaler,1.15,unitless
 aircraft:engine:mass,7400,lbm
@@ -31,7 +32,6 @@ aircraft:engine:num_fuselage_engines,0,unitless
 aircraft:engine:num_wing_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1,unitless
 aircraft:engine:pylon_factor,1.25,unitless
-aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_mass,7400,lbm
 aircraft:engine:reference_sls_thrust,28928.1,lbf
 aircraft:engine:scale_factor,1.0,unitless

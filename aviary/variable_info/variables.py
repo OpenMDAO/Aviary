@@ -37,6 +37,7 @@ class Aircraft:
 
     class BWB:
         DETAILED_WING_PROVIDED = 'aircraft:blended_wing_body_design:detailed_wing_provided'
+        MAX_BAY_WIDTH = 'aircraft:blended_wing_body_design:max_bay_width'
         MAX_NUM_BAYS = 'aircraft:blended_wing_body_design:max_num_bays'
         NUM_BAYS = 'aircraft:blended_wing_body_design:num_bays'
         PASSENGER_LEADING_EDGE_SWEEP = (
@@ -202,6 +203,7 @@ class Aircraft:
         GLOBAL_HYBRID_THROTTLE = 'aircraft:engine:global_hybrid_throttle'
         GLOBAL_THROTTLE = 'aircraft:engine:global_throttle'
         IGNORE_NEGATIVE_THRUST = 'aircraft:engine:ignore_negative_thrust'
+        INLET_AREA_COEFFICIENT = 'aircraft:engine:inlet_area_coefficient'
         INTERPOLATION_METHOD = 'aircraft:engine:interpolation_method'
         INTERPOLATION_SORT = 'aircraft:engine:interpolation_sort'
         MASS = 'aircraft:engine:mass'
@@ -214,7 +216,6 @@ class Aircraft:
         POD_MASS_SCALER = 'aircraft:engine:pod_mass_scaler'
         POSITION_FACTOR = 'aircraft:engine:position_factor'
         PYLON_FACTOR = 'aircraft:engine:pylon_factor'
-        REFERENCE_DIAMETER = 'aircraft:engine:reference_diameter'
         REFERENCE_MASS = 'aircraft:engine:reference_mass'
         REFERENCE_SLS_THRUST = 'aircraft:engine:reference_sls_thrust'
         RPM_DESIGN = 'aircraft:engine:rpm_design'
@@ -332,6 +333,7 @@ class Aircraft:
         PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
         REF_DIAMETER = 'aircraft:fuselage:ref_diameter'
         SEAT_WIDTH = 'aircraft:fuselage:seat_width'
+        SIDEBODY_THICKNESS_TO_CHORD = 'aircraft:fuselage:sidebody_thickness_to_chord'
         SIMPLE_LAYOUT = 'aircraft:fuselage:simple_layout'
         TAIL_FINENESS = 'aircraft:fuselage:tail_fineness'
         WETTED_AREA = 'aircraft:fuselage:wetted_area'
