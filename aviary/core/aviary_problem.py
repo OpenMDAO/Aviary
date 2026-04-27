@@ -655,6 +655,8 @@ class AviaryProblem(om.Problem):
             Controls the level of terminal output for this method. If None, uses the problem-level
             verbosity.
 
+        Notes
+        -----
         If using the FLOPS model, a design variable is added for the gross mass of the aircraft,
         with a lower bound of 10 lbm and an upper bound of 900,000 lbm.
 
