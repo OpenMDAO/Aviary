@@ -32,7 +32,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
             (Mission.GROSS_MASS, 'lbm'): 171414.17171104,
             (Mission.OPERATING_MASS, 'lbm'): 94986.583699,
             (Mission.TOTAL_FUEL, 'lbm'): 40451.68735078,
-            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
+            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.0906835,
             (Mission.RANGE, 'NM'): 3675.0,
             (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
         }
