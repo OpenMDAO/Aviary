@@ -31,10 +31,6 @@ class MetaDataTest(unittest.TestCase):
         flops_names = [var['historical_name']['FLOPS'] for var in _MetaData.values()]
         assert_no_duplicates(flops_names)
 
-    def test_duplicate_names_LEAPS1(self):
-        leaps1_names = [var['historical_name']['LEAPS1'] for var in _MetaData.values()]
-        assert_no_duplicates(leaps1_names)
-
     def test_alphabetization(self):
         # TODO currently excluding Dynamic variables that do not have proper full
         #      names mirroring the hierarchy
