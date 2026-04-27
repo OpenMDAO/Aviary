@@ -10,20 +10,25 @@ from aviary.subsystems.aerodynamics.gasp_based.flaps_model import FlapsGroup
 from aviary.subsystems.aerodynamics.gasp_based.flaps_model.basic_calculations import (
     BasicFlapsGeometry,
 )
-from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import AeroFormfactors
+from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import (
+    AeroFormfactors,
+    FormFactor,
+    BWBFormFactor,
+)
 from aviary.subsystems.aerodynamics.gasp_based.interference import (
     WingFuselageInterferencePremission,
 )
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.enums import AircraftTypes, SpeedType
+from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
-
-# TODO: add subsystems to compute CLMXFU, CLMXTO, CLMXLD using dynamic aero components
-# with alpha > alpha_stall
 
 
 class PreMissionAero(om.Group):
     """Takeoff and landing flaps modeling."""
+
+    def initialize(self):
+        add_aviary_option(self, Aircraft.Design.TYPE)
 
     def setup(self):
         self.add_subsystem(
@@ -42,6 +47,22 @@ class PreMissionAero(om.Group):
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        design_type = self.options[Aircraft.Design.TYPE]
+        if design_type is AircraftTypes.TRANSPORT:
+            self.add_subsystem(
+                'aero_form_factors2',
+                FormFactor(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
+        else:
+            self.add_subsystem(
+                'aero_form_factors2',
+                BWBFormFactor(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
         # speeds weren't originally computed here, speedtype of Mach is intended
         # to avoid multiple sources for computed Mach (gets calculated somewhere upstream)
@@ -70,7 +91,7 @@ class PreMissionAero(om.Group):
         )
 
         # Flaps geometry
-        # TODO: maybe this should move to geometry.
+        # should this be moved to geometry? See issue #1086
         self.add_subsystem(
             'BasicFlapsGeometry',
             BasicFlapsGeometry(),
@@ -152,7 +173,6 @@ class PreMissionAero(om.Group):
 
     def configure(self):
         # set default trailing edge deflection angle per GASP
-        # TODO: This hidden default behavior needs to be moved to the pre-processor.
         flap = self.flaps_up
         self.set_input_defaults(
             Aircraft.Wing.OPTIMUM_FLAP_DEFLECTION,
