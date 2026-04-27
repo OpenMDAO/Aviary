@@ -49,6 +49,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
+    # TODO the zero value behavior should probably be covered in fortran_to_aviary, and the preprocessor sets up the default value if it is not provided in the input file at all
     if Aircraft.Wing.ASPECT_RATIO_REFERENCE in aviary_options:
         arref = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE)
         if (np.isscalar(arref) and arref == 0) or (not np.isscalar(arref) and arref[0] == 0):
@@ -61,6 +62,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
                         'as Aircraft.Wing.ASPECT_RATIO.'
                     )
 
+    # TODO also move zero value behavior to fortran_to_aviary and rewrite this case to cover when variable is not provided
     if Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE in aviary_options:
         tcref = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE)
         if (np.isscalar(tcref) and tcref == 0) or (not np.isscalar(tcref) and tcref[0] == 0):
