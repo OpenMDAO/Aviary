@@ -25,13 +25,15 @@ class TestSizingResults(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            local_phase_info,
+            phase_info_modifier=phase_info_parameterization,
         )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
-        prob.add_phases(phase_info_parameterization=phase_info_parameterization)
+        prob.add_phases()
         prob.add_post_mission_systems()
 
         # Link phases and variables

@@ -1,3 +1,4 @@
+import inspect
 import sys
 import warnings
 from importlib.util import module_from_spec, spec_from_file_location
@@ -24,6 +25,7 @@ from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.preprocessors import preprocess_options
@@ -196,6 +198,7 @@ class AviaryGroup(om.Group):
         aircraft_data,
         phase_info=None,
         problem_configurator=None,
+        phase_info_modifier=None,
         verbosity=None,
     ):
         """
@@ -215,6 +218,13 @@ class AviaryGroup(om.Group):
             verbosity = Verbosity(verbosity)
         else:
             verbosity = self.verbosity  # defaults to BRIEF
+
+        # validate phase info modifier function
+        if phase_info_modifier is not None:
+            self._validate_phase_info_modifier(phase_info_modifier)
+            self.phase_info_modifier = phase_info_modifier
+        else:
+            self.phase_info_modifier = None
 
         ## LOAD INPUT FILE ###
         # Create AviaryValues object from file (or process existing AviaryValues object
@@ -677,19 +687,13 @@ class AviaryGroup(om.Group):
 
         return phase
 
-    def add_phases(
-        self, phase_info_parameterization=None, parallel_phases=True, verbosity=None, comm=None
-    ):
+    def add_phases(self, parallel_phases=True, verbosity=None, comm=None):
         """
         Add the mission phases to the problem trajectory based on the user-specified
         phase_info dictionary.
 
         Parameters
         ----------
-        phase_info_parameterization (function, optional): A function that takes in the
-            phase_info dictionary and aviary_inputs and returns modified phase_info.
-            Defaults to None.
-
         parallel_phases (bool, optional): If True, the top-level container of all phases
             will be a ParallelGroup, otherwise it will be a standard OpenMDAO Group.
             Defaults to True.
@@ -706,8 +710,8 @@ class AviaryGroup(om.Group):
         else:
             verbosity = self.verbosity  # defaults to BRIEF
 
-        if phase_info_parameterization is not None:
-            self.mission_info, self.post_mission_info = phase_info_parameterization(
+        if self.phase_info_modifier is not None:
+            self.mission_info, self.post_mission_info = self.phase_info_modifier(
                 self.mission_info, self.post_mission_info, self.aviary_inputs
             )
 
@@ -1635,3 +1639,36 @@ class AviaryGroup(om.Group):
             ],
             promotes_outputs=[('reserve_fuel', reserves_name)],
         )
+
+    def _validate_phase_info_modifier(self, phase_info_modifier):
+        """Check function for required arguments (phase_info, post_mission_info, aviary_inputs)"""
+
+        # validate phase_info_modifier function
+        sig = inspect.signature(phase_info_modifier)
+        params = sig.parameters
+        # NOTE Exact argument name matching needed to check types later (this might be
+        #      avoidable, if params is guaranteed to be in order)
+        expected_args = {'phase_info', 'post_mission_info', 'aviary_inputs'}
+        actual_args = set(params.keys())
+
+        if expected_args != actual_args:
+            raise ValueError(
+                f'Phase modifier function must match arguments: {expected_args}. Got: {actual_args}'
+            )
+
+        # Check argument types (if provided)
+        if params['phase_info'].annotation not in (dict, inspect.Parameter.empty):
+            raise TypeError(
+                "The 'phase_info' argument of phase info modifier function must be a dict (or "
+                'left unspecified).'
+            )
+        if params['post_mission_info'].annotation not in (dict, inspect.Parameter.empty):
+            raise TypeError(
+                "The 'post_mission_info' argument of phase info modifier function must be a dict "
+                '(or left unspecified).'
+            )
+        if params['aviary_inputs'].annotation not in (AviaryValues, inspect.Parameter.empty):
+            raise TypeError(
+                "The 'aviary_inputs' argument of phase info modifier function must be an "
+                'AviaryValues (or left unspecified).'
+            )
