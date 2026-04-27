@@ -32,7 +32,7 @@ class CanardMassTest(unittest.TestCase):
 
     @parameterized.expand(canard_data_sets, name_func=print_case)
     def test_case1(self, case_name):
-        # TODO: No test cases with canards. Use dummy vars.
+        # No test cases with canards. Use dummy vars. See issue #1091
         validation_data = canard_test_data[case_name]
         prob = self.prob
 

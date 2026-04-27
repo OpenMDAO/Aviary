@@ -34,7 +34,6 @@ class EngineScalingTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 1.15)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.05)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 10.0, units='lbm/h')
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.9)
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)

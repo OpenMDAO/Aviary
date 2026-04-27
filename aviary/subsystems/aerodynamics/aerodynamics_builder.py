@@ -478,13 +478,61 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
             if method == 'computed':
                 try:
+                    verbosity = aviary_inputs.get_val(Settings.VERBOSITY)
+                except KeyError:
+                    verbosity = Verbosity.QUIET
+                try:
                     design_type = aviary_inputs.get_val(Aircraft.Design.TYPE)
                 except KeyError:
                     design_type = AircraftTypes.TRANSPORT
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'No input value found for Aircraft.Design.TYPE. '
+                            'Assuming the aircraft is of type: AircraftTypes.TRANSPORT.'
+                        )
+
+                try:
+                    num_horizontal_tails = aviary_inputs.get_val(Aircraft.HorizontalTail.NUM_TAILS)
+                except KeyError:
+                    num_horizontal_tails = 1
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'No input value found for Aircraft.HorizontalTail.NUM_TAILS. '
+                            'Assuming there is 1 horizontal tail.'
+                        )
+                try:
+                    num_vertical_tails = aviary_inputs.get_val(Aircraft.VerticalTail.NUM_TAILS)
+                except KeyError:
+                    num_vertical_tails = 1
+                    if verbosity >= Verbosity.BRIEF:
+                        warnings.warn(
+                            'No inpuit value found for Aircraft.VerticalTail.NUM_TAILS. '
+                            'Assuming there is 1 vertical tail.'
+                        )
+
                 if design_type is AircraftTypes.BLENDED_WING_BODY:
-                    core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                    if num_horizontal_tails == 0 and num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB
+                    elif num_horizontal_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB + VERTICAL_TAIL_INPUTS
+                    elif num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS_BWB + HORIZONTAL_TAIL_INPUTS
+                    else:
+                        core_inputs_computed = (
+                            COMPUTED_CORE_INPUTS_BWB + HORIZONTAL_TAIL_INPUTS + VERTICAL_TAIL_INPUTS
+                        )
                 else:
-                    core_inputs_computed = COMPUTED_CORE_INPUTS
+                    if num_horizontal_tails == 0 and num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS
+                    elif num_horizontal_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS + VERTICAL_TAIL_INPUTS
+                    elif num_vertical_tails == 0:
+                        core_inputs_computed = COMPUTED_CORE_INPUTS + HORIZONTAL_TAIL_INPUTS
+                    else:
+                        core_inputs_computed = (
+                            COMPUTED_CORE_INPUTS + HORIZONTAL_TAIL_INPUTS + VERTICAL_TAIL_INPUTS
+                        )
+
                 for var in core_inputs_computed:
                     meta = _MetaData[var]
 
@@ -696,16 +744,16 @@ COMPUTED_CORE_INPUTS = [
     Aircraft.Fuselage.LAMINAR_FLOW_UPPER,
     Aircraft.Fuselage.LENGTH_TO_DIAMETER,
     Aircraft.Fuselage.WETTED_AREA,
-    Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
-    Aircraft.HorizontalTail.FINENESS,
-    Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
-    Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
-    Aircraft.HorizontalTail.WETTED_AREA,
-    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
-    Aircraft.VerticalTail.FINENESS,
-    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
-    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
-    Aircraft.VerticalTail.WETTED_AREA,
+    # Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+    # Aircraft.HorizontalTail.FINENESS,
+    # Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+    # Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+    # Aircraft.HorizontalTail.WETTED_AREA,
+    # Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+    # Aircraft.VerticalTail.FINENESS,
+    # Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
+    # Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
+    # Aircraft.VerticalTail.WETTED_AREA,
     Aircraft.Wing.AREA,
     Aircraft.Wing.ASPECT_RATIO,
     Aircraft.Wing.CHARACTERISTIC_LENGTH,
@@ -754,6 +802,22 @@ COMPUTED_CORE_INPUTS_BWB = [
     Aircraft.Design.MACH,
 ]
 
+HORIZONTAL_TAIL_INPUTS = [
+    Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH,
+    Aircraft.HorizontalTail.FINENESS,
+    Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER,
+    Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER,
+    Aircraft.HorizontalTail.WETTED_AREA,
+]
+
+VERTICAL_TAIL_INPUTS = [
+    Aircraft.VerticalTail.CHARACTERISTIC_LENGTH,
+    Aircraft.VerticalTail.FINENESS,
+    Aircraft.VerticalTail.LAMINAR_FLOW_LOWER,
+    Aircraft.VerticalTail.LAMINAR_FLOW_UPPER,
+    Aircraft.VerticalTail.WETTED_AREA,
+]
+
 TABULAR_CORE_INPUTS = [
     Aircraft.Wing.AREA,
     Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
@@ -786,6 +850,7 @@ AERO_2DOF_INPUTS = [
     Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT,
     Aircraft.Fuselage.LENGTH,
     Aircraft.Fuselage.WETTED_AREA,
+    Aircraft.Fuselage.FORM_FACTOR,
     Aircraft.HorizontalTail.AREA,
     Aircraft.HorizontalTail.AVERAGE_CHORD,
     Aircraft.HorizontalTail.FORM_FACTOR,
