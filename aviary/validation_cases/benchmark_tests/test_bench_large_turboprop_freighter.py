@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
-@require_pyoptsparse(optimizer='IPOPT')
+@require_pyoptsparse(optimizer='SNOPT')
 # TODO need to add asserts with "truth" values, only verifying no errors here
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
     def build_and_run_problem(self, mission_method):

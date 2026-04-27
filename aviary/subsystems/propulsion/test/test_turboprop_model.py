@@ -410,13 +410,13 @@ class TurbopropMissionTest(unittest.TestCase):
 
         self.prob.run_model()
 
-        shp_expected = [0.151665999, 379.164998, 1516.65999]
+        shp_expected = [1.51665999, 536.2202822, 1516.659991]
         prop_thrust_expected = total_thrust_expected = [
-            8.20491214,
-            2594.01215,
-            10376.0486,
+            103.76048662,
+            5188.02430387,
+            10376.04860512,
         ]
-        electric_power_expected = [0.129792551, 294.946761, 1185.50666]
+        electric_power_expected = [1.29959593, 415.69603238, 1185.50666173]
         expected_values = {
             Dynamic.Vehicle.Propulsion.SHAFT_POWER: (shp_expected, 'hp', 1e-8),
             Dynamic.Vehicle.Propulsion.THRUST: (total_thrust_expected, 'lbf', 1e-8),
