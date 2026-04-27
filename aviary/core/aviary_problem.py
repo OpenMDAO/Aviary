@@ -239,6 +239,7 @@ class AviaryProblem(om.Problem):
         aircraft: AviaryValues,
         phase_info: dict,
         problem_configurator=None,
+        phase_info_modifier=None,
         verbosity: Verbosity = Verbosity.BRIEF,
     ):
         """
