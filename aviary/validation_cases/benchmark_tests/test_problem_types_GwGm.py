@@ -30,7 +30,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_max_range.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
 
         prob_off_design_max_range.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
@@ -42,6 +42,9 @@ class TestOffDesign(TwoDOFTestCase):
         )
         prob_off_design_max_range.aviary_inputs.set_val(
             'mission:gross_mass', self.sized_mass, units='lbm'
+        )
+        prob_off_design_max_range.aviary_inputs.set_val(
+            'aircraft:fuselage:form_factor', 1.05557953, units='unitless'
         )
 
         prob_off_design_max_range.check_and_preprocess_inputs()
@@ -58,7 +61,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_min_fuel.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
         prob_off_design_min_fuel.problem_type = ProblemType.OFF_DESIGN_MIN_FUEL
         prob_off_design_min_fuel.aviary_inputs.set_val(
@@ -92,7 +95,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_max_range.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
 
         prob_off_design_max_range.problem_type = ProblemType.OFF_DESIGN_MAX_RANGE
@@ -119,7 +122,7 @@ class TestOffDesign(TwoDOFTestCase):
         prob_off_design_min_fuel.load_inputs(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
             self.phase_info,
-            verbosity=Verbosity.QUIET,
+            verbosity=Verbosity.BRIEF,
         )
         prob_off_design_min_fuel.problem_type = ProblemType.OFF_DESIGN_MIN_FUEL
         prob_off_design_min_fuel.aviary_inputs.set_val(
@@ -151,5 +154,5 @@ if __name__ == '__main__':
     unittest.main()
     # test = TestOffDesign()
     # test.setUp()
-    # test.test_off_design_SNOPT()
-    # test.test_off_design_IPOPT()
+    # test.bench_test_off_design_SNOPT()
+    # test.bench_test_off_design_IPOPT()

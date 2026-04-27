@@ -325,6 +325,7 @@ class WingFuselageInterferencePremission(om.Group):
         )
 
 
+# This component is not used
 class WingFuselageInterferenceMission(om.ExplicitComponent):
     """
     This calculates an additional flat plate drag area due to general aerodynamic interference for wing-fuselage interference

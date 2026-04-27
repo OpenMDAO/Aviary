@@ -106,6 +106,23 @@ class AviaryGroup(om.Group):
             # Under MPI, promotion info only lives on rank 0, so broadcast.
             all_prom_inputs = self.comm.bcast(all_prom_inputs, root=0)
 
+        # Find all variables that are shape_by_conn so we don't set their shape with a stale value
+        # from the default metadata. We can only find these on the next level down because
+        # aviary_group's setup is not complete until after configure.
+        sbc_vars = []
+        for sub in self.system_iter(recurse=False, typ=om.Group):
+            pr2abs = sub._resolver.prom2abs_iter('input')
+            sub_inputs = [
+                (k, v[0]) for k, v in pr2abs if k.startswith('aircraft') or k.startswith('mission')
+            ]
+            abs2meta = sub._var_abs2meta['input']
+
+            for data in sub_inputs:
+                prom_name, abs_name = data
+                meta = abs2meta[abs_name]
+                if meta.get('shape_by_conn') is True:
+                    sbc_vars.append(prom_name)
+
         for key in aviary_metadata:
             if ':' not in key or key.startswith('dynamic:'):
                 continue
@@ -127,7 +144,12 @@ class AviaryGroup(om.Group):
                     # optional, but no default value
                     continue
 
-            self.set_input_defaults(key, val=val, units=units)
+            kwargs = {'units': units}
+            if key not in sbc_vars:
+                # Default val if var doesn't use shape_by_conn.
+                kwargs['val'] = val
+
+            self.set_input_defaults(key, **kwargs)
 
         # try to get all the possible EOMs from the Enums rather than specifically calling the names here
         # This will require some modifications to the enums

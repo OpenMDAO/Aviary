@@ -551,16 +551,6 @@ dependent_options = [
         },
     ],
     [
-        'JENGSZ',
-        {
-            'val': 4,
-            'relation': '!=',
-            'target': Aircraft.Engine.SCALE_PERFORMANCE,
-            'result': True,
-            'alternate': False,
-        },
-    ],
-    [
         Aircraft.HorizontalTail.VOLUME_COEFFICIENT,
         {
             'val': 0,
