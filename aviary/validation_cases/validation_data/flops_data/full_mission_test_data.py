@@ -6,11 +6,11 @@ One point was taken from each phase: climb, cruise, and descent.
 
 Notes
 -----
-FLOPS mission analyses data cannot be used to unit test Aviary mission
-analysis data, because the methodologies are too different. FLOPS
+FLOPS/LEAPS1 mission analyses data cannot be used to unit test Aviary mission
+analysis data, because the methodologies are too different. FLOPS/LEAPS1
 mission analyses use implementations that do not rely on some Aviary variables,
 such as altitude rate and velocity rate. These missing values cannot be derived
-from the available FLOPS data.
+from the available FLOPS/LEAPS1 data.
 """
 
 from aviary.utils.aviary_values import AviaryValues
