@@ -34,18 +34,18 @@ class InstallationTest(CommandEntryPointsTestCases):
 class run_missionTestCases(CommandEntryPointsTestCases):
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_SNOPT_cmd(self):
-        cmd = 'aviary run_mission models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer SNOPT --max_iter 1'
+        cmd = 'aviary run_mission validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv --optimizer SNOPT --max_iter 1'
         self.run_and_test_cmd(cmd)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_IPOPT_cmd(self):
-        cmd = 'aviary run_mission models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1'
+        cmd = 'aviary run_mission validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1'
         self.run_and_test_cmd(cmd)
 
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_phase_info_cmd(self):
         cmd = (
-            'aviary run_mission models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1'
+            'aviary run_mission validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv --optimizer IPOPT --max_iter 1'
             ' --phase_info models/missions/two_dof_default.py'
         )
         self.run_and_test_cmd(cmd)

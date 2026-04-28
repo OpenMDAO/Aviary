@@ -21,7 +21,7 @@ class PreMissionGroupTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = AviaryProblem()
 
-        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv'
         self.gasp_inputs = prob.load_inputs(csv_path)
         self.gasp_inputs.set_val(
             Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless'

@@ -12,4 +12,4 @@ The suite of test aircraft include:
 Also included in this folder:
 `GwFm_phase_info`: the custom phase info needed for the GwFm benchmark
 `turbofan_28k_with_electric`: a version of the "turbofan_28k" engine deck with arbitrary electric power consumption. Used for the "aircraft_for_bench_FwFm_with_electric" model.
-
+`high_wing_single_aisle`: a FLOPS-based aircraft with a high wing, used for FLOPS aerodynamics testing

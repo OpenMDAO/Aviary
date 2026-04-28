@@ -36,7 +36,8 @@ class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
     def test_zero_iters_2DOF(self):
         local_phase_info = deepcopy(two_dof_phase_info)
         self.build_and_run_problem(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', local_phase_info
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
+            local_phase_info,
         )
 
 

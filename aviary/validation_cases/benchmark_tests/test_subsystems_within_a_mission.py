@@ -78,7 +78,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv', phase_info
+        )
 
         prob.load_external_subsystems(
             [
@@ -126,7 +128,8 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', two_dof_phase_info
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
+            two_dof_phase_info,
         )
 
         prob.load_external_subsystems(
@@ -179,7 +182,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob = AviaryProblem(reports=False, verbosity=0)
 
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv', phase_info
+        )
 
         prob.check_and_preprocess_inputs()
 

@@ -20,7 +20,7 @@ class TestAeroBuilderGasp(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
         )
 

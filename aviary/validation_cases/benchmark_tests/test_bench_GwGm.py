@@ -16,7 +16,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass and aero method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -50,7 +50,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
             verbosity=0,
@@ -67,7 +67,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='SNOPT',
             verbosity=0,
@@ -102,7 +102,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         }
 
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
             verbosity=0,
