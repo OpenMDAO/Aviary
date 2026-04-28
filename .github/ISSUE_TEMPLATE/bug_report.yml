@@ -1,6 +1,6 @@
 name: Bug Report
-description: Submit a report only if you believe you've found a bug in Aviary. If you're not sure if your problem is a bug, especially for installation issues, try reaching out on the discussions page first.
-labels: ["bug"]
+description: Please submit a report only if you believe you've found a bug in Aviary. If you're not sure if your problem is a bug, especially for installation issues, try reaching out on the discussions page first.
+type: "bug"
 body:
   - type: textarea
     id: description
@@ -16,6 +16,14 @@ body:
       description: Please provide an example of the code that triggers the unexpected behavior. If possible, create a complete, minimal test case that reproduces the issue. Alternatively, link to a file in another repository where the issue is demonstrated.
     validations:
       required: true
+  - type: textarea
+    id: traceback
+    attributes:
+      label: Error Message
+      description: Please provide the full error message, ideally from your code example provided above.
+      placeholder: "<< Full traceback starting from `Traceback ..` >>
+    validations:
+      required: true
   - type: input
     id: aviary-version
     attributes:
@@ -28,4 +36,4 @@ body:
     id: environment
     attributes:
       label: Relevant environment information
-      description: If applicable, please provide versions of relevant dependencies (numpy, scipy, MPI, etc).  This can be obtained from `pip freeze`.
+      description: If applicable, please provide versions of relevant dependencies (openmdao, dymos, numpy, etc). This can be obtained using `pip freeze` or `conda list --export`.
