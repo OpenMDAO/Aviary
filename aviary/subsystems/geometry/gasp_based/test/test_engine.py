@@ -6,9 +6,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.geometry.gasp_based.engine import (
-    BWBEngineSize,
-    BWBEngineSizeGroup,
-    EngineSize,
+    GASPEngineSize,
+    GASPEngineSizeGroup,
     PercentNotInFuselage,
 )
 from aviary.utils.aviary_values import AviaryValues
@@ -86,11 +85,12 @@ class TestEngine(
 
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
+        aviary_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000301265)
 
-        self.prob.model.add_subsystem('engsz', EngineSize(), promotes=['*'])
+        self.prob.model.add_subsystem('engsz', GASPEngineSize(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
+        self.prob.model.set_input_defaults('percent_exposed', 1.0)
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -100,53 +100,20 @@ class TestEngine(
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
-    def test_large_sinle_aisle_1_defaults(self):
+    def test_large_single_aisle_1_defaults(self):
         self.prob.run_model()
         tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58389, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.25002007, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.50004014, tol)
+        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 330.26175625, tol)
 
     def test_partials(self):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
-class TestEngineBWB(unittest.TestCase):
-    """Test engine size using EngineSize class and BWB data"""
-
-    def setUp(self):
-        self.prob = om.Problem()
-
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
-
-        self.prob.model.add_subsystem('engsz', EngineSize(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.3053677239456256)
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.2205, units='unitless'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Nacelle.FINENESS, 1.3588, units='unitless')
-
-        setup_model_options(self.prob, aviary_options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-        tol = 1e-4
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 8.08783369, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 10.98974842, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 279.23498901, tol)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
-
-
 class BWBTestEngine(unittest.TestCase):
-    """Test engine size using BWBEngineSize class and BWB data"""
+    """Test engine size using GASPEngineSize class and BWB data"""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -154,7 +121,7 @@ class BWBTestEngine(unittest.TestCase):
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2]))
 
-        self.prob.model.add_subsystem('engsz', BWBEngineSize(), promotes=['*'])
+        self.prob.model.add_subsystem('engsz', GASPEngineSize(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
         self.prob.model.set_input_defaults('percent_exposed', 1.0)
@@ -184,13 +151,12 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
         aviary_options = AviaryValues()
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
+        aviary_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, [0.0003, 0.0002])
 
-        prob.model.add_subsystem('cable', EngineSize(), promotes=['*'])
+        prob.model.add_subsystem('cable', GASPEngineSize(), promotes=['*'])
 
-        prob.model.set_input_defaults(
-            Aircraft.Engine.REFERENCE_DIAMETER, np.array([5.8, 8.2]), units='ft'
-        )
-        prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=np.array([1.028233, 0.9]))
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
+        prob.model.set_input_defaults('percent_exposed', [1.0, 1.0])
         prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, np.array([1.25, 1.02]), units='unitless'
         )
@@ -206,16 +172,16 @@ class ElectricTestCaseMultiEngine(unittest.TestCase):
 
         tol = 1e-5
 
-        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], [7.35163, 7.9347871], tol)
-        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], [14.70326, 17.5358795], tol)
-        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], [339.58389, 437.13210486], tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_DIAMETER], [7.23478278, 3.40843509], tol)
+        assert_near_equal(prob[Aircraft.Nacelle.AVG_LENGTH], [14.46956556, 7.53264155], tol)
+        assert_near_equal(prob[Aircraft.Nacelle.SURFACE_AREA], [328.875, 80.65888272], tol)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
 @use_tempdirs
-class BWBEngineSizeGroupTestCase(unittest.TestCase):
+class GASPEngineSizeGroupTestCase(unittest.TestCase):
     """this is the GASP BWB test case"""
 
     def setUp(self):
@@ -225,7 +191,7 @@ class BWBEngineSizeGroupTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            BWBEngineSizeGroup(),
+            GASPEngineSizeGroup(),
             promotes=['*'],
         )
 

@@ -330,6 +330,21 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.BWB.MAX_BAY_WIDTH,
+    meta_data=_MetaData,
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.BAYWMX',
+        'LEAPS1': None,
+    },
+    units='ft',
+    desc='maximum bay width',
+    types=float,
+    option=True,
+    default_value=0,
+)
+
+add_meta_data(
     Aircraft.BWB.MAX_NUM_BAYS,
     meta_data=_MetaData,
     historical_name={
@@ -1053,7 +1068,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NBABR'},
     units='unitless',
-    desc='Number of business class passengers abreast',
+    desc='Number of business class seats abreast.',
     types=int,
     option=True,
     default_value=5,
@@ -1064,7 +1079,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SAB', 'FLOPS': 'FUSEIN.NTABR'},
     units='unitless',
-    desc='Number of economy class passengers abreast',
+    desc='Number of economy class seats abreast.',
     types=int,
     option=True,
     default_value=6,
@@ -1075,7 +1090,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.NFABR'},
     units='unitless',
-    desc='Number of first class passengers abreast',
+    desc='Number of first class seats abreast.',
     types=int,
     option=True,
     default_value=4,
@@ -1086,9 +1101,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BPITCH'},
     units='inch',
-    desc='pitch of the business class seats',
+    desc='pitch of the business class seats.',
     option=True,
-    default_value=0.0,
+    default_value=39.0,
 )
 
 add_meta_data(
@@ -1096,9 +1111,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.PS', 'FLOPS': 'FUSEIN.TPITCH'},
     units='inch',
-    desc='pitch of the economy class seats',
+    desc='pitch of the economy class seats.',
     option=True,
-    default_value=0.0,
+    default_value=32.0,
 )
 
 add_meta_data(
@@ -1106,9 +1121,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': 'FUSEIN.FPITCH'},
     units='inch',
-    desc='pitch of the first class seats',
+    desc='pitch of the first class seats.',
     option=True,
-    default_value=0.0,
+    default_value=61.0,
 )
 
 #  _____                 _
@@ -1170,7 +1185,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCMPC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCMPC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='compressibility aero calibration factor',
@@ -1324,7 +1339,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='excrescence aero drag factor',
@@ -1380,7 +1395,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCKIC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCKIC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='interference aero calibration factor (including technology factor INGASP.FCKIT)',
@@ -1555,7 +1570,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.PCT_EXCR', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.PCT_EXCR', 'FLOPS': None},
     units='unitless',
     option=True,
     default_value=0.0,
@@ -1660,8 +1675,8 @@ add_meta_data(
 # TODO intermediate calculated values with no uses by other systems may not belong in the
 #      variable hierarchy
 add_meta_data(
-    # Note in FLOPS/LEAPS1, this is the same variable as
-    # Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, because FLOPS/LEAPS1 overwrite the
+    # Note in FLOPS, this is the same variable as
+    # Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, because FLOPS overwrite the
     # value during calculations; in Aviary, these must be separate variables
     Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE,
     meta_data=_MetaData,
@@ -2116,6 +2131,18 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Engine.INLET_AREA_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='unitless',
+    option=True,
+    default_value=0.0002,  # default in GASP
+    types=float,
+    desc='engine inlet area coefficient. Suggested values: 0.000375 for modern engines.',
+    multivalue=True,
+)
+
+add_meta_data(
     Aircraft.Engine.INTERPOLATION_METHOD,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
@@ -2277,19 +2304,6 @@ add_meta_data(
     units='unitless',
     desc='factor for turbofan engine pylon mass',
     default_value=0.7,
-    multivalue=True,
-)
-
-add_meta_data(
-    Aircraft.Engine.REFERENCE_DIAMETER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.DIAM_REF',
-        'FLOPS': None,
-    },  # no DIAM_REF in GASP
-    units='ft',
-    desc='engine reference diameter',
-    default_value=0.0,
     multivalue=True,
 )
 
@@ -3205,7 +3219,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFFC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFFC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='fuselage aero calibration factor (including technology factor INGASP.FCFFT)',
@@ -3534,6 +3548,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.TCSOB', 'LEAPS1': None},
+    units='unitless',
+    desc='fuselage thickness/chord ratio at side of body',
+    default_value=0.0,
+)
+
+add_meta_data(
     Aircraft.Fuselage.SIMPLE_LAYOUT,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
@@ -3646,7 +3669,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFHTC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFHTC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='horizontal tail aero calibration factor (including technology factor INGASP.FCFHTT)',
@@ -4216,7 +4239,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFNC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFNC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='nacelle aero calibration factor (including technology factor INGASP.FCFNT)',
@@ -4323,7 +4346,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.PYLON_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FPYLND', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FPYLND', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='pylon aero calibration factor',
@@ -4699,7 +4722,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Strut.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFSTRC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFSTRC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='strut aero calibration factor (including technology factor INGASP.FCFSTRT)',
@@ -4827,7 +4850,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.VerticalTail.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='vertical tail aero calibration factor (including technology factor INGASP.FCFVTT)',
@@ -5247,7 +5270,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    # see also: station_chord_lengths (of LEAPS1)
     Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
@@ -5331,7 +5353,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFWC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFWC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='wing aero calibration factor (including technology factor INGASP.FCFWT)',
@@ -7151,7 +7173,7 @@ add_meta_data(
 
 add_meta_data(
     # TODO: missing &DEFINE.AERIN.CLAPP ???
-    #    - NOTE: there is a relationship in FLOPS/LEAPS1 between CLAPP and
+    #    - NOTE: there is a relationship in FLOPS between CLAPP and
     #      CLLDM (this variable)
     Mission.Landing.LIFT_COEFFICIENT_MAX,
     meta_data=_MetaData,
@@ -7421,7 +7443,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    # TODO FLOPS/LEAPS1 implementation is different from Aviary
+    # TODO FLOPS implementation is different from Aviary
     #    - correct variable reference?
     #    - correct Aviary equations?
     Mission.Takeoff.FINAL_VELOCITY,
@@ -7436,7 +7458,7 @@ add_meta_data(
 
 add_meta_data(
     # Note user override (no scaling)
-    # Note FLOPS/LEAPS1 calculated as part of mission analysis, and not as
+    # Note FLOPS calculated as part of mission analysis, and not as
     # part of takeoff
     Mission.Takeoff.FUEL,
     meta_data=_MetaData,

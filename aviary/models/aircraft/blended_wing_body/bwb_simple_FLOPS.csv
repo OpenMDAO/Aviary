@@ -90,7 +90,7 @@ aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
-aircraft:fuselage:height_to_width_ratio,0.11,unitless
+aircraft:fuselage:sidebody_thickness_to_chord,0.11,unitless
 aircraft:fuselage:length,137.5,ft
 aircraft:fuselage:mass_scaler,1.0,unitless
 aircraft:fuselage:max_width,64.58,ft
