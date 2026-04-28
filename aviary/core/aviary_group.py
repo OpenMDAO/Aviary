@@ -159,7 +159,7 @@ class AviaryGroup(om.Group):
 
         # Temporarily add extra stuff here, probably patched soon
         # add a check for traj using hasattr for pre-mission tests.
-        if hasattr(self, 'traj'):
+        if mission_method is ENERGY_STATE and hasattr(self, 'traj'):
             # Set a more appropriate solver for dymos when the phases are linked.
             if MPI and isinstance(self.traj.phases.linear_solver, om.PETScKrylov):
                 # When any phase is connected with input_initial = True, dymos puts
