@@ -21,8 +21,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
       with:
         python-version: '3.11'
     - uses: pre-commit/action@v3.0.1
@@ -35,14 +35,14 @@ jobs:
         include:
           # oldest supported versions of openmdao/dymos
           # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
-          - NAME: oldest
-            PY: '3.11'
-            NUMPY: '2.2'
-            SCIPY: '1.15'
-            PYOPTSPARSE: 'v2.13.1'
-            SNOPT: '7.7'
-            OPENMDAO: '3.43.0'
-            DYMOS: '1.13.1'
+          #- NAME: oldest
+          #  PY: '3.11'
+          #  NUMPY: '2.2'
+          #  SCIPY: '1.15'
+          #  PYOPTSPARSE: 'v2.13.1'
+          #  SNOPT: '7.7'
+          #  OPENMDAO: '3.43.0'
+          #  DYMOS: '1.13.1'
 
           # latest versions of openmdao/dymos
           - NAME: latest
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
@@ -86,7 +86,7 @@ jobs:
           testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions

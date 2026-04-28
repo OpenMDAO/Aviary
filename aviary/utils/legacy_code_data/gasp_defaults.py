@@ -65,7 +65,6 @@ gasp_default_values = NamedValues(
         'INGASP.DELWST': (0.0, 'lbm'),
         'INGASP.DFLPLD': (40, 'deg'),
         'INGASP.DFLPTO': (10, 'deg'),
-        'INGASP.DIAM_REF': (5.8, 'ft'),  # no DIAM_REF in GASP
         'INGASP.DNQDE': (1.0, 'unitless'),
         'INGASP.DV1': (5.0, 'kn'),
         'INGASP.DVR': (5.0, 'kn'),

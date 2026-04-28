@@ -65,7 +65,7 @@ class NacelleMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
 
         count_factor = nacelle_count_factor(num_eng)
-        # TODO: This should be distributed thrust factor
+        # This should be distributed thrust factor, see issue #1096.
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
         outputs[Aircraft.Nacelle.MASS] = (
@@ -79,7 +79,7 @@ class NacelleMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Nacelle.MASS_SCALER]
 
         count_factor = nacelle_count_factor(num_eng)
-        # TODO: This should be distributed thrust factor
+        # This should be distributed thrust factor, see issue #1096.
         thrust = inputs[Aircraft.Engine.SCALED_SLS_THRUST]
 
         thrust_exp = thrust**0.36

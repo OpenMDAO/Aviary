@@ -159,133 +159,15 @@ class PercentNotInFuselage(om.ExplicitComponent):
         J['percent_exposed', Aircraft.Nacelle.PERCENT_DIAM_BURIED_IN_FUSELAGE] = d_pct_swn
 
 
-class EngineSize(om.ExplicitComponent):
+class GASPEngineSize(om.ExplicitComponent):
     """
-    GASP engine geometry calculation. It returns Aircraft.Nacelle.AVG_DIAMETER,
-    Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. This does not follow GASP
-    algorithm exactly.
-    """
-
-    def initialize(self):
-        add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
-        add_aviary_option(self, Settings.VERBOSITY)
-
-    def setup(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-
-        add_aviary_input(
-            self, Aircraft.Engine.REFERENCE_DIAMETER, shape=num_engine_type, units='ft'
-        )
-        add_aviary_input(
-            self, Aircraft.Engine.SCALE_FACTOR, shape=num_engine_type, units='unitless'
-        )
-        add_aviary_input(
-            self, Aircraft.Nacelle.CORE_DIAMETER_RATIO, shape=num_engine_type, units='unitless'
-        )
-        add_aviary_input(self, Aircraft.Nacelle.FINENESS, shape=num_engine_type, units='unitless')
-        self.add_input('percent_exposed', val=np.ones(num_engine_type), units='unitless')
-
-        add_aviary_output(self, Aircraft.Nacelle.AVG_DIAMETER, shape=num_engine_type, units='ft')
-        add_aviary_output(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
-        add_aviary_output(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
-
-    def setup_partials(self):
-        # derivatives w.r.t vectorized engine inputs have known sparsity pattern
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
-        shape = np.arange(num_engine_type)
-
-        innames = [
-            Aircraft.Engine.REFERENCE_DIAMETER,
-            Aircraft.Engine.SCALE_FACTOR,
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO,
-            Aircraft.Nacelle.FINENESS,
-        ]
-
-        self.declare_partials(
-            Aircraft.Nacelle.AVG_DIAMETER, innames[:-1], rows=shape, cols=shape, val=1.0
-        )
-        self.declare_partials(Aircraft.Nacelle.AVG_LENGTH, innames, rows=shape, cols=shape, val=1.0)
-        self.declare_partials(
-            Aircraft.Nacelle.SURFACE_AREA,
-            innames + ['percent_exposed'],
-            rows=shape,
-            cols=shape,
-            val=1.0,
-        )
-
-    def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
-        d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
-        scale_fac = inputs[Aircraft.Engine.SCALE_FACTOR]
-        d_nac_eng = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
-        ld_nac = inputs[Aircraft.Nacelle.FINENESS]
-        if any(x <= 0.0 for x in scale_fac):
-            if verbosity > Verbosity.BRIEF:
-                print('Aircraft.Engine.SCALE_FACTOR must be positive.')
-
-        d_eng = d_ref * np.sqrt(scale_fac)
-        outputs[Aircraft.Nacelle.AVG_DIAMETER] = d_eng * d_nac_eng
-        outputs[Aircraft.Nacelle.AVG_LENGTH] = ld_nac * outputs[Aircraft.Nacelle.AVG_DIAMETER]
-        outputs[Aircraft.Nacelle.SURFACE_AREA] = (
-            np.pi
-            * outputs[Aircraft.Nacelle.AVG_DIAMETER]
-            * outputs[Aircraft.Nacelle.AVG_LENGTH]
-            * inputs['percent_exposed']
-        )
-
-    def compute_partials(self, inputs, J):
-        d_ref = inputs[Aircraft.Engine.REFERENCE_DIAMETER]
-        scale_fac = inputs[Aircraft.Engine.SCALE_FACTOR]
-        d_nac_eng = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
-        ld_nac = inputs[Aircraft.Nacelle.FINENESS]
-
-        tr = np.sqrt(scale_fac)
-        d_eng = d_ref * tr
-        d_nac = d_eng * d_nac_eng
-        l_nac = d_nac * ld_nac
-
-        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.REFERENCE_DIAMETER] = tr * d_nac_eng
-        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Engine.SCALE_FACTOR] = (
-            d_nac_eng * d_ref / (2 * tr)
-        )
-        J[Aircraft.Nacelle.AVG_DIAMETER, Aircraft.Nacelle.CORE_DIAMETER_RATIO] = d_eng
-
-        for wrt in [
-            Aircraft.Engine.REFERENCE_DIAMETER,
-            Aircraft.Engine.SCALE_FACTOR,
-            Aircraft.Nacelle.CORE_DIAMETER_RATIO,
-        ]:
-            J[Aircraft.Nacelle.AVG_LENGTH, wrt] = J[Aircraft.Nacelle.AVG_DIAMETER, wrt] * ld_nac
-            J[Aircraft.Nacelle.SURFACE_AREA, wrt] = (
-                np.pi
-                * (
-                    J[Aircraft.Nacelle.AVG_DIAMETER, wrt] * l_nac
-                    + J[Aircraft.Nacelle.AVG_LENGTH, wrt] * d_nac
-                )
-                * inputs['percent_exposed']
-            )
-
-        J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS] = d_nac
-        J[Aircraft.Nacelle.SURFACE_AREA, Aircraft.Nacelle.FINENESS] = (
-            np.pi
-            * J[Aircraft.Nacelle.AVG_LENGTH, Aircraft.Nacelle.FINENESS]
-            * d_nac
-            * inputs['percent_exposed']
-        )
-        J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = (
-            np.pi * d_eng * d_nac_eng * ld_nac * d_eng * d_nac_eng
-        )
-
-
-class BWBEngineSize(om.ExplicitComponent):
-    """
-    Engine geometry calculation for BWB. It returns Aircraft.Nacelle.AVG_DIAMETER,
+    Engine geometry calculation based on engine diameter. It returns Aircraft.Nacelle.AVG_DIAMETER,
     Nacelle.AVG_LENGTH, and Aircraft.Nacelle.SURFACE_AREA. It follows the algorithm in GASP.
-    Users can use this component instead of EngineSize.
     """
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Aircraft.Engine.INLET_AREA_COEFFICIENT)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -305,10 +187,36 @@ class BWBEngineSize(om.ExplicitComponent):
     def setup_partials(self):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
         shape = np.arange(num_engine_type)
+        nn = np.zeros(num_engine_type, dtype=int)
+
         self.declare_partials(
             Aircraft.Nacelle.AVG_DIAMETER,
             [
                 Aircraft.Design.GROSS_MASS,
+            ],
+            rows=shape,
+            cols=nn,
+        )
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_LENGTH,
+            [
+                Aircraft.Design.GROSS_MASS,
+            ],
+            rows=shape,
+            cols=nn,
+        )
+        self.declare_partials(
+            Aircraft.Nacelle.SURFACE_AREA,
+            [
+                Aircraft.Design.GROSS_MASS,
+            ],
+            rows=shape,
+            cols=nn,
+        )
+
+        self.declare_partials(
+            Aircraft.Nacelle.AVG_DIAMETER,
+            [
                 Aircraft.Nacelle.CORE_DIAMETER_RATIO,
             ],
             rows=shape,
@@ -317,7 +225,6 @@ class BWBEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.AVG_LENGTH,
             [
-                Aircraft.Design.GROSS_MASS,
                 Aircraft.Nacelle.CORE_DIAMETER_RATIO,
                 Aircraft.Nacelle.FINENESS,
             ],
@@ -327,7 +234,6 @@ class BWBEngineSize(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Nacelle.SURFACE_AREA,
             [
-                Aircraft.Design.GROSS_MASS,
                 Aircraft.Nacelle.CORE_DIAMETER_RATIO,
                 Aircraft.Nacelle.FINENESS,
                 'percent_exposed',
@@ -337,15 +243,15 @@ class BWBEngineSize(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
+        coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
         gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
-        area_engine = 0.3 * gross_mass / 1500.0 / num_engine
+        area_engine = coeff_inlet * gross_mass / num_engine
         diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
         len_nacelle = fineness_nac * diam_nacelle
@@ -357,19 +263,20 @@ class BWBEngineSize(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         num_engine = self.options[Aircraft.Engine.NUM_ENGINES]
+        coeff_inlet = self.options[Aircraft.Engine.INLET_AREA_COEFFICIENT]
 
         gross_mass = inputs[Aircraft.Design.GROSS_MASS]
+        gross_mass = np.full(len(num_engine), gross_mass)
         core_diam_ratio = inputs[Aircraft.Nacelle.CORE_DIAMETER_RATIO]
         fineness_nac = inputs[Aircraft.Nacelle.FINENESS]
         pct_exposed = inputs['percent_exposed']
 
-        area_engine = 0.3 * gross_mass / 1500.0 / num_engine
+        area_engine = coeff_inlet * gross_mass / num_engine
         diam_engine = np.sqrt(4.0 * area_engine / np.pi)
         diam_nacelle = core_diam_ratio * diam_engine
         len_nacelle = fineness_nac * diam_nacelle
-        wet_area_nacelle = np.pi * diam_nacelle * len_nacelle * pct_exposed
 
-        darea_engine_dgross_mass = 0.3 * np.ones(1) / 1500.0 / num_engine
+        darea_engine_dgross_mass = coeff_inlet * np.ones(1) / num_engine
         ddiam_engine_dgross_mass = 2 / np.pi / diam_engine * darea_engine_dgross_mass
         ddiam_nacelle_dgross_mass = core_diam_ratio * ddiam_engine_dgross_mass
         ddiam_nacelle_dcore_diam_ratio = diam_engine
@@ -412,7 +319,7 @@ class BWBEngineSize(om.ExplicitComponent):
         J[Aircraft.Nacelle.SURFACE_AREA, 'percent_exposed'] = dwet_area_nacelle_dpct_exposed
 
 
-class BWBEngineSizeGroup(om.Group):
+class GASPEngineSizeGroup(om.Group):
     def setup(self):
         self.add_subsystem(
             'perc',
@@ -423,7 +330,7 @@ class BWBEngineSizeGroup(om.Group):
 
         self.add_subsystem(
             'eng_size',
-            BWBEngineSize(),
+            GASPEngineSize(),
             promotes_inputs=['*'] + ['percent_exposed'],
             promotes_outputs=['*'],
         )

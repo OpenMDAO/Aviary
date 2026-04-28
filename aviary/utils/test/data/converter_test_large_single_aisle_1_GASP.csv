@@ -43,7 +43,6 @@ aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1.0,unitless
 aircraft:engine:pylon_factor,1.25,unitless
-aircraft:engine:reference_diameter,5.8,ft
 aircraft:engine:reference_sls_thrust,28690.0,lbf
 aircraft:engine:scaled_sls_thrust,28690.0,lbf
 aircraft:engine:type,7,unitless
@@ -90,6 +89,7 @@ aircraft:nacelle:core_diameter_ratio,1.25,unitless
 aircraft:nacelle:fineness,2.0,unitless
 aircraft:nacelle:form_factor,1.5,unitless
 aircraft:nacelle:mass_specific,3.0,lbm/ft**2
+aircraft:nacelle:pylon_drag_factor,1.0,unitless
 aircraft:strut:area_ratio,0.0,unitless
 aircraft:strut:attachment_location,0.0,ft
 aircraft:strut:attachment_location_dimensionless,0.0,unitless
@@ -182,7 +182,6 @@ INGASP.DCDSE,-1
 INGASP.DYR,12
 INGASP.EMCRU,0.8
 INGASP.FCSF,2.5
-INGASP.FPYLND,1
 INGASP.HBTP,0.333
 INGASP.HIR,0.015
 INGASP.HNCRU,37500

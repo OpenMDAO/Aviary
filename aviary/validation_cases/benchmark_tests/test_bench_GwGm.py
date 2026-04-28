@@ -29,10 +29,10 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Aircraft.Design.GROSS_MASS, 'lbm'): 171595.06049335,
-            (Mission.OPERATING_MASS, 'lbm'): 95089.98897716,
-            (Mission.TOTAL_FUEL, 'lbm'): 40505.07151619,
-            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
+            (Mission.GROSS_MASS, 'lbm'): 171414.17171104,
+            (Mission.OPERATING_MASS, 'lbm'): 94986.583699,
+            (Mission.TOTAL_FUEL, 'lbm'): 40451.68735078,
+            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.0906835,
             (Mission.RANGE, 'NM'): 3675.0,
             (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
         }
@@ -58,8 +58,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         self.assertTrue(prob.result.success)
 
-        rtol = 1e-3
-
         # There are no truth values for these.
         self.check_values(prob)
 
@@ -74,8 +72,6 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         self.assertTrue(prob.result.success)
-
-        rtol = 1e-3
 
         # There are no truth values for these.
         self.check_values(prob)
@@ -111,7 +107,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ProblemPhaseTestCase()
-    test.setUp()
-    test.test_bench_GwGm_IPOPT_Breguet_Cruise()
+    unittest.main()
+    # test = ProblemPhaseTestCase()
+    # test.setUp()
+    # test.test_bench_GwGm_IPOPT_Breguet_Cruise()

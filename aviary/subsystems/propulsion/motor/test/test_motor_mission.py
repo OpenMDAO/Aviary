@@ -21,6 +21,9 @@ class TestMotorMission(unittest.TestCase):
         options = AviaryValues()
         options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(filename))
         options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
+        options.set_val(
+            Aircraft.Engine.FIXED_RPM, 6000, 'rpm'
+        )  # set fixed RPM so we can manually set it
 
         prob = om.Problem()
 
@@ -28,11 +31,15 @@ class TestMotorMission(unittest.TestCase):
 
         setup_model_options(prob, options)
 
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.Propulsion.RPM, val=np.ones(nn) * 6000, units='rpm'
+        )
+
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Dynamic.Vehicle.Propulsion.THROTTLE, np.linspace(0, 1, nn))
-        # prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.linspace(0, 6000, nn))
-        # prob.set_val('torque_unscaled', np.linspace(0, 1800, nn), 'N*m')
+        prob.set_val(Dynamic.Vehicle.Propulsion.RPM, np.linspace(0, 6000, nn))
+
         prob.set_val(Aircraft.Engine.SCALE_FACTOR, 1.12)
 
         prob.run_model()

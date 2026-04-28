@@ -4,7 +4,7 @@
 title: ""
 author: Aviary team at NASA
 logo: aviary.png
-copyright: '2023'
+copyright: '2026'
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -34,6 +34,8 @@ html:
   favicon : "aviary_logo.png"
   extra_css:
     - custom.css
+  extra_js:
+    - collapsible_headers.js
 
 
 launch_buttons:

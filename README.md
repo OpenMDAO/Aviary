@@ -78,13 +78,6 @@ We have also provided a static version of the `environment.yml` at the top level
 
 
 
-## Planned future features
-
-Aviary is in active development.
-We plan to expand its capabilities and have provided a non-exhaustive [list of future features](https://openmdao.github.io/Aviary/misc_resources/planned_future_features.html).
-
-
-
 ## Contact Us
 **Get in touch with the Aviary team at agency-aviary@mail.nasa.gov or the GitHub [discussions page](https://github.com/OpenMDAO/Aviary/discussions)** 
 
