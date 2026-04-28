@@ -7710,7 +7710,7 @@ add_meta_data(
     Settings.PROBLEM_TYPE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
-    desc="Select from Aviary's built in problem types: SIZING, ALTERNATE, FALLOUT and MULTI_MISSION",
+    desc="Select from Aviary's built in problem types: SIZING, OFF_DESIGN_MIN_FUEL, OFF_DESIGN_MAX_RANGE and MULTI_MISSION",
     option=True,
     types=ProblemType,
     default_value=None,
