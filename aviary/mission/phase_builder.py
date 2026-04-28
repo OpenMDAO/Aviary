@@ -16,7 +16,7 @@ import numpy as np
 from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
 from aviary.mission.initial_guess_builders import InitialGuess
 from aviary.utils.aviary_values import AviaryValues, get_keys
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 _require_new_initial_guesses_meta_data_class_attr_ = namedtuple(
     '_require_new_initial_guesses_meta_data_class_attr_', ()
@@ -102,7 +102,7 @@ class PhaseBuilder(ABC):
     default_ode_class = EnergyStateODE
     default_options_class = om.OptionsDictionary
 
-    default_meta_data = _MetaData
+    default_meta_data = CoreMetaData
     # endregion : derived type customization points
 
     def __init__(

@@ -7,7 +7,7 @@ import importlib_resources
 
 from aviary.utils.aviary_values import AviaryValues, get_items
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 def get_aviary_resource_path(resource_name: str) -> Path:
@@ -60,7 +60,7 @@ def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
             continue
 
 
-def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_data=_MetaData):
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_data=CoreMetaData):
     """
     This function sets the default values and units for any inputs prior to
     setup. This is needed to resolve ambiguities when inputs are promoted

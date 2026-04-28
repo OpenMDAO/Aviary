@@ -43,7 +43,7 @@ from aviary.subsystems.propulsion.utils import (
 from aviary.utils.aviary_values import AviaryValues, NamedValues, get_items, get_keys
 from aviary.utils.csv_data_file import read_data_file
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 MACH = EngineModelVariables.MACH
@@ -153,7 +153,7 @@ class EngineDeck(EngineModel):
         options: AviaryValues = None,
         data: NamedValues = None,
         required_variables: set = default_required_variables,
-        meta_data: dict = _MetaData,
+        meta_data: dict = CoreMetaData,
     ):
         if data is not None:
             self.read_from_file = False

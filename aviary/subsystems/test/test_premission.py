@@ -20,7 +20,7 @@ from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission
 
 FLOPS = LegacyCode.FLOPS
@@ -73,12 +73,12 @@ class PreMissionTestCase(unittest.TestCase):
 
         engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', CoreMetaData, engines)
+        mass = CoreMassBuilder('mass', CoreMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, FLOPS)
         geom = CoreGeometryBuilder(
             'geometry',
-            BaseMetaData,
+            CoreMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=GASP,
         )
@@ -104,7 +104,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         for key, (val, units) in get_items(GASP_input):
             try:
-                if not BaseMetaData[key]['option']:
+                if not CoreMetaData[key]['option']:
                     self.prob.model.set_input_defaults(key, val, units)
             except KeyError:
                 continue
@@ -224,12 +224,12 @@ class PreMissionTestCase(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', CoreMetaData, engines)
+        mass = CoreMassBuilder('mass', CoreMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, FLOPS)
         geom = CoreGeometryBuilder(
             'geometry',
-            BaseMetaData,
+            CoreMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
         )
@@ -254,7 +254,7 @@ class PreMissionTestCase(unittest.TestCase):
 
         for key, (val, units) in get_items(GASP_input):
             try:
-                if not BaseMetaData[key]['option']:
+                if not CoreMetaData[key]['option']:
                     prob.model.set_input_defaults(key, val, units)
             except KeyError:
                 continue

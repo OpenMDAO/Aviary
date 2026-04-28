@@ -1,6 +1,6 @@
 from abc import ABC
 
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 class SubsystemBuilder(ABC):
@@ -19,7 +19,7 @@ class SubsystemBuilder(ABC):
 
     # derived type customization point
     _default_name = 'default_subsystem_name'
-    _default_metadata = _MetaData
+    _default_metadata = CoreMetaData
 
     def __init__(self, name=None, meta_data=None):
         if name is None:

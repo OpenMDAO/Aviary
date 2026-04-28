@@ -13,13 +13,15 @@ from aviary.utils.named_values import get_keys
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, ProblemType, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
 # TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
-def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
+def preprocess_options(
+    aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
+):
     """
     Run all preprocessors on provided AviaryValues object.
 
@@ -97,7 +99,7 @@ def remove_preprocessed_options(aviary_options):
         aviary_options.delete(option)
 
 
-def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
+def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
@@ -618,7 +620,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
 def preprocess_propulsion(
     aviary_options: AviaryValues,
     engine_models: list = None,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     verbosity=None,
 ):
     """

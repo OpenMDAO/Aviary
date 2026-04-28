@@ -12,8 +12,9 @@ from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.utils.aviary_values import get_items
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.options import get_option_defaults, is_option
+from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 @use_tempdirs
@@ -49,7 +50,7 @@ class MassSummationTestCase1(unittest.TestCase):
         input_options.delete(Aircraft.Engine.SCALE_FACTOR)
 
         for key, (val, units) in get_items(input_options):
-            if not is_option(key):
+            if not CoreMetaData[key]['option']:
                 self.prob.model.set_input_defaults(key, val=val, units=units)
 
         for key, (val, units) in get_items(V3_bug_fixed_non_metadata):

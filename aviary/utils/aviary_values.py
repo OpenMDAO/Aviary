@@ -21,7 +21,7 @@ from openmdao.utils.units import convert_units as _convert_units
 
 from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
 from aviary.utils.utils import cast_type, check_type
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 # TODO: workaround to avoid unused imports - a better solution is desired such as utils or making
 #       get_*() methods of NamedValues
@@ -33,7 +33,7 @@ get_values = get_values
 class AviaryValues(NamedValues):
     """Define a collection of aviary values with associated units and aviary tests."""
 
-    def set_val(self, key, val, units='unitless', meta_data=_MetaData):
+    def set_val(self, key, val, units='unitless', meta_data=CoreMetaData):
         """
         Update the named value and its associated units.
 
@@ -64,7 +64,7 @@ class AviaryValues(NamedValues):
 
         super().set_val(key=key, val=val, units=units)
 
-    def _check_units_compatibility(self, key, val, units, meta_data=_MetaData):
+    def _check_units_compatibility(self, key, val, units, meta_data=CoreMetaData):
         """
         Check that the two provided units are compatible - we don't actually want to
         convert here, just verify that the provided units are allowed.

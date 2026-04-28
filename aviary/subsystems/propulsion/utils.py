@@ -15,7 +15,7 @@ import aviary.constants as constants
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.named_values import NamedValues, get_items, get_keys
 from aviary.utils.utils import isiterable
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -130,7 +130,7 @@ def build_engine_deck(
     options: AviaryValues,
     name: str = None,
     required_variables=None,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
 ):
     """
     Creates an EngineDeck using available inputs and options in aviary_options.
@@ -172,7 +172,7 @@ def build_engine_deck(
         else:
             try:
                 aviary_val = options.get_val(var, units)
-            # if not, use default value from _MetaData?
+            # if not, use default value from CoreMetaData?
             except KeyError:
                 # currently skipping filling "missing" variables with defaults
                 # engine_options.set_val(var, meta_data[var]['default_value'], units)

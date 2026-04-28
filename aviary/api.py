@@ -11,7 +11,6 @@ user-facing should be imported to this file.
 # TODO: don't rename things here, do it in the entire codebase
 # TODO: when documenting methods and classes, make sure to include documentation (printing of docstrings) for everything that's imported in this API
 # TODO: remove overload prototype
-# TODO: import examples once we settle on those
 # TODO: import this in all user-facing files
 
 
@@ -20,7 +19,6 @@ user-facing should be imported to this file.
 ###################
 
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.options import get_option_defaults, is_option
 from aviary.utils.develop_metadata import add_meta_data, update_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.functions import (
