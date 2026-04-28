@@ -10,7 +10,6 @@ from aviary.models.aircraft.large_single_aisle_1.V3_bug_fixed_IO import (
 )
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
-from aviary.utils.aviary_values import get_items
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -49,11 +48,11 @@ class MassSummationTestCase1(unittest.TestCase):
         input_options.delete(Aircraft.Furnishings.MASS)
         input_options.delete(Aircraft.Engine.SCALE_FACTOR)
 
-        for key, (val, units) in get_items(input_options):
+        for key, (val, units) in input_options.items():
             if not CoreMetaData[key]['option']:
                 self.prob.model.set_input_defaults(key, val=val, units=units)
 
-        for key, (val, units) in get_items(V3_bug_fixed_non_metadata):
+        for key, (val, units) in V3_bug_fixed_non_metadata.items():
             self.prob.model.set_input_defaults(key, val=val, units=units)
 
         input_options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')

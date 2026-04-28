@@ -5,7 +5,7 @@ from typing import Union
 
 import importlib_resources
 
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
@@ -51,7 +51,7 @@ def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
     aviary_inputs : AviaryValues
         Instance of AviaryValues containing all initial values.
     """
-    for key, (val, units) in get_items(aviary_inputs):
+    for key, (val, units) in aviary_inputs.items():
         try:
             prob.set_val(key, val, units)
 

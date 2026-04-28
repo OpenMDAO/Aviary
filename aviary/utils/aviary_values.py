@@ -19,15 +19,9 @@ class AviaryValues
 
 from openmdao.utils.units import convert_units as _convert_units
 
-from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
+from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import cast_type, check_type
 from aviary.variable_info.variable_meta_data import CoreMetaData
-
-# TODO: workaround to avoid unused imports - a better solution is desired such as utils or making
-#       get_*() methods of NamedValues
-get_items = get_items
-get_keys = get_keys
-get_values = get_values
 
 
 class AviaryValues(NamedValues):
@@ -36,9 +30,6 @@ class AviaryValues(NamedValues):
     def set_val(self, key, val, units='unitless', meta_data=CoreMetaData):
         """
         Update the named value and its associated units.
-
-        Note, specifying units of `None` or units of any type other than `str` will raise
-        `Typerror`.
 
         Parameters
         ----------
@@ -66,8 +57,8 @@ class AviaryValues(NamedValues):
 
     def _check_units_compatibility(self, key, val, units, meta_data=CoreMetaData):
         """
-        Check that the two provided units are compatible - we don't actually want to
-        convert here, just verify that the provided units are allowed.
+        Check that the two provided units are compatible - we don't actually want to convert here,
+        just verify that the provided units are allowed.
         """
         expected_units = meta_data[key]['units']
 
@@ -84,20 +75,3 @@ class AviaryValues(NamedValues):
             )
         except BaseException:
             raise KeyError('There is an unknown error with your units.')
-
-    def items(self):
-        """
-        Return (name, value) for variables contained in this vector.
-
-        Note that AviaryValues is not a dictionary, but this adds support for iterating over
-        its contents.
-
-        Yields
-        ------
-        str
-            The name of an item.
-        object
-            The value of that item.
-        """
-        for key, val in self._mapping.items():
-            yield key, val

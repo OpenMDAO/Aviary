@@ -22,7 +22,7 @@ from operator import eq, ge, gt, le, lt, ne
 import numpy as np
 from openmdao.utils.units import valid_units
 
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import convert_strings_to_data, get_path
 from aviary.variable_info.enums import ProblemType, Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
@@ -260,7 +260,7 @@ def update_GASP_options(aircraft_values: AviaryValues):
 
     if aircraft_values.get_val(Settings.VERBOSITY) >= Verbosity.VERBOSE:
         print('\nOptions')
-        for key in get_keys(aircraft_values):
+        for key in aircraft_values.keys():
             val, units = aircraft_values.get_item(key)
             print(key, val, units)
 
@@ -283,7 +283,7 @@ def update_dependent_options(aircraft_values: AviaryValues, dependent_options):
     """
     # gets the names of all the variables that affect dependent options
     for var_name, dependency in dependent_options:
-        if var_name in get_keys(aircraft_values):
+        if var_name in aircraft_values.keys():
             var_value, var_units = aircraft_values.get_item(var_name)
             # dependency is a dictionary that contains the target option, the relationship to the variable and the output values
             if dependency['relation'] in operation_dict:

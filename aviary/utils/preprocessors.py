@@ -9,7 +9,6 @@ import warnings
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.named_values import get_keys
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, ProblemType, Verbosity
@@ -669,7 +668,7 @@ def preprocess_propulsion(
 
     # update_list has keys of all variables that are already defined, and must
     # be vectorized
-    update_list = list(get_keys(complete_options_list))
+    update_list = list(complete_options_list.keys())
 
     # Vectorize engine variables. Only update variables in update_list that are relevant
     # to engines (defined by _get_engine_variables())

@@ -12,7 +12,7 @@ from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data imp
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -28,7 +28,7 @@ class TestTakeoffAeroGroup(unittest.TestCase):
 
         tol = 1e-12
 
-        for key, (desired, units) in get_items(_regression_data):
+        for key, (desired, units) in _regression_data.items():
             try:
                 actual = prob.get_val(key, units)
 
@@ -49,7 +49,7 @@ class TestTakeoffAeroGroup(unittest.TestCase):
 
         tol = 1e-12
 
-        for key, (desired, units) in get_items(_regression_data_spoiler):
+        for key, (desired, units) in _regression_data_spoiler.items():
             try:
                 actual = prob.get_val(key, units)
 

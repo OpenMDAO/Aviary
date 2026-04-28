@@ -40,7 +40,7 @@ from aviary.subsystems.propulsion.utils import (
     default_units,
     max_variables,
 )
-from aviary.utils.aviary_values import AviaryValues, NamedValues, get_items, get_keys
+from aviary.utils.aviary_values import AviaryValues, NamedValues
 from aviary.utils.csv_data_file import read_data_file
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.variable_meta_data import CoreMetaData
@@ -356,7 +356,7 @@ class EngineDeck(EngineModel):
             # run provided data through aliases
             # create dict of what names to change, modify outside of loop
             alias_dict = {}
-            for item in get_items(raw_data):
+            for item in raw_data.items():
                 var = item[0]
                 val = item[1][0]
                 units = item[1][1]
@@ -374,7 +374,7 @@ class EngineDeck(EngineModel):
 
         # Loop through all variables in provided data. Track which valid variables are included with
         # the data and save raw data for reference
-        for key in get_keys(raw_data):
+        for key in raw_data.keys():
             val, units = raw_data.get_item(key)
             if key in aliases:
                 # Convert data to expected units. Required so settings like tolerances that assume
@@ -1259,7 +1259,7 @@ class EngineDeck(EngineModel):
         Perform consistency checks on thrust-scaling options based on new reference
         thrust.
         """
-        engine_mapping = get_keys(self.options)
+        engine_mapping = self.options.keys()
 
         # Find reference thrust if not provided - assumed user-provided value is "best"
         # estimate of reference thrust

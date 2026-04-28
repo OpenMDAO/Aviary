@@ -2,7 +2,7 @@
 
 import unittest
 
-from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -178,15 +178,15 @@ class NamedValuesTest(unittest.TestCase):
         b = tuple(d)
         self.assertEqual(a, b)
 
-        b = tuple(get_items(d))
+        b = tuple(d.items())
         self.assertEqual(a, b)
 
         a = tuple(iter(_data1))
-        b = tuple(get_keys(d))
+        b = tuple(d.keys())
         self.assertEqual(a, b)
 
         a = tuple(_data1.values())
-        b = tuple(get_values(d))
+        b = tuple(d.values())
         self.assertEqual(a, b)
 
         # Sized

@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 from aviary.utils.csv_data_file import read_data_file
-from aviary.utils.named_values import get_items
 from aviary.variable_info.functions import add_aviary_option
 from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.functions import get_path
@@ -39,10 +38,10 @@ class MotorMap(om.Group):
             _,
         ) = read_data_file(motor_model)
 
-        # Extract data with units using get_items
+        # Extract data with units using items
         data_dict = {}
         units_dict = {}
-        for name, (values, units) in get_items(read_data):
+        for name, (values, units) in read_data.items():
             data_dict[name] = values
             units_dict[name] = units
 
