@@ -303,7 +303,7 @@ class NamedValues(Collection):
     __slots__ = ('_mapping',)
 
 
-# It is weird that these are not methods - it requires us to import these in AviarValues
+# It is weird that these are not methods - it requires us to import these in AviaryValues
 # just so they can be imported from that file as well. Seems unintuitive
 def get_keys(named_values: NamedValues):
     """Return a new view of the collection's names."""

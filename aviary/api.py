@@ -19,6 +19,7 @@ user-facing should be imported to this file.
 ###################
 
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
+from aviary.variable_info.options import is_option
 from aviary.utils.develop_metadata import add_meta_data, update_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.functions import (
@@ -26,9 +27,6 @@ from aviary.variable_info.functions import (
     add_aviary_output,
     add_aviary_option,
     get_units,
-    override_aviary_vars,
-    setup_model_options,
-    setup_trajectory_params,
 )
 from aviary.utils.merge_hierarchies import merge_hierarchies
 from aviary.utils.merge_variable_metadata import merge_meta_data
@@ -36,16 +34,7 @@ from aviary.utils.named_values import NamedValues, get_keys, get_items, get_valu
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
-from aviary.variable_info.enums import (
-    AlphaModes,
-    EquationsOfMotion,
-    FlapType,
-    GASPEngineType,
-    LegacyCode,
-    ProblemType,
-    SpeedType,
-    Verbosity,
-)
+from aviary.variable_info.enums import *
 from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
 from aviary.models.missions.energy_state_default import (
     phase_info as default_energy_state_phase_info,
@@ -67,8 +56,6 @@ from aviary.constants import (
     GRAV_ENGLISH_LBM,
     GRAV_METRIC_FLOPS,
     GRAV_METRIC_GASP,
-    MU_LANDING,
-    MU_TAKEOFF,
     PSLS_PSF,
     RADIUS_EARTH_METRIC,
     RHO_SEA_LEVEL_ENGLISH,
@@ -77,13 +64,18 @@ from aviary.constants import (
 )
 from aviary.subsystems.test.subsystem_tester import (
     TestSubsystemBuilder,
-    skipIfMissingDependencies,
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 ###################
 # Level 3 Imports #
 ###################
+# Model Setup
+from aviary.variable_info.functions import (
+    override_aviary_vars,
+    setup_model_options,
+    setup_trajectory_params,
+)
 
 # Miscellaneous
 from aviary.subsystems.premission import CorePreMission
