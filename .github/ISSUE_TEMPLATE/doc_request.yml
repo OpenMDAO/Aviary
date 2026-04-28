@@ -6,13 +6,13 @@ body:
     id: desired
     attributes:
       label: Missing documentation or idea for new documentation.
-      description: What topic you would like documented, including any specific things you would like addressed in the content.
+      description: Explain what topic you would like documented, including any specific things you would like addressed in the content.
     validations:
       required: true
   - type: textarea
     id: problem
     attributes:
-      label: Issues with existing documentation.
+      label: Issue with existing documentation.
       description: Provide a link to the documentation and explain what you would like to see changed.
     validations:
       required: false
