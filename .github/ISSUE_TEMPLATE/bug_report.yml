@@ -21,7 +21,7 @@ body:
     attributes:
       label: Error Message
       description: Please provide the full error message, ideally from your code example provided above.
-      placeholder: "<< Full traceback starting from `Traceback ..` >>
+      placeholder: "<< Full traceback starting from `Traceback ..` >>"
     validations:
       required: true
   - type: input
