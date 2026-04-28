@@ -6,13 +6,13 @@ body:
     id: desired
     attributes:
       label: Desired capability or behavior.
-      description: Please explain what changes you would like to see in Aviary.
+      description: What changes you would like to see in Aviary?
     validations:
       required: true
   - type: textarea
     id: example
     attributes:
       label: Suggested implementation.
-      description: If you have a suggested solution, describe it below. This could be code or pseudocode, an example of an api change, or a general explanation of your proposed solution.
+      description: If you have a suggested solution, describe it below. This could be code/pseudocode, a mockup of an api change, or a general explanation of your proposed solution.
     validations:
       required: true
