@@ -1,5 +1,6 @@
-name: Additional Documentation Request
-description: Request additional documentation on a certain topic in Aviary. This does not include documentation errors as those should be filed under a bug report.
+name: Documentation Request
+description: Request additional documentation on a certain topic in Aviary or report innacurate documentation. This does not include errors in code embedded in doc pages, as those should be filed under a bug report.
+labels: ["documentation", "request"]
 body:
   - type: textarea
     id: desired
