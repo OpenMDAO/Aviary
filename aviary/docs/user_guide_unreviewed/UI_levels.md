@@ -68,7 +68,7 @@ Levels 2 and 3 will require code to control the more detailed aspects of the ana
 
 |                  **Level 1**                 |            **Level 2**            |       **Level 3**      |
 |:--------------------------------------------:|:---------------------------------:|:----------------------:|
-|   Mission Type (Sizing, OFF_DESIGN_MAX_RANGE)             |   All Level 1 Controls            |   All Level 2 Controls |
+|   Mission Type (SIZING, OFF_DESIGN_MAX_RANGE)             |   All Level 1 Controls            |   All Level 2 Controls |
 |   Optimizer (IPOPT, SNOPT)                   |   Specify phase order and options |   Custom ODEs and EOMs |
 |   Mission Description (Altitude, Mach, etc)  |                                   |                        |
 
