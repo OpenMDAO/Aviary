@@ -35,4 +35,4 @@ body:
     id: environment
     attributes:
       label: Environment Information
-      description: If applicable, please provide versions of relevant dependencies (openmdao, dymos, numpy, etc). This can be obtained using `pip freeze` or `conda list --export`.
+      description: Provide versions of relevant dependencies (openmdao, dymos, numpy, etc). This can be obtained using `pip freeze` or `conda list --export`.
