@@ -39,8 +39,8 @@ operation_dict = {
 }
 problem_types = {
     'sizing': ProblemType.SIZING,
-    'alternate': ProblemType.ALTERNATE,
-    'fallout': ProblemType.FALLOUT,
+    'off_design_min_fuel': ProblemType.OFF_DESIGN_MIN_FUEL,
+    'off_design_max_range': ProblemType.OFF_DESIGN_MAX_RANGE,
 }
 
 
@@ -359,7 +359,7 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
 
     # takeoff mass not given
     if mission_mass <= 0:
-        if problem_type == ProblemType.ALTERNATE:
+        if problem_type == ProblemType.OFF_DESIGN_MIN_FUEL:
             fuel_mass = (
                 num_pax
                 * (
@@ -378,14 +378,14 @@ def initialization_guessing(aircraft_values: AviaryValues, initialization_guesse
                 )
                 + fuel_mass
             )
-        elif problem_type == ProblemType.FALLOUT or problem_type == ProblemType.SIZING:
+        elif problem_type == ProblemType.OFF_DESIGN_MAX_RANGE or problem_type == ProblemType.SIZING:
             mission_mass = aircraft_values.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
     initialization_guesses['actual_takeoff_mass'] = mission_mass
 
     if cruise_mass_final == 0:  # no guess given
         if problem_type == ProblemType.SIZING:
             cruise_mass_final = 0.8
-        elif problem_type == ProblemType.ALTERNATE:
+        elif problem_type == ProblemType.OFF_DESIGN_MIN_FUEL:
             cruise_mass_final = -1
     # estimation based on payload and fuel
     if cruise_mass_final <= 0:

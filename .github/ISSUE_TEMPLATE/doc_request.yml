@@ -1,17 +1,18 @@
-name: Additional Documentation Request
-description: Request additional documentation on a certain topic in Aviary. This does not include documentation errors as those should be filed under a bug report.
+name: Documentation Request
+description: Suggest an improvement or explain issues with the documentation. Errors in code embedded in doc pages should be filed as a bug report.
+labels: ["documentation", "request"]
 body:
   - type: textarea
     id: desired
     attributes:
-      label: Desired documentation content.
-      description: Please explain what area you would like documented and any specific things you would like addressed in the content.
+      label: Missing documentation or idea for new documentation.
+      description: Explain what topic you would like documented, including any specific things you would like addressed in the content.
     validations:
       required: true
   - type: textarea
-    id: existing
+    id: problem
     attributes:
-      label: Is there any existing documentation on your requested topic? Please describe.
-      description: Description and relevant links to any existing documentation that are related to your request.
+      label: Issue with existing documentation.
+      description: Provide a link to the documentation and explain what you would like to see changed.
     validations:
       required: false
