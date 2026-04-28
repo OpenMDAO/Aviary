@@ -1185,7 +1185,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCMPC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCMPC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='compressibility aero calibration factor',
@@ -1339,7 +1339,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FEXCRT', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='excrescence aero drag factor',
@@ -1395,7 +1395,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCKIC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCKIC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='interference aero calibration factor (including technology factor INGASP.FCKIT)',
@@ -1570,7 +1570,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.PCT_EXCR', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.PCT_EXCR', 'FLOPS': None},
     units='unitless',
     option=True,
     default_value=0.0,
@@ -1675,8 +1675,8 @@ add_meta_data(
 # TODO intermediate calculated values with no uses by other systems may not belong in the
 #      variable hierarchy
 add_meta_data(
-    # Note in FLOPS/LEAPS1, this is the same variable as
-    # Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, because FLOPS/LEAPS1 overwrite the
+    # Note in FLOPS, this is the same variable as
+    # Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, because FLOPS overwrite the
     # value during calculations; in Aviary, these must be separate variables
     Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS_BASE,
     meta_data=_MetaData,
@@ -3237,7 +3237,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFFC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFFC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='fuselage aero calibration factor (including technology factor INGASP.FCFFT)',
@@ -3687,7 +3687,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.HorizontalTail.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFHTC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFHTC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='horizontal tail aero calibration factor (including technology factor INGASP.FCFHTT)',
@@ -4257,7 +4257,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFNC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFNC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='nacelle aero calibration factor (including technology factor INGASP.FCFNT)',
@@ -4364,7 +4364,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Nacelle.PYLON_DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FPYLND', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FPYLND', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='pylon aero calibration factor',
@@ -4742,7 +4742,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Strut.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFSTRC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFSTRC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='strut aero calibration factor (including technology factor INGASP.FCFSTRT)',
@@ -4870,7 +4870,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.VerticalTail.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFVTC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='vertical tail aero calibration factor (including technology factor INGASP.FCFVTT)',
@@ -5290,7 +5290,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    # see also: station_chord_lengths (of LEAPS1)
     Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     meta_data=_MetaData,
     historical_name={
@@ -5374,7 +5373,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Wing.DRAG_FACTOR,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FCFWC', 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': 'INGASP.FCFWC', 'FLOPS': None},
     units='unitless',
     default_value=1.0,
     desc='wing aero calibration factor (including technology factor INGASP.FCFWT)',
@@ -7194,7 +7193,7 @@ add_meta_data(
 
 add_meta_data(
     # TODO: missing &DEFINE.AERIN.CLAPP ???
-    #    - NOTE: there is a relationship in FLOPS/LEAPS1 between CLAPP and
+    #    - NOTE: there is a relationship in FLOPS between CLAPP and
     #      CLLDM (this variable)
     Mission.Landing.LIFT_COEFFICIENT_MAX,
     meta_data=_MetaData,
@@ -7464,7 +7463,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    # TODO FLOPS/LEAPS1 implementation is different from Aviary
+    # TODO FLOPS implementation is different from Aviary
     #    - correct variable reference?
     #    - correct Aviary equations?
     Mission.Takeoff.FINAL_VELOCITY,
@@ -7479,7 +7478,7 @@ add_meta_data(
 
 add_meta_data(
     # Note user override (no scaling)
-    # Note FLOPS/LEAPS1 calculated as part of mission analysis, and not as
+    # Note FLOPS calculated as part of mission analysis, and not as
     # part of takeoff
     Mission.Takeoff.FUEL,
     meta_data=_MetaData,
@@ -7731,7 +7730,7 @@ add_meta_data(
     Settings.PROBLEM_TYPE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
-    desc="Select from Aviary's built in problem types: SIZING, ALTERNATE, FALLOUT and MULTI_MISSION",
+    desc="Select from Aviary's built in problem types: SIZING, OFF_DESIGN_MIN_FUEL, OFF_DESIGN_MAX_RANGE and MULTI_MISSION",
     option=True,
     types=ProblemType,
     default_value=None,
