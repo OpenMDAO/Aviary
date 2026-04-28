@@ -43,7 +43,6 @@ class LandingSegment(TwoDOFODE):
                 'units': 'ft',
             },
             airport_alt={'val': np.zeros(1), 'units': 'ft'},
-            has_diag_partials=True,
         )
 
         alias_comp.add_expr(
