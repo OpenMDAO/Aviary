@@ -116,7 +116,6 @@ phase_info = {
 }
 
 phase_info['pre_mission'] = {'include_takeoff': False, 'optimize_mass': True}
-phase_info['pre_mission']['external_subsystems'] = [wing_mass_builder]
 
 aircraft_definition_file = 'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv'
 make_plots = False
@@ -125,6 +124,7 @@ make_plots = False
 prob = av.AviaryProblem()
 
 prob.load_inputs(aircraft_definition_file, phase_info)
+prob.load_external_subsystems([wing_mass_builder])
 prob.check_and_preprocess_inputs()
 prob.build_model()
 prob.add_driver(optimizer=optimizer)
