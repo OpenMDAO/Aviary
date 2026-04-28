@@ -294,7 +294,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
             elif aviary_path.stem == item.stem:
                 close_match.append(item)
 
-    if close_match is not None:
+    if len(close_match) > 0:
         best_match = None
         # if a .csv file exists, use it as the best match
         for item in close_match:
