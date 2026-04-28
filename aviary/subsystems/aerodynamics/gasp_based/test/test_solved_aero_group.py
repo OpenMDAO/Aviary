@@ -20,7 +20,7 @@ from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
-polar_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_free_reduced_alpha.csv'
+polar_file = 'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_free_reduced_alpha.csv'
 
 phase_info = deepcopy(phase_info)
 
