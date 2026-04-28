@@ -58,7 +58,7 @@ class TestFortranToAviary(unittest.TestCase):
                     raise Exception(exc_string)
 
     def test_large_single_aisle(self):
-        filepath = 'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/large_single_aisle_1_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
 
         self.prepare_and_run(
@@ -68,7 +68,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_small_single_aisle(self):
-        filepath = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/small_single_aisle_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_small_single_aisle_GASP.csv'
 
         self.prepare_and_run(
@@ -78,14 +78,14 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_diff_configuration(self):
-        filepath = 'utils/test/data/configuration_test_data_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/configuration_test_data_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
 
         self.prepare_and_run(filepath, output_file=Path.cwd() / Path('TEST_' + comparison_filepath))
         self.compare_files(comparison_filepath)
 
     def test_bwb_gasp(self):
-        filepath = 'models/aircraft/blended_wing_body/generic_BWB_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/generic_BWB_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
         self.prepare_and_run(
@@ -95,7 +95,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_bwb_detailed_flops(self):
-        filepath = 'models/aircraft/blended_wing_body/bwb_detailed_FLOPS.in'
+        filepath = 'validation_cases/validation_data/legacy_files/bwb_detailed_FLOPS.in'
         comparison_filepath = 'utils/test/data/converter_test_BWB_detailed_FLOPS.csv'
 
         self.prepare_and_run(
@@ -106,7 +106,7 @@ class TestFortranToAviary(unittest.TestCase):
         self.compare_files(comparison_filepath)
 
     def test_bwb_simple_flops(self):
-        filepath = 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.in'
+        filepath = 'validation_cases/validation_data/legacy_files/bwb_simple_FLOPS.in'
         comparison_filepath = 'utils/test/data/converter_test_BWB_simple_FLOPS.csv'
 
         self.prepare_and_run(

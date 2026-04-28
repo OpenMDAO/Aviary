@@ -13,7 +13,7 @@ class TestEngineDeckConversion(unittest.TestCase):
 
     def prepare_and_run(self, filename, output_file=None, data_format=EngineDeckType.GASP):
         # Specify the input file
-        input_file = get_path('utils/test/data/' + filename)
+        input_file = get_path('validation_cases/validation_data/legacy_files/' + filename)
 
         # Specify the output file
         if not output_file:
@@ -74,6 +74,6 @@ class TestEngineDeckConversion(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TestEngineDeckConversion()
-    # test.test_TP_conversion()
+    # unittest.main()
+    test = TestEngineDeckConversion()
+    test.test_TP_conversion()

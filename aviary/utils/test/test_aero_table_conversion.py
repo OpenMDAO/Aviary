@@ -16,7 +16,7 @@ class TestAeroTableConversion(unittest.TestCase):
 
     def prepare_and_run(self, filename, output_file=None, data_format='GASP'):
         # Specify the input file
-        input_file = get_path('utils/test/data/' + filename)
+        input_file = get_path('validation_cases/validation_data/legacy_files/' + filename)
 
         # Specify the output file
         if not output_file:
@@ -138,7 +138,7 @@ class TestAeroTableConversion(unittest.TestCase):
 
     #     expected_cdi_comments = ['# lift-dependent drag polar, function of Mach & CL']
 
-    #     input = get_path('utils/test/data/flops_test_polar.txt')
+    #     input = get_path('validation_cases/validation_data/legacy_files/flops_test_polar.txt')
     #     cdi_data, cdi_comments, cd0_data, cd0_comments = _load_flops_aero_table(input)
 
     #     # test CDi
@@ -198,7 +198,7 @@ class TestAeroTableConversion(unittest.TestCase):
     #     def args():
     #         return None
 
-    #     args.input_file = 'utils/test/data/flops_test_polar.txt'
+    #     args.input_file = 'validation_cases/validation_data/legacy_files/flops_test_polar.txt'
     #     args.output_file = str(Path(tempdir, 'TEST_' + Path(args.input_file).name))
     #     args.format = 'FLOPS'
     #     _exec_ATC(args, None)
