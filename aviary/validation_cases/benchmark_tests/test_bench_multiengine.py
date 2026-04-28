@@ -9,7 +9,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.models.missions.energy_state_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_data import (
+from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
     inputs,

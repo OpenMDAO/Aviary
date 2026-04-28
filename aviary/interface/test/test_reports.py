@@ -156,4 +156,6 @@ class TestReports(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestReports()
+    test.test_multiple_off_design_report_directories()
