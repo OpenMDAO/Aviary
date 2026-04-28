@@ -53,19 +53,14 @@ class NamedValues(Collection):
 
         self.update(other, **kwargs)
 
-    def get_item(self, key, default=(None, None)) -> OptionalValueAndUnits:
+    def get_item(self, key) -> OptionalValueAndUnits:
         """
         Return the named value and its associated units.
-
-        Note, this method never raises `KeyError` or `TypeError`.
 
         Parameters
         ----------
         key : str
             the name of the item
-
-        default : OptionalValueAndUnits (None, None)
-            if the item does not exist, return this object
 
         Returns
         -------
@@ -79,7 +74,7 @@ class NamedValues(Collection):
         item = self._mapping.get(key, _UNDEFINED)
 
         if item is _UNDEFINED:
-            return default
+            raise KeyError(f'key not found: {key}')
 
         return item
 
@@ -141,7 +136,7 @@ class NamedValues(Collection):
         item = self._mapping.get(key, _UNDEFINED)
 
         if item is _UNDEFINED:
-            raise KeyError(f'KeyError: key not found: {key}')
+            raise KeyError(f'key not found: {key}')
 
         val, old_units = item
 
@@ -263,7 +258,7 @@ class NamedValues(Collection):
             del self._mapping[key]
 
         except KeyError:
-            raise KeyError(f'KeyError: key not found: {key}')
+            raise KeyError(f'key not found: {key}')
 
     def __eq__(self, other):
         """Return whether or not this collection is equivalent to another."""
@@ -306,7 +301,7 @@ class NamedValues(Collection):
         """
         if (units is None) or not isinstance(units, str):
             raise TypeError(
-                f'{self.__class__.__name__}: {funcname}({key}): unsupported units: {units}'
+                f'{self.__class__.__name__}.{funcname}({key}): unsupported units: {units}'
             )
 
 
