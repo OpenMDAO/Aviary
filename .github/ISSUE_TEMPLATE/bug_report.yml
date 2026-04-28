@@ -1,6 +1,5 @@
 name: Bug Report
 description: Please submit a report only if you believe you've found a bug in Aviary. If you're not sure if your problem is a bug, especially for installation issues, try reaching out on the discussions page first.
-type: "bug"
 body:
   - type: textarea
     id: description
