@@ -28,7 +28,7 @@ class TrappedFuelCapacityCase1(unittest.TestCase):
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=1370.0, units='ft**2'
-        )  # large_single_aisle_1_FLOPS_data.csv
+        )  # large_single_aisle_1_FLOPS.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units='unitless'
         )  # large_single_aisle_1_GASP.csv
@@ -69,7 +69,7 @@ class TrappedFuelCapacityCase2(unittest.TestCase):
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=1370.0, units='ft**2'
-        )  # large_single_aisle_1_FLOPS_data.csv
+        )  # large_single_aisle_1_FLOPS.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.6, units='unitless'
         )  # large_single_aisle_1_GASP.csv
@@ -111,7 +111,7 @@ class TrappedFuelCapacityCase3(unittest.TestCase):
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Wing.AREA, val=2142.85718, units='ft**2'
-        )  # large_single_aisle_1_FLOPS_data.csv
+        )  # large_single_aisle_1_FLOPS.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuel.WING_FUEL_FRACTION, val=0.45, units='unitless'
         )  # large_single_aisle_1_GASP.csv

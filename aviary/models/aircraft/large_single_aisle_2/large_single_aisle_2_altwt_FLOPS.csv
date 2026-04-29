@@ -1,5 +1,4 @@
-# created 04/27/26 at 16:50
-# Aviary Inputs CSV converted from large_single_aisle_2_detailwing_FLOPS_data_test.csv
+# created 04/27/26 at 16:52
 
 aircraft:air_conditioning:mass_scaler,1.0,unitless
 aircraft:anti_icing:mass_scaler,1.0,unitless
@@ -18,9 +17,13 @@ aircraft:crew_and_payload:design:num_passengers,162,unitless
 aircraft:crew_and_payload:flight_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:mass_per_passenger,165.0,lbm
 aircraft:crew_and_payload:misc_cargo,4077.0,lbm
+aircraft:crew_and_payload:num_business_class,0,unitless
+aircraft:crew_and_payload:num_economy_class,150,unitless
+aircraft:crew_and_payload:num_first_class,12,unitless
 aircraft:crew_and_payload:num_flight_attendants,5,unitless
 aircraft:crew_and_payload:num_flight_crew,2,unitless
 aircraft:crew_and_payload:num_galley_crew,1,unitless
+aircraft:crew_and_payload:num_passengers,162,unitless
 aircraft:crew_and_payload:passenger_service_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:wing_cargo,0.0,lbm
 aircraft:design:base_area,0.0,ft**2
@@ -32,8 +35,8 @@ aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:range,2960.0,NM
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
-aircraft:design:thrust_takeoff_per_eng,24555.5,lbf
-aircraft:design:use_alt_mass,False,unitless
+aircraft:design:thrust_takeoff_per_eng,27301.0,lbf
+aircraft:design:use_alt_mass,True,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.945,unitless
 aircraft:electrical:mass_scaler,1.0,unitless
 aircraft:engine:additional_mass_fraction,0.0,unitless
@@ -61,9 +64,7 @@ aircraft:engine:scaled_sls_thrust,27301.0,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:thrust_reversers_mass_scaler,1.0,unitless
-aircraft:engine:wing_locations,0.28131,unitless
 aircraft:fins:area,0.0,ft**2
-aircraft:fins:mass,1.0,lbm
 aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,10.0,unitless
@@ -73,6 +74,7 @@ aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,46063.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
+aircraft:fuel:wing_fuel_fraction,0.7752,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
 aircraft:fuselage:length,124.75,ft
 aircraft:fuselage:mass_scaler,1.0,unitless
@@ -86,6 +88,8 @@ aircraft:fuselage:wetted_area,4142.317,ft**2
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,407.335370699457,ft**2
 aircraft:horizontal_tail:aspect_ratio,5.444,unitless
+aircraft:horizontal_tail:laminar_flow_lower,10.0,unitless
+aircraft:horizontal_tail:laminar_flow_upper,10.0,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
 aircraft:horizontal_tail:taper_ratio,0.3008,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.1195,unitless
@@ -108,6 +112,8 @@ aircraft:propulsion:engine_oil_mass_scaler,1.0,unitless
 aircraft:propulsion:misc_mass_scaler,1.0,unitless
 aircraft:vertical_tail:area,284.499779284585,ft**2
 aircraft:vertical_tail:aspect_ratio,2.2262,unitless
+aircraft:vertical_tail:laminar_flow_lower,10.0,unitless
+aircraft:vertical_tail:laminar_flow_upper,10.0,unitless
 aircraft:vertical_tail:mass_scaler,1.0,unitless
 aircraft:vertical_tail:num_tails,1,unitless
 aircraft:vertical_tail:taper_ratio,0.21082082638898,unitless
@@ -117,21 +123,17 @@ aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.87,unitless
 aircraft:wing:area,1341.0,ft**2
-aircraft:wing:aspect_ratio,9.42519,unitless
+aircraft:wing:aspect_ratio,9.45,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
-aircraft:wing:chord_per_semispan_distribution,0.4441,0.2313,0.0729,unitless
 aircraft:wing:composite_fraction,0.0,unitless
 aircraft:wing:control_surface_area_ratio,0.333,unitless
-aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:glove_and_bat,0.0,ft**2
-aircraft:wing:input_station_distribution,0.0,0.3238,1.0,unitless
-aircraft:wing:load_distribution_control,2.0,unitless
+aircraft:wing:laminar_flow_lower,10.0,unitless
+aircraft:wing:laminar_flow_upper,10.0,unitless
 aircraft:wing:load_fraction,1.0,unitless
-aircraft:wing:load_path_sweep_distribution,0.0,22.0,deg
-aircraft:wing:mass,15548.0,lbm
+aircraft:wing:mass,15288.0,lbm
 aircraft:wing:max_camber_at_70_semispan,0.015,unitless
 aircraft:wing:misc_mass_scaler,1.0,unitless
-aircraft:wing:num_integration_stations,100,unitless
 aircraft:wing:shear_control_mass_scaler,1.0,unitless
 aircraft:wing:span,112.57,ft
 aircraft:wing:span_efficiency_factor,1.35,unitless
@@ -141,7 +143,6 @@ aircraft:wing:surface_control_mass_scaler,1.0,unitless
 aircraft:wing:sweep,25.03,deg
 aircraft:wing:taper_ratio,0.237343146184852,unitless
 aircraft:wing:thickness_to_chord,0.131732727515702,unitless
-aircraft:wing:thickness_to_chord_distribution,0.145,0.115,0.104,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2423.02,ft**2
@@ -149,7 +150,7 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.82,unitless
 mission:fuel_flow_scaler,1.0,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
-mission:takeoff:fuel,577.0,lbm
+mission:takeoff:fuel,659.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:takeoff:lift_over_drag,17.35,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
