@@ -268,10 +268,10 @@ class ZeroFuelMass(om.ExplicitComponent):
 
 class UsefulLoadMass(om.ExplicitComponent):
     def setup(self):
-        self.add_input(Aircraft.Design.GROSS_MASS, units='lbm')
-        self.add_input(Aircraft.Design.EMPTY_MASS, units='lbm')
+        self.add_aviary_input(Aircraft.Design.GROSS_MASS, units='lbm')
+        self.add_aviary_input(Aircraft.Design.EMPTY_MASS, units='lbm')
 
-        self.add_output(Aircraft.Design.USEFUL_LOAD_MASS, units='lbm')
+        self.add_aviary_output(Aircraft.Design.USEFUL_LOAD_MASS, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(Aircraft.Design.USEFUL_LOAD_MASS, Aircraft.Design.GROSS_MASS, val=1)
