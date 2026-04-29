@@ -672,6 +672,7 @@ class Mission:
     FINAL_TIME = 'mission:final_time'
     FUEL = 'mission:fuel'
     GROSS_MASS = 'mission:gross_mass'
+    OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'
     RESERVE_FUEL = 'mission:reserve_fuel'
@@ -679,7 +680,6 @@ class Mission:
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
     TOTAL_FUEL = 'mission:total_fuel'
     TOTAL_RESERVE_FUEL = 'mission:total_reserve_fuel'
-    OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 
     class Constraints:

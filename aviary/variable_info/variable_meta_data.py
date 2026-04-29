@@ -6860,6 +6860,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.OPERATING_ITEMS_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
+    units='lbm',
+    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
@@ -6931,15 +6940,6 @@ add_meta_data(
     desc='the total fuel reserves which is the sum of: '
     'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
     default_value=0,
-)
-
-add_meta_data(
-    Mission.OPERATING_ITEMS_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
-    units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
-    default_value=0.0,
 )
 
 add_meta_data(
