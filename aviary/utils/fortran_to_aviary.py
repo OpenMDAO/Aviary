@@ -1265,6 +1265,27 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             ARHT = input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0]
             input_values.set_val(Aircraft.VerticalTail.ASPECT_RATIO, [ARHT / 2.0], 'unitless')
 
+    # if mission-wide fuel flow factor provided, combine into sub and supersonic fuel flow factors
+    if 'MISSIN.fact' in vehicle_data['unused_values']:
+        FACT = vehicle_data['unused_values'].get_item('MISSIN.fact')[0][0]
+        if Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER in input_values:
+            sub_fuel_flow_fact = input_values.get_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER)[0]
+            input_values.set_val(
+                Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, [sub_fuel_flow_fact * FACT]
+            )
+        else:
+            input_values.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, [FACT])
+        if Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER in input_values:
+            sup_fuel_flow_fact = input_values.get_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER)[
+                0
+            ]
+            input_values.set_val(
+                Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, [sup_fuel_flow_fact * FACT]
+            )
+        else:
+            input_values.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, [FACT])
+        vehicle_data['unused_values'].delete('MISSIN.fact')
+
     # These variables should be removed if they are zero.
     rem_list = [
         (Aircraft.Design.TOUCHDOWN_MASS_MAX, 'lbm'),

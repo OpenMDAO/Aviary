@@ -143,7 +143,6 @@ mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900,ft/min
 mission:landing:obstacle_height,50,ft
 mission:landing:touchdown_sink_rate,5,ft/s
-mission:fuel_flow_scaler,1.0,unitless
 mission:takeoff:decision_speed_increment,10,kn
 mission:takeoff:rotation_speed_increment,5,kn
 mission:taxi:duration,0.1677,h

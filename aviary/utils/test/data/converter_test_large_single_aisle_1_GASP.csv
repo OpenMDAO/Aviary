@@ -45,6 +45,8 @@ aircraft:engine:pod_mass_scaler,1.0,unitless
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_sls_thrust,28690.0,lbf
 aircraft:engine:scaled_sls_thrust,28690.0,lbf
+aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
+aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:type,7,unitless
 aircraft:engine:wing_locations,0.35,unitless
 aircraft:fuel:density,6.687,lbm/galUS
@@ -143,7 +145,6 @@ aircraft:wing:thickness_to_chord_root,0.15,unitless
 aircraft:wing:thickness_to_chord_tip,0.12,unitless
 aircraft:wing:vertical_mount_location,0.0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
-mission:fuel_flow_scaler,1.0,unitless
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1.0,s
 mission:landing:glide_to_stall_ratio,1.3,unitless

@@ -224,7 +224,6 @@ inputs.set_val(Aircraft.Wing.SPAN_EFFICIENCY_FACTOR, 0.0)  # E
 # Mission
 # ---------------------------
 inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.85)  # VCMN
-inputs.set_val(Mission.FUEL_FLOW_SCALER, 1.0)  # FACT
 inputs.set_val(Aircraft.Design.RANGE, 7750.0, 'NM')  # DESRNG
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.85)  # VMMO
 # inputs.set_val(Mission.Takeoff.FUEL, 577, 'lbm')  # FTKOFL

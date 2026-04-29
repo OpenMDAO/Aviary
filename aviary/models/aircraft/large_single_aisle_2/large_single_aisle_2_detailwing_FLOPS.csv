@@ -146,7 +146,6 @@ aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2423.02,ft**2
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.82,unitless
-mission:fuel_flow_scaler,1.0,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:takeoff:fuel,577.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless

@@ -1011,12 +1011,6 @@
         "<class 'float'>"
     ],
     [
-        "mission:fuel_flow_scaler",
-        1.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
         "mission:takeoff:fuel",
         577.0,
         "lbm",
