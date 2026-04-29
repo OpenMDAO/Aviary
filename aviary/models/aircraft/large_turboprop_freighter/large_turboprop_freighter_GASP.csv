@@ -187,11 +187,6 @@ aircraft:strut:fuselage_interference_factor, 0, unitless
 aircraft:strut:mass_coefficient, 0, unitless
 aircraft:furnishings:mass, 0, lbm
 
-###########
-# MISSION #
-###########
-mission:fuel_flow_scaler, 1, unitless
-
 # Design
 aircraft:design:cruise_altitude, 21000, ft
 aircraft:design:gross_mass, 155000, lbm

@@ -183,7 +183,6 @@ mission:landing:flare_rate,3.0,deg/s
 mission:landing:initial_velocity,150.0,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 aircraft:design:cruise_mach,0.85,unitless
-mission:fuel_flow_scaler,1.0,unitless
 mission:takeoff:angle_of_attack_runway,4.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
 mission:takeoff:drag_coefficient_min,0.035258,unitless
