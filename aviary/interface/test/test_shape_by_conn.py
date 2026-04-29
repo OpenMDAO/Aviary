@@ -33,7 +33,7 @@ class TestShapebyConn(unittest.TestCase):
             units='ft',
             desc='CG of the wing.',
             default_value=1.0,
-            meta_data=CoreMetaData,
+            meta_data=ExtendedMetaData,
         )
 
         add_meta_data(
@@ -41,7 +41,7 @@ class TestShapebyConn(unittest.TestCase):
             units='ft',
             desc='CG of the wing.',
             default_value=1.0,
-            meta_data=CoreMetaData,
+            meta_data=ExtendedMetaData,
         )
 
         class SBC(om.ExplicitComponent):
