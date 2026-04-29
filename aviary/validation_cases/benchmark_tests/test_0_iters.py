@@ -4,7 +4,7 @@ from copy import deepcopy
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import inputs
 from aviary.models.missions.energy_state_default import phase_info as energy_state_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 
@@ -36,7 +36,8 @@ class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
     def test_zero_iters_2DOF(self):
         local_phase_info = deepcopy(two_dof_phase_info)
         self.build_and_run_problem(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', local_phase_info
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
+            local_phase_info,
         )
 
 

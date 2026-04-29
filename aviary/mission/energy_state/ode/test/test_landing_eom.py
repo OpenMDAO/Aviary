@@ -10,7 +10,7 @@ from aviary.mission.energy_state.ode.landing_eom import (
     GlideSlopeForces,
     GroundSumForces,
 )
-from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     detailed_landing_flare,
     inputs,
 )

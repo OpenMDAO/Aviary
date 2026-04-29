@@ -36,7 +36,7 @@ class PythonModelToCSV(unittest.TestCase):
 
         for file in python_inputs:
             module_name = file[:-3]
-            file_path = get_path(file)
+            file_path = get_path(directory_path + file)
             spec = importlib.util.spec_from_file_location(module_name, file_path)
 
             # import the module from the spec and execute it to load its material
@@ -63,7 +63,6 @@ class PythonModelToCSV(unittest.TestCase):
         """
         filename = filepath.split('.')[0] + '.csv'
 
-        filename_path = get_path(filename)
         validation_data_path = get_path(validation_data)
 
         # Open the converted and validation files
@@ -97,28 +96,28 @@ class PythonModelToCSV(unittest.TestCase):
 
     def test_python_models_to_csv(self):
         """
-        This is the test portion of the class that provides function arguments to 'find_all_inputs' and 'compare_functions'.
-        The program checks for all 'inputs' in aviary/models/aircraft, then compares them to the specified CSVs below.
+        This is the test portion of the class that provides function arguments to 'find_all_inputs'
+        and 'compare_functions'. The program checks for all 'inputs' in aviary/models/aircraft, then
+        compares them to the specified CSVs below.
         """
-
         base_path = 'aviary/models/aircraft/'
 
         # Need to find a way to make this flexible and not hardcode existing CSVs in here
         existing_csvs = {
-            'large_single_aisle_1_FLOPS_data_test.csv': base_path
-            + 'large_single_aisle_1/large_single_aisle_1_FLOPS_data.csv',
-            'large_single_aisle_2_FLOPS_data_test.csv': base_path
-            + 'large_single_aisle_2/large_single_aisle_2_FLOPS_data.csv',
-            'large_single_aisle_2_altwt_FLOPS_data_test.csv': base_path
-            + 'large_single_aisle_2/large_single_aisle_2_altwt_FLOPS_data.csv',
-            'large_single_aisle_2_detailwing_FLOPS_data_test.csv': base_path
-            + 'large_single_aisle_2/large_single_aisle_2_detailwing_FLOPS_data.csv',
-            'multi_engine_single_aisle_data_test.csv': base_path
-            + 'multi_engine_single_aisle/multi_engine_single_aisle_data.csv',
+            'large_single_aisle_1_FLOPS_test.csv': base_path
+            + 'large_single_aisle_1/large_single_aisle_1_FLOPS.csv',
+            'large_single_aisle_2_FLOPS_test.csv': base_path
+            + 'large_single_aisle_2/large_single_aisle_2_FLOPS.csv',
+            'large_single_aisle_2_altwt_FLOPS_test.csv': base_path
+            + 'large_single_aisle_2/large_single_aisle_2_altwt_FLOPS.csv',
+            'large_single_aisle_2_detailwing_FLOPS_test.csv': base_path
+            + 'large_single_aisle_2/large_single_aisle_2_detailwing_FLOPS.csv',
+            'multi_engine_single_aisle_test.csv': base_path
+            + 'multi_engine_single_aisle/multi_engine_single_aisle.csv',
         }
 
         # Finding all 'inputs' through this function call
-        python_file_inputs = self.find_all_inputs('aviary/models/aircraft')
+        python_file_inputs = self.find_all_inputs('validation_cases/validation_data/test_data/')
         # Specifying the string tags to ignore in the line-by-line comparison of the CSVs
         excluded_lines = ['#', 'engine:data_file']
 
