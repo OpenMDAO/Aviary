@@ -699,6 +699,8 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
     def test_case3(self):
         """
         bwb detailed, investigation of partial of Aircraft.Wing.BENDING_MATERIAL_FACTOR
+        To see the problem, create sum_csw = np.sum(csw) as an output and see its partials.
+        Even if slinear is replaced by lagrange2, still get high partials.
         """
         prob = self.prob
 
