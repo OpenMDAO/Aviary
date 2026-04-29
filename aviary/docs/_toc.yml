@@ -26,6 +26,7 @@ parts:
         - file: user_guide_unreviewed/UI_levels
         # - file: user_guide/user_interface
         # - file: new file with recommended examples to view next
+    - file: user_guide/included_aircraft_models
     - file: user_guide_unreviewed/onboarding_level2
     - file: user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels
     - file: user_guide_unreviewed/aviary_commands
