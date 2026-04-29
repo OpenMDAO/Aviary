@@ -6874,7 +6874,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
     units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
+    desc='Operating Items group. Includes crew, unusable fuel, and oil mass.',
     default_value=0.0,
 )
 

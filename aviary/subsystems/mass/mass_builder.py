@@ -277,7 +277,7 @@ class CoreMassBuilder(MassBuilder):
             val, units = find_variable_in_problem(
                 Mission.OPERATING_ITEMS_MASS, prob, self.meta_data
             )
-            f.write(f'|Useful Load|{val}|{units}|\n')
+            f.write(f'|Operating Items|{val}|{units}|\n')
 
             val1, units = find_variable_in_problem(
                 Aircraft.CrewPayload.CABIN_CREW_MASS, prob, self.meta_data
