@@ -9,7 +9,7 @@ from aviary.mission.phase_builder import PhaseBuilder, register
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Dynamic
 
 # Solved 2DOF uses this builder.
@@ -81,7 +81,7 @@ class GroundrollPhase(PhaseBuilder):
     default_name = 'groundroll'
     default_ode_class = GroundrollODE
     default_options_class = GroundrollPhaseOptions
-    default_meta_data = _MetaData
+    default_meta_data = CoreMetaData
 
     def build_phase(self, aviary_options: AviaryValues = None):
         """

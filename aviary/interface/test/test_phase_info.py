@@ -71,7 +71,7 @@ class TestParameterizePhaseInfo(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(
             csv_path, phase_info, phase_info_modifier=phase_info_parameterization_energy_state
@@ -120,7 +120,7 @@ class TestPhaseInfoAPI(unittest.TestCase):
         }
         prob = AviaryProblem()
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, phase_info)
 

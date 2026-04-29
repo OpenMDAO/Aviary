@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.models.missions.two_dof_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestAeroBuilderGasp(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestAeroBuilderGasp(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
         )
 

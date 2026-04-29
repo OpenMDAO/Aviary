@@ -9,17 +9,18 @@ import warnings
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.named_values import get_keys
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, ProblemType, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
 # TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
-def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
+def preprocess_options(
+    aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
+):
     """
     Run all preprocessors on provided AviaryValues object.
 
@@ -49,6 +50,9 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
+    # TODO move these into their own subfunction (preprocess options is a collector for preprocessor
+    #      functions only, and should not change options on its own)
+
     # TODO the zero value behavior should probably be covered in fortran_to_aviary, and the preprocessor sets up the default value if it is not provided in the input file at all
     if Aircraft.Wing.ASPECT_RATIO_REFERENCE in aviary_options:
         arref = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE)
@@ -76,28 +80,7 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
                     )
 
 
-# this function is not used
-def remove_preprocessed_options(aviary_options):
-    """
-    Remove options whose values will be computed in the preprocessors.
-
-    Parameters
-    ----------
-    aviary_options : AviaryValues
-        Options to be updated
-    """
-    pre_opt = [
-        Aircraft.CrewPayload.NUM_FLIGHT_CREW,
-        Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS,
-        Aircraft.CrewPayload.NUM_GALLEY_CREW,
-        Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
-    ]
-
-    for option in pre_opt:
-        aviary_options.delete(option)
-
-
-def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
+def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
@@ -618,7 +601,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
 def preprocess_propulsion(
     aviary_options: AviaryValues,
     engine_models: list = None,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     verbosity=None,
 ):
     """
@@ -667,7 +650,7 @@ def preprocess_propulsion(
 
     # update_list has keys of all variables that are already defined, and must
     # be vectorized
-    update_list = list(get_keys(complete_options_list))
+    update_list = list(complete_options_list.keys())
 
     # Vectorize engine variables. Only update variables in update_list that are relevant
     # to engines (defined by _get_engine_variables())

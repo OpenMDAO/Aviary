@@ -28,7 +28,7 @@ class TestOffDesign(TwoDOFTestCase):
         # OFF_DESIGN_MAX_RANGE Mission
         prob_off_design_max_range = av.AviaryProblem()
         prob_off_design_max_range.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.BRIEF,
         )
@@ -59,7 +59,7 @@ class TestOffDesign(TwoDOFTestCase):
         # off_design_min_fuel Mission
         prob_off_design_min_fuel = av.AviaryProblem()
         prob_off_design_min_fuel.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.BRIEF,
         )
@@ -93,7 +93,7 @@ class TestOffDesign(TwoDOFTestCase):
         # off_design_max_range Mission
         prob_off_design_max_range = av.AviaryProblem()
         prob_off_design_max_range.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.BRIEF,
         )
@@ -120,7 +120,7 @@ class TestOffDesign(TwoDOFTestCase):
         # off_design_min_fuel Mission
         prob_off_design_min_fuel = av.AviaryProblem()
         prob_off_design_min_fuel.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             self.phase_info,
             verbosity=Verbosity.BRIEF,
         )

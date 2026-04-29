@@ -13,7 +13,7 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuil
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import LegacyCode, SpeedType
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Dynamic
 
 
@@ -78,7 +78,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         )
         self.options.declare(
             'meta_data',
-            default=_MetaData,
+            default=CoreMetaData,
             desc='metadata associated with the variables to be passed into the ODE',
         )
 

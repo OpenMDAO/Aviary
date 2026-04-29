@@ -23,7 +23,7 @@ class TestTypes(unittest.TestCase):
         except TypeError as err:
             self.assertEqual(
                 str(err),
-                f'AviaryValues: set_val({Aircraft.Design.PART25_STRUCTURAL_CATEGORY}): '
+                f'AviaryValues.set_val({Aircraft.Design.PART25_STRUCTURAL_CATEGORY}): '
                 'unsupported units: None',
             )
         else:

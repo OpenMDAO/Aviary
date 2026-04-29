@@ -13,7 +13,9 @@ class TestPropellerMapConversion(unittest.TestCase):
 
     def prepare_and_run(self, filename, output_file=None, data_format=PropMapType.GASP):
         # Specify the input file
-        input_file = filepath = get_path('models/engines/propellers/' + filename)
+        input_file = filepath = get_path(
+            'validation_cases/validation_data/legacy_files/' + filename
+        )
 
         # Specify the output file
         if not output_file:

@@ -13,7 +13,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft
 
 
@@ -21,7 +21,7 @@ from aviary.variable_info.variables import Aircraft
 class GASPOverrideTestCase(unittest.TestCase):
     def setUp(self):
         aviary_inputs, initial_guesses = create_vehicle(
-            'models/aircraft/test_aircraft/configuration_test_GASP.csv'
+            'validation_cases/validation_data/test_models/configuration_test_GASP.csv'
         )
 
         engines = [build_engine_deck(aviary_inputs)]
@@ -33,7 +33,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         prob.model = AviaryGroup()
         prob.model.aviary_inputs = aviary_inputs
-        prob.model.meta_data = BaseMetaData
+        prob.model.meta_data = CoreMetaData
 
         prob.model.add_subsystem(
             'pre_mission',

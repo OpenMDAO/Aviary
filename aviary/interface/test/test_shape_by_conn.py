@@ -27,13 +27,13 @@ class TestShapebyConn(unittest.TestCase):
                 CG1 = 'aircraft:wing:cg1'
                 CG2 = 'aircraft:wing:cg2'
 
-        ExtendedMetaData = CoreMetaData
+        ExtendedMetaData = deepcopy(CoreMetaData)
         add_meta_data(
             ExtendedAircraft.Wing.CG1,
             units='ft',
             desc='CG of the wing.',
             default_value=1.0,
-            meta_data=CoreMetaData,
+            meta_data=ExtendedMetaData,
         )
 
         add_meta_data(
@@ -41,7 +41,7 @@ class TestShapebyConn(unittest.TestCase):
             units='ft',
             desc='CG of the wing.',
             default_value=1.0,
-            meta_data=CoreMetaData,
+            meta_data=ExtendedMetaData,
         )
 
         class SBC(om.ExplicitComponent):
@@ -82,7 +82,7 @@ class TestShapebyConn(unittest.TestCase):
         prob = AviaryProblem(meta_data=ExtendedMetaData)
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.load_external_subsystems([CGBuilder()])

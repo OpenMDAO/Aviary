@@ -25,8 +25,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
-CDI_table = 'subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CDI_polar.csv'
-CD0_table = 'subsystems/aerodynamics/flops_based/test/large_single_aisle_1_CD0_polar.csv'
+CDI_table = 'validation_cases/validation_data/test_data/large_single_aisle_1_CDI_polar.csv'
+CD0_table = 'validation_cases/validation_data/test_data/large_single_aisle_1_CD0_polar.csv'
 
 
 @use_tempdirs
@@ -100,7 +100,7 @@ class TabularAeroGroupFileTest(unittest.TestCase):
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
@@ -229,7 +229,7 @@ class TabularAeroGroupDataTest(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
