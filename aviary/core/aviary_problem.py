@@ -2037,15 +2037,6 @@ class AviaryProblem(om.Problem):
             src_indices=[-1],
         )
 
-    def _save_to_csv_file(self, filename):
-        with open(filename, 'w', newline='') as csvfile:
-            fieldnames = ['name', 'value', 'units']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-            for name, value_units in sorted(self.model.aviary_inputs):
-                value, units = value_units
-                writer.writerow({'name': name, 'value': value, 'units': units})
-
 
 def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
     """
