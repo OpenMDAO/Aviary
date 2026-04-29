@@ -452,5 +452,4 @@ class UsefulLoadMass(om.ExplicitComponent):
         gross_mass = inputs[Aircraft.Design.GROSS_MASS]
         empty_mass = inputs[Aircraft.Design.EMPTY_MASS]
 
-        # True Useful Load
         outputs[Aircraft.Design.USEFUL_LOAD_MASS] = gross_mass - empty_mass

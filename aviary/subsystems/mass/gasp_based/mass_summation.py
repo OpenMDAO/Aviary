@@ -50,6 +50,10 @@ class MassSummation(om.Group):
             'zero_fuel_mass', ZeroFuelMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
+        self.add_subsystem(
+            'useful_load_mass', UsefulLoadMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+
 
 class EmpennageMass(om.ExplicitComponent):
     def setup(self):
@@ -260,3 +264,20 @@ class ZeroFuelMass(om.ExplicitComponent):
         operating_mass = inputs[Mission.OPERATING_MASS]
 
         outputs[Mission.ZERO_FUEL_MASS] = operating_mass + payload_mass
+
+
+class UsefulLoadMass(om.ExplicitComponent):
+    def setup(self):
+        self.add_input(Aircraft.Design.GROSS_MASS, units='lbm')
+        self.add_input(Aircraft.Design.EMPTY_MASS, units='lbm')
+
+        self.add_output(Aircraft.Design.USEFUL_LOAD_MASS, units='lbm')
+
+    def setup_partials(self):
+        self.declare_partials(Aircraft.Design.USEFUL_LOAD_MASS, '**', val=1)
+
+    def compute(self, inputs, outputs):
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
+        empty_mass = inputs[Aircraft.Design.EMPTY_MASS]
+
+        outputs[Aircraft.Design.USEFUL_LOAD_MASS] = gross_mass - empty_mass
