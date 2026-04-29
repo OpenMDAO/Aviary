@@ -1786,7 +1786,7 @@ add_meta_data(
 
 add_meta_data(
     Aircraft.Design.USEFUL_LOAD_MASS,
-    meta_data=MetaData,
+    meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
     desc='Useful load of the aircraft calculated as '
