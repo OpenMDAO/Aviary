@@ -11,7 +11,7 @@ user-facing should be imported to this file.
 # TODO: don't rename things here, do it in the entire codebase
 # TODO: when documenting methods and classes, make sure to include documentation (printing of docstrings) for everything that's imported in this API
 # TODO: remove overload prototype
-# TODO: import this in all user-facing files
+# TODO: import and use the aviary api in all user-facing files rather than individual imports
 
 
 ###################
@@ -41,8 +41,12 @@ from aviary.models.missions.energy_state_default import (
 )
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem, reload_aviary_problem
+
+# Converters
 from aviary.utils.engine_deck_conversion import convert_engine_deck
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
+from aviary.utils.aero_table_conversion import convert_aero_table
+
 from aviary.utils.functions import (
     get_path,
     set_aviary_initial_values,
@@ -80,12 +84,15 @@ from aviary.variable_info.functions import (
 # Miscellaneous
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
+from aviary.utils.process_input_decks import create_vehicle
+
+# Preprocessors
 from aviary.utils.preprocessors import (
-    preprocess_crewpayload,
     preprocess_options,
+    preprocess_crewpayload,
+    preprocess_fuel_capacities,
     preprocess_propulsion,
 )
-from aviary.utils.process_input_decks import create_vehicle
 
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP
@@ -102,12 +109,11 @@ from aviary.mission.energy_state.phases.simplified_landing import (
 )
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.two_dof.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
-from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE
+from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE, ElectricBreguetCruiseODE
 from aviary.mission.two_dof.ode.flight_ode import FlightODE as TwoDOFFlightODE
 from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE as TwoDOFTakeOffODE
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment as TwoDOFSimplifiedLanding
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment as AnalyticTaxi
-
 
 # Phase builders
 from aviary.mission.phase_builder import PhaseBuilder
@@ -150,6 +156,10 @@ from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase as TwoDOFAccelerationPhase
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase as TwoDOFFlightPhase
 from aviary.mission.two_dof.phases.takeoff_phase import TakeoffPhase as TwoDOFTakeoffPhase
+from aviary.mission.two_dof.phases.breguet_cruise_phase import (
+    BreguetCruisePhase,
+    ElectricCruisePhase,
+)
 
 # Trajectory builders
 from aviary.mission.energy_state.phases.detailed_landing_phases import (
@@ -173,11 +183,20 @@ from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import Tabula
 # Atmosphere
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
+# Energy
+from aviary.subsystems.energy.battery_builder import BatteryBuilder
+
 # Geometry
 from aviary.subsystems.geometry.geometry_builder import GeometryBuilder, CoreGeometryBuilder
 
 # Mass
 from aviary.subsystems.mass.mass_builder import MassBuilder, CoreMassBuilder
+
+# Performance
+from aviary.subsystems.performance.performance_builder import (
+    PerformanceBuilder,
+    CorePerformanceBuilder,
+)
 
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
@@ -188,3 +207,6 @@ from aviary.subsystems.propulsion.propulsion_builder import (
     CorePropulsionBuilder,
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
+from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
+from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder
