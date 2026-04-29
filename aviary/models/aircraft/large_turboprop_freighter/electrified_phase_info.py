@@ -1,13 +1,10 @@
-from aviary.variable_info.enums import SpeedType, PhaseType, ThrottleAllocation
+from aviary.variable_info.enums import PhaseType, SpeedType
 
 # Energy method
 energy_phase_info = {
-    'pre_mission': {
-        'include_takeoff': False,
-        'optimize_mass': True,
-    },
+    'pre_mission': {'include_takeoff': False, 'optimize_mass': True},
     'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -20,16 +17,18 @@ energy_phase_info = {
             'no_descent': True,
             'mass_ref': (154000, 'lbm'),
             'throttle_enforcement': 'control',
+            'throttle_bounds': ((0.2, 1), 'unitless'),
             'time_initial_bounds': ((0.0, 0.0), 'min'),
             'time_duration_bounds': ((24.0, 128.0), 'min'),
         },
         'initial_guesses': {
             'altitude': ([100.0, 21_000.0], 'ft'),
             'mach': ([0.17, 0.475], 'unitless'),
+            'throttle': ([1, 1], 'unitless'),
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -41,16 +40,18 @@ energy_phase_info = {
             'altitude_bounds': ((20_000.0, 22_000.0), 'ft'),
             'mass_ref': (154000, 'lbm'),
             'throttle_enforcement': 'control',
+            'throttle_bounds': ((0.2, 1), 'unitless'),
             'time_initial_bounds': ((24.0, 128.0), 'min'),
             'time_duration_bounds': ((56.5, 1000.0), 'min'),
         },
         'initial_guesses': {
             'altitude': ([21_000, 21_000.0], 'ft'),
             'mach': ([0.475, 0.475], 'unitless'),
+            'throttle': ([1, 1], 'unitless'),
         },
     },
     'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'cruise', 'solve_alpha': 'true'}},
+        'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -65,9 +66,11 @@ energy_phase_info = {
             'mass_ref': (154000, 'lbm'),
             'no_climb': True,
             'throttle_enforcement': 'control',
+            'throttle_bounds': ((0.15, 1), 'unitless'),
             'time_initial_bounds': ((80, 1056.5), 'min'),
             'time_duration_bounds': ((29.0, 128.0), 'min'),
         },
+        'initial_guesses': {'throttle': ([0.5, 0.15], 'unitless')},
     },
     'post_mission': {
         'include_landing': False,
@@ -253,19 +256,19 @@ two_dof_phase_info = {
             'throttle': ([0.956, 0.956], 'unitless'),
         },
     },
-    'electric_cruise': {
+    'cruise': {
         'user_options': {
-            'phase_type': PhaseType.BREGUET_RANGE,
+            'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (21_000, 'ft'),
             'mach_cruise': 0.475,
+            'mass_bounds': ((0, None), 'lbm'),
+            'mass_ref': (150_000, 'lbm'),
+            'time_duration_bounds': ((0.0, 15.0), 'h'),
+            'time_duration_ref': (8, 'h'),
         },
         'initial_guesses': {
-            # [Initial mass, delta mass] for special cruise phase.
-            'mass': ([150_000.0, -35_000], 'lbm'),
-            'initial_distance': (100.0e3, 'ft'),
-            'initial_time': (1_000.0, 's'),
-            'altitude': (21_000, 'ft'),
-            'mach': (0.475, 'unitless'),
+            'mass': ([150_000.0, 115000], 'lbm'),
+            'time': ([1516.0, 2100.0], 's'),
         },
     },
     'desc1': {
@@ -277,7 +280,7 @@ two_dof_phase_info = {
             'input_speed_type': SpeedType.MACH,
             'time_duration_bounds': ((300.0, 1800.0), 's'),
             'time_duration_ref': (1000, 's'),
-            'altitude_initial': (21_000, 'ft'),
+            # 'altitude_initial': (21_000, 'ft'),
             'altitude_final': (10_000, 'ft'),
             'altitude_bounds': ((10000.0, 21_000.0), 'ft'),
             'altitude_ref': (20_000, 'ft'),

@@ -35,7 +35,11 @@ def sigmoidX(x, x0, mu=1.0):
         y = np.zeros(n_size, dtype=dtype)
         # avoid overflow in squared term, underflow seems to be ok
         calc_idx = np.where((x.real - x0) / mu > -320)
-        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
+
+        if isinstance(x0, np.ndarray) and len(x0) == n_size:
+            y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0[calc_idx]) / mu))
+        else:
+            y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
     else:
         if isinstance(x, float):
             dtype = float

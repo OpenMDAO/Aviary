@@ -728,14 +728,23 @@ def preprocess_propulsion(
                         vec.append(default_value)
                     else:
                         # save value from aviary_options
-                        if isiterable(aviary_val):
+                        if isiterable(aviary_val) and len(aviary_val) > 1:
                             if multidimensional:
                                 vec.extend(aviary_val)
                             else:
-                                # if aviary_val is an iterable, just grab val for this engine
-                                vec.append(aviary_val[i])
+                                try:
+                                    # check variable exists at this index - if not, use default
+                                    aviary_val[i]
+                                except IndexError:
+                                    vec.append(default_value)
+                                else:
+                                    # if aviary_val is an iterable, just grab val for this engine
+                                    vec.append(aviary_val[i])
                         else:
-                            vec.append(aviary_val)
+                            if isiterable(aviary_val):
+                                vec.extend(aviary_val)
+                            else:
+                                vec.append(aviary_val)
                 else:
                     # save value from EngineModel
                     if isiterable(engine_val) and multidimensional:

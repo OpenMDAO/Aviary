@@ -274,7 +274,7 @@ add_meta_data(
         'GASP': 'INGASP.ENGYDEN',
         'FLOPS': None,
     },
-    units='kW*h/kg',
+    units='W*h/kg',
     desc='specific energy density of the battery pack',
     default_value=1.0,
 )
@@ -1962,6 +1962,7 @@ add_meta_data(
     'engine model or chosen by optimizer. Typically used when pairing a motor or '
     'turboshaft using a fixed operating RPM with a propeller.',
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -2350,6 +2351,7 @@ add_meta_data(
     units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
