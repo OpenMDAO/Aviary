@@ -446,7 +446,8 @@ class UsefulLoadMass(om.ExplicitComponent):
         self.add_output(Aircraft.Design.USEFUL_LOAD_MASS, units='lbm')
 
     def setup_partials(self):
-        self.declare_partials(Aircraft.Design.USEFUL_LOAD_MASS, '**', val=1)
+        self.declare_partials(Aircraft.Design.USEFUL_LOAD_MASS, Aircraft.Design.GROSS_MASS, val=1)
+        self.declare_partials(Aircraft.Design.USEFUL_LOAD_MASS, Aircraft.Design.EMPTY_MASS, val=-1)
 
     def compute(self, inputs, outputs):
         gross_mass = inputs[Aircraft.Design.GROSS_MASS]

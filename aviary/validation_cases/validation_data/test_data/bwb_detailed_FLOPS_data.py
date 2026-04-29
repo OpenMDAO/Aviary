@@ -428,3 +428,4 @@ outputs.set_val(Mission.OPERATING_ITEMS_MASS, 20996.3933862, 'lbm')
 outputs.set_val(Aircraft.Design.MACH, 0.800)
 outputs.set_val(Mission.OPERATING_MASS, 411552.29917206, 'lbm')  # WOWE
 outputs.set_val(Mission.ZERO_FUEL_MASS, 509364.29917206, 'lbm')  # WZF
+outputs.set_val(Aircraft.Design.USEFUL_LOAD_MASS, 483543.0927945, 'lbm')
