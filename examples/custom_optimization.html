@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Running a Custom Optimization</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3683e473" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/custom_optimization';</script>
+    <script src="../_static/collapsible_headers.js?v=13c9d35c"></script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running a Reserve Mission" href="reserve_mission.html" />
+    <link rel="prev" title="Running a Simple Mission" href="simple_mission.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../introduction.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <img src="../_static/aviary.png" class="logo__image only-dark pst-js-only" alt=" - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../introduction.html">
+                    Welcome to Aviary
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/tools_that_aviary_uses.html">Underlying Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/whats_next.html">What’s Next?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/aviary_fundamentals.html">Aviary Fundamentals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/fundamentals/variables.html">How Aviary Defines Variables</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/fundamentals/input_files.html">Aviary Input Files</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/fundamentals/aircraft_definition.html">Aircraft Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/fundamentals/mission_definition.html">Mission Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/fundamentals/data_files.html">Data Files</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/outputs.html">Outputted files and how to read them</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/UI_levels.html">User Interface Levels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/included_aircraft_models.html">Aircraft Models Included With Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/onboarding_level2.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/visualizing_results.html">Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/features_and_functionalities.html">Features and Functionalities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/custom_variable_hierarchies.html">Defining a Custom Variable Hierarchy</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/subsystems.html">Subsystems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/aerodynamics.html">Aerodynamics Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/external_aero.html">Externally Computed Polars</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/electric_motor.html">Electric Motor Modelling</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/mass.html">Mass Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/fuel.html">Fuel Burn Calculations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/using_external_subsystems.html">External Subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Examples Outline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simple_mission.html">Running a Simple Mission</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Running a Custom Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reserve_mission.html">Running a Reserve Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/detailed_takeoff_landing.html">2DOF Detailed Takeoff and Landing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="external_subsystems.html">Creating and Using External Subsystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/deconstructed_example.html">Aviary Model Without AviaryProblem</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/comparison_to_flops.html">Comparison to FLOPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Source Docs</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../source_docs/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source_docs/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source_docs/subsystem_builder.html">SubsystemBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/examples/custom_optimization.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fexamples/custom_optimization.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/examples/custom_optimization.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Running a Custom Optimization</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-optimization-problem">The Optimization Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-aviary">Setting Up Aviary</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Testing Cell</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.core.aviary_problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">AviaryProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.cmd_entry_points</span><span class="w"> </span><span class="kn">import</span> <span class="n">_command_map</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.interface.run_aviary</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_aviary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.utils.doctape</span><span class="w"> </span><span class="kn">import</span> <span class="n">glue_class_methods</span><span class="p">,</span> <span class="n">glue_keys</span><span class="p">,</span> <span class="n">glue_variable</span>
+
+<span class="k">if</span> <span class="s1">&#39;run_mission&#39;</span> <span class="ow">in</span> <span class="n">_command_map</span><span class="p">:</span>
+    <span class="n">glue_variable</span><span class="p">(</span><span class="s1">&#39;run_mission&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">run_aviary</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">run_aviary</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="n">AviaryProblem</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">AviaryProblem</span><span class="o">.</span><span class="n">build_model</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">glue_variable</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">AviaryProblem</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">()&#39;</span><span class="p">,</span> <span class="n">md_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># glue_class_methods(AviaryProblem, [], prefix=&#39;prob&#39;, md_code=True)</span>
+
+<span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;advanced_single_aisle.csv&#39;</span><span class="p">))</span>
+<span class="n">Path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">get_path</span><span class="p">(</span><span class="s1">&#39;models/missions/energy_state_default.py&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<p><code class="docutils literal notranslate"><span class="pre">run_mission</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">run_aviary</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">build_model()</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">setup()</span></code></p>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="running-a-custom-optimization">
+<h1>Running a Custom Optimization<a class="headerlink" href="#running-a-custom-optimization" title="Link to this heading">#</a></h1>
+<p>Aviary’s Python API allows for significantly more customization over what Aviary does. In this example, we will dig further into the Python API to optimize an aircraft with new design variables and constraints.</p>
+<section id="the-optimization-problem">
+<h2>The Optimization Problem<a class="headerlink" href="#the-optimization-problem" title="Link to this heading">#</a></h2>
+<p>In this toy problem, we have two constraints that we want our aircraft to meet. These are arbitrarily chosen for this example, but could represent some specific performance criteria we are trying to meet.</p>
+<ul class="simple">
+<li><p>Thrust-to-Weight ratio greater than 0.35</p></li>
+<li><p>Wing loading greater than 120 lbf./ft.<sup>2</sup></p></li>
+</ul>
+<p>In order for our aircraft to meet these performance goals, we will need to adjust some related properties of the aircraft. The chosen design variables for this problem are:</p>
+<ul class="simple">
+<li><p>Engine scale factor, which will adjust how much thrust our engines are sized to output</p></li>
+<li><p>Wing area</p></li>
+</ul>
+<p>We will be using Aviary’s default objective function, which minimizes fuel burn over the design mission.</p>
+</section>
+<section id="setting-up-aviary">
+<h2>Setting Up Aviary<a class="headerlink" href="#setting-up-aviary" title="Link to this heading">#</a></h2>
+<p>For this example we cannot use the <code class="docutils literal notranslate"><span class="pre">run_mission</span></code> command or the <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> function in Python. The tradeoff of the “single-line” simplicity of those methods is a lack of customizability over how the problem is set up, which is needed for this problem definition. Instead we will go one level deeper into Aviary’s Python API and directly utilize the <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code> object<!-- TODO: link to source docs of this object once complete -->. In brief, an <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code> is an OpenMDAO Problem that is extended to have additional Aviary-specific features. Creating and running an <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code> is very similar to the steps needed to use a pure OpenMDAO problem.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">aviary.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">av</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">aviary.models.missions.energy_state_default</span><span class="w"> </span><span class="kn">import</span> <span class="n">phase_info</span>
+
+<span class="c1"># Suppress outputs by setting verbosity as zero (quiet mode)</span>
+<span class="n">prob</span> <span class="o">=</span> <span class="n">av</span><span class="o">.</span><span class="n">AviaryProblem</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Load aircraft and options data from provided sources</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">load_inputs</span><span class="p">(</span>
+    <span class="s1">&#39;validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv&#39;</span><span class="p">,</span> <span class="n">phase_info</span>
+<span class="p">)</span>
+
+<span class="c1"># Sanity check inputs and guess initial conditions for mission phases</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">check_and_preprocess_inputs</span><span class="p">()</span>
+
+<span class="c1"># Have Aviary build the OpenMDAO model with pre-mission, mission, and post-mission components</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">build_model</span><span class="p">()</span>
+
+<span class="c1"># Selecting optimizer and iteration limit are optional</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_driver</span><span class="p">(</span><span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># Add the default design variables needed to size the aircraft</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_design_variables</span><span class="p">()</span>
+
+<span class="c1"># Add wing area and engine scaling as additional design variables</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Engine</span><span class="o">.</span><span class="n">SCALE_FACTOR</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_design_var</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Wing</span><span class="o">.</span><span class="n">AREA</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1200</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1800</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;ft**2&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="mi">1400</span><span class="p">)</span>
+
+<span class="c1"># Add the default objective function (minimum fuel burn)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">add_objective</span><span class="p">()</span>
+
+<span class="c1"># Add constraints for wing loading and thrust-to-weight ratio</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">WING_LOADING</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;lbf/ft**2&#39;</span><span class="p">)</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">av</span><span class="o">.</span><span class="n">Aircraft</span><span class="o">.</span><span class="n">Design</span><span class="o">.</span><span class="n">THRUST_TO_WEIGHT_RATIO</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+
+<span class="c1"># Standard OpenMDAO problem setup step</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+
+<span class="c1"># Run the optimization problem</span>
+<span class="n">prob</span><span class="o">.</span><span class="n">run_aviary_problem</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+        <iframe
+            width="100%"
+            height="700"
+            src="problem_out/reports/n2.html"
+            frameborder="0"
+            allowfullscreen
+            
+        ></iframe>
+        </div></div>
+</div>
+<p>This code mirrors what <code class="docutils literal notranslate"><span class="pre">run_aviary()</span></code> is actually doing behind the scenes - these steps can be broken down even further, but that isn’t necessary for this example.</p>
+<p>There is a combination of <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code>-specific methods and some standard OpenMDAO ones mixed together here. <code class="docutils literal notranslate"><span class="pre">add_design_var()</span></code> and <code class="docutils literal notranslate"><span class="pre">add_constraint()</span></code> are two OpenMDAO methods used to define our optimization problem. Because the <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code> is based on the OpenMDAO Problem, we can directly use any method that exists for the OpenMDAO Problem too.</p>
+<p>The order these steps are executed in is very important! Flipping around the order will break Aviary and result in an immediate error or important parts of the problem definition not being done correctly. The exception is our custom optimization problem setup steps (adding design variables and constraints). In this example, the order does not matter too much, as long as it is done between <code class="docutils literal notranslate"><span class="pre">build_model()</span></code> and <code class="docutils literal notranslate"><span class="pre">setup()</span></code>. In general, when customizing an <code class="docutils literal notranslate"><span class="pre">AviaryProblem</span></code> it is good practice to do any modifications in the same place you would make similar changes to a pure OpenMDAO problem. This takes some familiarity with OpenMDAO to master, but the reward is extremely broad power over exactly what optimization problem Aviary runs.</p>
+<p>Now let’s take a look at some results of the problem:</p>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Takeoff Gross Weight = 158758.20959412013 lbm
+
+Design Variables
+---------------
+Engine Scale Factor (started at 1) = 0.9604048201911309
+Wing Area (started at 1370) = 1322.985079951001 ft^2
+
+Constraints
+-----------
+Wing Loading = 120.00000000000001 lbf/ft^2
+Thrust/Weight Ratio = 0.3500000000000004
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see that the value for engine scale factor and wing area have changed from their initial values, which is expected since they were design variables for the problem. In addition, the values for our new constraints are right against their specified bounds. This example was designed such that both constraints are simultaneously active, allowing us to easily see how they affected the aircraft design.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./examples"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="simple_mission.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Running a Simple Mission</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="reserve_mission.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Running a Reserve Mission</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-optimization-problem">The Optimization Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-aviary">Setting Up Aviary</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

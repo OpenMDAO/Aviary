@@ -1,0 +1,1030 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Installation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=3683e473" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'getting_started/installation';</script>
+    <script src="../_static/collapsible_headers.js?v=13c9d35c"></script>
+    <link rel="icon" href="../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Expected User Knowledge" href="expected_user_knowledge.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../introduction.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <img src="../_static/aviary.png" class="logo__image only-dark pst-js-only" alt=" - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../introduction.html">
+                    Welcome to Aviary
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools_that_aviary_uses.html">Underlying Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whats_next.html">What’s Next?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide/aviary_fundamentals.html">Aviary Fundamentals</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide/fundamentals/variables.html">How Aviary Defines Variables</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide/fundamentals/input_files.html">Aviary Input Files</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/fundamentals/aircraft_definition.html">Aircraft Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/fundamentals/mission_definition.html">Mission Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide/fundamentals/data_files.html">Data Files</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/outputs.html">Outputted files and how to read them</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/UI_levels.html">User Interface Levels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide/included_aircraft_models.html">Aircraft Models Included With Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/onboarding_level2.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/visualizing_results.html">Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/features_and_functionalities.html">Features and Functionalities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/custom_variable_hierarchies.html">Defining a Custom Variable Hierarchy</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/subsystems.html">Subsystems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/aerodynamics.html">Aerodynamics Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/external_aero.html">Externally Computed Polars</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/electric_motor.html">Electric Motor Modelling</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../user_guide_unreviewed/subsystems/mass.html">Mass Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/fuel.html">Fuel Burn Calculations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../user_guide_unreviewed/subsystems/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/using_external_subsystems.html">External Subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user_guide_unreviewed/subsystems/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide_unreviewed/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../examples/intro.html">Examples Outline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/simple_mission.html">Running a Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/custom_optimization.html">Running a Custom Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/reserve_mission.html">Running a Reserve Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/detailed_takeoff_landing.html">2DOF Detailed Takeoff and Landing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/external_subsystems.html">Creating and Using External Subsystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples_unreviewed/deconstructed_example.html">Aviary Model Without AviaryProblem</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/comparison_to_flops.html">Comparison to FLOPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Source Docs</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../source_docs/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source_docs/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../source_docs/subsystem_builder.html">SubsystemBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../misc_resources/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/getting_started/installation.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fgetting_started/installation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/getting_started/installation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Installation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-installation-guide-should-i-use">Which Installation Guide Should I Use?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizers">Optimizers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#editable-source-code">Editable Source Code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-to-development-versions">Access to Development Versions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start-guide">Quick Start Guide</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-aviary">Updating Aviary</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-installation-guide">Detailed Installation Guide</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-install-aviary">Step 1: Install Aviary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Updating Aviary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-pyoptsparse">Step 2: Install pyOptSparse</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-conda">Installing with conda</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-pip-or-if-you-have-snopt">Installing with pip, or if you have SNOPT</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-snopt">Adding SNOPT</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-s-guide">Developer’s Guide</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Step 1: Install Aviary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Updating Aviary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Step 2: Install pyOptSparse</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-dependencies">Optional Dependencies</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#packages-for-running-tests">Packages For Running Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#packages-for-contributing-code">Packages For Contributing Code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#packages-for-building-docs">Packages For Building Docs</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-your-installation">Verify Your Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-verification">Developer Verification</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h1>
+<p>Aviary can be installed on any OS, including Windows, Linux, and macOS (as well as integrated shells like unix on macOS or Linux through WSL on Windows).</p>
+<p>Aviary requires a working Python environment. This installation guide assumes that you already have Python installed on your system. We recommend using conda for environment management as it makes it easier to install Aviary with its full feature set, which is explained in the next section. Our recommended package manager is <a class="reference external" href="https://github.com/conda-forge/miniforge">miniforge</a>. Miniforge is an open-source alternative to miniconda, and functions identically.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The minimum supported Python version is <code class="docutils literal notranslate"><span class="pre">3.10</span></code>; we recommend using the latest release of Python.</p>
+</div>
+<p>The Detailed and Developer’s installation guides assume you have <a class="reference external" href="https://git-scm.com">git</a> installed. The Developer’s Guide also assumes that if you are using your own fork of Aviary, and that you have your system correctly configured with the proper permissions to pull from and push to your fork.</p>
+<section id="which-installation-guide-should-i-use">
+<h2>Which Installation Guide Should I Use?<a class="headerlink" href="#which-installation-guide-should-i-use" title="Link to this heading">#</a></h2>
+<p>The following guides are available:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#quick-start-guide">Quick Start Guide</a></p></li>
+<li><p><a class="reference internal" href="#detailed-guide">Detailed Installation Guide</a></p></li>
+<li><p><a class="reference internal" href="#developers-guide">Developer’s Guide</a></p></li>
+<li><p>Docker Installation Guide (coming soon)</p></li>
+</ul>
+<p>The different installation guides are intended to get users of various levels of Python experience and analysis needs started. Here is a brief explanation of what can differ between Aviary installs.</p>
+<section id="optimizers">
+<h3>Optimizers<a class="headerlink" href="#optimizers" title="Link to this heading">#</a></h3>
+<p>Aviary uses the <code class="docutils literal notranslate"><span class="pre">pyOptSparse</span></code> package to get access to a variety of different optimizers. Many of the more powerful and robust optimizers do not come with pyOptSparse by default, and may require additional steps to install. The Quick Start Guide does not include pyOptSparse, however you can always “upgrade” your install with pyOptSparse later to get access to more optimizers. Using a conda environment can simplify that installation process.</p>
+</section>
+<section id="editable-source-code">
+<h3>Editable Source Code<a class="headerlink" href="#editable-source-code" title="Link to this heading">#</a></h3>
+<p>If you do not follow the Developer’s Guide, then you will not have an editable version of Aviary source code. Following that guide installs a copy of Aviary that you can freely modify.</p>
+</section>
+<section id="access-to-development-versions">
+<h3>Access to Development Versions<a class="headerlink" href="#access-to-development-versions" title="Link to this heading">#</a></h3>
+<p>The Quick Start Guide only grabs the most recent versioned release of Aviary, so if you need a new feature or bugfix you will have to wait until the next version release to get it. However, the other guides show how to directly get the latest Aviary code from GitHub. These development versions are generally stable and give you access to new features immediately. However, we recommend using tagged releases for studies, which makes documenting and replicating your work much easier.</p>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="quick-start-guide">
+<span id="id1"></span><h1>Quick Start Guide<a class="headerlink" href="#quick-start-guide" title="Link to this heading">#</a></h1>
+<p><em><strong>Prerequisites:</strong></em> Python environment</p>
+<p><em><strong>Features:</strong></em> Minimal Aviary install, basic optimizers only</p>
+<hr class="docutils" />
+<p>Aviary can be very quickly installed via the terminal. This version of Aviary only includes basic optimizers.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install aviary
+</pre></div>
+</div>
+<p>This will install the latest release of Aviary and all of its dependencies. This may take serval minutes. Verify your installation following <a class="reference internal" href="#verify-installation">these steps</a>, and you’re done! Keep in mind that some examples and most tests require optimizers that aren’t included in this installation. To run those on your own machine, you will need to follow <a class="reference internal" href="#install-pyoptsparse">this step</a> from the Detailed Installation Guide.</p>
+<section id="updating-aviary">
+<h2>Updating Aviary<a class="headerlink" href="#updating-aviary" title="Link to this heading">#</a></h2>
+<p>When a new version of Aviary is released, you can update your local copy by running the following command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install --upgrade aviary
+</pre></div>
+</div>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="detailed-installation-guide">
+<span id="detailed-guide"></span><h1>Detailed Installation Guide<a class="headerlink" href="#detailed-installation-guide" title="Link to this heading">#</a></h1>
+<p><em><strong>Prerequisites:</strong></em> Python environment (conda recommended), git (optional)</p>
+<p><em><strong>Features:</strong></em> Latest development version of Aviary with additional optimizers</p>
+<hr class="docutils" />
+<p>This installation guide will show you how to install Aviary with the ability to grab latest development versions, as well as a guide on how to install <code class="docutils literal notranslate"><span class="pre">pyoptsparse</span></code> with additional optimizers.</p>
+<p>If you installed Aviary following the Quick Start Guide, you can “upgrade” your installation to use more optimizers by skipping ahead to <a class="reference internal" href="#install-pyoptsparse">Step 2</a>. Once you have pyoptsparse installed, proceed to <a class="reference internal" href="#verify-installation">verifying your installation</a>.</p>
+<section id="step-1-install-aviary">
+<h2>Step 1: Install Aviary<a class="headerlink" href="#step-1-install-aviary" title="Link to this heading">#</a></h2>
+<p>You can install the development version of Aviary directly from the github repository, rather than the latest tagged version from PyPi. If you don’t have git, you can download the files from github, and install it using pip from inside the top-level Aviary directory (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code>). If you don’t want or need the latest, cutting-edge version of Aviary, installing it using the method shown in the Quick Start Guide is fine.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/OpenMDAO/Aviary@main
+</pre></div>
+</div>
+<section id="id2">
+<h3>Updating Aviary<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>To update your copy of Aviary to the latest development version, run this command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install --upgrade git+https://github.com/OpenMDAO/Aviary@main
+</pre></div>
+</div>
+</section>
+</section>
+<section id="step-2-install-pyoptsparse">
+<span id="install-pyoptsparse"></span><h2>Step 2: Install pyOptSparse<a class="headerlink" href="#step-2-install-pyoptsparse" title="Link to this heading">#</a></h2>
+<p>There are two sets of instructions included for pyOptSparse - read through both and determine which fits your needs and Python environment setup.</p>
+<section id="installing-with-conda">
+<h3>Installing with conda<a class="headerlink" href="#installing-with-conda" title="Link to this heading">#</a></h3>
+<p>If you have a conda environment, then you can easily install pyOptSparse with access to the “IPOPT” optimizer. This is the most commonly used optimizer in Aviary, as it is generally more performant than “SLSQP” (the default option) and is available for free. First, install the <code class="docutils literal notranslate"><span class="pre">pyoptsparse</span></code> package using conda:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>conda install pyoptsparse
+</pre></div>
+</div>
+<p>Next, add the IPOPT optimizer using the following command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>conda install cyipopt
+</pre></div>
+</div>
+</section>
+<section id="installing-with-pip-or-if-you-have-snopt">
+<h3>Installing with pip, or if you have SNOPT<a class="headerlink" href="#installing-with-pip-or-if-you-have-snopt" title="Link to this heading">#</a></h3>
+<p>To install pyOptSparse without conda, you will need the <a class="reference external" href="https://github.com/OpenMDAO/build_pyoptsparse">build_pyoptsparse</a> package to help build pyOptSparse correctly. It is possible to install pyOptSparse without this utility package, but that is outside the scope of this guide.</p>
+<p>First install <code class="docutils literal notranslate"><span class="pre">build_pyoptsparse</span></code>, then run it as a command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install git+https://github.com/OpenMDAO/build_pyoptsparse
+build_pyoptsparse
+</pre></div>
+</div>
+<section id="adding-snopt">
+<h4>Adding SNOPT<a class="headerlink" href="#adding-snopt" title="Link to this heading">#</a></h4>
+<p><a class="reference external" href="http://ccom.ucsd.edu/~optimizers/solvers/snopt/">SNOPT</a> is a proprietary, high-performance optimizer that is very good at solving large nonlinear problems and is used by many OpenMDAO users. SNOPT is only supported on Linux.</p>
+<p>If you have a copy of SNOPT, instead run the following command to install <code class="docutils literal notranslate"><span class="pre">pyoptsparse</span></code> with both IPOPT and SNOPT available:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>build_pyoptsparse -s /path_to_SNOPT_dir
+</pre></div>
+</div>
+</section>
+<section id="troubleshooting">
+<h4>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h4>
+<p>Here are steps to resolve some common errors seen when installing pyOptSparse. First, try running <code class="docutils literal notranslate"><span class="pre">build_pyoptsparse</span> <span class="pre">-v</span></code> to get a more verbose output.</p>
+<p><em>If you see an error for a missing command:</em></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ERROR: Required command swig not found.
+</pre></div>
+</div>
+<p>Install the missing package (in this case <code class="docutils literal notranslate"><span class="pre">swig</span></code>) using pip or conda. Swig is a commonly missing dependency.</p>
+<p><em>If you see an error where a conda or mamba command failed:</em></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subprocess.CalledProcessError: Command &#39;[&#39;mamba&#39;, &#39;info&#39;, &#39;--unsafe-channels&#39;]&#39; returned non-zero exit status 109.
+</pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">build_pyoptsparse</span> <span class="pre">-m</span></code> to disable use of mamba commands during installation. Adding <code class="docutils literal notranslate"><span class="pre">-e</span></code> will do the same for conda if your error specifically mentions <code class="docutils literal notranslate"><span class="pre">'conda'</span></code>.</p>
+</section>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="developer-s-guide">
+<span id="developers-guide"></span><h1>Developer’s Guide<a class="headerlink" href="#developer-s-guide" title="Link to this heading">#</a></h1>
+<p><em><strong>Prerequisites:</strong></em> Python environment (conda recommended), git</p>
+<p><em><strong>Features:</strong></em> Editable install of latest version Aviary with additional optimizers, additional packages for development and testing</p>
+<hr class="docutils" />
+<p>The Developer’s Guide installs an editable version of Aviary source code, cloned from github, as well as additional Python packages needed for Aviary development and contributing code to the project.</p>
+<section id="id3">
+<h2>Step 1: Install Aviary<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>It is recommended for developers to create their own fork of Aviary and clone that. In these instructions we will use the main <a class="reference external" href="https://github.com/OpenMDAO/Aviary">github repository</a>, if you are using a fork simply substitute the url with your own. Navigate to the folder where you’d like Aviary to be downloaded to, then run:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/OpenMDAO/Aviary
+</pre></div>
+</div>
+<p>Next, we will install Aviary in “editable” mode, which means that you can make changes to the code inside this Aviary directory. The <code class="docutils literal notranslate"><span class="pre">[all]</span></code> tag will also install all optional dependencies - Aviary has several installation configurations you can use by adding the correct tag inside brackets after the period. The available tags are detailed <a class="reference internal" href="#optional-dependencies">here</a>. From inside the top-level Aviary directory (it should contain a file called <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>), run:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install -e .[all]
+</pre></div>
+</div>
+<section id="id4">
+<h3>Updating Aviary<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>To update your copy of Aviary to the latest development version, run this command from anywhere inside the Aviary repository folder:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>git pull
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>Step 2: Install pyOptSparse<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>The instructions for installing pyOptSparse are the same as the Detailed Installation Guide <a class="reference internal" href="#install-pyoptsparse">here</a>.</p>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="optional-dependencies">
+<span id="id6"></span><h1>Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Link to this heading">#</a></h1>
+<p>There are many additional packages that are useful for developers and advanced users, but not required for users. Select the ones that make sense for your use case. Once you have installed the packages you need, <a class="reference internal" href="#verify-installation">verify your installation</a>.</p>
+<p>You can automatically install these optional packages by specifying a tag inside brackets after “aviary” when pip installing, like so:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install aviary[tag]
+</pre></div>
+</div>
+<p>The following tags are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs</span></code>: installs <a class="reference internal" href="#docs-packages">packages for building docs</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dev</span></code>: installs the <a class="reference internal" href="#tests-packages">packages for running tests</a> and <a class="reference internal" href="#contribution-packages">contributing code</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">all</span></code>: installs all optional packages listed in this section</p></li>
+</ul>
+<section id="packages-for-running-tests">
+<span id="tests-packages"></span><h2>Packages For Running Tests<a class="headerlink" href="#packages-for-running-tests" title="Link to this heading">#</a></h2>
+<p>In order to run Aviary’s test suite, you will need the following packages:</p>
+<ul class="simple">
+<li><p><em>testflo</em></p></li>
+<li><p><em>ambiance</em></p></li>
+<li><p><em>openaerostruct</em></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">testflo</span></code> is the core package that automates testing. The other two packages, <code class="docutils literal notranslate"><span class="pre">ambiance</span></code> and <code class="docutils literal notranslate"><span class="pre">openaerostruct</span></code>, are needed to run example cases that incorporate them as external subsystems. It is useful to be able to run these cases even if you have no interest in those specific tools to ensure that the interface for external subsystems is working correctly.</p>
+</section>
+<section id="packages-for-contributing-code">
+<span id="contribution-packages"></span><h2>Packages For Contributing Code<a class="headerlink" href="#packages-for-contributing-code" title="Link to this heading">#</a></h2>
+<p>To contribute code, you will need to follow Aviary’s <a class="reference internal" href="../developer_guide/contributing_guidelines.html"><span class="std std-doc">contribution guidelines</span></a>. This involves the use of additional packages:</p>
+<ul class="simple">
+<li><p><em>pre-commit</em></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code> package has an additional install step after you get the package through <code class="docutils literal notranslate"><span class="pre">pip</span></code> or <code class="docutils literal notranslate"><span class="pre">conda</span></code> commands.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>pip install pre-commit
+pre-commit install
+</pre></div>
+</div>
+</section>
+<section id="packages-for-building-docs">
+<span id="docs-packages"></span><h2>Packages For Building Docs<a class="headerlink" href="#packages-for-building-docs" title="Link to this heading">#</a></h2>
+<p>Several additional packages are needed to build a copy of the Aviary documentation locally:</p>
+<ul class="simple">
+<li><p><em>jupyter-book</em></p></li>
+<li><p><em>itables</em></p></li>
+</ul>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="verify-your-installation">
+<span id="verify-installation"></span><h1>Verify Your Installation<a class="headerlink" href="#verify-your-installation" title="Link to this heading">#</a></h1>
+<p>First, check that Aviary commands can be successfully executed by entering the following into your command line:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>aviary
+</pre></div>
+</div>
+<div class="cell tag_remove-input docutils container">
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>usage: aviary [-h] [--version]  ...
+
+aviary Command Line Tools
+
+options:
+  -h, --help         show this help message and exit
+  --version          show version and exit
+
+Tools:
+  
+    check            Verify Aviary installation
+    convert          Convert legacy formatted data files (aero_table,
+                     engine_deck, fortran_to_aviary, propeller_table) to
+                     Aviary format.
+    dashboard        Open the results dashboard for a provided Aviary run.
+    draw_mission     Open the mission profile drawing GUI.
+    plot_drag_polar  Plot a Drag Polar Graph using a provided polar data csv
+                     input.
+    rtplot           Run a script and show a real-time plot of the
+                     optimization progress.
+    run_mission      Run Aviary using a provided input deck.
+</pre></div>
+</div>
+</div>
+</div>
+<p>You should see a similar output listing all the available command line utilities.</p>
+<p>Next try running the check command, which verifies your installation:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>aviary check
+</pre></div>
+</div>
+<p>The command should finish without raising any errors - warnings and other printouts are ok. If you don’t get any errors, you are ready to use Aviary!</p>
+<section id="developer-verification">
+<h2>Developer Verification<a class="headerlink" href="#developer-verification" title="Link to this heading">#</a></h2>
+<p>If you followed the Developer’s Guide, then you had the option to install testflo. If you did not, you can always install the package individually. To run Aviary’s test suite, run the following command from inside the top level of the Aviary repository. Be advised, running the full test suite may take a significant amount of time, on the order of thirty minutes on weaker machines such as laptops.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>testflo
+</pre></div>
+</div>
+<p>The tests should begin running. You will see a series of characters printed to the screen, along with normal printouts from running Aviary cases. Periods indicate successful tests, “E” for failed tests, and “S” represents a skipped test. Skipped tests are not a concern. Tests are flagged to be skipped for a variety of reasons, and do not mean there is a problem with your installation.</p>
+<p>If you are missing optional packages, tests that require them will simply be skipped, so you should never be seeing failures because of which installation guide you followed. If you receive an MPI error, you can add the <code class="docutils literal notranslate"><span class="pre">--nompi</span></code> option to the testflo command run.</p>
+<p>A successful test run should look like the following once complete. The exact number of tests ran will vary as Aviary development continues, but there should be not be any failed tests.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>OK
+
+Passed:  1392
+Failed:  0
+Skipped: 10
+
+
+Ran 1402 tests using 208 processes
+Wall clock time:   00:06:6.20
+</pre></div>
+</div>
+<p>You can also run the benchmark tests, which are a suite of full aircraft optimization problems. These are separate from the test suite called with testflo to allow developers to only run the subset of tests they need to save runtime. To run the benchmark tests, execute the <code class="docutils literal notranslate"><span class="pre">run_all_benchmarks.py</span></code> script located in the <code class="docutils literal notranslate"><span class="pre">aviary</span></code> directory in the repository.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>python aviary/run_all_benchmarks.py
+</pre></div>
+</div>
+<p>The final printout should look like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>OK
+
+Passed:  13
+Failed:  0
+Skipped: 1
+
+
+Ran 14 tests using 208 processes
+Wall clock time:   00:02:45.00
+</pre></div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./getting_started"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="getting_started.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Getting Started</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="expected_user_knowledge.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Expected User Knowledge</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#which-installation-guide-should-i-use">Which Installation Guide Should I Use?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optimizers">Optimizers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#editable-source-code">Editable Source Code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-to-development-versions">Access to Development Versions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start-guide">Quick Start Guide</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-aviary">Updating Aviary</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-installation-guide">Detailed Installation Guide</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-install-aviary">Step 1: Install Aviary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Updating Aviary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-install-pyoptsparse">Step 2: Install pyOptSparse</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-conda">Installing with conda</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-pip-or-if-you-have-snopt">Installing with pip, or if you have SNOPT</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-snopt">Adding SNOPT</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-s-guide">Developer’s Guide</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Step 1: Install Aviary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Updating Aviary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Step 2: Install pyOptSparse</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-dependencies">Optional Dependencies</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#packages-for-running-tests">Packages For Running Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#packages-for-contributing-code">Packages For Contributing Code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#packages-for-building-docs">Packages For Building Docs</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#verify-your-installation">Verify Your Installation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developer-verification">Developer Verification</a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

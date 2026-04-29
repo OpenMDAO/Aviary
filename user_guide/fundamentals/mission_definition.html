@@ -1,0 +1,818 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mission Definition</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=3683e473" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/fundamentals/mission_definition';</script>
+    <script src="../../_static/collapsible_headers.js?v=13c9d35c"></script>
+    <link rel="icon" href="../../_static/aviary_logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Data Files" href="data_files.html" />
+    <link rel="prev" title="Aircraft Definition" href="aircraft_definition.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../introduction.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/aviary.png" class="logo__image only-light" alt=" - Home"/>
+    <img src="../../_static/aviary.png" class="logo__image only-dark pst-js-only" alt=" - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../introduction.html">
+                    Welcome to Aviary
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/installation.html">Installation</a></li>
+
+
+
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/expected_user_knowledge.html">Expected User Knowledge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/tools_that_aviary_uses.html">Underlying Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started/whats_next.html">What’s Next?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../aviary_fundamentals.html">Aviary Fundamentals</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="variables.html">How Aviary Defines Variables</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="input_files.html">Aviary Input Files</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aircraft_definition.html">Aircraft Definition</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Mission Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data_files.html">Data Files</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide_unreviewed/outputs.html">Outputted files and how to read them</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide_unreviewed/UI_levels.html">User Interface Levels</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../included_aircraft_models.html">Aircraft Models Included With Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/onboarding_level2.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/examples_of_the_same_mission_at_different_UI_levels.html">Examples of the same mission at different UI levels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/aviary_commands.html">Command Line Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/drawing_and_running_simple_missions.html">Drawing and running simple missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/pre_mission_and_mission.html">Pre-Mission and Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/visualizing_results.html">Visualizing Results from Aviary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/features_and_functionalities.html">Features and Functionalities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/custom_variable_hierarchies.html">Defining a Custom Variable Hierarchy</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/subsystems.html">Subsystems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/aerodynamics.html">Aerodynamics Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/external_aero.html">Externally Computed Polars</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/atmosphere.html">Atmosphere Subsystem</a></li>
+
+
+
+
+
+
+
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/propulsion.html">Propulsion</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/electric_motor.html">Electric Motor Modelling</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/hamilton_standard.html">Hamilton Standard Propulsion Model</a></li>
+
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/creating_a_turboprop_engine.html">Creating a Turboprop Powered Aircraft Example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/mass.html">Mass Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/fuel.html">Fuel Burn Calculations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/blended_wing_body_GASP.html">GASP Based Blended Wing Body Modeling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/blended_wing_body_FLOPS.html">FLOPS Based Blended Wing Body Modeling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/using_external_subsystems.html">External Subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/step_by_step_external_guide.html">Step-by-step guide for creating, testing, and using external subsystems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../user_guide_unreviewed/subsystems/battery_subsystem_example.html">In-depth look at the battery subsystem as an example</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/features/overriding.html">Overriding Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/FLOPS_based_detailed_takeoff_and_landing.html">FLOPS Based Detailed Takeoff and Landing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/reserve_missions.html">Reserve Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/multi_mission.html">Multi-Mission Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/payload_range_functionality.html">Payload Range Functionality.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide_unreviewed/troubleshooting.html">Troubleshooting</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../examples/intro.html">Examples Outline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/simple_mission.html">Running a Simple Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/custom_optimization.html">Running a Custom Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/reserve_mission.html">Running a Reserve Mission</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples_unreviewed/more_advanced_example.html">Optimizing the Mission Profile of a Conventional Aircraft</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/off_design_missions.html">Off-Design Missions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples_unreviewed/detailed_takeoff_landing.html">2DOF Detailed Takeoff and Landing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples_unreviewed/multi_mission.html">Multi-Mission Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/external_subsystems.html">Creating and Using External Subsystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples_unreviewed/OAS_subsystem.html">Using Aviary and OpenAeroStruct Together</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples_unreviewed/deconstructed_example.html">Aviary Model Without AviaryProblem</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Theory Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/intro.html">Overview of Aviary Functionality</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../theory_guide/underlying_concepts.html">Underlying Concepts</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/assumptions.html">Assumptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/aerodynamics.html">Core Aerodynamics Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/geometry.html">Core Geometry Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/mass.html">Core Mass Subsystem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../theory_guide/mission.html">Mission Analysis</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../theory_guide/propulsion.html">Core Propulsion Subsystem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../theory_guide/turboprop.html">The Turboprop Model</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/optimization_algorithms.html">Optimization Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/validation.html">Validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/comparison_to_flops.html">Comparison to FLOPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../theory_guide/gasp_based_bwb.html">GASP based BWB model implementation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/codebase_overview.html">Codebase Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/coding_standards.html">Coding Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/ai_policy.html">Aviary’s AI Policy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/unit_tests.html">Unit Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/contributing_guidelines.html">Guidelines for Contributing Code</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../developer_guide/how_to_contribute_docs.html">How to Contribute Docs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../developer_guide/doctape.html">DocTAPE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../developer_guide/doctape_examples.html">DocTAPE Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../developer_guide/debugging_env_from_github.html">Using Dev Environments from GitHub Actions</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Source Docs</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../source_docs/variable_metadata.html">Understanding the Variable Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source_docs/phase_info_detailed.html">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options reference for all Aviary EquationsOfMotion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source_docs/subsystem_builder.html">SubsystemBuilder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../_srcdocs/index.html">Source Docs</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous Resources</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/FAQ.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc_resources/phase_info_conversion.html">Converting from legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> user options</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/openmdao/Aviary/blob/gh-pages/user_guide/fundamentals/mission_definition.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/openmdao/Aviary/issues/new?title=Issue%20on%20page%20%2Fuser_guide/fundamentals/mission_definition.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/user_guide/fundamentals/mission_definition.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Mission Definition</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-info-overview">Phase Info Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-options">Phase Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subsystem-options">Subsystem Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#user-options">User Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#general-phase-settings">General phase settings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specialized-phase-settings">Specialized phase settings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#state-variables">State variables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#controls">Controls</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time">Time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specialized-2dof-phase-settings">Specialized 2DOF phase settings</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="mission-definition">
+<h1>Mission Definition<a class="headerlink" href="#mission-definition" title="Link to this heading">#</a></h1>
+<p>“Mission definition” is all of the information needed for Aviary to create a Dymos trajectory that flies the vehicle through the desired mission profile. Specifically, it defines all of the information needed to define Dymos phases (a list of that information can be found in the <a class="reference external" href="https://openmdao.org/dymos/docs/1.9.1/api/phase_api.html">Dymos docs</a>). This is a vast list, and is much more detailed than the majority of Aviary users need to know. Aviary only needs a select amount of information about each mission from the user, which is conveyed in the mission definition. This takes the form of a Python dictionary commonly referred to as the <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> in Aviary.</p>
+<section id="phase-info-overview">
+<h2>Phase Info Overview<a class="headerlink" href="#phase-info-overview" title="Link to this heading">#</a></h2>
+<p>Aviary uses a nested Python dictionary to define and control all aspects of the mission and its phases. The dictionary must have a very specific structure, and all valid keys Aviary recognizes are detailed later in this section. Understanding this format is necessary if you want to modify existing missions or design your own.</p>
+<p>The top level of the <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> contains a name string and a sub-dictionary for each phase in the mission. Users are free to choose any valid python name for their phases (valid characters are upper/lower case letters, numbers, and underscores.) In addition, there are two default categories “pre_mission” and “post_mission”. These contain any settings that pertain to the pre_mission, which is any calculation that occurs before the mission runs, and the post_mission, which is any calculation that occurs after the mission runs. The sub-dictionaries for “pre_mission” and “post_mission” must be named exactly as shown, and cannot have custom names.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;pre_mission&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;climb1&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;climb2&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;cruise&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;descent&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;post_mission&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that the order is important, so “pre_mission” should be first, followed by phases in chronological order, terminated by “post_mission”. All of the sections shown in this example are optional, including “pre_mission”, and “post_mission” - the options that can be configured in those sections are not required.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When using the Python API, the variable name for the dictionary is not important, since you will just be passing it as an argument to the function that runs Aviary. If you are providing your <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> as a file, such as when running Aviary from the command line, the dictionary <em>must</em> be named “phase_info” so it can be found and loaded successfully.</p>
+</div>
+</section>
+<section id="phase-options">
+<h2>Phase Options<a class="headerlink" href="#phase-options" title="Link to this heading">#</a></h2>
+<p>Each phase has its own unique set of options, which are further organized inside additional sub-dictionaries. Here is an example of a phase-specific dictionary with the 3 possible sub-categories already defined:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">phase_info</span><span class="p">[</span><span class="s1">&#39;climb1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;subsystem_options&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;user_options&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="s1">&#39;initial_conditions&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The ‘subsystem_options’ dictionary contains options for all subsystems.
+The ‘user_options’ dictionary includes all options that define the phase and its boundary conditions.
+The ‘initial_conditions’ dictionary allows you to set initial values for any variables that are under control of the optimizer, including states, optimized controls, and time.</p>
+<p>The following sections outline important options available for each of these categories. A full description of every user option in the phase_info for each of Aviary’s phase builders is given in the <a class="reference internal" href="../../source_docs/phase_info_detailed.html"><span class="std std-doc">Complete <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> Reference.</span></a>.</p>
+<p>If you have a phase_info that was built in an version of Aviary prior to version 1.0, check the <a class="reference internal" href="../../misc_resources/phase_info_conversion.html"><span class="std std-doc">legacy <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> conversion guide</span></a> to learn what has changed.</p>
+</section>
+<section id="subsystem-options">
+<h2>Subsystem Options<a class="headerlink" href="#subsystem-options" title="Link to this heading">#</a></h2>
+<p>Here subsystem-specific options can be defined, which only apply to the specific phase they are present in. What options are available depends on which specific subsystems you are including with your model. Available options for the core Aviary subsystems are defined in their respective documentation pages in the <a class="reference internal" href="../../user_guide_unreviewed/subsystems/subsystems.html"><span class="std std-doc">User Guide</span></a>.</p>
+</section>
+<section id="user-options">
+<h2>User Options<a class="headerlink" href="#user-options" title="Link to this heading">#</a></h2>
+<p>The user options format supports (and enforces) the inclusion of an OpenMDAO unit string when specifying any quantity that has a unit. These take the format of a tuple, such as “(500, ‘s’)” to represent “500 seconds”. If an option requires multiple value, a nested tuple is used, with the list of values stored in their own tuple: “((300.0, 900.0), ‘s’)”. For options whose values do not have a unit, you can either skip the units definition entirely, just directly providing the desired value, or you can specify units of “unitless” for clarity.</p>
+<p>Aviary includes several sets of equations of motion to define flight physics, each with their own additional set of available options. Thus, the full set of valid options that can be specified in <code class="docutils literal notranslate"><span class="pre">phase_info</span></code> can differ based on your problem setup. The following section describes the general patterns that globally apply to all Aviary models.<!-- TODO: add documentation for EOM-specific phase_info options. Each EOM should probably have its own page in the User Guide, which is a good place for this info. Link to those files here once done. --></p>
+<section id="general-phase-settings">
+<h3>General phase settings<a class="headerlink" href="#general-phase-settings" title="Link to this heading">#</a></h3>
+<p>These options can be specified for any mission phase.</p>
+<!-- TODO: include default values for each setting, as well as if they are optional -->
+<!-- TODO: reduce verbosity of this section and standardize - make it more like a docstring. Name, default value, description of variable, list possible options (or data type if no set list of allowable options) and what each does -->
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">num_segments</span></code></strong>: The number of segments in the dymos transcription.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">order</span></code></strong>: The order of polynomials for the dymos transcription.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">throttle_enforcement</span></code></strong>: Enforce throttle as a “path_constraint” (default), “boundary_constraint”, a “control” (which can be optimized or set to a fixed value), or “bounded” via a solver upper and lower bounds (not recommended).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">throttle_allocation</span></code></strong>: How to allocate throttles for multi-engine, can be “fixed” for user-specified allocations, “static” where the optimizer picks a single allocation for the whole phase, or “dynamic” where the optimizer chooses an allocation at each trajectory point.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">no_climb</span></code></strong>: Set to True to prevent the aircraft from climbing during the phase. This option can be used to prevent unexpected climb during a descent phase. This is only available when using the energy_state equations of motion.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">no_descent</span></code></strong>: Set to True to prevent the aircraft from descending during the phase. This can be used to prevent unexpected descent during a climb phase. This is only available when using the energy_state equations of motion.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">transcription</span></code></strong>: Set the Dymos transcription to use for the phase. Aviary supports ‘Collocation’ or ‘PicardShooting’. <a class="reference external" href="https://openmdao.github.io/dymos/getting_started/transcriptions.html">See Dymos documentation for more details</a></p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">transcription</span></code></strong>: Set the Dymos transcription to use for the phase. Aviary supports ‘Collocation’ or ‘PicardShooting’. <a class="reference external" href="https://openmdao.github.io/dymos/getting_started/transcriptions.html">See Dymos documentation for more details</a></p></li>
+</ul>
+</section>
+<section id="specialized-phase-settings">
+<h3>Specialized phase settings<a class="headerlink" href="#specialized-phase-settings" title="Link to this heading">#</a></h3>
+<p>These options are unique to specific types of phases, or have other limitations on their use.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">reserve</span></code></strong>: When True, this is a reserve phase. These phases should appear after your final flight phase in the phase_info.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">ground_roll</span></code></strong>: When True, restrict the problem to the ground plane. This will remove certain states/controls, and is only used in takeoff and landing phases when using the 2DOF equations of motion.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">required_available_climb_rate</span></code></strong>: Adds a lower bound path constraint on altitude_rate_max, which is the maximum rate that the aircraft could climb at any point in the phase.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">target_distance</span></code></strong>: Total mission distance constraint. This should be set in the final flight phase only.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">constraints</span></code></strong>: Dictionary of custom constraints applied to dynamic variables in the phase.</p></li>
+</ul>
+</section>
+<section id="state-variables">
+<h3>State variables<a class="headerlink" href="#state-variables" title="Link to this heading">#</a></h3>
+<p>These options provide information about state variables, or variables that are summed over the course of a phase by Dymos. Which state variables exist in a phase is dependent on what kind of phase it is and which equations of motion are being used. Here, the options for the “mass” state are described. When defining options for a different state variable, the same set of options are available, but the variable name at the beginning of the option must be swapped out for the state variable of interest (such as <code class="docutils literal notranslate"><span class="pre">mass_initial</span></code> becoming <code class="docutils literal notranslate"><span class="pre">altitude_initial</span></code>).</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_initial</span></code></strong>: Mass at the start of the phase. When unspecified, the optimizer controls the value. When specified, a constraint is created on the initial mass.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_final</span></code></strong>: Mass at the end of the phase. When unspecified, the optimizer controls the value. When specified, a constraint is created on the final mass.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_bounds</span></code></strong>: Tuple of upper and lower bounds for all values of mass in the phase. The default of None for either means that bound will not be declared.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_ref</span></code></strong>: Multiplicative scale factor “ref” for mass. Default is 1.0</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_ref0</span></code></strong>: Additive scale factor “ref0” for mass. Default is None.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_defect_ref</span></code></strong>: Multiplicative scale factor “ref” for defect constraint. Deafult is None, which means the ref and defect_ref are the same.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_constraint_ref</span></code></strong>: Multiplicative scale factor “ref” for boundary constraint. If unspecified, then the value in <code class="docutils literal notranslate"><span class="pre">mass_final</span></code> will be used.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mass_solve_segments</span></code></strong>: When True, a solver will be used to converge the mass collocation defects within a segment. Note that the state continuity defects between segments will still be handled by the optimizer.</p></li>
+</ul>
+</section>
+<section id="controls">
+<h3>Controls<a class="headerlink" href="#controls" title="Link to this heading">#</a></h3>
+<p>These options provide information about control variables, or variables that are directly controlled by the optimizer. Like state variables, control variables for a given phase is also dependent on what kind of phase it is and which equations of motion are being used. The naming scheme is also similar, with the control variable of interest forming the first part of the option’s name.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_optimize</span></code></strong>: When True, the optimizer will set this value. When False, the initial value for all nodes can be set in the initial_conditions section of the phase.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_initial</span></code></strong>: Altitude at the start of the phase. If altitude_optimize is True, specifying this will create a constraint. Otherwise, it serves as an initial value for the first point. When unspecified, the linkage constraint with the upstream phase will drive this value if altitude_optimize is True.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_final</span></code></strong>: Altitude at the end of the phase. If altitude_optimize is True, specifying this will create a constraint. Otherwise, it serves as an initial value for the first point. When unspecified, the linkage constraint with the downstream phase will drive this value if altitude_optimize is True.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_bounds</span></code></strong>: Tuple of upper and lower bounds for all values of altitude in the phase. The default of None for either means that bound will not be declared.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_ref</span></code></strong>: Multiplicative scale factor “ref” for altitude. Default is 1.0</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_ref0</span></code></strong>: Additive scale factor “ref0” for altitude. Default is None.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">altitude_polynomial_order</span></code></strong>: The order of polynomials for interpolation in the transcription. Default is None, which does not use a polynomial.</p></li>
+</ul>
+</section>
+<section id="time">
+<h3>Time<a class="headerlink" href="#time" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">time_initial</span></code></strong>: Value of “time” at the start of the phase. When unspecified, the value is determined by the optimizer.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">time_duration</span></code></strong>: Duration of the phase. When unspecified, the value is determined by the optimizer.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">time_initial_bounds</span></code></strong>: Upper and lower bounds for time_initial. Ignored if “time_initial” is specified.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">time_duration_bounds</span></code></strong>: Upper and lower bounds for time_duration.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">time_initial_ref</span></code></strong>: Multiplicative scale factor “ref” for time_initial. Default is 1.0</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">time_duration_ref</span></code></strong>: Additive scale factor “ref” for time_duration. Default is None.</p></li>
+</ul>
+</section>
+<section id="specialized-2dof-phase-settings">
+<h3>Specialized 2DOF phase settings<a class="headerlink" href="#specialized-2dof-phase-settings" title="Link to this heading">#</a></h3>
+<!-- TODO: see earlier TODO to consider moving these kinds of EOM-specific options to their own doc page -->
+<p>When using the 2DOF equations of motion, there are several phase options that are only available in specific phases. Future refactor may change some of these to be more consistent with the phase_options listed above in naming and function.</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">alt</span></code></strong>: Constant altitude for this phase. Only available in accel phases (i.e, phases with “accel” in their name).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">EAS_target</span></code></strong>: Target airspeed for the balance in this phase. This is a maximum value that is enforced by a KS constraint. If the optimization objective prioritizes a quick climb or descent, the aircraft will fly at this velocity unless that exceeeds the mach_target, which it may at higher altitudes. Only available in flight phases.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mach_target</span></code></strong>: The maximum Mach during the phase.  Only available in flight phases.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">normal_ref</span></code></strong>: Multiplicative scale factor “ref” for the normal force constraint. Only available in rotation phases (i.e, phases with “rotation” in their name).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">normal_ref0</span></code></strong>: Additive scale factor “ref0” for the normal force constraint. Only available in rotation phases (i.e, phases with “rotation” in their name).</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pitch_constraint_bounds</span></code></strong>: Lower and upper bounds of the pitch constraint. Only available in takeoff phases.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pitch_constraint_bounds</span></code></strong>: Lower and upper bounds of the pitch constraint. Only available in takeoff phases.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pitch_constraint_ref</span></code></strong>: Multiplicative scale factor “ref” for the pitch constraint. Only available in takeoff phases.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./user_guide/fundamentals"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="aircraft_definition.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Aircraft Definition</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="data_files.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data Files</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-info-overview">Phase Info Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-options">Phase Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subsystem-options">Subsystem Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#user-options">User Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#general-phase-settings">General phase settings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specialized-phase-settings">Specialized phase settings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#state-variables">State variables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#controls">Controls</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time">Time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#specialized-2dof-phase-settings">Specialized 2DOF phase settings</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Aviary team at NASA
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
