@@ -198,19 +198,19 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.GROSS_MASS, units='lbm'),
-            615233.67861433,
+            618370.76963151,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            327094.09117139,
+            328794.4056369,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
-            225439.58744294,
+            226876.36399461,
             tolerance=rtol,
         )
 

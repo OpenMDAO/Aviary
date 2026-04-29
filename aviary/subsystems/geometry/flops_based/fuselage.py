@@ -601,7 +601,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if seat_pitch_economy <= 0:
             seat_pitch_economy = 32.0  # inch
 
-        # Determine unit seat areas for each type of passenger
+        # Determine unit seat areas for each type of passenger (ft**2)
         area_seat_business = bay_width_nom * seat_pitch_business / 12.0 / num_seat_abreast_business
         area_seat_first = bay_width_nom * seat_pitch_first / 12.0 / num_seat_abreast_first
         area_seat_economy = bay_width_nom * seat_pitch_economy / 12.0 / num_seat_abreast_economy
@@ -636,16 +636,17 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
-        num_bays_loc = num_bays
+        # num_bays_loc = num_bays
         iter = 0
+        bay_width = bay_width_nom
         while True:
             num_bays_loc = num_bays
             # Cabin area wasted due to slanted  != side wall
-            area_waste = num_bays * tan_sweep * (bay_width_nom / 2.0) ** 2
+            area_waste = num_bays * tan_sweep * (bay_width / 2.0) ** 2
 
             # Aisle area for horseshoe (5'), cross (2') and rear (3') aisles
             # Aisles only go to center of outboard bays, hence num_bays-1
-            area_aisle = 10.0 * (num_bays - 1) * bay_width_nom
+            area_aisle = 10.0 * (num_bays - 1) * bay_width
 
             # Total pressurized cabin area
             area_cabin = area_seats + area_service + area_waste + area_aisle
@@ -658,7 +659,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays_tmp = max_width / bay_width_nom
+            num_bays_tmp = max_width / bay_width
             if num_bays_tmp[0].real > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
             else:
