@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 @use_tempdirs
-@require_pyoptsparse(optimizer='IPOPT')
+@require_pyoptsparse(optimizer='SNOPT')
 # TODO need to add asserts with "truth" values, only verifying no errors here
 class LargeTurbopropFreighterBenchmark(unittest.TestCase):
     def build_and_run_problem(self, mission_method):
@@ -37,7 +37,7 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         turboprop = TurbopropModel('turboprop', options=options)
 
         if mission_method == 'energy':
-            options.set_val(Settings.EQUATIONS_OF_MOTION, 'height_energy')
+            options.set_val(Settings.EQUATIONS_OF_MOTION, 'energy_state')
 
         # load_inputs needs to be updated to accept an already existing aviary options
         prob.load_inputs(
@@ -52,23 +52,27 @@ class LargeTurbopropFreighterBenchmark(unittest.TestCase):
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
-        prob.add_driver('IPOPT', max_iter=0, verbosity=0)
+        prob.add_driver('SNOPT', max_iter=20, verbosity=1)
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
 
         prob.run_aviary_problem()
 
+        self.assertTrue(prob.result.success)
         return prob
-        # self.assertTrue(prob.result.success)
 
     def test_bench_2DOF(self):
         prob = self.build_and_run_problem('2DOF')
+        self.assertTrue(prob.result.success)
+
         # TODO asserts
 
     @unittest.skip('Skipping due to convergence issues (possible drag too low in descent?)')
     def test_bench_energy(self):
         prob = self.build_and_run_problem('energy')
+        self.assertTrue(prob.result.success)
+
         # TODO asserts
 
 

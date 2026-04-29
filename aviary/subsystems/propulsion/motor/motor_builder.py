@@ -2,6 +2,7 @@ from aviary.subsystems.propulsion.motor.model.motor_mission import MotorMission
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.utils.aviary_values import AviaryValues
 
 
 class MotorBuilder(SubsystemBuilder):
@@ -64,17 +65,15 @@ class MotorBuilder(SubsystemBuilder):
         No preprocessing needed for the motor subsystem.
     """
 
-    def __init__(self, name='motor'):  # , include_constraints=True):
-        # self.include_constraints = include_constraints
-        super().__init__(name)
+    _default_name = 'motor'
 
-    def build_pre_mission(self, aviary_inputs):
-        return MotorPreMission(aviary_inputs=aviary_inputs)  # , simple_mass=True)
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
+        return MotorPreMission()
 
-    def build_mission(self, num_nodes, aviary_inputs):
-        return MotorMission(num_nodes=num_nodes, aviary_inputs=aviary_inputs)
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
+        return MotorMission(num_nodes=num_nodes)
 
-    # def get_constraints(self):
+    # def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
     #     if self.include_constraints:
     #         constraints = {
     #             Dynamic.Mission.Motor.TORQUE_CON: {'upper': 0.0, 'type': 'path'}
@@ -84,18 +83,39 @@ class MotorBuilder(SubsystemBuilder):
 
     #     return constraints
 
-    def get_design_vars(self):
-        DVs = {
-            Aircraft.Engine.SCALE_FACTOR: {
-                'units': 'unitless',
-                'lower': 0.001,
-                'upper': None,
-            },
-        }
+    # def get_design_vars(self, aviary_inputs=None):
+    #     DVs = {
+    #         Aircraft.Engine.SCALE_FACTOR: {
+    #             'units': 'unitless',
+    #             'lower': 0.001,
+    #             'upper': None,
+    #         },
+    #     }
 
-        return DVs
+    #     return DVs
 
-    def get_parameters(self):
+    # def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    # controls_dict = {}
+    # if aviary_inputs is not None:
+    #     if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
+    #         if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
+    #             rpm_limit = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
+    #         else:
+    #             rpm_limit = 6000
+    #         controls_dict = {
+    #             Dynamic.Vehicle.Propulsion.RPM: {
+    #                 'units': 'rpm',
+    #                 'lower': 1.0,
+    #                 'upper': rpm_limit,
+    #                 'control_type': 'polynomial',
+    #                 'order': 3,
+    #                 'opt': True,
+    #             },
+    #         }
+
+    # return controls_dict
+
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         params = {
             Aircraft.Engine.SCALE_FACTOR: {
                 'val': 1.0,
@@ -105,18 +125,25 @@ class MotorBuilder(SubsystemBuilder):
         }
         return params
 
-    # def get_initial_guesses(self):
-    #     initial_guess_dict = {
-    #         Aircraft.Motor.RPM: {
-    #             'units': 'rpm',
-    #             'type': 'parameter',
-    #             'val': 4000.0,  # based on our map
-    #         },
-    #     }
+    # def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    #     initial_guess_dict = {}
+    #     if aviary_inputs is not None:
+    #         if Aircraft.Engine.FIXED_RPM not in aviary_inputs:
+    #             if Aircraft.Engine.RPM_DESIGN in aviary_inputs:
+    #                 rpm_guess = aviary_inputs.get_val(Aircraft.Engine.RPM_DESIGN, 'rpm')[0]
+    #             else:
+    #                 rpm_guess = 6000
+    #             initial_guess_dict = {
+    #                 f'{Dynamic.Vehicle.Propulsion.RPM}_control': {
+    #                     'units': 'rpm',
+    #                     'type': 'control',
+    #                     'val': rpm_guess,
+    #                 },
+    #             }
 
-    # return initial_guess_dict
+    #     return initial_guess_dict
 
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """
         Return a list of names for the motor subsystem.
 
@@ -125,9 +152,9 @@ class MotorBuilder(SubsystemBuilder):
         mass_names : list
             A list of names for the motor subsystem.
         """
-        return [Aircraft.Engine.Motor.MASS, Aircraft.Engine.Gearbox.MASS]
+        return [Aircraft.Engine.Motor.MASS]
 
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return a list of output names for the motor subsystem.
 
@@ -137,8 +164,8 @@ class MotorBuilder(SubsystemBuilder):
             A list of variable names for the motor subsystem.
         """
         return [
-            Dynamic.Vehicle.Propulsion.TORQUE,
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
-            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
+            # Dynamic.Vehicle.Propulsion.TORQUE,
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,
+            # Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
         ]

@@ -38,12 +38,13 @@ class VerticalTailMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
                 Aircraft.VerticalTail.AREA,
                 Aircraft.VerticalTail.TAPER_RATIO,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.VerticalTail.MASS_SCALER,
             ],
             output_keys=Aircraft.VerticalTail.MASS,
@@ -80,7 +81,7 @@ class VerticalTailMassTest2(unittest.TestCase):
 
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.VerticalTail.AREA, 100, 'ft**2')
-        prob.set_val(Mission.Design.GROSS_MASS, 1000.0, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 1000.0, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -105,6 +106,7 @@ class AltVerticalTailMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.VerticalTail.AREA, Aircraft.VerticalTail.MASS_SCALER],

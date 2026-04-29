@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.flops_based.compressibility_drag import CompressibilityDrag
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class CompressibilityDragTest(unittest.TestCase):
     def test_derivs(self):
         # Nudge the mach and diam/wingspan values off of the table points to prevent problem with
@@ -40,7 +42,7 @@ class CompressibilityDragTest(unittest.TestCase):
                 Aircraft.Fuselage.CROSS_SECTION,
                 Aircraft.Fuselage.DIAMETER_TO_WING_SPAN,
                 Aircraft.Fuselage.LENGTH_TO_DIAMETER,
-                Mission.Design.MACH,
+                Aircraft.Design.MACH,
             ],
             promotes_outputs=['compress_drag_coeff'],
         )
@@ -48,7 +50,7 @@ class CompressibilityDragTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val('LID.mach', mach)
-        prob.set_val(Mission.Design.MACH, 0.8 - delta)
+        prob.set_val(Aircraft.Design.MACH, 0.8 - delta)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.13)
         prob.set_val(Aircraft.Fuselage.CROSS_SECTION, 128.2)
         prob.set_val(Aircraft.Design.BASE_AREA, 0.01)

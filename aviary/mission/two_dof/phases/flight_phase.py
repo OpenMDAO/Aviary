@@ -5,7 +5,6 @@ from aviary.mission.initial_guess_builders import (
     InitialGuessState,
 )
 from aviary.mission.phase_builder import PhaseBuilder
-from aviary.mission.phase_utils import add_subsystem_variables_to_phase
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
@@ -110,7 +109,7 @@ class FlightPhase(PhaseBuilder):
     A phase builder for a 2DOF flight phase.
 
     This class extends the PhaseBuilder class, providing specific implementations for
-    the descent phase of a 2-degree of freedom flight mission.
+    the descent phase of a 2-degrees-of-freedom flight mission.
 
     Attributes
     ----------
@@ -148,7 +147,7 @@ class FlightPhase(PhaseBuilder):
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
-        add_subsystem_variables_to_phase(phase, self.name, self.subsystems)
+        phase = self.add_subsystem_variables_to_phase(phase, aviary_options)
 
         # Add constraints
         if required_available_climb_rate is not None:

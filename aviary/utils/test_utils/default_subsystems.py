@@ -3,7 +3,7 @@ from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 def get_default_premission_subsystems(legacy_code, engines=None):
@@ -19,10 +19,10 @@ def get_default_premission_subsystems(legacy_code, engines=None):
         List of EngineDecks
     """
     legacy_code = LegacyCode(legacy_code)
-    prop = CorePropulsionBuilder('propulsion', BaseMetaData, engine_models=engines)
-    mass = CoreMassBuilder('mass', BaseMetaData, legacy_code)
-    aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, legacy_code)
-    geom = CoreGeometryBuilder('geometry', BaseMetaData, legacy_code)
+    prop = CorePropulsionBuilder('propulsion', CoreMetaData, engine_models=engines)
+    mass = CoreMassBuilder('mass', CoreMetaData, legacy_code)
+    aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, legacy_code)
+    geom = CoreGeometryBuilder('geometry', CoreMetaData, legacy_code)
 
     return [prop, geom, aero, mass]
 
@@ -39,8 +39,8 @@ def get_default_mission_subsystems(legacy_code, engines=None):
         List of EngineDecks
     """
     legacy_code = LegacyCode(legacy_code)
-    prop = CorePropulsionBuilder('propulsion', BaseMetaData, engine_models=engines)
-    aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, legacy_code)
+    prop = CorePropulsionBuilder('propulsion', CoreMetaData, engine_models=engines)
+    aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, legacy_code)
 
     return [aero, prop]
 
@@ -55,7 +55,7 @@ def get_geom_and_mass_subsystems(legacy_code):
         either FLOPS or GASP LegacyCode Enums, or their strings equivalents ('FLOPS', 'GASP')
     """
     legacy_code = LegacyCode(legacy_code)
-    mass = CoreMassBuilder('mass', BaseMetaData, legacy_code)
-    geom = CoreGeometryBuilder('geometry', BaseMetaData, legacy_code)
+    mass = CoreMassBuilder('mass', CoreMetaData, legacy_code)
+    geom = CoreGeometryBuilder('geometry', CoreMetaData, legacy_code)
 
     return [geom, mass]

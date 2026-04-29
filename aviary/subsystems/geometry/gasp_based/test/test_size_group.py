@@ -23,6 +23,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -37,7 +38,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -48,7 +49,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -75,7 +76,6 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -89,43 +89,39 @@ class SizeGroupTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 5e-4
-        assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 157.2, tol)
-        assert_near_equal(self.prob['cabin_height'], 13.1, tol)
-        assert_near_equal(self.prob['cabin_len'], 72.1, tol)
-        assert_near_equal(self.prob['nose_height'], 8.6, tol)
+        expected_values = {
+            Aircraft.Fuselage.AVG_DIAMETER: 157.2,
+            'cabin_height': 13.1,
+            'cabin_len': 72.1,
+            'nose_height': 8.6,
+            Aircraft.Fuselage.LENGTH: 129.5,  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
+            Aircraft.Fuselage.WETTED_AREA: 4639.57,
+            Aircraft.TailBoom.LENGTH: 129.5,  # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
+            Aircraft.Wing.AREA: 1370.3,
+            Aircraft.Wing.SPAN: 117.8,
+            Aircraft.Wing.CENTER_CHORD: 17.49,
+            Aircraft.Wing.AVERAGE_CHORD: 12.615,
+            Aircraft.Wing.ROOT_CHORD: 16.41,
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.1397,  # not exact GASP value, likely due to rounding error
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 1114,
+            Aircraft.HorizontalTail.AREA: 375.9,
+            Aircraft.HorizontalTail.SPAN: 42.25,
+            Aircraft.HorizontalTail.ROOT_CHORD: 13.16130387591471,
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 9.57573,
+            Aircraft.HorizontalTail.MOMENT_ARM: 54.7,
+            Aircraft.VerticalTail.AREA: 469.3,
+            Aircraft.VerticalTail.SPAN: 28,
+            Aircraft.VerticalTail.ROOT_CHORD: 18.61267549773935,
+            Aircraft.VerticalTail.AVERAGE_CHORD: 16.83022,
+            Aircraft.VerticalTail.MOMENT_ARM: 49.9,
+            Aircraft.Nacelle.AVG_DIAMETER: 7.35,
+            Aircraft.Nacelle.AVG_LENGTH: 14.7,
+            Aircraft.Nacelle.SURFACE_AREA: 339.58,
+        }
 
-        # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
-        assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol)
-        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.57, tol)
-        # note: this is the actual GASP value, but for version 3.5. Version 3 has 129.4
-        assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol)
-
-        assert_near_equal(self.prob[Aircraft.Wing.AREA], 1370.3, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 117.8, tol)
-
-        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 17.49, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.615, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.41, tol)
-        assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.1397, tol
-        )  # not exact GASP value, likely due to rounding error
-        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 1114, tol)
-
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 375.9, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 42.25, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 13.16130387591471, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 9.57573, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 54.7, tol)
-
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 469.3, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 28, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 18.61267549773935, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 16.83022, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.9, tol)
-
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.7, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58, tol)
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
@@ -149,6 +145,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -166,7 +163,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Strut.ATTACHMENT_LOCATION, val=12, units='ft')
         self.prob.model.set_input_defaults(
@@ -178,7 +175,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -208,7 +205,6 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -222,99 +218,47 @@ class SizeGroupTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.AVG_DIAMETER], 157.2, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['cabin_height'], 13.1, tol)  # not actual GASP value
-        assert_near_equal(self.prob['cabin_len'], 72.09722222, tol)  # not actual GASP value
-        assert_near_equal(self.prob['nose_height'], 8.6, tol)  # not actual GASP value
+        expected_values = {
+            Aircraft.Fuselage.AVG_DIAMETER: 157.2,  # not actual GASP value
+            'cabin_height': 13.1,  # not actual GASP value
+            'cabin_len': 72.09722222,  # not actual GASP value
+            'nose_height': 8.6,  # not actual GASP value
+            Aircraft.Fuselage.LENGTH: 129.5,  # not actual GASP value
+            Aircraft.Fuselage.WETTED_AREA: 4639.57,  # not actual GASP value
+            Aircraft.TailBoom.LENGTH: 129.5,  # not actual GASP value
+            Aircraft.Wing.AREA: 1370.3125,  # not actual GASP value
+            Aircraft.Wing.SPAN: 117.81878299,  # not actual GASP value
+            Aircraft.Wing.CENTER_CHORD: 17.48974356,  # not actual GASP value
+            Aircraft.Wing.AVERAGE_CHORD: 12.61453233,  # not actual GASP value
+            Aircraft.Wing.ROOT_CHORD: 16.40711451,  # not actual GASP value
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.13965584,  # not actual GASP value
+            'nonfolded_taper_ratio': 0.93175961,  # not actual GASP value
+            Aircraft.Wing.FOLDING_AREA: 1167.5966191,  # not actual GASP value
+            'nonfolded_wing_area': 202.7158809,  # not actual GASP value
+            'tc_ratio_mean_folded': 0.14847223,  # not actual GASP value
+            'nonfolded_AR': 0.71035382,  # not actual GASP value
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 208.08091725,  # not actual GASP value
+            'strut_y': 6,  # not actual GASP value
+            Aircraft.Strut.LENGTH: 13.11154072,  # not actual GASP value
+            Aircraft.Strut.CHORD: 1.14403031,  # not actual GASP value
+            Aircraft.HorizontalTail.AREA: 375.87987047,  # not actual GASP value
+            Aircraft.HorizontalTail.SPAN: 42.25434161,  # not actual GASP value
+            Aircraft.HorizontalTail.ROOT_CHORD: 13.15924684,  # not actual GASP value
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 9.57681709,  # not actual GASP value
+            Aircraft.HorizontalTail.MOMENT_ARM: 54.67937726,  # not actual GASP value
+            Aircraft.VerticalTail.AREA: 469.31832812,  # not actual GASP value
+            Aircraft.VerticalTail.SPAN: 27.99574268,  # not actual GASP value
+            Aircraft.VerticalTail.ROOT_CHORD: 18.61623295,  # not actual GASP value
+            Aircraft.VerticalTail.AVERAGE_CHORD: 16.83214111,  # not actual GASP value
+            Aircraft.VerticalTail.MOMENT_ARM: 49.88094115,  # not actual GASP value
+            Aircraft.Nacelle.AVG_DIAMETER: 7.35163168,  # may not be actual GASP value
+            Aircraft.Nacelle.AVG_LENGTH: 14.70326336,  # may not be actual GASP value
+            Aircraft.Nacelle.SURFACE_AREA: 339.58410134,  # may not be actual GASP value
+        }
 
-        assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 129.5, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 4639.57, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 129.5, tol)  # not actual GASP value
-
-        assert_near_equal(self.prob[Aircraft.Wing.AREA], 1370.3125, tol)  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 117.81878299, tol)  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Wing.CENTER_CHORD], 17.48974356, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.61453233, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.ROOT_CHORD], 16.40711451, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13965584, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob['nonfolded_taper_ratio'], 0.93175961, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.FOLDING_AREA], 1167.5966191, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob['nonfolded_wing_area'], 202.7158809, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob['tc_ratio_mean_folded'], 0.14847223, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['nonfolded_AR'], 0.71035382, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 208.08091725, tol
-        )  # not actual GASP value
-
-        assert_near_equal(self.prob['strut_y'], 6, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Strut.LENGTH], 13.11154072, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Strut.CHORD], 1.14403031, tol)  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.AREA], 375.87987047, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.SPAN], 42.25434161, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 13.15924684, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 9.57681709, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 54.67937726, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.AREA], 469.31832812, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.SPAN], 27.99574268, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.ROOT_CHORD], 18.61623295, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 16.83214111, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.88094115, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163168, tol
-        )  # may not be actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326336, tol
-        )  # may not be actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58410134, tol
-        )  # may not be actual GASP value
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-10, rtol=1e-12)
@@ -337,6 +281,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -351,11 +296,11 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(Aircraft.Wing.FOLDED_SPAN, val=25, units='ft')
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -366,7 +311,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(
             Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
         )
@@ -396,7 +341,6 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -410,99 +354,45 @@ class SizeGroupTestCase3(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.AVG_DIAMETER], 56.2, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['cabin_height'], 9.18333, tol)  # not actual GASP value
-        assert_near_equal(self.prob['cabin_len'], 435, tol)  # not actual GASP value
-        assert_near_equal(self.prob['nose_height'], 4.68333, tol)  # not actual GASP value
+        expected_values = {
+            Aircraft.Fuselage.AVG_DIAMETER: 56.2,  # not actual GASP value
+            'cabin_height': 9.18333,  # not actual GASP value
+            'cabin_len': 435,  # not actual GASP value
+            'nose_height': 4.68333,  # not actual GASP value
+            Aircraft.Fuselage.LENGTH: 476.7333,  # not actual GASP value
+            Aircraft.Fuselage.WETTED_AREA: 13400.44,  # not actual GASP value
+            Aircraft.TailBoom.LENGTH: 476.7333,  # not actual GASP value
+            Aircraft.Wing.AREA: 1370.3125,  # not actual GASP value
+            Aircraft.Wing.SPAN: 117.81878299,  # not actual GASP value
+            Aircraft.Wing.CENTER_CHORD: 17.48974356,  # not actual GASP value
+            Aircraft.Wing.AVERAGE_CHORD: 12.61453233,  # not actual GASP value
+            Aircraft.Wing.ROOT_CHORD: 16.988,  # not actual GASP value
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.14151,  # not actual GASP value
+            'nonfolded_taper_ratio': 0.85783252,  # not actual GASP value
+            Aircraft.Wing.FOLDING_AREA: 964.14982163,  # not actual GASP value
+            'nonfolded_wing_area': 406.16267837,  # not actual GASP value
+            'tc_ratio_mean_folded': 0.14681715,  # not actual GASP value
+            'nonfolded_AR': 1.5387923,  # not actual GASP value
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 406.53567274,  # not actual GASP value
+            Aircraft.HorizontalTail.AREA: 298.484,  # not actual GASP value
+            Aircraft.HorizontalTail.SPAN: 37.654,  # not actual GASP value
+            Aircraft.HorizontalTail.ROOT_CHORD: 11.7265,  # not actual GASP value
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 8.5341,  # not actual GASP value
+            Aircraft.HorizontalTail.MOMENT_ARM: 54.67937726,  # not actual GASP value
+            Aircraft.VerticalTail.AREA: 297.003,  # not actual GASP value
+            Aircraft.VerticalTail.SPAN: 22.2709,  # not actual GASP value
+            Aircraft.VerticalTail.ROOT_CHORD: 14.8094,  # not actual GASP value
+            Aircraft.VerticalTail.AVERAGE_CHORD: 13.3902,  # not actual GASP value
+            Aircraft.VerticalTail.MOMENT_ARM: 49.88094115,  # not actual GASP value
+            Aircraft.Nacelle.AVG_DIAMETER: 7.35163168,  # may not be actual GASP value
+            Aircraft.Nacelle.AVG_LENGTH: 14.70326336,  # may not be actual GASP value
+            Aircraft.Nacelle.SURFACE_AREA: 339.58410134,  # may not be actual GASP value
+            Aircraft.Electrical.HYBRID_CABLE_LENGTH: 50.6032,  # not actual GASP value
+        }
 
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.LENGTH], 476.7333, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 13400.44, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.TailBoom.LENGTH], 476.7333, tol
-        )  # not actual GASP value
-
-        assert_near_equal(self.prob[Aircraft.Wing.AREA], 1370.3125, tol)  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 117.81878299, tol)  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Wing.CENTER_CHORD], 17.48974356, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.61453233, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.988, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.14151, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob['nonfolded_taper_ratio'], 0.85783252, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.FOLDING_AREA], 964.14982163, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob['nonfolded_wing_area'], 406.16267837, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob['tc_ratio_mean_folded'], 0.14681715, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['nonfolded_AR'], 1.5387923, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 406.53567274, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.AREA], 298.484, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.SPAN], 37.654, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 11.7265, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 8.5341, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 54.67937726, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.AREA], 297.003, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.SPAN], 22.2709, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.8094, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 13.3902, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.88094115, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163168, tol
-        )  # may not be actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326336, tol
-        )  # may not be actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58410134, tol
-        )  # may not be actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Electrical.HYBRID_CABLE_LENGTH], 50.6032, tol
-        )  # not actual GASP value
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-9, rtol=1e-12)
@@ -523,6 +413,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
         options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -537,7 +428,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.Strut.ATTACHMENT_LOCATION_DIMENSIONLESS, val=0, units='unitless'
@@ -546,7 +437,7 @@ class SizeGroupTestCase4(unittest.TestCase):
             Aircraft.Strut.AREA_RATIO, val=0.021893, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, val=0, units='unitless'
+            Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, val=0, units='unitless'
         )
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, val=1.67, units='unitless'
@@ -557,7 +448,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.SCALE_FACTOR, val=1.028233)
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 175400.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6, units='unitless')
 
         self.prob.model.set_input_defaults(
@@ -584,7 +475,6 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.HorizontalTail.ASPECT_RATIO, val=4.75, units='unitless'
         )
-        self.prob.model.set_input_defaults(Aircraft.Engine.REFERENCE_DIAMETER, 5.8, units='ft')
         self.prob.model.set_input_defaults(
             Aircraft.Nacelle.CORE_DIAMETER_RATIO, 1.25, units='unitless'
         )
@@ -598,82 +488,41 @@ class SizeGroupTestCase4(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-4
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.AVG_DIAMETER], 56.2, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob['cabin_height'], 9.18333, tol)  # not actual GASP value
-        assert_near_equal(self.prob['cabin_len'], 435, tol)  # not actual GASP value
-        assert_near_equal(self.prob['nose_height'], 4.68333, tol)  # not actual GASP value
+        expected_values = {
+            Aircraft.Fuselage.AVG_DIAMETER: 56.2,  # not actual GASP value
+            'cabin_height': 9.18333,  # not actual GASP value
+            'cabin_len': 435,  # not actual GASP value
+            'nose_height': 4.68333,  # not actual GASP value
+            Aircraft.Fuselage.LENGTH: 476.7333,  # not actual GASP value
+            Aircraft.Fuselage.WETTED_AREA: 13400.44,  # not actual GASP value
+            Aircraft.TailBoom.LENGTH: 476.7333,  # not actual GASP value
+            Aircraft.Wing.AREA: 1370.3125,  # not actual GASP value
+            Aircraft.Wing.SPAN: 117.81878299,  # not actual GASP value
+            Aircraft.Wing.CENTER_CHORD: 17.48974356,  # not actual GASP value
+            Aircraft.Wing.AVERAGE_CHORD: 12.61453233,  # not actual GASP value
+            Aircraft.Wing.ROOT_CHORD: 16.988,  # not actual GASP value
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.14151,  # not actual GASP value
+            'strut_y': 0,  # not actual GASP value
+            Aircraft.Strut.LENGTH: 5.2361,  # not actual GASP value
+            Aircraft.Strut.CHORD: 2.8647,  # not actual GASP value
+            Aircraft.HorizontalTail.AREA: 298.484,  # not actual GASP value
+            Aircraft.HorizontalTail.SPAN: 37.654,  # not actual GASP value
+            Aircraft.HorizontalTail.ROOT_CHORD: 11.7265,  # not actual GASP value
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 8.5341,  # not actual GASP value
+            Aircraft.HorizontalTail.MOMENT_ARM: 54.67937726,  # not actual GASP value
+            Aircraft.VerticalTail.AREA: 297.003,  # not actual GASP value
+            Aircraft.VerticalTail.SPAN: 22.2709,  # not actual GASP value
+            Aircraft.VerticalTail.ROOT_CHORD: 14.8094,  # not actual GASP value
+            Aircraft.VerticalTail.AVERAGE_CHORD: 13.3902,  # not actual GASP value
+            Aircraft.VerticalTail.MOMENT_ARM: 49.88094115,  # not actual GASP value
+            Aircraft.Nacelle.AVG_DIAMETER: 7.35163168,  # may not be actual GASP value
+            Aircraft.Nacelle.AVG_LENGTH: 14.70326336,  # may not be actual GASP value
+            Aircraft.Nacelle.SURFACE_AREA: 339.58410134,  # may not be actual GASP value
+        }
 
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.LENGTH], 476.7333, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Fuselage.WETTED_AREA], 13400.44, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.TailBoom.LENGTH], 476.7333, tol
-        )  # not actual GASP value
-
-        assert_near_equal(self.prob[Aircraft.Wing.AREA], 1370.3125, tol)  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 117.81878299, tol)  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Wing.CENTER_CHORD], 17.48974356, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.AVERAGE_CHORD], 12.61453233, tol
-        )  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 16.988, tol)  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.14151, tol
-        )  # not actual GASP value
-
-        assert_near_equal(self.prob['strut_y'], 0, tol)  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Strut.LENGTH], 5.2361, tol)  # not actual GASP value
-        assert_near_equal(self.prob[Aircraft.Strut.CHORD], 2.8647, tol)  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.AREA], 298.484, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.SPAN], 37.654, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 11.7265, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 8.5341, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 54.67937726, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.AREA], 297.003, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.SPAN], 22.2709, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.8094, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 13.3902, tol
-        )  # not actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.VerticalTail.MOMENT_ARM], 49.88094115, tol
-        )  # not actual GASP value
-
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.AVG_DIAMETER], 7.35163168, tol
-        )  # may not be actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.AVG_LENGTH], 14.70326336, tol
-        )  # may not be actual GASP value
-        assert_near_equal(
-            self.prob[Aircraft.Nacelle.SURFACE_AREA], 339.58410134, tol
-        )  # may not be actual GASP value
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=2e-12, rtol=1e-12)
@@ -715,7 +564,7 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, 0.165, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, 70.0, units='lbf/ft**2')
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless'
@@ -821,41 +670,40 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         tol = 1e-4
 
         # BWBFuselageGroup
-        assert_near_equal(self.prob[Aircraft.Fuselage.AVG_DIAMETER], 38, tol)
-        assert_near_equal(self.prob['cabin_height'], 9.86859989, tol)
-        # assert_near_equal(self.prob['fuselage.cabin_len'], 43.83334, tol)
-        assert_near_equal(self.prob['nose_height'], 4.86859989, tol)
-        assert_near_equal(self.prob[Aircraft.Fuselage.LENGTH], 71.5245514, tol)
-        assert_near_equal(self.prob[Aircraft.Fuselage.WETTED_AREA], 4573.42578, tol)
-        assert_near_equal(self.prob[Aircraft.TailBoom.LENGTH], 71.5245514, tol)
+        expected_values = {
+            Aircraft.Fuselage.AVG_DIAMETER: 38,
+            'cabin_height': 9.86859989,
+            'nose_height': 4.86859989,
+            Aircraft.Fuselage.LENGTH: 71.5245514,
+            Aircraft.Fuselage.WETTED_AREA: 4573.42578,
+            Aircraft.TailBoom.LENGTH: 71.5245514,
+            Aircraft.Wing.AREA: 2142.85714286,
+            Aircraft.Wing.SPAN: 146.38501094,
+            Aircraft.Wing.CENTER_CHORD: 22.97244452,
+            Aircraft.Wing.AVERAGE_CHORD: 16.2200522,
+            Aircraft.Wing.ROOT_CHORD: 20.33371617,
+            Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: 0.13596576,
+            'wing_volume_no_fold': 783.62100035,
+            Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX: 605.90781747,
+            Aircraft.Wing.EXPOSED_AREA: 1352.1135998,
+            Aircraft.HorizontalTail.AREA: 0.00117064,
+            Aircraft.HorizontalTail.SPAN: 0.04467601,
+            Aircraft.HorizontalTail.ROOT_CHORD: 0.03836448,
+            Aircraft.HorizontalTail.AVERAGE_CHORD: 0.02808445,
+            Aircraft.HorizontalTail.MOMENT_ARM: 29.69074172,
+            Aircraft.VerticalTail.AREA: 169.11964286,
+            Aircraft.VerticalTail.SPAN: 16.98084188,
+            Aircraft.VerticalTail.ROOT_CHORD: 14.58190052,
+            Aircraft.VerticalTail.AVERAGE_CHORD: 10.67457744,
+            Aircraft.VerticalTail.MOMENT_ARM: 27.82191598,
+            Aircraft.Nacelle.AVG_DIAMETER: 5.33382144,
+            Aircraft.Nacelle.AVG_LENGTH: 7.24759657,
+            Aircraft.Nacelle.SURFACE_AREA: 121.44575974,
+        }
 
-        # BWBWingGroup
-        assert_near_equal(self.prob[Aircraft.Wing.AREA], 2142.85714286, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.SPAN], 146.38501094, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.CENTER_CHORD], 22.97244452, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.AVERAGE_CHORD], 16.2200522, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.ROOT_CHORD], 20.33371617, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED], 0.13596576, tol)
-        assert_near_equal(self.prob['wing_volume_no_fold'], 783.62100035, tol)
-        assert_near_equal(self.prob[Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX], 605.90781747, tol)
-        assert_near_equal(self.prob[Aircraft.Wing.EXPOSED_AREA], 1352.1135998, tol)
-
-        # EmpennageSize
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AREA], 0.00117064, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.SPAN], 0.04467601, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.ROOT_CHORD], 0.03836448, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.AVERAGE_CHORD], 0.02808445, tol)
-        assert_near_equal(self.prob[Aircraft.HorizontalTail.MOMENT_ARM], 29.69074172, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AREA], 169.11964286, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.SPAN], 16.98084188, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.ROOT_CHORD], 14.58190052, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.AVERAGE_CHORD], 10.67457744, tol)
-        assert_near_equal(self.prob[Aircraft.VerticalTail.MOMENT_ARM], 27.82191598, tol)
-
-        # BWBEngineSizeGroup
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_DIAMETER], 5.33382144, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.AVG_LENGTH], 7.24759657, tol)
-        assert_near_equal(self.prob[Aircraft.Nacelle.SURFACE_AREA], 121.44575974, tol)
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)

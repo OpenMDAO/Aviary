@@ -1,5 +1,5 @@
 from aviary.variable_info.enums import PhaseType, SpeedType
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 # defaults for 2DOF based phases
 mission_distance = 3675
@@ -8,6 +8,8 @@ phase_info = {
     'groundroll': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
+            'ground_roll': True,
             'num_segments': 1,
             'order': 3,
             'time_initial': (0.0, 's'),
@@ -34,6 +36,8 @@ phase_info = {
     'rotation': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
+            'rotation': True,
             'num_segments': 1,
             'order': 3,
             'time_duration_bounds': ((1, 100), 's'),
@@ -63,10 +67,12 @@ phase_info = {
     'ascent': {
         'subsystem_options': {'aerodynamics': {'method': 'low_speed'}},
         'user_options': {
+            'phase_type': PhaseType.TWO_DOF_TAKEOFF,
             'num_segments': 4,
             'order': 3,
             'velocity_bounds': ((0, 700), 'kn'),
             'velocity_ref': (200, 'kn'),
+            'time_duration_ref': (10, 's'),
             'mass_bounds': ((0, None), 'lbm'),
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
@@ -101,6 +107,7 @@ phase_info = {
     'accel': {
         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
+            'phase_type': PhaseType.ACCEL,
             'num_segments': 1,
             'order': 3,
             'alt': (500, 'ft'),
@@ -180,7 +187,7 @@ phase_info = {
     'cruise': {
         'subsystem_options': {'aerodynamics': {'method': 'cruise'}},
         'user_options': {
-            'phase_builder': PhaseType.SIMPLE_CRUISE,
+            'phase_type': PhaseType.SIMPLE_CRUISE,
             'alt_cruise': (37.5e3, 'ft'),
             'mach_cruise': 0.8,
             'mass_bounds': ((0, None), 'lbm'),
@@ -276,10 +283,10 @@ def phase_info_parameterization(phase_info, post_mission_info, aviary_inputs):
         Modified phase_info that has been changed to match the new mission
         parameters
     """
-    range_cruise = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
-    alt_cruise = aviary_inputs.get_val(Mission.Design.CRUISE_ALTITUDE, units='ft')
-    gross_mass = aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
-    mach_cruise = aviary_inputs.get_val(Mission.Design.MACH)
+    range_cruise = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
+    alt_cruise = aviary_inputs.get_val(Aircraft.Design.CRUISE_ALTITUDE, units='ft')
+    gross_mass = aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
+    mach_cruise = aviary_inputs.get_val(Aircraft.Design.MACH)
 
     # Range
     old_range_cruise = phase_info['desc2']['initial_guesses']['distance'][0][1]

@@ -41,9 +41,10 @@ class PassengerServiceMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
-            input_keys=[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, Mission.Design.RANGE],
+            input_keys=[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER, Aircraft.Design.RANGE],
             output_keys=Aircraft.CrewPayload.PASSENGER_SERVICE_MASS,
             version=Version.TRANSPORT_and_BWB,
             tol=2e-4,
@@ -78,7 +79,7 @@ class PassengerServiceMassTest2(unittest.TestCase):
         prob.model_options['*'] = get_flops_options('AdvancedSingleAisle', preprocess=True)
 
         prob.setup(check=False, force_alloc_complex=True)
-        prob.set_val(Mission.Design.RANGE, 3500.0, 'nmi')
+        prob.set_val(Aircraft.Design.RANGE, 3500.0, 'nmi')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -105,6 +106,7 @@ class AlternatePassengerServiceMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=Aircraft.CrewPayload.PASSENGER_SERVICE_MASS_SCALER,

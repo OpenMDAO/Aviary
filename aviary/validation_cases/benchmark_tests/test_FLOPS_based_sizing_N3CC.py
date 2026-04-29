@@ -20,7 +20,7 @@ from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
 from aviary.utils.test_utils.assert_utils import warn_timeseries_near_equal
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 # benchmark for simple sizing problem on the N3CC
@@ -41,10 +41,10 @@ def run_trajectory(sim=True):
     takeoff_thrust_per_eng = 24555.5  # lbf TODO: where should this get connected from?
     takeoff_L_over_D = 17.35  # TODO: should this come from aero?
 
-    prob.aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, takeoff_fuel_burned, units='lbm')
+    prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, takeoff_fuel_burned, units='lbm')
     prob.aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, takeoff_L_over_D, units='unitless')
     prob.aviary_inputs.set_val(
-        Mission.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
+        Aircraft.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
     )
 
     prob.check_and_preprocess_inputs()
@@ -58,7 +58,7 @@ def run_trajectory(sim=True):
     prob.add_design_variables()
 
     # Nudge it a bit off the correct answer to verify that the optimize takes us there.
-    prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
+    prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 135000.0, units='lbm')
 
     ##########################
     # Add Objective Function #
@@ -518,6 +518,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         )
 
         compare_against_expected_values(prob, self.expected_dict)
+        # self.assertTrue(prob.result.success)
 
 
 if __name__ == '__main__':

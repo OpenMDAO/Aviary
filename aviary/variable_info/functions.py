@@ -1,3 +1,4 @@
+import warnings
 from enum import Enum
 
 import dymos as dm
@@ -10,8 +11,8 @@ from aviary.utils.aviary_options_dict import units_setter
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import cast_type, check_type, enum_setter, wrapped_convert_units
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variable_meta_data import CoreMetaData
+from aviary.variable_info.variables import Aircraft, Settings
 
 # ---------------------------
 # Helper functions for setting up inputs/outputs in components
@@ -25,7 +26,7 @@ def add_aviary_input(
     units=None,
     desc=None,
     shape_by_conn=False,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     shape=None,
     primal_name=None,
 ):
@@ -116,7 +117,7 @@ def add_aviary_output(
     units=None,
     desc=None,
     shape_by_conn=False,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     shape=None,
     primal_name=None,
 ):
@@ -200,10 +201,10 @@ def add_aviary_output(
     )
 
 
-def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=_MetaData):
+def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=CoreMetaData):
     """
-    Adds an option to an Aviary component. Default values from the metadata are used
-    unless a new value is specified.
+    Adds an option to an Aviary component. Default values from the metadata are used unless a new
+    value is specified.
 
     Parameters
     ----------
@@ -212,17 +213,23 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
     name: str
         Name of variable.
     val: float or ndarray
-        (Optional) Default value for option. If not specified, the value from metadata
-        is used.
+        (Optional) Default value for option. If not specified, the value from metadata is used.
     desc: str
         (Optional) description text for the variable.
     units: str
         (Optional) OpenMDAO units string. This can be specified for variables with units.
     meta_data: dict
-        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
-        be used.
+        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will be used.
     """
     meta = meta_data[name]
+
+    if not meta['option']:
+        warnings.warn(
+            f'Variable {name} was declared an option to an OpenMDAO component, but in variable '
+            'metadata it is not flagged as an option (option = False). This option might never '
+            'get be set to its intended value.'
+        )
+
     # units of None are overwritten with defaults. Overwriting units with None is
     # unnecessary as it will cause errors down the line if the default is not already
     # None
@@ -406,7 +413,7 @@ def setup_trajectory_params(
     aviary_variables: AviaryValues,
     phases=['climb', 'cruise', 'descent'],
     variables_to_add=None,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     external_parameters={},
 ):
     """
@@ -493,12 +500,12 @@ def get_units(key, meta_data=None) -> str:
         metadata will be used.
     """
     if meta_data is None:
-        meta_data = _MetaData
+        meta_data = CoreMetaData
 
     return meta_data[key]['units']
 
 
-def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
+def extract_options(aviary_inputs: AviaryValues, metadata=CoreMetaData) -> dict:
     """
     Extract a dictionary of options from the given aviary_inputs.
 
@@ -539,7 +546,7 @@ def extract_options(aviary_inputs: AviaryValues, metadata=_MetaData) -> dict:
 def setup_model_options(
     prob: om.Problem,
     aviary_inputs: AviaryValues,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     engine_models=None,
     prefix=None,
     group=None,
@@ -571,51 +578,47 @@ def setup_model_options(
         prefix = ''  # the original default value
     prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 
-    # Multi-engines need to index into their options.
-    try:
-        num = aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES)
-        if isinstance(num, int):
-            num_engine_models = 1
-        else:
-            num_engine_models = len(aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES))
-    except KeyError:
-        # No engine data.
-        return
-
     # TODO: Modify this method for multi mission/model.
 
-    if num_engine_models > 1:
-        if engine_models is None:
-            # Required in multi-mission cases
-            if group is None:
-                engine_models = prob.model.engine_models
-            else:
-                engine_models = group.engine_models
+    if engine_models is None:
+        # Required in multi-mission cases
+        if group is None:
+            src = prob.model
+        else:
+            src = group
 
-        for idx in range(num_engine_models):
-            eng_name = engine_models[idx].name
+        if not hasattr(src, 'engine_models'):
+            # In a unit-test context, this function can be used without an aviary model.
+            return
 
-            # TODO: For future flexibility, need get a list of options per engine (these are
-            # EngineDeck required options), so custom multiengine works
-            opt_names = [
-                Aircraft.Engine.SCALE_PERFORMANCE,
-                Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
-                Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
-                Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
-                Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
-            ]
-            opt_names_units = [
-                Aircraft.Engine.REFERENCE_SLS_THRUST,
-                Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
-            ]
-            opts = {}
-            for key in opt_names:
-                if key in aviary_inputs:
-                    opts[key] = aviary_inputs.get_item(key)[0][idx]
-            for key in opt_names_units:
-                if key in aviary_inputs:
-                    val, units = aviary_inputs.get_item(key)
-                    opts[key] = (val[idx], units)
+        engine_models = src.engine_models
 
-            path = f'{prefix}*propulsion.{eng_name}*'
-            prob.model_options[path] = opts
+    for idx, engine_model in enumerate(engine_models):
+        eng_name = engine_model.name
+
+        # TODO: For future flexibility, need get a list of options per engine (these are
+        # EngineDeck required options), so custom multiengine works
+        opt_names = [
+            Aircraft.Engine.Motor.DATA_FILE,
+            Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
+            Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
+            Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM,
+            Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
+        ]
+        opt_names_units = [
+            Aircraft.Engine.RPM_DESIGN,
+            Aircraft.Engine.FIXED_RPM,
+            Aircraft.Engine.REFERENCE_SLS_THRUST,
+            Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
+        ]
+        opts = {}
+        for key in opt_names:
+            if key in aviary_inputs:
+                opts[key] = aviary_inputs.get_item(key)[0][idx]
+        for key in opt_names_units:
+            if key in aviary_inputs:
+                val, units = aviary_inputs.get_item(key)
+                opts[key] = (val[idx], units)
+
+        path = f'{prefix}*propulsion.{eng_name}*'
+        prob.model_options[path] = opts

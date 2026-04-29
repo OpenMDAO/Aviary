@@ -36,6 +36,7 @@ class PaintMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Design.TOTAL_WETTED_AREA, Aircraft.Paint.MASS_PER_UNIT_AREA],
@@ -68,6 +69,7 @@ class BWBPaintMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.Design.TOTAL_WETTED_AREA, Aircraft.Paint.MASS_PER_UNIT_AREA],

@@ -40,28 +40,19 @@ class DescentTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE],
-            np.array([-39.42713005, -39.42713005]),
-            tol,
-        )  # note: values from GASP are: np.array([-39.75, -39.75])
-        assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE],
-            np.array([773.70078935, 773.70078935]),
-            tol,
-            # note: these values are finite differenced and lose accuracy. Fd values are:np.array([964.4634921, 964.4634921])
-        )
-        assert_near_equal(
-            self.prob['required_lift'],
-            np.array([147444.41570307, 147444.41570307]),
-            tol,
-            # note: values from GASP are: np.array([146288.8, 146288.8]) (estimated based on GASP values)
-        )
-        assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE],
-            np.array([-0.0509151, -0.0509151]),
-            tol,
-        )  # note: values from GASP are: np.array([-.0513127, -.0513127])
+        # note: some values from GASP differ slightly due to calculation method differences
+        # GASP values: ALTITUDE_RATE=[-39.75, -39.75], DISTANCE_RATE=[964.4634921, 964.4634921] (fd),
+        #              required_lift=[146288.8, 146288.8], FLIGHT_PATH_ANGLE=[-.0513127, -.0513127]
+        expected_values = {
+            Dynamic.Mission.ALTITUDE_RATE: np.array([-39.42713005, -39.42713005]),
+            Dynamic.Mission.DISTANCE_RATE: np.array([773.70078935, 773.70078935]),
+            'required_lift': np.array([147444.41570307, 147444.41570307]),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.array([-0.0509151, -0.0509151]),
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -131,27 +122,19 @@ class ClimbTestCase(unittest.TestCase):
         tol = 1e-6
         self.prob.run_model()
 
-        assert_near_equal(
-            self.prob[Dynamic.Mission.ALTITUDE_RATE],
-            np.array([6.24116612, 6.24116612]),
-            tol,
-        )  # note: values from GASP are: np.array([5.9667, 5.9667])
-        assert_near_equal(
-            self.prob[Dynamic.Mission.DISTANCE_RATE],
-            np.array([774.679584, 774.679584]),
-            tol,
-            # note: these values are finite differenced and lose accuracy. Fd values are: np.array([799.489, 799.489])
-        )
-        assert_near_equal(
-            self.prob['required_lift'],
-            np.array([162662.70954313, 162662.70954313]),
-            tol,
-        )  # note: values from GASP are: np.array([170316.2, 170316.2])
-        assert_near_equal(
-            self.prob[Dynamic.Mission.FLIGHT_PATH_ANGLE],
-            np.array([0.00805627, 0.00805627]),
-            tol,
-        )  # note: values from GASP are:np.array([.0076794487, .0076794487])
+        # note: some values from GASP differ slightly due to calculation method differences
+        # GASP values: ALTITUDE_RATE=[5.9667, 5.9667], DISTANCE_RATE=[799.489, 799.489] (fd),
+        #              required_lift=[170316.2, 170316.2], FLIGHT_PATH_ANGLE=[.0076794487, .0076794487]
+        expected_values = {
+            Dynamic.Mission.ALTITUDE_RATE: np.array([6.24116612, 6.24116612]),
+            Dynamic.Mission.DISTANCE_RATE: np.array([774.679584, 774.679584]),
+            'required_lift': np.array([162662.70954313, 162662.70954313]),
+            Dynamic.Mission.FLIGHT_PATH_ANGLE: np.array([0.00805627, 0.00805627]),
+        }
+
+        for var_name, expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)

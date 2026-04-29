@@ -19,7 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 data = AviaryValues()
 
 data.set_val(
-    Mission.Design.GROSS_MASS,
+    Aircraft.Design.GROSS_MASS,
     val=181200.0,
     units='lbm',
 )
@@ -31,7 +31,7 @@ data.set_val(
 )
 
 data.set_val(
-    Mission.Takeoff.FUEL_SIMPLE,
+    Mission.Takeoff.FUEL,
     val=577,
     units='lbm',
 )
@@ -55,7 +55,7 @@ data.set_val(
 )
 
 data.set_val(
-    Mission.Design.THRUST_TAKEOFF_PER_ENG,
+    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
     val=24555.5,
     units='lbf',
 )

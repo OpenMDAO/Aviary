@@ -27,7 +27,10 @@ class TestSubsystemsMission(unittest.TestCase):
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
+                'subsystem_options': {
+                    'aerodynamics': {'method': 'cruise', 'solve_alpha': True},
+                    'additional_array_guess': {'enable_control': True},
+                },
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -70,7 +73,7 @@ class TestSubsystemsMission(unittest.TestCase):
         #     }
         # }
 
-    def test_subsystems_in_a_mission_height_energy(self):
+    def test_subsystems_in_a_mission_energy_state(self):
         phase_info = self.energy_phase_info.copy()
 
         prob = AviaryProblem(verbosity=0)

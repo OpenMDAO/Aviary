@@ -17,11 +17,11 @@ def _unint(xa, ya, x):
     variation of 3nd degree interpolation to produce a continuity
     of slope between adjacent intervals.
     """
-    Lmt = 0
+    extrap_flag = 0
     n = len(xa)
     # test for off low end
     if xa[0] > x:
-        Lmt = 1  # off low end
+        extrap_flag = 1  # off low end
         y = ya[0]
     elif xa[0] == x:
         y = ya[0]  # at low end
@@ -39,7 +39,7 @@ def _unint(xa, ya, x):
                 break
         if ifnd == 0:
             idx = n
-            Lmt = 2  # off high end
+            extrap_flag = 2  # off high end
             y = ya[n - 1]
         elif ifnd == 1:
             y = ya[idx]
@@ -64,24 +64,18 @@ def _unint(xa, ya, x):
             p3 = xa[jx1 + 3] - xa[jx1 + 2]
             p4 = p1 + p2
             p5 = p2 + p3
+
             d1 = x - xa[jx1]
             d2 = x - xa[jx1 + 1]
             d3 = x - xa[jx1 + 2]
             d4 = x - xa[jx1 + 3]
-            c1 = ra / p1 * d2 / p4 * d3
-            c2 = -ra / p1 * d1 / p2 * d3 + rb / p2 * d3 / p5 * d4
-            c3 = ra / p2 * d1 / p4 * d2 - rb / p2 * d2 / p3 * d4
-            c4 = rb / p5 * d2 / p3 * d3
+            c1 = (ra * d2 * d3) / (p1 * p4)
+            c2 = -(ra * d1 * d3) / (p1 * p2) + (rb * d3 * d4) / (p2 * p5)
+            c3 = (ra * d1 * d2) / (p2 * p4) - (rb * d2 * d4) / (p2 * p3)
+            c4 = (rb * d2 * d3) / (p5 * p3)
             y = ya[jx1] * c1 + ya[jx1 + 1] * c2 + ya[jx1 + 2] * c3 + ya[jx1 + 3] * c4
 
-            # we don't want y to be an array
-            try:
-                y = y[0]
-            # floats/ints will give TypeError, numpy versions give IndexError
-            except (TypeError, IndexError):
-                pass
-
-    return y, Lmt
+    return y, extrap_flag
 
 
 def _biquad(T, i, xi, yi):
@@ -140,108 +134,109 @@ def _biquad(T, i, xi, yi):
             else:
                 jx1 = jn - 2
                 ra_x = (T[jn] - x) / (T[jn] - T[jn - 1])
-        rb_x = 1.0 - ra_x
 
-        # return here from search of x
-        lmt = kx
-        jx = jx1
-        # The following code puts x values in xc blocks
+    rb_x = 1.0 - ra_x
+
+    # return here from search of x
+    lmt = kx
+    jx = jx1
+    # The following code puts x values in xc blocks
+    for j in range(4):
+        xc[j] = T[jx1 + j]
+    # get coeff. in x sense
+    # coefficient routine - input x,x1,x2,x3,x4,ra_x,rb_x
+    p1 = xc[1] - xc[0]
+    p2 = xc[2] - xc[1]
+    p3 = xc[3] - xc[2]
+    p4 = p1 + p2
+    p5 = p2 + p3
+    d1 = x - xc[0]
+    d2 = x - xc[1]
+    d3 = x - xc[2]
+    d4 = x - xc[3]
+    cx1 = ra_x / p1 * d2 / p4 * d3
+    cx2 = -ra_x / p1 * d1 / p2 * d3 + rb_x / p2 * d3 / p5 * d4
+    cx3 = ra_x / p2 * d1 / p4 * d2 - rb_x / p2 * d2 / p3 * d4
+    cx4 = rb_x / p5 * d2 / p3 * d3
+    # return to main body
+
+    # return here with coeff. test for univariate or bivariate
+    if ny == 0:
+        z = 0.0
+        jy = jx + nx
+        z = cx1 * T[jy] + cx2 * T[jy + 1] + cx3 * T[jy + 2] + cx4 * T[jy + 3]
+    else:
+        # bivariate table
+        y = yi
+        j3 = j2 + 1
+        j4 = j3 + ny - 1
+        # search in y sense
+        # jy1 = subscript of 1st y
+        # search routine - input j3,j4,y
+        #                - output ra_y,rb_y,ky,,jy1
+        ky = 0
+        ifnd_y = 0
+        for j in range(j3, j4 + 1):
+            if T[j] >= y:
+                ifnd_y = 1
+                break
+        if ifnd_y == 0:
+            # off high end
+            y = T[j4]
+            ky = 2
+            # use last 4 points and curve B
+            jy1 = j4 - 3
+            ra_y = 0.0
+        else:
+            # test for off low end, first interval
+            if j < j3 + 1:
+                if T[j] != y:
+                    ky = 1
+                    y = T[j3]
+            if j <= j3 + 1:
+                jy1 = j3
+                ra_y = 1.0
+            else:
+                # test for last interval
+                if j == j4:
+                    jy1 = j4 - 3
+                    ra_y = 0.0
+                else:
+                    jy1 = j - 2
+                    ra_y = (T[j] - y) / (T[j] - T[j - 1])
+        rb_y = 1.0 - ra_y
+
+        lmt = lmt + 3 * ky
+        # interpolate in y sense
+        # subscript - base, num. of col., num. of y's
+        jy = (j4 + 1) + (jx - i - 2) * ny + (jy1 - j3)
+        yt = [0, 0, 0, 0]
+        for m in range(4):
+            jx = jy
+            yt[m] = cx1 * T[jx] + cx2 * T[jx + ny] + cx3 * T[jx + 2 * ny] + cx4 * T[jx + 3 * ny]
+            jy = jy + 1
+
+        # the following code puts y values in yc block
+        yc = [0, 0, 0, 0]
         for j in range(4):
-            xc[j] = T[jx1 + j]
-        # get coeff. in x sense
-        # coefficient routine - input x,x1,x2,x3,x4,ra_x,rb_x
-        p1 = xc[1] - xc[0]
-        p2 = xc[2] - xc[1]
-        p3 = xc[3] - xc[2]
+            yc[j] = T[jy1]
+            jy1 = jy1 + 1
+        # get coeff. in y sense
+        # coefficient routine - input y, y1, y2, y3, y4, ra_y, rb_y
+        p1 = yc[1] - yc[0]
+        p2 = yc[2] - yc[1]
+        p3 = yc[3] - yc[2]
         p4 = p1 + p2
         p5 = p2 + p3
-        d1 = x - xc[0]
-        d2 = x - xc[1]
-        d3 = x - xc[2]
-        d4 = x - xc[3]
-        cx1 = ra_x / p1 * d2 / p4 * d3
-        cx2 = -ra_x / p1 * d1 / p2 * d3 + rb_x / p2 * d3 / p5 * d4
-        cx3 = ra_x / p2 * d1 / p4 * d2 - rb_x / p2 * d2 / p3 * d4
-        cx4 = rb_x / p5 * d2 / p3 * d3
-        # return to main body
-
-        # return here with coeff. test for univariate or bivariate
-        if ny == 0:
-            z = 0.0
-            jy = jx + nx
-            z = cx1 * T[jy] + cx2 * T[jy + 1] + cx3 * T[jy + 2] + cx4 * T[jy + 3]
-        else:
-            # bivariate table
-            y = yi
-            j3 = j2 + 1
-            j4 = j3 + ny - 1
-            # search in y sense
-            # jy1 = subscript of 1st y
-            # search routine - input j3,j4,y
-            #                - output ra_y,rb_y,ky,,jy1
-            ky = 0
-            ifnd_y = 0
-            for j in range(j3, j4 + 1):
-                if T[j] >= y:
-                    ifnd_y = 1
-                    break
-            if ifnd_y == 0:
-                # off high end
-                y = T[j4]
-                ky = 2
-                # use last 4 points and curve B
-                jy1 = j4 - 3
-                ra_y = 0.0
-            else:
-                # test for off low end, first interval
-                if j < j3 + 1:
-                    if T[j] != y:
-                        ky = 1
-                        y = T[j3]
-                if j <= j3 + 1:
-                    jy1 = j3
-                    ra_y = 1.0
-                else:
-                    # test for last interval
-                    if j == j4:
-                        jy1 = j4 - 3
-                        ra_y = 0.0
-                    else:
-                        jy1 = j - 2
-                        ra_y = (T[j] - y) / (T[j] - T[j - 1])
-            rb_y = 1.0 - ra_y
-
-            lmt = lmt + 3 * ky
-            # interpolate in y sense
-            # subscript - base, num. of col., num. of y's
-            jy = (j4 + 1) + (jx - i - 2) * ny + (jy1 - j3)
-            yt = [0, 0, 0, 0]
-            for m in range(4):
-                jx = jy
-                yt[m] = cx1 * T[jx] + cx2 * T[jx + ny] + cx3 * T[jx + 2 * ny] + cx4 * T[jx + 3 * ny]
-                jy = jy + 1
-
-            # the following code puts y values in yc block
-            yc = [0, 0, 0, 0]
-            for j in range(4):
-                yc[j] = T[jy1]
-                jy1 = jy1 + 1
-            # get coeff. in y sense
-            # coefficient routine - input y, y1, y2, y3, y4, ra_y, rb_y
-            p1 = yc[1] - yc[0]
-            p2 = yc[2] - yc[1]
-            p3 = yc[3] - yc[2]
-            p4 = p1 + p2
-            p5 = p2 + p3
-            d1 = y - yc[0]
-            d2 = y - yc[1]
-            d3 = y - yc[2]
-            d4 = y - yc[3]
-            cy1 = ra_y / p1 * d2 / p4 * d3
-            cy2 = -ra_y / p1 * d1 / p2 * d3 + rb_y / p2 * d3 / p5 * d4
-            cy3 = ra_y / p2 * d1 / p4 * d2 - rb_y / p2 * d2 / p3 * d4
-            cy4 = rb_y / p5 * d2 / p3 * d3
-            z = cy1 * yt[0] + cy2 * yt[1] + cy3 * yt[2] + cy4 * yt[3]
+        d1 = y - yc[0]
+        d2 = y - yc[1]
+        d3 = y - yc[2]
+        d4 = y - yc[3]
+        cy1 = ra_y / p1 * d2 / p4 * d3
+        cy2 = -ra_y / p1 * d1 / p2 * d3 + rb_y / p2 * d3 / p5 * d4
+        cy3 = ra_y / p2 * d1 / p4 * d2 - rb_y / p2 * d2 / p3 * d4
+        cy4 = rb_y / p5 * d2 / p3 * d3
+        z = cy1 * yt[0] + cy2 * yt[1] + cy3 * yt[2] + cy4 * yt[3]
 
     return z, lmt
 
@@ -636,7 +631,12 @@ class HamiltonStandard(om.ExplicitComponent):
         # propeller tip compressibility loss factor
         self.add_output('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
 
-        self.declare_partials('*', '*', method='cs')
+    def setup_partials(self):
+        # self.declare_partials('*', '*', method='cs')
+        # This should pick up 3 because the vectorized inputs have digaonal jacs.
+        self.declare_coloring(
+            '*', method='cs', num_full_jacs=1, show_summary=False, show_sparsity=False
+        )
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
@@ -644,6 +644,7 @@ class HamiltonStandard(om.ExplicitComponent):
 
         act_factor = inputs[Aircraft.Engine.Propeller.ACTIVITY_FACTOR][0]
         cli = inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0]
+        adv_ratio = inputs['advance_ratio']
 
         # TODO verify this works with multiple engine models (i.e. prop mission is
         #      properly slicing these inputs)
@@ -660,7 +661,6 @@ class HamiltonStandard(om.ExplicitComponent):
 
         CTT = np.zeros(7, dtype=cli.dtype)
         BLL = np.zeros(7, dtype=cli.dtype)
-        BLLL = np.zeros(7, dtype=cli.dtype)
         PXCLI = np.zeros(7, dtype=cli.dtype)
         XFFT = np.zeros(6, dtype=cli.dtype)
         CTG = np.zeros(11, dtype=cli.dtype)
@@ -669,14 +669,16 @@ class HamiltonStandard(om.ExplicitComponent):
         CTTT = np.zeros(4, dtype=cli.dtype)
         XXXFT = np.zeros(4, dtype=cli.dtype)
 
+        # TODO: We don't output this.
+        # BLLL = np.zeros(7, dtype=cli.dtype)
+
         for i_node in range(self.options['num_nodes']):
             ichck = 0
-            run_flag = 0
+            extrap_flag = 0
             xft = 1.0
 
             CTT[:] = 0.0
             BLL[:] = 0.0
-            BLLL[:] = 0.0
             PXCLI[:] = 0.0
             XFFT[:] = 0.0
             CTG[:] = 0.0
@@ -685,28 +687,28 @@ class HamiltonStandard(om.ExplicitComponent):
             CTTT[:] = 0.0
             XXXFT[:] = 0.0
 
+            # TODO: We don't output this.
+            # BLLL[:] = 0.0
+
             for k in range(2):
-                AF_adj_CP[k], run_flag = _unint(Act_Factor_arr, AFCPC[k], act_factor)
-                AF_adj_CT[k], run_flag = _unint(Act_Factor_arr, AFCTC[k], act_factor)
-            for k in range(2, 7):
-                AF_adj_CP[k] = AF_adj_CP[1]
-                AF_adj_CT[k] = AF_adj_CT[1]
-            if inputs['advance_ratio'][i_node] <= 0.5:
-                AFCTE = (
-                    2.0 * inputs['advance_ratio'][i_node] * (AF_adj_CT[1] - AF_adj_CT[0])
-                    + AF_adj_CT[0]
-                )
+                AF_adj_CP[k], _ = _unint(Act_Factor_arr, AFCPC[k], act_factor)
+                AF_adj_CT[k], extrap_flag = _unint(Act_Factor_arr, AFCTC[k], act_factor)
+            AF_adj_CP[2:] = AF_adj_CP[1]
+            AF_adj_CT[2:] = AF_adj_CT[1]
+
+            if adv_ratio[i_node].real <= 0.5:
+                AFCTE = 2.0 * adv_ratio[i_node] * (AF_adj_CT[1] - AF_adj_CT[0]) + AF_adj_CT[0]
             else:
                 AFCTE = AF_adj_CT[1]
 
             # bounding J (advance ratio) for setting up interpolation
-            if inputs['advance_ratio'][i_node] <= 1.0:
+            if adv_ratio[i_node].real <= 1.0:
                 J_begin = 0
                 J_end = 3
-            elif inputs['advance_ratio'][i_node] <= 1.5:
+            elif adv_ratio[i_node].real <= 1.5:
                 J_begin = 1
                 J_end = 4
-            elif inputs['advance_ratio'][i_node] <= 2.0:
+            elif adv_ratio[i_node].real <= 2.0:
                 J_begin = 2
                 J_end = 5
             else:
@@ -749,7 +751,7 @@ class HamiltonStandard(om.ExplicitComponent):
                 #                       idx_blade = 2 if 4 blades;
                 #                       idx_blade = 3 if 6 blades;
                 #                       idx_blade = 4 if 8 blades.
-                idx_blade = idx_blade - 1
+                idx_blade -= 1
             else:
                 nbb = 4
                 # odd number of blades
@@ -761,7 +763,7 @@ class HamiltonStandard(om.ExplicitComponent):
                 #       using 4 sets of even J (advance ratio) interpolation
                 for kdx in range(J_begin, J_end + 1):
                     CP_Eff = power_coefficient * AF_adj_CP[kdx]
-                    PBL, run_flag = _unint(CPEC, BL_P_corr_table[idx_blade], CP_Eff)
+                    PBL, _ = _unint(CPEC, BL_P_corr_table[idx_blade], CP_Eff)
                     # PBL = number of blades correction for power_coefficient
                     CPE1 = CP_Eff * PBL * PF_CLI_arr[kdx]
                     CL_tab_idx = CL_tab_idx_begin
@@ -770,13 +772,13 @@ class HamiltonStandard(om.ExplicitComponent):
                         if CPE1 < CP_CLi_table[CL_tab_idx][0]:
                             CPE1X = CP_CLi_table[CL_tab_idx][0]
                         cli_len = cli_arr_len[CL_tab_idx]
-                        PXCLI[kl], run_flag = _unint(
+                        PXCLI[kl], extrap_flag = _unint(
                             CP_CLi_table[CL_tab_idx][:cli_len], XPCLI[CL_tab_idx], CPE1X
                         )
-                        if run_flag == 1:
+                        if extrap_flag == 1:
                             ichck = ichck + 1
                         if verbosity == Verbosity.DEBUG or ichck <= Verbosity.BRIEF:
-                            if run_flag == 1:
+                            if extrap_flag == 1:
                                 warnings.warn(
                                     f'Mach = {inputs[Dynamic.Atmosphere.MACH][i_node]}\n'
                                     f'VTMACH = {inputs["tip_mach"][i_node]}\n'
@@ -797,26 +799,27 @@ class HamiltonStandard(om.ExplicitComponent):
                                     f'Extrapolated data is being used for CLI=.8--CPE1,PXCLI,L= , {CPE1},{PXCLI[kl]},{idx_blade}   Suggest inputting CLI=.5'
                                 )
                         NERPT = 1
-                        CL_tab_idx = CL_tab_idx + 1
+                        CL_tab_idx += 1
+
                     if CL_tab_idx_flg != 1:
-                        PCLI, run_flag = _unint(
+                        PCLI, extrap_flag = _unint(
                             CL_arr[CL_tab_idx_begin : CL_tab_idx_begin + 4],
                             PXCLI[CL_tab_idx_begin : CL_tab_idx_begin + 4],
-                            inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0],
+                            cli,
                         )
                     else:
                         PCLI = PXCLI[CL_tab_idx_begin]
                         # PCLI = CLI adjustment to power_coefficient
                     CP_Eff = CP_Eff * PCLI  # the effective CP at baseline point for kdx
                     ang_len = ang_arr_len[kdx]
-                    BLL[kdx], run_flag = _unint(
+                    BLL[kdx], extrap_flag = _unint(
                         # blade angle at baseline point for kdx
                         CP_Angle_table[idx_blade][kdx][:ang_len],
                         Blade_angle_table[kdx],
                         CP_Eff,
                     )
                     try:
-                        CTT[kdx], run_flag = _unint(
+                        CTT[kdx], extrap_flag = _unint(
                             # thrust coeff at baseline point for kdx
                             Blade_angle_table[kdx][:ang_len],
                             CT_Angle_table[idx_blade][kdx][:ang_len],
@@ -826,36 +829,36 @@ class HamiltonStandard(om.ExplicitComponent):
                         raise om.AnalysisError(
                             'interp failed for CTT (thrust coefficient) in hamilton_standard.py'
                         )
-                    if run_flag > 1:
+                    if extrap_flag > 1:
                         NERPT = 2
-                        print(f'ERROR IN PROP. PERF.-- NERPT={NERPT}, run_flag={run_flag}')
+                        print(f'ERROR IN PROP. PERF.-- NERPT={NERPT}, extrap_flag={extrap_flag}')
 
-                BLLL[ibb], run_flag = _unint(
-                    advance_ratio_array[J_begin : J_begin + 4],
-                    BLL[J_begin : J_begin + 4],
-                    inputs['advance_ratio'][i_node],
-                )
-                ang_blade = BLLL[ibb]
-                CTTT[ibb], run_flag = _unint(
+                # TODO: We don't output this.
+                # BLLL[ibb], extrap_flag = _unint(
+                #    advance_ratio_array[J_begin : J_begin + 4],
+                #    BLL[J_begin : J_begin + 4],
+                #    adv_ratio[i_node],
+                # )
+                # ang_blade = BLLL[ibb]
+
+                CTTT[ibb], extrap_flag = _unint(
                     advance_ratio_array[J_begin : J_begin + 4],
                     CTT[J_begin : J_begin + 4],
-                    inputs['advance_ratio'][i_node],
+                    adv_ratio[i_node],
                 )
 
                 # make extra correction. CTG is an "error" function, and the iteration (loop counter = "IL") tries to drive CTG/CT to 0
                 # ERR_CT = CTG1[il]/CTTT[ibb], where CTG1 =CT_Eff - CTTT(IBB).
                 CTG[0] = 0.100
                 CTG[1] = 0.200
-                TFCLII, run_flag = _unint(
-                    advance_ratio_array, TF_CLI_arr, inputs['advance_ratio'][i_node]
-                )
+                TFCLII, extrap_flag = _unint(advance_ratio_array, TF_CLI_arr, adv_ratio[i_node])
                 NCTG = 10
                 ifnd1 = 0
                 ifnd2 = 0
                 for il in range(NCTG):
                     ct = CTG[il]
                     CT_Eff = CTG[il] * AFCTE
-                    TBL, run_flag = _unint(CTEC, BL_T_corr_table[idx_blade], CT_Eff)
+                    TBL, extrap_flag = _unint(CTEC, BL_T_corr_table[idx_blade], CT_Eff)
                     # TBL = number of blades correction for thrust_coefficient
                     CTE1 = CT_Eff * TBL * TFCLII
                     CL_tab_idx = CL_tab_idx_begin
@@ -864,21 +867,21 @@ class HamiltonStandard(om.ExplicitComponent):
                         if CTE1 < CT_CLi_table[CL_tab_idx][0]:
                             CTE1X = CT_CLi_table[CL_tab_idx][0]
                         cli_len = cli_arr_len[CL_tab_idx]
-                        TXCLI[kl], run_flag = _unint(
+                        TXCLI[kl], extrap_flag = _unint(
                             CT_CLi_table[CL_tab_idx][:cli_len], XTCLI[CL_tab_idx][:cli_len], CTE1X
                         )
                         NERPT = 5
-                        if run_flag == 1:
+                        if extrap_flag == 1:
                             # off lower bound only.
                             print(
                                 f'ERROR IN PROP. PERF.-- NERPT={NERPT}, '
-                                f'run_flag={run_flag}, il={il}, kl = {kl}'
+                                f'extrap_flag={extrap_flag}, il={il}, kl = {kl}'
                             )
-                        if inputs['advance_ratio'][i_node] != 0.0:
-                            ZMCRT, run_flag = _unint(
+                        if adv_ratio[i_node].real != 0.0:
+                            ZMCRT, extrap_flag = _unint(
                                 advance_ratio_array2,
                                 mach_corr_table[CL_tab_idx],
-                                inputs['advance_ratio'][i_node],
+                                adv_ratio[i_node],
                             )
                             DMN = inputs[Dynamic.Atmosphere.MACH][i_node] - ZMCRT
                         else:
@@ -887,16 +890,15 @@ class HamiltonStandard(om.ExplicitComponent):
                         XFFT[kl] = 1.0  # compressibility tip loss factor
                         if DMN > 0.0:
                             CTE2 = CT_Eff * TXCLI[kl] * TBL
-                            XFFT[kl], run_flag = _biquad(comp_mach_CT_arr, 1, DMN, CTE2)
+                            XFFT[kl], extrap_flag = _biquad(comp_mach_CT_arr, 1, DMN, CTE2)
                         CL_tab_idx = CL_tab_idx + 1
                     if CL_tab_idx_flg != 1:
-                        cli = inputs[Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT][0]
-                        TCLII, run_flag = _unint(
+                        TCLII, extrap_flag = _unint(
                             CL_arr[CL_tab_idx_begin : CL_tab_idx_begin + 4],
                             TXCLI[CL_tab_idx_begin : CL_tab_idx_begin + 4],
                             cli,
                         )
-                        xft, run_flag = _unint(
+                        xft, extrap_flag = _unint(
                             CL_arr[CL_tab_idx_begin : CL_tab_idx_begin + 4],
                             XFFT[CL_tab_idx_begin : CL_tab_idx_begin + 4],
                             cli,
@@ -928,13 +930,15 @@ class HamiltonStandard(om.ExplicitComponent):
                     ct = 0.0
                 CTTT[ibb] = ct
                 XXXFT[ibb] = xft
-                idx_blade = idx_blade + 1
+                idx_blade += 1
 
             if nbb != 1:
                 # interpolation by the number of blades if odd number
-                ang_blade, run_flag = _unint(num_blades_arr, BLLL[:4], num_blades)
-                ct, run_flag = _unint(num_blades_arr, CTTT, num_blades)
-                xft, run_flag = _unint(num_blades_arr, XXXFT, num_blades)
+                ct, _ = _unint(num_blades_arr, CTTT, num_blades)
+                xft, _ = _unint(num_blades_arr, XXXFT, num_blades)
+
+                # TODO: We don't output this.
+                # ang_blade, _ = _unint(num_blades_arr, BLLL[:4], num_blades)
 
             # NOTE this could be handled via the metamodel comps (extrapolate flag)
             if ichck > 0:
@@ -1046,7 +1050,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
 
         # avoid divide by zero when shaft power is zero
         calc_idx = np.where(inputs['power_coefficient'] > 1e-6)  # index where CP > 1e-5
-        prop_eff = np.zeros(self.options['num_nodes'])
+        prop_eff = np.zeros(self.options['num_nodes'], dtype=ctx.dtype)
         prop_eff[calc_idx] = (
             inputs['advance_ratio'][calc_idx]
             * ctx[calc_idx]

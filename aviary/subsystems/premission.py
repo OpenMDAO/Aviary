@@ -4,7 +4,7 @@ from packaging import version
 
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import override_aviary_vars
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 use_new_openmdao_syntax = version.parse(openmdao.__version__) >= version.parse('3.28')
 
@@ -22,7 +22,12 @@ class CorePreMission(om.Group):
             desc='collection of Aircraft/Mission specific options',
         )
         self.options.declare('subsystems', desc='list of subsystem builders')
-        self.options.declare('meta_data', desc='problem metadata', default=_MetaData)
+        self.options.declare(
+            'subsystem_options',
+            desc='dictionary containing all options for the subsystems in premission',
+        )
+        self.options.declare('meta_data', desc='problem metadata', default=CoreMetaData)
+
         # NOTE this flag is only needed for tests - in AviaryProblem it should always be False
         self.options.declare(
             'process_overrides',
@@ -39,12 +44,19 @@ class CorePreMission(om.Group):
 
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
+        all_subsystem_options = self.options['subsystem_options']
 
         for subsystem in subsystems:
-            pre_mission_system = subsystem.build_pre_mission(aviary_options)
+            name = subsystem.name
+            subsystem_options = all_subsystem_options.get(name, {})
+
+            pre_mission_system = subsystem.build_pre_mission(
+                aviary_options, subsystem_options=subsystem_options
+            )
+
             if pre_mission_system is not None:
                 self.add_subsystem(
-                    subsystem.name,
+                    name,
                     pre_mission_system,
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],

@@ -126,27 +126,19 @@ class MassPremission(om.Group):
                 'engine_oil', AltEngineOilMass(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
-            if design_type == AircraftTypes.BLENDED_WING_BODY:
-                self.add_subsystem(
-                    'furnishings',
-                    BWBFurnishingsGroupMass(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
-            else:
-                self.add_subsystem(
-                    'furnishing_base',
-                    AltFurnishingsGroupMassBase(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
+            self.add_subsystem(
+                'furnishing_base',
+                AltFurnishingsGroupMassBase(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
-                self.add_subsystem(
-                    'furnishings',
-                    AltFurnishingsGroupMass(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
+            self.add_subsystem(
+                'furnishings',
+                AltFurnishingsGroupMass(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
             self.add_subsystem(
                 'hydraulics',
@@ -177,20 +169,12 @@ class MassPremission(om.Group):
                 'surf_ctrl', AltSurfaceControlMass(), promotes_inputs=['*'], promotes_outputs=['*']
             )
 
-            if design_type == AircraftTypes.BLENDED_WING_BODY:
-                self.add_subsystem(
-                    'fuselage',
-                    BWBFuselageMass(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
-            else:
-                self.add_subsystem(
-                    'fuselage',
-                    AltFuselageMass(),
-                    promotes_inputs=['*'],
-                    promotes_outputs=['*'],
-                )
+            self.add_subsystem(
+                'fuselage',
+                AltFuselageMass(),
+                promotes_inputs=['*'],
+                promotes_outputs=['*'],
+            )
 
             self.add_subsystem(
                 'htail',
@@ -341,3 +325,5 @@ class MassPremission(om.Group):
         self.add_subsystem(
             'mass_summation', MassSummation(), promotes_inputs=['*'], promotes_outputs=['*']
         )
+
+        self.set_input_defaults(Aircraft.Fuel.DENSITY, units='lbm/galUS')

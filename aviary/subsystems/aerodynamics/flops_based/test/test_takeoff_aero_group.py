@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import (
     N3CC,
@@ -11,13 +12,14 @@ from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data imp
 )
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.preprocessors import preprocess_options
 
 
+@use_tempdirs
 class TestTakeoffAeroGroup(unittest.TestCase):
     def test_takeoff_aero_group(self):
         prob: om.Problem = make_problem(takeoff_subsystem_options)
@@ -26,7 +28,7 @@ class TestTakeoffAeroGroup(unittest.TestCase):
 
         tol = 1e-12
 
-        for key, (desired, units) in get_items(_regression_data):
+        for key, (desired, units) in _regression_data.items():
             try:
                 actual = prob.get_val(key, units)
 
@@ -47,7 +49,7 @@ class TestTakeoffAeroGroup(unittest.TestCase):
 
         tol = 1e-12
 
-        for key, (desired, units) in get_items(_regression_data_spoiler):
+        for key, (desired, units) in _regression_data_spoiler.items():
             try:
                 actual = prob.get_val(key, units)
 
@@ -110,10 +112,21 @@ def make_problem(subsystem_options={}):
     prob.model.add_subsystem(
         name='aerodynamics',
         subsys=aero_builder.build_mission(
-            num_nodes=nn, aviary_inputs=aviary_inputs, **subsystem_options['aerodynamics']
+            num_nodes=nn,
+            aviary_inputs=aviary_inputs,
+            user_options={},
+            subsystem_options=subsystem_options['aerodynamics'],
         ),
-        promotes_inputs=aero_builder.mission_inputs(**subsystem_options['aerodynamics']),
-        promotes_outputs=aero_builder.mission_outputs(**subsystem_options['aerodynamics']),
+        promotes_inputs=aero_builder.mission_inputs(
+            aviary_inputs=aviary_inputs,
+            user_options={},
+            subsystem_options=subsystem_options['aerodynamics'],
+        ),
+        promotes_outputs=aero_builder.mission_outputs(
+            aviary_inputs=aviary_inputs,
+            user_options={},
+            subsystem_options=subsystem_options['aerodynamics'],
+        ),
     )
 
     prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn), 'm')
@@ -125,7 +138,7 @@ def make_problem(subsystem_options={}):
 
     for key in aviary_keys:
         try:
-            val, units = aviary_inputs.get_item(key, ())
+            val, units = aviary_inputs.get_item(key)
 
         except Exception as error:
             msg = f'"{key}": {error!s}'

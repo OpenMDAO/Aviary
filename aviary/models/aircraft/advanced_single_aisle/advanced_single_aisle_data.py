@@ -8,7 +8,7 @@ FLOPS derived input/output for use with Aviary unit tests and benchmarks
 
 import numpy as np
 
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingApproachToMicP3,
     LandingFlareToTouchdown,
     LandingMicP3ToObstacle,
@@ -17,7 +17,7 @@ from aviary.mission.height_energy.phases.detailed_landing_phases import (
     LandingTouchdownToNoseDown,
     LandingTrajectory,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffBrakeReleaseToDecisionSpeed,
     TakeoffBrakeToAbort,
     TakeoffDecisionSpeedBrakeDelay,
@@ -50,7 +50,7 @@ outputs = N3CC['outputs'] = AviaryValues()
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.01498)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
-inputs.set_val(Mission.Design.GROSS_MASS, 129734.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 129734.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, False)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.93)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 0.95)
@@ -149,7 +149,7 @@ inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 29.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.2734375)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.115)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.42225)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 576.571192, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -213,7 +213,6 @@ inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 inputs.set_val(Aircraft.Engine.WING_LOCATIONS, 0.289682918)
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
-inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
 inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
@@ -251,7 +250,7 @@ inputs.set_val(Aircraft.Wing.ASPECT_RATIO, 11.5587605382765)
 inputs.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 11.5587605382765)
 inputs.set_val(Aircraft.Wing.BENDING_MATERIAL_MASS_SCALER, 1.0)
 inputs.set_val(
-    Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
+    Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
     np.array([0.273522534166506, 0.204274849507037, 0.0888152947868224, 0.0725353313595661]),
 )
 inputs.set_val(Aircraft.Wing.COMPOSITE_FRACTION, 0.33333)
@@ -260,13 +259,13 @@ inputs.set_val(Aircraft.Wing.CONTROL_SURFACE_AREA_RATIO, 0.333)
 inputs.set_val(Aircraft.Wing.DETAILED_WING, True)
 inputs.set_val(Aircraft.Wing.GLOVE_AND_BAT, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Wing.HEIGHT, 8.6, 'ft')
-inputs.set_val(Aircraft.Wing.INPUT_STATION_DIST, np.array([0.0, 0.34453777998, 0.919, 1.0]))
+inputs.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, np.array([0.0, 0.34453777998, 0.919, 1.0]))
 inputs.set_val(Aircraft.Wing.LAMINAR_FLOW_LOWER, 0.0)
 inputs.set_val(Aircraft.Wing.LAMINAR_FLOW_UPPER, 58.0)
 inputs.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0)
 inputs.set_val(Aircraft.Wing.LOAD_FRACTION, 1.0)
 inputs.set_val(
-    Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
+    Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
     np.array([0.0, 23.6286942529271, 23.6286942529271]),
     'deg',
 )
@@ -282,7 +281,9 @@ inputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1.77696)
 inputs.set_val(Aircraft.Wing.SWEEP, 23.6286942529271, 'deg')
 inputs.set_val(Aircraft.Wing.TAPER_RATIO, 0.265189599754917)
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, 0.12233)
-inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, np.array([0.14233, 0.12233, 0.1108, 0.1058]))
+inputs.set_val(
+    Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION, np.array([0.14233, 0.12233, 0.1108, 0.1058])
+)
 inputs.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.116565)
 inputs.set_val(Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.75)
 inputs.set_val(Aircraft.Wing.MASS_SCALER, 0.7412)
@@ -292,9 +293,8 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 
 # Mission
 # ---------------------------
-inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)
-inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
-inputs.set_val(Mission.Design.RANGE, 3500, 'NM')
+inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
+inputs.set_val(Aircraft.Design.RANGE, 3500, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.785)
 inputs.set_val(Mission.Landing.DRAG_COEFFICIENT_MIN, 0.045, 'unitless')
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 2.0, 'unitless')
@@ -315,11 +315,11 @@ inputs.set_val(Mission.Landing.OBSTACLE_HEIGHT, 50.0, 'ft')
 inputs.set_val(Mission.Landing.SPOILER_DRAG_COEFFICIENT, 0.085000)
 inputs.set_val(Mission.Landing.SPOILER_LIFT_COEFFICIENT, -0.810000)
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
-inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577.0, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL, 577.0, 'lbm')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.VERBOSITY, 0)
@@ -331,16 +331,15 @@ inputs.set_val(Settings.PROBLEM_TYPE, ProblemType.SIZING)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 67542.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 996.88, 'lbm')
-outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 108976.4, 'lbm')
+outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 108976.4, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3322, 'lbm')
-outputs.set_val(Mission.Summary.OPERATING_MASS, 72642.0, 'lbm')
+outputs.set_val(Mission.OPERATING_MASS, 72642.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 13105.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 29336.0, 'lbm')
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 24105.0, 'lbm')
-outputs.set_val(Mission.Summary.USEFUL_LOAD, 5100, 'lbm')
+outputs.set_val(Mission.USEFUL_LOAD, 5100, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 7956.515738, 'ft**2')
-outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 103442.0, 'lbm')
-outputs.set_val(Mission.Summary.FUEL_MASS, 26292.0, 'lbm')
+outputs.set_val(Mission.ZERO_FUEL_MASS, 103442.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 1541.0, 'lbm')
 
@@ -439,8 +438,8 @@ outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 4329.9, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 2741.0, 'lbm')
 outputs.set_val(Aircraft.Wing.MASS, 8911.0, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.779)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.583)
+outputs.set_val(Aircraft.Design.MACH, 0.779)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.583)
 
 # Create engine model
 engines = [build_engine_deck(options=inputs)]
@@ -505,7 +504,7 @@ takeoff_brake_release_initial_guesses.set_val('distance', [0.0, 4100.0], 'ft')
 takeoff_brake_release_initial_guesses.set_val('velocity', [0.01, 150.0], 'kn')
 
 gross_mass_units = 'lbm'
-gross_mass = inputs.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
+gross_mass = inputs.get_val(Aircraft.Design.GROSS_MASS, gross_mass_units)
 takeoff_brake_release_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
 takeoff_brake_release_initial_guesses.set_val('throttle', 1.0)

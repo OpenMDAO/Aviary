@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.core.aviary_problem import AviaryGroup
+from aviary.core.aviary_group import AviaryGroup
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import AeroGeom
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -13,7 +13,7 @@ from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft
 
 
@@ -33,11 +33,15 @@ class GASPOverrideTestCase(unittest.TestCase):
 
         prob.model = AviaryGroup()
         prob.model.aviary_inputs = aviary_inputs
-        prob.model.meta_data = BaseMetaData
+        prob.model.meta_data = CoreMetaData
 
         prob.model.add_subsystem(
             'pre_mission',
-            CorePreMission(aviary_options=aviary_inputs, subsystems=subsystems),
+            CorePreMission(
+                aviary_options=aviary_inputs,
+                subsystems=subsystems,
+                subsystem_options={},
+            ),
             promotes_inputs=['aircraft:*', 'mission:*'],
             promotes_outputs=['aircraft:*', 'mission:*'],
         )

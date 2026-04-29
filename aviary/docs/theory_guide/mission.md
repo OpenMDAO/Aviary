@@ -1,6 +1,6 @@
 # Mission Analysis
 
-This page will detail all of the mission implementation and theory details for different ODEs, including HeightEnergy and 2DOF.
+This page will detail all of the mission implementation and theory details for different ODEs, including EnergyState and 2DOF.
 
 ## What is a mission in Aviary?
 
@@ -16,7 +16,7 @@ For example, you might have a climb phase, a cruise phase, and a descent phase.
 If you wanted to climb first at a specific rate-of-climb, then after that climb to a specific altitude at some fixed Mach number, those would be two separate phases within the mission.
 An extremely simple mission, showing its climb, cruise, and descent phases, is shown below.
 
-![simple mission](images/mission_simple.png)
+![simple mission](./images/mission_simple.png)
 
 Breaking the mission down into phases allows us to have more control over the control schemes, constraints, and modeling options for each of the flight phases.
 For example, the climb portion of the flight might feature a nonlinear optimal flight path, whereas the cruise phase is simpler because you might be flying at a constant altitude.
@@ -40,7 +40,7 @@ Having a basic understanding of some control theory lingo will be helpful for un
 (energy-method)=
 ### Energy-state approximation
 
-The energy-state approximation is a method of describing an aircraft's energy state based on its combined kinetic and potential energy.
+The energy-state approximation is a method of describing an aircraft's energy-state based on its combined kinetic and potential energy.
 This is a relatively simple EOM model for an aircraft because it does not consider the aircraft's flight path angle (using small-angle approximations), and treats the aircraft as a point mass without rotational degrees of freedom.
 Instead, we only care about the aircraft's current speed and current altitude, as that is all we need to calculate its combined energy.
 The aircraft is then modeled in such a way that this energy can be instantaneously transferred between the kinetic and potential realms.
@@ -56,7 +56,7 @@ Through this approximation, the only state variable is the energy $E$ and $V$ ca
 
 An excellent introduction to this type of aircraft modeling is [Rutowski's 1953 "Energy Approach to the General Aircraft Performance Problem"](https://arc.aiaa.org/doi/pdf/10.2514/8.2956).
 
-### Two degree-of-freedom
+### Two-degrees-of-freedom
 
 The 2DOF EOM is a bit more detailed than the energy-state approximation as it considers the x-y movement of the aircraft.
 This means that we need some notion of the aircraft's flight path heading and speed to obtain its change in the x- and y-directions.
@@ -85,4 +85,4 @@ where $L$, $D$, $T$, and $W$ are the forces of lift, drag, thrust, and weight re
 
 The following figure shows how these forces are oriented relative to an aircraft in flight.
 
-![aircraft force diagram](images/aircraft_force_diagram.png)
+![aircraft force diagram](./images/aircraft_force_diagram.png)

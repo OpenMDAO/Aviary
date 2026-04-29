@@ -1,7 +1,7 @@
 """
 fortran_to_aviary.py is used to read in Fortran based vehicle decks and convert them to Aviary decks.
 
-FLOPS, GASP, or Aviary names can be used for variables (Ex WG or Mission:Design:GROSS_MASS)
+FLOPS, GASP, or Aviary names can be used for variables (Ex WG or aircraft:design:gross_mass)
 When specifying variables from FORTRAN, they should be in the appropriate NAMELIST.
 Aviary variable names should be specified outside any NAMELISTS.
 Names are not case-sensitive.
@@ -31,7 +31,7 @@ from aviary.utils.legacy_code_data.gasp_defaults import gasp_default_values, gas
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
@@ -41,7 +41,7 @@ GASP = LegacyCode.GASP
 def fortran_to_aviary(
     fortran_deck: str,
     legacy_code=None,
-    out_file=None,
+    output_file=None,
     force=False,
     verbosity=Verbosity.BRIEF,
 ):
@@ -75,11 +75,11 @@ def fortran_to_aviary(
         f'# {legacy_code.value}-derived aircraft input deck converted from {fortran_deck.name}'
     )
 
-    if out_file:
-        out_file = Path(out_file)
+    if output_file:
+        output_file = Path(output_file)
     else:
         name = fortran_deck.stem
-        out_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
+        output_file: Path = fortran_deck.parent.resolve().joinpath(name + '_converted.csv')
 
     # create dictionary to convert legacy code variables to Aviary variables
     # key: variable name, value: either None or relevant historical_name
@@ -130,7 +130,7 @@ def fortran_to_aviary(
 
     # Add settings and engine data file
     if legacy_code is FLOPS:
-        eom = ['height_energy']
+        eom = ['energy_state']
         aero = mass = ['FLOPS']
     if legacy_code is GASP:
         eom = ['2DOF']
@@ -139,26 +139,26 @@ def fortran_to_aviary(
     vehicle_data['input_values'].set_val(Settings.MASS_METHOD, mass)
     vehicle_data['input_values'].set_val(Settings.AERODYNAMICS_METHOD, aero)
 
-    if not out_file.is_file():
+    if not output_file.is_file():
         # default outputted file to be in same directory as input
-        out_file = fortran_deck.parent / out_file
+        output_file = fortran_deck.parent / output_file
 
-    if out_file.is_file():
+    if output_file.is_file():
         if not force:
-            raise RuntimeError(f'{out_file} already exists. Choose a new name or enable --force')
+            raise RuntimeError(f'{output_file} already exists. Choose a new name or enable --force')
         elif verbosity >= Verbosity.BRIEF:
-            print(f'Overwriting existing file: {out_file.name}')
+            print(f'Overwriting existing file: {output_file.name}')
 
     else:
         # create any directories defined by the new filename if they don't already exist
-        out_file.parent.mkdir(parents=True, exist_ok=True)
+        output_file.parent.mkdir(parents=True, exist_ok=True)
         if verbosity >= Verbosity.VERBOSE:
-            print('Writing to:', out_file)
+            print('Writing to:', output_file)
 
     # TODO Use the existing utilities to write this input file? It will be much more
     #      human-readable
     # open the file in write mode
-    with open(out_file, 'w', newline='') as f:
+    with open(output_file, 'w', newline='') as f:
         writer = csv.writer(f)
         # Write header info and comments
         for comment in comments:
@@ -361,7 +361,7 @@ def process_and_store_data(
                 vehicle_data['initialization_guesses'][name] = float(var_values[0])
                 continue
 
-            elif name in _MetaData:
+            elif name in CoreMetaData:
                 if current_namelist + '.' + var_name in default_values:
                     data_units = default_values.get_item(current_namelist + '.' + var_name)[1]
                 else:
@@ -393,16 +393,16 @@ def set_value(var_name, var_value, units=None, value_dict: NamedValues = None, v
     set_value will update the current value of a variable in a value dictionary that contains a value
     and it's associated units.
     If units are specified for the new value, they will be used, otherwise the current units in the
-    value dictionary or the default units from _MetaData are used.
+    value dictionary or the default units from CoreMetaData are used.
     If the new variable is part of a list, the current list will be extended if needed.
     """
     if var_name in value_dict:
         current_value, units = value_dict.get_item(var_name)
     else:
         current_value = None
-        if var_name in _MetaData:
+        if var_name in CoreMetaData:
             if not units:
-                units = _MetaData[var_name]['units']
+                units = CoreMetaData[var_name]['units']
     if not units:
         units = 'unitless'
 
@@ -436,10 +436,10 @@ def generate_aviary_names(legacy_code):
     Each Aviary variable will have a list of matching Fortran names.
     """
     alternate_names = {}
-    for key in _MetaData.keys():
-        historical_dict = _MetaData[key]['historical_name']
+    for key in CoreMetaData.keys():
+        historical_dict = CoreMetaData[key]['historical_name']
         if historical_dict and legacy_code in historical_dict:
-            alt_name = _MetaData[key]['historical_name'][legacy_code]
+            alt_name = CoreMetaData[key]['historical_name'][legacy_code]
             if isinstance(alt_name, str):
                 alt_name = [alt_name]
             alternate_names[key] = alt_name
@@ -503,28 +503,28 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     ## PROBLEM TYPE ##
     # if multiple values of target_range are specified, use the one that
     # corresponds to the problem_type
-    design_range, distance_units = input_values.get_item(Mission.Design.RANGE)
+    design_range, distance_units = input_values.get_item(Aircraft.Design.RANGE)
     try:
         problem_type = input_values.get_val(Settings.PROBLEM_TYPE)[0]
     except KeyError:
         problem_type = 'sizing'
 
     if isinstance(design_range, list):
-        # if the design range target_range value is 0, set the problem_type to fallout
+        # if the design range target_range value is 0, set the problem_type to off_design_max_range
         if design_range[0] == 0:
-            problem_type = 'fallout'
+            problem_type = 'off_design_max_range'
             input_values.set_val(Settings.PROBLEM_TYPE, [problem_type])
             design_range = 0
         if problem_type == 'sizing':
             design_range = design_range[0]
         elif problem_type == 'alternate':
             design_range = design_range[2]
-        elif problem_type == 'fallout':
+        elif problem_type == 'off_design_max_range':
             design_range = 0
     else:
         if design_range == 0:
-            input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
-    input_values.set_val(Mission.Design.RANGE, [design_range], distance_units)
+            input_values.set_val(Settings.PROBLEM_TYPE, ['off_design_max_range'])
+    input_values.set_val(Aircraft.Design.RANGE, [design_range], distance_units)
 
     ## Passengers ##
     if Aircraft.CrewPayload.Design.NUM_PASSENGERS in input_values:
@@ -560,6 +560,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 'unitless'
         )[0]
         num_seat_abreast_economy = int(num_seat_abreast_economy)
+        if num_seat_abreast_economy == 0:
+            num_seat_abreast_economy = 6
         input_values.set_val(
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, [num_seat_abreast_economy]
         )
@@ -569,6 +571,8 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 'unitless'
                 )[0]
             )
+            if num_seat_abreast_first == 0:
+                num_seat_abreast_first = 4
             input_values.set_val(
                 Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, [num_seat_abreast_first]
             )
@@ -580,8 +584,43 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
                     Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 'unitless'
                 )[0]
             )
+            if num_seat_abreast_business == 0:
+                num_seat_abreast_business = 5
             input_values.set_val(
                 Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, [num_seat_abreast_business]
+            )
+        except:
+            pass
+        try:
+            seat_pitch_business = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, 'inch')[0]
+            )
+            if seat_pitch_business == 0.0:
+                seat_pitch_business = 39.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, [seat_pitch_business], 'inch'
+            )
+        except:
+            pass
+        try:
+            seat_pitch_economy = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 'inch')[0]
+            )
+            if seat_pitch_economy == 0.0:
+                seat_pitch_economy = 32.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, [seat_pitch_economy], 'inch'
+            )
+        except:
+            pass
+        try:
+            seat_pitch_first = float(
+                input_values.get_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 'inch')[0]
+            )
+            if seat_pitch_first == 0.0:
+                seat_pitch_first = 61.0
+            input_values.set_val(
+                Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, [seat_pitch_first], 'inch'
             )
         except:
             pass
@@ -682,22 +721,35 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         num_flap_segments = int(num_flap_segments)
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
 
-    ## Fuel ##
-    reserve_fuel_additional = input_values.get_val(
-        Aircraft.Design.RESERVE_FUEL_ADDITIONAL, units='lbm'
-    )[0]
+    ## FUEL RESERVES ##
+    reserve_fuel_additional = input_values.get_val(Mission.RESERVE_FUEL_ADDITIONAL, units='lbm')[0]
     if reserve_fuel_additional <= 0:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+        # This is a percentage of mission fuel
         input_values.set_val(
-            Aircraft.Design.RESERVE_FUEL_FRACTION,
-            [-reserve_fuel_additional],
-            units='unitless',
+            Mission.RESERVE_FUEL_MARGIN, [-reserve_fuel_additional * 100], units='unitless'
+        )  # flip the value and multipy by 100 because it is a percentage
+        input_values.set_val(
+            Mission.RESERVE_FUEL_ADDITIONAL, [0], units='lbm'
+        )  # then clear out the unused value
+    if reserve_fuel_additional > 0 and reserve_fuel_additional < 10:
+        ValueError(
+            '"FRESF" is not valid between 0 and 10. To set a reserve mission flight time you must setup a reserve mission definition with a target_duration.'
         )
-    elif reserve_fuel_additional >= 10:
-        input_values.set_val(Aircraft.Design.RESERVE_FUEL_FRACTION, [0], units='unitless')
-    else:
-        ValueError('"FRESF" is not valid between 0 and 10.')
+        input_values.set_val(Mission.RESERVE_FUEL_ADDITIONAL, [0], units='lbm')
+    if reserve_fuel_additional >= 10:
+        # we leave reserve_fuel_additional as it is
+        pass
 
+    # Wing Fuel Tank Sizing ##
+    reserve_fuel_volume = input_values.get_val(Aircraft.Fuel.VOLUME_MARGIN, units='unitless')[0]
+
+    if reserve_fuel_volume < 0:
+        ValueError(
+            '"FVOL_MRG" is not valid below 0. Cannot set fuel volume reserves to less than zero'
+        )  #
+        input_values.set_val(Aircraft.Fuel.VOLUME_MARGIN, [0], units='lbm')
+
+    # FLARE LOAD FACTOR ##
     if Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR in input_values:
         if input_values.get_val(Mission.Landing.MAXIMUM_FLARE_LOAD_FACTOR)[0] > 4:
             if verbosity > Verbosity.BRIEF:
@@ -758,8 +810,6 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.set_val(
                 Aircraft.Engine.NUM_FUSELAGE_ENGINES, [num_fuselage_engines], 'unitless'
             )
-            # BWB engine sizing algorithm does not use reference diameter
-            input_values.delete(Aircraft.Engine.REFERENCE_DIAMETER)
     else:
         input_values.set_val(Aircraft.Design.TYPE, 'transport')
     if Aircraft.Engine.TYPE in input_values:
@@ -786,6 +836,78 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.delete(Aircraft.Nacelle.AVG_LENGTH)
         except:
             pass
+
+    # Friction factors (combine drag factor and technology factor into one factor)
+    round_position = 6
+    if Aircraft.Fuselage.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Fuselage.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFFT')[0][0]
+            unused_values.delete('INGASP.FCFFT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Fuselage.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.HorizontalTail.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.HorizontalTail.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFHTT')[0][0]
+            unused_values.delete('INGASP.FCFHTT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.HorizontalTail.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Design.INTERFERENCE_DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Design.INTERFERENCE_DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCKIT')[0][0]
+            unused_values.delete('INGASP.FCKIT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Design.INTERFERENCE_DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Nacelle.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Nacelle.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFNT')[0][0]
+            unused_values.delete('INGASP.FCFNT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Nacelle.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Strut.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Strut.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFSTRT')[0][0]
+            unused_values.delete('INGASP.FCFSTRT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Strut.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.VerticalTail.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.VerticalTail.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFVTT')[0][0]
+            unused_values.delete('INGASP.FCFVTT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.VerticalTail.DRAG_FACTOR, [drag_scaler], 'unitless')
+
+    if Aircraft.Wing.DRAG_FACTOR in input_values:
+        drag_scaler = input_values.get_val(Aircraft.Wing.DRAG_FACTOR, 'unitless')[0]
+        try:
+            tech_factor = unused_values.get_item('INGASP.FCFWT')[0][0]
+            unused_values.delete('INGASP.FCFWT')
+        except:
+            tech_factor = 1.0
+        drag_scaler = round(drag_scaler * tech_factor, round_position)
+        input_values.set_val(Aircraft.Wing.DRAG_FACTOR, [drag_scaler], 'unitless')
 
     # Variables required by GASP, but no default values are provided in GASP
     missing_vars = []
@@ -817,7 +939,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('PS')
     if Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY not in input_values:
         missing_vars.append('SAB')
-    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if Aircraft.Wing.TAPER_RATIO not in input_values:
         missing_vars.append('SLM')
@@ -847,7 +969,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('YMG')
     if Aircraft.Engine.WING_LOCATIONS not in input_values:
         missing_vars.append('YP')
-    if Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not in input_values:
+    if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in input_values:
         missing_vars.append('SAH')
     if len(missing_vars) > 0:
         raise RuntimeError(
@@ -913,8 +1035,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             else:
                 FULDEN = wrapped_convert_units(
                     (
-                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
-                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['units'],
                     ),
                     'lbm/ft**3',
                 )
@@ -925,7 +1047,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             input_values.delete(Aircraft.Fuel.WING_FUEL_CAPACITY)
 
     # Set detailed wing flag if model supports it
-    if Aircraft.Wing.INPUT_STATION_DIST in input_values:
+    if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
 
     if Mission.Landing.LIFT_COEFFICIENT_MAX not in input_values:
@@ -934,7 +1056,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         try:
             CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
             CLLDM = 1.69 * CLAPP
-        except TypeError:
+        except KeyError:
             CLLDM = 3.0
         input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
 
@@ -951,25 +1073,45 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
 
         # BWB always have detailed wing.
         input_values.set_val(Aircraft.Wing.DETAILED_WING, [True])
-        if Aircraft.Wing.INPUT_STATION_DIST in input_values:
-            input_station_dist = input_values.get_val(Aircraft.Wing.INPUT_STATION_DIST)
-            input_station_dist = [0.0] + input_station_dist
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, input_station_dist)
-            n_dist = len(input_station_dist)
-            chord_per_semispan_dist = input_values.get_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST)
-            chord_per_semispan_dist = [-1.0] + chord_per_semispan_dist[0 : n_dist - 1]
-            input_values.set_val(Aircraft.Wing.CHORD_PER_SEMISPAN_DIST, chord_per_semispan_dist)
-            load_path_sweep_dist = input_values.get_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, 'deg')
-            load_path_sweep_dist = [0.0] + load_path_sweep_dist[0 : n_dist - 2]
-            input_values.set_val(Aircraft.Wing.LOAD_PATH_SWEEP_DIST, load_path_sweep_dist, 'deg')
-            thickness_to_chord_dist = input_values.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST)
-            thickness_to_chord_dist = [-1.0] + thickness_to_chord_dist[0 : n_dist - 1]
-            input_values.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_DIST, thickness_to_chord_dist)
+        if Aircraft.Wing.INPUT_STATION_DISTRIBUTION in input_values:
+            input_station_distribution = input_values.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
+            )
+            input_station_distribution = [0.0] + input_station_distribution
+            input_values.set_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION, input_station_distribution
+            )
+            n_dist = len(input_station_distribution)
+            chord_per_semispan_distribution = input_values.get_val(
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
+            )
+            chord_per_semispan_distribution = [-1.0] + chord_per_semispan_distribution[
+                0 : n_dist - 1
+            ]
+            input_values.set_val(
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION, chord_per_semispan_distribution
+            )
+            load_path_sweep_distribution = input_values.get_val(
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, 'deg'
+            )
+            load_path_sweep_distribution = [0.0] + load_path_sweep_distribution[0 : n_dist - 2]
+            input_values.set_val(
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION, load_path_sweep_distribution, 'deg'
+            )
+            thickness_to_chord_distribution = input_values.get_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
+            )
+            thickness_to_chord_distribution = [-1.0] + thickness_to_chord_distribution[
+                0 : n_dist - 1
+            ]
+            input_values.set_val(
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION, thickness_to_chord_distribution
+            )
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [True])
         else:
             # For BWB, if detail wing is not provided, initialize it to [0, 0.5, 1]. See doc page for detail.
             input_values.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, [False])
-            input_values.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0])
+            input_values.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.0, 0.5, 1.0])
 
         if (
             Aircraft.Fuselage.LENGTH in input_values
@@ -1008,8 +1150,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             else:
                 FULDEN = wrapped_convert_units(
                     (
-                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
-                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['units'],
                     ),
                     'lbm/ft**3',
                 )
@@ -1123,19 +1265,53 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             ARHT = input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0]
             input_values.set_val(Aircraft.VerticalTail.ASPECT_RATIO, [ARHT / 2.0], 'unitless')
 
+    # if mission-wide fuel flow factor provided, combine into sub and supersonic fuel flow factors
+    if 'MISSIN.fact' in vehicle_data['unused_values']:
+        FACT = vehicle_data['unused_values'].get_item('MISSIN.fact')[0][0]
+        if Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER in input_values:
+            sub_fuel_flow_fact = input_values.get_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER)[0]
+            input_values.set_val(
+                Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, [sub_fuel_flow_fact * FACT]
+            )
+        else:
+            input_values.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, [FACT])
+        if Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER in input_values:
+            sup_fuel_flow_fact = input_values.get_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER)[
+                0
+            ]
+            input_values.set_val(
+                Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, [sup_fuel_flow_fact * FACT]
+            )
+        else:
+            input_values.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, [FACT])
+        vehicle_data['unused_values'].delete('MISSIN.fact')
+
     # These variables should be removed if they are zero.
     rem_list = [
-        (Aircraft.Design.TOUCHDOWN_MASS, 'lbm'),
+        (Aircraft.Design.TOUCHDOWN_MASS_MAX, 'lbm'),
         (Aircraft.Fuselage.CABIN_AREA, 'ft**2'),
         (Aircraft.Fuselage.MAX_HEIGHT, 'ft'),
         (Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 'ft'),
         (Aircraft.Fuselage.LENGTH, 'ft'),
         (Aircraft.Fuselage.MAX_WIDTH, 'ft'),
+        (Aircraft.Design.EMPTY_MASS, 'lbm'),
     ]
     for var in rem_list:
         try:
             val = input_values.get_val(var[0], var[1])[0]
             if val == 0.0:
+                input_values.delete(var[0])
+        except:
+            pass
+
+    # These variables should be removed if they are negative.
+    rem_list = [
+        (Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, 'lbm'),
+    ]
+    for var in rem_list:
+        try:
+            val = input_values.get_val(var[0], var[1])[0]
+            if val < 0.0:
                 input_values.delete(var[0])
         except:
             pass
@@ -1290,14 +1466,14 @@ def _setup_F2A_parser(parser):
         help='Filename of vehicle input deck, including partial or complete path.',
     )
     parser.add_argument(
-        '-o',
-        '--out_file',
-        default=None,
+        'output_file',
+        type=str,
+        nargs='?',
         help='Filename for converted input deck, including partial or complete path.',
     )
     parser.add_argument(
-        '-l',
-        '--legacy_code',
+        '-f',
+        '--format',
         type=LegacyCode,
         help='Name of the legacy code the deck originated from',
         choices=set(LegacyCode),
@@ -1327,4 +1503,4 @@ def _exec_F2A(args, user_args):
     # convert verbosity from int to enum
     verbosity = Verbosity(args.verbosity)
 
-    fortran_to_aviary(filepath, args.legacy_code, args.out_file, args.force, verbosity)
+    fortran_to_aviary(filepath, args.format, args.output_file, args.force, verbosity)

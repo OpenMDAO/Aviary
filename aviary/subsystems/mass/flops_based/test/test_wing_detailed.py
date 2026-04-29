@@ -47,7 +47,9 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: inputs.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Aircraft.Wing.INPUT_STATION_DIST: inputs.get_val(Aircraft.Wing.INPUT_STATION_DIST),
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION: inputs.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
+            ),
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: inputs.get_val(
                 Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
             ),
@@ -65,13 +67,14 @@ class DetailedWingBendingTest(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
-                Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-                Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-                Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+                Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+                Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Engine.POD_MASS,
                 Aircraft.Wing.ASPECT_RATIO,
                 Aircraft.Wing.ASPECT_RATIO_REFERENCE,
@@ -116,8 +119,8 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
-                Aircraft.Wing.INPUT_STATION_DIST
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
                 Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
@@ -134,10 +137,10 @@ class DetailedWingBendingTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         input_keys = [
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -204,8 +207,8 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
-                Aircraft.Wing.INPUT_STATION_DIST
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
                 Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
@@ -224,10 +227,10 @@ class DetailedWingBendingTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         input_keys = [
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -287,8 +290,8 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
-                Aircraft.Wing.INPUT_STATION_DIST
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
                 Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
@@ -307,10 +310,10 @@ class DetailedWingBendingTest(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         input_keys = [
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -365,8 +368,8 @@ class DetailedWingBendingTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES: aviary_options.get_val(
                 Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES
             ),
-            Aircraft.Wing.INPUT_STATION_DIST: aviary_options.get_val(
-                Aircraft.Wing.INPUT_STATION_DIST
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION: aviary_options.get_val(
+                Aircraft.Wing.INPUT_STATION_DISTRIBUTION
             ),
             Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL: aviary_options.get_val(
                 Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL
@@ -385,10 +388,10 @@ class DetailedWingBendingTest(unittest.TestCase):
         self.prob.setup(check=False)
 
         input_keys = [
-            Aircraft.Wing.LOAD_PATH_SWEEP_DIST,
-            Aircraft.Wing.THICKNESS_TO_CHORD_DIST,
-            Aircraft.Wing.CHORD_PER_SEMISPAN_DIST,
-            Mission.Design.GROSS_MASS,
+            Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
+            Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
+            Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
+            Aircraft.Design.GROSS_MASS,
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.ASPECT_RATIO_REFERENCE,
             Aircraft.Wing.STRUT_BRACING_FACTOR,
@@ -438,7 +441,9 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [3], units='unitless')
         aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, [0], units='unitless')
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
-        aviary_options.set_val(Aircraft.Wing.INPUT_STATION_DIST, [0.0, 0.5, 1.0], units='unitless')
+        aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.0, 0.5, 1.0], units='unitless'
+        )
         aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
         aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 50, units='unitless')
         aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, False, units='unitless')
@@ -450,7 +455,7 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=874099.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
@@ -473,9 +478,11 @@ class BWBSimpleWingBendingTest(unittest.TestCase):
         wing_location = np.append(wing_location, [0.0])
         prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_location)
 
-        prob.set_val('BWB_CHORD_PER_SEMISPAN_DIST', [137.5, 91.3717, 14.2848], units='unitless')
-        prob.set_val('BWB_THICKNESS_TO_CHORD_DIST', [0.11, 0.11, 0.11], units='unitless')
-        prob.set_val('BWB_LOAD_PATH_SWEEP_DIST', [0.0, 15.337244816], units='deg')
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', [137.5, 91.3717, 14.2848], units='unitless'
+        )
+        prob.set_val('BWB_THICKNESS_TO_CHORD_DISTRIBUTION', [0.11, 0.11, 0.11], units='unitless')
+        prob.set_val('BWB_LOAD_PATH_SWEEP_DISTRIBUTION', [0.0, 15.337244816], units='deg')
 
         prob.run_model()
 
@@ -505,7 +512,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, [0], units='unitless')
         aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
         aviary_options.set_val(
-            Aircraft.Wing.INPUT_STATION_DIST,
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
             [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
@@ -520,7 +527,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=874099, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=874099, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 7.557, units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
@@ -544,7 +551,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_location)
 
         prob.set_val(
-            'BWB_CHORD_PER_SEMISPAN_DIST',
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
             [
                 112.3001936860821,
                 55,
@@ -565,7 +572,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             units='unitless',
         )
         prob.set_val(
-            'BWB_THICKNESS_TO_CHORD_DIST',
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
             [
                 0.11,
                 0.11,
@@ -586,7 +593,7 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
             units='unitless',
         )
         prob.set_val(
-            'BWB_LOAD_PATH_SWEEP_DIST',
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
             units='deg',
         )
@@ -596,13 +603,102 @@ class BWBDetailedWingBendingTest(unittest.TestCase):
         BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
         pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
 
-        BENDING_MATERIAL_FACTOR_expected = 3.93931503  # FLOPS BT = 3.9724796254619563
+        BENDING_MATERIAL_FACTOR_expected = 3.97247765  # FLOPS BT = 3.9724796254619563
         pod_inertia_expected = 1.0
         assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
         assert_near_equal(prob.get_val('calculated_wing_area'), 5399.4057051, tolerance=1e-9)
         # current BWB data set does not check the following
         assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
 
+    def test_case2(self):
+        """
+        bwb300_baseline
+        This test is to investigate the different result of Aircraft.Wing.BENDING_MATERIAL_FACTOR
+        (or BT as returned by subroutine BNDMAT) between this function and FLOPS. The algorithm is
+        not exactly the same. Note that Aircraft.Wing.NUM_INTEGRATION_STATIONS is set to 10 to make
+        debugging easier.
+        In BNDMAT(), AR is computed locally but is not passed back. So, we call it "calc_ar" in
+        our algorithm.
+        In FLOPS, given CHD = [48.25, 33.20, 18.97, 14.19, 10.20, 3.220] as bwb300_baseline,
+        subroutin DEFINE() will update it to CHD = [116.576, 55, 33.2, 18.97, 14.19, 10.2, 2.361]
+        Then in subroutin WWGHT(), right before calling BNDMAT(), it updates CHD to
+        C = [1.249, 0.589, 0.356, 0.203, 0.152, 0.109, 2.361] which is used in BNDMAT(). Is it right?
+        """
+        prob = self.prob
+
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, [0], units='unitless')
+        aviary_options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 0, units='unitless')
+        aviary_options.set_val(
+            Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
+            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            units='unitless',
+        )
+        aviary_options.set_val(Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL, 2.0, units='unitless')
+        aviary_options.set_val(Aircraft.Wing.NUM_INTEGRATION_STATIONS, 10, units='unitless')
+        aviary_options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, True, units='unitless')
+
+        prob.model.add_subsystem(
+            'bending',
+            BWBDetailedWingBendingFact(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, 5.4252, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO_REFERENCE, 0.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Wing.STRUT_BRACING_FACTOR, 0.0, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR, 0.0, units='unitless'
+        )
+        prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD, 0.11, units='unitless')
+        prob.model.set_input_defaults(
+            Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, 0.11, units='unitless'
+        )
+
+        setup_model_options(self.prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Engine.POD_MASS, np.array([0]), units='lbm')
+        prob.set_val(Aircraft.Wing.SPAN, val=186.631829293424)
+        prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 49.77182929, 'ft')
+
+        wing_location = np.zeros(0)
+        wing_location = np.append(wing_location, [0.2])
+        prob.set_val(Aircraft.Engine.WING_LOCATIONS, wing_location)
+
+        prob.set_val(
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION',
+            [116.57609631, 55.0, 33.2, 18.97, 14.19, 10.2, 2.36127568],
+            units='unitless',
+        )
+        prob.set_val(
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION',
+            [0.1792, 0.1792, 0.125, 0.076, 0.076, 0.076, 0.06],
+            units='unitless',
+        )
+        prob.set_val(
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION',
+            [0.0, 0.0, 0.0, 17.0, 17.0, 17.0],
+            units='deg',
+        )
+
+        prob.run_model()
+
+        BENDING_MATERIAL_FACTOR = prob.get_val(Aircraft.Wing.BENDING_MATERIAL_FACTOR)
+        pod_inertia = prob.get_val(Aircraft.Wing.ENG_POD_INERTIA_FACTOR)
+
+        BENDING_MATERIAL_FACTOR_expected = 5.98133918  # Real FLOPS BT = 5.998060404
+        pod_inertia_expected = 1.0
+        assert_near_equal(BENDING_MATERIAL_FACTOR, BENDING_MATERIAL_FACTOR_expected, tolerance=1e-9)
+        assert_near_equal(prob.get_val('calculated_wing_area'), 4151.88659141, tolerance=1e-9)
+        # current BWB data set does not check the following
+        assert_near_equal(pod_inertia, pod_inertia_expected, tolerance=1e-9)
+
 
 if __name__ == '__main__':
     unittest.main()
+    # test = DetailedWingBendingTest()
+    # test.setUp()
+    # test.test_extreme_engine_loc()

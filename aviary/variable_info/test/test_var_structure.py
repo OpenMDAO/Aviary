@@ -7,7 +7,7 @@ from aviary.utils.test_utils.variable_test import (
     assert_structure_alphabetization,
     get_names_from_hierarchy,
 )
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
@@ -18,7 +18,7 @@ class DuplicateHierarchy:
 
     class Design:
         CRUISE_MACH = 'mission:design:cruise_mach'
-        RANGE = 'mission:design:range'
+        RANGE = 'aircraft:design:range'
 
     class OperatingLimits:
         MAX_MACH = 'mission:design:cruise_mach'  # this is a duplicate
@@ -28,17 +28,13 @@ class MetaDataTest(unittest.TestCase):
     """Tests for variable_meta_data.py: check for duplicate legacy code names, alphabetization, and any missing names from variable hierarchy."""
 
     def test_duplicate_names_FLOPS(self):
-        flops_names = [var['historical_name']['FLOPS'] for var in _MetaData.values()]
+        flops_names = [var['historical_name']['FLOPS'] for var in CoreMetaData.values()]
         assert_no_duplicates(flops_names)
-
-    def test_duplicate_names_LEAPS1(self):
-        leaps1_names = [var['historical_name']['LEAPS1'] for var in _MetaData.values()]
-        assert_no_duplicates(leaps1_names)
 
     def test_alphabetization(self):
         # TODO currently excluding Dynamic variables that do not have proper full
         #      names mirroring the hierarchy
-        metadata_var_names = [key for key in _MetaData if ':' in key]
+        metadata_var_names = [key for key in CoreMetaData if ':' in key]
 
         assert_metadata_alphabetization(metadata_var_names)
 
@@ -51,7 +47,7 @@ class MetaDataTest(unittest.TestCase):
             + get_names_from_hierarchy(Settings)
         )
 
-        metadata_dict = deepcopy(_MetaData)
+        metadata_dict = deepcopy(CoreMetaData)
         for var in var_names:
             try:
                 metadata_dict.pop(var)

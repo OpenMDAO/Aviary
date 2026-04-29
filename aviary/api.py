@@ -11,8 +11,7 @@ user-facing should be imported to this file.
 # TODO: don't rename things here, do it in the entire codebase
 # TODO: when documenting methods and classes, make sure to include documentation (printing of docstrings) for everything that's imported in this API
 # TODO: remove overload prototype
-# TODO: import examples once we settle on those
-# TODO: import this in all user-facing files
+# TODO: import and use the aviary api in all user-facing files rather than individual imports
 
 
 ###################
@@ -20,42 +19,34 @@ user-facing should be imported to this file.
 ###################
 
 from aviary.variable_info.variables import Aircraft, Mission, Dynamic, Settings
-from aviary.variable_info.options import get_option_defaults, is_option
+from aviary.variable_info.options import is_option
 from aviary.utils.develop_metadata import add_meta_data, update_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.functions import (
     add_aviary_input,
     add_aviary_output,
+    add_aviary_option,
     get_units,
-    override_aviary_vars,
-    setup_model_options,
-    setup_trajectory_params,
 )
 from aviary.utils.merge_hierarchies import merge_hierarchies
 from aviary.utils.merge_variable_metadata import merge_meta_data
-from aviary.utils.named_values import NamedValues, get_keys, get_items, get_values
+from aviary.utils.named_values import NamedValues
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.csv_data_file import read_data_file, write_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
-from aviary.variable_info.enums import (
-    AlphaModes,
-    EquationsOfMotion,
-    FlapType,
-    GASPEngineType,
-    LegacyCode,
-    ProblemType,
-    SpeedType,
-    Verbosity,
-)
+from aviary.variable_info.enums import *
 from aviary.models.missions.two_dof_default import phase_info as default_2DOF_phase_info
-from aviary.models.missions.height_energy_default import (
-    phase_info as default_height_energy_phase_info,
+from aviary.models.missions.energy_state_default import (
+    phase_info as default_energy_state_phase_info,
 )
-from aviary.interface.run_aviary import run_aviary_cmd
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem, reload_aviary_problem
+
+# Converters
 from aviary.utils.engine_deck_conversion import convert_engine_deck
 from aviary.utils.fortran_to_aviary import fortran_to_aviary
+from aviary.utils.aero_table_conversion import convert_aero_table
+
 from aviary.utils.functions import (
     get_path,
     set_aviary_initial_values,
@@ -69,8 +60,6 @@ from aviary.constants import (
     GRAV_ENGLISH_LBM,
     GRAV_METRIC_FLOPS,
     GRAV_METRIC_GASP,
-    MU_LANDING,
-    MU_TAKEOFF,
     PSLS_PSF,
     RADIUS_EARTH_METRIC,
     RHO_SEA_LEVEL_ENGLISH,
@@ -79,65 +68,69 @@ from aviary.constants import (
 )
 from aviary.subsystems.test.subsystem_tester import (
     TestSubsystemBuilder,
-    skipIfMissingDependencies,
 )
 from aviary.subsystems.propulsion.utils import build_engine_deck
 
 ###################
 # Level 3 Imports #
 ###################
+# Model Setup
+from aviary.variable_info.functions import (
+    override_aviary_vars,
+    setup_model_options,
+    setup_trajectory_params,
+)
 
 # Miscellaneous
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
+from aviary.utils.process_input_decks import create_vehicle
+
+# Preprocessors
 from aviary.utils.preprocessors import (
-    preprocess_crewpayload,
     preprocess_options,
+    preprocess_crewpayload,
+    preprocess_fuel_capacities,
     preprocess_propulsion,
 )
-from aviary.utils.process_input_decks import create_vehicle
 
 # ODEs
 # TODO: check and see if this works with both sides, or just GASP
 from aviary.mission.base_ode import BaseODE
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.mission.height_energy.ode.landing_ode import LandingODE as DetailedLandingODE
-from aviary.mission.height_energy.ode.landing_ode import FlareODE as DetailedFlareODE
-from aviary.mission.height_energy.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE
-from aviary.mission.height_energy.phases.simplified_takeoff import (
-    TakeoffGroup as HeightEnergySimplifiedTakeoff,
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyStateODE
+from aviary.mission.energy_state.ode.landing_ode import LandingODE as DetailedLandingODE
+from aviary.mission.energy_state.ode.landing_ode import FlareODE as DetailedFlareODE
+from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE as DetailedTakeoffODE
+from aviary.mission.energy_state.phases.simplified_takeoff import (
+    TakeoffGroup as EnergyStateSimplifiedTakeoff,
 )
-from aviary.mission.height_energy.phases.simplified_landing import (
-    LandingGroup as HeightEnergySimplifiedLanding,
+from aviary.mission.energy_state.phases.simplified_landing import (
+    LandingGroup as EnergyStateSimplifiedLanding,
 )
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.two_dof.ode.accel_ode import AccelODE as TwoDOFAccelerationODE
-from aviary.mission.two_dof.ode.ascent_ode import AscentODE as TwoDOFAscentODE
-from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE
+from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE, ElectricBreguetCruiseODE
 from aviary.mission.two_dof.ode.flight_ode import FlightODE as TwoDOFFlightODE
-from aviary.mission.two_dof.ode.flight_path_ode import FlightPathODE as TwoDOFFlightPathODE
-from aviary.mission.two_dof.ode.groundroll_ode import GroundrollODE as TwoDOFGroundrollODE
-from aviary.mission.two_dof.ode.rotation_ode import RotationODE as TwoDOFRotationODE
+from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE as TwoDOFTakeOffODE
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment as TwoDOFSimplifiedLanding
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment as AnalyticTaxi
-
 
 # Phase builders
 from aviary.mission.phase_builder import PhaseBuilder
 
 # note that this is only for simplified right now
-from aviary.mission.height_energy.phases.energy_phase import (
-    EnergyPhase as HeightEnergyPhaseBuilder,
+from aviary.mission.energy_state.phases.energy_phase import (
+    EnergyPhase as EnergyStatePhaseBuilder,
 )
-from aviary.mission.height_energy.phases.build_landing import (
-    Landing as HeightEnergyLandingPhaseBuilder,
+from aviary.mission.energy_state.phases.build_landing import (
+    Landing as EnergyStateLandingPhaseBuilder,
 )
 
 # note that this is only for simplified right now
-from aviary.mission.height_energy.phases.build_takeoff import (
-    Takeoff as HeightEnergyTakeoffPhaseBuilder,
+from aviary.mission.energy_state.phases.build_takeoff import (
+    Takeoff as EnergyStateTakeoffPhaseBuilder,
 )
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingApproachToMicP3 as DetailedLandingApproachToMicP3PhaseBuilder,
     LandingMicP3ToObstacle as DetailedLandingMicP3ToObstaclePhaseBuilder,
     LandingObstacleToFlare as DetailedLandingObstacleToFlarePhaseBuilder,
@@ -145,7 +138,7 @@ from aviary.mission.height_energy.phases.detailed_landing_phases import (
     LandingTouchdownToNoseDown as DetailedLandingTouchdownToNoseDownPhaseBuilder,
     LandingNoseDownToStop as DetailedLandingNoseDownToStopPhaseBuilder,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffBrakeReleaseToDecisionSpeed as DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder,
     TakeoffDecisionSpeedToRotate as DetailedTakeoffDecisionSpeedToRotatePhaseBuilder,
     TakeoffDecisionSpeedBrakeDelay as DetailedTakeoffDecisionSpeedBrakeDelayPhaseBuilder,
@@ -161,18 +154,18 @@ from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
 
 # Phase builders
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase as TwoDOFAccelerationPhase
-from aviary.mission.two_dof.phases.ascent_phase import AscentPhase as TwoDOFAscentPhase
 from aviary.mission.two_dof.phases.flight_phase import FlightPhase as TwoDOFFlightPhase
-from aviary.mission.two_dof.phases.groundroll_phase import (
-    GroundrollPhase as TwoDOFGroundrollPhase,
+from aviary.mission.two_dof.phases.takeoff_phase import TakeoffPhase as TwoDOFTakeoffPhase
+from aviary.mission.two_dof.phases.breguet_cruise_phase import (
+    BreguetCruisePhase,
+    ElectricCruisePhase,
 )
-from aviary.mission.two_dof.phases.rotation_phase import RotationPhase as TwoDOFRotationPhase
 
 # Trajectory builders
-from aviary.mission.height_energy.phases.detailed_landing_phases import (
+from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingTrajectory as DetailedLandingTrajectoryBuilder,
 )
-from aviary.mission.height_energy.phases.detailed_takeoff_phases import (
+from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as DetailedTakeoffTrajectoryBuilder,
 )
 
@@ -190,11 +183,20 @@ from aviary.subsystems.aerodynamics.flops_based.tabular_aero_group import Tabula
 # Atmosphere
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 
+# Energy
+from aviary.subsystems.energy.battery_builder import BatteryBuilder
+
 # Geometry
 from aviary.subsystems.geometry.geometry_builder import GeometryBuilder, CoreGeometryBuilder
 
 # Mass
 from aviary.subsystems.mass.mass_builder import MassBuilder, CoreMassBuilder
+
+# Performance
+from aviary.subsystems.performance.performance_builder import (
+    PerformanceBuilder,
+    CorePerformanceBuilder,
+)
 
 # Propulsion
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
@@ -205,3 +207,6 @@ from aviary.subsystems.propulsion.propulsion_builder import (
     CorePropulsionBuilder,
 )
 from aviary.subsystems.propulsion.turboprop_model import TurbopropModel
+from aviary.subsystems.propulsion.gearbox.gearbox_builder import GearboxBuilder
+from aviary.subsystems.propulsion.motor.motor_builder import MotorBuilder
+from aviary.subsystems.propulsion.propeller.propeller_builder import PropellerBuilder

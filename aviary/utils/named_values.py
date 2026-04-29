@@ -32,43 +32,44 @@ OptionalValueAndUnits = Union[ValueAndUnits, Any]
 class NamedValues(Collection):
     """Define a collection of named values with associated units."""
 
+    __slots__ = ('_mapping',)
+
     def __init__(self, other=None, **kwargs):
         """
         Initialize this collection.
 
         Notes
         -----
-        When initializing from another collection, the following types of
-        collections are supported:
+        When initializing from another collection, the following types of collections are supported:
 
             * `NamedValues`
             * `Dict[str, ValueAndUnits]`
             * `Iterable[Tuple[str, ValueAndUnits]]`
 
-        When initializing from keyword arguments, the mapped item must be of a
-        type of `ValueAndUnits`.
+        When initializing from keyword arguments, the mapped item must be of a type of
+        `ValueAndUnits`.
         """
         self._mapping = {}
 
         self.update(other, **kwargs)
 
-    def get_item(self, key, default=(None, None)) -> OptionalValueAndUnits:
+    def get_item(self, key) -> OptionalValueAndUnits:
         """
         Return the named value and its associated units.
-
-        Note, this method never raises `KeyError` or `TypeError`.
 
         Parameters
         ----------
         key : str
             the name of the item
 
-        default : OptionalValueAndUnits (None, None)
-            if the item does not exist, return this object
-
         Returns
         -------
         OptionalValueAndUnits
+
+        Raises
+        ------
+        KeyError
+            if the named value does not exist
 
         See Also
         --------
@@ -78,7 +79,7 @@ class NamedValues(Collection):
         item = self._mapping.get(key, _UNDEFINED)
 
         if item is _UNDEFINED:
-            return default
+            raise KeyError(f'key not found: {key}')
 
         return item
 
@@ -114,22 +115,18 @@ class NamedValues(Collection):
         """
         Return the named value in the specified units.
 
-        Note, requesting a named value that does not exist will raise `KeyError`.
-
-        Note, specifying units of `None` or units of any type other than `str` will raise
-        `TypeError`.
-
         Parameters
         ----------
         key : str
             the name of the item
 
-        units : str ('unitless')
-            the units of the returned value
+        units : str
+            the units of the returned value in OpenMDAO format (e.g. "unitless")
 
         Returns
         -------
         val
+            value of `key`, converted to requested `units`
 
         Raises
         ------
@@ -144,7 +141,7 @@ class NamedValues(Collection):
         item = self._mapping.get(key, _UNDEFINED)
 
         if item is _UNDEFINED:
-            raise KeyError(f'KeyError: key not found: {key}')
+            raise KeyError(f'key not found: {key}')
 
         val, old_units = item
 
@@ -179,6 +176,18 @@ class NamedValues(Collection):
         self._check_units('set_val', key, units)
 
         self._mapping[key] = (val, units)
+
+    def keys(self):
+        """Return a new view of the collection's names."""
+        return self._mapping.keys()
+
+    def items(self):
+        """Return a new view of the collection's `(key, (val, units))`."""
+        return self._mapping.items()
+
+    def values(self):
+        """Return a new view of the collection's `(val, units)`."""
+        return self._mapping.values()
 
     def __repr__(self):
         """Return a string containing a printable representation of the collection."""
@@ -254,7 +263,7 @@ class NamedValues(Collection):
             del self._mapping[key]
 
         except KeyError:
-            raise KeyError(f'KeyError: key not found: {key}')
+            raise KeyError(f'key not found: {key}')
 
     def __eq__(self, other):
         """Return whether or not this collection is equivalent to another."""
@@ -297,24 +306,26 @@ class NamedValues(Collection):
         """
         if (units is None) or not isinstance(units, str):
             raise TypeError(
-                f'{self.__class__.__name__}: {funcname}({key}): unsupported units: {units}'
+                f'{self.__class__.__name__}.{funcname}({key}): unsupported units: {units}'
             )
 
-    __slots__ = ('_mapping',)
 
-
-# It is weird that these are not methods - it requires us to import these in AviarValues
-# just so they can be imported from that file as well. Seems unintuitive
 def get_keys(named_values: NamedValues):
-    """Return a new view of the collection's names."""
-    return named_values._mapping.keys()
+    raise DeprecationWarning(
+        'The get_keys() function has been replaced with the NamedValues.keys() method to better '
+        'mirror dictionary functionality.'
+    )
 
 
 def get_items(named_values: NamedValues):
-    """Return a new view of the collection's `(key, (val, units))`."""
-    return named_values._mapping.items()
+    raise DeprecationWarning(
+        'The get_items() function has been replaced with the NamedValues.items() method to better '
+        'mirror dictionary functionality.'
+    )
 
 
 def get_values(named_values: NamedValues):
-    """Return a new view of the collection's `(val, units)`."""
-    return named_values._mapping.values()
+    raise DeprecationWarning(
+        'The get_values() function has been replaced with the NamedValues.values() method to better '
+        'mirror dictionary functionality.'
+    )

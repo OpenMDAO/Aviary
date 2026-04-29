@@ -18,7 +18,7 @@ Large Single Aisle 2 Mission/fixed_gw
 inputs.set_val(Aircraft.Design.BASE_AREA, 0.0, 'ft**2')
 inputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN_SCALER, 0.00514)
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.84)
-inputs.set_val(Mission.Design.GROSS_MASS, 174200.0, 'lbm')
+inputs.set_val(Aircraft.Design.GROSS_MASS, 174200.0, 'lbm')
 inputs.set_val(Aircraft.Design.USE_ALT_MASS, True)
 inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 1.0)
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
@@ -116,7 +116,7 @@ inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_LOWER, 10.0)
 inputs.set_val(Aircraft.HorizontalTail.LAMINAR_FLOW_UPPER, 10.0)
 inputs.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 0.3008)
 inputs.set_val(Aircraft.HorizontalTail.THICKNESS_TO_CHORD, 0.1195)
-inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, 0.0)
+inputs.set_val(Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, 0.0)
 inputs.set_val(Aircraft.HorizontalTail.MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA, 707.706, 'ft**2')  # Override
 inputs.set_val(Aircraft.HorizontalTail.WETTED_AREA_SCALER, 1.0)
@@ -167,7 +167,6 @@ inputs.set_val(Aircraft.Engine.NUM_WING_ENGINES, 2)
 inputs.set_val(Aircraft.Engine.THRUST_REVERSERS_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SCALE_MASS, True)
 inputs.set_val(Aircraft.Engine.MASS_SCALER, 1.15)
-inputs.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
 
 inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
@@ -229,13 +228,12 @@ inputs.set_val(Aircraft.Wing.WETTED_AREA_SCALER, 1.0)
 
 # Mission
 # ---------------------------
-inputs.set_val(Mission.Summary.CRUISE_MACH, 0.785)
-inputs.set_val(Mission.Design.RANGE, 2960.0, 'NM')
-inputs.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
+inputs.set_val(Aircraft.Design.CRUISE_MACH, 0.785)
+inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 659, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL, 659, 'lbm')
 
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
@@ -247,11 +245,11 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35)
 # never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
 # lbf TODO: where should this get connected from?
-inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 27301.0, 'lbf')
+inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 27301.0, 'lbf')
 
 # Settings
 # ---------------------------
-inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.HEIGHT_ENERGY)
+inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
@@ -261,8 +259,8 @@ inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
 
 outputs.set_val(Aircraft.Design.EMPTY_MASS, 96288.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPTY_MASS_MARGIN, 492.0, 'lbm')
-outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS, 146328.0, 'lbm')
-outputs.set_val(Mission.Summary.OPERATING_MASS, 106360.0, 'lbm')
+outputs.set_val(Aircraft.Design.TOUCHDOWN_MASS_MAX, 146328.0, 'lbm')
+outputs.set_val(Mission.OPERATING_MASS, 106360.0, 'lbm')
 outputs.set_val(Aircraft.Design.EMPENNAGE_MASS, 3906.6, 'lbm')
 propulsion_mass = 20275.0
 propulsion_mass_units = 'lbm'
@@ -273,10 +271,9 @@ outputs.set_val(Aircraft.Design.STRUCTURE_MASS, struct_mass, struct_mass_units)
 sys_equip_mass = 32232.0
 sys_equip_mass_units = 'lbm'
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, sys_equip_mass, sys_equip_mass_units)
-outputs.set_val(Mission.Summary.USEFUL_LOAD, 10071.93, 'lbm')
+outputs.set_val(Mission.USEFUL_LOAD, 10071.93, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
-outputs.set_val(Mission.Summary.ZERO_FUEL_MASS, 142837.0, 'lbm')
-outputs.set_val(Mission.Summary.FUEL_MASS, 31363.0, 'lbm')
+outputs.set_val(Mission.ZERO_FUEL_MASS, 142837.0, 'lbm')
 
 outputs.set_val(Aircraft.AirConditioning.MASS, 4212.0, 'lbm')
 
@@ -385,8 +382,8 @@ outputs.set_val(Aircraft.Wing.MISC_MASS, 1718.7, 'lbm')
 outputs.set_val(Aircraft.Wing.SHEAR_CONTROL_MASS, 7552.6, 'lbm')
 outputs.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS, 3127.4, 'lbm')
 
-outputs.set_val(Mission.Design.MACH, 0.799)
-outputs.set_val(Mission.Design.LIFT_COEFFICIENT, 0.523)
+outputs.set_val(Aircraft.Design.MACH, 0.799)
+outputs.set_val(Aircraft.Design.LIFT_COEFFICIENT, 0.523)
 
 # Back out some of the outputs need for validation of alt mass
 sys_equip_mass_base = (sys_equip_mass - 0.01 * (struct_mass + propulsion_mass)) / 1.01

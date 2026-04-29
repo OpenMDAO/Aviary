@@ -23,7 +23,7 @@ from aviary.validation_cases.benchmark_utils import compare_against_expected_val
 class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
-    GASP mass method, GASP aero method, and HEIGHT_ENERGY mission method. Expected outputs
+    GASP mass method, GASP aero method, and ENERGY_STATE mission method. Expected outputs
     based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
     """
 
@@ -122,7 +122,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         prob = run_aviary(
             'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv',
             self.phase_info,
-            max_iter=100,
+            max_iter=50,
             optimizer='IPOPT',
             verbosity=0,
         )
@@ -136,10 +136,11 @@ class ProblemPhaseTestCase(unittest.TestCase):
             self.phase_info,
             max_iter=50,
             optimizer='SNOPT',
-            verbosity=0,
+            verbosity=1,
         )
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)
+        self.assertTrue(prob.result.success)
 
 
 if __name__ == '__main__':

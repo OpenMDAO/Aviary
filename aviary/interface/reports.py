@@ -32,7 +32,6 @@ def register_custom_reports():
         class_name='AviaryProblem',
         method='run_driver',
         pre_or_post='post',
-        # **kwargs
     )
 
     register_report(
@@ -148,7 +147,7 @@ def sizing_results(prob: AviaryProblem):
         prob.save_results(report_file)
 
 
-def subsystem_report(prob: AviaryProblem, **kwargs):
+def subsystem_report(prob: AviaryProblem):
     """
     Loops through all subsystem builders in the AviaryProblem calls their write_report
     method. All generated report files are placed in the "reports/subsystem_reports" folder.
@@ -176,7 +175,7 @@ def subsystem_report(prob: AviaryProblem, **kwargs):
     subsystems = model.subsystems  # TODO: redo for multimissions
 
     for subsystem in subsystems:
-        subsystem.report(prob, reports_folder, **kwargs)
+        subsystem.report(prob, reports_folder)
 
 
 def mission_report(prob: AviaryProblem, **kwargs):
@@ -252,7 +251,6 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             # get initial values, first in traj
             if idx == 0:
-                initial_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', 0)[0]
                 initial_time = _get_phase_value(model, 'traj', phase, 'time', 'min', 0)
                 initial_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', 0)[0]
 
@@ -264,17 +262,21 @@ def mission_report(prob: AviaryProblem, **kwargs):
             data[phase] = outputs
 
             # get final values, last in traj
-            final_mass = _get_phase_value(model, 'traj', phase, 'mass', 'lbm', -1)[0]
             final_time = _get_phase_value(model, 'traj', phase, 'time', 'min', -1)
             final_range = _get_phase_value(model, 'traj', phase, 'distance', 'nmi', -1)[0]
 
             totals = NamedValues()
-            totals.set_val('Total Fuel Burn', initial_mass - final_mass, 'lbm')
 
             if multi_mission:
                 var_name = f'{name}.'
             else:
                 var_name = ''
+
+            totals.set_val(
+                'Total Fuel Burn',
+                prob.get_val(f'{var_name}mission:fuel', units='lbm')[0],
+                units='lbm',
+            )
 
             totals.set_val(
                 'Total Fuel Capacity',

@@ -38,12 +38,13 @@ class ExplicitHorizontalTailMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[
                 Aircraft.HorizontalTail.AREA,
                 Aircraft.HorizontalTail.TAPER_RATIO,
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.HorizontalTail.MASS_SCALER,
             ],
             output_keys=Aircraft.HorizontalTail.MASS,
@@ -79,7 +80,7 @@ class ExplicitHorizontalTailMassTest2(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.HorizontalTail.AREA, 10.0, 'ft**2')
         prob.set_val(Aircraft.HorizontalTail.TAPER_RATIO, 10.0, 'unitless')
-        prob.set_val(Mission.Design.GROSS_MASS, 1000.0, 'lbm')
+        prob.set_val(Aircraft.Design.GROSS_MASS, 1000.0, 'lbm')
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
@@ -104,6 +105,7 @@ class ExplicitAltHorizontalTailMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.HorizontalTail.AREA, Aircraft.HorizontalTail.MASS_SCALER],

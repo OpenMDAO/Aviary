@@ -35,7 +35,11 @@ def sigmoidX(x, x0, mu=1.0):
         y = np.zeros(n_size, dtype=dtype)
         # avoid overflow in squared term, underflow seems to be ok
         calc_idx = np.where((x.real - x0) / mu > -320)
-        y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
+
+        if isinstance(x0, np.ndarray) and len(x0) == n_size:
+            y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0[calc_idx]) / mu))
+        else:
+            y[calc_idx] = 1 / (1 + np.exp(-(x[calc_idx] - x0) / mu))
     else:
         if isinstance(x, float):
             dtype = float
@@ -215,7 +219,7 @@ def smooth_int_tanh(x, mu=10.0):
     """
     Smooth approximation of int(x) using tanh.
     """
-    f = np.floor(x)
+    f = np.floor(x.real) + x.imag * 1j
     frac = x - f
     t = np.tanh(mu * (frac - 0.5))
     s = 0.5 * (t + 1)
@@ -228,7 +232,7 @@ def d_smooth_int_tanh(x, mu=10.0):
     Smooth approximation of int(x) using tanh.
     Returns (y, dy_dx).
     """
-    f = np.floor(x)
+    f = np.floor(x.real) + x.imag * 1j
     frac = x - f
     t = np.tanh(mu * (frac - 0.5))
     dy_dx = 0.5 * mu * (1 - t**2)

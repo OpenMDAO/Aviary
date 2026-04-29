@@ -30,10 +30,14 @@ class TestAeroForces(unittest.TestCase):
 
         prob.run_model()
 
-        lift = prob.get_val(Dynamic.Vehicle.LIFT)
-        drag = prob.get_val(Dynamic.Vehicle.DRAG)
-        assert_near_equal(lift, [1370.3, 1233.27, 1096.24])
-        assert_near_equal(drag, [1370.3, 1301.785, 1164.755])
+        expected_values = {
+            Dynamic.Vehicle.LIFT: [1370.3, 1233.27, 1096.24],
+            Dynamic.Vehicle.DRAG: [1370.3, 1301.785, 1164.755],
+        }
+
+        for var_name, reg_data in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(prob.get_val(var_name), reg_data)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-15)

@@ -5,9 +5,9 @@ from typing import Union
 
 import importlib_resources
 
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 def get_aviary_resource_path(resource_name: str) -> Path:
@@ -51,7 +51,7 @@ def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
     aviary_inputs : AviaryValues
         Instance of AviaryValues containing all initial values.
     """
-    for key, (val, units) in get_items(aviary_inputs):
+    for key, (val, units) in aviary_inputs.items():
         try:
             prob.set_val(key, val, units)
 
@@ -60,7 +60,7 @@ def set_aviary_initial_values(prob, aviary_inputs: AviaryValues):
             continue
 
 
-def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_data=_MetaData):
+def set_aviary_input_defaults(model, inputs, aviary_inputs: AviaryValues, meta_data=CoreMetaData):
     """
     This function sets the default values and units for any inputs prior to
     setup. This is needed to resolve ambiguities when inputs are promoted
@@ -284,7 +284,7 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
         from glob import glob
 
         contents = glob(str(get_aviary_resource_path('models') / '**'), recursive=True)
-        close_match = None
+        close_match = []
         for item in contents:
             item = Path(item)
             # check if full filepath, file name with extension, or just file (or folder) name
@@ -292,11 +292,19 @@ def get_model(file_name: str, verbosity=Verbosity.BRIEF) -> Path:
             if aviary_path == item or aviary_path.name == item.name:
                 return item
             elif aviary_path.stem == item.stem:
-                close_match = item
+                close_match.append(item)
 
-    if close_match is not None:
-        # Probably requested the wrong file extension.
-        return close_match
+    if len(close_match) > 0:
+        best_match = None
+        # if a .csv file exists, use it as the best match
+        for item in close_match:
+            if item.suffix.lower() == '.csv':
+                best_match = item
+                break
+        if best_match == None:
+            # Probably requested the wrong file extension.
+            best_match = close_match.pop(0)
+        return best_match
 
     # If the path doesn't exist, raise an error.
     raise FileNotFoundError("File or Folder not found in Aviary's hangar")

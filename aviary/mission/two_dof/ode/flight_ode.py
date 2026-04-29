@@ -14,7 +14,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightODE(TwoDOFODE):
-    """ODE for quasi-steady flight in GASP 2-dof. This replaces ClimbODE and DescentODE.
+    """ODE for quasi-steady flight in GASP 2DOF. This replaces ClimbODE and DescentODE.
 
     This ODE has a ``KSComp`` which aggregates the maximum EAS and mach number constraints.
     This allows a single constraint to whichever of the two constraints would be active at
@@ -39,6 +39,7 @@ class FlightODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
         input_speed_type = self.options['input_speed_type']
 
         if input_speed_type is SpeedType.EAS:
@@ -189,24 +190,34 @@ class FlightODE(TwoDOFODE):
                 }
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilder):
-                    lift_balance_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = lift_balance_group
                 else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
-
+                    target = self
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                target.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,

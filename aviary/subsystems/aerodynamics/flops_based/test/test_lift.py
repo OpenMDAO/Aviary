@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight, SimpleLift
@@ -18,6 +19,7 @@ data_sets = get_flops_case_names(
 )
 
 
+@use_tempdirs
 class SimpleLiftTest(unittest.TestCase):
     @parameterized.expand(data_sets, name_func=print_case)
     def test_case(self, case_name):
@@ -75,6 +77,7 @@ class SimpleLiftTest(unittest.TestCase):
         assert_near_equal(prob.get_val(Dynamic.Vehicle.LIFT), mission_simple_data[case_name], 1e-6)
 
 
+@use_tempdirs
 class LiftEqualsWeightTest(unittest.TestCase):
     @parameterized.expand(data_sets, name_func=print_case)
     def test_case(self, case_name):

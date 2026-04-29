@@ -41,6 +41,12 @@ aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
+# TODO: Needed to reduce the drag so that engine wasn't full throttle in cruise.
+# There must be something about drag that still isn't working for BWB.
+aircraft:design:subsonic_drag_coeff_factor,0.7,unitless
+# aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
+
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
@@ -66,7 +72,6 @@ aircraft:engine:reference_mass,22017.0,lbm
 aircraft:engine:reference_sls_thrust,86459.2,lbf
 aircraft:engine:scale_factor,0.8096304384,unitless
 aircraft:engine:scale_mass,True,unitless
-aircraft:engine:scale_performance,True,unitless
 aircraft:engine:scaled_sls_thrust,70000,lbf
 aircraft:engine:subsonic_fuel_flow_scaler,1.0,unitless
 aircraft:engine:supersonic_fuel_flow_scaler,1.0,unitless
@@ -85,7 +90,7 @@ aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:wing_fuel_fraction,0.68835495693,unitless
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
 aircraft:furnishings:mass_scaler,1.0,unitless
-aircraft:fuselage:height_to_width_ratio,0.11,unitless
+aircraft:fuselage:sidebody_thickness_to_chord,0.11,unitless
 aircraft:fuselage:length,137.5,ft
 aircraft:fuselage:mass_scaler,1.0,unitless
 aircraft:fuselage:max_width,64.58,ft
@@ -99,7 +104,7 @@ aircraft:horizontal_tail:mass_scaler,1.0,unitless
 aircraft:horizontal_tail:num_tails,0,unitless
 aircraft:horizontal_tail:taper_ratio,0.0,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.11,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
@@ -130,7 +135,7 @@ aircraft:wing:control_surface_area_ratio,0.333,unitless
 aircraft:wing:detailed_wing,True,unitless
 aircraft:wing:dihedral,3.0,deg
 aircraft:wing:glove_and_bat,121.05,ft**2
-aircraft:wing:input_station_dist,0.0,0.5,1.0,unitless
+aircraft:wing:input_station_distribution,0.0,0.5,1.0,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
 aircraft:wing:mass_scaler,1,unitless
 aircraft:wing:max_camber_at_70_semispan,2,unitless
@@ -151,17 +156,16 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
-mission:design:gross_mass,874099,lbm
-mission:design:range,7750,NM
-mission:design:thrust_takeoff_per_eng,0.25,lbf
+aircraft:design:gross_mass,874099,lbm
+aircraft:design:range,7750,NM
+aircraft:design:thrust_takeoff_per_eng,0.25,lbf
 mission:landing:initial_velocity,140,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:landing:rolling_friction_coefficient,0.025,unitless
 mission:takeoff:lift_coefficient_max,2.0,unitless
-mission:summary:cruise_mach,0.85,unitless
-mission:summary:fuel_flow_scaler,1.0,unitless
+aircraft:design:cruise_mach,0.85,unitless
 settings:aerodynamics_method,FLOPS,unitless
-settings:equations_of_motion,height_energy,unitless
+settings:equations_of_motion,energy_state,unitless
 settings:mass_method,FLOPS,unitless
 settings:verbosity,1,unitless
 

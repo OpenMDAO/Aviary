@@ -60,6 +60,7 @@ class PayloadGroupTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         do_validation_test(
+            self,
             prob,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
@@ -99,6 +100,7 @@ class BWBCargoMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
             input_keys=[Aircraft.CrewPayload.MISC_CARGO, Aircraft.CrewPayload.WING_CARGO],

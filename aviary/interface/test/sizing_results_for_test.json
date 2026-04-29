@@ -36,19 +36,19 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:design:reserve_fuel_additional",
+        "mission:reserve_fuel_additional",
         3000.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "aircraft:design:reserve_fuel_fraction",
+        "mission:reserve_fuel_margin",
         0.0,
         "unitless",
         "<class 'float'>"
     ],
     [
-        "mission:design:cruise_altitude",
+        "aircraft:design:cruise_altitude",
         35000.0,
         "ft",
         "<class 'float'>"
@@ -204,7 +204,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:touchdown_mass",
+        "aircraft:design:touchdown_mass_max",
         152800.0,
         "lbm",
         "<class 'float'>"
@@ -401,14 +401,6 @@
     ],
     [
         "aircraft:engine:scale_mass",
-        [
-            true
-        ],
-        "unitless",
-        "<class 'list'>"
-    ],
-    [
-        "aircraft:engine:scale_performance",
         [
             true
         ],
@@ -618,7 +610,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:horizontal_tail:vertical_tail_fraction",
+        "aircraft:horizontal_tail:vertical_tail_mount_location",
         0.0,
         "unitless",
         "<class 'float'>"
@@ -806,7 +798,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:chord_per_semispan_dist",
+        "aircraft:wing:chord_per_semispan_distribution",
         [
             0.31,
             0.23,
@@ -846,7 +838,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:input_station_dist",
+        "aircraft:wing:input_station_distribution",
         [
             0.0,
             0.2759,
@@ -868,7 +860,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:load_path_sweep_dist",
+        "aircraft:wing:load_path_sweep_distribution",
         [
             0.0,
             22.0
@@ -943,7 +935,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:wing:thickness_to_chord_dist",
+        "aircraft:wing:thickness_to_chord_distribution",
         [
             0.145,
             0.115,
@@ -989,19 +981,19 @@
         "<class 'float'>"
     ],
     [
-        "mission:design:gross_mass",
+        "aircraft:design:gross_mass",
         175400.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "mission:design:range",
+        "aircraft:design:range",
         3500.0,
         "NM",
         "<class 'float'>"
     ],
     [
-        "mission:design:thrust_takeoff_per_eng",
+        "aircraft:design:thrust_takeoff_per_eng",
         28928.1,
         "lbf",
         "<class 'float'>"
@@ -1013,19 +1005,13 @@
         "<class 'float'>"
     ],
     [
-        "mission:summary:cruise_mach",
+        "aircraft:design:cruise_mach",
         0.785,
         "unitless",
         "<class 'float'>"
     ],
     [
-        "mission:summary:fuel_flow_scaler",
-        1.0,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
-        "mission:takeoff:fuel_simple",
+        "mission:takeoff:fuel",
         577.0,
         "lbm",
         "<class 'float'>"
@@ -1044,7 +1030,7 @@
     ],
     [
         "settings:equations_of_motion",
-        "HEIGHT_ENERGY",
+        "ENERGY_STATE",
         "unitless",
         "<enum 'EquationsOfMotion'>"
     ],
@@ -1139,13 +1125,13 @@
         "<class 'int'>"
     ],
     [
-        "mission:summary:gross_mass",
+        "mission:gross_mass",
         175400.0,
         "lbm",
         "<class 'float'>"
     ],
     [
-        "mission:summary:range",
+        "mission:range",
         1906.0,
         "NM",
         "<class 'float'>"

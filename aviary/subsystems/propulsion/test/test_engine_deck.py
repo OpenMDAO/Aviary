@@ -61,9 +61,6 @@ class EngineDeckTest(unittest.TestCase):
 
         model = build_engine_deck(aviary_values)
 
-        # hardcoded data of processed engine model from LEAPS1 after flight idle
-        # point generation, sorted in Aviary order
-
         expected_mach_number = []
         expected_altitude = []
         expected_throttle = []

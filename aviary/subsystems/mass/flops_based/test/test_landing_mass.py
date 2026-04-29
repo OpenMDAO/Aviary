@@ -28,10 +28,11 @@ class LandingMassTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
+            self,
             prob,
             case_name,
-            input_keys=[Mission.Design.GROSS_MASS, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO],
-            output_keys=Aircraft.Design.TOUCHDOWN_MASS,
+            input_keys=[Aircraft.Design.GROSS_MASS, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO],
+            output_keys=Aircraft.Design.TOUCHDOWN_MASS_MAX,
             version=Version.TRANSPORT_and_BWB,
         )
 

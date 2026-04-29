@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.flops_based.ground_effect import GroundEffect
-from aviary.utils.aviary_values import AviaryValues, get_items
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class TestGroundEffect(unittest.TestCase):
     """
     Perform regression test in all three computational ranges:
@@ -24,7 +26,7 @@ class TestGroundEffect(unittest.TestCase):
 
         tol = 1e-12
 
-        for key, (desired, units) in get_items(_regression_data):
+        for key, (desired, units) in _regression_data.items():
             try:
                 actual = prob.get_val(key, units)
 

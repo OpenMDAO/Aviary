@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.flops_based.buffet_lift import BuffetLift
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class TestBuffetLift(unittest.TestCase):
     def test_derivs(self):
         # fmt: off
@@ -29,7 +31,7 @@ class TestBuffetLift(unittest.TestCase):
                 Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
                 Aircraft.Wing.SWEEP,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Mission.Design.MACH,
+                Aircraft.Design.MACH,
             ],
         )
 
@@ -41,7 +43,7 @@ class TestBuffetLift(unittest.TestCase):
         prob.set_val(Aircraft.Wing.SWEEP, 25)
         prob.set_val(Aircraft.Wing.ASPECT_RATIO, 11.232936003236246)
         prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, 0.0)
-        prob.set_val(Mission.Design.MACH, 0.801)
+        prob.set_val(Aircraft.Design.MACH, 0.801)
 
         prob.run_model()
         derivs = prob.check_partials(compact_print=True, method='cs')

@@ -5,7 +5,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 import aviary.api as av
 from aviary.core.aviary_problem import reload_aviary_problem
-from aviary.models.missions.height_energy_default import phase_info, phase_info_parameterization
+from aviary.models.missions.energy_state_default import phase_info, phase_info_parameterization
 from aviary.utils.functions import get_path
 
 
@@ -25,13 +25,15 @@ class TestSizingResults(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', local_phase_info
+            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            local_phase_info,
+            phase_info_modifier=phase_info_parameterization,
         )
 
         # Preprocess inputs
         prob.check_and_preprocess_inputs()
         prob.add_pre_mission_systems()
-        prob.add_phases(phase_info_parameterization=phase_info_parameterization)
+        prob.add_phases()
         prob.add_post_mission_systems()
 
         # Link phases and variables
@@ -53,18 +55,20 @@ class TestSizingResults(unittest.TestCase):
         )
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_alternate(self):
+    def test_off_design_min_fuel(self):
         local_phase_info = deepcopy(phase_info)
 
         prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
-        prob.run_off_design_mission(problem_type='alternate', phase_info=local_phase_info)
+        prob.run_off_design_mission(problem_type='off_design_min_fuel', phase_info=local_phase_info)
 
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_fallout(self):
+    def test_off_design_max_range(self):
         local_phase_info = deepcopy(phase_info)
 
         prob = reload_aviary_problem('interface/test/sizing_results_for_test.json')
-        prob.run_off_design_mission(problem_type='fallout', phase_info=local_phase_info)
+        prob.run_off_design_mission(
+            problem_type='off_design_max_range', phase_info=local_phase_info
+        )
 
     def compare_files(self, test_file, validation_file):
         """
@@ -98,4 +102,4 @@ if __name__ == '__main__':
 
     # test = TestSizingResults()
     # test.test_save_json()
-    # test.test_fallout()
+    # test.test_off_design_max_range()

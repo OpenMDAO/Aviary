@@ -5,18 +5,20 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
-from aviary.models.missions.height_energy_default import phase_info as height_energy_phase_info
+from aviary.models.missions.energy_state_default import phase_info as energy_state_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 
 
 class BaseProblemPhaseTestCase(unittest.TestCase):
     """Test the setup and run of a simple energy method and 2DOF mission (no optimization, single iteration)."""
 
-    def build_and_run_problem(self, input_filename, phase_info, objective_type=None):
+    def build_and_run_problem(
+        self, input_filename, phase_info, phase_info_modifier=None, objective_type=None
+    ):
         # Build problem
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs(input_filename, phase_info)
+        prob.load_inputs(input_filename, phase_info, phase_info_modifier)
 
         prob.check_and_preprocess_inputs()
 
@@ -41,8 +43,8 @@ class TwoDOFZeroItersTestCase(BaseProblemPhaseTestCase):
 @use_tempdirs
 class HEZeroItersTestCase(BaseProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='IPOPT')
-    def test_zero_iters_height_energy(self):
-        local_phase_info = deepcopy(height_energy_phase_info)
+    def test_zero_iters_energy_state(self):
+        local_phase_info = deepcopy(energy_state_phase_info)
         local_inputs = deepcopy(inputs)
         local_phase_info['pre_mission']['include_takeoff'] = True
         local_phase_info['post_mission']['include_landing'] = True
@@ -50,6 +52,6 @@ class HEZeroItersTestCase(BaseProblemPhaseTestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = TwoDOFZeroItersTestCase()
-    # test.test_zero_iters_2DOF()
+    # unittest.main()
+    test = TwoDOFZeroItersTestCase()
+    test.test_zero_iters_2DOF()
