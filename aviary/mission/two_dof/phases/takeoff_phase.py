@@ -69,7 +69,7 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
         self.add_state_options('flight_path_angle', units='rad', defaults=defaults)
 
         defaults = {
-            'angle_of_attack_ref': np.deg2rad(5),
+            'angle_of_attack_ref': np.deg2rad(15),
             'angle_of_attack_bounds': (np.deg2rad(-30), np.deg2rad(30)),
             'angle_of_attack_optimize': True,
         }

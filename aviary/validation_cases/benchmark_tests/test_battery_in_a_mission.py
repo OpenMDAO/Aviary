@@ -168,7 +168,6 @@ class TestBatteryMission(unittest.TestCase):
             1e-6,
         )
 
-    @unittest.skip('Not converging in CI for unknown reasons - requires additional investigation')
     @require_pyoptsparse(optimizer='SNOPT')
     def test_subsystems_in_a_mission_2dof(self):
         phase_info = deepcopy(twodof_phase_info)
