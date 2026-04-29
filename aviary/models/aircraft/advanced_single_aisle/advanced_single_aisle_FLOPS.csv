@@ -179,7 +179,6 @@ mission:landing:rolling_friction_coefficient,0.0175,unitless
 mission:landing:spoiler_drag_coefficient,0.085,unitless
 mission:landing:spoiler_lift_coefficient,-0.81,unitless
 aircraft:design:cruise_mach,0.785,unitless
-mission:fuel_flow_scaler,1,unitless
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:angle_of_attack_runway,0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless

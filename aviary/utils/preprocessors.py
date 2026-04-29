@@ -847,9 +847,6 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
 
-    if Mission.FUEL_FLOW_SCALER not in aviary_options:
-        aviary_options.set_val(Mission.FUEL_FLOW_SCALER, 1.0)
-
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))
     total_num_fuse_engines = int(sum(num_fuse_engines_all))
