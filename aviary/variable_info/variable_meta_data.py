@@ -6395,7 +6395,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='ft',
-    desc='Current altitude of the vehicle',
+    desc='Current geometric altitude of the vehicle',
     default_value=0.0,
     multivalue=True,
 )
