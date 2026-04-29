@@ -510,20 +510,20 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         problem_type = 'sizing'
 
     if isinstance(design_range, list):
-        # if the design range target_range value is 0, set the problem_type to fallout
+        # if the design range target_range value is 0, set the problem_type to off_design_max_range
         if design_range[0] == 0:
-            problem_type = 'fallout'
+            problem_type = 'off_design_max_range'
             input_values.set_val(Settings.PROBLEM_TYPE, [problem_type])
             design_range = 0
         if problem_type == 'sizing':
             design_range = design_range[0]
         elif problem_type == 'alternate':
             design_range = design_range[2]
-        elif problem_type == 'fallout':
+        elif problem_type == 'off_design_max_range':
             design_range = 0
     else:
         if design_range == 0:
-            input_values.set_val(Settings.PROBLEM_TYPE, ['fallout'])
+            input_values.set_val(Settings.PROBLEM_TYPE, ['off_design_max_range'])
     input_values.set_val(Aircraft.Design.RANGE, [design_range], distance_units)
 
     ## Passengers ##

@@ -1,7 +1,7 @@
 ############
 # SETTINGS #
 ############
-settings:problem_type, fallout, unitless
+settings:problem_type, off_design_max_range, unitless
 settings:equations_of_motion, 2DOF
 settings:aerodynamics_method, GASP
 settings:mass_method, GASP
