@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import argparse
 from copy import deepcopy
+from pathlib import Path
 
 import numpy as np
 import openmdao.api as om
@@ -12,7 +13,7 @@ from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
-from aviary.utils.functions import get_path
+from aviary.utils.functions import get_aviary_resource_path, get_path
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import EngineDeckType
 from aviary.variable_info.variables import Dynamic
@@ -111,7 +112,28 @@ def convert_engine_deck(input_file, output_file, data_format: EngineDeckType, ro
     comments = []
     data = {}
 
-    data_file = get_path(input_file)
+    # If the input is a string, convert it to a Path object.
+    if isinstance(input_file, str):
+        data_file = Path(input_file)
+    else:
+        data_file = input_file
+
+    # Check if input file exists
+    # If the path still doesn't exist, attempt to find it relative to the Aviary package.
+    if not data_file.exists():
+        # Determine the path relative to the Aviary package.
+        data_file = Path(get_aviary_resource_path(str(data_file)))
+
+    if not data_file.exists():
+        raise FileNotFoundError(
+            f'Engine deck file not found: {input_file}. '
+            f'Please check that the file path is correct and the file exists.'
+        )
+
+    if not data_file.is_file():
+        raise ValueError(
+            f'Path is not a file: {input_file}. Please provide a path to a valid engine deck file.'
+        )
 
     legacy_code = data_format.value
     engine_type = 'engine'
