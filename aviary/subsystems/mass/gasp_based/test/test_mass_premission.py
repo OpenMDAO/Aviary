@@ -79,8 +79,6 @@ class MassPremissionTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        # print(f'wetted_area: {self.prob[Aircraft.Fuselage.WETTED_AREA]}')
-
         tol = 5e-4
         expected_values = {
             'gasp_based_geom.cabin_height': 13.1,
@@ -112,6 +110,7 @@ class MassPremissionTestCase1(unittest.TestCase):
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,  # always zero when no body tank
             'extra_fuel_volume': 0,  # always zero when no body tank
             'max_extra_fuel_mass': 0,  # always zero when no body tank
+            Aircraft.Design.USEFUL_LOAD_MASS: 85002.98039399,
         }
 
         for var_name, expected_val in expected_values.items():
