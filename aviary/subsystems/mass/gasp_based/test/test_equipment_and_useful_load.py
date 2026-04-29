@@ -6,20 +6,18 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
     BWBEquipMassGroup,
-    EquipMassSum,
-    EquipMassGroup,
-    UsefulLoadMass,
-    UsefulLoadMassGroup,
     EquipAndUsefulLoadMassGroup,
+    EquipMassGroup,
+    UsefulLoadMassGroup,
 )
-
+from aviary.subsystems.mass.gasp_based.mass_summation import SystemsEquipmentMass, UsefulLoadMass
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
-class FixedEquipMassTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+class EquipmentMassSummationTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -29,7 +27,7 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassSum(),
+            SystemsEquipmentMass(),
             promotes=['*'],
         )
 
@@ -44,9 +42,6 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Hydraulics.MASS, val=1487.78, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Electrical.MASS, val=2231.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.OxygenSystem.MASS, val=50, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.0, units='lbm'
-        )
 
         setup_model_options(self.prob, options)
 
@@ -62,8 +57,8 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class FixedEquipMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+class EquipMassGroupTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -129,8 +124,8 @@ class FixedEquipMassGroupTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class UsefulMassTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+class UsefulMassSumTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -181,7 +176,7 @@ class UsefulMassTestCase1(unittest.TestCase):
 
 
 class UsefulMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -236,7 +231,7 @@ class UsefulMassGroupTest(unittest.TestCase):
 
 
 class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -330,7 +325,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBFixedEquipMassGroupTest(unittest.TestCase):
-    """Created based on GASP BWB model"""
+    """Created based on GASP BWB model."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -393,10 +388,8 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class BWBUsefulMassTestCase1(unittest.TestCase):
-    """
-    Created based on GASP BWB modele
-    """
+class BWBUsefulMassSumTest(unittest.TestCase):
+    """Created based on GASP BWB model."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -446,7 +439,7 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
 
 @use_tempdirs
 class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()

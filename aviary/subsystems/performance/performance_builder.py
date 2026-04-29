@@ -12,7 +12,7 @@ class PerformanceBuilder(SubsystemBuilder):
         Initializes the PerformanceBuilder object with a given name.
     """
 
-    _default_name = 'mass'
+    _default_name = 'performance'
 
 
 class CorePerformanceBuilder(PerformanceBuilder):

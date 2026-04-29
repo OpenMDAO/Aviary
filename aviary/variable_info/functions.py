@@ -606,6 +606,8 @@ def setup_model_options(
             Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM,
         ]
         opt_names_units = [
+            Aircraft.Engine.RPM_DESIGN,
+            Aircraft.Engine.FIXED_RPM,
             Aircraft.Engine.REFERENCE_SLS_THRUST,
             Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
         ]

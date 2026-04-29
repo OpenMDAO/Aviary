@@ -3,15 +3,14 @@ import unittest
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
-from aviary.subsystems.mass.gasp_based.cargo import CargoMass
-
+from aviary.subsystems.mass.gasp_based.cargo_containers import CargoContainerMass
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
 class CargoTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -25,7 +24,7 @@ class CargoTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'cargo',
-            CargoMass(),
+            CargoContainerMass(),
             promotes=['*'],
         )
 
@@ -44,7 +43,7 @@ class CargoTestCase1(unittest.TestCase):
 
 
 class CargoTestCase2(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -58,22 +57,22 @@ class CargoTestCase2(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'cargo',
-            CargoMass(),
+            CargoContainerMass(),
             promotes=['*'],
         )
 
-        import aviary.subsystems.mass.gasp_based.cargo as cargo
+        import aviary.subsystems.mass.gasp_based.cargo_containers as cargo_containers
 
-        cargo.GRAV_ENGLISH_LBM = 1.1
+        cargo_containers.GRAV_ENGLISH_LBM = 1.1
 
         setup_model_options(self.prob, options)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.cargo as cargo
+        import aviary.subsystems.mass.gasp_based.cargo_containers as cargo_containers
 
-        cargo.GRAV_ENGLISH_LBM = 1.0
+        cargo_containers.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
         self.prob.run_model()
@@ -86,7 +85,7 @@ class CargoTestCase2(unittest.TestCase):
 
 
 class CargoTestCase3(unittest.TestCase):
-    """BWB Parameters"""
+    """BWB Parameters."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -100,7 +99,7 @@ class CargoTestCase3(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'cargo',
-            CargoMass(),
+            CargoContainerMass(),
             promotes=['*'],
         )
 

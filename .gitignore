@@ -143,8 +143,6 @@ aviary/reports/
 
 #VSCode user settings
 .vscode/
-#VSCode extensions
-.continue/
 
 # Built docs
 _build/

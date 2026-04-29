@@ -6,14 +6,13 @@ equations, modified to output mass instead of weight.
 
 import openmdao.api as om
 
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
-from aviary.constants import GRAV_ENGLISH_LBM
 
-
-class CargoMass(om.ExplicitComponent):
-    """Calculate the mass of any passengers, their baggage, and other cargo."""
+class CargoContainerMass(om.ExplicitComponent):
+    """Calculate the mass of cargo containers."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS)

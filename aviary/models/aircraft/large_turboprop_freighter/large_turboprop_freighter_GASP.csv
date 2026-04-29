@@ -9,7 +9,10 @@ settings:mass_method, GASP
 ############
 # AIRCRAFT #
 ############
-aircraft:design:subsonic_drag_coeff_factor, 1.447, unitless
+# This was the original value in this file. We needed to decrease the drag
+# to get a good optimization.
+# aircraft:design:subsonic_drag_coeff_factor, 1.447, unitless
+aircraft:design:subsonic_drag_coeff_factor, 1.33, unitless
 
 # Design
 aircraft:design:cg_delta, 0.25, unitless
@@ -49,7 +52,7 @@ aircraft:crew_and_payload:water_mass_per_occupant, 0, lbm
 
 # Engine/Propulsion
 # setting electrical mass may not do anything
-aircraft:electrical:mass, 300, lbm
+#aircraft:electrical:mass, 300, lbm
 aircraft:engine:additional_mass_fraction, 0.34, unitless
 aircraft:engine:data_file, models/engines/turboshaft_4465hp.csv
 aircraft:engine:mass_scaler, 1, unitless
@@ -111,7 +114,7 @@ aircraft:horizontal_tail:volume_coefficient, 0.8614, unitless
 # Landing Gear
 aircraft:landing_gear:fixed_gear, False, unitless
 aircraft:landing_gear:main_gear_location, 0, unitless
-aircraft:landing_gear:main_gear_mass_coefficient, 0.916, unitless
+aircraft:landing_gear:main_gear_mass_fraction, 0.916, unitless
 aircraft:landing_gear:mass_coefficient, 0.0337, unitless
 aircraft:landing_gear:tail_hook_mass_scaler, 1, unitless
 aircraft:landing_gear:total_mass_scaler, 1, unitless
