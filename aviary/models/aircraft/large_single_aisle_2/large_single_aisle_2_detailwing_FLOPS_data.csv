@@ -118,6 +118,7 @@ aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,1.87,unitless
 aircraft:wing:area,1341.0,ft**2
 aircraft:wing:aspect_ratio,9.42519,unitless
+aircraft:wing:aspect_ratio_reference,9.42519,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan_distribution,0.4441,0.2313,0.0729,unitless
 aircraft:wing:composite_fraction,0.0,unitless
@@ -142,12 +143,12 @@ aircraft:wing:sweep,25.03,deg
 aircraft:wing:taper_ratio,0.237343146184852,unitless
 aircraft:wing:thickness_to_chord,0.131732727515702,unitless
 aircraft:wing:thickness_to_chord_distribution,0.145,0.115,0.104,unitless
+aircraft:wing:thickness_to_chord_reference,0.131732727515702,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2423.02,ft**2
 aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.82,unitless
-mission:fuel_flow_scaler,1.0,unitless
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:takeoff:fuel,577.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless

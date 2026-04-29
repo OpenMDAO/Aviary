@@ -32,7 +32,6 @@ def register_custom_reports():
         class_name='AviaryProblem',
         method='run_driver',
         pre_or_post='post',
-        # **kwargs
     )
 
     register_report(
@@ -148,7 +147,7 @@ def sizing_results(prob: AviaryProblem):
         prob.save_results(report_file)
 
 
-def subsystem_report(prob: AviaryProblem, **kwargs):
+def subsystem_report(prob: AviaryProblem):
     """
     Loops through all subsystem builders in the AviaryProblem calls their write_report
     method. All generated report files are placed in the "reports/subsystem_reports" folder.
@@ -176,7 +175,7 @@ def subsystem_report(prob: AviaryProblem, **kwargs):
     subsystems = model.subsystems  # TODO: redo for multimissions
 
     for subsystem in subsystems:
-        subsystem.report(prob, reports_folder, **kwargs)
+        subsystem.report(prob, reports_folder)
 
 
 def mission_report(prob: AviaryProblem, **kwargs):

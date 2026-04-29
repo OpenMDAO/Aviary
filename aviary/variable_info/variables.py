@@ -671,7 +671,6 @@ class Mission:
     FINAL_MASS = 'mission:final_mass'
     FINAL_TIME = 'mission:final_time'
     FUEL = 'mission:fuel'
-    FUEL_FLOW_SCALER = 'mission:fuel_flow_scaler'
     GROSS_MASS = 'mission:gross_mass'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'

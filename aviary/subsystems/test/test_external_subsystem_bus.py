@@ -14,7 +14,7 @@ from aviary.models.missions.energy_state_default import phase_info as ph_in
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 
-ExtendedMetaData = av.CoreMetaData
+ExtendedMetaData = deepcopy(av.CoreMetaData)
 
 
 av.add_meta_data(

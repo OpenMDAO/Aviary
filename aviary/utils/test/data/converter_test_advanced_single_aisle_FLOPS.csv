@@ -154,7 +154,6 @@ aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0.0,unitless
 aircraft:wing:wetted_area,2210.280228,ft**2
 mission:constraints:max_mach,0.785,unitless
-mission:fuel_flow_scaler,1.0,unitless
 mission:landing:drag_coefficient_min,0.045,unitless
 mission:landing:flare_rate,2.2,deg/s
 mission:landing:initial_velocity,145.0,ft/s
