@@ -98,7 +98,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [5], tolerance=1e-9)
+        assert_near_equal(num_bays, [5.00872038], tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)

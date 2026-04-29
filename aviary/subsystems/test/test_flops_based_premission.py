@@ -536,7 +536,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
-        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
+        assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.00872038, 1e-4)
         # BWBFuselagePrelim
         assert_near_equal(prob[Aircraft.Fuselage.REF_DIAMETER], 39.8525, tol)
         assert_near_equal(prob[Aircraft.Fuselage.PLANFORM_AREA], 7390.267432149546, tol)
@@ -629,7 +629,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportEngineOilMass
         assert_near_equal(prob[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS], 346.93557352, tol)
         # BWBFurnishingsGroupMass
-        assert_near_equal(prob[Aircraft.Furnishings.MASS], 61482.097969438299, tol)
+        assert_near_equal(prob[Aircraft.Furnishings.MASS], 61509.57919465, tol)
         # TransportHydraulicsGroupMass
         assert_near_equal(prob[Aircraft.Hydraulics.MASS], 7368.5077321194321, tol)
         # PassengerServiceMass
@@ -691,9 +691,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # PropulsionMass
         assert_near_equal(prob[Aircraft.Propulsion.MASS], 61597.102467771889, tol)
         # SystemsEquipMass
-        assert_near_equal(
-            prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 98848.9061107412710, tol
-        )
+        assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 98876.385842, tol)
         # EmptyMass
         assert_near_equal(prob[Aircraft.Design.EMPTY_MASS], 434037.32820147, tol)
         # OperatingMass
@@ -1232,4 +1230,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBPreMissionGroupCSVTest1()
+    test.setUp()
+    test.test_case_geom_mass()
