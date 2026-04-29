@@ -100,10 +100,6 @@ required_options = (
     Aircraft.Engine.GENERATE_FLIGHT_IDLE,
     Aircraft.Engine.INTERPOLATION_METHOD,
     Aircraft.Engine.INTERPOLATION_SORT,
-    # TODO fuel flow scaler is required for the EngineScaling component but does not need to be
-    # defined on a per-engine basis, so it could exist only in the problem-level aviary_options
-    # without issue. Is this a propulsion_preprocessor task?
-    Mission.FUEL_FLOW_SCALER,
 )
 
 # options that are only required based on the value of another option

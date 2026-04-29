@@ -2397,7 +2397,7 @@ add_meta_data(
     Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.CKFF',
         'FLOPS': 'ENGDIN.FFFSUB',
     },
     units='unitless',
@@ -2411,7 +2411,7 @@ add_meta_data(
     Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.CKFF',
         'FLOPS': 'ENGDIN.FFFSUP',
     },
     units='unitless',
@@ -6848,23 +6848,6 @@ add_meta_data(
     'This does not include fuel burned in reserve phases or taxi-in.'
     'The only time taxi-in would be included in this is if the user'
     'specifies a taxi phase as part of the regular mission phases.',
-)
-
-# NOTE if per-mission level scaling is not best mapping for GASP's 'CKFF', map
-#      to FFFSUB/FFFSUP
-# CKFF is consistent for one aircraft over all missions, once the vehicle is sized
-# can we map it to both FFFSUB and FFFSUP?
-add_meta_data(
-    Mission.FUEL_FLOW_SCALER,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': 'INGASP.CKFF',
-        'FLOPS': 'MISSIN.FACT',  # ['&DEFMSS.MISSIN.FACT', 'TRNSF.FACT'],
-    },
-    units='unitless',
-    desc='scale factor on overall fuel flow',
-    default_value=1.0,
-    option=True,
 )
 
 add_meta_data(
