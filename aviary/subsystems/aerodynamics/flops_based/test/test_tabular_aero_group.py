@@ -25,8 +25,8 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 FLOPS = LegacyCode.FLOPS
 GASP = LegacyCode.GASP
 
-CDI_table = 'aviary/validation_cases/validation_data/test_data/large_single_aisle_1_CDI_polar.csv'
-CD0_table = 'aviary/validation_cases/validation_data/test_data/large_single_aisle_1_CD0_polar.csv'
+CDI_table = 'validation_cases/validation_data/test_data/large_single_aisle_1_CDI_polar.csv'
+CD0_table = 'validation_cases/validation_data/test_data/large_single_aisle_1_CD0_polar.csv'
 
 
 @use_tempdirs
