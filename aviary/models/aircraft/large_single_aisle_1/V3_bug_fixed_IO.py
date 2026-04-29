@@ -112,7 +112,7 @@ V3_bug_fixed_options.set_val(
 V3_bug_fixed_options.set_val(Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm')
 V3_bug_fixed_options.set_val(Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless')
 V3_bug_fixed_options.set_val(
-    Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT, val=0.85, units='unitless'
+    Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
 )
 V3_bug_fixed_options.set_val(Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Engine.MASS_SPECIFIC, val=0.21366, units='lbm/lbf')

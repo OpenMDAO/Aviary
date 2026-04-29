@@ -1,5 +1,8 @@
 from abc import ABC
 
+from openmdao.core.system import System
+
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
@@ -46,7 +49,7 @@ class SubsystemBuilder(ABC):
         """
         return True
 
-    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None) -> None | System:
         """
         Build an OpenMDAO System for the pre-mission computations of the subsystem.
 
@@ -72,7 +75,7 @@ class SubsystemBuilder(ABC):
 
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of dynamic states defined by this subsystem. (Optional)
+        Return a dictionary of dynamic states defined by this subsystem (Optional).
 
         Required for subsystems with mission-based dynamics.
 
@@ -104,7 +107,7 @@ class SubsystemBuilder(ABC):
 
     def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of control variables for the subsystem. (Optional)
+        Return a dictionary of control variables for the subsystem (Optional).
 
         Parameters
         ----------
@@ -131,7 +134,7 @@ class SubsystemBuilder(ABC):
 
     def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of parameters for the subsystem. (Optional)
+        Return a dictionary of parameters for the subsystem (Optional).
 
         A parameter is a value that does not vary over the trajectory. Adding a variable name to
         this list promotes the input to the top of the Aviary model, where it is either implicitly
@@ -243,7 +246,9 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
+    def build_mission(
+        self, num_nodes, aviary_inputs, user_options, subsystem_options
+    ) -> None | System:
         """
         Build an OpenMDAO System for the mission computations of the subsystem.
 
@@ -375,7 +380,7 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def preprocess_inputs(self, aviary_inputs=None):
+    def preprocess_inputs(self, aviary_inputs=None) -> AviaryValues:
         """
         Preprocess the inputs to the subsystem, returning a modified AviaryValues object.
 
@@ -452,7 +457,7 @@ class SubsystemBuilder(ABC):
         mission_info=None,
         subsystem_options=None,
         phase_mission_bus_lengths=None,
-    ):
+    ) -> None | System:
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
 

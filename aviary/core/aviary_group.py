@@ -292,7 +292,7 @@ class AviaryGroup(om.Group):
 
         if phase_info is None:
             phase_info = self.configurator.get_default_phase_info(self)
-            if verbosity is not None and verbosity >= Verbosity.BRIEF:
+            if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                 print(
                     f'Loaded default phase_info for {self.mission_method.value.lower()} equations '
                     'of motion.'
@@ -1316,7 +1316,7 @@ class AviaryGroup(om.Group):
         and another for the gross mass of the aircraft computed during the mission. A constraint is
         also added to ensure that the residual range is zero.
 
-        If solving an alternate problem, only a design variable for the gross mass of the aircraft
+        If solving an OFF_DESIGN_MIN_FUEL problem, only a design variable for the gross mass of the aircraft
         computed during the mission is added. A constraint is also added to ensure that the residual
         range is zero.
 
@@ -1390,7 +1390,7 @@ class AviaryGroup(om.Group):
                 if self.require_range_residual:
                     self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
-            elif problem_type is ProblemType.ALTERNATE:
+            elif problem_type is ProblemType.OFF_DESIGN_MIN_FUEL:
                 # target range problem
                 # fixed vehicle (design GTOW) but variable actual GTOW for off-design
                 # get the design gross mass and set as the upper bound for the gross mass design variable
@@ -1405,10 +1405,12 @@ class AviaryGroup(om.Group):
 
                 self.add_constraint(Mission.Constraints.RANGE_RESIDUAL, equals=0, ref=1000)
 
-            elif problem_type is ProblemType.FALLOUT:
+            elif problem_type is ProblemType.OFF_DESIGN_MAX_RANGE:
                 # fixed vehicle gross mass aviary finds optimal trajectory and maximum range
                 if verbosity >= Verbosity.VERBOSE:
-                    print('No additional aircraft design variables added for Fallout missions')
+                    print(
+                        'No additional aircraft design variables added for OFF_DESIGN_MAX_RANGE missions'
+                    )
 
             elif problem_type is ProblemType.MULTI_MISSION:
                 self.add_design_var(
