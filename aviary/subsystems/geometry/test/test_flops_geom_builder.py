@@ -5,7 +5,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 import aviary.api as av
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft
 
 FLOPS = LegacyCode.FLOPS
@@ -23,7 +23,7 @@ class TestFLOPSGeomBuilder(av.TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
             'geometry',
-            BaseMetaData,
+            CoreMetaData,
             code_origin=FLOPS,
             code_origin_to_prioritize=FLOPS,
         )
@@ -58,7 +58,7 @@ class TestFLOPSGeomBuilderHybrid(av.TestSubsystemBuilder):
     def setUp(self):
         self.subsystem_builder = CoreGeometryBuilder(
             'geometry',
-            BaseMetaData,
+            CoreMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
         )

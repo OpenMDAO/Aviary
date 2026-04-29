@@ -256,11 +256,10 @@ class ThrottleAllocation(Enum):
 class Transcription(Enum):
     """
     Sets the Dymos Transcription for each phase.
-    See Dymos documentation for more details: https://openmdao.github.io/dymos/getting_started/transcriptions.html
+    See Dymos documentation for more details: https://openmdao.github.io/dymos/getting_started/transcriptions.html.
 
     COLLOCATION uses implicit pseudospectral method for discritizing state and control history over time.
     PICARDShooting uses explicit numerical integration to propagate the initial state subject to controls.
-
     """
 
     COLLOCATION = 'collocation'

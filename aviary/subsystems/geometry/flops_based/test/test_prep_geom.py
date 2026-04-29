@@ -565,7 +565,7 @@ class CharacteristicLengthsTest(unittest.TestCase):
             model_options[key] = options.get_item(key)[0]
 
         model_options[Aircraft.Engine.REFERENCE_SLS_THRUST] = options.get_item(
-            Aircraft.Engine.REFERENCE_SLS_THRUST, 'lbf'
+            Aircraft.Engine.REFERENCE_SLS_THRUST
         )
 
         prob.model.add_subsystem(

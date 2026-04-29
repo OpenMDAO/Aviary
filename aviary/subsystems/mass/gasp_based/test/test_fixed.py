@@ -18,7 +18,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     PayloadGroup,
     TailMass,
 )
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import extract_options, setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -1484,7 +1484,7 @@ class FixedMassGroupTestCase3(unittest.TestCase):
 
         prob.setup(force_alloc_complex=True)
 
-        for key in get_keys(data):
+        for key in data.keys():
             val, units = data.get_item(key)
             try:
                 prob.set_val(key, val, units)
