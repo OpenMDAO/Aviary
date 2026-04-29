@@ -174,7 +174,6 @@ class TestBatteryMission(unittest.TestCase):
                 actual = prob.get_val(var_name).ravel()
                 assert_near_equal(actual, expected, 1e-6)
 
-    @unittest.skip('Not converging in CI for unknown reasons - requires additional investigation')
     @require_pyoptsparse(optimizer='SNOPT')
     def test_subsystems_in_a_mission_2dof(self):
         """
