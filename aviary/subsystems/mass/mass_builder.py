@@ -274,7 +274,9 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|####**MISSION SPECIFIC DETAILS:**####|||\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.USEFUL_LOAD, prob, self.meta_data)
+            val, units = find_variable_in_problem(
+                Mission.OPERATING_ITEMS_MASS, prob, self.meta_data
+            )
             f.write(f'|Useful Load|{val}|{units}|\n')
 
             val1, units = find_variable_in_problem(

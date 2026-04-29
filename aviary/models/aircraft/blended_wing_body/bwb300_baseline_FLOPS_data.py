@@ -423,7 +423,7 @@ outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 8421.7146805052689, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 17302.04910213, 'ft**2')  # SWET(1)
 
-outputs.set_val(Mission.Summary.USEFUL_LOAD, 20996.3933862, 'lbm')
+outputs.set_val(Mission.Summary.OPERATING_ITEMS_MASS, 20996.3933862, 'lbm')
 
 # outputs.set_val(Aircraft.Design.MACH, 0.800)  # FMDES
 outputs.set_val(Mission.Summary.OPERATING_MASS, 321171.82272983, 'lbm')  # DOWE

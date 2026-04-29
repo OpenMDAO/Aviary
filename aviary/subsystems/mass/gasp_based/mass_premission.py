@@ -1,7 +1,9 @@
 import openmdao.api as om
 
 from aviary.subsystems.mass.gasp_based.design_load import BWBDesignLoadGroup, DesignLoadGroup
-from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import EquipAndUsefulLoadMassGroup
+from aviary.subsystems.mass.gasp_based.equipment_and_operating_items import (
+    EquipAndOperatingItemsMassGroup,
+)
 from aviary.subsystems.mass.gasp_based.fixed import FixedMassGroup
 from aviary.subsystems.mass.gasp_based.fuel import (
     BodyTankCalculations,
@@ -52,7 +54,7 @@ class MassPremission(om.Group):
 
         self.add_subsystem(
             'equip_and_useful_mass',
-            EquipAndUsefulLoadMassGroup(),
+            EquipAndOperatingItemsMassGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

@@ -679,7 +679,7 @@ class Mission:
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
     TOTAL_FUEL = 'mission:total_fuel'
     TOTAL_RESERVE_FUEL = 'mission:total_reserve_fuel'
-    USEFUL_LOAD = 'mission:useful_load'
+    OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 
     class Constraints:

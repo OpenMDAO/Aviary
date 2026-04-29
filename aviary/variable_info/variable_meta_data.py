@@ -6934,7 +6934,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.USEFUL_LOAD,
+    Mission.OPERATING_ITEMS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
     units='lbm',

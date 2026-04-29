@@ -78,7 +78,7 @@ class EquipMassGroup(om.Group):
         )
 
 
-class UsefulLoadMassGroup(om.Group):
+class OperatingItemsMassGroup(om.Group):
     def setup(self):
         self.add_subsystem(
             'cargo_containers',
@@ -182,7 +182,7 @@ class BWBEquipMassGroup(om.Group):
         )
 
 
-class EquipAndUsefulLoadMassGroup(om.Group):
+class EquipAndOperatingItemsMassGroup(om.Group):
     def initialize(self):
         add_aviary_option(self, Aircraft.Design.TYPE)
 
@@ -206,7 +206,7 @@ class EquipAndUsefulLoadMassGroup(om.Group):
 
         self.add_subsystem(
             'useful',
-            UsefulLoadMassGroup(),
+            OperatingItemsMassGroup(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )

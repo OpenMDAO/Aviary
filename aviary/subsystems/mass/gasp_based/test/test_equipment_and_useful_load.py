@@ -4,13 +4,16 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
+from aviary.subsystems.mass.gasp_based.equipment_and_operating_items import (
     BWBEquipMassGroup,
-    EquipAndUsefulLoadMassGroup,
+    EquipAndOperatingItemsMassGroup,
     EquipMassGroup,
-    UsefulLoadMassGroup,
+    OperatingItemsMassGroup,
 )
-from aviary.subsystems.mass.gasp_based.mass_summation import SystemsEquipmentMass, UsefulLoadMass
+from aviary.subsystems.mass.gasp_based.mass_summation import (
+    SystemsEquipmentMass,
+    OperatingItemsMass,
+)
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -135,7 +138,7 @@ class UsefulMassSumTest(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'useful',
-            UsefulLoadMass(),
+            OperatingItemsMass(),
             promotes=['*'],
         )
 
@@ -169,7 +172,7 @@ class UsefulMassSumTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Mission.USEFUL_LOAD], 5341.36, tol)
+        assert_near_equal(self.prob[Mission.OPERATING_ITEMS_MASS], 5341.36, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -186,7 +189,7 @@ class UsefulMassGroupTest(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'useful_group',
-            UsefulLoadMassGroup(),
+            OperatingItemsMassGroup(),
             promotes=['*'],
         )
 
@@ -241,7 +244,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'group',
-            EquipAndUsefulLoadMassGroup(),
+            EquipAndOperatingItemsMassGroup(),
             promotes=['*'],
         )
 
@@ -399,7 +402,7 @@ class BWBUsefulMassSumTest(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
             'useful',
-            UsefulLoadMass(),
+            OperatingItemsMass(),
             promotes=['*'],
         )
 
@@ -431,7 +434,7 @@ class BWBUsefulMassSumTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Mission.USEFUL_LOAD], 4321.8, tol)
+        assert_near_equal(self.prob[Mission.OPERATING_ITEMS_MASS], 4321.8, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -450,7 +453,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem(
             'group',
-            EquipAndUsefulLoadMassGroup(),
+            EquipAndOperatingItemsMassGroup(),
             promotes=['*'],
         )
 
