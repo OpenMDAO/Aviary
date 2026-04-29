@@ -1,4 +1,5 @@
 import numpy as np
+import openmdao.api as om
 
 from aviary.mission.two_dof.ode.landing_eom import (
     GlideConditionComponent,
@@ -35,13 +36,38 @@ class LandingSegment(TwoDOFODE):
             promotes_outputs=[Mission.Landing.INITIAL_ALTITUDE],
         )
 
+        alias_comp = om.ExecComp(
+            'alt=airport_alt',
+            alt={
+                'val': np.zeros(1),
+                'units': 'ft',
+            },
+            airport_alt={'val': np.zeros(1), 'units': 'ft'},
+        )
+
+        alias_comp.add_expr(
+            'mach=landing_mach',
+            mach={'val': np.zeros(1), 'units': 'unitless'},
+            landing_mach={'val': np.zeros(1), 'units': 'unitless'},
+        )
+
+        self.add_subsystem(
+            'alias_landing_phase',
+            alias_comp,
+            promotes_inputs=[
+                ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
+                ('landing_mach', Mission.Landing.INITIAL_MACH),
+            ],
+            promotes_outputs=[
+                ('alt', Dynamic.Mission.ALTITUDE),
+                ('mach', Dynamic.Atmosphere.MACH),
+            ],
+        )
+
         self.add_subsystem(
             name='atmosphere',
             subsys=Atmosphere(num_nodes=1, input_speed_type=SpeedType.MACH),
-            promotes_inputs=[
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.INITIAL_ALTITUDE),
-                (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
-            ],
+            promotes_inputs=[Dynamic.Mission.ALTITUDE, Dynamic.Atmosphere.MACH],
             promotes_outputs=[
                 Dynamic.Atmosphere.DENSITY,
                 Dynamic.Atmosphere.SPEED_OF_SOUND,
@@ -72,14 +98,9 @@ class LandingSegment(TwoDOFODE):
                     aero_system,
                     promotes_inputs=[
                         '*',
-                        (
-                            Dynamic.Mission.ALTITUDE,
-                            Mission.Landing.INITIAL_ALTITUDE,
-                        ),
                         Dynamic.Atmosphere.DENSITY,
                         Dynamic.Atmosphere.SPEED_OF_SOUND,
                         Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
-                        ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                         Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                         ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
@@ -108,11 +129,7 @@ class LandingSegment(TwoDOFODE):
                 propulsion_mission = self.add_subsystem(
                     subsystem.name,
                     propulsion_system,
-                    promotes_inputs=[
-                        '*',
-                        (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
-                        (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
-                    ],
+                    promotes_inputs=['*'],
                     promotes_outputs=[(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, 'thrust_idle')],
                 )
                 propulsion_mission.set_input_defaults(Dynamic.Vehicle.Propulsion.THROTTLE, 0.0)
@@ -150,7 +167,7 @@ class LandingSegment(TwoDOFODE):
             name='atmosphere_td',
             subsys=Atmosphere(num_nodes=1),
             promotes_inputs=[
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
+                Dynamic.Mission.ALTITUDE,
                 (Dynamic.Mission.VELOCITY, 'TAS_touchdown'),
             ],
             promotes_outputs=[
@@ -175,7 +192,6 @@ class LandingSegment(TwoDOFODE):
             ),
             promotes_inputs=[
                 '*',
-                (Dynamic.Mission.ALTITUDE, Mission.Landing.AIRPORT_ALTITUDE),
                 (Dynamic.Atmosphere.DENSITY, 'rho_td'),
                 (Dynamic.Atmosphere.SPEED_OF_SOUND, 'sos_td'),
                 (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'viscosity_td'),

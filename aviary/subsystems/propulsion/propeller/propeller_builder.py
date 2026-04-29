@@ -143,9 +143,9 @@ class PropellerBuilder(SubsystemBuilder):
 
     def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return [
-            Dynamic.Vehicle.Propulsion.SHAFT_POWER,
+            # Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             # Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX + '_out',
-            Dynamic.Vehicle.Propulsion.RPM,
-            Dynamic.Vehicle.Propulsion.TORQUE,
+            # Dynamic.Vehicle.Propulsion.RPM,
+            # Dynamic.Vehicle.Propulsion.TORQUE,
             # Mission.Constraints.GEARBOX_SHAFT_POWER_RESIDUAL,
         ]

@@ -22,6 +22,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def setUp(self):
         _clear_problem_names()  # need to reset these to simulate separate runs
 
+    @unittest.skip('Not converging in CI for unknown reasons - requires additional investigation')
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_bwb_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)

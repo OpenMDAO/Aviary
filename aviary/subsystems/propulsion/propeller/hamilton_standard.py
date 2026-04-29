@@ -134,108 +134,109 @@ def _biquad(T, i, xi, yi):
             else:
                 jx1 = jn - 2
                 ra_x = (T[jn] - x) / (T[jn] - T[jn - 1])
-        rb_x = 1.0 - ra_x
 
-        # return here from search of x
-        lmt = kx
-        jx = jx1
-        # The following code puts x values in xc blocks
+    rb_x = 1.0 - ra_x
+
+    # return here from search of x
+    lmt = kx
+    jx = jx1
+    # The following code puts x values in xc blocks
+    for j in range(4):
+        xc[j] = T[jx1 + j]
+    # get coeff. in x sense
+    # coefficient routine - input x,x1,x2,x3,x4,ra_x,rb_x
+    p1 = xc[1] - xc[0]
+    p2 = xc[2] - xc[1]
+    p3 = xc[3] - xc[2]
+    p4 = p1 + p2
+    p5 = p2 + p3
+    d1 = x - xc[0]
+    d2 = x - xc[1]
+    d3 = x - xc[2]
+    d4 = x - xc[3]
+    cx1 = ra_x / p1 * d2 / p4 * d3
+    cx2 = -ra_x / p1 * d1 / p2 * d3 + rb_x / p2 * d3 / p5 * d4
+    cx3 = ra_x / p2 * d1 / p4 * d2 - rb_x / p2 * d2 / p3 * d4
+    cx4 = rb_x / p5 * d2 / p3 * d3
+    # return to main body
+
+    # return here with coeff. test for univariate or bivariate
+    if ny == 0:
+        z = 0.0
+        jy = jx + nx
+        z = cx1 * T[jy] + cx2 * T[jy + 1] + cx3 * T[jy + 2] + cx4 * T[jy + 3]
+    else:
+        # bivariate table
+        y = yi
+        j3 = j2 + 1
+        j4 = j3 + ny - 1
+        # search in y sense
+        # jy1 = subscript of 1st y
+        # search routine - input j3,j4,y
+        #                - output ra_y,rb_y,ky,,jy1
+        ky = 0
+        ifnd_y = 0
+        for j in range(j3, j4 + 1):
+            if T[j] >= y:
+                ifnd_y = 1
+                break
+        if ifnd_y == 0:
+            # off high end
+            y = T[j4]
+            ky = 2
+            # use last 4 points and curve B
+            jy1 = j4 - 3
+            ra_y = 0.0
+        else:
+            # test for off low end, first interval
+            if j < j3 + 1:
+                if T[j] != y:
+                    ky = 1
+                    y = T[j3]
+            if j <= j3 + 1:
+                jy1 = j3
+                ra_y = 1.0
+            else:
+                # test for last interval
+                if j == j4:
+                    jy1 = j4 - 3
+                    ra_y = 0.0
+                else:
+                    jy1 = j - 2
+                    ra_y = (T[j] - y) / (T[j] - T[j - 1])
+        rb_y = 1.0 - ra_y
+
+        lmt = lmt + 3 * ky
+        # interpolate in y sense
+        # subscript - base, num. of col., num. of y's
+        jy = (j4 + 1) + (jx - i - 2) * ny + (jy1 - j3)
+        yt = [0, 0, 0, 0]
+        for m in range(4):
+            jx = jy
+            yt[m] = cx1 * T[jx] + cx2 * T[jx + ny] + cx3 * T[jx + 2 * ny] + cx4 * T[jx + 3 * ny]
+            jy = jy + 1
+
+        # the following code puts y values in yc block
+        yc = [0, 0, 0, 0]
         for j in range(4):
-            xc[j] = T[jx1 + j]
-        # get coeff. in x sense
-        # coefficient routine - input x,x1,x2,x3,x4,ra_x,rb_x
-        p1 = xc[1] - xc[0]
-        p2 = xc[2] - xc[1]
-        p3 = xc[3] - xc[2]
+            yc[j] = T[jy1]
+            jy1 = jy1 + 1
+        # get coeff. in y sense
+        # coefficient routine - input y, y1, y2, y3, y4, ra_y, rb_y
+        p1 = yc[1] - yc[0]
+        p2 = yc[2] - yc[1]
+        p3 = yc[3] - yc[2]
         p4 = p1 + p2
         p5 = p2 + p3
-        d1 = x - xc[0]
-        d2 = x - xc[1]
-        d3 = x - xc[2]
-        d4 = x - xc[3]
-        cx1 = ra_x / p1 * d2 / p4 * d3
-        cx2 = -ra_x / p1 * d1 / p2 * d3 + rb_x / p2 * d3 / p5 * d4
-        cx3 = ra_x / p2 * d1 / p4 * d2 - rb_x / p2 * d2 / p3 * d4
-        cx4 = rb_x / p5 * d2 / p3 * d3
-        # return to main body
-
-        # return here with coeff. test for univariate or bivariate
-        if ny == 0:
-            z = 0.0
-            jy = jx + nx
-            z = cx1 * T[jy] + cx2 * T[jy + 1] + cx3 * T[jy + 2] + cx4 * T[jy + 3]
-        else:
-            # bivariate table
-            y = yi
-            j3 = j2 + 1
-            j4 = j3 + ny - 1
-            # search in y sense
-            # jy1 = subscript of 1st y
-            # search routine - input j3,j4,y
-            #                - output ra_y,rb_y,ky,,jy1
-            ky = 0
-            ifnd_y = 0
-            for j in range(j3, j4 + 1):
-                if T[j] >= y:
-                    ifnd_y = 1
-                    break
-            if ifnd_y == 0:
-                # off high end
-                y = T[j4]
-                ky = 2
-                # use last 4 points and curve B
-                jy1 = j4 - 3
-                ra_y = 0.0
-            else:
-                # test for off low end, first interval
-                if j < j3 + 1:
-                    if T[j] != y:
-                        ky = 1
-                        y = T[j3]
-                if j <= j3 + 1:
-                    jy1 = j3
-                    ra_y = 1.0
-                else:
-                    # test for last interval
-                    if j == j4:
-                        jy1 = j4 - 3
-                        ra_y = 0.0
-                    else:
-                        jy1 = j - 2
-                        ra_y = (T[j] - y) / (T[j] - T[j - 1])
-            rb_y = 1.0 - ra_y
-
-            lmt = lmt + 3 * ky
-            # interpolate in y sense
-            # subscript - base, num. of col., num. of y's
-            jy = (j4 + 1) + (jx - i - 2) * ny + (jy1 - j3)
-            yt = [0, 0, 0, 0]
-            for m in range(4):
-                jx = jy
-                yt[m] = cx1 * T[jx] + cx2 * T[jx + ny] + cx3 * T[jx + 2 * ny] + cx4 * T[jx + 3 * ny]
-                jy = jy + 1
-
-            # the following code puts y values in yc block
-            yc = [0, 0, 0, 0]
-            for j in range(4):
-                yc[j] = T[jy1]
-                jy1 = jy1 + 1
-            # get coeff. in y sense
-            # coefficient routine - input y, y1, y2, y3, y4, ra_y, rb_y
-            p1 = yc[1] - yc[0]
-            p2 = yc[2] - yc[1]
-            p3 = yc[3] - yc[2]
-            p4 = p1 + p2
-            p5 = p2 + p3
-            d1 = y - yc[0]
-            d2 = y - yc[1]
-            d3 = y - yc[2]
-            d4 = y - yc[3]
-            cy1 = ra_y / p1 * d2 / p4 * d3
-            cy2 = -ra_y / p1 * d1 / p2 * d3 + rb_y / p2 * d3 / p5 * d4
-            cy3 = ra_y / p2 * d1 / p4 * d2 - rb_y / p2 * d2 / p3 * d4
-            cy4 = rb_y / p5 * d2 / p3 * d3
-            z = cy1 * yt[0] + cy2 * yt[1] + cy3 * yt[2] + cy4 * yt[3]
+        d1 = y - yc[0]
+        d2 = y - yc[1]
+        d3 = y - yc[2]
+        d4 = y - yc[3]
+        cy1 = ra_y / p1 * d2 / p4 * d3
+        cy2 = -ra_y / p1 * d1 / p2 * d3 + rb_y / p2 * d3 / p5 * d4
+        cy3 = ra_y / p2 * d1 / p4 * d2 - rb_y / p2 * d2 / p3 * d4
+        cy4 = rb_y / p5 * d2 / p3 * d3
+        z = cy1 * yt[0] + cy2 * yt[1] + cy3 * yt[2] + cy4 * yt[3]
 
     return z, lmt
 

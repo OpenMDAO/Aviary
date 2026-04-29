@@ -274,7 +274,7 @@ add_meta_data(
         'GASP': 'INGASP.ENGYDEN',
         'FLOPS': None,
     },
-    units='kW*h/kg',
+    units='W*h/kg',
     desc='specific energy density of the battery pack',
     default_value=1.0,
 )
@@ -1903,8 +1903,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='additional propulsion system mass added to engine control and starter mass, or '
-    'engine installation mass',
+    desc='additional engine mass not counted by existing categories (such as engine control and '
+    'starter mass in FLOPS). In GASP, this is engine installation mass.',
     default_value=0.0,
     multivalue=True,
 )
@@ -1918,9 +1918,8 @@ add_meta_data(
     },
     units='unitless',
     option=True,
-    desc='fraction of (scaled) engine mass used to calculate additional propulsion '
-    'system mass added to engine control and starter mass, or used to calculate engine '
-    'installation mass',
+    desc='fraction of (scaled) engine mass used to calculate additional engine mass (see '
+    'Aircraft.Engine.ADDITIONAL_MASS)',
     types=(float, int, np.ndarray),
     multivalue=True,
     default_value=0.0,
@@ -1963,6 +1962,7 @@ add_meta_data(
     'engine model or chosen by optimizer. Typically used when pairing a motor or '
     'turboshaft using a fixed operating RPM with a propeller.',
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -2351,6 +2351,7 @@ add_meta_data(
     units='rpm',
     desc='the designed output RPM from the engine for fixed-RPM shafts',
     multivalue=True,
+    option=True,
 )
 
 add_meta_data(
@@ -2636,6 +2637,19 @@ add_meta_data(
     desc='propeller blade integrated design lift coefficient (Range: 0.3 to 0.8)',
     default_value=0.5,
     multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Propeller.MASS,
+    meta_data=_MetaData,
+    # TODO Check if GASP has a variable for this
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='lbm',
+    desc='mass of propellers on engine (sum of all blades)',
+    option=False,
+    types=float,
+    multivalue=True,
+    default_value=0,
 )
 
 add_meta_data(
@@ -3081,6 +3095,9 @@ add_meta_data(
     default_value=0.0,
 )
 
+# TODO the GASP use of this variable is misleading (optional coefficient for additional
+#      furnishing mass, which is activated by Aircraft.Furnishings.USE_EMPERICAL_EQUATION). Create
+#      new variable (Aircraft.Furnishings.MASS_COEFFICIENT?) for GASP side
 add_meta_data(
     Aircraft.Furnishings.MASS_SCALER,
     meta_data=_MetaData,
@@ -3095,6 +3112,9 @@ add_meta_data(
     default_value=1.0,
 )
 
+# Misnamed. This sets if Aircraft.Furnishings.MASS_SCALER is used as a coefficient for additional
+# furnishings weight and the alternative (False) is to use the emperical equation. The variable toggle
+# based on gross mass and num_pax is bad Aviary behavior and should occur in fortran_to_aviary instead
 add_meta_data(
     Aircraft.Furnishings.USE_EMPIRICAL_EQUATION,
     meta_data=_MetaData,
@@ -4061,11 +4081,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.LandingGear.MAIN_GEAR_MASS_COEFFICIENT,
+    Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKMG', 'FLOPS': None},
     units='unitless',
-    desc='mass trend coefficient of main gear, fraction of total landing gear',
+    desc='fraction of total landing gear mass that is main gear mass',
     default_value=0.0,
 )
 
@@ -4511,6 +4531,8 @@ add_meta_data(
 )
 
 # TODO clash with per-engine scaling, need to resolve w/ heterogeneous engine
+# TODO in GASP this applies to ADDITIONAL_MASS (installation weight), confusing because that also
+#      uses ADDITIONAL_MASS_FRACTION - also applies globally to all engines there, which is wrong
 add_meta_data(
     Aircraft.Propulsion.MISC_MASS_SCALER,
     meta_data=_MetaData,
@@ -4520,8 +4542,8 @@ add_meta_data(
         'FLOPS': 'WTIN.WPMSC',
     },
     units='unitless',
-    desc='scaler applied to miscellaneous engine mass (sum of engine control, starter, '
-    'and additional mass)',
+    desc='scaler applied to miscellaneous engine mass (in FLOPS, sum of engine control, starter, '
+    'and additional mass. In GASP, applied to ADDITIONAL_MASS, which is engine installation mass)',
     default_value=1.0,
 )
 
