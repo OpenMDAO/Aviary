@@ -123,12 +123,15 @@ class PythonModelToCSV(unittest.TestCase):
         excluded_lines = ['#', 'engine:data_file']
 
         for mod_name, input_data in python_file_inputs.items():
-            csv_filename = mod_name + '_test.csv'
-            # Function call to generate CSVs from the AviaryInputs
-            save_to_csv_file(csv_filename, input_data)
+            with self.subTest(mod_name):
+                csv_filename = mod_name + '_test.csv'
+                # Function call to generate CSVs from the AviaryInputs
+                save_to_csv_file(csv_filename, input_data)
 
-            if csv_filename in existing_csvs:
-                self.compare_files(csv_filename, existing_csvs.get(csv_filename), excluded_lines)
+                if csv_filename in existing_csvs:
+                    self.compare_files(
+                        csv_filename, existing_csvs.get(csv_filename), excluded_lines
+                    )
 
 
 if __name__ == '__main__':
