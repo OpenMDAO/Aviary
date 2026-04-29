@@ -329,7 +329,7 @@ outputs.set_val(Aircraft.Electrical.MASS, 4277.63057018, 'lbm')  # WELEC
 
 outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 1184642.3647993, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 5410.39486929, 'lbm')  # WFSYS
-outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1732.78186198, 'lbm')  # WUF
+outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1725.1605645, 'lbm')  # WUF
 outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 1184642.3647993, 'lbm')  # FULWMX
 
 outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
@@ -347,8 +347,8 @@ outputs.set_val(Aircraft.Fuselage.MASS, 136102.89191481, 'lbm')  # WFUSE
 outputs.set_val(Aircraft.Fuselage.MAX_HEIGHT, 12.29401757, 'ft')  # DF
 outputs.set_val(Aircraft.Fuselage.PLANFORM_AREA, 6626.34234164, 'ft**2')  # FPAREA
 outputs.set_val(Aircraft.Fuselage.AFTBODY_MASS, 18545.58195235, 'lbm')  # WAFTB
-outputs.set_val(Aircraft.Fuselage.LENGTH, 112.3001936860821, 'ft')  # XL
-outputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 80.220756073526772, 'ft')  # WF
+outputs.set_val(Aircraft.Fuselage.LENGTH, 111.76379613, 'ft')  # XL
+outputs.set_val(Aircraft.Fuselage.MAX_WIDTH, 79.46979495, 'ft')  # WF
 outputs.set_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, 78.23465729, 'ft')  # XLP
 
 outputs.set_val(Aircraft.HorizontalTail.CHARACTERISTIC_LENGTH, 0.0, 'ft')  # EL(2)
@@ -421,7 +421,7 @@ outputs.set_val(Aircraft.Wing.ROOT_CHORD, 38.5, 'ft')  # XLW
 outputs.set_val(Aircraft.Wing.AREA, 12025.74804674, 'ft**2')  # SW
 outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.47039383)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 24541.8164668, 'ft**2')  # SWET(1)
-outputs.set_val(Aircraft.Wing.SPAN, 253.720756, 'ft')  # SPAN = WF+OSSPAN*2
+outputs.set_val(Aircraft.Wing.SPAN, 252.96979495033787, 'ft')  # SPAN = WF+OSSPAN*2
 
 outputs.set_val(Mission.USEFUL_LOAD, 20996.3933862, 'lbm')
 

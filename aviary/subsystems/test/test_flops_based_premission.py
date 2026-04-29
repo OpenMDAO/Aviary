@@ -284,6 +284,8 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             input_keys=[],
             output_keys=[
                 # Geometry
+                # BWBComputeDetailedWingDist
+                Aircraft.Wing.SPAN,
                 # BWBSimpleCabinLayout
                 Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH,
                 Aircraft.Wing.ROOT_CHORD,
@@ -1230,7 +1232,4 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBPreMissionGroupCSVTest1()
-    test.setUp()
-    test.test_case_geom_mass()
+    unittest.main()
