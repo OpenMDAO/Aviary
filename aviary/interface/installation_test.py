@@ -83,7 +83,7 @@ def _exec_installation_test(args, user_args):
     def _test_install(optimizer):
         """Runs an example Aviary problem using the requested optimizer in a temporary directory."""
         return av.run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             av.default_energy_state_phase_info,
             optimizer=optimizer,
             make_plots=False,

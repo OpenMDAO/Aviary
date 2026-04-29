@@ -19,7 +19,7 @@ class TestCruiseAero(unittest.TestCase):
     def test_climb(self):
         prob = om.Problem()
 
-        fp = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
+        fp = 'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_free.csv'
         prob.model = TabularCruiseAero(num_nodes=8, aero_data=fp)
 
         prob.setup(force_alloc_complex=True)
@@ -45,7 +45,7 @@ class TestCruiseAero(unittest.TestCase):
 
     def test_cruise(self):
         prob = om.Problem()
-        ref = 'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
+        ref = 'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_free.csv'
         fp = get_aviary_resource_path(ref)
         prob.model = TabularCruiseAero(num_nodes=2, aero_data=fp)
         prob.setup(force_alloc_complex=True)
@@ -74,13 +74,13 @@ class TestLowSpeedAero(unittest.TestCase):
     flap_defl_to = 10
 
     free_data = get_aviary_resource_path(
-        'models/large_single_aisle_1/large_single_aisle_1_aero_free.csv'
+        'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_free.csv'
     )
     flaps_data = get_aviary_resource_path(
-        'models/large_single_aisle_1/large_single_aisle_1_aero_flaps.csv'
+        'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_flaps.csv'
     )
     ground_data = get_aviary_resource_path(
-        'models/large_single_aisle_1/large_single_aisle_1_aero_ground.csv'
+        'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_ground.csv'
     )
 
     def test_groundroll(self):
@@ -234,7 +234,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
     def test_climb(self):
         prob = om.Problem()
 
-        fp = 'models/aircraft/blended_wing_body/generic_BWB_GASP_aero.csv'
+        fp = 'models/aircraft/blended_wing_body/aerodynamics_tables/generic_BWB_GASP_aero.csv'
         prob.model = TabularCruiseAero(num_nodes=3, aero_data=fp)
 
         prob.setup(force_alloc_complex=True)
@@ -258,7 +258,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
 
     def test_cruise(self):
         prob = om.Problem()
-        ref = 'models/aircraft/blended_wing_body/generic_BWB_GASP_aero.csv'
+        ref = 'models/aircraft/blended_wing_body/aerodynamics_tables/generic_BWB_GASP_aero.csv'
         fp = get_aviary_resource_path(ref)
         prob.model = TabularCruiseAero(num_nodes=2, aero_data=fp)
         prob.setup(force_alloc_complex=True)

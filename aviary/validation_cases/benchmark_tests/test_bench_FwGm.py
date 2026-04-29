@@ -15,7 +15,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     FLOPS mass method, GASP aero method, and TWO_DEGREES_OF_FREEDOM mission method.
-    Expected outputs based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    Expected outputs based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -25,7 +25,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             max_iter=50,
             verbosity=0,
@@ -57,7 +57,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             verbosity=1,
             optimizer='SNOPT',
