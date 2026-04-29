@@ -9,7 +9,7 @@ from enum import Enum
 import numpy as np
 from openmdao.utils.units import convert_units
 
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 def isiterable(val, valid_iterables: tuple = (list, np.ndarray, tuple)):
@@ -141,7 +141,7 @@ def enum_setter(opt_meta, value):
     raise TypeError(msg)
 
 
-def check_type(key, val, meta_data=_MetaData):
+def check_type(key, val, meta_data=CoreMetaData):
     """
     Check that provided val is the correct type. If val is iterable, also check each individual
     index.
@@ -208,7 +208,7 @@ def check_type(key, val, meta_data=_MetaData):
             )
 
 
-def cast_type(key, val, meta_data=_MetaData):
+def cast_type(key, val, meta_data=CoreMetaData):
     """
     Attempts to cast val into an accepted type in meta_data. If a valid type cast is found, val is
     changed to that type. If no compatible type is found, val is returned as is. Typing preference

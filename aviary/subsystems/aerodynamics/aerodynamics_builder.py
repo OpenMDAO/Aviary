@@ -28,7 +28,7 @@ from aviary.subsystems.aerodynamics.solve_alpha_group import SolveAlphaGroup
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 
@@ -534,7 +534,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                         )
 
                 for var in core_inputs_computed:
-                    meta = _MetaData[var]
+                    meta = CoreMetaData[var]
 
                     val = meta['default_value']
                     if val is None:
@@ -550,7 +550,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                     params[var] = {'val': val, 'units': units, 'static_target': True}
 
                 for var in ENGINE_SIZED_INPUTS:
-                    meta = _MetaData[var]
+                    meta = CoreMetaData[var]
                     val = meta['default_value']
                     if val is None:
                         val = [0.0]  # _unspecified
@@ -564,7 +564,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
             elif method == 'tabular':
                 for var in TABULAR_CORE_INPUTS:
-                    meta = _MetaData[var]
+                    meta = CoreMetaData[var]
 
                     val = meta['default_value']
                     if val is None:
@@ -581,7 +581,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
             elif method == 'low_speed':
                 for var in LOW_SPEED_CORE_INPUTS:
-                    meta = _MetaData[var]
+                    meta = CoreMetaData[var]
 
                     val = meta['default_value']
                     if val is None:
@@ -675,7 +675,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
             for var in all_vars:
                 # TODO only checking core metadata here!!
-                meta = _MetaData[var]
+                meta = CoreMetaData[var]
 
                 val = meta['default_value']
                 if val is None:

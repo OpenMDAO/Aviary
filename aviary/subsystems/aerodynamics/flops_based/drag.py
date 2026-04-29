@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
-from aviary.variable_info.variable_meta_data import _MetaData as _meta_data
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -157,8 +157,8 @@ class TotalDrag(om.Group):
     def setup(self):
         nn = self.options['num_nodes']
 
-        FCDI_desc = _meta_data[Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR]['desc']
-        FCD0_desc = _meta_data[Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR]['desc']
+        FCDI_desc = CoreMetaData[Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR]['desc']
+        FCD0_desc = CoreMetaData[Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR]['desc']
 
         kwargs = {
             'CDI': dict(
