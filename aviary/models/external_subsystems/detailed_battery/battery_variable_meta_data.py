@@ -1,7 +1,9 @@
+from copy import deepcopy
+
 import aviary.api as av
 from aviary.models.external_subsystems.detailed_battery.battery_variables import Aircraft, Dynamic
 
-ExtendedMetaData = av.CoreMetaData
+ExtendedMetaData = deepcopy(av.CoreMetaData)
 
 
 ##### BATTERY VALUES #####
