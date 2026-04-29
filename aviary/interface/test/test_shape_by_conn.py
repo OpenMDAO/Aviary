@@ -27,7 +27,7 @@ class TestShapebyConn(unittest.TestCase):
                 CG1 = 'aircraft:wing:cg1'
                 CG2 = 'aircraft:wing:cg2'
 
-        ExtendedMetaData = CoreMetaData
+        ExtendedMetaData = deepcopy(CoreMetaData)
         add_meta_data(
             ExtendedAircraft.Wing.CG1,
             units='ft',
