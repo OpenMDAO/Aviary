@@ -282,7 +282,7 @@ class TestExternalSubsystemBus(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
         prob.load_inputs(csv_path, phase_info)
         prob.aviary_inputs.set_val('the_shape_for_the_thing_dim0', 3, meta_data=ExtendedMetaData)
         prob.aviary_inputs.set_val('the_shape_for_the_thing_dim1', 4, meta_data=ExtendedMetaData)

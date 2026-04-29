@@ -248,7 +248,7 @@ def get_path(path: Union[str, Path], verbosity=Verbosity.BRIEF) -> Path:
         )
 
     # Print the path being used.
-    if verbosity > Verbosity.BRIEF:
+    if verbosity > Verbosity.VERBOSE:
         print(f'Found {path}')
 
     return path

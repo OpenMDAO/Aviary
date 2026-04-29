@@ -40,7 +40,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.load_external_subsystems([SolverBuilder(name='solve_me')])
@@ -66,7 +66,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
 

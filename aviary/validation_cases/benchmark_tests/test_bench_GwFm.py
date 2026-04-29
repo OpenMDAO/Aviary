@@ -15,7 +15,7 @@ from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.run_aviary import run_aviary
-from aviary.models.aircraft.test_aircraft.GwFm_phase_info import phase_info
+from aviary.validation_cases.validation_data.test_models.GwFm_phase_info import phase_info
 from aviary.validation_cases.benchmark_utils import compare_against_expected_values
 
 
@@ -24,7 +24,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass method, GASP aero method, and ENERGY_STATE mission method. Expected outputs
-    based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -120,7 +120,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer='IPOPT')
     def bench_test_swap_1_GwFm_IPOPT(self):
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv',
             self.phase_info,
             max_iter=50,
             optimizer='IPOPT',
@@ -132,7 +132,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def bench_test_swap_1_GwFm_SNOPT(self):
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv',
             self.phase_info,
             max_iter=50,
             optimizer='SNOPT',

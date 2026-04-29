@@ -22,7 +22,8 @@ class TestEnergyStateOffDesign(unittest.TestCase):
         copy_energy_phase_info['post_mission']['target_range'] = (2500.0, 'nmi')
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', copy_energy_phase_info
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+            copy_energy_phase_info,
         )
 
         # define passengers of every seat class so we can change their values later
@@ -278,7 +279,8 @@ class Test2DOFOffDesign(unittest.TestCase):
         copy_twodof_phase_info = deepcopy(twodof_phase_info)
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', copy_twodof_phase_info
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
+            copy_twodof_phase_info,
         )
 
         prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, val=150000, units='lbm')
@@ -504,7 +506,7 @@ class PayloadRangeTest(unittest.TestCase):
         )
 
         (aviary_inputs, initialization_guesses) = av.create_vehicle(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
         )
         aviary_inputs.set_val(Settings.PAYLOAD_RANGE, True)
         prob.load_inputs(aviary_inputs, phase_info)
