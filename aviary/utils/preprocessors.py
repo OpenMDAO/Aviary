@@ -50,6 +50,9 @@ def preprocess_options(
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
+    # TODO move these into their own subfunction (preprocess options is a collector for preprocessor
+    #      functions only, and should not change options on its own)
+
     # TODO the zero value behavior should probably be covered in fortran_to_aviary, and the preprocessor sets up the default value if it is not provided in the input file at all
     if Aircraft.Wing.ASPECT_RATIO_REFERENCE in aviary_options:
         arref = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE)
