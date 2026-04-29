@@ -138,7 +138,7 @@ def make_problem(subsystem_options={}):
 
     for key in aviary_keys:
         try:
-            val, units = aviary_inputs.get_item(key, ())
+            val, units = aviary_inputs.get_item(key)
 
         except Exception as error:
             msg = f'"{key}": {error!s}'

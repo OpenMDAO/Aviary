@@ -66,6 +66,11 @@ class NamedValues(Collection):
         -------
         OptionalValueAndUnits
 
+        Raises
+        ------
+        KeyError
+            if the named value does not exist
+
         See Also
         --------
         get_val

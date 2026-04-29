@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.models.missions.two_dof_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestAeroBuilderGasp(unittest.TestCase):
@@ -26,6 +26,10 @@ class TestAeroBuilderGasp(unittest.TestCase):
 
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.HEIGHT, 7.7777, units='ft')
+
+        # This value is missing from GwGm model. Old version of test was relying on
+        # NamedValues.get_item() to return (None, None) in option_to_var.py to avoid errors
+        prob.aviary_inputs.set_val(Mission.Taxi.MACH, 0, 'unitless')
 
         prob.check_and_preprocess_inputs()
 
