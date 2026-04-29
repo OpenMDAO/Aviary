@@ -27,10 +27,6 @@ class TestAeroBuilderGasp(unittest.TestCase):
         # Change value just to be certain.
         prob.aviary_inputs.set_val(Aircraft.Wing.HEIGHT, 7.7777, units='ft')
 
-        # This value is missing from GwGm model. Old version of test was relying on
-        # NamedValues.get_item() to return (None, None) in option_to_var.py to avoid errors
-        prob.aviary_inputs.set_val(Mission.Taxi.MACH, 0, 'unitless')
-
         prob.check_and_preprocess_inputs()
 
         prob.build_model()
