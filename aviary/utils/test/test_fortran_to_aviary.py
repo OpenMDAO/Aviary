@@ -121,7 +121,9 @@ class TestFortranToAviary(unittest.TestCase):
         # using the fortran-to-Aviary converter and was not evaluated for comparison to the original.
         # Thus, until this file is evaluated, this test is purely a regression test.
 
-        filepath = 'models/aircraft/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPS.txt'
+        filepath = (
+            'validation_cases/validation_data/legacy_files/N3CC_generic_low_speed_polars_FLOPS.txt'
+        )
         comparison_filepath = 'utils/test/data/converter_test_advanced_single_aisle_FLOPS.csv'
         self.prepare_and_run(
             filepath,

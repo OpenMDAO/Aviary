@@ -362,7 +362,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         modified_phase_info['cruise']['user_options']['mach_final'] = (0.5, 'unitless')
         prob = AviaryProblem(verbosity=1)
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, modified_phase_info)
         prob.check_and_preprocess_inputs()
