@@ -14,13 +14,12 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
-from aviary.utils.aviary_values import get_items, get_keys
 from aviary.utils.functions import set_aviary_initial_values
 from aviary.utils.preprocessors import preprocess_options
 from aviary.validation_cases.validation_tests import get_flops_case_names, get_flops_inputs
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission
 
 FLOPS = LegacyCode.FLOPS
@@ -30,11 +29,11 @@ data_sets = get_flops_case_names()
 
 
 def setup_options(priority_data, backfill_data):
-    priority_keys = get_keys(priority_data)
+    priority_keys = priority_data.keys()
     full_data = priority_data.deepcopy()
 
     # add options to priority data that exist in backfill data but not priorirty
-    for key, (val, units) in get_items(backfill_data):
+    for key, (val, units) in backfill_data.items():
         if key not in priority_keys:
             (new_val, new_unit) = backfill_data.get_item(key)
             full_data.set_val(key, val=new_val, units=new_unit)
@@ -73,12 +72,12 @@ class PreMissionTestCase(unittest.TestCase):
 
         engines = [build_engine_deck(input_options)]
 
-        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', CoreMetaData, engines)
+        mass = CoreMassBuilder('mass', CoreMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, FLOPS)
         geom = CoreGeometryBuilder(
             'geometry',
-            BaseMetaData,
+            CoreMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=GASP,
         )
@@ -102,14 +101,14 @@ class PreMissionTestCase(unittest.TestCase):
             Aircraft.Engine.SCALED_SLS_THRUST, val=val, units=units
         )
 
-        for key, (val, units) in get_items(GASP_input):
+        for key, (val, units) in GASP_input.items():
             try:
-                if not BaseMetaData[key]['option']:
+                if not CoreMetaData[key]['option']:
                     self.prob.model.set_input_defaults(key, val, units)
             except KeyError:
                 continue
 
-        for key, (val, units) in get_items(V3_bug_fixed_non_metadata):
+        for key, (val, units) in V3_bug_fixed_non_metadata.items():
             self.prob.model.set_input_defaults(key, val=val, units=units)
 
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=1.0, units='ft')
@@ -224,12 +223,12 @@ class PreMissionTestCase(unittest.TestCase):
         prob = om.Problem()
         model = prob.model
 
-        prop = CorePropulsionBuilder('propulsion', BaseMetaData, engines)
-        mass = CoreMassBuilder('mass', BaseMetaData, GASP)
-        aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, FLOPS)
+        prop = CorePropulsionBuilder('propulsion', CoreMetaData, engines)
+        mass = CoreMassBuilder('mass', CoreMetaData, GASP)
+        aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, FLOPS)
         geom = CoreGeometryBuilder(
             'geometry',
-            BaseMetaData,
+            CoreMetaData,
             code_origin=(FLOPS, GASP),
             code_origin_to_prioritize=FLOPS,
         )
@@ -252,14 +251,14 @@ class PreMissionTestCase(unittest.TestCase):
             Aircraft.Engine.SCALED_SLS_THRUST, val=val, units=units
         )
 
-        for key, (val, units) in get_items(GASP_input):
+        for key, (val, units) in GASP_input.items():
             try:
-                if not BaseMetaData[key]['option']:
+                if not CoreMetaData[key]['option']:
                     prob.model.set_input_defaults(key, val, units)
             except KeyError:
                 continue
 
-        for key, (val, units) in get_items(V3_bug_fixed_non_metadata):
+        for key, (val, units) in V3_bug_fixed_non_metadata.items():
             prob.model.set_input_defaults(key, val=val, units=units)
 
         setup_model_options(prob, aviary_inputs)

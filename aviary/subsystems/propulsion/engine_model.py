@@ -228,25 +228,25 @@ class EngineModel(SubsystemBuilder):
         """
         return self.options.get_val(key, units)
 
-    def get_item(self, key, default=(None, None)):
+    def get_item(self, key):
         """
         Return the named value and its associated units.
-
-        Note, this method never raises `KeyError` or `TypeError`.
 
         Parameters
         ----------
         key : str
             the name of the item
 
-        default : OptionalValueAndUnits (None, None)
-            if the item does not exist, return this object
-
         Returns
         -------
         OptionalValueAndUnits
+
+        Raises
+        ------
+        KeyError
+            if the named value does not exist
         """
-        return self.options.get_item(key, default)
+        return self.options.get_item(key)
 
     def set_val(self, key, val, units='unitless'):
         """

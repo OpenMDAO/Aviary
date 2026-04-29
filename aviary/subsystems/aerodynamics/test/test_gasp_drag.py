@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_near_equal
 
 from aviary.models.missions.two_dof_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 class TestAeroBuilderGasp(unittest.TestCase):

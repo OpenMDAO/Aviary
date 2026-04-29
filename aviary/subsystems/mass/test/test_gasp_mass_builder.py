@@ -8,7 +8,7 @@ from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft
 
 GASP = LegacyCode.GASP
@@ -22,7 +22,7 @@ class TestGASPMassBuilderHybrid(av.TestSubsystemBuilder):
 
     def setUp(self):
         self.subsystem_builder = CoreMassBuilder(
-            'test_core_mass', meta_data=BaseMetaData, code_origin=GASP
+            'test_core_mass', meta_data=CoreMetaData, code_origin=GASP
         )
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
@@ -108,7 +108,7 @@ class TestGASPMassBuilder(av.TestSubsystemBuilder):
 
     def setUp(self):
         self.subsystem_builder = CoreMassBuilder(
-            'test_core_mass', meta_data=BaseMetaData, code_origin=GASP
+            'test_core_mass', meta_data=CoreMetaData, code_origin=GASP
         )
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Design.PART25_STRUCTURAL_CATEGORY, 3, units='unitless')
