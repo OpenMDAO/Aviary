@@ -27,7 +27,7 @@ from aviary.utils.merge_variable_metadata import merge_meta_data
 from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import EquationsOfMotion, LegacyCode, ProblemType, Verbosity
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
@@ -77,7 +77,7 @@ class AviaryProblem(om.Problem):
         self,
         problem_type: ProblemType = None,
         verbosity=None,
-        meta_data=BaseMetaData.copy(),
+        meta_data=CoreMetaData.copy(),
         **kwargs,
     ):
         # Modify OpenMDAO's default_reports for this session.
@@ -2127,7 +2127,7 @@ def _read_sizing_json(json_filename, meta_data, verbosity=Verbosity.BRIEF):
 
 
 def reload_aviary_problem(
-    filename, phase_info=None, metadata=BaseMetaData.copy(), verbosity=Verbosity.QUIET
+    filename, phase_info=None, metadata=CoreMetaData.copy(), verbosity=Verbosity.QUIET
 ):
     """
     Loads a previously sized Aviary model and returns an AviaryProblem for that model.

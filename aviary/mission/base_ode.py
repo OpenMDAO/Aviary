@@ -3,7 +3,7 @@ import openmdao.api as om
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import promote_aircraft_and_mission_vars
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 
 #
@@ -46,7 +46,7 @@ class BaseODE(om.Group):
         )
         self.options.declare(
             'meta_data',
-            default=_MetaData,
+            default=CoreMetaData,
             desc='metadata associated with the variables to be passed into the ODE',
         )
 

@@ -3,7 +3,7 @@ import unittest
 import aviary.api as av
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
 from aviary.variable_info.enums import LegacyCode
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft
 
 GASP = LegacyCode.GASP
@@ -17,7 +17,7 @@ class TestAeroBuilder(av.TestSubsystemBuilder):
     """
 
     def setUp(self):
-        self.subsystem_builder = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, GASP)
+        self.subsystem_builder = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, GASP)
         self.aviary_values = av.AviaryValues()
         self.aviary_values.set_val(Aircraft.Engine.NUM_ENGINES, [1], units='unitless')
         self.aviary_values.set_val(Aircraft.Design.TYPE, 'transport', units='unitless')

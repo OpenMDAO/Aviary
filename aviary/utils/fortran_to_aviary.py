@@ -31,7 +31,7 @@ from aviary.utils.legacy_code_data.gasp_defaults import gasp_default_values, gas
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import LegacyCode, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 FLOPS = LegacyCode.FLOPS
@@ -361,7 +361,7 @@ def process_and_store_data(
                 vehicle_data['initialization_guesses'][name] = float(var_values[0])
                 continue
 
-            elif name in _MetaData:
+            elif name in CoreMetaData:
                 if current_namelist + '.' + var_name in default_values:
                     data_units = default_values.get_item(current_namelist + '.' + var_name)[1]
                 else:
@@ -393,16 +393,16 @@ def set_value(var_name, var_value, units=None, value_dict: NamedValues = None, v
     set_value will update the current value of a variable in a value dictionary that contains a value
     and it's associated units.
     If units are specified for the new value, they will be used, otherwise the current units in the
-    value dictionary or the default units from _MetaData are used.
+    value dictionary or the default units from CoreMetaData are used.
     If the new variable is part of a list, the current list will be extended if needed.
     """
     if var_name in value_dict:
         current_value, units = value_dict.get_item(var_name)
     else:
         current_value = None
-        if var_name in _MetaData:
+        if var_name in CoreMetaData:
             if not units:
-                units = _MetaData[var_name]['units']
+                units = CoreMetaData[var_name]['units']
     if not units:
         units = 'unitless'
 
@@ -436,10 +436,10 @@ def generate_aviary_names(legacy_code):
     Each Aviary variable will have a list of matching Fortran names.
     """
     alternate_names = {}
-    for key in _MetaData.keys():
-        historical_dict = _MetaData[key]['historical_name']
+    for key in CoreMetaData.keys():
+        historical_dict = CoreMetaData[key]['historical_name']
         if historical_dict and legacy_code in historical_dict:
-            alt_name = _MetaData[key]['historical_name'][legacy_code]
+            alt_name = CoreMetaData[key]['historical_name'][legacy_code]
             if isinstance(alt_name, str):
                 alt_name = [alt_name]
             alternate_names[key] = alt_name
@@ -1035,8 +1035,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             else:
                 FULDEN = wrapped_convert_units(
                     (
-                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
-                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['units'],
                     ),
                     'lbm/ft**3',
                 )
@@ -1056,7 +1056,7 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         try:
             CLAPP = unused_values.get_item('TOLIN.CLAPP')[0][0]
             CLLDM = 1.69 * CLAPP
-        except TypeError:
+        except KeyError:
             CLLDM = 3.0
         input_values.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, [CLLDM])
 
@@ -1150,8 +1150,8 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
             else:
                 FULDEN = wrapped_convert_units(
                     (
-                        _MetaData[Aircraft.Fuel.DENSITY]['default_value'],
-                        _MetaData[Aircraft.Fuel.DENSITY]['units'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['default_value'],
+                        CoreMetaData[Aircraft.Fuel.DENSITY]['units'],
                     ),
                     'lbm/ft**3',
                 )
