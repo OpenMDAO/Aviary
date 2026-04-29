@@ -280,6 +280,7 @@ class EmptyMassGroup(om.Group):
     def setup(self):
         alt_mass = self.options[Aircraft.Design.USE_ALT_MASS]
 
+        # Empty mass margin is calculated here to avoid feedback loop
         self.add_subsystem(
             'empty_mass_margin', EmptyMassMargin(), promotes_inputs=['*'], promotes_outputs=['*']
         )
