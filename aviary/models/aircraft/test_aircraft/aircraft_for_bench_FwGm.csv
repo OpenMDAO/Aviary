@@ -69,7 +69,7 @@ aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:volume_coefficient,1.189,unitless
 aircraft:landing_gear:fixed_gear,False,unitless
 aircraft:landing_gear:main_gear_location,0.15,unitless
-aircraft:landing_gear:main_gear_mass_coefficient,0.85,unitless
+aircraft:landing_gear:main_gear_mass_fraction,0.85,unitless
 aircraft:landing_gear:mass_coefficient,0.04,unitless
 aircraft:landing_gear:tail_hook_mass_scaler,1,unitless
 aircraft:landing_gear:total_mass_scaler,1,unitless

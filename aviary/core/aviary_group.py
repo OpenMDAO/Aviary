@@ -292,7 +292,7 @@ class AviaryGroup(om.Group):
 
         if phase_info is None:
             phase_info = self.configurator.get_default_phase_info(self)
-            if verbosity is not None and verbosity >= Verbosity.BRIEF:
+            if verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                 print(
                     f'Loaded default phase_info for {self.mission_method.value.lower()} equations '
                     'of motion.'

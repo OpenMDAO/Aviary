@@ -783,14 +783,14 @@ def preprocess_propulsion(
         if total_engines_calc == 0:
             if num_engines > 1:
                 num_wing_engines_all[i] = num_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         f'Mount location for engines of type <{eng_name}> not '
                         'specified. Wing-mounted engines are assumed.'
                     )
             else:
                 num_fuse_engines_all[i] = num_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         f'Mount location for single engine of type <{eng_name}> not '
                         'specified. Assuming it is fuselage-mounted.'
@@ -813,14 +813,14 @@ def preprocess_propulsion(
             num_unspecified_engines = num_engines - num_fuse_engines - num_wing_engines
             if num_unspecified_engines > 1:
                 num_wing_engines_all[i] = num_wing_engines + num_unspecified_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         'Mount location was not defined for all engines of EngineModel '
                         f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
                     )
             elif num_unspecified_engines == 1 and num_wing_engines != 0:
                 num_fuse_engines_all[i] = num_fuse_engines + num_unspecified_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         'Mount location was not defined for all engine of EngineModel '
                         f'<{eng_name}> - unspecified engine is assumed fuselage-mounted.'
