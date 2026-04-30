@@ -290,7 +290,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Wing.INPUT_STATION_DISTRIBUTION)
         add_aviary_option(self, Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL)
         add_aviary_option(self, Aircraft.Wing.NUM_INTEGRATION_STATIONS)
-        add_aviary_option(self, Aircraft.BWB.DETAILED_WING_PROVIDED)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -350,22 +349,20 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         bwb_input_station_dist = np.array(
             self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
         )
-        if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
-            bwb_input_station_dist[1] = width / 2.0
-        else:
-            bwb_input_station_dist = np.where(
-                bwb_input_station_dist <= 1.0,
-                bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
-                bwb_input_station_dist + width / 2.0,  # else
-            )
-            bwb_input_station_dist[0] = 0.0
-            bwb_input_station_dist[1] = width / 2.0
-        inp_stations_mod = []
-        for x in bwb_input_station_dist:
-            if x > 1.0:
-                inp_stations_mod.append(2 * x / wingspan)
-            else:
-                inp_stations_mod.append(x)
+        bwb_input_station_dist = np.where(
+            bwb_input_station_dist <= 1.0,
+            bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
+            bwb_input_station_dist + width / 2.0,  # else
+        )
+        bwb_input_station_dist[0] = 0.0
+        bwb_input_station_dist[1] = width / 2.0
+
+        # in FLOPS, this is a step before calling BNDMAT
+        inp_stations_mod = np.where(
+            bwb_input_station_dist > 1.0,
+            2 * bwb_input_station_dist / wingspan,
+            bwb_input_station_dist,
+        )
         inp_stations_mod = np.array(inp_stations_mod)
         # For BWB, always start from inp_stations_mod[1], not inp_stations_mod[0]
         inp_stations_mod = inp_stations_mod[1:]
@@ -392,13 +389,12 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
                     'Assume it is the same as Aircraft.Wing.ASPECT_RATIO.'
                 )
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
-        chord_mod = []
-        for x in chord:
-            if x > 5.0:
-                chord_mod.append(2 * x / wingspan)
-            else:
-                chord_mod.append(x * arref[0] / ar[0])
-        chord_mod = np.array(chord_mod)
+        # chord_mod = []
+        chord_mod = np.where(
+            chord > 5.0,
+            2 * chord / wingspan,
+            chord,
+        )
 
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
         faert = inputs[Aircraft.Wing.AEROELASTIC_TAILORING_FACTOR]
@@ -485,7 +481,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         )
         csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
         emi = (del_moment + dy * load_path_length[1:]) * csw
-        em = np.sum(emi)
+        # em = np.sum(emi)
 
         tc_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations

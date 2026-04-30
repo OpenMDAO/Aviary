@@ -33,11 +33,8 @@ class TotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    # @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(
-        self,
-    ):
-        case_name = 'BWBdetailedFLOPS'
+    @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    def test_case(self, case_name):
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -249,7 +246,4 @@ class StructureMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TotalSummationTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()
