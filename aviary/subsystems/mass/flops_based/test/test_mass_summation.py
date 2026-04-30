@@ -7,10 +7,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 from parameterized import parameterized
 
 from aviary.subsystems.mass.flops_based.mass_summation import (
-    EmptyMass,
     MassSummation,
-    OperatingMass,
-    PropulsionMass,
     StructureMass,
 )
 from aviary.subsystems.propulsion.engine_deck import EngineDeck
@@ -92,6 +89,7 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Wing.MASS,
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS,
                 Aircraft.Propulsion.TOTAL_MISC_MASS,
+                Aircraft.Design.GROSS_MASS,
             ],
             output_keys=[
                 Aircraft.Design.EMPTY_MASS_MARGIN,
@@ -100,9 +98,10 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPENNAGE_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Mission.USEFUL_LOAD,
+                Mission.OPERATING_ITEMS_MASS,
                 Mission.OPERATING_MASS,
                 Mission.ZERO_FUEL_MASS,
+                Aircraft.Design.USEFUL_LOAD_MASS,
             ],
             version=Version.TRANSPORT_and_BWB,
             atol=1e-10,
@@ -185,7 +184,7 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPENNAGE_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Mission.USEFUL_LOAD,
+                Mission.OPERATING_ITEMS_MASS,
                 Mission.OPERATING_MASS,
                 Mission.ZERO_FUEL_MASS,
             ],

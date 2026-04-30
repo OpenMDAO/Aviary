@@ -271,7 +271,7 @@ outputs.set_val(Aircraft.Design.STRUCTURE_MASS, struct_mass, struct_mass_units)
 sys_equip_mass = 32232.0
 sys_equip_mass_units = 'lbm'
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, sys_equip_mass, sys_equip_mass_units)
-outputs.set_val(Mission.USEFUL_LOAD, 10071.93, 'lbm')
+outputs.set_val(Mission.OPERATING_ITEMS_MASS, 10071.93, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.ZERO_FUEL_MASS, 142837.0, 'lbm')
 

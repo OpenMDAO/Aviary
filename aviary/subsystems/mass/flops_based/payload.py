@@ -14,6 +14,9 @@ class PayloadGroup(om.Group):
     def setup(self):
         self.add_subsystem('cargo_mass', CargoMass(), promotes_inputs=['*'], promotes_outputs=['*'])
         self.add_subsystem(
+            'pax_payload_mass', PaxPayloadMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
+        self.add_subsystem(
             'total_payload_mass', TotalPayload(), promotes_inputs=['*'], promotes_outputs=['*']
         )
 
@@ -24,6 +27,7 @@ class TotalPayload(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
+
         add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, units='lbm')
 
     def setup_partials(self):
@@ -33,7 +37,7 @@ class TotalPayload(om.ExplicitComponent):
             val=1.0,
         )
 
-    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def compute(self, inputs, outputs):
         cargo_mass = inputs[Aircraft.CrewPayload.CARGO_MASS]
         passenger_payload_mass = inputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS]
 
@@ -41,7 +45,26 @@ class TotalPayload(om.ExplicitComponent):
 
 
 class CargoMass(om.ExplicitComponent):
-    """Calculate the mass of any passengers, their baggage, and other cargo."""
+    """Calculate the total cargo mass."""
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO, units='lbm')
+        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO, units='lbm')
+
+        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
+
+    def setup_partials(self):
+        self.declare_partials(Aircraft.CrewPayload.CARGO_MASS, '*', val=1.0)
+
+    def compute(self, inputs, outputs):
+        wing_cargo = inputs[Aircraft.CrewPayload.WING_CARGO]
+        misc_cargo = inputs[Aircraft.CrewPayload.MISC_CARGO]
+
+        outputs[Aircraft.CrewPayload.CARGO_MASS] = wing_cargo + misc_cargo
+
+
+class PaxPayloadMass(om.ExplicitComponent):
+    """Calculate the mass of passengers and their baggage."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER, units='lbm')
@@ -49,38 +72,21 @@ class CargoMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.NUM_PASSENGERS)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.CrewPayload.WING_CARGO, units='lbm')
-        add_aviary_input(self, Aircraft.CrewPayload.MISC_CARGO, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_MASS_TOTAL, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.BAGGAGE_MASS, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
-        add_aviary_output(self, Aircraft.CrewPayload.CARGO_MASS, units='lbm')
 
-    def setup_partials(self):
-        self.declare_partials(
-            Aircraft.CrewPayload.CARGO_MASS, Aircraft.CrewPayload.WING_CARGO, val=1.0
-        )
-
-        self.declare_partials(
-            Aircraft.CrewPayload.CARGO_MASS, Aircraft.CrewPayload.MISC_CARGO, val=1.0
-        )
-
-    def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
+    def compute(self, inputs, outputs):
         passenger_count = self.options[Aircraft.CrewPayload.NUM_PASSENGERS]
         mass_per_passenger, _ = self.options[Aircraft.CrewPayload.MASS_PER_PASSENGER]
         baggage_mass_per_passenger, _ = self.options[
             Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER
         ]
 
-        outputs[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL] = mass_per_passenger * passenger_count
+        pax_mass = mass_per_passenger * passenger_count
+        baggage_mass = baggage_mass_per_passenger * passenger_count
+        pax_payload = pax_mass + baggage_mass
 
-        outputs[Aircraft.CrewPayload.BAGGAGE_MASS] = baggage_mass_per_passenger * passenger_count
-
-        outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = (
-            mass_per_passenger * passenger_count + baggage_mass_per_passenger * passenger_count
-        )
-
-        wing_cargo = inputs[Aircraft.CrewPayload.WING_CARGO]
-        misc_cargo = inputs[Aircraft.CrewPayload.MISC_CARGO]
-
-        outputs[Aircraft.CrewPayload.CARGO_MASS] = wing_cargo + misc_cargo
+        outputs[Aircraft.CrewPayload.PASSENGER_MASS_TOTAL] = pax_mass
+        outputs[Aircraft.CrewPayload.BAGGAGE_MASS] = baggage_mass
+        outputs[Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS] = pax_payload

@@ -754,7 +754,7 @@ class BWBFuelAndOEMTestCase(unittest.TestCase):
         # prob.model.set_input_defaults(
         #     Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 20876.477, units='lbm'
         # )
-        # prob.model.set_input_defaults(Mission.USEFUL_LOAD, 5736.3, units='lbm')
+        # prob.model.set_input_defaults(Mission.OPERATING_ITEMS_MASS, 5736.3, units='lbm')
         prob.model.set_input_defaults(Mission.OPERATING_MASS, 88282.366, units='lbm')
         prob.model.set_input_defaults('fuel_mass_required', 26652.3, units='lbm')
         prob.model.set_input_defaults(

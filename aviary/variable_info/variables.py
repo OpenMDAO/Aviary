@@ -176,6 +176,7 @@ class Aircraft:
         TYPE = 'aircraft:design:type'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
+        USEFUL_LOAD_MASS = 'aircraft:design:useful_load_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
         WING_LOADING = 'aircraft:design:wing_loading'
         ZERO_LIFT_DRAG_COEFF_FACTOR = 'aircraft:design:zero_lift_drag_coeff_factor'
@@ -672,6 +673,7 @@ class Mission:
     FINAL_TIME = 'mission:final_time'
     FUEL = 'mission:fuel'
     GROSS_MASS = 'mission:gross_mass'
+    OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'
     RESERVE_FUEL = 'mission:reserve_fuel'
@@ -679,7 +681,6 @@ class Mission:
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
     TOTAL_FUEL = 'mission:total_fuel'
     TOTAL_RESERVE_FUEL = 'mission:total_reserve_fuel'
-    USEFUL_LOAD = 'mission:useful_load'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 
     class Constraints:
