@@ -14,6 +14,7 @@ import numpy as np
 import openmdao
 import openmdao.api as om
 import openmdao.utils.hooks as hooks
+from openmdao.utils.mpi import MPI
 from openmdao.utils.reports_system import _default_reports
 from openmdao.utils.units import convert_units
 from packaging import version
@@ -1331,9 +1332,13 @@ class AviaryProblem(om.Problem):
             self.driver.add_recorder(recorder)
             self.final_setup()
 
-        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
-            with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
-                self.model.list_inputs(out_stream=outfile)
+        if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUGs
+            if MPI and self.comm.size > 1 and self.comm.rank > 0:
+                # Only log on rank 0
+                pass
+            else:
+                with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
+                    self.model.list_inputs(out_stream=outfile)
 
         def _view_realtime_plot_hook(driver):
             case_recorder_file = str(driver._rec_mgr._recorders[0]._filepath)
