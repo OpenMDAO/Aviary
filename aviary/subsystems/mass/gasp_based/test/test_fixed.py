@@ -16,7 +16,8 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     LandingGearMassGroup,
     MassParameters,
     PayloadGroup,
-    TailMass,
+    HorizontalTailMass,
+    VerticalTailMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import extract_options, setup_model_options
@@ -613,7 +614,8 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
 class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
+        self.prob.model.add_subsystem('h_tail', HorizontalTailMass(), promotes=['*'])
+        self.prob.model.add_subsystem('v_tail', VerticalTailMass(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
@@ -787,7 +789,7 @@ class ControlMassTestCase(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1078,7 +1080,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1309,7 +1311,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1769,7 +1771,8 @@ class BWBTailTestCase(unittest.TestCase):
 
     def setUp(self):
         prob = self.prob = om.Problem()
-        prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
+        prob.model.add_subsystem('h_tail', HorizontalTailMass(), promotes=['*'])
+        prob.model.add_subsystem('v_tail', VerticalTailMass(), promotes=['*'])
 
         prob.model.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
@@ -1899,7 +1902,7 @@ class BWBControlMassTestCase(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, 0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
@@ -2052,7 +2055,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, 0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
