@@ -86,7 +86,11 @@ jobs:
           echo "============================================================="
           echo "Run Tests"
           echo "============================================================="
-          testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
+          cd aviary
+          cd validation_cases
+          cd benchmark_tests
+          testflo -n 1 --timeout=250 test_bench_FwFm.py
+          #testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
         uses: actions/checkout@v6

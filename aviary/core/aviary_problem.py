@@ -1333,8 +1333,8 @@ class AviaryProblem(om.Problem):
             self.final_setup()
 
         if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUGs
-            if MPI and self.comm.size > 1 and self.comm.rank > 0:
-                # Only log on rank 0
+            if MPI and self.comm.size > 1:
+                # list_inputs seems to have some collective calls.
                 pass
             else:
                 with open(self.get_reports_dir() / 'input_list.txt', 'w') as outfile:
