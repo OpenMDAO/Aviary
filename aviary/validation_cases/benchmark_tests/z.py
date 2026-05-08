@@ -101,23 +101,23 @@ def run_aviary(
         aircraft_data, phase_info, phase_info_modifier=phase_info_modifier, verbosity=verbosity
     )
 
-    #prob.load_external_subsystems(subsystems, verbosity=verbosity)
+    prob.load_external_subsystems(subsystems, verbosity=verbosity)
 
-    #prob.check_and_preprocess_inputs(verbosity=verbosity)
+    prob.check_and_preprocess_inputs(verbosity=verbosity)
 
-    ## Add Systems
-    #prob.add_pre_mission_systems(verbosity=verbosity)
+    # Add Systems
+    prob.add_pre_mission_systems(verbosity=verbosity)
 
-    #prob.add_phases(verbosity=verbosity)
+    prob.add_phases(verbosity=verbosity)
 
-    #prob.add_post_mission_systems(verbosity=verbosity)
+    prob.add_post_mission_systems(verbosity=verbosity)
 
-    ## Link phases and variables
-    #prob.link_phases(verbosity=verbosity)
+    # Link phases and variables
+    prob.link_phases(verbosity=verbosity)
 
-    #prob.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
+    prob.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
 
-    #prob.add_design_variables(verbosity=verbosity)
+    prob.add_design_variables(verbosity=verbosity)
 
     ## Load optimization problem formulation
     ## Detail which variables the optimizer can control
