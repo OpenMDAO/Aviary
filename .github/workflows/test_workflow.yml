@@ -50,7 +50,7 @@ jobs:
           # latest versions of openmdao/dymos
           - NAME: latest
             OS: ubuntu-24.04
-            OPENMDAO_PIXI_ENVIRONMENT: 'py313'
+            OPENMDAO_PIXI_ENVIRONMENT: 'py314'
             OPENMDAO_INSTALL_FROM: 'github'
             OPENMDAO: ''
             SNOPT: '7.7'
@@ -81,6 +81,10 @@ jobs:
 
       - name: Run tests
         shell: bash -l {0}
+        env:
+          # MPI settings for CI (all platforms)
+          PRTE_MCA_rmaps_default_mapping_policy: ":oversubscribe"
+          OMPI_MCA_rmaps_base_oversubscribe: "1"
         run: |
           eval "$(pixi shell-hook -e ${{ matrix.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
           echo "============================================================="
@@ -89,7 +93,7 @@ jobs:
           cd aviary
           cd validation_cases
           cd benchmark_tests
-          testflo -n 1 --timeout=250 z.py
+          testflo  --timeout=250 z.py
           #testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
