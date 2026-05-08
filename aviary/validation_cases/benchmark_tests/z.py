@@ -121,9 +121,9 @@ def run_aviary(
 
     ## Load optimization problem formulation
     ## Detail which variables the optimizer can control
-    #prob.add_objective(objective_type=objective_type, verbosity=verbosity)
+    prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
-    #prob.setup(verbosity=verbosity)
+    prob.setup(verbosity=verbosity)
     #prob.final_setup()
 
     #prob.run_aviary_problem(
