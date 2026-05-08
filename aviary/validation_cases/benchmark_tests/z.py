@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.mpi import MPI
-from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
+from openmdao.utils.testing_utils import require_pyoptsparse
 
 from aviary.api import Mission
 from aviary.interface.run_aviary import run_aviary
@@ -16,15 +16,11 @@ except ImportError:
 
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
-from importlib.util import spec_from_file_location, module_from_spec
 import os
 from pathlib import Path
 import subprocess
 import sys
 from pathlib import Path
-
-from aviary.utils.functions import get_path
-from aviary.variable_info.enums import Verbosity
 
 
 def run_aviary(
@@ -101,34 +97,34 @@ def run_aviary(
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(
-        aircraft_data, phase_info, phase_info_modifier=phase_info_modifier, verbosity=verbosity
-    )
+    #prob.load_inputs(
+        #aircraft_data, phase_info, phase_info_modifier=phase_info_modifier, verbosity=verbosity
+    #)
 
-    prob.load_external_subsystems(subsystems, verbosity=verbosity)
+    #prob.load_external_subsystems(subsystems, verbosity=verbosity)
 
-    prob.check_and_preprocess_inputs(verbosity=verbosity)
+    #prob.check_and_preprocess_inputs(verbosity=verbosity)
 
-    # Add Systems
-    prob.add_pre_mission_systems(verbosity=verbosity)
+    ## Add Systems
+    #prob.add_pre_mission_systems(verbosity=verbosity)
 
-    prob.add_phases(verbosity=verbosity)
+    #prob.add_phases(verbosity=verbosity)
 
-    prob.add_post_mission_systems(verbosity=verbosity)
+    #prob.add_post_mission_systems(verbosity=verbosity)
 
-    # Link phases and variables
-    prob.link_phases(verbosity=verbosity)
+    ## Link phases and variables
+    #prob.link_phases(verbosity=verbosity)
 
-    prob.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
+    #prob.add_driver(optimizer, max_iter=max_iter, verbosity=verbosity)
 
-    prob.add_design_variables(verbosity=verbosity)
+    #prob.add_design_variables(verbosity=verbosity)
 
-    # Load optimization problem formulation
-    # Detail which variables the optimizer can control
-    prob.add_objective(objective_type=objective_type, verbosity=verbosity)
+    ## Load optimization problem formulation
+    ## Detail which variables the optimizer can control
+    #prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
-    prob.setup(verbosity=verbosity)
-    prob.final_setup()
+    #prob.setup(verbosity=verbosity)
+    #prob.final_setup()
 
     #prob.run_aviary_problem(
         #restart_filename=restart_filename,
@@ -328,15 +324,14 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_FwFm_SNOPT_MPI(self):
 
-        print('do nothing')
-        #prob = run_aviary(
-            #'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
-            #self.phase_info,
-            #verbosity=2,
-            #max_iter=1,
-            #optimizer='IPOPT',
-        #)
-        ## self.assertTrue(prob.result.success)
+        prob = run_aviary(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
+            self.phase_info,
+            verbosity=2,
+            max_iter=1,
+            optimizer='IPOPT',
+        )
+        # self.assertTrue(prob.result.success)
         #compare_against_expected_values(prob, self.expected_dict)
 
 
