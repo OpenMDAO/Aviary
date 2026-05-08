@@ -124,15 +124,15 @@ def run_aviary(
     prob.add_objective(objective_type=objective_type, verbosity=verbosity)
 
     prob.setup(verbosity=verbosity)
-    #prob.final_setup()
+    prob.final_setup()
 
-    #prob.run_aviary_problem(
-        #restart_filename=restart_filename,
-        #run_driver=run_driver,
-        #make_plots=make_plots,
-        #verbosity=verbosity,
-        #real_time_plotting=real_time_plotting,
-    #)
+    prob.run_aviary_problem(
+        restart_filename=restart_filename,
+        run_driver=run_driver,
+        make_plots=make_plots,
+        verbosity=verbosity,
+        real_time_plotting=real_time_plotting,
+    )
 
     return prob
 
