@@ -4,25 +4,22 @@ inputs:
     NAME:
         required: true
         type: string
-    PY:
+    OPENMDAO_PIXI_ENVIRONMENT:
         required: true
         type: string
-    NUMPY:
-        required: true
-        type: string
-    SCIPY:
-        required: true
-        type: string
-    PYOPTSPARSE:
-        required: true
-        type: string
-    SNOPT:
+    OPENMDAO_INSTALL_FROM:
         required: true
         type: string
     OPENMDAO:
         required: true
         type: string
+    SNOPT:
+        required: true
+        type: string
     DYMOS:
+        required: true
+        type: string
+    PYOPTSPARSE:
         required: true
         type: string
     SSH_PRIVATE_KEY:
@@ -32,11 +29,22 @@ inputs:
     SNOPT_LOCATION_77:
         required: true
 
+    # Deprecate
+    PY:
+        required: true
+        type: string
+    NUMPY:
+        required: true
+        type: string
+    SCIPY:
+        required: true
+        type: string
+
 runs:
   using: "composite"
   steps:
     - name: Display run details
-      shell: bash
+      shell: bash -l {0}
       run: |
         echo "============================================================="
         echo "Run #${GITHUB_RUN_NUMBER}"
@@ -46,8 +54,11 @@ runs:
         echo "Initiated by: ${GITHUB_ACTOR}"
         echo "============================================================="
 
+    - name: Checkout Aviary
+      uses: actions/checkout@v6
+
     - name: Create SSH key
-      shell: bash
+      shell: bash -l {0}
       env:
         SSH_PRIVATE_KEY: ${{inputs.SSH_PRIVATE_KEY}}
         SSH_KNOWN_HOSTS: ${{inputs.SSH_KNOWN_HOSTS}}
@@ -57,81 +68,36 @@ runs:
         sudo chmod 600 ~/.ssh/id_rsa
         echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-    - name: Setup miniconda
-      uses: conda-incubator/setup-miniconda@v3
+    - name: 'Setup OpenMDAO pixi Environment'
+      id: setup_pixi_environment
+      uses: OpenMDAO/OpenMDAO/.github/actions/setup_openmdao_pixi@master
       with:
-        auto-update-conda: true
-        python-version: ${{ inputs.PY }}
-        channels: conda-forge
+        environment: '${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }}'
+        openmdao_install_from: '${{ inputs.OPENMDAO_INSTALL_FROM }}'
+        openmdao_version: '${{ inputs.OPENMDAO }}'
 
-    - name: Install dependencies
+    - name: Install SNOPT
+      if: inputs.SNOPT_LOCATION_77
       shell: bash -l {0}
       run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
         echo "============================================================="
-        echo "Install dependencies"
-        echo "============================================================="
-        conda install numpy=${{ inputs.NUMPY }} scipy=${{ inputs.SCIPY }} -q -y
-        conda install matplotlib pandas panel hvplot -q -y
-        pip install testflo -q
-
-    - name: Install pyOptSparse
-      if: inputs.PYOPTSPARSE
-      shell: bash -l {0}
-      run: |
-        echo "============================================================="
-        echo "Determine which branch/version of pyoptsparse to install"
-        echo "============================================================="
-        if [[ "${{ inputs.PYOPTSPARSE }}" == "latest" ]]; then
-          function latest_version() {
-            local REPO_URL=$1/releases/latest
-            local LATEST_URL=`curl -fsSLI -o /dev/null -w %{url_effective} $REPO_URL`
-            local LATEST_VER=`echo $LATEST_URL | awk '{split($0,a,"/tag/"); print a[2]}'`
-            echo $LATEST_VER
-          }
-          BRANCH="-b $(latest_version https://github.com/mdolab/pyoptsparse)"
-        else
-          BRANCH="-b ${{ inputs.PYOPTSPARSE }}"
-        fi
-
-        echo "============================================================="
-        echo "Install pyoptsparse"
+        echo "Install SNOPT"
         echo "============================================================="
         if [[ "${{ inputs.SNOPT }}" == "7.7" && "${{ inputs.SNOPT_LOCATION_77 }}" ]]; then
           mkdir SNOPT
           echo "  > Secure copying SNOPT 7.7 over SSH"
           scp -qr ${{ inputs.SNOPT_LOCATION_77 }} SNOPT
-          SNOPT="-s SNOPT/src"
+          python -m build_pyoptsparse.snopt_module SNOPT/src
         elif [[ "${{ inputs.SNOPT }}" ]]; then
           echo "SNOPT version ${{ inputs.SNOPT }} was requested but source is not available"
-        fi
-
-        conda config --add channels conda-forge
-
-        pip install git+https://github.com/OpenMDAO/build_pyoptsparse@v2.0.13
-        build_pyoptsparse -v $BRANCH $SNOPT
-
-        echo "The build script has been grabbing an older version of IPOPT with some problems."
-        conda install ipopt=3.14
-
-    - name: Install OpenMDAO
-      if: inputs.OPENMDAO
-      shell: bash -l {0}
-      run: |
-        echo "============================================================="
-        echo "Install OpenMDAO"
-        echo "============================================================="
-        if [[ "${{ inputs.OPENMDAO }}" == "dev" ]]; then
-          pip install git+https://github.com/OpenMDAO/OpenMDAO
-        elif [[ "${{ inputs.OPENMDAO }}" == "latest" ]]; then
-          pip install openmdao
-        else
-          pip install openmdao==${{ inputs.OPENMDAO }}
         fi
 
     - name: Install Dymos
       if: inputs.DYMOS
       shell: bash -l {0}
       run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
         echo "============================================================="
         echo "Install Dymos"
         echo "============================================================="
@@ -143,27 +109,60 @@ runs:
           pip install dymos==${{ inputs.DYMOS }}
         fi
 
-    - name: Checkout Aviary
-      uses: actions/checkout@v6
-
     - name: Install Aviary
       shell: bash -l {0}
       run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
         echo "============================================================="
         echo "Install Aviary"
         echo "============================================================="
         pip install -e .[all]
 
+    - name: Check MPI and PETSc
+      shell: bash -l {0}
+      continue-on-error: true
+      run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
+        if python -c "import mpi4py, petsc4py" 2>/dev/null; then
+          echo "============================================================="
+          echo "Check MPI and PETSc installation"
+          echo "============================================================="
+          export PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe
+          export OMPI_MCA_rmaps_base_oversubscribe=1
+          export OMPI_MCA_btl=^openib
+          echo "-----------------------"
+          echo "Quick test of mpi4py:"
+          mpirun -n 3 python -c "from mpi4py import MPI; print(f'Rank: {MPI.COMM_WORLD.rank}')"
+          echo "-----------------------"
+          echo "Quick test of petsc4py:"
+          mpirun -n 3 python -c "import numpy; from mpi4py import MPI; comm = MPI.COMM_WORLD; \
+            import petsc4py; petsc4py.init(); \
+            x = petsc4py.PETSc.Vec().createWithArray(numpy.ones(5)*comm.rank, comm=comm);  \
+            print(x.getArray())"
+          echo "-----------------------"
+
+          # shellcheck disable=SC2129
+          echo "PRTE_MCA_rmaps_default_mapping_policy=:oversubscribe" >> "$GITHUB_ENV"
+          echo "OMPI_MCA_rmaps_base_oversubscribe=1" >> "$GITHUB_ENV"
+          echo "OMPI_MCA_btl=^openib" >> "$GITHUB_ENV"
+
+          echo "Workaround for intermittent failures with OMPI https://github.com/open-mpi/ompi/issues/7393"
+          echo "TMPDIR=/tmp" >> "$GITHUB_ENV"
+        else
+          echo "mpi4py or petsc4py not installed in this environment, skipping MPI checks"
+        fi
+
     - name: Display conda environment info
       shell: bash -l {0}
       run: |
+        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
         conda info
         conda list
         conda env export --file environment.yml
         mv environment.yml ${{ inputs.NAME }}_environment.yml
 
     - name: 'Upload environment artifact'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.NAME }}_environment
         path: ${{ inputs.NAME }}_environment.yml

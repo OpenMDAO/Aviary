@@ -14,45 +14,49 @@ on:
   # Allow running the workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  # Cancel any existing CI runs if we push to this branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   pre_commit:
     # run pre-commit checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-python@v6
       with:
-        python-version: '3.11'
+        python-version: '3.13'
     - uses: pre-commit/action@v3.0.1
 
   test_ubuntu:
-    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         include:
           # oldest supported versions of openmdao/dymos
           # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
-          #- NAME: oldest
-          #  PY: '3.11'
-          #  NUMPY: '2.2'
-          #  SCIPY: '1.15'
-          #  PYOPTSPARSE: 'v2.13.1'
-          #  SNOPT: '7.7'
-          #  OPENMDAO: '3.43.0'
-          #  DYMOS: '1.13.1'
+          - NAME: oldest
+            OS: ubuntu-24.04
+            OPENMDAO_PIXI_ENVIRONMENT: 'py311'
+            OPENMDAO_INSTALL_FROM: 'pypi'
+            OPENMDAO: '3.43.0'
+            SNOPT: '7.7'
+            DYMOS: '1.13.1'
 
           # latest versions of openmdao/dymos
           - NAME: latest
-            PY: '3.13'
-            NUMPY: 2.2
-            SCIPY: 1.16
-            PYOPTSPARSE: 'v2.14.4'
+            OS: ubuntu-24.04
+            OPENMDAO_PIXI_ENVIRONMENT: 'py314'
+            OPENMDAO_INSTALL_FROM: 'github'
+            OPENMDAO: ''
             SNOPT: '7.7'
-            OPENMDAO: 'latest'
             DYMOS: 'latest'
+
+    runs-on: ${{ matrix.OS }}
 
     steps:
       - name: Checkout actions
@@ -66,12 +70,10 @@ jobs:
         uses: ./actions/.github/actions/prepare_environment
         with:
           NAME: ${{ matrix.NAME }}
-          PY: ${{ matrix.PY }}
-          NUMPY: ${{ matrix.NUMPY }}
-          SCIPY: ${{ matrix.SCIPY }}
-          PYOPTSPARSE: ${{ matrix.PYOPTSPARSE }}
-          SNOPT: ${{ matrix.SNOPT }}
+          OPENMDAO_PIXI_ENVIRONMENT: ${{ matrix.OPENMDAO_PIXI_ENVIRONMENT }}
+          OPENMDAO_INSTALL_FROM: ${{ matrix.OPENMDAO_INSTALL_FROM }}
           OPENMDAO: ${{ matrix.OPENMDAO }}
+          SNOPT: ${{ matrix.SNOPT }}
           DYMOS: ${{ matrix.DYMOS }}
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
@@ -79,11 +81,16 @@ jobs:
 
       - name: Run tests
         shell: bash -l {0}
+        env:
+          # MPI settings for CI (all platforms)
+          PRTE_MCA_rmaps_default_mapping_policy: ":oversubscribe"
+          OMPI_MCA_rmaps_base_oversubscribe: "1"
         run: |
+          eval "$(pixi shell-hook -e ${{ matrix.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
           echo "============================================================="
           echo "Run Tests"
           echo "============================================================="
-          testflo . -n 1 --timeout=200 --show_skipped --coverage --coverpkg aviary
+          testflo . --timeout=200 --show_skipped --coverage --coverpkg aviary
 
       - name: Checkout actions (again)
         uses: actions/checkout@v6

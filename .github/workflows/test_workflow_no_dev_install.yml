@@ -29,10 +29,15 @@ on:
 
 run-name:  ${{ inputs.run_name }}
 
+concurrency:
+  # Cancel any existing CI runs if we push to this branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   test_ubuntu_no_dev_install:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     timeout-minutes: 90
 
@@ -105,7 +110,7 @@ jobs:
           mv environment.yml ${{ inputs.NAME }}_environment.yml
 
       - name: 'Upload environment artifact'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.NAME }}_environment
           path: ${{ matrix.NAME }}_environment.yml
