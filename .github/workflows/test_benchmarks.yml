@@ -14,11 +14,15 @@ on:
   # Allow running the workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  # Cancel any existing CI runs if we push to this branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
   latest_benchmarks:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
 
     steps:
@@ -32,21 +36,20 @@ jobs:
       - name: prepare_benchmark_environment
         uses: ./actions/.github/actions/prepare_environment
         with:
-            NAME: 'latest'
-            PY: 3.12
-            NUMPY: 2.2
-            SCIPY: 1.16
-            PYOPTSPARSE: 'v2.14.4'
-            SNOPT: '7.7'
-            OPENMDAO: 'latest'
-            DYMOS: 'latest'
-            SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
-            SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
-            SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
+          NAME: 'latest'
+          OPENMDAO_PIXI_ENVIRONMENT: 'py313'
+          OPENMDAO_INSTALL_FROM: 'pypi'
+          OPENMDAO: ''
+          SNOPT: '7.7'
+          DYMOS: 'latest'
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+          SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
+          SNOPT_LOCATION_77: ${{ secrets.SNOPT_LOCATION_77 }}
 
       - name: Run benchmarks
         shell: bash -l {0}
         run: |
+          eval "$(pixi shell-hook -e py313 --manifest-path=${{ env.PIXI_MANIFEST }})"
           echo "============================================================="
           echo "Run Benchmarks"
           echo "============================================================="
