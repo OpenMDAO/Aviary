@@ -1,3 +1,4 @@
+from copy import deepcopy
 import os
 import unittest
 import warnings
@@ -60,14 +61,16 @@ class TestAviaryCSV(unittest.TestCase):
         # catch warnings as errors
         warnings.filterwarnings('error')
 
+        core_meta = deepcopy(CoreMetaData)
+
         try:
-            data, inputs, outputs, comments = read_data_file(self.filename, CoreMetaData)
+            data, inputs, outputs, comments = read_data_file(self.filename, core_meta)
         except UserWarning:
             # disable warnings as errors behavior for future tests
             warnings.resetwarnings()
             # run read_data_file() without catching warnings as errors so it completes
             data, inputs, outputs, comments = read_data_file(
-                self.filename, CoreMetaData, save_comments=True
+                self.filename, core_meta, save_comments=True
             )
             if 'fake_var' in data.keys():
                 raise RuntimeError('fake_var should be skipped when reading csv')
@@ -79,8 +82,8 @@ class TestAviaryCSV(unittest.TestCase):
             raise RuntimeError('File should raise warning of skipped header data')
 
         # add fake_vars to metadata and try again - should work identically to test_read_data_file()
-        add_meta_data(key='fake_var', meta_data=CoreMetaData, units='lbm')
-        self._compare_csv_results(*read_data_file(self.filename, CoreMetaData, save_comments=True))
+        add_meta_data(key='fake_var', meta_data=core_meta, units='lbm')
+        self._compare_csv_results(*read_data_file(self.filename, core_meta, save_comments=True))
 
     def test_aliases_csv(self):
         aliases = {'Real Var': 'Fake Var'}
