@@ -28,7 +28,7 @@ jobs:
           - NAME: dev
             OS: ubuntu-24.04
             OPENMDAO_PIXI_ENVIRONMENT: 'py313'
-            OPENMDAO_INSTALL_FROM: 'dev'
+            OPENMDAO_INSTALL_FROM: 'github'
             OPENMDAO: ''
             SNOPT: '7.7'
             DYMOS: 'dev'
