@@ -424,7 +424,19 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
+            Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
             Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )  # bug fixed value and original value
 
         setup_model_options(self.prob, options)
@@ -439,6 +451,9 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
+            'eng_comb_mass': 14370.8,
+            'wing_mounted_mass': 24446.343040697346,
+            'prop_mass_sum': 0.0,
         }
         tol = 5e-4
 
@@ -543,7 +558,25 @@ class EngineTestCase2(unittest.TestCase):
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
+            Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
             Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            'aug_mass', val=0, units='lbm'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
+        )  # bug fixed value and original value
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )  # bug fixed value and original value
 
         setup_model_options(self.prob, options)
@@ -558,6 +591,9 @@ class EngineTestCase2(unittest.TestCase):
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
+            'eng_comb_mass': 14370.8,
+            'prop_mass_sum': 0,
+            'wing_mounted_mass': 24446.343040697346,
         }
         tol = 5e-4
 
@@ -672,7 +708,19 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             Aircraft.Engine.PYLON_FACTOR, val=[1.25, 1.28], units='unitless'
         )
         self.prob.model.set_input_defaults(
+            Aircraft.Engine.MASS_SCALER, val=[1, 0.9], units='unitless'
+        )
+        self.prob.model.set_input_defaults(
             Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.WING_LOCATIONS, val=[0.35, 0.0, 0.1], units='unitless'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
+        )
+        self.prob.model.set_input_defaults(
+            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
         )
 
         self.prob.model_options['*'] = extract_options(options)
@@ -687,6 +735,8 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
+            'eng_comb_mass': 26142.7716,
+            'wing_mounted_mass': 41417.49593562,
         }
 
         for var_name, expected_val in expected_values.items():
@@ -1885,7 +1935,11 @@ class BWBEngineTestCase(unittest.TestCase):
             Aircraft.Nacelle.SURFACE_AREA, 194.957186763, units='ft**2'
         )  # 6.76*3.14159265*9.18
         prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1.0, units='unitless')
         prob.model.set_input_defaults(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Engine.WING_LOCATIONS, 0.0, units='unitless')
+        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_MASS, 6630.0, units='lbm')
+        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0, units='unitless')
 
         setup_model_options(self.prob, options)
 
@@ -1901,6 +1955,9 @@ class BWBEngineTestCase(unittest.TestCase):
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
             Aircraft.Engine.POD_MASS: 1046.15088237,
+            'eng_comb_mass': 7311.49017184,
+            'wing_mounted_mass': 0,
+            'prop_mass_sum': 0.0,
         }
         tol = 1e-7
 
@@ -2285,14 +2342,4 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    # test = WingMountEngineTestCase2()
-    # test = EngineTestCase2()
-    # test = EngineTestCaseMultiEngine()
-    # test = WingMountEngineTestCaseMultiEngine()
-    # test = BWBEngineTestCase()
-    # test = EngineTestCase1()
-    # test = FixedMassGroupTestCase1()
-    test = FixedMassGroupTestCase3()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
