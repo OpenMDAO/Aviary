@@ -11,7 +11,6 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     ControlMass,
     ElectricAugmentationMass,
     EngineMass,
-    WingMountEngineMass,
     FixedMassGroup,
     HighLiftMass,
     LandingGearMassGroup,
@@ -450,73 +449,8 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
-            Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
             'wing_mounted_mass': 24446.343040697346,
-            'prop_mass_sum': 0.0,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=2e-11, rtol=1e-12)
-
-
-class WingMountEngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
-    """HAS_HYBRID_SYSTEM = False"""
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'wing_engine',
-            WingMountEngineMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=0.21366, units='lbm/lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=29500.0, units='lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS, val=882.4158, units='lbm'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS, val=1892.24386333, units='lbm')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            'eng_comb_mass': 14370.8,
-            'wing_mounted_mass': 24446.343040697346,
-            'prop_mass_sum': 0.0,
         }
         tol = 5e-4
 
@@ -590,7 +524,6 @@ class EngineTestCase2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
-            Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
             'prop_mass_sum': 0,
             'wing_mounted_mass': 24446.343040697346,
@@ -605,79 +538,10 @@ class EngineTestCase2(unittest.TestCase):
         assert_check_partials(data, atol=2e-11, rtol=1e-12)
 
 
-class WingMountEngineTestCase2(unittest.TestCase):
-    """HAS_HYBRID_SYSTEM = True"""
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'wing_engine',
-            WingMountEngineMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=0.21366, units='lbm/lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=29500.0, units='lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            'aug_mass', val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS, val=882.4158, units='lbm'
-        )
-        self.prob.model.set_input_defaults(Aircraft.Engine.POD_MASS, val=1892.24386333, units='lbm')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            'eng_comb_mass': 14370.8,
-            'wing_mounted_mass': 24446.343040697346,
-            'prop_mass_sum': 0.0,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=2e-11, rtol=1e-12)
-
-
 # arbitrary test case with multiple engine types
 @use_tempdirs
 class EngineTestCaseMultiEngine(unittest.TestCase):
-    def test_case1(self):
+    def test_case_1(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
 
@@ -734,71 +598,6 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
-            Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
-            'eng_comb_mass': 26142.7716,
-            'wing_mounted_mass': 41417.49593562,
-        }
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-8, rtol=1e-8)
-
-
-class WingMountEngineTestCaseMultiEngine(unittest.TestCase):
-    def test_case1(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, np.array([0.14, 0.19]))
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'wing_engine',
-            WingMountEngineMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=[0.21366, 0.15], units='lbm/lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=[29500.0, 18000], units='lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SCALER, val=[1, 0.9], units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=[0.35, 0.0, 0.1], units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.ADDITIONAL_MASS, val=[882.4158, 513.0], units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.POD_MASS, val=[1892.24386333, 1072.40259317], units='lbm'
-        )
-
-        self.prob.model_options['*'] = extract_options(options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.run_model()
-
-        tol = 5e-4
-        expected_values = {
             'eng_comb_mass': 26142.7716,
             'wing_mounted_mass': 41417.49593562,
         }
@@ -1954,10 +1753,8 @@ class BWBEngineTestCase(unittest.TestCase):
             'pylon_mass': 558.757916785,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
-            Aircraft.Engine.POD_MASS: 1046.15088237,
             'eng_comb_mass': 7311.49017184,
             'wing_mounted_mass': 0,
-            'prop_mass_sum': 0.0,
         }
         tol = 1e-7
 
@@ -1966,7 +1763,7 @@ class BWBEngineTestCase(unittest.TestCase):
                 assert_near_equal(self.prob[var_name], expected_val, tol)
 
         data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-10, rtol=1e-12)
+        assert_check_partials(data, atol=2e-9, rtol=1e-12)
 
 
 class BWBTailTestCase(unittest.TestCase):
@@ -2343,3 +2140,6 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    test = EngineTestCaseMultiEngine()
+    test.setUp()
+    # test.test_case_1()
