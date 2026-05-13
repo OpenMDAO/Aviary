@@ -450,6 +450,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
+            Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
             'wing_mounted_mass': 24446.343040697346,
         }
@@ -588,8 +589,9 @@ class EngineTestCase2(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
+            Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
-            'prop_mass_all': 0,
+            'prop_mass_sum': 0,
             'wing_mounted_mass': 24446.343040697346,
         }
         tol = 5e-4
@@ -746,7 +748,7 @@ class WingMountEngineTestCase3(unittest.TestCase):
 # arbitrary test case with multiple engine types
 @use_tempdirs
 class EngineTestCaseMultiEngine(unittest.TestCase):
-    def test_case_1(self):
+    def test_case1(self):
         options = get_option_defaults()
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
 
@@ -803,6 +805,7 @@ class EngineTestCaseMultiEngine(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
             Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
+            Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
             'eng_comb_mass': 26142.7716,
             'wing_mounted_mass': 41417.49593562,
         }
@@ -1718,7 +1721,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Engine.ADDITIONAL_MASS: 1765 / 2,
             'eng_comb_mass': 14599.28196478,
             'wing_mounted_mass': 24027.6,
-            'prop_mass_all': 0,
+            'prop_mass_sum': 0,
         }
         tol = 5e-4
 
@@ -2022,6 +2025,7 @@ class BWBEngineTestCase(unittest.TestCase):
             'pylon_mass': 558.757916785,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
             Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
+            Aircraft.Engine.POD_MASS: 1046.15088237,
             'eng_comb_mass': 7311.49017184,
             'wing_mounted_mass': 0,
         }
@@ -2032,7 +2036,7 @@ class BWBEngineTestCase(unittest.TestCase):
                 assert_near_equal(self.prob[var_name], expected_val, tol)
 
         data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=2e-9, rtol=1e-12)
+        assert_check_partials(data, atol=1e-10, rtol=1e-12)
 
 
 class BWBTailTestCase(unittest.TestCase):
@@ -2408,7 +2412,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
+    unittest.main()
     test = BWBEngineTestCase()
     test.setUp()
-    test.test_case1()
+    # test.test_case1()
