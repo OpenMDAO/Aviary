@@ -525,7 +525,7 @@ class EngineTestCase2(unittest.TestCase):
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             'eng_comb_mass': 14370.8,
-            'prop_mass_sum': 0,
+            'prop_mass_all': 0,
             'wing_mounted_mass': 24446.343040697346,
         }
         tol = 5e-4
@@ -1449,7 +1449,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Engine.ADDITIONAL_MASS: 1765 / 2,
             'eng_comb_mass': 14599.28196478,
             'wing_mounted_mass': 24027.6,
-            'prop_mass_sum': 0,
+            'prop_mass_all': 0,
         }
         tol = 5e-4
 
@@ -2140,6 +2140,3 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    test = EngineTestCaseMultiEngine()
-    test.setUp()
-    # test.test_case_1()
