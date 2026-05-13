@@ -51,8 +51,8 @@ class AccelODE(TwoDOFODE):
 
         self.add_excess_rate_comps(nn)
 
-        self.set_input_defaults(Dynamic.Vehicle.MASS, val=14e4 * np.ones(nn), units='lbm')
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units='ft')
+        self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
         self.set_input_defaults(
-            Dynamic.Mission.VELOCITY, val=200 * np.ones(nn), units='m/s'
+            Dynamic.Mission.VELOCITY, val=np.ones(nn), units='m/s'
         )  # val here is nominal

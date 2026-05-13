@@ -158,5 +158,5 @@ class SimpleCruiseODE(TwoDOFODE):
             promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )
 
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
-        self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
+        self.set_input_defaults('mass', val=np.ones(nn), units='lbm')

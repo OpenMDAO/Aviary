@@ -226,9 +226,9 @@ class FlightODE(TwoDOFODE):
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
-        self.set_input_defaults(Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units='unitless')
+        self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THROTTLE, val=0 * np.ones(nn), units='unitless'
+            Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
         )
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')
