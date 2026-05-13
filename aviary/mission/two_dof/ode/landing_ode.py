@@ -101,6 +101,7 @@ class LandingSegment(TwoDOFODE):
                         Dynamic.Atmosphere.DENSITY,
                         Dynamic.Atmosphere.SPEED_OF_SOUND,
                         Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                        ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                         Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                         ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),

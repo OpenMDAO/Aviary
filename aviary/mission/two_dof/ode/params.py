@@ -11,9 +11,9 @@ class ParamPort(om.ExplicitComponent):
     """
 
     param_data = {
-        Aircraft.Wing.INCIDENCE: dict(units='deg', val=0),
-        Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF: dict(units='deg', val=10),
-        Aircraft.Wing.FLAP_DEFLECTION_LANDING: dict(units='deg', val=40),
+        #Aircraft.Wing.INCIDENCE: dict(units='deg', val=0),
+        #Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF: dict(units='deg', val=10),
+        #Aircraft.Wing.FLAP_DEFLECTION_LANDING: dict(units='deg', val=40),
     }
 
     def setup(self):

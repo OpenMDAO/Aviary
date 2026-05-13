@@ -8,7 +8,8 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variable_meta_data import CoreMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPhaseOptions(AviaryOptionsDictionary):
@@ -213,6 +214,15 @@ class FlightPhase(PhaseBuilder):
             'mach_target': self.user_options.get_val('mach_target'),
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
+
+    def get_parameters(self):
+        params = {}
+        params[Aircraft.Wing.INCIDENCE] = {
+            'shape': (1, ),
+            'units': CoreMetaData[Aircraft.Wing.INCIDENCE]['units'],
+            'static_target': True,
+        }
+        return params
 
 
 # Adding initial guess metadata
