@@ -884,9 +884,14 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
 
-AERO_2DOF_TABULAR_LS_INPUTS = [Aircraft.Wing.SPAN, Aircraft.Wing.HEIGHT]
+AERO_2DOF_TABULAR_LS_INPUTS = [
+    Mission.Takeoff.AIRPORT_ALTITUDE,
+    Aircraft.Wing.SPAN,
+    Aircraft.Wing.HEIGHT
+]
 
 AERO_LS_2DOF_INPUTS = [
+    Mission.Takeoff.AIRPORT_ALTITUDE,
     Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,

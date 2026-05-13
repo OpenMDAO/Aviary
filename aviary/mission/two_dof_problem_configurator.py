@@ -807,46 +807,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         base_phase = phase_name.removeprefix('reserve_')
 
         if 'mass' not in guesses:
-            # Determine a mass guess depending on the phase name
-            if base_phase in ['groundroll', 'rotation', 'ascent', 'accel', 'climb1']:
-                mass_guess = rotation_mass
-            elif base_phase == 'climb2':
-                mass_guess = 0.99 * rotation_mass
-            elif 'desc' in base_phase:
-                mass_guess = 0.9 * aviary_group.cruise_mass_final
+            mass_guess = rotation_mass
 
             # Set the mass guess as the initial value for the mass state variable
             target_prob.set_val(
                 parent_prefix + f'traj.{phase_name}.states:mass', mass_guess, units='lbm'
-            )
-
-        if 'time' not in guesses:
-            # Determine initial time and duration guesses depending on the phase name
-            if 'desc1' == base_phase:
-                t_initial = flight_duration * 0.9
-                t_duration = flight_duration * 0.04
-            elif 'desc2' in base_phase:
-                t_initial = flight_duration * 0.94
-                t_duration = 5000
-
-            # Set the time guesses as the initial values for the time-related
-            # trajectory variables
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.t_initial', t_initial, units='s'
-            )
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.t_duration', t_duration, units='s'
-            )
-
-        if 'distance' not in guesses and phase_type is not PhaseType.SIMPLE_CRUISE:
-            # Determine initial distance guesses depending on the phase name
-            if 'desc1' == base_phase:
-                ys = [aviary_group.target_range * 0.97, aviary_group.target_range * 0.99]
-            elif 'desc2' in base_phase:
-                ys = [aviary_group.target_range * 0.99, aviary_group.target_range]
-            # Set the distance guesses as the initial values for the distance state
-            # variable
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.states:distance',
-                phase.interp(Dynamic.Mission.DISTANCE, ys=ys),
             )
