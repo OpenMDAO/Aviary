@@ -1066,7 +1066,7 @@ class WingMountEngineMass(om.ExplicitComponent):
 
         import pdb
 
-        pdb.set_trace()
+        # pdb.set_trace()
         J['wing_mounted_mass', Aircraft.Engine.WING_LOCATIONS] = (
             0.001 / (eng_span_frac + 0.001) ** 2 * wing_mass_deriv / GRAV_ENGLISH_LBM
         )
