@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.anti_icing import AntiIcingMass
 from aviary.variable_info.functions import setup_model_options
@@ -9,8 +10,9 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class AntiIcingTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case where SMOOTH_MASS_DISCONTINUITIES is false."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -46,6 +48,19 @@ class AntiIcingTestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
+    def test_case2(self):
+        """non-realistic case"""
+        self.prob.set_val(Aircraft.VerticalTail.AREA, 1.0, units='ft**2')
+        self.prob.set_val(Aircraft.Wing.AREA, 1.0, units='ft**2')
+        self.prob.set_val(Aircraft.HorizontalTail.AREA, 1.0, units='ft**2')
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AntiIcing.MASS], 0.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
 
 class AntiIcingTestCase2(unittest.TestCase):
     """
@@ -54,7 +69,7 @@ class AntiIcingTestCase2(unittest.TestCase):
 
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=False, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -96,8 +111,9 @@ class AntiIcingTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class AntiIcingTestCase3(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case where SMOOTH_MASS_DISCONTINUITIES is true."""
 
     def setUp(self):
         options = get_option_defaults()

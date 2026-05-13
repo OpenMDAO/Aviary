@@ -5,7 +5,7 @@ from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
 from aviary.variable_info.enums import GASPEngineType
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 def get_num_of_flight_attendent(num_pax):
@@ -56,6 +56,280 @@ def get_num_of_lavatories(num_pax):
     return num_lavatories
 
 
+def common_compute(
+    PAX, smooth, empirical, engine_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
+):
+    num_pilots = get_num_of_pilots(PAX, engine_type)
+    num_flight_attendants = get_num_of_flight_attendent(PAX)
+    lavatories = get_num_of_lavatories(PAX)
+
+    if smooth:
+        # gross_wt_init <= 10000.0:
+        furnishing_wt_1 = 0.065 * gross_wt_init - 59.0
+        # gross_wt_init > 10000.0:
+        if PAX >= 50:
+            if empirical:
+                # commonly used empirical furnishing weight equation
+                furnishing_wt_additional = scaler * PAX
+            else:
+                # linear regression formula
+                furnishing_wt_additional = 118.4 * PAX - 4190.0
+            # baseline furnishings (crew seats, cockpit, lavatories, galleys)
+            cabin_len = 0.75 * fus_len
+            agalley = 0.50 * PAX
+            furnishing_wt_2 = (
+                furnishing_wt_additional
+                + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
+                + num_flight_attendants * 30.0
+                + lavatories * 240.0
+                + agalley * 12.0
+                + 1.5 * cabin_len * cabin_width * np.pi / 2.0
+                + 0.5 * acabin
+            )
+        else:
+            CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
+            CPX = (
+                28 * sigmoidX(CPX_lin / 28, 1, -0.01)
+                + CPX_lin * sigmoidX(CPX_lin / 28, 1, 0.01) * sigmoidX(CPX_lin / 62, 1, -0.01)
+                + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
+            )
+            furnishing_wt_2 = CPX * PAX + 310.0
+        smoother = sigmoidX(gross_wt_init, 10000.0, 0.01)
+        furnishing_wt = (1 - smoother) * furnishing_wt_1 + smooth * furnishing_wt_2
+        furnishing_wt = smooth_max(furnishing_wt, 30.0, mu)
+    else:
+        if gross_wt_init <= 10000.0:
+            furnishing_wt = 0.065 * gross_wt_init - 59.0
+        else:
+            if PAX >= 50:
+                if empirical:
+                    # commonly used empirical furnishing weight equation
+                    furnishing_wt_additional = scaler * PAX
+                else:
+                    # linear regression formula
+                    furnishing_wt_additional = 118.4 * PAX - 4190.0
+                # baseline furnishings (crew seats, cockpit, lavatories, galleys)
+                cabin_len = 0.75 * fus_len
+                agalley = 0.50 * PAX
+                furnishing_wt = (
+                    furnishing_wt_additional
+                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
+                    + num_flight_attendants * 30.0
+                    + lavatories * 240.0
+                    + agalley * 12.0
+                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
+                    + 0.5 * acabin
+                )
+            else:
+                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
+                if cabin_width <= 5.667:
+                    CPX = 28.0
+                elif cabin_width > 8.90:
+                    CPX = 62.0
+                furnishing_wt = CPX * PAX + 310.0
+        furnishing_wt = np.maximum(furnishing_wt, 30.0)
+
+    return furnishing_wt
+
+
+def common_compute_partials(
+    PAX, smooth, empirical, engine_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
+):
+    num_pilots = get_num_of_pilots(PAX, engine_type)
+    num_flight_attendants = get_num_of_flight_attendent(PAX)
+    lavatories = get_num_of_lavatories(PAX)
+
+    if smooth:
+        # gross_wt_init <= 10000.0:
+        furnishing_wt_1 = 0.065 * gross_wt_init - 59.0
+        dfurnishing_wt_dgross_wt_init_1 = 0.065
+        dfurnishing_wt_dcabin_width_1 = 0.0
+        dfurnishing_wt_dfus_len_1 = 0.0
+        dfurnishing_wt_dscaler_1 = 0.0
+        dfurnishing_wt_dacabin_1 = 0.0
+        # gross_wt_init > 10000.0:
+        if PAX >= 50:
+            if empirical:
+                furnishing_wt_additional = scaler * PAX
+                dfurnishing_wt_additional_dgross_wt_init = 0.0
+                dfurnishing_wt_additional_dcabin_width = 0.0
+                dfurnishing_wt_additional_dfus_len = 0.0
+                dfurnishing_wt_additional_dscaler = PAX
+                dfurnishing_wt_additional_dacabin = 0.0
+            else:
+                furnishing_wt_additional = 118.4 * PAX - 4190.0
+                dfurnishing_wt_additional_dgross_wt_init = 0.0
+                dfurnishing_wt_additional_dcabin_width = 0.0
+                dfurnishing_wt_additional_dfus_len = 0.0
+                dfurnishing_wt_additional_dscaler = 0.0
+                dfurnishing_wt_additional_dacabin = 0.0
+            cabin_len = 0.75 * fus_len
+            agalley = 0.50 * PAX
+            furnishing_wt_2 = (
+                furnishing_wt_additional
+                + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
+                + num_flight_attendants * 30.0
+                + lavatories * 240.0
+                + agalley * 12.0
+                + 1.5 * cabin_len * cabin_width * np.pi / 2.0
+                + 0.5 * acabin
+            )
+            dfurnishing_wt_dgross_wt_init_2 = dfurnishing_wt_additional_dgross_wt_init + 0.0
+            dfurnishing_wt_dcabin_width_2 = (
+                dfurnishing_wt_additional_dcabin_width
+                + num_pilots * (1.0 / 12.0) * 90.0
+                + 1.5 * 0.75 * fus_len * np.pi / 2.0
+            )
+            dfurnishing_wt_dfus_len_2 = (
+                dfurnishing_wt_additional_dfus_len + 1.5 * 0.75 * cabin_width * np.pi / 2.0
+            )
+            dfurnishing_wt_dscaler_2 = dfurnishing_wt_additional_dscaler + 0.0
+            dfurnishing_wt_dacabin_2 = dfurnishing_wt_additional_dacabin + 0.5
+        else:
+            CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
+            CPX = (
+                28 * sigmoidX(CPX_lin / 28, 1, -0.01)
+                + CPX_lin * sigmoidX(CPX_lin / 28, 1, 0.01) * sigmoidX(CPX_lin / 62, 1, -0.01)
+                + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
+            )
+            furnishing_wt_2 = CPX * PAX + 310.0
+
+            dCPX_lin_dcabin_width = 10.516
+            dCPX_dcabin_width_2 = (
+                1 * dSigmoidXdx(CPX_lin / 28, 1, 0.01) * -dCPX_lin_dcabin_width
+                + dCPX_lin_dcabin_width
+                * CPX_lin
+                * sigmoidX(CPX_lin / 28, 1, 0.01)
+                * sigmoidX(CPX_lin / 62, 1, -0.01)
+                + CPX_lin
+                * dSigmoidXdx(CPX_lin / 28, 1, 0.01)
+                / 28
+                * sigmoidX(CPX_lin / 62, 1, -0.01)
+                * dCPX_lin_dcabin_width
+                + CPX_lin
+                * sigmoidX(CPX_lin / 28, 1, 0.01)
+                * dSigmoidXdx(CPX_lin / 62, 1, -0.01)
+                / 62
+                * -dCPX_lin_dcabin_width
+                + 1 * dSigmoidXdx(CPX_lin / 62, 1, 0.01) * dCPX_lin_dcabin_width
+            )
+
+            dfurnishing_wt_dcabin_width_2 = PAX * dCPX_dcabin_width_2
+            dfurnishing_wt_dgross_wt_init_2 = 0.0
+            dfurnishing_wt_dfus_len_2 = 0.0
+            dfurnishing_wt_dscaler_2 = 0.0
+            dfurnishing_wt_dacabin_2 = 0.0
+
+        smoother = sigmoidX(gross_wt_init, 10000.0, 0.01)
+        dsmoother_dgross_wt_init = dSigmoidXdx(gross_wt_init, 10000.0, 0.01)
+        furnishing_wt = (1 - smoother) * furnishing_wt_1 + smooth * furnishing_wt_2
+        dfurnishing_wt_dcabin_width = (
+            1 - smoother
+        ) * dfurnishing_wt_dcabin_width_1 + smoother * dfurnishing_wt_dcabin_width_2
+        dfurnishing_wt_dgross_wt_init = (
+            -dsmoother_dgross_wt_init * furnishing_wt_1
+            + (1 - smoother) * dfurnishing_wt_dgross_wt_init_1
+            + dsmoother_dgross_wt_init * furnishing_wt_2
+            + smoother * dfurnishing_wt_dgross_wt_init_2
+        )
+        dfurnishing_wt_dfus_len = (
+            1 - smoother
+        ) * dfurnishing_wt_dfus_len_1 + smoother * dfurnishing_wt_dfus_len_2
+        dfurnishing_wt_dscaler = (
+            1 - smoother
+        ) * dfurnishing_wt_dscaler_1 + smoother * dfurnishing_wt_dscaler_2
+        dfurnishing_wt_dacabin = (
+            1 - smoother
+        ) * dfurnishing_wt_dacabin_1 + smoother * dfurnishing_wt_dacabin_2
+
+        sm_fac = d_smooth_max(furnishing_wt, 30.0, mu)
+        dfurnishing_wt_dcabin_width = sm_fac * dfurnishing_wt_dcabin_width
+        dfurnishing_wt_dgross_wt_init = sm_fac * dfurnishing_wt_dgross_wt_init
+        dfurnishing_wt_dfus_len = sm_fac * dfurnishing_wt_dfus_len
+        dfurnishing_wt_dscaler = sm_fac * dfurnishing_wt_dscaler
+        dfurnishing_wt_dacabin = sm_fac * dfurnishing_wt_dacabin
+    else:
+        if gross_wt_init <= 10000.0:
+            furnishing_wt = 0.065 * gross_wt_init - 59.0
+            dfurnishing_wt_dgross_wt_init = 0.065
+            dfurnishing_wt_dcabin_width = 0.0
+            dfurnishing_wt_dfus_len = 0.0
+            dfurnishing_wt_dscaler = 0.0
+            dfurnishing_wt_dacabin = 0.0
+        else:
+            if PAX >= 50:
+                if empirical:
+                    furnishing_wt_additional = scaler * PAX
+                    dfurnishing_wt_additional_dgross_wt_init = 0.0
+                    dfurnishing_wt_additional_dcabin_width = 0.0
+                    dfurnishing_wt_additional_dfus_len = 0.0
+                    dfurnishing_wt_additional_dscaler = PAX
+                    dfurnishing_wt_additional_dacabin = 0.0
+                else:
+                    furnishing_wt_additional = 118.4 * PAX - 4190.0
+                    dfurnishing_wt_additional_dgross_wt_init = 0.0
+                    dfurnishing_wt_additional_dcabin_width = 0.0
+                    dfurnishing_wt_additional_dfus_len = 0.0
+                    dfurnishing_wt_additional_dscaler = 0.0
+                    dfurnishing_wt_additional_dacabin = 0.0
+                cabin_len = 0.75 * fus_len
+                agalley = 0.50 * PAX
+                furnishing_wt = (
+                    furnishing_wt_additional
+                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
+                    + num_flight_attendants * 30.0
+                    + lavatories * 240.0
+                    + agalley * 12.0
+                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
+                    + 0.5 * acabin
+                )
+                dfurnishing_wt_dgross_wt_init = dfurnishing_wt_additional_dgross_wt_init + 0.0
+                dfurnishing_wt_dcabin_width = (
+                    dfurnishing_wt_additional_dcabin_width
+                    + num_pilots * (1.0 / 12.0) * 90.0
+                    + 1.5 * 0.75 * fus_len * np.pi / 2.0
+                )
+                dfurnishing_wt_dfus_len = (
+                    dfurnishing_wt_additional_dfus_len + 1.5 * 0.75 * cabin_width * np.pi / 2.0
+                )
+                dfurnishing_wt_dscaler = dfurnishing_wt_additional_dscaler + 0.0
+                dfurnishing_wt_dacabin = dfurnishing_wt_additional_dacabin + 0.5
+            else:
+                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
+                if cabin_width <= 5.667:
+                    CPX = 28.0
+                elif cabin_width > 8.90:
+                    CPX = 62.0
+                furnishing_wt = CPX * PAX + 310.0
+
+                dCPX_lin_dcabin_width = 10.516
+                if cabin_width <= 5.667:
+                    dCPX_dcabin_width = 0.0
+                if cabin_width > 8.90:
+                    dCPX_dcabin_width = 0.0
+
+                dfurnishing_wt_dcabin_width = PAX * dCPX_dcabin_width
+                dfurnishing_wt_dgross_wt_init = 0.0
+                dfurnishing_wt_dfus_len = 0.0
+                dfurnishing_wt_dscaler = 0.0
+                dfurnishing_wt_dacabin = 0.0
+
+        if furnishing_wt < 30.0:
+            dfurnishing_wt_dcabin_width = 0.0
+            dfurnishing_wt_dgross_wt_init = 0.0
+            dfurnishing_wt_dfus_len = 0.0
+            dfurnishing_wt_dscaler = 0.0
+            dfurnishing_wt_dacabin = 0.0
+
+    return [
+        dfurnishing_wt_dcabin_width,
+        dfurnishing_wt_dgross_wt_init,
+        dfurnishing_wt_dfus_len,
+        dfurnishing_wt_dscaler,
+        dfurnishing_wt_dacabin,
+    ]
+
+
 class FurnishingMass(om.ExplicitComponent):
     """
     Computation of furnishing mass.
@@ -92,196 +366,45 @@ class FurnishingMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         empirical = self.options[Aircraft.Furnishings.USE_EMPIRICAL_EQUATION]
-        engine_type = self.options[Aircraft.Engine.TYPE][0]
+        en_type = self.options[Aircraft.Engine.TYPE][0]
         mu = self.options['mu']
 
-        num_pilots = get_num_of_pilots(PAX, engine_type)
-        num_flight_attendants = get_num_of_flight_attendent(PAX)
-        lavatories = get_num_of_lavatories(PAX)
-
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_init = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
 
-        if gross_wt_initial <= 10000.0:
-            # note: this technically creates a discontinuity
-            # TODO: Doesn't occur in large single aisle
-            furnishing_wt = 0.065 * gross_wt_initial - 59.0
-        else:
-            if PAX >= 50:
-                if empirical:
-                    # commonly used empirical furnishing weight equation
-                    furnishing_wt_additional = scaler * PAX
-                else:
-                    # linear regression formula
-                    furnishing_wt_additional = 118.4 * PAX - 4190.0
-                # baseline furnishings (crew seats, cockpit, lavatories, galleys)
-                cabin_len = 0.75 * fus_len
-                agalley = 0.50 * PAX
-                furnishing_wt = (
-                    furnishing_wt_additional
-                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
-                    + num_flight_attendants * 30.0
-                    + lavatories * 240.0
-                    + agalley * 12.0
-                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
-                    + 0.5 * acabin
-                )
-            else:
-                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
-                if smooth:
-                    CPX = (
-                        28 * sigmoidX(CPX_lin / 28, 1, -0.01)
-                        + CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
-                    )
-                else:
-                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                        CPX = 28.0
-                    elif cabin_width > 8.90:  # note: this technically creates a discontinuity
-                        CPX = 62.0
-                furnishing_wt = CPX * PAX + 310.0
-        # Theoretically, we should make sure that furnishing_wt >= 0 here
-
-        if smooth:
-            furnishing_wt = smooth_max(furnishing_wt, 30.0, mu)
-        else:
-            furnishing_wt = np.maximum(furnishing_wt, 30.0)
-
+        furnishing_wt = common_compute(
+            PAX, smooth, empirical, en_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
+        )
         outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         empirical = self.options[Aircraft.Furnishings.USE_EMPIRICAL_EQUATION]
-        engine_type = self.options[Aircraft.Engine.TYPE][0]
+        en_type = self.options[Aircraft.Engine.TYPE][0]
         mu = self.options['mu']
 
-        num_pilots = get_num_of_pilots(PAX, engine_type)
-        num_flight_attendants = get_num_of_flight_attendent(PAX)
-        lavatories = get_num_of_lavatories(PAX)
-
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_init = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
 
-        if gross_wt_initial <= 10000.0:
-            furnishing_wt = 0.065 * gross_wt_initial - 59.0
-            dfurnishing_wt_dgross_wt_initial = 0.065
-            dfurnishing_wt_dcabin_width = 0.0
-            dfurnishing_wt_dfus_len = 0.0
-            dfurnishing_wt_dscaler = 0.0
-            dfurnishing_wt_dacabin = 0.0
-        else:
-            if PAX >= 50:
-                if empirical:
-                    furnishing_wt_additional = scaler * PAX
-                    dfurnishing_wt_additional_dgross_wt_initial = 0.0
-                    dfurnishing_wt_additional_dcabin_width = 0.0
-                    dfurnishing_wt_additional_dfus_len = 0.0
-                    dfurnishing_wt_additional_dscaler = PAX
-                    dfurnishing_wt_additional_dacabin = 0.0
-                else:
-                    furnishing_wt_additional = 118.4 * PAX - 4190.0
-                    dfurnishing_wt_additional_dgross_wt_initial = 0.0
-                    dfurnishing_wt_additional_dcabin_width = 0.0
-                    dfurnishing_wt_additional_dfus_len = 0.0
-                    dfurnishing_wt_additional_dscaler = 0.0
-                    dfurnishing_wt_additional_dacabin = 0.0
-                cabin_len = 0.75 * fus_len
-                agalley = 0.50 * PAX
-                furnishing_wt = (
-                    furnishing_wt_additional
-                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
-                    + num_flight_attendants * 30.0
-                    + lavatories * 240.0
-                    + agalley * 12.0
-                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
-                    + 0.5 * acabin
-                )
-                dfurnishing_wt_dgross_wt_initial = dfurnishing_wt_additional_dgross_wt_initial + 0.0
-                dfurnishing_wt_dcabin_width = (
-                    dfurnishing_wt_additional_dcabin_width
-                    + num_pilots * (1.0 / 12.0) * 90.0
-                    + 1.5 * 0.75 * fus_len * np.pi / 2.0
-                )
-                dfurnishing_wt_dfus_len = (
-                    dfurnishing_wt_additional_dfus_len + 1.5 * 0.75 * cabin_width * np.pi / 2.0
-                )
-                dfurnishing_wt_dscaler = dfurnishing_wt_additional_dscaler + 0.0
-                dfurnishing_wt_dacabin = dfurnishing_wt_additional_dacabin + 0.5
-            else:
-                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
-                if smooth:
-                    CPX = (
-                        28 * sigmoidX(CPX_lin / 28, 1, -0.01)
-                        + CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
-                    )
-                else:
-                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                        CPX = 28.0
-                    elif cabin_width > 8.90:  # note: this technically creates a discontinuity
-                        CPX = 62.0
-                furnishing_wt = CPX * PAX + 310.0
-
-                dCPX_lin_dcabin_width = 10.516
-                if smooth:
-                    dCPX_dcabin_width = (
-                        1 * dSigmoidXdx(CPX_lin / 28, 1, 0.01) * -dCPX_lin_dcabin_width
-                        + dCPX_lin_dcabin_width
-                        * CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        + CPX_lin
-                        * dSigmoidXdx(CPX_lin / 28, 1, 0.01)
-                        / 28
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        * dCPX_lin_dcabin_width
-                        + CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * dSigmoidXdx(CPX_lin / 62, 1, -0.01)
-                        / 62
-                        * -dCPX_lin_dcabin_width
-                        + 1 * dSigmoidXdx(CPX_lin / 62, 1, 0.01) * dCPX_lin_dcabin_width
-                    )
-                else:
-                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                        dCPX_dcabin_width = 0.0
-                    if cabin_width > 8.90:  # note: this technically creates a discontinuity
-                        dCPX_dcabin_width = 0.0
-
-                dfurnishing_wt_dcabin_width = PAX * dCPX_dcabin_width
-                dfurnishing_wt_dgross_wt_initial = 0.0
-                dfurnishing_wt_dfus_len = 0.0
-                dfurnishing_wt_dscaler = 0.0
-                dfurnishing_wt_dacabin = 0.0
-
-        if smooth:
-            sm_fac = d_smooth_max(furnishing_wt, 30.0, mu)
-            dfurnishing_wt_dcabin_width = sm_fac * dfurnishing_wt_dcabin_width
-            dfurnishing_wt_dgross_wt_initial = sm_fac * dfurnishing_wt_dgross_wt_initial
-            dfurnishing_wt_dfus_len = sm_fac * dfurnishing_wt_dfus_len
-            dfurnishing_wt_dscaler = sm_fac * dfurnishing_wt_dscaler
-            dfurnishing_wt_dacabin = sm_fac * dfurnishing_wt_dacabin
-        else:
-            if furnishing_wt < 30.0:  # note: this technically creates a discontinuity
-                dfurnishing_wt_dcabin_width = 0.0
-                dfurnishing_wt_dgross_wt_initial = 0.0
-                dfurnishing_wt_dfus_len = 0.0
-                dfurnishing_wt_dscaler = 0.0
-                dfurnishing_wt_dacabin = 0.0
+        [
+            dfurnishing_wt_dcabin_width,
+            dfurnishing_wt_dgross_wt_init,
+            dfurnishing_wt_dfus_len,
+            dfurnishing_wt_dscaler,
+            dfurnishing_wt_dacabin,
+        ] = common_compute_partials(
+            PAX, smooth, empirical, en_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
+        )
 
         partials[Aircraft.Furnishings.MASS, Aircraft.Design.GROSS_MASS] = (
-            dfurnishing_wt_dgross_wt_initial
+            dfurnishing_wt_dgross_wt_init
         )
         partials[Aircraft.Furnishings.MASS, Aircraft.Fuselage.AVG_DIAMETER] = (
             dfurnishing_wt_dcabin_width / GRAV_ENGLISH_LBM
@@ -333,64 +456,18 @@ class BWBFurnishingMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         empirical = self.options[Aircraft.Furnishings.USE_EMPIRICAL_EQUATION]
-        engine_type = self.options[Aircraft.Engine.TYPE][0]
+        en_type = self.options[Aircraft.Engine.TYPE][0]
         mu = self.options['mu']
 
-        num_pilots = get_num_of_pilots(PAX, engine_type)
-        num_flight_attendants = get_num_of_flight_attendent(PAX)
-        lavatories = get_num_of_lavatories(PAX)
-
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_init = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
 
-        if gross_wt_initial <= 10000.0:
-            # note: this technically creates a discontinuity
-            # TODO: Doesn't occur in large single aisle
-            furnishing_wt = 0.065 * gross_wt_initial - 59.0
-        else:
-            if PAX >= 50:
-                if empirical:
-                    # commonly used empirical furnishing weight equation
-                    furnishing_wt_additional = scaler * PAX
-                else:
-                    # linear regression formula
-                    furnishing_wt_additional = 118.4 * PAX - 4190.0
-                # baseline furnishings (crew seats, cockpit, lavatories, galleys)
-                cabin_len = 0.75 * fus_len
-                agalley = 0.50 * PAX
-                furnishing_wt = (
-                    furnishing_wt_additional
-                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
-                    + num_flight_attendants * 30.0
-                    + lavatories * 240.0
-                    + agalley * 12.0
-                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
-                    + 0.5 * acabin
-                )
-            else:
-                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
-                if smooth:
-                    CPX = (
-                        28 * sigmoidX(CPX_lin / 28, 1, -0.01)
-                        + CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
-                    )
-                else:
-                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                        CPX = 28.0
-                    elif cabin_width > 8.90:  # note: this technically creates a discontinuity
-                        CPX = 62.0
-                furnishing_wt = CPX * PAX + 310.0
-
-        if smooth:
-            furnishing_wt = smooth_max(furnishing_wt, 30.0, mu)
-        else:
-            furnishing_wt = np.maximum(furnishing_wt, 30.0)
+        furnishing_wt = common_compute(
+            PAX, smooth, empirical, en_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
+        )
 
         outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM
 
@@ -398,130 +475,27 @@ class BWBFurnishingMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
         empirical = self.options[Aircraft.Furnishings.USE_EMPIRICAL_EQUATION]
-        engine_type = self.options[Aircraft.Engine.TYPE][0]
+        en_type = self.options[Aircraft.Engine.TYPE][0]
         mu = self.options['mu']
 
-        num_pilots = get_num_of_pilots(PAX, engine_type)
-        num_flight_attendants = get_num_of_flight_attendent(PAX)
-        lavatories = get_num_of_lavatories(PAX)
-
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_init = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fus_len = inputs[Aircraft.Fuselage.LENGTH]
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
 
-        if gross_wt_initial <= 10000.0:
-            furnishing_wt = 0.065 * gross_wt_initial - 59.0
-            dfurnishing_wt_dgross_wt_initial = 0.065
-            dfurnishing_wt_dcabin_width = 0.0
-            dfurnishing_wt_dfus_len = 0.0
-            dfurnishing_wt_dscaler = 0.0
-            dfurnishing_wt_dacabin = 0.0
-        else:
-            if PAX >= 50:
-                if empirical:
-                    furnishing_wt_additional = scaler * PAX
-                    dfurnishing_wt_additional_dgross_wt_initial = 0.0
-                    dfurnishing_wt_additional_dcabin_width = 0.0
-                    dfurnishing_wt_additional_dfus_len = 0.0
-                    dfurnishing_wt_additional_dscaler = PAX
-                    dfurnishing_wt_additional_dacabin = 0.0
-                else:
-                    furnishing_wt_additional = 118.4 * PAX - 4190.0
-                    dfurnishing_wt_additional_dgross_wt_initial = 0.0
-                    dfurnishing_wt_additional_dcabin_width = 0.0
-                    dfurnishing_wt_additional_dfus_len = 0.0
-                    dfurnishing_wt_additional_dscaler = 0.0
-                    dfurnishing_wt_additional_dacabin = 0.0
-                cabin_len = 0.75 * fus_len
-                agalley = 0.50 * PAX
-                furnishing_wt = (
-                    furnishing_wt_additional
-                    + num_pilots * (1.0 + cabin_width / 12.0) * 90.0
-                    + num_flight_attendants * 30.0
-                    + lavatories * 240.0
-                    + agalley * 12.0
-                    + 1.5 * cabin_len * cabin_width * np.pi / 2.0
-                    + 0.5 * acabin
-                )
-                dfurnishing_wt_dgross_wt_initial = dfurnishing_wt_additional_dgross_wt_initial + 0.0
-                dfurnishing_wt_dcabin_width = (
-                    dfurnishing_wt_additional_dcabin_width
-                    + num_pilots * (1.0 / 12.0) * 90.0
-                    + 1.5 * 0.75 * fus_len * np.pi / 2.0
-                )
-                dfurnishing_wt_dfus_len = (
-                    dfurnishing_wt_additional_dfus_len + 1.5 * 0.75 * cabin_width * np.pi / 2.0
-                )
-                dfurnishing_wt_dscaler = dfurnishing_wt_additional_dscaler + 0.0
-                dfurnishing_wt_dacabin = dfurnishing_wt_additional_dacabin + 0.5
-            else:
-                CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
-                if smooth:
-                    CPX = (
-                        28 * sigmoidX(CPX_lin / 28, 1, -0.01)
-                        + CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
-                    )
-                else:
-                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                        CPX = 28.0
-                    elif cabin_width > 8.90:  # note: this technically creates a discontinuity
-                        CPX = 62.0
-                furnishing_wt = CPX * PAX + 310.0
-
-                dCPX_lin_dcabin_width = 10.516
-                if smooth:
-                    dCPX_dcabin_width = (
-                        1 * dSigmoidXdx(CPX_lin / 28, 1, 0.01) * -dCPX_lin_dcabin_width
-                        + dCPX_lin_dcabin_width
-                        * CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        + CPX_lin
-                        * dSigmoidXdx(CPX_lin / 28, 1, 0.01)
-                        / 28
-                        * sigmoidX(CPX_lin / 62, 1, -0.01)
-                        * dCPX_lin_dcabin_width
-                        + CPX_lin
-                        * sigmoidX(CPX_lin / 28, 1, 0.01)
-                        * dSigmoidXdx(CPX_lin / 62, 1, -0.01)
-                        / 62
-                        * -dCPX_lin_dcabin_width
-                        + 1 * dSigmoidXdx(CPX_lin / 62, 1, 0.01) * dCPX_lin_dcabin_width
-                    )
-                else:
-                    if cabin_width <= 5.667:  # note: this technically creates a discontinuity
-                        dCPX_dcabin_width = 0.0
-                    if cabin_width > 8.90:  # note: this technically creates a discontinuity
-                        dCPX_dcabin_width = 0.0
-
-                dfurnishing_wt_dcabin_width = PAX * dCPX_dcabin_width
-                dfurnishing_wt_dgross_wt_initial = 0.0
-                dfurnishing_wt_dfus_len = 0.0
-                dfurnishing_wt_dscaler = 0.0
-                dfurnishing_wt_dacabin = 0.0
-
-        if smooth:
-            sm_fac = d_smooth_max(furnishing_wt, 30.0, mu)
-            dfurnishing_wt_dcabin_width = sm_fac * dfurnishing_wt_dcabin_width
-            dfurnishing_wt_dgross_wt_initial = sm_fac * dfurnishing_wt_dgross_wt_initial
-            dfurnishing_wt_dfus_len = sm_fac * dfurnishing_wt_dfus_len
-            dfurnishing_wt_dscaler = sm_fac * dfurnishing_wt_dscaler
-            dfurnishing_wt_dacabin = sm_fac * dfurnishing_wt_dacabin
-        else:
-            if furnishing_wt < 30.0:  # note: this technically creates a discontinuity
-                dfurnishing_wt_dcabin_width = 0.0
-                dfurnishing_wt_dgross_wt_initial = 0.0
-                dfurnishing_wt_dfus_len = 0.0
-                dfurnishing_wt_dscaler = 0.0
-                dfurnishing_wt_dacabin = 0.0
+        [
+            dfurnishing_wt_dcabin_width,
+            dfurnishing_wt_dgross_wt_init,
+            dfurnishing_wt_dfus_len,
+            dfurnishing_wt_dscaler,
+            dfurnishing_wt_dacabin,
+        ] = common_compute_partials(
+            PAX, smooth, empirical, en_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
+        )
 
         partials[Aircraft.Furnishings.MASS, Aircraft.Design.GROSS_MASS] = (
-            dfurnishing_wt_dgross_wt_initial
+            dfurnishing_wt_dgross_wt_init
         )
         partials[Aircraft.Furnishings.MASS, Aircraft.Fuselage.HYDRAULIC_DIAMETER] = (
             dfurnishing_wt_dcabin_width / GRAV_ENGLISH_LBM
