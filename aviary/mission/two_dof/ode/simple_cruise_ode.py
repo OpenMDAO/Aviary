@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.mission.two_dof.ode.simple_cruise_eom import DistanceComp
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
@@ -22,9 +21,6 @@ class SimpleCruiseODE(TwoDOFODE):
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
         user_options = self.options['user_options']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
@@ -162,6 +158,5 @@ class SimpleCruiseODE(TwoDOFODE):
             promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )
 
-        ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
         self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')

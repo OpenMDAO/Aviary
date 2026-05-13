@@ -1,8 +1,6 @@
 import numpy as np
 
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
-from aviary.mission.two_dof.ode.params import ParamPort
-
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.variables import Dynamic
@@ -18,9 +16,6 @@ class AccelODE(TwoDOFODE):
 
     def setup(self):
         nn = self.options['num_nodes']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere()
 
@@ -56,7 +51,6 @@ class AccelODE(TwoDOFODE):
 
         self.add_excess_rate_comps(nn)
 
-        ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=14e4 * np.ones(nn), units='lbm')
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=500 * np.ones(nn), units='ft')
         self.set_input_defaults(

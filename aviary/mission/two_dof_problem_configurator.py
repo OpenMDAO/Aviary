@@ -2,7 +2,6 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.breguet_cruise_phase import (
@@ -490,13 +489,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         [phase1, phase2], [state], connected=connected, **kwargs
                     )
 
-        # add all params and promote them to aviary_group level
-        ParamPort.promote_params(
-            aviary_group,
-            trajs=['traj'],
-            phases=[[*aviary_group.regular_phases, *aviary_group.reserve_phases]],
-        )
-
         aviary_group.promotes(
             'traj',
             inputs=[
@@ -543,11 +535,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
         aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
-
-        # promote all ParamPort inputs
-        param_list = list(ParamPort.param_data)
-        aviary_group.promotes('taxi', inputs=param_list)
-        aviary_group.promotes('landing', inputs=param_list)
         aviary_group.connect('taxi.mass', 'vrot.mass')
 
         if len(phases) > 1:
