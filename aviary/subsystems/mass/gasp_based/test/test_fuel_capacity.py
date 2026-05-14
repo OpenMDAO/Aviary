@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.fuel_capacity import TrappedFuelCapacity
 from aviary.variable_info.functions import setup_model_options
@@ -9,11 +10,12 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class TrappedFuelCapacityCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
-        options = get_option_defaults()
+        options = self.options = get_option_defaults()
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -43,7 +45,21 @@ class TrappedFuelCapacityCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 619.7611152, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+    def test_case2(self):
+        self.options.set_val(
+            Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless'
+        )
+        setup_model_options(self.prob, self.options)
+        self.prob.setup(force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Fuel.UNUSABLE_FUEL_MASS], 619.7611152, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class TrappedFuelCapacityCase2(unittest.TestCase):

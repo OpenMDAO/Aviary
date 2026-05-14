@@ -5690,7 +5690,7 @@ add_meta_data(
         'FLOPS': 'WTIN.PDIST',  # ['&DEFINE.WTIN.PDIST', 'WDEF.PDIST'],
     },
     units='unitless',
-    desc='controls spatial distribution of integration stations for detailed wing',
+    desc='controls spatial distribution of integration stations for detailed wing, in [1, 3]',
     default_value=2.0,
     option=True,
 )

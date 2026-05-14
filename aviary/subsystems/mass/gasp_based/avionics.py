@@ -46,13 +46,13 @@ class AvionicsMass(om.ExplicitComponent):
                 # Should we use use 4 sigmoid functions (one for each transition zone) instead?
                 avionics_wt = 35.538 * np.exp(0.0002 * gross_wt_initial)
             else:
-                if gross_wt_initial >= 3000.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 3000.0:
                     avionics_wt = 65.0
-                if gross_wt_initial >= 5500.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 5500.0:
                     avionics_wt = 113.0
-                if gross_wt_initial >= 7500.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 7500.0:
                     avionics_wt = 163.0
-                if gross_wt_initial >= 11000.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 11000.0:
                     avionics_wt = 340.0
         if PAX >= 20 and PAX < 30:
             avionics_wt = 400.0

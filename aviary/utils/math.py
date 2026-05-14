@@ -171,7 +171,7 @@ def d_smooth_max(x, b, mu=10.0):
     m = np.maximum(mu_x, mu_b)
     numerator = np.exp(mu_x - m)
     denominator = np.exp(mu_x - m) + np.exp(mu_b - m)
-    d_sum_log_exp = mu * numerator / denominator
+    d_sum_log_exp = numerator / denominator
     return d_sum_log_exp
 
 
