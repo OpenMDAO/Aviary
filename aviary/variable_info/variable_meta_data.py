@@ -1789,8 +1789,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='Useful load of the aircraft calculated as '
-    'Aircraft.Design.GROSS_MASS - Aircraft.Design.EMPTY_MASS',
+    desc='Useful load of the aircraft is the difference between the max_gross_mass and the empty_mass.'
+    'This includes operating_items, total_payload and total_fuel.',
 )
 
 
