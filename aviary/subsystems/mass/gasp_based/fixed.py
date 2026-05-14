@@ -641,12 +641,12 @@ class EngineMass(om.ExplicitComponent):
             desc='WPROP1: mass of one propeller',
         )
 
-        self.add_output('prop_mass_all', val=0, units='lbm', desc='WPROP: mass of all propellers')
+        self.add_output('prop_mass_sum', val=0, units='lbm', desc='WPROP: mass of all propellers')
 
     def setup_partials(self):
         has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
 
-        self.declare_partials('prop_mass_all', [Aircraft.Engine.Propeller.MASS])
+        self.declare_partials('prop_mass_sum', [Aircraft.Engine.Propeller.MASS])
         self.declare_partials('wing_mounted_mass', Aircraft.Engine.Propeller.MASS)
 
         # derivatives w.r.t vectorized engine inputs have known sparsity pattern
@@ -795,6 +795,7 @@ class EngineMass(om.ExplicitComponent):
         outputs[Aircraft.Propulsion.TOTAL_ENGINE_MASS] = sum(dry_wt_eng_all) / GRAV_ENGLISH_LBM
         outputs[Aircraft.Nacelle.MASS] = nacelle_wt / GRAV_ENGLISH_LBM
         outputs['pylon_mass'] = pylon_wt / GRAV_ENGLISH_LBM
+
         # NOTE TOTAL_ENGINE_POD_MASS by definition includes everything *in* the pod too! This component
         #      should probably use a new/different variable name (same for pod mass scaler)
         pod_wt_sum = sum(pod_wt * num_engines)
@@ -825,7 +826,7 @@ class EngineMass(om.ExplicitComponent):
             ) / GRAV_ENGLISH_LBM
 
         prop_wt = inputs[Aircraft.Engine.Propeller.MASS] * GRAV_ENGLISH_LBM
-        outputs['prop_mass_all'] = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
+        outputs['prop_mass_sum'] = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
         span_frac_factor = eng_span_frac / (eng_span_frac + 0.001)
         # sum span_frac_factor for each engine type
@@ -1001,7 +1002,7 @@ class EngineMass(om.ExplicitComponent):
         prop_wt = inputs[Aircraft.Engine.Propeller.MASS] * GRAV_ENGLISH_LBM
         # prop_wt_all = sum(num_engines * prop_wt) / GRAV_ENGLISH_LBM
 
-        J['prop_mass_all', Aircraft.Engine.Propeller.MASS] = num_engines
+        J['prop_mass_sum', Aircraft.Engine.Propeller.MASS] = num_engines
 
         dPylonWt_dFnSLS = pylon_fac * 0.736 * (dry_wt_eng + nacelle_wt) ** -0.264 * eng_spec_wt
         dPylonWt_dEngSpecWt = (
