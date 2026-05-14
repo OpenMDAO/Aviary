@@ -495,9 +495,6 @@ class NewEngineTestCase1(unittest.TestCase):  # this is the large single aisle 1
         self.prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
         )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
 
         setup_model_options(self.prob, options)
 
@@ -509,7 +506,7 @@ class NewEngineTestCase1(unittest.TestCase):  # this is the large single aisle 1
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
+            # Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
         }
         tol = 5e-4
 
@@ -690,9 +687,6 @@ class NewEngineTestCase2(unittest.TestCase):
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
             Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
         )  # bug fixed value and original value
 
@@ -706,7 +700,6 @@ class NewEngineTestCase2(unittest.TestCase):
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
         }
         tol = 5e-4
@@ -822,9 +815,6 @@ class NewEngineTestCase3(unittest.TestCase):
             Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
             Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
         )  # bug fixed value and original value
 
@@ -844,7 +834,6 @@ class NewEngineTestCase3(unittest.TestCase):
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1870.53906934,
         }
         tol = 5e-4
@@ -1166,7 +1155,6 @@ class NewEngineTestCaseMultiEngine(unittest.TestCase):
 
         options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, np.array([0.14, 0.19]))
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -1190,9 +1178,6 @@ class NewEngineTestCaseMultiEngine(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Engine.PYLON_FACTOR, val=[1.25, 1.28], units='unitless'
         )
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )
 
         self.prob.model_options['*'] = extract_options(options)
 
@@ -1204,7 +1189,6 @@ class NewEngineTestCaseMultiEngine(unittest.TestCase):
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
-            Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
             Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
         }
 
@@ -3484,6 +3468,6 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    test = NewFixedMassGroupTestCase3()
+    test = NewEngineTestCase1()
     test.setUp()
     # test.test_case1()
