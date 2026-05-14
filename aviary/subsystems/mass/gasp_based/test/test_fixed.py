@@ -591,7 +591,7 @@ class EngineTestCase2(unittest.TestCase):
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
             'eng_comb_mass': 14370.8,
-            'prop_mass_sum': 0,
+            'prop_mass_all': 0,
             'wing_mounted_mass': 24446.343040697346,
         }
         tol = 5e-4
