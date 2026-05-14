@@ -511,7 +511,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         aviary_group.connect(
             f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
-            src_indices=[0],
+            src_indices=[-1],
         )
 
     def set_phase_initial_guesses(
