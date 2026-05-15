@@ -218,7 +218,7 @@ class FlightPhase(PhaseBuilder):
     def get_parameters(self):
         params = {}
         params[Aircraft.Wing.INCIDENCE] = {
-            'shape': (1, ),
+            'shape': (1,),
             'units': CoreMetaData[Aircraft.Wing.INCIDENCE]['units'],
             'static_target': True,
         }

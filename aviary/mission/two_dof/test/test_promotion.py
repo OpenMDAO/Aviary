@@ -18,7 +18,7 @@ class Test2DOFMissionPromotion(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            "validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv",
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             phase_info,
             verbosity=0,
         )
@@ -43,11 +43,17 @@ class Test2DOFMissionPromotion(unittest.TestCase):
         airport_alt = prob.get_val(Mission.Takeoff.AIRPORT_ALTITUDE, units='ft')
         assert_near_equal(airport_alt, 2345.0)
 
-        airport_alt = prob.get_val(f'traj.groundroll.rhs_all.{Mission.Takeoff.AIRPORT_ALTITUDE}', units='ft')
+        airport_alt = prob.get_val(
+            f'traj.groundroll.rhs_all.{Mission.Takeoff.AIRPORT_ALTITUDE}', units='ft'
+        )
         assert_near_equal(airport_alt, 2345.0)
-        airport_alt = prob.get_val(f'traj.rotation.rhs_all.{Mission.Takeoff.AIRPORT_ALTITUDE}', units='ft')
+        airport_alt = prob.get_val(
+            f'traj.rotation.rhs_all.{Mission.Takeoff.AIRPORT_ALTITUDE}', units='ft'
+        )
         assert_near_equal(airport_alt, 2345.0)
-        airport_alt = prob.get_val(f'traj.ascent.rhs_all.{Mission.Takeoff.AIRPORT_ALTITUDE}', units='ft')
+        airport_alt = prob.get_val(
+            f'traj.ascent.rhs_all.{Mission.Takeoff.AIRPORT_ALTITUDE}', units='ft'
+        )
         assert_near_equal(airport_alt, 2345.0)
 
         # Bypass promotion system to make sure they are promoted by checking the value.
