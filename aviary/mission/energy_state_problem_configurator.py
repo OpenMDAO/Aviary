@@ -113,7 +113,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         """
         takeoff_options = Takeoff(
             airport_altitude=0.0,  # ft
-            num_engines=aviary_group.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES),
         )
 
         # Build and add takeoff subsystem

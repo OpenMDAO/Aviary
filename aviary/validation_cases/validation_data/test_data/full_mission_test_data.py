@@ -55,12 +55,6 @@ data.set_val(
 )
 
 data.set_val(
-    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
-    val=24555.5,
-    units='lbf',
-)
-
-data.set_val(
     # states:altitude
     Dynamic.Mission.ALTITUDE,
     val=[

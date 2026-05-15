@@ -151,19 +151,3 @@ runs:
         else
           echo "mpi4py or petsc4py not installed in this environment, skipping MPI checks"
         fi
-
-    - name: Display conda environment info
-      shell: bash -l {0}
-      run: |
-        eval "$(pixi shell-hook -e ${{ inputs.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
-        conda info
-        conda list
-        conda env export --file environment.yml
-        mv environment.yml ${{ inputs.NAME }}_environment.yml
-
-    - name: 'Upload environment artifact'
-      uses: actions/upload-artifact@v7
-      with:
-        name: ${{ inputs.NAME }}_environment
-        path: ${{ inputs.NAME }}_environment.yml
-        retention-days: 5

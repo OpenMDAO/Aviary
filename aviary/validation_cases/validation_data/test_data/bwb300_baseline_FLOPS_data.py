@@ -279,7 +279,6 @@ inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 1.3)  # CLTOM
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.7)  # WRATIO
 inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 150.0, 'ft/s')  # VAPPR
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
-inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 0.0, 'lbf')  # THROFF
 inputs.set_val(Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY, 4.0, 'deg')  # ALPRUN
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 4.0, 'deg')  # TINC
 inputs.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT, 0.35)  # BRAKMU

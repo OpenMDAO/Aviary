@@ -785,7 +785,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.NUM_CABIN_CREW,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,  # This is NCABCR internal to FLOPS.
+    },
     units='unitless',
     desc='Total number of cabin crew. In FLOPS this includes galley and flight attendants',
     types=int,
@@ -1683,20 +1686,6 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
     desc='Total systems & equipment group mass without additional 1% of empty mass',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'AERIN.THROFF',
-        # LEAPS1 used the average thrust_takeoff of all operational engines
-        # actually on the airplane, possibly after resizing (as with FLOPS)
-    },
-    units='lbf',
-    desc='Thrust per engine, used for energy state simple takeoff calculation',
     default_value=0.0,
 )
 
@@ -7370,6 +7359,15 @@ add_meta_data(
     default_value=0.3,
     units='unitless',
     desc='takeoff coefficient of friction, with brakes on',
+)
+add_meta_data(
+    Mission.Takeoff.CLIMBOUT_THRUST_FRACTION,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='unitless',
+    desc='Fraction of Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST to use for'
+    'climbout phase of simple takeoff calculations. For 2 engine aircraft set = 0.5 for one engine out.',
+    default_value=1,
 )
 
 add_meta_data(
