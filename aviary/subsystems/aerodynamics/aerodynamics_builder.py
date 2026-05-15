@@ -633,7 +633,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                             'static_target': True,
                         }
                     else:
-                        lift_opts = {'shape': shape, 'static_target': True}
+                        lift_opts = {'val': np.ones(shape), 'static_target': True}
 
                     if aviary_inputs is not None and Aircraft.Design.DRAG_POLAR in aviary_inputs:
                         drag_opts = {
@@ -641,7 +641,7 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                             'static_target': True,
                         }
                     else:
-                        drag_opts = {'shape': shape, 'static_target': True}
+                        drag_opts = {'val': np.ones(shape), 'static_target': True}
 
                     params[Aircraft.Design.LIFT_POLAR] = lift_opts
                     params[Aircraft.Design.DRAG_POLAR] = drag_opts
