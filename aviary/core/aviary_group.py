@@ -111,19 +111,32 @@ class AviaryGroup(om.Group):
         # Find all variables that are shape_by_conn so we don't set their shape with a stale value
         # from the default metadata. We can only find these on the next level down because
         # aviary_group's setup is not complete until after configure.
-        sbc_vars = []
+        sbc_vars = set()
+        non_sbc_vars = set()
         for sub in self.system_iter(recurse=False, typ=om.Group):
             pr2abs = sub._resolver.prom2abs_iter('input')
-            sub_inputs = [
-                (k, v[0]) for k, v in pr2abs if k.startswith('aircraft') or k.startswith('mission')
-            ]
+            if sub.pathname == 'traj':
+                sub_inputs = [(k, v[0]) for k, v in pr2abs if k.startswith('parameters:')]
+            else:
+                sub_inputs = [
+                    (k, v[0])
+                    for k, v in pr2abs
+                    if k.startswith('aircraft') or k.startswith('mission')
+                ]
             abs2meta = sub._var_abs2meta['input']
 
             for data in sub_inputs:
                 prom_name, abs_name = data
+                if prom_name.startswith('parameters:'):
+                    # Parameters haven't been pully promoted out of traj at this point.
+                    prom_name = prom_name.removeprefix('parameters:')
                 meta = abs2meta[abs_name]
                 if meta.get('shape_by_conn') is True:
-                    sbc_vars.append(prom_name)
+                    sbc_vars.add(prom_name)
+                else:
+                    non_sbc_vars.add(prom_name)
+
+        sbc_only_vars = sbc_vars - non_sbc_vars
 
         for key in aviary_metadata:
             if ':' not in key or key.startswith('dynamic:'):
@@ -147,7 +160,7 @@ class AviaryGroup(om.Group):
                     continue
 
             kwargs = {'units': units}
-            if key not in sbc_vars:
+            if key not in sbc_only_vars:
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val
 
