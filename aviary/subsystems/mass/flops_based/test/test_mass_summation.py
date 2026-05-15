@@ -62,9 +62,7 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.APU.MASS,
                 Aircraft.Avionics.MASS,
                 Aircraft.Canard.MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
-                Aircraft.CrewPayload.BAGGAGE_MASS,
-                Aircraft.CrewPayload.CARGO_MASS,
+                Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
                 Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
@@ -150,9 +148,7 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.APU.MASS,
                 Aircraft.Avionics.MASS,
                 Aircraft.Canard.MASS,
-                Aircraft.CrewPayload.PASSENGER_MASS_TOTAL,
-                Aircraft.CrewPayload.BAGGAGE_MASS,
-                Aircraft.CrewPayload.CARGO_MASS,
+                Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS,
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS,
                 Aircraft.CrewPayload.CABIN_CREW_MASS,
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS,
@@ -248,7 +244,7 @@ class StructureMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TotalSummationTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()
+    # test = TotalSummationTest()
+    # test.setUp()
+    # test.test_case()
