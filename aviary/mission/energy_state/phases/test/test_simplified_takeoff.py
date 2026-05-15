@@ -83,7 +83,7 @@ class FinalConditionsTest(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('comp', FinalTakeoffConditions(num_engines=2), promotes=['*'])
+        self.prob.model.add_subsystem('comp', FinalTakeoffConditions(), promotes=['*'])
 
         self.prob.model.set_input_defaults('v_stall', val=100, units='m/s')  # not actual value
         self.prob.model.set_input_defaults('mass', val=181200.0, units='lbm')  # check
@@ -98,8 +98,11 @@ class FinalConditionsTest(unittest.TestCase):
             Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2.0000, units='unitless'
         )  # check
         self.prob.model.set_input_defaults(
-            Aircraft.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units='lbf'
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=28928.0 * 2, units='lbf'
         )  # check
+        self.prob.model.set_input_defaults(
+            Mission.Takeoff.CLIMBOUT_THRUST_FRACTION, val=1, units='unitless'
+        )
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless'
         )  # check
@@ -140,7 +143,7 @@ class FinalConditionsTest2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        prob.model.add_subsystem('comp', FinalTakeoffConditions(num_engines=2), promotes=['*'])
+        prob.model.add_subsystem('comp', FinalTakeoffConditions(), promotes=['*'])
         # default value v_stall = 0.1 will worsen the output
         prob.model.set_input_defaults('v_stall', val=100, units='m/s')
         # default value GROSS_MASS = 150000 will worsen the output
@@ -156,20 +159,24 @@ class TakeoffGroupTest(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('group_example', TakeoffGroup(num_engines=2), promotes=['*'])
+        self.prob.model.add_subsystem('group_example', TakeoffGroup(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Mission.GROSS_MASS, val=181200.0, units='lbm')  # check
+        self.prob.model.set_input_defaults(Mission.GROSS_MASS, val=181300.0, units='lbm')  # check
+        self.prob.model.set_input_defaults(Mission.Taxi.FUEL_TAXI_OUT, val=101, units='lbm')
         self.prob.model.set_input_defaults(Mission.Takeoff.FUEL, val=577, units='lbm')  # check
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2.0000, units='unitless'
         )  # check
         self.prob.model.set_input_defaults(
-            Aircraft.Design.THRUST_TAKEOFF_PER_ENG, val=28928.0, units='lbf'
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=28928.0 * 2, units='lbf'
         )  # check
         self.prob.model.set_input_defaults(
+            Mission.Takeoff.CLIMBOUT_THRUST_FRACTION, val=1, units='unitless'
+        )
+        self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless'
-        )  # check
+        )
         self.prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, val=0, units='ft')  # check
 
         self.prob.setup(check=False, force_alloc_complex=True)
@@ -178,7 +185,8 @@ class TakeoffGroupTest(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-5
-
+        assert_near_equal(self.prob['end_of_taxi_mass'], 181199, tol)
+        assert_near_equal(self.prob['v_stall'], 71.90002053, tol)
         assert_near_equal(
             self.prob[Mission.Takeoff.GROUND_DISTANCE], 6637.65645404, tol
         )  # ft (not actual value)
@@ -189,6 +197,7 @@ class TakeoffGroupTest(unittest.TestCase):
             self.prob[Mission.Takeoff.FINAL_MASS], 180623.0, tol
         )  # lbm (not actual value)
         assert_near_equal(self.prob[Mission.Takeoff.FINAL_ALTITUDE], 35, tol)  # ft
+        assert_near_equal(self.prob[Mission.Takeoff.FINAL_MACH], 0.26009873, tol)
 
         partial_data = self.prob.check_partials(
             out_stream=None, excludes=['*.standard_atmosphere'], method='cs'

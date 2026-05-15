@@ -11,11 +11,7 @@ class TakeoffPhaseTest(unittest.TestCase):
     """Test takeoff phase builder."""
 
     def test_case1(self):
-        takeoff_options = Takeoff(
-            airport_altitude=0,  # ft
-            ramp_mass=181200.0,  # lbm
-            num_engines=2,  # no units
-        )
+        takeoff_options = Takeoff(airport_altitude=0)  # ft
 
         use_detailed = False
         takeoff = takeoff_options.build_phase(use_detailed=use_detailed)
@@ -24,6 +20,9 @@ class TakeoffPhaseTest(unittest.TestCase):
         prob.model = takeoff
         prob.model.set_input_defaults(Aircraft.Wing.AREA, 1370.3, units='ft**2')
         prob.model.set_input_defaults(Mission.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 200000, units='lbf'
+        )
         prob.setup(force_alloc_complex=True)
         prob.run_model()
         partial_data = prob.check_partials(
@@ -32,9 +31,7 @@ class TakeoffPhaseTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         tol = 1e-5
-        assert_near_equal(
-            prob[Mission.Takeoff.GROUND_DISTANCE], 2811.50257923, tol
-        )  # this check value requires GROSS_MASS of 150,000 but ramp_mass listed as 181200
+        assert_near_equal(prob[Mission.Takeoff.GROUND_DISTANCE], 2811.50257923, tol)
 
 
 if __name__ == '__main__':

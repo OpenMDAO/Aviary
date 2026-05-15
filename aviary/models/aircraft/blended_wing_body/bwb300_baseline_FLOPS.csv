@@ -177,7 +177,6 @@ aircraft:wing:wetted_area_scaler,0.61,unitless
 mission:constraints:max_mach,0.9,unitless
 aircraft:design:gross_mass,600000.0,lbm
 aircraft:design:range,7500.0,NM
-aircraft:design:thrust_takeoff_per_eng,0.0,lbf
 mission:landing:drag_coefficient_min,0.0,unitless
 mission:landing:flare_rate,3.0,deg/s
 mission:landing:initial_velocity,150.0,ft/s
