@@ -14,7 +14,6 @@ class Test2DOFMissionPromotion(unittest.TestCase):
     """Testing parameter promotion from the phases."""
 
     def test_promotion(self):
-
         prob = AviaryProblem()
 
         prob.load_inputs(
