@@ -12,6 +12,7 @@ from aviary.subsystems.mass.gasp_based.fixed import (
     ElectricAugmentationMass,
     EngineMass,
     NewEngineMass,
+    PODMass,
     WingMountEngineMass,
     NewEngineMassGroup,
     FixedMassGroup,
@@ -454,6 +455,7 @@ class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
             Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
             Aircraft.Engine.POD_MASS: 1892.24386333,
+            Aircraft.Nacelle.MASS: 1018.74,
             'eng_comb_mass': 14370.8,
             'wing_mounted_mass': 24446.343040697346,
         }
@@ -516,6 +518,44 @@ class NewEngineTestCase1(unittest.TestCase):  # this is the large single aisle 1
 
         data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=2e-11, rtol=1e-12)
+
+
+class PODMassTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2])
+
+        self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'engine',
+            PODMass(),
+            promotes=['*'],
+        )
+
+        self.prob.model.set_input_defaults(Aircraft.Nacelle.MASS, val=1018.74, units='lbm')
+        self.prob.model.set_input_defaults(
+            Aircraft.Engine.POD_MASS_SCALER, val=1.0, units='unitless'
+        )
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        expected_values = {
+            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2037.48,
+            Aircraft.Engine.POD_MASS: 1018.74,
+        }
+        tol = 5e-4
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
+
+        data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(data, atol=1e-12, rtol=1e-12)
 
 
 class WingMountEngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
@@ -700,7 +740,6 @@ class NewEngineTestCase2(unittest.TestCase):
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.POD_MASS: 1892.24386333,
         }
         tol = 5e-4
 
@@ -834,7 +873,6 @@ class NewEngineTestCase3(unittest.TestCase):
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.POD_MASS: 1870.53906934,
         }
         tol = 5e-4
 
@@ -1189,7 +1227,6 @@ class NewEngineTestCaseMultiEngine(unittest.TestCase):
         expected_values = {
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
             # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
-            Aircraft.Engine.POD_MASS: [1892.24386333, 1072.40259317],
         }
 
         for var_name, expected_val in expected_values.items():
@@ -3468,6 +3505,6 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    test = NewEngineTestCase1()
+    test = NewFixedMassGroupTestCase1()
     test.setUp()
     # test.test_case1()
