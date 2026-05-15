@@ -39,22 +39,45 @@ jobs:
         include:
           # oldest supported versions of openmdao/dymos
           # Note: bugfixes sometimes require incrementing the minimal version of openmdao or dymos.
-          - NAME: oldest
+          - NAME: oldest-supported
             OS: ubuntu-24.04
             OPENMDAO_PIXI_ENVIRONMENT: 'py311'
             OPENMDAO_INSTALL_FROM: 'pypi'
             OPENMDAO: '3.43.0'
             SNOPT: '7.7'
             DYMOS: '1.13.1'
+            COVERAGE: true
 
           # latest versions of openmdao/dymos
-          - NAME: latest
+          - NAME: latest-ubuntu
             OS: ubuntu-24.04
             OPENMDAO_PIXI_ENVIRONMENT: 'py314'
             OPENMDAO_INSTALL_FROM: 'github'
             OPENMDAO: ''
             SNOPT: '7.7'
             DYMOS: 'latest'
+            COVERAGE: true
+
+          # latest versions of openmdao/dymos
+          #- NAME: latest-macos
+          #  OS: macos-latest
+          #  OPENMDAO_PIXI_ENVIRONMENT: 'py314'
+          #  OPENMDAO_INSTALL_FROM: 'github'
+          #  OPENMDAO: ''
+          #  SNOPT: '7.7'
+          #  DYMOS: 'latest'
+          #  COVERAGE: true
+
+          # latest versions of openmdao/dymos
+          # Coverage currently has some problems in windows, according to the openmdao workflows.
+          #- NAME: latest-windows
+          #  OS: windows-latest
+          #  OPENMDAO_PIXI_ENVIRONMENT: 'py314'
+          #  OPENMDAO_INSTALL_FROM: 'github'
+          #  OPENMDAO: ''
+          #  SNOPT: false
+          #  DYMOS: 'latest'
+          #  COVERAGE: false
 
     runs-on: ${{ matrix.OS }}
 
@@ -87,11 +110,17 @@ jobs:
           OMPI_MCA_rmaps_base_oversubscribe: "1"
         run: |
           eval "$(pixi shell-hook -e ${{ matrix.OPENMDAO_PIXI_ENVIRONMENT }} --manifest-path=${{ env.PIXI_MANIFEST }})"
-          echo "============================================================="
-          echo "Run Tests"
-          echo "============================================================="
-          testflo . --timeout=200 --show_skipped --coverage --coverpkg aviary
-
+          if [[ "${{ matrix.COVERAGE }}" == "true" ]]; then
+            echo "============================================================="
+            echo "Run Tests with coverage"
+            echo "============================================================="
+            testflo . --timeout=200 --show_skipped --coverage --coverpkg aviary
+          else
+            echo "============================================================="
+            echo "Run Tests"
+            echo "============================================================="
+            testflo . --timeout=200 --show_skipped
+          fi
       - name: Checkout actions (again)
         uses: actions/checkout@v6
         with:
