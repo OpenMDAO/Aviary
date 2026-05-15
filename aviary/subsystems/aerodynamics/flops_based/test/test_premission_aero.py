@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.aerodynamics.flops_based.design import Design
+from aviary.subsystems.aerodynamics.flops_based.premission_aero import Design, TakeoffLoverD
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -133,6 +133,32 @@ class DesignMCLTest(unittest.TestCase):
 
         assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.740390], 1e-6)
         assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.753], 1e-6)
+
+
+class LoverDTest(unittest.TestCase):
+    "Test L_over_D computation in TakeoffLoverD class"
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+        self.prob.model.add_subsystem('comp', TakeoffLoverD(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=9, units='unitless')
+        self.prob.model.set_input_defaults(
+            Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2, units='unitless'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-5
+
+        assert_near_equal(self.prob[Mission.Takeoff.LIFT_OVER_DRAG], 11.214129201, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':

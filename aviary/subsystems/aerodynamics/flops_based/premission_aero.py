@@ -253,3 +253,72 @@ CMDEStable = InterpND(
 HSMDEStable = InterpND(
     method='slinear', points=(HSMDES[1:, 0], HSMDES[0, 1:]), values=HSMDES[1:, 1:], extrapolate=True
 )
+
+
+class TakeoffLoverD(om.ExplicitComponent):
+    """
+    Estimates the Takeoff Lift over Drag ratio.
+    """
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
+        add_aviary_input(self, Mission.Takeoff.LIFT_COEFFICIENT_MAX, units='unitless')
+
+        add_aviary_output(self, Mission.Takeoff.LIFT_OVER_DRAG, units='unitless')
+
+    def setup_partials(self):
+        self.declare_partials(Mission.Takeoff.LIFT_OVER_DRAG, Aircraft.Wing.ASPECT_RATIO)
+        self.declare_partials(Mission.Takeoff.LIFT_OVER_DRAG, Mission.Takeoff.LIFT_COEFFICIENT_MAX)
+
+    def compute(self, inputs, outputs):
+        AR = inputs[Aircraft.Wing.ASPECT_RATIO]
+        CL_Max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
+
+        CL = 0.66 * CL_Max
+        CD = 0.015 + CL**2 / (0.6 * np.pi * AR)
+        L_over_D = CL / CD
+
+        outputs[Mission.Takeoff.LIFT_OVER_DRAG] = L_over_D
+
+    def compute_partials(self, inputs, J):
+        # Extract inputs
+        AR = inputs[Aircraft.Wing.ASPECT_RATIO]
+        CL_Max = inputs[Mission.Takeoff.LIFT_COEFFICIENT_MAX]
+
+        CL = 0.66 * CL_Max
+        CD = 0.015 + CL**2 / (0.6 * np.pi * AR)
+
+        dCL_dCLMax = 0.66
+
+        dCD_dCL = (2 * CL) / (0.6 * np.pi * AR)
+        dCD_dAR = -(CL**2) / (0.6 * np.pi * AR**2)
+
+        dLoverD_dCL = 1.0 / CD
+        dLoverD_dCD = -CL / (CD**2)
+
+        # Chain rule for L_over_D wrt AR
+        dLoverD_dAR = dLoverD_dCD * dCD_dAR
+
+        # Chain rule for L_over_D wrt CL_Max
+        dLoverD_dCLMax = (dLoverD_dCL + dLoverD_dCD * dCD_dCL) * dCL_dCLMax
+
+        # Assign to Jacobian
+        J[Mission.Takeoff.LIFT_OVER_DRAG, Aircraft.Wing.ASPECT_RATIO] = dLoverD_dAR
+        J[Mission.Takeoff.LIFT_OVER_DRAG, Mission.Takeoff.LIFT_COEFFICIENT_MAX] = dLoverD_dCLMax
+
+
+class PreMissionAero(om.Group):
+    def setup(self):
+        self.add_subsystem(
+            'design',
+            Design(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'takeoff_l_over_d',
+            TakeoffLoverD(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )

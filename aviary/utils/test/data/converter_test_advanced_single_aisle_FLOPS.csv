@@ -32,7 +32,6 @@ aircraft:design:mach,-1.0,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
-aircraft:design:thrust_takeoff_per_eng,0.0,lbf
 aircraft:design:type,transport,unitless
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
@@ -180,6 +179,7 @@ AERIN.elodss,0
 AERIN.flldg,8190
 AERIN.flto,8190
 AERIN.thrma,0
+AERIN.throff,0.0
 AERIN.thrss,0
 AERIN.xllam,1
 CONFIN.ch,43000.0,0.0,0.0,0.0,0.0,0.0

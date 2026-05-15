@@ -14,7 +14,7 @@ body:
       label: Example
       description: Provide a complete, minimal test case that reproduces the issue. Alternatively, link to a file in another repository where the issue is demonstrated.
     validations:
-      required: true
+      required: false
   - type: textarea
     id: traceback
     attributes:
@@ -22,7 +22,7 @@ body:
       description: Provide the full error message, ideally from your code example provided above.
       placeholder: "<< Full traceback starting from `Traceback ..` >>"
     validations:
-      required: true
+      required: false
   - type: input
     id: aviary-version
     attributes:
