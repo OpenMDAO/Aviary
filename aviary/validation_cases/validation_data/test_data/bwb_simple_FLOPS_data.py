@@ -234,7 +234,6 @@ inputs.set_val(Mission.Takeoff.LIFT_COEFFICIENT_MAX, 2)  # CLTOM
 inputs.set_val(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, 0.8)  # WRATIO
 inputs.set_val(Mission.Landing.INITIAL_VELOCITY, 140.0, 'ft/s')  # VAPPR
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
-inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 0.25, 'lbf')  # THROFF
 
 # Settings
 # ---------------------------

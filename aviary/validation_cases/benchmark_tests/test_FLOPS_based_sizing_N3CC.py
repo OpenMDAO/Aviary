@@ -43,9 +43,6 @@ def run_trajectory(sim=True):
 
     prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, takeoff_fuel_burned, units='lbm')
     prob.aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, takeoff_L_over_D, units='unitless')
-    prob.aviary_inputs.set_val(
-        Aircraft.Design.THRUST_TAKEOFF_PER_ENG, takeoff_thrust_per_eng, units='lbf'
-    )
 
     prob.check_and_preprocess_inputs()
 

@@ -35,7 +35,6 @@ aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:range,2960.0,NM
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
-aircraft:design:thrust_takeoff_per_eng,27301.0,lbf
 aircraft:design:use_alt_mass,True,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.945,unitless
 aircraft:electrical:mass_scaler,1.0,unitless

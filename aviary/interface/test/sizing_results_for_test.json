@@ -993,12 +993,6 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:thrust_takeoff_per_eng",
-        28928.1,
-        "lbf",
-        "<class 'float'>"
-    ],
-    [
         "mission:landing:lift_coefficient_max",
         2.0,
         "unitless",
