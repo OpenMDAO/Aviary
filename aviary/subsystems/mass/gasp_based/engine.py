@@ -345,9 +345,6 @@ class WingMountEngineMass(om.ExplicitComponent):
     additional engine mass.
     """
 
-    # TODO this component needs to be split into multiple different components so their intermediate
-    #      calculations can be overriden correctly
-
     def initialize(self):
         add_aviary_option(self, Aircraft.Electrical.HAS_HYBRID_SYSTEM)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
