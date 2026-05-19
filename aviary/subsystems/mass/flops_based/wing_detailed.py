@@ -428,6 +428,10 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         stations_per_section[-1] += 1  # add one more point to the last section
         integration_stations = np.empty(0, dtype=chord.dtype)
         sweep_int_stations = np.empty(0, dtype=chord.dtype)
+        print('inp_stations_mod', inp_stations_mod)
+        print('np.diff(inp_stations_mod)', np.diff(inp_stations_mod))
+        print('target_dy', target_dy)
+        print('stations_per_section', stations_per_section)
 
         for i, val in enumerate(inp_stations_mod[1:]):
             endpoint = i == len(inp_stations_mod) - 2
@@ -447,7 +451,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         avg_sweep = np.sum(
             (dy[0:] + 2.0 * integration_stations[0:-1]) * dy[0:] * sweep_int_stations[0:-1]
         )
-        print('integration_stations', integration_stations)
 
         load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
         load_intensity = load_intensity_by_factor(load_distribution_factor, integration_stations)
