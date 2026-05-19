@@ -6,7 +6,6 @@ from aviary.mission.two_dof.ode.landing_eom import (
     LandingAltitudeComponent,
     LandingGroundRollComponent,
 )
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
@@ -22,9 +21,6 @@ class LandingSegment(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         user_options = self.options['user_options']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_subsystem(
             'approach_alt_comp',
@@ -101,6 +97,7 @@ class LandingSegment(TwoDOFODE):
                         Dynamic.Atmosphere.DENSITY,
                         Dynamic.Atmosphere.SPEED_OF_SOUND,
                         Dynamic.Atmosphere.DYNAMIC_VISCOSITY,
+                        ('airport_alt', Mission.Landing.AIRPORT_ALTITUDE),
                         (Dynamic.Atmosphere.MACH, Mission.Landing.INITIAL_MACH),
                         Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                         ('flap_defl', Aircraft.Wing.FLAP_DEFLECTION_LANDING),
@@ -241,8 +238,6 @@ class LandingSegment(TwoDOFODE):
                 'mission:*',
             ],
         )
-
-        ParamPort.set_default_vals(self)
 
         self.set_input_defaults(Mission.Landing.INITIAL_MACH, val=0.1)
 

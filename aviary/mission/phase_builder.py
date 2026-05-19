@@ -605,6 +605,30 @@ class PhaseBuilder(ABC):
                     )
         return phase
 
+    def get_parameters(self):
+        """
+        Declare any additional ODE variables that need to be promoted to the top of the
+        trajectory.
+
+        A parameter is a value that does not vary over the trajectory. Adding a variable name to
+        this list promotes the input to the top of the Aviary model, where it is either implicitly
+        connected to any pre-mission component that produces it, or it assumes the value set in
+        the csv file.
+
+        Returns
+        -------
+        dict
+            A dictionary where the keys are the names of the fixed parameters and the values are
+            dictionaries with the following keys:
+
+            - 'value': float or array
+                The fixed value for the variable.
+            - 'units': str
+                The units for the fixed value (optional).
+            - any additional keyword arguments required by OpenMDAO for the fixed variable.
+        """
+        return {}
+
 
 _registered_phase_builder_types = []
 

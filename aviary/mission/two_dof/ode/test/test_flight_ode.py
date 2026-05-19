@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
 from aviary.mission.two_dof.ode.flight_ode import FlightODE
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -104,6 +104,7 @@ class FlightODEClimbTestCase(unittest.TestCase):
         self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
         self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0, units='deg')
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
