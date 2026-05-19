@@ -8,8 +8,7 @@ from aviary.variable_info.variables import Aircraft
 
 class MiscControlMass(om.ExplicitComponent):
     """
-    Computation of total mass of cockpit controls, fixed wing controls, and SAS,
-    and mass of surface controls.
+    Computation of total mass of cockpit controls, and stability augmentation system
     """
 
     def setup(self):
@@ -114,8 +113,7 @@ class MiscControlMass(om.ExplicitComponent):
 
 class SurfaceControlMass(om.ExplicitComponent):
     """
-    Computation of total mass of cockpit controls, fixed wing controls, and SAS,
-    and mass of surface controls.
+    Computation mass of surface controls.
     """
 
     def setup(self):
@@ -273,7 +271,7 @@ class SurfaceControlMass(om.ExplicitComponent):
         )
 
 
-class ControlMass2(om.ExplicitComponent):
+class SumControlMass(om.ExplicitComponent):
     """
     Computation of control mass.
     """
@@ -321,7 +319,7 @@ class ControlMassGroup(om.Group):
         )
         self.add_subsystem(
             'sum_control',
-            ControlMass2(),
+            SumControlMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
