@@ -32,7 +32,7 @@ jobs:
         python-version: '3.13'
     - uses: pre-commit/action@v3.0.1
 
-  test_ubuntu:
+  test_aviary:
     strategy:
       fail-fast: false
       matrix:
