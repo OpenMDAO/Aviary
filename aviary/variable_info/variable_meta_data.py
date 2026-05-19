@@ -5431,6 +5431,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DFLPLD', 'FLOPS': None},
     units='deg',
+    default_value=40.0,
     desc='Deflection of flaps for landing',
 )
 
@@ -5439,6 +5440,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DFLPTO', 'FLOPS': None},
     units='deg',
+    default_value=10.0,
     desc='Deflection of flaps for takeoff',
 )
 

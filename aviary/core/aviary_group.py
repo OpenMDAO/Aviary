@@ -698,7 +698,7 @@ class AviaryGroup(om.Group):
         # TODO: Should some of this stuff be moved into the phase builder?
         self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options, comm)
 
-        return phase
+        return phase, phase_object
 
     def add_phases(self, parallel_phases=True, verbosity=None, comm=None):
         """
@@ -750,10 +750,12 @@ class AviaryGroup(om.Group):
         for phase_idx, phase_name in enumerate(mission_info):
             # Create and add phases.
             # This also expands mission_info to include all keys.
-            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
+            phase, builder = self._get_phase(phase_name, phase_idx, comm)
+            traj.add_phase(phase_name, phase)
 
             phase_info = mission_info[phase_name]
-            external_parameters[phase_name] = {}
+            external_parameters[phase_name] = builder.get_parameters()
+
             user_options = phase_info.get('user_options', {})
             all_subsystem_options = phase_info.get('subsystem_options', {})
 
