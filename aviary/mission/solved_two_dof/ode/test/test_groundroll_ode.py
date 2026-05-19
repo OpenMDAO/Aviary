@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs

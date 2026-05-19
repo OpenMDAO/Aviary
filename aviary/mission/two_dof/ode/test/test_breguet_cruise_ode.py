@@ -8,7 +8,7 @@ from aviary.mission.two_dof.ode.breguet_cruise_ode import (
     BreguetCruiseODE,
     ElectricBreguetCruiseODE,
 )
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.variable_info.functions import setup_model_options
@@ -49,6 +49,8 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(2), units='ft')
+        self.prob.set_val('mass', val=np.linspace(171481, 171581 - 10000, 2), units='lbm')
 
         set_params_for_unit_tests(self.prob)
 

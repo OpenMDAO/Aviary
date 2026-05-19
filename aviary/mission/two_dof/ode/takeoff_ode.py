@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
@@ -76,9 +75,6 @@ class TakeOffODE(TwoDOFODE):
 
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere(input_speed_type=input_speed_type)
 
@@ -258,8 +254,6 @@ class TakeOffODE(TwoDOFODE):
 
         if not (ground_roll or rotation):
             self.add_excess_rate_comps(nn)
-
-        ParamPort.set_default_vals(self)
 
         self.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='deg')

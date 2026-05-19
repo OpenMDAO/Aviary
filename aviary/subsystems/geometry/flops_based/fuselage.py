@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import openmdao.api as om
 
-from aviary.utils.math import smooth_int_tanh, d_smooth_int_tanh, smooth_min, d_smooth_min
+from aviary.utils.math import smooth_int_tanh, d_smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission, Settings
@@ -449,14 +449,6 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
             ],
         )
 
-        self.declare_partials(
-            of=[Aircraft.BWB.NUM_BAYS],
-            wrt=[
-                Aircraft.Fuselage.MAX_WIDTH,
-                Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
-            ],
-        )
-
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
 
@@ -485,16 +477,15 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         # Enforce maximum number of bays
         num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        if num_bays_max > 0:
-            num_bays = smooth_min(max_width / bay_width_nom, num_bays_max, mu=50.0)
-        else:
-            num_bays = max_width / bay_width_nom
+        num_bays = int(0.5 + max_width / bay_width_nom)
+        if num_bays.real > num_bays_max and num_bays_max > 0:
+            num_bays = num_bays_max
+        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
         outputs[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH] = pax_compart_length
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
         outputs[Aircraft.Fuselage.CABIN_AREA] = area_cabin
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
-        outputs[Aircraft.BWB.NUM_BAYS] = smooth_int_tanh(num_bays, mu=20.0)
 
     def compute_partials(self, inputs, J):
         length = inputs[Aircraft.Fuselage.LENGTH]
@@ -504,16 +495,6 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
         tan_sweep = np.tan(sweep / 57.296)
         pax_compart_length = rear_spar_percent_chord * length
         height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
-        bay_width_nom = 12.0
-
-        num_bays_max = self.options[Aircraft.BWB.MAX_NUM_BAYS]
-        dnum_bays_dmax_width = 1.0 / bay_width_nom
-        if num_bays_max > 0:
-            dnum_bays_dmax_width = (
-                d_smooth_min(max_width / bay_width_nom, num_bays_max, mu=50.0) / bay_width_nom
-            )
-        else:
-            dnum_bays_dmax_width = 1.0 / bay_width_nom
 
         J[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, Aircraft.Fuselage.LENGTH] = (
             rear_spar_percent_chord
@@ -540,8 +521,6 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.LENGTH] = height_to_width
         J[Aircraft.Fuselage.MAX_HEIGHT, Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD] = length
-
-        J[Aircraft.BWB.NUM_BAYS, Aircraft.Fuselage.MAX_WIDTH] = dnum_bays_dmax_width
 
 
 class BWBDetailedCabinLayout(om.ExplicitComponent):
@@ -581,7 +560,6 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
         sweep = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP]
         height_to_width = inputs[Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD]
@@ -623,7 +601,7 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         if seat_pitch_economy <= 0:
             seat_pitch_economy = 32.0  # inch
 
-        # Determine unit seat areas for each type of passenger (ft**2)
+        # Determine unit seat areas for each type of passenger
         area_seat_business = bay_width_nom * seat_pitch_business / 12.0 / num_seat_abreast_business
         area_seat_first = bay_width_nom * seat_pitch_first / 12.0 / num_seat_abreast_first
         area_seat_economy = bay_width_nom * seat_pitch_economy / 12.0 / num_seat_abreast_economy
@@ -654,20 +632,20 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         area_service = num_lavas * area_lava + num_galleys * area_galley + num_closets * area_closet
 
         # Estimate number of bays based on these areas
-        num_bays = (area_seats + area_service) / 550.0
+        num_bays = int(0.5 + (area_seats + area_service) / 550.0)
         if num_bays > num_bays_max and num_bays_max > 0:
             num_bays = num_bays_max
 
+        num_bays_loc = num_bays
         iter = 0
-        bay_width = bay_width_nom
         while True:
             num_bays_loc = num_bays
-            # Cabin area wasted due to slanted != side wall
-            area_waste = num_bays * tan_sweep * (bay_width / 2.0) ** 2
+            # Cabin area wasted due to slanted  != side wall
+            area_waste = num_bays * tan_sweep * (bay_width_nom / 2.0) ** 2
 
             # Aisle area for horseshoe (5'), cross (2') and rear (3') aisles
             # Aisles only go to center of outboard bays, hence num_bays-1
-            area_aisle = 10.0 * (num_bays - 1) * bay_width
+            area_aisle = 10.0 * (num_bays - 1) * bay_width_nom
 
             # Total pressurized cabin area
             area_cabin = area_seats + area_service + area_waste + area_aisle
@@ -680,30 +658,32 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
             pax_compart_length = root_chord + tan_sweep * max_width / 2.0
 
             # Enforce maximum number of bays
-            num_bays = max_width[0] / bay_width
-            if num_bays.real > num_bays_max and num_bays_max > 0:
+            num_bays_tmp = 0.5 + max_width / bay_width_nom
+            if num_bays_tmp[0].real > num_bays_max and num_bays_max > 0:
                 num_bays = num_bays_max
+            else:
+                num_bays = int(num_bays_tmp[0].real)
 
             # Enforce maximum bay width
-            bay_width = max_width[0] / num_bays
+            bay_width = max_width / num_bays
             if bay_width > bay_width_max and bay_width_max > 0.0:
                 bay_width = bay_width_max
-                num_bays = max_width[0] / bay_width
-                if num_bays.real > num_bays_max and num_bays_max > 0:
+                num_bays_tmp = 0.999 + max_width / bay_width
+                if num_bays_tmp.real > num_bays_max and num_bays_max > 0:
                     num_bays = num_bays_max
                     max_width = num_bays_max * bay_width
                     pax_compart_length = area_cabin / max_width + tan_sweep * max_width / 4.0
                     root_chord = pax_compart_length - tan_sweep * max_width / 2.0
+                else:
+                    num_bays = smooth_int_tanh(num_bays_tmp, mu=40.0)
 
-            if np.abs(num_bays_loc - num_bays) < 0.00001:
+            if num_bays_loc == num_bays:
                 break
             iter = iter + 1
             if iter > 100:
-                if verbosity > Verbosity.BRIEF:
-                    warnings.warn(f'Number of iteration in BWBDetailedCabinLayout exceeded 100.')
+                warnings.warn(f'Number of iteration exceeded 100.')
                 break
 
-        num_bays = smooth_int_tanh(num_bays, mu=40.0)
         length = pax_compart_length / rear_spar_percent_chord
         max_height = height_to_width * length
         outputs[Aircraft.BWB.NUM_BAYS] = num_bays
@@ -715,3 +695,5 @@ class BWBDetailedCabinLayout(om.ExplicitComponent):
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = max_height
         outputs[Aircraft.Wing.ROOT_CHORD] = root_chord
         outputs['bay_width'] = bay_width
+
+        # For improvement on using int function on num_bays, see issue #1084.

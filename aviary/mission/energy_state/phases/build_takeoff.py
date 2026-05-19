@@ -6,15 +6,13 @@ from aviary.variable_info.variables import Dynamic
 
 class Takeoff:
     """
-    Define user constraints for a climb phase.
+    Define user constraints for a takeoff phase.
 
     Parameters
     ----------
     airport_altitude : float (None)
         altitude of airport (ft)
         ratio of lift to drag at takeoff (None)
-    num_engines int (None)
-        number of engines (None)
 
     Returns
     -------
@@ -25,18 +23,10 @@ class Takeoff:
     def __init__(
         self,
         airport_altitude=None,
-        ramp_mass=None,
-        num_engines=None,
     ):
         self.airport_altitude = airport_altitude  # ft
-        self.num_engines = num_engines
-        # note: need to clean this up so that some of these variables come from
-        # connections. The only variables that should stay are: airport_altitude
 
-    __slots__ = (
-        'airport_altitude',
-        'num_engines',
-    )
+    __slots__ = 'airport_altitude'
 
     def build_phase(self, use_detailed=False):
         """
@@ -63,7 +53,7 @@ class Takeoff:
         # Add Inputs #
         ##############
 
-        takeoff = TakeoffGroup(num_engines=self.num_engines)
+        takeoff = TakeoffGroup()
         takeoff.set_input_defaults(Dynamic.Mission.ALTITUDE, val=self.airport_altitude, units='ft')
 
         return takeoff

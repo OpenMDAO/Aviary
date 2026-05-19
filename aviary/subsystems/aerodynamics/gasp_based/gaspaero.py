@@ -969,6 +969,10 @@ class AeroGeom(om.ExplicitComponent):
             fexcrt,
             pct_excr,
         ) = inputs.values()
+
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_type = len(num_engines)
+
         # skin friction coeff at Re = 10**7
         cf = 0.455 / 7**2.58 / (1 + 0.144 * mach**2) ** 0.65
         cdfi = fcffc * cf
@@ -1001,16 +1005,19 @@ class AeroGeom(om.ExplicitComponent):
         # Re correction factors: fuselage, wing, nacelle, vtail, htail, strut, tip tank
         # protect against Mach 0, any other small Mach should be ok
         dtype = complex if self.under_complex_step else float
-        ffre, fwre, fnre, fvtre, fhtre, fstrtre = np.ones(
-            (6, self.options['num_nodes']), dtype=dtype
-        )
+
+        # create separate numpy arrays of len num_nodes for each variable
+        ffre, fwre, fvtre, fhtre, fstrtre = np.ones((5, self.options['num_nodes']), dtype=dtype)
+        # special case, fnre is vectorized across engine types
+        fnre = np.ones((num_engine_type, self.options['num_nodes']), dtype=dtype)
         if self.under_complex_step:
             good_mask = reli.real > 1
         else:
             good_mask = reli > 1
         ffre[good_mask] = (np.log10(reli[good_mask] * fus_len) / 7) ** -2.6
         fwre[good_mask] = (np.log10(reli[good_mask] * avg_chord) / 7) ** -2.6
-        fnre[good_mask] = (np.log10(reli[good_mask] * nac_len) / 7) ** -2.6
+        for i in range(num_engine_type):
+            fnre[i, good_mask] = (np.log10(reli[good_mask] * nac_len[i]) / 7) ** -2.6
         fvtre[good_mask] = (np.log10(reli[good_mask] * vtail_chord) / 7) ** -2.6
         fhtre[good_mask] = (np.log10(reli[good_mask] * htail_chord) / 7) ** -2.6
         include_strut = self.options[Aircraft.Wing.HAS_STRUT]
@@ -1024,9 +1031,11 @@ class AeroGeom(om.ExplicitComponent):
         # GASP uses different values of cf for wing, nacelle, fuselage, etc.
         fef = fus_SA * cdfi * ffre * ff_fus + fe_fus_inc
         few = ff_wing * wing_area * cdwi * fwre
-        # Replaced 2 with total_num_engines. Need to check. See issue #1080
-        total_num_engines = sum(self.options[Aircraft.Engine.NUM_ENGINES])
-        fen = fpylnd * total_num_engines * ff_nac * nacelle_area * cdni * fnre
+
+        # transposing nacelle row vectors into column vectors
+        per_engine_nac = np.atleast_2d(ff_nac * nacelle_area).T * fnre
+        fen = fpylnd * cdni * np.dot(num_engines, per_engine_nac)
+        
         fevt = ff_vtail * vtail_area * cdvti * fvtre
         feht = ff_htail * htail_area * cdhti * fhtre
         festrt = strut_fus_intf * strut_wing_area_ratio * wing_area * cdstrti * fstrtre

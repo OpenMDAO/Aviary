@@ -144,7 +144,6 @@ mission:constraints:max_mach,0.785,unitless
 aircraft:design:cruise_altitude,35000,ft
 aircraft:design:gross_mass,175400.0,lbm
 aircraft:design:range,3500,NM
-aircraft:design:thrust_takeoff_per_eng,28928.1,lbf
 mission:landing:lift_coefficient_max,2.0,unitless
 aircraft:design:cruise_mach,0.785,unitless
 mission:takeoff:fuel,577,lbm

@@ -785,7 +785,10 @@ add_meta_data(
 add_meta_data(
     Aircraft.CrewPayload.NUM_CABIN_CREW,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
+    historical_name={
+        'GASP': None,
+        'FLOPS': None,  # This is NCABCR internal to FLOPS.
+    },
     units='unitless',
     desc='Total number of cabin crew. In FLOPS this includes galley and flight attendants',
     types=int,
@@ -1687,20 +1690,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Design.THRUST_TAKEOFF_PER_ENG,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'AERIN.THROFF',
-        # LEAPS1 used the average thrust_takeoff of all operational engines
-        # actually on the airplane, possibly after resizing (as with FLOPS)
-    },
-    units='lbf',
-    desc='Thrust per engine, used for energy state simple takeoff calculation',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Design.THRUST_TO_WEIGHT_RATIO,
     meta_data=_MetaData,
     historical_name={
@@ -1783,6 +1772,16 @@ add_meta_data(
     types=bool,
     default_value=False,
 )
+
+add_meta_data(
+    Aircraft.Design.USEFUL_LOAD_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='Useful load of the aircraft is the difference between the max_gross_mass and the empty_mass.'
+    'This includes operating_items, total_payload and total_fuel.',
+)
+
 
 add_meta_data(
     Aircraft.Design.WETTED_AREAS,
@@ -5432,6 +5431,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DFLPLD', 'FLOPS': None},
     units='deg',
+    default_value=40.0,
     desc='Deflection of flaps for landing',
 )
 
@@ -5440,6 +5440,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DFLPTO', 'FLOPS': None},
     units='deg',
+    default_value=10.0,
     desc='Deflection of flaps for takeoff',
 )
 
@@ -5690,7 +5691,7 @@ add_meta_data(
         'FLOPS': 'WTIN.PDIST',  # ['&DEFINE.WTIN.PDIST', 'WDEF.PDIST'],
     },
     units='unitless',
-    desc='controls spatial distribution of integration stations for detailed wing',
+    desc='controls spatial distribution of integration stations for detailed wing, in [1, 3]',
     default_value=2.0,
     option=True,
 )
@@ -6860,6 +6861,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.OPERATING_ITEMS_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
+    units='lbm',
+    desc='Operating Items group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
@@ -6931,15 +6941,6 @@ add_meta_data(
     desc='the total fuel reserves which is the sum of: '
     'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
     default_value=0,
-)
-
-add_meta_data(
-    Mission.USEFUL_LOAD,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
-    units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
-    default_value=0.0,
 )
 
 add_meta_data(
@@ -7370,6 +7371,15 @@ add_meta_data(
     default_value=0.3,
     units='unitless',
     desc='takeoff coefficient of friction, with brakes on',
+)
+add_meta_data(
+    Mission.Takeoff.CLIMBOUT_THRUST_FRACTION,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='unitless',
+    desc='Fraction of Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST to use for'
+    'climbout phase of simple takeoff calculations. For 2 engine aircraft set = 0.5 for one engine out.',
+    default_value=1,
 )
 
 add_meta_data(
