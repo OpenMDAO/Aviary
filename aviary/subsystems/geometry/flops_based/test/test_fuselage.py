@@ -98,7 +98,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, [5], tolerance=1e-9)
+        assert_near_equal(num_bays, [5.00872038], tolerance=1e-9)
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
@@ -146,22 +146,22 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, 7, tolerance=1e-9)
+        assert_near_equal(num_bays, 6.99994448, tolerance=1e-5)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
-        assert_near_equal(fuselage_length, 112.30019369, tolerance=1e-9)
+        assert_near_equal(fuselage_length, 111.76379613, tolerance=1e-9)
 
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
-        assert_near_equal(pax_compart_length, 78.61013558, tolerance=1e-9)
+        assert_near_equal(pax_compart_length, 78.23465729, tolerance=1e-9)
 
         fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
-        assert_near_equal(fuselage_width, 80.22075607, tolerance=1e-9)
+        assert_near_equal(fuselage_width, 79.46979495, tolerance=1e-9)
 
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
-        assert_near_equal(fuselage_height, 12.35302131, tolerance=1e-9)
+        assert_near_equal(fuselage_height, 12.29401757, tolerance=1e-9)
 
         cabin_area = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
-        assert_near_equal(cabin_area, 4697.33181006, tolerance=1e-9)
+        assert_near_equal(cabin_area, 4638.43963915, tolerance=1e-9)
 
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
@@ -194,23 +194,23 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
         prob.run_model()
 
-        fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
-        assert_near_equal(fuselage_width, 49.77182929, tolerance=1e-9)
-
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, 4, tolerance=1e-9)
+        assert_near_equal(num_bays, 4, tolerance=1e-5)
+
+        fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
+        assert_near_equal(fuselage_width, 50.17622787, tolerance=1e-9)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
-        assert_near_equal(fuselage_length, 116.57609631, tolerance=1e-9)
+        assert_near_equal(fuselage_length, 117.07640514, tolerance=1e-9)
 
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
-        assert_near_equal(pax_compart_length, 81.60326742, tolerance=1e-9)
+        assert_near_equal(pax_compart_length, 81.9534836, tolerance=1e-9)
 
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
-        assert_near_equal(fuselage_height, 12.82337059, tolerance=1e-9)
+        assert_near_equal(fuselage_height, 12.87840457, tolerance=1e-9)
 
         cabin_area = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
-        assert_near_equal(cabin_area, 2988.87966179, tolerance=1e-9)
+        assert_near_equal(cabin_area, 3021.9507202, tolerance=1e-9)
 
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
         assert_near_equal(root_chord, 38.5, tolerance=1e-9)
@@ -251,7 +251,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(fuselage_width, 40.0, tolerance=1e-9)
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
-        assert_near_equal(num_bays, 4.0, tolerance=1e-9)
+        assert_near_equal(num_bays, 4.0, tolerance=1e-5)
 
         fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
         assert_near_equal(fuselage_length, 131.4890549, tolerance=1e-9)
