@@ -50,6 +50,7 @@ class TestFortranToAviary(unittest.TestCase):
                 # Assert that the lines are equal
                 try:
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
+
                 except Exception:
                     exc_string = (
                         f'Error: {filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'

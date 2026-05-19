@@ -52,7 +52,6 @@ class TestEngineDeckConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception:
-
                     # Do we have a small floating point difference?
                     # This could be due to python numeric representation.
                     try:
