@@ -432,7 +432,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         for i, val in enumerate(inp_stations_mod[1:]):
             endpoint = i == len(inp_stations_mod) - 2
             print('i,endpoint', i, endpoint)
-            per_section = int(stations_per_section[i]) q
+            per_section = int(stations_per_section[i])
             print('per_section', per_section)
             print('new', np.linspace(inp_stations_mod[i], val, per_section, endpoint=endpoint))
             integration_stations = np.append(
