@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_eom import TaxiFuelComponent
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
@@ -19,8 +18,6 @@ class TaxiSegment(TwoDOFODE):
         options: AviaryValues = self.options['aviary_options']
         subsystems = self.options['subsystems']
         user_options = self.options['user_options']
-
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         # NOTE calling add_opts2vals in this way makes Mission.Taxi.MACH a required variable.
         # This is because ODE was relying on old behavior of NamedValues.get_item() which returns
@@ -81,7 +78,6 @@ class TaxiSegment(TwoDOFODE):
 
         self.add_subsystem('taxifuel', TaxiFuelComponent(), promotes=['*'])
 
-        ParamPort.set_default_vals(self)
         self.set_input_defaults(Mission.Taxi.MACH, 0)
 
         # Throttle Idle
