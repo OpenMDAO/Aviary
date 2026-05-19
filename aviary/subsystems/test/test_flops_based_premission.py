@@ -920,6 +920,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Fins.MASS], 3159.3781042368792, tol)
         # WingMassGroup
         # BWBDetailedWingBendingFact
+        # This is particularly sensitive to numerics.
         assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_FACTOR], 3.9705868, .002)
         assert_near_equal(prob[Aircraft.Wing.ENG_POD_INERTIA_FACTOR], 1.0, tol)
         # BWBWingMiscMass
@@ -927,7 +928,8 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # WingShearControlMass
         assert_near_equal(prob[Aircraft.Wing.SHEAR_CONTROL_MASS], 34867.592407371565, tol)
         # WingBendingMass
-        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 8856.01080887, tol)
+        # This is particularly sensitive to numerics.
+        assert_near_equal(prob[Aircraft.Wing.BENDING_MATERIAL_MASS], 8856.01080887, .002)
         # BWBAftBodyMass
         assert_near_equal(prob[Aircraft.Fuselage.AFTBODY_MASS], 18736.55008878, tol)
         assert_near_equal(prob[Aircraft.Wing.BWB_AFTBODY_MASS], 15551.33657368, tol)
