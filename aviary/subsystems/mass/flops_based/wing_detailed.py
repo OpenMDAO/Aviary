@@ -444,7 +444,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         avg_sweep = np.sum(
             (dy[0:] + 2.0 * integration_stations[0:-1]) * dy[0:] * sweep_int_stations[0:-1]
         )
-        print('sweep_int_stations', sweep_int_stations)
+        print('inp_stations_mod', inp_stations_mod)
+        print('integration_stations', integration_stations)
         print('dy', dy)
 
         load_distribution_factor = self.options[Aircraft.Wing.LOAD_DISTRIBUTION_CONTROL]
@@ -483,7 +484,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         )
         csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
         emi = (del_moment + dy * load_path_length[1:]) * csw
-        print('emi', emi)
 
         tc_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
@@ -491,7 +491,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         tc_int_stations = tc_interp.evaluate_spline(
             thickness_to_chord_mod, compute_derivative=False
         )
-        print('tc_int_stations', tc_int_stations)
 
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
@@ -501,7 +500,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         bma = total_moment * csw / (chord_int_stations[:-1] * tc_int_stations[:-1])
 
         pm = np.sum((bma[:-1] + bma[1:]) * dy[:-1] * 0.5)
-        print('pm', pm)
 
         s = np.sum((chord_int_stations[:-1] + chord_int_stations[1:]) * dy * 0.5)
         # calculated aspect ratio and calculated wing area
@@ -520,7 +518,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         den = calc_ar ** (0.25 * fstrt) * (
             1.0 + (0.5 * faert - 0.16 * fstrt) * sa**2 + 0.03 * caya * (1.0 - 0.5 * faert) * sa
         )
-        print('den', den)
         bt = btb / den
 
         outputs[Aircraft.Wing.BENDING_MATERIAL_FACTOR] = bt
