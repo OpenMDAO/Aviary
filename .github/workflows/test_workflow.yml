@@ -59,25 +59,25 @@ jobs:
             COVERAGE: true
 
           # latest versions of openmdao/dymos
-          #- NAME: latest-macos
-          #  OS: macos-latest
-          #  OPENMDAO_PIXI_ENVIRONMENT: 'py314'
-          #  OPENMDAO_INSTALL_FROM: 'github'
-          #  OPENMDAO: ''
-          #  SNOPT: '7.7'
-          #  DYMOS: 'latest'
-          #  COVERAGE: true
+          - NAME: latest-macos
+            OS: macos-latest
+            OPENMDAO_PIXI_ENVIRONMENT: 'py314'
+            OPENMDAO_INSTALL_FROM: 'github'
+            OPENMDAO: ''
+            SNOPT: '7.7'
+            DYMOS: 'latest'
+            COVERAGE: true
 
           # latest versions of openmdao/dymos
           # Coverage currently has some problems in windows, according to the openmdao workflows.
-          #- NAME: latest-windows
-          #  OS: windows-latest
-          #  OPENMDAO_PIXI_ENVIRONMENT: 'py314'
-          #  OPENMDAO_INSTALL_FROM: 'github'
-          #  OPENMDAO: ''
-          #  SNOPT: false
-          #  DYMOS: 'latest'
-          #  COVERAGE: false
+          - NAME: latest-windows
+            OS: windows-latest
+            OPENMDAO_PIXI_ENVIRONMENT: 'py314'
+            OPENMDAO_INSTALL_FROM: 'github'
+            OPENMDAO: ''
+            SNOPT: false
+            DYMOS: 'latest'
+            COVERAGE: false
 
     runs-on: ${{ matrix.OS }}
 
