@@ -430,6 +430,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         sweep_int_stations = np.empty(0, dtype=chord.dtype)
         print('inp_stations_mod', inp_stations_mod)
         print('np.diff(inp_stations_mod)', np.diff(inp_stations_mod))
+        print('np.abs(np.diff(inp_stations_mod) / target_dy + 0.5)', np.abs(np.diff(inp_stations_mod) / target_dy + 0.5))
         print('target_dy', target_dy)
         print('stations_per_section', stations_per_section)
 
