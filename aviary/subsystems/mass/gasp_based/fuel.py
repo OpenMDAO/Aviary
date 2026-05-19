@@ -148,14 +148,14 @@ class BodyTankCalculations(om.ExplicitComponent):
         if verbosity >= Verbosity.BRIEF:
             if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 if not self.warned_mass:
-                    print('Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank')
+                    print('req_fuel_mass > max_wingfuel_mass, adding a body tank')
                 self.warned_mass = True
             else:
                 self.warned_mass = False
 
             if (req_fuel_wt < max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 if not self.warned_vol:
-                    print('Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank')
+                    print('design_fuel_vol > max_wingfuel_vol, adding a body tank')
                 self.warned_vol = True
             else:
                 self.warned_vol = False

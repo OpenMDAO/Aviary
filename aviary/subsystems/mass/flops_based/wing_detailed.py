@@ -365,7 +365,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         rate_span = (wingspan - width) / wingspan
 
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=width.dtype
         )
         if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
             bwb_input_station_dist[1] = width / 2.0
@@ -390,22 +390,21 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION']
         load_path_sweep_mod = np.array(load_path_sweep[1:])
 
-        ar = inputs[Aircraft.Wing.ASPECT_RATIO]
-        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
-        if arref[0] == 0:  # this could happen if Aircraft.Wing.ASPECT_RATIO is not an input
-            arref[0] = ar[0]
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn(
-                    'Aircraft.Wing.ASPECT_RATIO_REFERENCE is not provided. '
-                    'Assume it is the same as Aircraft.Wing.ASPECT_RATIO.'
-                )
+        ar = inputs[Aircraft.Wing.ASPECT_RATIO][0]
+        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE][0]
+        ar_scale_factor = arref / ar
+        if (
+            ar_scale_factor == 0.0
+        ):  # this could happen if Aircraft.Wing.ASPECT_RATIO is not input by user
+            ar_scale_factor = 1.0
+
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
         for x in chord:
             if x > 5.0:
                 chord_mod.append(2 * x / wingspan)
             else:
-                chord_mod.append(x * arref[0] / ar[0])
+                chord_mod.append(x * ar_scale_factor)
         chord_mod = np.array(chord_mod)
 
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
@@ -454,9 +453,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
         )
         chord_int_stations = chord_interp.evaluate_spline(chord_mod[1:], compute_derivative=False)
-        if arref > 0.0:
-            # Scale
-            chord_int_stations *= arref / ar
+        # Scale
+        chord_int_stations *= ar_scale_factor
 
         del_load = (
             dy

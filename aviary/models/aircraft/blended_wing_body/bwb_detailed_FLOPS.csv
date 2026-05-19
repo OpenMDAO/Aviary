@@ -20,7 +20,6 @@ aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_business,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
-aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:seat_pitch_business,39,inch
 aircraft:crew_and_payload:design:seat_pitch_first,61,inch
 aircraft:crew_and_payload:design:seat_pitch_economy,32,inch
