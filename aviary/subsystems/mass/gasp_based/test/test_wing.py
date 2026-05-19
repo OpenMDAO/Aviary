@@ -10,6 +10,7 @@ from aviary.subsystems.mass.gasp_based.wing import (
     WingMassGroup,
     WingMassSolve,
     WingMassTotal,
+    StrutAndFoldMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
@@ -138,6 +139,7 @@ class TotalWingMassTestCase1(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
+        self.prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
         self.prob.model.add_subsystem(
             'total',
             WingMassTotal(),
@@ -170,6 +172,7 @@ class TotalWingMassTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
 
         self.prob = om.Problem()
+        self.prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
         self.prob.model.add_subsystem(
             'total',
             WingMassTotal(),
@@ -209,6 +212,7 @@ class TotalWingMassTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
 
         self.prob = om.Problem()
+        self.prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
         self.prob.model.add_subsystem(
             'total',
             WingMassTotal(),
@@ -243,6 +247,7 @@ class TotalWingMassTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
 
         self.prob = om.Problem()
+        self.prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
         self.prob.model.add_subsystem('total', WingMassTotal(), promotes=['*'])
 
         self.prob.model.set_input_defaults('isolated_wing_mass', val=15830.0, units='lbm')
@@ -291,6 +296,7 @@ class TotalWingMassTestCase5(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
+        prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
         prob.model.add_subsystem(
             'total',
             WingMassTotal(),
@@ -326,6 +332,11 @@ class TotalWingMassTestCase6(unittest.TestCase):
         options = get_option_defaults()
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'strut_fold',
+            StrutAndFoldMass(),
+            promotes=['*'],
+        )
         self.prob.model.add_subsystem(
             'total',
             WingMassTotal(),
@@ -367,6 +378,11 @@ class TotalWingMassTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         prob = om.Problem()
         prob.model.add_subsystem(
+            'strut_fold',
+            StrutAndFoldMass(),
+            promotes=['*'],
+        )
+        prob.model.add_subsystem(
             'total',
             WingMassTotal(),
             promotes=['*'],
@@ -403,6 +419,7 @@ class TotalWingMassTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Wing.HAS_FOLD, val=True, units='unitless')
         options.set_val(Aircraft.Wing.HAS_STRUT, val=True, units='unitless')
         prob = om.Problem()
+        prob.model.add_subsystem('strut_fold', StrutAndFoldMass(), promotes=['*'])
         prob.model.add_subsystem('total', WingMassTotal(), promotes=['*'])
         prob.model.set_input_defaults('isolated_wing_mass', val=15830.0, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.AREA, val=100, units='ft**2')
