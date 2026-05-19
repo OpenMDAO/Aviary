@@ -1125,7 +1125,7 @@ class AviaryGroup(om.Group):
         # easier for users to access Mission.FINAL_MASS, Mission.FINAL_TIME,
         # and Mission.RANGE.
         self.connect(
-            f'traj.{final_phase}.states:mass',
+            f'traj.{final_phase}.timeseries.mass',
             'state_output.mass_in',
             src_indices=[-1],
         )

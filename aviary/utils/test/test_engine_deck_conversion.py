@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 
+from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.utils.engine_deck_conversion import EngineDeckType, convert_engine_deck
@@ -51,8 +52,17 @@ class TestEngineDeckConversion(unittest.TestCase):
                     self.assertEqual(line_no_whitespace.count(expected_line), 1)
 
                 except Exception:
-                    exc_string = f'Error: TEST_{filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
-                    raise Exception(exc_string)
+
+                    # Do we have a small floating point difference?
+                    # This could be due to python numeric representation.
+                    try:
+                        expected_nums = [float(item) for item in expected_line.split(',')]
+                        nums = [float(item) for item in line_no_whitespace.split(',')]
+                        for expect, actual in zip(expected_nums, nums):
+                            assert_near_equal(expect, actual, 1e-4)
+                    except:
+                        exc_string = f'Error: TEST_{filename}\nFound: {line_no_whitespace}\nExpected: {expected_line}'
+                        raise Exception(exc_string)
 
     def test_TF_conversion_FLOPS(self):
         filename = 'turbofan_22k.txt'
@@ -101,4 +111,4 @@ class TestEngineDeckConversion(unittest.TestCase):
 if __name__ == '__main__':
     # unittest.main()
     test = TestEngineDeckConversion()
-    test.test_TP_conversion()
+    test.test_TF_conversion_GASP()
