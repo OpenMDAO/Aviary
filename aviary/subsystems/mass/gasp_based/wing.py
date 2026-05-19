@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class WingMassSolve(om.ImplicitComponent):
@@ -259,7 +259,7 @@ class WingMassSolve(om.ImplicitComponent):
 
 
 class StrutAndFoldMass(om.ExplicitComponent):
-    """Computation of wing mass, strut mass, and wing fold mass."""
+    """Computation of strut mass, and wing fold mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
@@ -357,7 +357,7 @@ class StrutAndFoldMass(om.ExplicitComponent):
 
 
 class WingMassTotal(om.ExplicitComponent):
-    """Computation of wing mass, strut mass, and wing fold mass."""
+    """Computation of wing mass."""
 
     def setup(self):
         add_aviary_input(self, Aircraft.Wing.MASS_SCALER)
