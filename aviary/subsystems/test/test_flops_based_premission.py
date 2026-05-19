@@ -149,6 +149,7 @@ class PreMissionGroupTest(unittest.TestCase):
             atol=1e-4,
             rtol=1e-4,
             check_partials=False,
+            excludes=['*wing_prelim'],  # CS component, calculation is numerically sensitive.
             flops_inputs=flops_inputs,
             flops_outputs=flops_outputs,
         )

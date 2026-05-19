@@ -415,7 +415,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
         thickness_to_chord_mod = thickness_to_chord[1:] * tc[0] / tcref[0]
-        print('thickness_to_chord_mod', thickness_to_chord_mod)
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
@@ -428,18 +427,10 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         stations_per_section[-1] += 1  # add one more point to the last section
         integration_stations = np.empty(0, dtype=chord.dtype)
         sweep_int_stations = np.empty(0, dtype=chord.dtype)
-        print('inp_stations_mod', inp_stations_mod)
-        print('np.diff(inp_stations_mod)', np.diff(inp_stations_mod))
-        print('np.abs(np.diff(inp_stations_mod) / target_dy + 0.5)', np.abs(np.diff(inp_stations_mod) / target_dy + 0.5))
-        print('target_dy', target_dy)
-        print('stations_per_section', stations_per_section)
 
         for i, val in enumerate(inp_stations_mod[1:]):
             endpoint = i == len(inp_stations_mod) - 2
-            print('i,endpoint', i, endpoint)
             per_section = int(stations_per_section[i])
-            print('per_section', per_section)
-            print('new', np.linspace(inp_stations_mod[i], val, per_section, endpoint=endpoint))
             integration_stations = np.append(
                 integration_stations,
                 np.linspace(inp_stations_mod[i], val, per_section, endpoint=endpoint),
