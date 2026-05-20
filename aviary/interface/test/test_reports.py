@@ -144,15 +144,21 @@ class TestReports(unittest.TestCase):
         )
         prob.check_and_preprocess_inputs()
         prob.build_model()
-        prob.add_driver('SLSQP', max_iter=50)
+
+        # We are only checking file locations, so don't run the whole optimization.
+        prob.add_driver('SLSQP', max_iter=1)
+
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
         prob.run_aviary_problem()
         prob.run_off_design_mission(problem_type='off_design_max_range', mission_gross_mass=115000)
         prob.run_off_design_mission(problem_type='off_design_min_fuel', mission_range=1250)
-        assert Path('testflo_off_design_1_out').is_dir()
-        assert Path('testflo_off_design_out').is_dir()
+
+        stem = prob._metadata['pathname']
+
+        assert Path(f'{stem}_off_design_1_out').is_dir()
+        assert Path(f'{stem}_off_design_out').is_dir()
 
 
 if __name__ == '__main__':
