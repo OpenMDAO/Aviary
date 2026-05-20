@@ -413,10 +413,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
-        thickness_to_chord_mod = []
-        for x in thickness_to_chord:
-            thickness_to_chord_mod.append(x * tc[0] / tcref[0])
-        thickness_to_chord_mod = np.array(thickness_to_chord_mod)[1:]
+        thickness_to_chord_mod = thickness_to_chord[1:] * tc[0] / tcref[0]
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
@@ -481,7 +478,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         )
         csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
         emi = (del_moment + dy * load_path_length[1:]) * csw
-        em = np.sum(emi)
 
         tc_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
@@ -489,6 +485,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         tc_int_stations = tc_interp.evaluate_spline(
             thickness_to_chord_mod, compute_derivative=False
         )
+
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
 

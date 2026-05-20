@@ -1774,6 +1774,16 @@ add_meta_data(
 )
 
 add_meta_data(
+    Aircraft.Design.USEFUL_LOAD_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='Useful load of the aircraft is the difference between the max_gross_mass and the empty_mass.'
+    'This includes operating_items, total_payload and total_fuel.',
+)
+
+
+add_meta_data(
     Aircraft.Design.WETTED_AREAS,
     meta_data=_MetaData,
     historical_name={
@@ -5421,6 +5431,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DFLPLD', 'FLOPS': None},
     units='deg',
+    default_value=40.0,
     desc='Deflection of flaps for landing',
 )
 
@@ -5429,6 +5440,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.DFLPTO', 'FLOPS': None},
     units='deg',
+    default_value=10.0,
     desc='Deflection of flaps for takeoff',
 )
 
@@ -6849,6 +6861,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.OPERATING_ITEMS_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
+    units='lbm',
+    desc='Operating Items group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
@@ -6920,15 +6941,6 @@ add_meta_data(
     desc='the total fuel reserves which is the sum of: '
     'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
     default_value=0,
-)
-
-add_meta_data(
-    Mission.USEFUL_LOAD,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
-    units='lbm',
-    desc='Useful load group. Includes crew, unusable fuel, and oil mass.',
-    default_value=0.0,
 )
 
 add_meta_data(

@@ -79,8 +79,6 @@ class MassPremissionTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        # print(f'wetted_area: {self.prob[Aircraft.Fuselage.WETTED_AREA]}')
-
         tol = 5e-4
         expected_values = {
             'gasp_based_geom.cabin_height': 13.1,
@@ -112,6 +110,7 @@ class MassPremissionTestCase1(unittest.TestCase):
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,  # always zero when no body tank
             'extra_fuel_volume': 0,  # always zero when no body tank
             'max_extra_fuel_mass': 0,  # always zero when no body tank
+            Aircraft.Design.USEFUL_LOAD_MASS: 85002.98039399,
         }
 
         for var_name, expected_val in expected_values.items():
@@ -3236,7 +3235,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
 
-        # inputs to UsefulLoadMass
+        # inputs to OperatingItemsMass
         prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
@@ -3279,7 +3278,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Engine.POSITION_FACTOR -- SKEPOS = 1.05
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS - WFE = 20876.
-        Mission.USEFUL_LOAD -- WFUL = 5775.
+        Mission.OPERATING_ITEMS_MASS -- WFUL = 5775.
         Aircraft.Wing.MASS -- WW = 7645.
         Aircraft.Strut.MASS -- WSTRUT = 0
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
@@ -3358,7 +3357,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21885.38086961, tol)
-        assert_near_equal(prob[Mission.USEFUL_LOAD], 5961.79463002, tol)
+        assert_near_equal(prob[Mission.OPERATING_ITEMS_MASS], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         # BWBWingMassGroup
