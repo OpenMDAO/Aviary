@@ -38,7 +38,8 @@ class TotalEngineMass(om.ExplicitComponent):
         )
 
         # for multiengine implementation needs this to always be available
-        self.add_input(
+        add_aviary_input(
+            self,
             Aircraft.Engine.Propeller.MASS,
             # val=np.full(num_engine_type, 0.000000001),
             val=np.zeros(num_engine_type),
@@ -386,7 +387,8 @@ class WingMountEngineMass(om.ExplicitComponent):
             )
 
         # for multiengine implementation needs this to always be available
-        self.add_input(
+        add_aviary_input(
+            self,
             Aircraft.Engine.Propeller.MASS,
             # val=np.full(num_engine_type, 0.000000001),
             val=np.zeros(num_engine_type),
