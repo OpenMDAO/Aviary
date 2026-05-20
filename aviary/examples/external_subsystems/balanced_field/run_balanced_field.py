@@ -34,7 +34,7 @@ prob.load_inputs(
 # A few values that aren't in the csv file.
 prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, 577.0, units='lbm')
 prob.aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35, units='unitless')
-prob.aviary_inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, units='lbf')
+prob.aviary_inputs.set_val(Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 24555.5 * 2, units='lbf')
 
 # initial guess for mass
 prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 135000.0, units='lbm')
