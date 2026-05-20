@@ -422,8 +422,9 @@ outputs.set_val(Aircraft.Wing.LOAD_FRACTION, 0.47039383)  # PCTL
 outputs.set_val(Aircraft.Wing.WETTED_AREA, 24541.8164668, 'ft**2')  # SWET(1)
 outputs.set_val(Aircraft.Wing.SPAN, 252.96979495033787, 'ft')  # SPAN = WF+OSSPAN*2
 
-outputs.set_val(Mission.USEFUL_LOAD, 20988.77208872, 'lbm')
+outputs.set_val(Mission.OPERATING_ITEMS_MASS, 20996.3933862, 'lbm')
 
 outputs.set_val(Aircraft.Design.MACH, 0.800)
-outputs.set_val(Mission.OPERATING_MASS, 408966.86445029, 'lbm')  # WOWE
-outputs.set_val(Mission.ZERO_FUEL_MASS, 506778.86445029, 'lbm')  # WZF
+outputs.set_val(Mission.OPERATING_MASS, 411552.29917206, 'lbm')  # WOWE
+outputs.set_val(Mission.ZERO_FUEL_MASS, 509364.29917206, 'lbm')  # WZF
+outputs.set_val(Aircraft.Design.USEFUL_LOAD_MASS, 483543.0927945, 'lbm')
