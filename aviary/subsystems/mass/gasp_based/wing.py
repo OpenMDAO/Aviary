@@ -302,7 +302,6 @@ class StrutAndFoldMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         isolated_wing_wt = inputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
-        # TODO output the wing mass subcomponents?
         if self.options[Aircraft.Wing.HAS_STRUT]:
             c_strut_mass = inputs[Aircraft.Strut.MASS_COEFFICIENT]
             strut_wt = c_strut_mass * isolated_wing_wt

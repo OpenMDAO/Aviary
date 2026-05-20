@@ -2587,11 +2587,9 @@ class MassSummationTestCase8(unittest.TestCase):
         assert_near_equal(self.prob['volume_wingfuel_mass'], 31051.6, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 31051.6, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
-        # TODO: extra_fuel_volume < 0. need investigate
         assert_near_equal(
             self.prob['extra_fuel_volume'], 7.44643516, tol
         )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 7.5568
-        # TODO: extra_fuel_volume < 0. need investigate
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 372.48739763, tol
         )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 378.0062

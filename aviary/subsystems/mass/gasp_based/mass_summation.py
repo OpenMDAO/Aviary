@@ -110,8 +110,8 @@ class PropulsionMass(om.ExplicitComponent):
         # TODO These variables need cleanup, proper names, etc.
         #      They should probably be removed and we pass the couple individual masses that make it
         #      up here instead
-        self.add_input('eng_comb_mass', units='lbm')
-        self.add_input('prop_mass_sum', units='lbm')
+        self.add_input('eng_comb_mass', units='lbm', desc='WPSTAR as in WingMountEngineMass')
+        self.add_input('prop_mass_sum', units='lbm', desc='WPROP: mass of all propellers')
         add_aviary_input(self, Aircraft.Battery.MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')
