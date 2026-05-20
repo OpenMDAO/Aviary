@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
@@ -13,7 +12,7 @@ from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuil
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import LegacyCode, SpeedType
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Dynamic
 
 
@@ -52,13 +51,6 @@ class UnsteadySolvedODE(TwoDOFODE):
             desc='If true then no flaps or gear are included. Useful for high-speed flight phases.',
         )
         self.options.declare(
-            'include_param_comp',
-            types=bool,
-            default=True,
-            desc='If true then add a ParamComp to this ODE. Useful for smaller usages '
-            'of this ODE not within a full trajectory or a pre-mission group.',
-        )
-        self.options.declare(
             'input_speed_type',
             default=SpeedType.TAS,
             types=SpeedType,
@@ -78,7 +70,7 @@ class UnsteadySolvedODE(TwoDOFODE):
         )
         self.options.declare(
             'meta_data',
-            default=_MetaData,
+            default=CoreMetaData,
             desc='metadata associated with the variables to be passed into the ODE',
         )
 
@@ -88,12 +80,9 @@ class UnsteadySolvedODE(TwoDOFODE):
         input_speed_type = self.options['input_speed_type']
         aviary_options = self.options['aviary_options']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
         subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
-
-        if self.options['include_param_comp']:
-            # TODO: paramport
-            self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_subsystem(
             name='atmosphere',
@@ -166,8 +155,6 @@ class UnsteadySolvedODE(TwoDOFODE):
         throttle_balance_group.nonlinear_solver.options['err_on_non_converge'] = True
 
         kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
             'method': 'low_speed',
         }
         if self.options['clean']:
@@ -176,10 +163,25 @@ class UnsteadySolvedODE(TwoDOFODE):
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
                 if isinstance(subsystem, AerodynamicsBuilder):
-                    mission_inputs = subsystem.mission_inputs(**kwargs)
+                    mission_inputs = mission_in.copy()
                     if (
                         subsystem.code_origin is LegacyCode.FLOPS
                         and 'angle_of_attack' in mission_inputs
@@ -190,21 +192,21 @@ class UnsteadySolvedODE(TwoDOFODE):
                         subsystem.name,
                         system,
                         promotes_inputs=mission_inputs,
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_outputs=mission_out,
                     )
                 elif isinstance(subsystem, PropulsionBuilder):
                     throttle_balance_group.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
                 else:
                     self.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
 
         eom_comp = UnsteadySolvedEOM(num_nodes=nn, ground_roll=ground_roll)
@@ -274,9 +276,6 @@ class UnsteadySolvedODE(TwoDOFODE):
             ],
             promotes_outputs=['dmass_dr'],
         )
-
-        if self.options['include_param_comp']:
-            ParamPort.set_default_vals(self)
 
         onn = np.ones(nn)
         self.set_input_defaults(

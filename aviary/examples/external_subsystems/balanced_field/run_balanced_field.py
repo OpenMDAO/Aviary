@@ -12,7 +12,7 @@ from aviary.examples.external_subsystems.balanced_field.balanced_field_builder i
 )
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.models.aircraft.advanced_single_aisle.phase_info import phase_info
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 
 local_phase_info = deepcopy(phase_info)
 
@@ -32,12 +32,12 @@ prob.load_inputs(
 )
 
 # A few values that aren't in the csv file.
-prob.aviary_inputs.set_val(Mission.Takeoff.FUEL_SIMPLE, 577.0, units='lbm')
+prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, 577.0, units='lbm')
 prob.aviary_inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35, units='unitless')
 prob.aviary_inputs.set_val(Mission.Design.THRUST_TAKEOFF_PER_ENG, 24555.5, units='lbf')
 
 # initial guess for mass
-prob.aviary_inputs.set_val(Mission.Design.GROSS_MASS, 135000.0, units='lbm')
+prob.aviary_inputs.set_val(Aircraft.Design.GROSS_MASS, 135000.0, units='lbm')
 
 prob.check_and_preprocess_inputs()
 

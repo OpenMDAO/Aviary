@@ -11,7 +11,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.csv_data_file import read_data_file
@@ -20,7 +20,7 @@ from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.variables import Aircraft
 
 # The drag-polar-generating component reads this in, instead of computing the polars.
-polar_file = 'models/large_single_aisle_1/large_single_aisle_1_aero_free_reduced_alpha.csv'
+polar_file = 'models/large_single_aisle_1/aerodynamics_tables/large_single_aisle_1_aero_free_reduced_alpha.csv'
 
 phase_info = deepcopy(phase_info)
 
@@ -50,7 +50,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.model.aero_method = LegacyCode.GASP
@@ -75,7 +75,7 @@ class TestSolvedAero(unittest.TestCase):
 
         ph_in = deepcopy(phase_info)
 
-        polar_builder = FakeDragPolarBuilder(name='aero', altitude=ALTITUDE, mach=MACH, alpha=ALPHA)
+        polar_builder = FakeDragPolarBuilder(altitude=ALTITUDE, mach=MACH, alpha=ALPHA)
         aero_data = NamedValues()
         aero_data.set_val('altitude', ALTITUDE, 'ft')
         aero_data.set_val('mach', MACH, 'unitless')
@@ -92,7 +92,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             ph_in,
         )
 
@@ -138,7 +138,7 @@ class TestSolvedAero(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.model.aero_method = LegacyCode.GASP
@@ -165,7 +165,7 @@ class TestSolvedAero(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv'
+        csv_path = 'validation_cases/validation_data/test_models/high_wing_single_aisle.csv'
         prob.load_inputs(csv_path, local_phase_info)
         prob.model.aero_method = LegacyCode.GASP
 
@@ -206,7 +206,7 @@ class TestSolvedAero(unittest.TestCase):
         mach = np.array([0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9])
         alpha = np.array([-2.0, 0.0, 2.0, 4.0, 6.0, 8.0, 10.0])
 
-        polar_builder = FakeDragPolarBuilder(name='aero', altitude=alt, mach=mach, alpha=alpha)
+        polar_builder = FakeDragPolarBuilder(altitude=alt, mach=mach, alpha=alpha)
         aero_data = NamedValues()
         aero_data.set_val('altitude', alt, 'ft')
         aero_data.set_val('mach', mach, 'unitless')
@@ -310,13 +310,15 @@ class FakeDragPolarBuilder(SubsystemBuilder):
         List of angles of attack in ascending order. (Optional)
     """
 
-    def __init__(self, name='aero', altitude=None, mach=None, alpha=None):
-        super().__init__(name)
+    _default_name = 'aero'
+
+    def __init__(self, altitude=None, mach=None, alpha=None):
+        super().__init__()
         self.altitude = np.unique(altitude)
         self.mach = np.unique(mach)
         self.alpha = np.unique(alpha)
 
-    def build_pre_mission(self, aviary_inputs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         """
         Build an OpenMDAO system for the pre-mission computations of the subsystem.
 

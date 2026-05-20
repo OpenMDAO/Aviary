@@ -38,7 +38,7 @@ The unit test that Aviary uses most is `assert_near_equal` from the OpenMDAO uti
 assert_near_equal(actual_value, expected_value, tolerance=1e-15, tol_type='rel')
 ```
 
-where the `actual_value` is the value from Aviary and `expected_value` is what the developer expects. Ideally, the `expected_value` should come from computation by another tool (e.g. GASP, FLOPS or LEAPS1) or hand computation. When it is not possible, one can accept an Aviary computed value as expected. This guarantees that future development will not alter the outputs by mistake. As for the tolerance, it is good practice to take 1.e-6. By default, it checks relative error. If the `expected_value` is 0.0, it checks the absolute error.
+where the `actual_value` is the value from Aviary and `expected_value` is what the developer expects. Ideally, the `expected_value` should come from computation by another tool (e.g. GASP, FLOPS) or hand computation. When it is not possible, one can accept an Aviary computed value as expected. This guarantees that future development will not alter the outputs by mistake. As for the tolerance, it is good practice to take 1.e-6. By default, it checks relative error. If the `expected_value` is 0.0, it checks the absolute error.
 
 One can find examples mostly in `subsystems` and `mission` The purpose is to make sure that a variable in an object (namely a component and/or a group) is computed as expected. It is advised that `assert_near_equal` test is carried for all outputs both in components and groups.
 

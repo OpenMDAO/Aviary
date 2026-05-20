@@ -37,11 +37,19 @@ class PropulsionMission(om.Group):
             desc='dictionary of options for each EngineModel',
         )
 
+        self.options.declare(
+            'user_options',
+            types=dict,
+            default={},
+            desc='user_options for this phase',
+        )
+
     def setup(self):
         nn = self.options['num_nodes']
         options: AviaryValues = self.options['aviary_options']
         engine_models = self.options['engine_models']
         engine_options = self.options['engine_options']
+        user_options = self.options['user_options']
         num_engine_type = len(engine_models)
 
         # Create IndepVarComp to pass maximum throttle to max thrust interpolator
@@ -74,7 +82,7 @@ class PropulsionMission(om.Group):
             # save parameters for use in configure()
             parameters = self.parameters = set()
             for engine in engine_models:
-                eng_params = engine.get_parameters()
+                eng_params = engine.get_parameters(aviary_inputs=options)
                 param_dict.update(eng_params)
 
             parameters.update(param_dict.keys())
@@ -116,13 +124,26 @@ class PropulsionMission(om.Group):
                     kwargs = engine_options[engine.name]
                 if engine.compute_max_values:
                     engine_model = engine.build_mission(
-                        num_nodes=nn, aviary_inputs=options, **kwargs
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        user_options=user_options,
+                        subsystem_options={},
                     )
                 else:
-                    base_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                    base_comp = engine.build_mission(
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        user_options=user_options,
+                        subsystem_options={},
+                    )
                     engine_model = om.Group()
 
-                    max_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                    max_comp = engine.build_mission(
+                        num_nodes=nn,
+                        aviary_inputs=options,
+                        user_options=user_options,
+                        subsystem_options={},
+                    )
 
                     input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
                     if engine.use_hybrid_throttle:
@@ -157,7 +178,9 @@ class PropulsionMission(om.Group):
                     )
 
                 # loop through params and slice as needed
-                params = engine.get_parameters()
+                params = engine.get_parameters(
+                    aviary_inputs=options,
+                )
                 for param in params:
                     self.promotes(
                         engine.name,
@@ -171,12 +194,27 @@ class PropulsionMission(om.Group):
             if engine.name in engine_options:
                 kwargs = engine_options[engine.name]
             if engine.compute_max_values:
-                engine_model = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                engine_model = engine.build_mission(
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    user_options=user_options,
+                    subsystem_options={},
+                )
             else:
-                base_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                base_comp = engine.build_mission(
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    user_options=user_options,
+                    subsystem_options={},
+                )
                 engine_model = om.Group()
 
-                max_comp = engine.build_mission(num_nodes=nn, aviary_inputs=options, **kwargs)
+                max_comp = engine.build_mission(
+                    num_nodes=nn,
+                    aviary_inputs=options,
+                    user_options=user_options,
+                    subsystem_options={},
+                )
 
                 input_aliases = [(Dynamic.Vehicle.Propulsion.THROTTLE, 'throttle_max')]
                 if engine.use_hybrid_throttle:

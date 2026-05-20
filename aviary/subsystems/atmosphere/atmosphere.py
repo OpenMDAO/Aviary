@@ -25,10 +25,10 @@ class Atmosphere(om.Group):
 
         self.options.declare(
             'h_def',
-            values=('geopotential', 'geodetic'),
-            default='geodetic',
+            values=('geopotential', 'geometric'),
+            default='geometric',
             desc='The definition of altitude provided as input to the component. If '
-            '"geodetic", it will be converted to geopotential based on Equation 19 in '
+            '"geometric", it will be converted to geopotential based on Equation 19 in '
             'the original standard.',
         )
 
@@ -83,9 +83,9 @@ class AtmosphereComp(om.ExplicitComponent):
         )
         self.options.declare(
             'h_def',
-            values=('geopotential', 'geodetic'),
+            values=('geopotential', 'geometric'),
             default='geopotential',
-            desc='The definition of altitude provided as input to the component.  If "geodetic",'
+            desc='The definition of altitude provided as input to the component.  If "geometric",'
             'it will be converted to geopotential based on Equation 19 in the original standard.',
         )
         add_aviary_option(self, Settings.ATMOSPHERE_MODEL)
@@ -102,7 +102,7 @@ class AtmosphereComp(om.ExplicitComponent):
 
         self._dt = self.options['delta_T_Celcius']
 
-        self._geodetic = self.options['h_def'] == 'geodetic'
+        self._geometric = self.options['h_def'] == 'geometric'
         self._R0 = 6_356_766  # (meters) The effective Earth Radius
         # From the U.S. Standard Atmosphere 1976 publication located here
         # https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
@@ -183,7 +183,7 @@ class AtmosphereComp(om.ExplicitComponent):
         table_points = self.source_data.alt
         h = inputs[Dynamic.Mission.ALTITUDE]
 
-        if self._geodetic:
+        if self._geometric:
             h = (
                 h / (self._R0 + h) * self._R0
             )  # Equation 19 from the U.S. Standard Atmosphere 1976 publication
@@ -244,7 +244,7 @@ class AtmosphereComp(om.ExplicitComponent):
         h = inputs[Dynamic.Mission.ALTITUDE]
         dz_dh = 1.0
 
-        if self._geodetic:
+        if self._geometric:
             dz_dh = (self._R0 / (self._R0 + h)) ** 2
             h = h / (self._R0 + h) * self._R0  # Equation 19 from the original standard.
 
@@ -308,7 +308,7 @@ class AtmosphereComp(om.ExplicitComponent):
         )
         partials[Dynamic.Atmosphere.SPEED_OF_SOUND, Dynamic.Mission.ALTITUDE][...] = dsos_dh.ravel()
 
-        if self._geodetic:
+        if self._geometric:
             partials[Dynamic.Atmosphere.TEMPERATURE, Dynamic.Mission.ALTITUDE][...] *= dz_dh
             partials[Dynamic.Atmosphere.STATIC_PRESSURE, Dynamic.Mission.ALTITUDE][...] *= dz_dh
             partials[Dynamic.Atmosphere.DENSITY, Dynamic.Mission.ALTITUDE][...] *= dz_dh

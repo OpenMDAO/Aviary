@@ -34,6 +34,10 @@ class CorePostMission(om.Group):
             desc='The post_mission portion of the phase_info.',
             types=dict,
         )
+        self.options.declare(
+            'subsystem_options',
+            desc='dictionary containing all options for the subsystems in premission',
+        )
 
     def setup(self, **kwargs):
         # rely on openMDAO's auto-ordering for this group
@@ -42,19 +46,23 @@ class CorePostMission(om.Group):
         aviary_options = self.options['aviary_options']
         phase_info = self.options['phase_info']
         phase_mission_bus_lengths = self.options['phase_mission_bus_lengths']
-        post_mission_info = self.options['post_mission_info']
         subsystems = self.options['subsystems']
+        all_subsystem_options = self.options['subsystem_options']
 
         for subsystem in subsystems:
+            name = subsystem.name
+            subsystem_options = all_subsystem_options.get(name, {})
+
             pre_mission_system = subsystem.build_post_mission(
                 aviary_options,
-                phase_info,
-                phase_mission_bus_lengths,
-                post_mission_info=post_mission_info,
+                mission_info=phase_info,
+                subsystem_options=subsystem_options,
+                phase_mission_bus_lengths=phase_mission_bus_lengths,
             )
+
             if pre_mission_system is not None:
                 self.add_subsystem(
-                    subsystem.name,
+                    name,
                     pre_mission_system,
                     promotes_inputs=['*'],
                     promotes_outputs=['*'],

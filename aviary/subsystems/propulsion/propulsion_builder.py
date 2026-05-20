@@ -22,8 +22,6 @@ from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.preprocessors import _get_engine_variables
 from aviary.variable_info.variables import Aircraft
 
-_default_name = 'propulsion'
-
 
 class PropulsionBuilder(SubsystemBuilder):
     """
@@ -37,17 +35,11 @@ class PropulsionBuilder(SubsystemBuilder):
 
     Methods
     -------
-    mission_inputs()
-        class method to return mission inputs.
-    mission_outputs()
-        class method to return mission outputs.
+    __init__(self, name=None, meta_data=None):
+        Initializes the PerformanceBuilder object with a given name.
     """
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
-
-        super().__init__(name=name, meta_data=meta_data)
+    _default_name = 'propulsion'
 
 
 class CorePropulsionBuilder(PropulsionBuilder):
@@ -70,8 +62,6 @@ class CorePropulsionBuilder(PropulsionBuilder):
         Call get_linked_variables() on all engine models and return combined result.
     get_pre_mission_bus_variables(self) -> dict
         Call get_linked_variables() on all engine models and return combined result.
-    define_order(self) -> list:
-        Call define_order() on all engine models and return combined result.
     get_design_vars(self) -> dict:
         Call get_design_vars() on all engine models and return combined result.
     get_initial_guesses(self) -> dict:
@@ -87,9 +77,6 @@ class CorePropulsionBuilder(PropulsionBuilder):
     """
 
     def __init__(self, name=None, meta_data=None, engine_models=None, **kwargs):
-        if name is None:
-            name = 'propulsion'
-
         super().__init__(name=name, meta_data=meta_data)
 
         if not isinstance(engine_models, (list, np.ndarray)):
@@ -103,40 +90,51 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         self.engine_models = engine_models
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options):
         return PropulsionPreMission(
-            aviary_options=aviary_inputs, engine_models=self.engine_models, engine_options=kwargs
+            aviary_options=aviary_inputs,
+            engine_models=self.engine_models,
+            engine_options=subsystem_options,
         )
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return PropulsionMission(
             num_nodes=num_nodes,
             aviary_options=aviary_inputs,
             engine_models=self.engine_models,
-            engine_options=kwargs,
+            user_options=user_options,
+            engine_options=subsystem_options,
         )
 
     # NOTE no unittests!
-    def get_states(self):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_states() on all engine models and return combined result."""
         states = {}
         for engine in self.engine_models:
-            engine_states = engine.get_states()
+            engine_states = engine.get_states(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             states.update(engine_states)
 
         return states
 
-    def get_controls(self, phase_name=None):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_controls() on all engine models and return combined result."""
         controls = {}
         for engine in self.engine_models:
-            engine_controls = engine.get_controls(phase_name=phase_name)
+            engine_controls = engine.get_controls(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             controls.update(engine_controls)
 
         return controls
 
     # NOTE no unittests!
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Set expected shape of all variables that need to be vectorized for multiple
         engine types.
@@ -146,7 +144,11 @@ class CorePropulsionBuilder(PropulsionBuilder):
 
         # collect all the parameters for engines
         for engine in self.engine_models:
-            engine_params = engine.get_parameters()
+            engine_params = engine.get_parameters(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             # for param in engine_params:
             #     # For any parameters that need to be vectorized for multiple engines,
             #     # apply correct shape
@@ -174,30 +176,36 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return params
 
     # NOTE no unittests!
-    def get_constraints(self):
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_constraints() on all engine models and return combined result."""
         constraints = {}
         for engine in self.engine_models:
-            engine_constraints = engine.get_constraints()
+            engine_constraints = engine.get_constraints(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             constraints.update(engine_constraints)
 
         return constraints
 
     # NOTE no unittests!
-    def get_linked_variables(self):
+    def get_linked_variables(self, aviary_inputs=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         linked_vars = {}
         for engine in self.engine_models:
-            engine_linked_vars = engine.get_linked_variables()
+            engine_linked_vars = engine.get_linked_variables(aviary_inputs=aviary_inputs)
             linked_vars.update(engine_linked_vars)
 
         return linked_vars
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None):
+    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         bus_vars = {}
         for engine in self.engine_models:
-            engine_bus_vars = engine.get_pre_mission_bus_variables(aviary_inputs)
+            engine_bus_vars = engine.get_pre_mission_bus_variables(
+                aviary_inputs, mission_info=mission_info
+            )
             bus_vars.update(engine_bus_vars)
 
         # append propulsion group name to all engine-level bus variables
@@ -210,60 +218,58 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return complete_bus_vars
 
     # NOTE no unittests!
-    def define_order(self):
-        """Call define_order() on all engine models and return combined result."""
-        subsys_order = []
-        for engine in self.engine_models:
-            engine_subsys_order = engine.define_order()
-            subsys_order.append(engine_subsys_order)
-
-        return subsys_order
-
-    # NOTE no unittests!
-    def get_design_vars(self):
+    def get_design_vars(self, aviary_inputs=None):
         """Call get_design_vars() on all engine models and return combined result."""
         design_vars = {}
         for engine in self.engine_models:
-            engine_design_vars = engine.get_design_vars()
+            engine_design_vars = engine.get_design_vars(aviary_inputs=aviary_inputs)
             design_vars.update(engine_design_vars)
 
         return design_vars
 
-    def get_initial_guesses(self):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_initial_guesses() on all engine models and return combined result."""
         initial_guesses = {}
         for engine in self.engine_models:
-            engine_initial_guesses = engine.get_initial_guesses()
+            engine_initial_guesses = engine.get_initial_guesses(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             initial_guesses.update(engine_initial_guesses)
 
         return initial_guesses
 
     # NOTE no unittests!
-    def get_mass_names(self):
+    def get_mass_names(self, aviary_inputs=None):
         """Call get_mass_names() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
-            engine_mass_names = engine.get_mass_names()
+            engine_mass_names = engine.get_mass_names(aviary_inputs=aviary_inputs)
             mass_names.update(engine_mass_names)
 
         return mass_names
 
     # NOTE no unittests!
-    def preprocess_inputs(self):
+    def preprocess_inputs(self, aviary_inputs=None):
         """Call get_mass_names() on all engine models and return combined result."""
         mass_names = {}
         for engine in self.engine_models:
-            engine_mass_names = engine.get_mass_names()
+            engine_mass_names = engine.get_mass_names(aviary_inputs=aviary_inputs)
             mass_names.update(engine_mass_names)
 
         return mass_names
 
     # NOTE no unittests!
-    def get_timeseries(self):
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_timeseries() on all engine models and return combined result."""
         outputs = []
         for engine in self.engine_models:
-            engine_outputs = engine.get_timeseries()
+            engine_outputs = engine.get_timeseries(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             outputs.append(engine_outputs)
 
         return outputs

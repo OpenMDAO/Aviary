@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.mission.two_dof.ode.simple_cruise_eom import DistanceComp
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.ode.altitude_rate import AltitudeRate
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
@@ -21,9 +20,7 @@ class SimpleCruiseODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
+        user_options = self.options['user_options']
 
         self.add_atmosphere(input_speed_type=SpeedType.MACH)
 
@@ -47,29 +44,44 @@ class SimpleCruiseODE(TwoDOFODE):
                 base_kwargs = {'method': 'cruise', 'output_alpha': True}
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
                 if isinstance(subsystem, PropulsionBuilder):
                     prop_group.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
                 else:
                     self.add_subsystem(
                         subsystem.name,
                         system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
+                        promotes_inputs=mission_in,
+                        promotes_outputs=mission_out,
                     )
 
         bal = om.BalanceComp(
             name=Dynamic.Vehicle.Propulsion.THROTTLE,
             val=np.ones(nn),
-            upper=1.0,
-            lower=0.0,
+            # upper=1.0,
+            # lower=0.0,
             units='unitless',
             lhs_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             rhs_name=Dynamic.Vehicle.DRAG,
@@ -146,6 +158,5 @@ class SimpleCruiseODE(TwoDOFODE):
             promotes_outputs=[(Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.ALTITUDE_RATE_MAX)],
         )
 
-        ParamPort.set_default_vals(self)
-        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=37500 * np.ones(nn), units='ft')
-        self.set_input_defaults('mass', val=np.linspace(171481, 171581 - 10000, nn), units='lbm')
+        self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
+        self.set_input_defaults('mass', val=np.ones(nn), units='lbm')

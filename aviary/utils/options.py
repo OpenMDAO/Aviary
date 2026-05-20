@@ -1,6 +1,6 @@
 from openmdao.core.system import System
 
-from aviary.utils.aviary_values import AviaryValues, get_keys
+from aviary.utils.aviary_values import AviaryValues
 
 
 def list_options(model: System, aviary_keys: list = None):
@@ -30,7 +30,7 @@ def list_options(model: System, aviary_keys: list = None):
                 if isinstance(aviary_keys, list):
                     keys = aviary_keys
                 else:
-                    keys = get_keys(aviary_options)
+                    keys = aviary_options.keys()
                 for key in keys:
                     (val, units) = aviary_options.get_item(key)
                     if units == 'unitless':

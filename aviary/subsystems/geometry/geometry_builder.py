@@ -19,8 +19,6 @@ from aviary.variable_info.variables import Aircraft
 GASP = LegacyCode.GASP
 FLOPS = LegacyCode.FLOPS
 
-_default_name = 'geometry'
-
 
 class GeometryBuilder(SubsystemBuilder):
     """
@@ -30,17 +28,9 @@ class GeometryBuilder(SubsystemBuilder):
     -------
     __init__(self, name=None, meta_data=None):
         Initializes the GeometryBuilder object with a given name.
-    mission_inputs(self, **kwargs) -> list:
-        Return mission inputs.
-    mission_outputs(self, **kwargs) -> list:
-        Return mission outputs.
     """
 
-    def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = _default_name
-
-        super().__init__(name=name, meta_data=meta_data)
+    _default_name = 'geometry'
 
 
 class CoreGeometryBuilder(GeometryBuilder):
@@ -55,8 +45,6 @@ class CoreGeometryBuilder(GeometryBuilder):
         Builds an OpenMDAO system for the pre-mission computations of the subsystem.
     build_mission(self, num_nodes, aviary_inputs, **kwargs) -> openmdao.core.System:
         Builds an OpenMDAO system for the mission computations of the subsystem.
-    get_parameters(self, aviary_inputs=None, phase_info=None):
-        Returns a dictionary of fixed values for the Nacelle.
     report(self, prob, reports_folder, **kwargs):
         Generate the report for Aviary core geometry analysis.
     """
@@ -80,12 +68,12 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         code_origin = self.code_origin
         both_geom = self.use_both_geometries
         code_origin_to_prioritize = self.code_origin_to_prioritize
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
 
@@ -105,16 +93,18 @@ class CoreGeometryBuilder(GeometryBuilder):
 
         return geom_group
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         # by default there is no geom mission, but call super for safety/future-proofing
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         geom_group = None
 
         if method != 'external':
-            geom_group = super().build_mission(num_nodes, aviary_inputs)
+            geom_group = super().build_mission(
+                num_nodes, aviary_inputs, user_options, subsystem_options
+            )
 
         return geom_group
 
@@ -140,7 +130,8 @@ class CoreGeometryBuilder(GeometryBuilder):
             Aircraft.Wing.ASPECT_RATIO,
             Aircraft.Wing.SWEEP,
         ]
-        htail_outputs = [Aircraft.HorizontalTail.AREA, Aircraft.VerticalTail.AREA]
+        htail_outputs = [Aircraft.HorizontalTail.AREA]
+        vtail_outputs = [Aircraft.VerticalTail.AREA]
         fuselage_outputs = [Aircraft.Fuselage.LENGTH]
 
         if self.code_origin is FLOPS or self.use_both_geometries:
@@ -159,5 +150,7 @@ class CoreGeometryBuilder(GeometryBuilder):
             f.write('\n## Empennage\n')
             f.write('### Horizontal Tail')
             write_markdown_variable_table(f, prob, htail_outputs, self.meta_data)
+            f.write('### Vertical Tail')
+            write_markdown_variable_table(f, prob, vtail_outputs, self.meta_data)
             f.write('\n## Fuselage')
             write_markdown_variable_table(f, prob, fuselage_outputs, self.meta_data)

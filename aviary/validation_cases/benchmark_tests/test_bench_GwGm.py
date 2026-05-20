@@ -16,7 +16,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     GASP mass and aero method and TWO_DEGREES_OF_FREEDOM mission method. Expected outputs
-    based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -29,31 +29,34 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            (Mission.Design.GROSS_MASS, 'lbm'): 171595.06049335,
-            (Mission.Summary.OPERATING_MASS, 'lbm'): 95089.98897716,
-            (Mission.Summary.TOTAL_FUEL_MASS, 'lbm'): 40505.07151619,
-            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2657.88663983,
-            (Mission.Summary.RANGE, 'NM'): 3675.0,
-            (Mission.Landing.TOUCHDOWN_MASS, 'lbm'): 136087.98897716,
+            (Mission.GROSS_MASS, 'lbm'): 171414.17171104,
+            (Mission.OPERATING_MASS, 'lbm'): 94986.583699,
+            (Mission.TOTAL_FUEL, 'lbm'): 40451.68735078,
+            (Mission.Landing.GROUND_DISTANCE, 'ft'): 2655.0906835,
+            (Mission.RANGE, 'NM'): 3675.0,
+            (Mission.FINAL_MASS, 'lbm'): 136087.98897716,
         }
 
         for (var_name, units), expected_val in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob.get_val(var_name, units=units), expected_val, tolerance=rtol)
 
+        # Due to a bug, this constraint was unconnected. Test it explicitly.
+        t1 = prob.get_val('ascent_initial_time_slack_constraint.initial_time', units='s')
+        t2 = prob.get_val(Mission.Takeoff.ASCENT_T_INITIAL, units='s')
+        assert_near_equal(t1, t2, tolerance=rtol)
+
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_GwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
             verbosity=0,
         )
 
         self.assertTrue(prob.result.success)
-
-        rtol = 1e-3
 
         # There are no truth values for these.
         self.check_values(prob)
@@ -62,15 +65,13 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def test_bench_GwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='SNOPT',
             verbosity=0,
         )
 
         self.assertTrue(prob.result.success)
-
-        rtol = 1e-3
 
         # There are no truth values for these.
         self.check_values(prob)
@@ -97,7 +98,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
         }
 
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
             optimizer='IPOPT',
             verbosity=0,
@@ -106,7 +107,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = ProblemPhaseTestCase()
-    test.setUp()
-    test.test_bench_GwGm_IPOPT_Breguet_Cruise()
+    unittest.main()
+    # test = ProblemPhaseTestCase()
+    # test.setUp()
+    # test.test_bench_GwGm_IPOPT_Breguet_Cruise()

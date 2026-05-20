@@ -16,7 +16,7 @@ def _setup_ATC_parser(parser):
     )
     parser.add_argument(
         '-f',
-        '--data_format',
+        '--format',
         type=str,
         choices=[origin.value for origin in CodeOrigin],
         help='data format used by input_file',
@@ -27,5 +27,5 @@ def _exec_ATC(args, user_args):
     from aviary.utils.aero_table_conversion import convert_aero_table
 
     convert_aero_table(
-        input_file=args.input_file, output_file=args.output_file, data_format=args.data_format
+        input_file=args.input_file, output_file=args.output_file, data_format=args.format
     )

@@ -19,7 +19,7 @@ class TestOpts2Vals(unittest.TestCase):
     def setUp(self):
         self.options = get_option_defaults()
         self.options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=180, units='unitless')
-        self.options.set_val(Mission.Design.CRUISE_ALTITUDE, val=35, units='kft')
+        self.options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=35, units='kft')
 
     def test_default_units(self):
         tol = 1e-4
@@ -27,7 +27,7 @@ class TestOpts2Vals(unittest.TestCase):
         OptionsToValues = create_opts2vals(
             [
                 Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE,
+                Aircraft.Design.CRUISE_ALTITUDE,
             ]
         )
         add_opts2vals(self.prob.model, OptionsToValues, self.options)
@@ -35,7 +35,7 @@ class TestOpts2Vals(unittest.TestCase):
         self.prob.run_model()
 
         assert_near_equal(self.prob['option:' + Aircraft.CrewPayload.NUM_PASSENGERS], 180, tol)
-        assert_near_equal(self.prob['option:' + Mission.Design.CRUISE_ALTITUDE], 35, tol)
+        assert_near_equal(self.prob['option:' + Aircraft.Design.CRUISE_ALTITUDE], 35, tol)
 
     def test_specified_units(self):
         tol = 1e-4
@@ -43,9 +43,9 @@ class TestOpts2Vals(unittest.TestCase):
         OptionsToValues = create_opts2vals(
             [
                 Aircraft.CrewPayload.NUM_PASSENGERS,
-                Mission.Design.CRUISE_ALTITUDE,
+                Aircraft.Design.CRUISE_ALTITUDE,
             ],
-            output_units={Mission.Design.CRUISE_ALTITUDE: 'm'},
+            output_units={Aircraft.Design.CRUISE_ALTITUDE: 'm'},
         )
         add_opts2vals(self.prob.model, OptionsToValues, self.options)
         self.prob.setup()
@@ -54,7 +54,7 @@ class TestOpts2Vals(unittest.TestCase):
         altitude_in_meters = om.convert_units(35000, 'ft', 'm')
         assert_near_equal(self.prob['option:' + Aircraft.CrewPayload.NUM_PASSENGERS], 180, tol)
         assert_near_equal(
-            self.prob['option:' + Mission.Design.CRUISE_ALTITUDE], altitude_in_meters, tol
+            self.prob['option:' + Aircraft.Design.CRUISE_ALTITUDE], altitude_in_meters, tol
         )
 
 

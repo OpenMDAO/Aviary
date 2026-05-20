@@ -18,7 +18,7 @@ class TransportAvionicsMass(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Avionics.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
-        add_aviary_input(self, Mission.Design.RANGE, units='NM')
+        add_aviary_input(self, Aircraft.Design.RANGE, units='NM')
 
         add_aviary_output(self, Aircraft.Avionics.MASS, units='lbm')
 
@@ -29,7 +29,7 @@ class TransportAvionicsMass(om.ExplicitComponent):
         crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         scaler = inputs[Aircraft.Avionics.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        des_range = inputs[Mission.Design.RANGE]
+        des_range = inputs[Aircraft.Design.RANGE]
 
         outputs[Aircraft.Avionics.MASS] = (
             15.8 * des_range**0.1 * crew**0.7 * planform**0.43 * scaler / GRAV_ENGLISH_LBM
@@ -39,7 +39,7 @@ class TransportAvionicsMass(om.ExplicitComponent):
         crew = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
         scaler = inputs[Aircraft.Avionics.MASS_SCALER]
         planform = inputs[Aircraft.Fuselage.PLANFORM_AREA]
-        des_range = inputs[Mission.Design.RANGE]
+        des_range = inputs[Aircraft.Design.RANGE]
 
         des_range_exp = des_range**0.1
         crew_exp = crew**0.7
@@ -53,6 +53,6 @@ class TransportAvionicsMass(om.ExplicitComponent):
             6.794 * des_range_exp * crew_exp * planform**-0.57 * scaler / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.Avionics.MASS, Mission.Design.RANGE] = (
+        J[Aircraft.Avionics.MASS, Aircraft.Design.RANGE] = (
             1.58 * des_range**-0.9 * crew_exp * planform_exp * scaler / GRAV_ENGLISH_LBM
         )

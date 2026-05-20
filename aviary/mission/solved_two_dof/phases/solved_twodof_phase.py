@@ -11,7 +11,8 @@ from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.utils import wrapped_convert_units
 from aviary.variable_info.enums import EquationsOfMotion, SpeedType, ThrottleAllocation
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variable_meta_data import CoreMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 # TODO: support/handle the following in the base class
 # - phase.set_time_options()
@@ -176,7 +177,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
 
 @register
 class SolvedTwoDOFPhase(FlightPhaseBase):
-    """A phase builder for a two degree of freedom (2DOF) phase."""
+    """A phase builder for a two-degrees-of-freedom (2DOF) phase."""
 
     default_options_class = SolvedTwoDOFPhaseOptions
 
@@ -276,12 +277,22 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
         return {
             'subsystems': self.subsystems,
             'meta_data': self.meta_data,
+            'user_options': self.user_options_dict,
             'subsystem_options': self.subsystem_options,
             'input_speed_type': SpeedType.MACH,
             'clean': self.user_options.get_val('clean'),
             'ground_roll': self.user_options.get_val('ground_roll'),
             'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
         }
+
+    def get_parameters(self):
+        params = {}
+        params[Aircraft.Wing.INCIDENCE] = {
+            'shape': (1,),
+            'units': CoreMetaData[Aircraft.Wing.INCIDENCE]['units'],
+            'static_target': True,
+        }
+        return params
 
 
 SolvedTwoDOFPhase._add_initial_guess_meta_data(

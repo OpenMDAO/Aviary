@@ -5,20 +5,24 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.motor.model.motor_premission import MotorPreMission
-from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variables import Aircraft
+from aviary.utils.aviary_values import AviaryValues
+from aviary.utils.functions import get_path
+from aviary.variable_info.functions import setup_model_options
 
 
 class TestGearbox(unittest.TestCase):
     @use_tempdirs
-    def test_motor_map(self):
+    def test_motor_premission(self):
         prob = om.Problem()
-        options = AviaryValues()
-        options.set_val(Aircraft.Engine.RPM_DESIGN, 6000, 'rpm')
 
-        prob.model.add_subsystem(
-            'motor_map', MotorPreMission(aviary_inputs=options), promotes=['*']
-        )
+        filename = 'electric_motor_1800Nm_6000rpm.csv'
+        options = AviaryValues()
+        options.set_val(Aircraft.Engine.Motor.DATA_FILE, get_path(filename))
+
+        prob.model.add_subsystem('motor_map', MotorPreMission(), promotes=['*'])
+
+        setup_model_options(prob, options)
 
         prob.setup(force_alloc_complex=True)
 

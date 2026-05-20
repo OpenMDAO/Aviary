@@ -1,7 +1,10 @@
 """This file contains functions needed to run Aviary using the Level 1 interface."""
 
+from importlib.util import spec_from_file_location, module_from_spec
+import os
+from pathlib import Path
+import subprocess
 import sys
-from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
 from aviary.utils.functions import get_path
@@ -10,7 +13,7 @@ from aviary.variable_info.enums import Verbosity
 
 def run_aviary(
     aircraft_data,
-    phase_info,
+    phase_info=None,
     optimizer=None,
     objective_type=None,
     subsystems=[],
@@ -18,8 +21,9 @@ def run_aviary(
     max_iter=50,
     run_driver=True,
     make_plots=True,
-    phase_info_parameterization=None,
+    phase_info_modifier=None,
     verbosity=None,
+    real_time_plotting=False,
 ):
     """
     Run the Aviary optimization problem for a specified aircraft configuration and mission.
@@ -32,11 +36,11 @@ def run_aviary(
     Parameters
     ----------
     aircraft_data: str, Path, AviaryValues
-        Filename from which to load the aircraft and options data, either as a string or
-        Path object, or an AviaryValues object containing that information.
-    phase_info : dict
+        Filename from which to load the aircraft and options data, either as a string or Path
+        object, or an AviaryValues object containing that information.
+    phase_info : dict, optional
         Information about the phases of the mission.
-    optimizer : str
+    optimizer : str, optional
         The optimizer to use.
     objective_type : str, optional
         Type of the optimization objective.
@@ -50,12 +54,12 @@ def run_aviary(
         If True, the driver will be run, defaults to True.
     make_plots : bool, optional
         If True, generate plots during the optimization, defaults to True.
-    phase_info_parameterization : function, optional
-        Additional information to parameterize the phase_info object based on desired cruise
-        altitude and Mach.
+    phase_info_modifier : function, optional
+        Additional information to parameterize the phase_info object, such as based on desired
+        cruise altitude and Mach.
     verbosity : Verbosity or int, optional
-        Sets level of information outputted to the terminal during model execution.
-        If provided, overrides verbosity specified in aircraft_data.
+        Sets level of information outputted to the terminal during model execution. If provided,
+        overrides verbosity specified in aircraft_data.
 
     Returns
     -------
@@ -64,9 +68,9 @@ def run_aviary(
 
     Notes
     -----
-    The function allows for user overrides on aircraft and options data.
-    It raises warnings or errors if there are clashing user inputs.
-    Users can modify or add methods to alter the Aviary problem's behavior.
+    The function allows for user overrides on aircraft and options data. It raises warnings or
+    errors if there are clashing user inputs. Users can modify or add methods to alter the Aviary
+    problem's behavior.
     """
     # If loading from a file, use filename as problem name. Else, use OpenMDAO default
     if isinstance(aircraft_data, (str, Path)):
@@ -81,7 +85,9 @@ def run_aviary(
 
     # Load aircraft and options data from user
     # Allow for user overrides here
-    prob.load_inputs(aircraft_data, phase_info, verbosity=verbosity)
+    prob.load_inputs(
+        aircraft_data, phase_info, phase_info_modifier=phase_info_modifier, verbosity=verbosity
+    )
 
     prob.load_external_subsystems(subsystems, verbosity=verbosity)
 
@@ -90,7 +96,7 @@ def run_aviary(
     # Add Systems
     prob.add_pre_mission_systems(verbosity=verbosity)
 
-    prob.add_phases(phase_info_parameterization=phase_info_parameterization, verbosity=verbosity)
+    prob.add_phases(verbosity=verbosity)
 
     prob.add_post_mission_systems(verbosity=verbosity)
 
@@ -112,19 +118,30 @@ def run_aviary(
         run_driver=run_driver,
         make_plots=make_plots,
         verbosity=verbosity,
+        real_time_plotting=real_time_plotting,
     )
 
     return prob
 
 
 def run_aviary_cmd(
-    input_deck, optimizer='IPOPT', phase_info=None, max_iter=50, verbosity=Verbosity.BRIEF
+    input_deck,
+    optimizer='IPOPT',
+    phase_info=None,
+    max_iter=50,
+    verbosity=Verbosity.BRIEF,
+    real_time_plotting=False,
 ):
     """
     This file enables running aviary from the command line with a user specified input deck.
     usage: aviary run_mission [input_deck] [opt_args].
     """
-    kwargs = {'max_iter': max_iter, 'optimizer': optimizer, 'verbosity': Verbosity(verbosity)}
+    kwargs = {
+        'max_iter': max_iter,
+        'optimizer': optimizer,
+        'verbosity': Verbosity(verbosity),
+        'real_time_plotting': real_time_plotting,
+    }
 
     if isinstance(phase_info, str):
         phase_info_path = get_path(phase_info)
@@ -134,9 +151,6 @@ def run_aviary_cmd(
         spec.loader.exec_module(phase_info_file)
 
         phase_info = getattr(phase_info_file, 'phase_info')
-        kwargs['phase_info_parameterization'] = getattr(
-            phase_info_file, 'phase_info_parameterization', None
-        )
 
     prob = run_aviary(input_deck, phase_info, **kwargs)
 
@@ -167,6 +181,11 @@ def _setup_run_aviary_parser(parser):
         help='verbosity settings: 0=quiet, 1=brief, 2=verbose, 3=debug',
         choices=(0, 1, 2, 3),
     )
+    parser.add_argument(
+        '--rtplot',
+        action='store_true',
+        help='Enable realtime plotting option',
+    )
 
 
 def _exec_run_aviary(args, user_args):
@@ -183,4 +202,5 @@ def _exec_run_aviary(args, user_args):
         phase_info=args.phase_info,
         max_iter=args.max_iter,
         verbosity=args.verbosity,
+        real_time_plotting=args.rtplot,
     )

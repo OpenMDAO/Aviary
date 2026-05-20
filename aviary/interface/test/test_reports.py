@@ -7,12 +7,13 @@ import openmdao.api as om
 from openmdao.core.problem import _clear_problem_names
 from openmdao.utils.testing_utils import set_env_vars, use_tempdirs
 
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.develop_metadata import add_meta_data
 from aviary.variable_info.variable_meta_data import CoreMetaData
+import aviary.api as av
 
 
 @use_tempdirs
@@ -25,7 +26,7 @@ class TestReports(unittest.TestCase):
     def test_timeseries_report(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,
             optimizer='SLSQP',
             max_iter=0,
@@ -92,7 +93,7 @@ class TestReports(unittest.TestCase):
         # Make sure it also works when a user forgets to create metadata.
 
         class ExtraBuilder(SubsystemBuilder):
-            def build_pre_mission(self, aviary_inputs):
+            def build_pre_mission(self, aviary_inputs, subsystem_options=None):
                 comp = om.ExecComp(['z = 2*x', 'p = q'])
                 wing_group = om.Group()
                 wing_group.add_subsystem(
@@ -120,7 +121,7 @@ class TestReports(unittest.TestCase):
 
         prob = AviaryProblem()
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,
         )
 
@@ -135,6 +136,32 @@ class TestReports(unittest.TestCase):
         # no need to run this model, just generate the report.
         prob.final_setup()
 
+    @set_env_vars(TESTFLO_RUNNING='0')
+    def test_multiple_off_design_report_directories(self):
+        prob = av.AviaryProblem(verbosity=0)
+        prob.load_inputs(
+            'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv', phase_info
+        )
+        prob.check_and_preprocess_inputs()
+        prob.build_model()
+
+        # We are only checking file locations, so don't run the whole optimization.
+        prob.add_driver('SLSQP', max_iter=1)
+
+        prob.add_design_variables()
+        prob.add_objective()
+        prob.setup()
+        prob.run_aviary_problem()
+        prob.run_off_design_mission(problem_type='off_design_max_range', mission_gross_mass=115000)
+        prob.run_off_design_mission(problem_type='off_design_min_fuel', mission_range=1250)
+
+        stem = prob._metadata['pathname']
+
+        assert Path(f'{stem}_off_design_1_out').is_dir()
+        assert Path(f'{stem}_off_design_out').is_dir()
+
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestReports()
+    test.test_multiple_off_design_report_directories()

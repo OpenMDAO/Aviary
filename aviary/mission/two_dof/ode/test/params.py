@@ -1,0 +1,85 @@
+import openmdao.api as om
+
+from aviary.variable_info.variables import Aircraft, Mission
+
+
+params_for_unit_tests = {
+    Aircraft.Wing.AREA: dict(units='ft**2', val=1370.3),
+    Aircraft.Wing.HEIGHT: dict(units='ft', val=8),
+    Aircraft.Wing.SPAN: dict(units='ft', val=117.8),
+    Aircraft.Design.GROSS_MASS: dict(units='lbm', val=175400),
+    Mission.GROSS_MASS: dict(units='lbm', val=175400),
+    Mission.Takeoff.AIRPORT_ALTITUDE: dict(units='ft', val=0),
+    Mission.Landing.AIRPORT_ALTITUDE: dict(units='ft', val=0),
+    Aircraft.Wing.AVERAGE_CHORD: dict(units='ft', val=12.615),
+    Aircraft.Fuselage.AVG_DIAMETER: dict(units='inch', val=12 * 13.100),
+    Aircraft.HorizontalTail.AVERAGE_CHORD: dict(units='ft', val=9.577),
+    Aircraft.HorizontalTail.AREA: dict(units='ft**2', val=375.880),
+    Aircraft.HorizontalTail.SPAN: dict(units='ft', val=42.254),
+    Aircraft.VerticalTail.AVERAGE_CHORD: dict(units='ft', val=16.832),
+    Aircraft.VerticalTail.AREA: dict(units='ft**2', val=469.318),
+    Aircraft.VerticalTail.SPAN: dict(units='ft', val=27.996),
+    Aircraft.Fuselage.LENGTH: dict(units='ft', val=129.4),
+    Aircraft.Nacelle.AVG_LENGTH: dict(units='ft', val=14.5),
+    Aircraft.Fuselage.WETTED_AREA: dict(units='ft**2', val=4000),
+    Aircraft.Nacelle.SURFACE_AREA: dict(units='ft**2', val=659.23 / 2),
+    Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED: dict(units='unitless', val=0.1397),
+    Aircraft.Strut.CHORD: dict(
+        units='ft', val=0
+    ),  # only available if Aviary_option Aircraft.Wing.HAS_STRUT
+    Aircraft.Wing.ASPECT_RATIO: dict(units='unitless', val=10.13),
+    Aircraft.Wing.TAPER_RATIO: dict(units='unitless', val=0.33),
+    Aircraft.Wing.THICKNESS_TO_CHORD_ROOT: dict(units='unitless', val=0.15),
+    Aircraft.Wing.THICKNESS_TO_CHORD_TIP: dict(units='unitless', val=0.12),
+    Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION: dict(units='unitless', val=0),
+    Aircraft.Wing.SWEEP: dict(units='deg', val=25),
+    Aircraft.HorizontalTail.SWEEP: dict(units='deg', val=25),
+    Aircraft.HorizontalTail.MOMENT_RATIO: dict(units='unitless', val=0.2307),
+    Aircraft.Wing.VERTICAL_MOUNT_LOCATION: dict(units='unitless', val=0),
+    Aircraft.Design.STATIC_MARGIN: dict(units='unitless', val=0.03),
+    Aircraft.Design.CG_DELTA: dict(units='unitless', val=0.25),
+    Aircraft.Fuselage.FORM_FACTOR: dict(units='unitless', val=1.05557953),
+    Aircraft.Nacelle.FORM_FACTOR: dict(units='unitless', val=1.5),
+    Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR: dict(units='unitless', val=1.1),
+    Aircraft.Design.DRAG_COEFFICIENT_INCREMENT: dict(units='unitless', val=0.00175),
+    Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT: dict(units='ft**2', val=0.25),
+    Aircraft.Wing.CENTER_DISTANCE: dict(units='unitless', val=0.463),
+    Aircraft.Wing.MIN_PRESSURE_LOCATION: dict(units='unitless', val=0.3),
+    Aircraft.Wing.MAX_THICKNESS_LOCATION: dict(units='unitless', val=0.4),
+    Aircraft.Strut.AREA_RATIO: dict(units='unitless', val=0),
+    Aircraft.Wing.ZERO_LIFT_ANGLE: dict(units='deg', val=-1.2),
+    Aircraft.Design.DRAG_DIVERGENCE_SHIFT: dict(units='unitless', val=0.033),
+    Aircraft.Wing.FLAP_CHORD_RATIO: dict(units='unitless', val=0.3),
+    Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP: dict(units='unitless', val=1.2596),
+    Mission.Takeoff.LIFT_COEFFICIENT_MAX: dict(units='unitless', val=2.1886),
+    Mission.Landing.LIFT_COEFFICIENT_MAX: dict(units='unitless', val=2.8155),
+    Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(units='unitless', val=0.4182),
+    Mission.Landing.LIFT_COEFFICIENT_FLAP_INCREMENT: dict(units='unitless', val=1.0293),
+    Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(units='unitless', val=0.0085),
+    Mission.Landing.DRAG_COEFFICIENT_FLAP_INCREMENT: dict(units='unitless', val=0.0406),
+}
+
+
+def set_params_for_unit_tests(prob):
+    """
+    Helper function to set parameters for several ode tests with the 2DOF method.
+
+    This is needed because the Paramport used to contain default values for some
+    variables.
+
+    Parameters
+    ----------
+    prob : Problem
+        OpenMDAO problem that has been setup.
+
+    Returns
+    -------
+    Problem
+    """
+    for key, val in params_for_unit_tests.items():
+        try:
+            prob.set_val(key, val['val'], units=val['units'])
+        except:
+            pass
+
+    return prob

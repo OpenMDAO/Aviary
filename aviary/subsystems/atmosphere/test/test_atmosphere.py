@@ -53,7 +53,7 @@ expected_viscosity = [
 
 
 class USatm1976TestCase1(unittest.TestCase):
-    def test_geocentric(self):
+    def test_geopotential(self):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
@@ -95,7 +95,7 @@ class USatm1976TestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data)
 
-    def test_geocentric_delta_T(self):
+    def test_geopotential_delta_T(self):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
@@ -177,12 +177,12 @@ class USatm1976TestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data)
 
-    def test_geodetic(self):
+    def test_geometric(self):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(delta_T_Celcius=0, num_nodes=7, h_def='geodetic'),
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=7, h_def='geometric'),
             promotes=['*'],
         )
 
@@ -219,12 +219,12 @@ class USatm1976TestCase1(unittest.TestCase):
 
         assert_check_partials(partial_data)
 
-    def test_geodetic_delta_T(self):
+    def test_geometric_delta_T(self):
         self.prob = om.Problem()
 
         self.prob.model.add_subsystem(
             'atmo',
-            AtmosphereComp(delta_T_Celcius=15, num_nodes=7, h_def='geodetic'),
+            AtmosphereComp(delta_T_Celcius=15, num_nodes=7, h_def='geometric'),
             promotes=['*'],
         )
 

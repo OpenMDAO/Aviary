@@ -14,11 +14,11 @@ import numpy as np
 import dymos as dm
 import openmdao.api as om
 
-from aviary.mission.height_energy.ode.takeoff_ode import TakeoffODE
-from aviary.mission.height_energy.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
+from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE
+from aviary.mission.energy_state.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import _MetaData
-from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.variable_info.functions import setup_trajectory_params
 
 from aviary.mission.phase_builder import PhaseBuilder
@@ -230,7 +230,7 @@ class BalancedFieldTrajectoryBuilder(ABC):
         common_initial_guesses.set_val('angle_of_attack', 0.0, 'deg')
 
         gross_mass_units = 'lbm'
-        gross_mass = aviary_options.get_val(Mission.Design.GROSS_MASS, gross_mass_units)
+        gross_mass = aviary_options.get_val(Aircraft.Design.GROSS_MASS, gross_mass_units)
         common_initial_guesses.set_val('mass', gross_mass, gross_mass_units)
 
         #
@@ -509,13 +509,16 @@ class BalancedFieldTrajectoryBuilder(ABC):
             # We need to create parameters for just the inputs we have.
             # They mostly come from the low-speed aero subsystem.
 
-            kwargs = {'method': 'low_speed'}
+            subsystem_options = {'method': 'low_speed'}
 
             # TODO: Why is get_parameters different for different subsystems?
             # Do without blindly indexing.
             aero_builder = self.subsystems[0]
 
-            params = aero_builder.get_parameters(aviary_options, **kwargs)
+            params = aero_builder.get_parameters(
+                aviary_options,
+                subsystem_options=subsystem_options,
+            )
 
             # takeoff introduces this one.
             params[Mission.Takeoff.LIFT_COEFFICIENT_MAX] = {

@@ -135,7 +135,6 @@ reports/
 aviary/reports/
 *.openmdao_out
 *.out
-*.png
 *.sql
 *.db
 *.pdf
@@ -144,8 +143,6 @@ aviary/reports/
 
 #VSCode user settings
 .vscode/
-#VSCode extensions
-.continue/
 
 # Built docs
 _build/

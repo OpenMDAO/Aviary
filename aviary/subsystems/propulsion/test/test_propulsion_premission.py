@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.models.aircraft.multi_engine_single_aisle.multi_engine_single_aisle_data import (
+from aviary.validation_cases.validation_data.test_data.multi_engine_single_aisle_data import (
     engine_1_inputs,
     engine_2_inputs,
 )

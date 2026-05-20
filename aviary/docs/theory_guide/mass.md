@@ -31,7 +31,7 @@ The Fuel Capacity Group contains 4 subsystems:
 
     Aviary assumes that the wing volume can be approximated as a rectangular based pyramid, and that the available volume for fuel is a user specified fraction of this theoretcial volume (Aircraft.Fuel.WING_FUEL_FRACTION). The derivation of Aviary's theoretical volume calculation is included below:
 
-    ![wing_fuel_capacity_derivation](images/wing_fuel_capacity_derivation.png)
+    ![wing_fuel_capacity_derivation](./images/wing_fuel_capacity_derivation.png)
 
     Aviary then converts the volume to a capacity (lbm) using the user specified fuel density (Aircraft.Fuel.DENSITY).
 

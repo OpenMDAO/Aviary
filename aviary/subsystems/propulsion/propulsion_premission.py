@@ -50,7 +50,7 @@ class PropulsionPreMission(om.Group):
             options = {}
             if engine.name in engine_options:
                 options = engine_options[engine.name]
-            subsys = engine.build_pre_mission(aviary_options, **options)
+            subsys = engine.build_pre_mission(aviary_options, subsystem_options=options)
             if subsys:
                 if num_engine_type > 1:
                     proms = None

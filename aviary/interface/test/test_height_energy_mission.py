@@ -12,7 +12,7 @@ from openmdao.utils.testing_utils import require_pyoptsparse, use_tempdirs
 
 from aviary.interface.run_aviary import run_aviary
 from aviary.core.aviary_problem import AviaryProblem
-from aviary.mission.height_energy.phases.energy_phase import EnergyPhase
+from aviary.mission.energy_state.phases.energy_phase import EnergyPhase
 from aviary.subsystems.test.test_dummy_subsystem import ArrayGuessSubsystemBuilder
 from aviary.variable_info.variables import Dynamic
 from aviary.variable_info.enums import Transcription
@@ -100,7 +100,9 @@ class AircraftMissionTestSuite(unittest.TestCase):
             },
         }
 
-        self.aircraft_definition_file = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        self.aircraft_definition_file = (
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
+        )
         self.make_plots = False
         self.max_iter = 100
 
@@ -325,7 +327,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
 
         prob = AviaryProblem()
 
-        csv_path = 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, modified_phase_info)
         prob.check_and_preprocess_inputs()
@@ -360,7 +362,7 @@ class AircraftMissionTestSuite(unittest.TestCase):
         modified_phase_info['cruise']['user_options']['mach_final'] = (0.5, 'unitless')
         prob = AviaryProblem(verbosity=1)
 
-        csv_path = 'models/test_aircraft/aircraft_for_bench_FwFm.csv'
+        csv_path = 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv'
 
         prob.load_inputs(csv_path, modified_phase_info)
         prob.check_and_preprocess_inputs()

@@ -8,7 +8,7 @@ import numpy as np
 from openmdao.utils.units import is_compatible, valid_units
 
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.enums import Verbosity
 
 
@@ -137,7 +137,7 @@ def read_data_file(
                                 if 'output' in item:
                                     raise UserWarning(
                                         f'{filepath}: Variable {name} is listed as both an input '
-                                        'and an output.'
+                                        'and an output. Treating it as an input only.'
                                     )
                                 item.pop(item.index('input'))
                                 inputs.append(name)
@@ -281,7 +281,7 @@ def write_data_file(
     # assemble separate variable name, units, and dependence information into single list for header
     header = []
     data_dict = {}
-    for var, val_and_units in get_items(data):
+    for var, val_and_units in data.items():
         units = val_and_units[1]
         var_info = ''
         # only explicitly include units if there are any
@@ -304,7 +304,7 @@ def write_data_file(
 
     # set column widths, for more human-readable format
     col_format = []
-    for i, key in enumerate(get_keys(data)):
+    for i, key in enumerate(data.keys()):
         header_len = len(header[i])
         data_len = len(max(data_dict[key], key=len))
         # min column width is 10 - spaced out columns are visually easier to follow

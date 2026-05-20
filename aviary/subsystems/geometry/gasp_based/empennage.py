@@ -41,7 +41,9 @@ class TailVolCoef(om.ExplicitComponent):
         else:
             self.k = [0.43, 0.38, 0.85]
 
-        add_aviary_input(self, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION, units='unitless')
+        add_aviary_input(
+            self, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION, units='unitless'
+        )
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
 
@@ -68,7 +70,7 @@ class TailVolCoef(om.ExplicitComponent):
 
         htail_loc, fus_len, cab_w, wing_area, wing_ref = inputs.values()
         k1, k2, k3 = self.k
-        J[str_vol_coef, Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION] = -k2
+        J[str_vol_coef, Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION] = -k2
         J[str_vol_coef, Aircraft.Fuselage.LENGTH] = k3 * cab_w**2 / (wing_area * wing_ref)
         J[str_vol_coef, Aircraft.Fuselage.AVG_DIAMETER] = (
             2 * k3 * fus_len * cab_w / (wing_area * wing_ref)
@@ -242,12 +244,7 @@ class EmpennageSize(om.Group):
         add_aviary_option(self, Aircraft.Design.COMPUTE_VTAIL_VOLUME_COEFF)
 
     def setup(self):
-        # TODO: For cruciform/T-tail configurations, GASP checks to make sure the V tail
-        # chord at the H tail location is greater than the H tail root chord. If not, it
-        # overrides the H tail taper ratio so they match. If that leads to a H tail root
-        # chord greater than the H tail tip chord, it sets the taper ratio to 1 and
-        # overrides the H tail aspect ratio. H tail taper ratio is used in landing gear
-        # mass calculation.
+        # For cruciform/T-tail configurations, see issue #1089
 
         if self.options[Aircraft.Design.COMPUTE_HTAIL_VOLUME_COEFF]:
             self.add_subsystem(

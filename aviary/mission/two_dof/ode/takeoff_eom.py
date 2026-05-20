@@ -11,7 +11,7 @@ RAD2DEG = 1.0 / DEG2RAD
 
 class TakeoffEOM(om.ExplicitComponent):
     """
-    2-degree of freedom EOM for takeoff phases.
+    2-degrees-of-freedom EOM for takeoff phases.
 
     Compute the rates for the velocity, altitude, flight path angle, and angle of attack states.
     This can be used for the groundroll, rotation, and ascent phases. The angle of attack rate

@@ -16,8 +16,8 @@ import openmdao.api as om
 import aviary.api as av
 from aviary.core.pre_mission_group import PreMissionGroup
 from aviary.mission.flight_phase_builder import FlightPhaseOptions
-from aviary.mission.height_energy.ode.energy_ODE import EnergyODE
-from aviary.models.missions.height_energy_default import phase_info
+from aviary.mission.energy_state.ode.energy_state_ODE import EnergyODE
+from aviary.models.missions.energy_state_default import phase_info
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import setup_model_options, setup_trajectory_params
@@ -580,14 +580,14 @@ prob.driver.options['print_results'] = 'minimal'
 #####
 # prob.add_design_variables()
 prob.model.add_design_var(
-    Mission.Design.GROSS_MASS,
+    Aircraft.Design.GROSS_MASS,
     lower=100000.0,
     upper=None,
     units='lbm',
     ref=175e3,
 )
 prob.model.add_design_var(
-    Mission.Summary.GROSS_MASS,
+    Aircraft.Summary.GROSS_MASS,
     lower=100000.0,
     upper=None,
     units='lbm',
@@ -603,7 +603,7 @@ prob.model.add_subsystem(
         add_constraint=True,
     ),
     promotes_inputs=[
-        ('lhs:GTOW', Mission.Design.GROSS_MASS),
+        ('lhs:GTOW', Aircraft.Design.GROSS_MASS),
         ('rhs:GTOW', Mission.Summary.GROSS_MASS),
     ],
 )
@@ -697,7 +697,7 @@ descent.set_control_val(
 )
 descent.set_state_val('mass', 125000, units='lbm')
 
-prob.set_val(Mission.Design.GROSS_MASS, 175400, units='lbm')
+prob.set_val(Aircraft.Design.GROSS_MASS, 175400, units='lbm')
 prob.set_val(Mission.Summary.GROSS_MASS, 175400, units='lbm')
 
 prob.verbosity = Verbosity.BRIEF

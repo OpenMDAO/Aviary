@@ -1,6 +1,6 @@
 import unittest
 
-from aviary.interface.test_installation import _exec_installation_test
+from aviary.interface.installation_test import _exec_installation_test
 
 
 class test_installation(unittest.TestCase):

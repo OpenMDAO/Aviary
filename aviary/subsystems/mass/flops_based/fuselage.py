@@ -158,7 +158,7 @@ class BWBFuselageMass(om.ExplicitComponent):
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
@@ -168,18 +168,18 @@ class BWBFuselageMass(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         if gross_weight <= 0.0:
             if verbosity > Verbosity.BRIEF:
-                raise om.AnalysisError('Mission.Design.GROSS_MASS must be positive.')
+                raise om.AnalysisError('Aircraft.Design.GROSS_MASS must be positive.')
 
         outputs[Aircraft.Fuselage.MASS] = 1.8 * gross_weight**0.167 * cabin_area**1.06
 
     def compute_partials(self, inputs, J):
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
-        J[Aircraft.Fuselage.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Fuselage.MASS, Aircraft.Design.GROSS_MASS] = (
             0.167 * 1.8 * gross_weight**-0.833 * cabin_area**1.06
         )
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.CABIN_AREA] = (
@@ -195,7 +195,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.NUM_FUSELAGE_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuselage.PLANFORM_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
@@ -221,7 +221,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Fuselage.AFTBODY_MASS,
             [
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Fuselage.PLANFORM_AREA,
                 Aircraft.Fuselage.CABIN_AREA,
                 Aircraft.Fuselage.LENGTH,
@@ -233,7 +233,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
         self.declare_partials(
             Aircraft.Wing.BWB_AFTBODY_MASS,
             [
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Fuselage.PLANFORM_AREA,
                 Aircraft.Fuselage.CABIN_AREA,
                 Aircraft.Fuselage.LENGTH,
@@ -247,7 +247,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         verbosity = self.options[Settings.VERBOSITY]
         num_fuse_eng = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES]
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuse_area = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         length = inputs[Aircraft.Fuselage.LENGTH]
@@ -283,7 +283,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         num_fuse_eng = self.options[Aircraft.Engine.NUM_FUSELAGE_ENGINES]
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         fuse_area = inputs[Aircraft.Fuselage.PLANFORM_AREA]
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         length = inputs[Aircraft.Fuselage.LENGTH]
@@ -305,7 +305,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
             * (0.5 + aftbody_tr)
         )
 
-        J[Aircraft.Fuselage.AFTBODY_MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Design.GROSS_MASS] = (
             0.2
             * (1.0 + 0.05 * num_fuse_eng)
             * 0.53
@@ -313,8 +313,8 @@ class BWBAftBodyMass(om.ExplicitComponent):
             * gross_weight**-0.8
             * (0.5 + aftbody_tr)
         )
-        J[Aircraft.Wing.BWB_AFTBODY_MASS, Mission.Design.GROSS_MASS] = (
-            J[Aircraft.Fuselage.AFTBODY_MASS, Mission.Design.GROSS_MASS] * fac
+        J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Design.GROSS_MASS] = (
+            J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Design.GROSS_MASS] * fac
         )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
             (1.0 + 0.05 * num_fuse_eng) * 0.53 * gross_weight**0.2 * (0.5 + aftbody_tr)

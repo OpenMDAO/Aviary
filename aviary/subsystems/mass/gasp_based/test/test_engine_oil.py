@@ -4,7 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.engine_oil import EngineOilMass
-
 from aviary.variable_info.enums import GASPEngineType, Verbosity
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
@@ -46,6 +45,25 @@ class ElectricalTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS], 342.6, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+    def test_turboprop_derivs(self):
+        eng = EngineOilMass()
+        eng.options[Aircraft.Engine.TYPE] = [GASPEngineType.TURBOPROP]
+        eng.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES] = 2
+
+        prob = om.Problem()
+        prob.model.add_subsystem('engine_oil_mass', eng, promotes=['*'])
+
+        prob.model.set_input_defaults(
+            Aircraft.Engine.SCALED_SLS_THRUST, val=29500, units='lbf'
+        )  # generic_BWB_GASP.csv - 11.45
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        prob.run_model()
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 

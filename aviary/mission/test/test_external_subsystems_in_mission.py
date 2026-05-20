@@ -6,7 +6,7 @@ from copy import deepcopy
 import openmdao.api as om
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.models.missions.height_energy_default import phase_info as energy_phase_info
+from aviary.models.missions.energy_state_default import phase_info as energy_phase_info
 from aviary.models.missions.two_dof_default import phase_info as two_dof_phase_info
 from aviary.core.aviary_problem import AviaryProblem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
@@ -40,7 +40,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
         prob.load_external_subsystems([SolverBuilder(name='solve_me')])
@@ -66,7 +66,7 @@ class TestExternalSubsystems(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'subsystems/aerodynamics/flops_based/test/data/high_wing_single_aisle.csv',
+            'validation_cases/validation_data/test_models/high_wing_single_aisle.csv',
             local_phase_info,
         )
 
@@ -155,20 +155,20 @@ class ExternNoSolve(om.ExplicitComponent):
 class NoSolverBuilder(SubsystemBuilder):
     """Mission only. No solver."""
 
-    def needs_mission_solver(self, aviary_options):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         return False
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return ExternNoSolve()
 
 
 class SolverBuilder(SubsystemBuilder):
     """Mission only. Solver."""
 
-    def needs_mission_solver(self, aviary_options):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         return True
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return ExternNoSolve()
 
 

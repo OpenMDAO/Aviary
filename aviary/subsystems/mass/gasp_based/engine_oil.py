@@ -1,10 +1,9 @@
 import openmdao.api as om
 
-from aviary.variable_info.enums import GASPEngineType, Verbosity
-from aviary.variable_info.variables import Aircraft, Settings
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.enums import GASPEngineType, Verbosity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class EngineOilMass(om.ExplicitComponent):
@@ -60,7 +59,7 @@ class EngineOilMass(om.ExplicitComponent):
         if engine_type is GASPEngineType.TURBOJET:
             doil_per_eng_wt_dFn_SLS = 0.0054
         elif engine_type is GASPEngineType.TURBOSHAFT or engine_type is GASPEngineType.TURBOPROP:
-            doil_per_eng_wt_dFn_SLS = 0.0124
+            doil_per_eng_wt_dFn_SLS = 0.0214
         # else:
         #     doil_per_eng_wt_dFn_SLS = 0.062
         else:

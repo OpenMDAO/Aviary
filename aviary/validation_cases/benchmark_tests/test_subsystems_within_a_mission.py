@@ -27,7 +27,10 @@ class TestSubsystemsMission(unittest.TestCase):
                 'optimize_mass': True,
             },
             'cruise': {
-                'subsystem_options': {'aerodynamics': {'method': 'cruise', 'solve_alpha': True}},
+                'subsystem_options': {
+                    'aerodynamics': {'method': 'cruise', 'solve_alpha': True},
+                    'additional_array_guess': {'enable_control': True},
+                },
                 'user_options': {
                     'num_segments': 2,
                     'order': 3,
@@ -70,12 +73,14 @@ class TestSubsystemsMission(unittest.TestCase):
         #     }
         # }
 
-    def test_subsystems_in_a_mission_height_energy(self):
+    def test_subsystems_in_a_mission_energy_state(self):
         phase_info = self.energy_phase_info.copy()
 
         prob = AviaryProblem(verbosity=0)
 
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv', phase_info
+        )
 
         prob.load_external_subsystems(
             [
@@ -123,7 +128,8 @@ class TestSubsystemsMission(unittest.TestCase):
         prob = AviaryProblem(verbosity=0)
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv', two_dof_phase_info
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
+            two_dof_phase_info,
         )
 
         prob.load_external_subsystems(
@@ -176,7 +182,9 @@ class TestSubsystemsMission(unittest.TestCase):
 
         prob = AviaryProblem(reports=False, verbosity=0)
 
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_GwFm.csv', phase_info)
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwFm.csv', phase_info
+        )
 
         prob.check_and_preprocess_inputs()
 

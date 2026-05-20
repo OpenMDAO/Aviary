@@ -4,9 +4,9 @@ import dymos as dm
 import openmdao.api as om
 
 import aviary.api as av
-from aviary.api import Mission
+from aviary.api import Aircraft, Mission
 from aviary.interface.methods_for_level2 import AviaryProblem
-from aviary.models.aircraft.advanced_single_aisle.advanced_single_aisle_data import inputs
+from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import inputs
 from aviary.utils.preprocessors import preprocess_options
 
 
@@ -26,8 +26,8 @@ aviary_options.set_val(Mission.Takeoff.BRAKING_FRICTION_COEFFICIENT, 0.35)
 aviary_options.set_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT, 0.085000)
 aviary_options.set_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT, -0.810000)
 aviary_options.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
-aviary_options.set_val(Mission.Takeoff.FUEL_SIMPLE, 577.0, 'lbm')
-aviary_options.set_val(Mission.Design.GROSS_MASS, 160000, units='lbm')
+aviary_options.set_val(Mission.Takeoff.FUEL, 577.0, 'lbm')
+aviary_options.set_val(Aircraft.Design.GROSS_MASS, 160000, units='lbm')
 
 # This builder can be used for both takeoff and landing phases
 aero_builder = av.CoreAerodynamicsBuilder(name='low_speed_aero', code_origin=av.LegacyCode.FLOPS)
@@ -59,8 +59,8 @@ takeoff_spoiler_subsystem_options = {
     'low_speed_aero': {
         **takeoff_subsystem_options['low_speed_aero'],
         'use_spoilers': True,
-        'spoiler_drag_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_DRAG_COEFFICIENT),
-        'spoiler_lift_coefficient': inputs.get_val(Mission.Takeoff.SPOILER_LIFT_COEFFICIENT),
+        'spoiler_drag_coefficient': 0.085,
+        'spoiler_lift_coefficient': ,
     }
 }
 

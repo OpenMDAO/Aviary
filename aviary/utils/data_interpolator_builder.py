@@ -5,7 +5,7 @@ import openmdao.api as om
 
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.named_values import NamedValues
 
 
 def build_data_interpolator(
@@ -84,7 +84,7 @@ def build_data_interpolator(
             addtl_outputs = interpolator_outputs
         outputs = list(set(outputs + addtl_outputs))
 
-    all_vars = get_keys(interpolator_data)
+    all_vars = interpolator_data.keys()
 
     # Scenario 1: Only outputs provided in data file
     if len(inputs) == 0 and len(outputs) != 0:
@@ -122,7 +122,7 @@ def build_data_interpolator(
     #                  All data converted to numpy arrays
     indep_vars = NamedValues()
     dep_vars = NamedValues()
-    for key, (val, units) in get_items(interpolator_data):
+    for key, (val, units) in interpolator_data.items():
         if not isinstance(val, np.ndarray):
             val = np.array(val)
         if key in interpolator_outputs:
@@ -131,7 +131,7 @@ def build_data_interpolator(
             indep_vars.set_val(key, val, units)
     # update interpolator_data with correctly ordered indep/dep vars in numpy arrays
     interpolator_data.update(indep_vars)
-    for key, (val, units) in get_items(dep_vars):
+    for key, (val, units) in dep_vars.items():
         interpolator_data.set_val(key, val, units)
 
     # TODO investigate creating structured grid from semistructured grid via extrapolation
@@ -141,7 +141,7 @@ def build_data_interpolator(
     data_pre_structured = True
     shape = []
     # check inputs, should be vector of unique values only
-    for key, (val, units) in get_items(interpolator_data):
+    for key, (val, units) in interpolator_data.items():
         if len(val.shape) == 1:
             if key not in outputs:
                 # try:
@@ -190,7 +190,7 @@ def build_data_interpolator(
         # always sort unless data is in structured format
         if not data_pre_structured:
             # first check that data are all vectors of the same length
-            for idx, item in enumerate(get_items(interpolator_data)):
+            for idx, item in enumerate(interpolator_data.items()):
                 key = item[0]
                 units = item[1][1]
                 if idx != 0:
@@ -203,17 +203,17 @@ def build_data_interpolator(
 
             # get data into column array format
             sorted_values = np.array(
-                [val for (key, (val, units)) in get_items(interpolator_data)]
+                [val for (key, (val, units)) in interpolator_data.items()]
             ).transpose()
 
             # get all the independent values in format needed for sorting
-            independent_vals = np.array([val for (key, (val, units)) in get_items(indep_vars)])
+            independent_vals = np.array([val for (key, (val, units)) in indep_vars.items()])
 
             # Sort by dependent variables in priority order of their appearance
             sorted_values = sorted_values[np.lexsort(np.flip(independent_vals, 0))]
 
             # reset interpolator_data with sorted values
-            for idx, (var, (val, units)) in enumerate(get_items(interpolator_data)):
+            for idx, (var, (val, units)) in enumerate(interpolator_data.items()):
                 interpolator_data.set_val(var, sorted_values[:, idx], units)
 
         # If user wants structured data, but provided data is not formatted correctly,
@@ -241,7 +241,7 @@ def build_data_interpolator(
                 structured_data.append(np.reshape(sorted_values[:, i], shape))
 
             # reset interpolator_data with structured grid formatted values
-            for idx, (var, (val, units)) in enumerate(get_items(interpolator_data)):
+            for idx, (var, (val, units)) in enumerate(interpolator_data.items()):
                 interpolator_data.set_val(var, structured_data[idx], units)
 
     if connect_training_data and structured and not data_pre_structured:
@@ -249,7 +249,7 @@ def build_data_interpolator(
         # means we can't do any processing on the data including ensuring sorted order,
         # since that might misalign inputs with future connections we can't control here
         # Just convert inputs to structure grid format
-        for key in get_keys(indep_vars):
+        for key in indep_vars.keys():
             (val, units) = interpolator_data.get_item(key)
             # take unique values only, put back into interpolator_data
             val = np.unique(val)
@@ -272,7 +272,7 @@ def build_data_interpolator(
         )
 
     # add interpolator inputs
-    for key in get_keys(indep_vars):
+    for key in indep_vars.keys():
         values, units = interpolator_data.get_item(key)
         interp_comp.add_input(key, training_data=values, units=units)
     # add interpolator outputs

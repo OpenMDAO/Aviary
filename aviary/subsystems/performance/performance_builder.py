@@ -5,23 +5,36 @@ from aviary.subsystems.performance.performance_premission import PerformancePrem
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 
 
-class CorePerformanceBuilder(SubsystemBuilder):
+class PerformanceBuilder(SubsystemBuilder):
+    """
+    Base performance builder.
+
+    Methods
+    -------
+    __init__(self, name=None, meta_data=None):
+        Initializes the PerformanceBuilder object with a given name.
+    """
+
+    _default_name = 'performance'
+
+
+class CorePerformanceBuilder(PerformanceBuilder):
     """Core performance analysis subsystem builder."""
 
     def __init__(self, name=None, meta_data=None):
-        if name is None:
-            name = 'core_performance'
-
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         return PerformancePremission()
 
-    def build_post_mission(self, aviary_inputs, phase_info, phase_mission_bus_lengths, **kwargs):
-
-        if 'post_mission_info' in kwargs:
-            post = kwargs['post_mission_info']
-            if post.get('balanced_field', False):
-                return create_balance_field_subprob(aviary_inputs)
+    def build_post_mission(
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
+    ):
+        if subsystem_options.get('balanced_field', False):
+            return create_balance_field_subprob(aviary_inputs)
 
         return

@@ -4,7 +4,6 @@ import openmdao.api as om
 from aviary.mission.two_dof.ode.constraints.flight_constraints import FlightConstraints
 from aviary.mission.two_dof.ode.constraints.speed_constraints import SpeedConstraints
 from aviary.mission.two_dof.ode.flight_eom import EOMRates
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
@@ -14,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightODE(TwoDOFODE):
-    """ODE for quasi-steady flight in GASP 2-dof. This replaces ClimbODE and DescentODE.
+    """ODE for quasi-steady flight in GASP 2DOF. This replaces ClimbODE and DescentODE.
 
     This ODE has a ``KSComp`` which aggregates the maximum EAS and mach number constraints.
     This allows a single constraint to whichever of the two constraints would be active at
@@ -39,6 +38,7 @@ class FlightODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
         input_speed_type = self.options['input_speed_type']
 
         if input_speed_type is SpeedType.EAS:
@@ -47,9 +47,6 @@ class FlightODE(TwoDOFODE):
         elif input_speed_type is SpeedType.MACH:
             speed_inputs = ['mach']
             speed_outputs = ['EAS', Dynamic.Mission.VELOCITY]
-
-        # TODO: Let's get rid of this paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_subsystem(
             name='atmosphere',
@@ -189,24 +186,34 @@ class FlightODE(TwoDOFODE):
                 }
                 kwargs.update(base_kwargs)
 
-            system = subsystem.build_mission(num_nodes=nn, aviary_inputs=aviary_options, **kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
 
             if system is not None:
                 if isinstance(subsystem, AerodynamicsBuilder):
-                    lift_balance_group.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                    target = lift_balance_group
                 else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
-
+                    target = self
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                target.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
         self.add_alpha_control(
             alpha_group=lift_balance_group,
             alpha_mode=AlphaModes.REQUIRED_LIFT,
@@ -217,12 +224,11 @@ class FlightODE(TwoDOFODE):
         # the last two subsystems will also be used for constraints
         self.add_excess_rate_comps(nn)
 
-        ParamPort.set_default_vals(self)
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='ft')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
-        self.set_input_defaults(Dynamic.Atmosphere.MACH, val=0 * np.ones(nn), units='unitless')
+        self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.ones(nn), units='unitless')
         self.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.THROTTLE, val=0 * np.ones(nn), units='unitless'
+            Dynamic.Vehicle.Propulsion.THROTTLE, val=np.ones(nn), units='unitless'
         )
 
         self.set_input_defaults(Aircraft.Wing.AREA, val=1.0, units='ft**2')

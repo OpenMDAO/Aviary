@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
@@ -49,6 +49,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
         self.prob.set_val(Dynamic.Mission.VELOCITY, [75, 150], units='kn')
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
 
@@ -72,7 +73,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
 
 class RotationODETestCase(unittest.TestCase):
-    """Test 2-degree of freedom rotation ODE."""
+    """Test 2-degrees-of-freedom rotation ODE."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -105,6 +106,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
 
         set_params_for_unit_tests(self.prob)
 

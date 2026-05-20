@@ -16,7 +16,11 @@ class BalancedFieldBuilder(SubsystemBuilder):
         super().__init__(name=name, meta_data=meta_data)
 
     def build_post_mission(
-        self, aviary_inputs, phase_info=None, phase_mission_bus_lengths=None, **kwargs
+        self,
+        aviary_inputs=None,
+        mission_info=None,
+        subsystem_options=None,
+        phase_mission_bus_lengths=None,
     ):
         return create_balance_field_subprob(aviary_inputs)
 

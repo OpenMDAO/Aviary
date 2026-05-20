@@ -13,14 +13,14 @@ from aviary.variable_info.enums import PhaseType
 
 
 class DynBuilder(SubsystemBuilder):
-    def get_states(self):
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         return {
             'x': {
                 'rate_source': 'x_dot',
             }
         }
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return om.ExecComp('x_dot = x**2 + x')
 
 
@@ -49,7 +49,7 @@ class TestTwoDOFPhases(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_GwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_GwGm.csv',
             local_phase_info,
         )
         prob.load_external_subsystems([DynBuilder()])

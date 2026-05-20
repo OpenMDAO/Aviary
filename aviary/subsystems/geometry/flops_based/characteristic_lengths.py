@@ -347,8 +347,7 @@ class NacelleCharacteristicLength(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        # TODO do all engines support nacelles? If not, is this deliberate, or
-        # just an artifact of the implementation?
+        # For engine without nacelle, see issue #1090.
         num_eng = self.options[Aircraft.Engine.NUM_ENGINES]
 
         avg_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]

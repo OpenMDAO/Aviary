@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.two_dof.ode.flight_path_ode import FlightPathODE
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -15,7 +15,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPathODETestCase(unittest.TestCase):
-    """Test 2-degree of freedom flight path ODE."""
+    """Test 2-degrees-of-freedom flight path ODE."""
 
     def setUp(self):
         self.prob = om.Problem()
@@ -49,6 +49,7 @@ class FlightPathODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
 
         self.prob.run_model()
         testvals = {

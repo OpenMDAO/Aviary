@@ -9,17 +9,18 @@ import warnings
 import numpy as np
 
 from aviary.utils.aviary_values import AviaryValues
-from aviary.utils.named_values import get_keys
 from aviary.utils.test_utils.variable_test import get_names_from_hierarchy
 from aviary.utils.utils import isiterable
 from aviary.variable_info.enums import AircraftTypes, LegacyCode, ProblemType, Verbosity
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
 # TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
-def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None, **kwargs):
+def preprocess_options(
+    aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
+):
     """
     Run all preprocessors on provided AviaryValues object.
 
@@ -49,29 +50,37 @@ def preprocess_options(aviary_options: AviaryValues, meta_data=_MetaData, verbos
     if engine_models is not None:
         preprocess_propulsion(aviary_options, engine_models, meta_data, verbosity)
 
+    # TODO move these into their own subfunction (preprocess options is a collector for preprocessor
+    #      functions only, and should not change options on its own)
 
-# this function is not used
-def remove_preprocessed_options(aviary_options):
-    """
-    Remove options whose values will be computed in the preprocessors.
+    # TODO the zero value behavior should probably be covered in fortran_to_aviary, and the preprocessor sets up the default value if it is not provided in the input file at all
+    if Aircraft.Wing.ASPECT_RATIO_REFERENCE in aviary_options:
+        arref = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE)
+        if (np.isscalar(arref) and arref == 0) or (not np.isscalar(arref) and arref[0] == 0):
+            if Aircraft.Wing.ASPECT_RATIO in aviary_options:
+                ar = aviary_options.get_val(Aircraft.Wing.ASPECT_RATIO)
+                aviary_options.set_val(Aircraft.Wing.ASPECT_RATIO_REFERENCE, ar, 'unitless')
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Assume Aircraft.Wing.ASPECT_RATIO_REFERENCE is the same '
+                        f'as Aircraft.Wing.ASPECT_RATIO {ar}.'
+                    )
 
-    Parameters
-    ----------
-    aviary_options : AviaryValues
-        Options to be updated
-    """
-    pre_opt = [
-        Aircraft.CrewPayload.NUM_FLIGHT_CREW,
-        Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS,
-        Aircraft.CrewPayload.NUM_GALLEY_CREW,
-        Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER,
-    ]
-
-    for option in pre_opt:
-        aviary_options.delete(option)
+    # TODO also move zero value behavior to fortran_to_aviary and rewrite this case to cover when variable is not provided
+    if Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE in aviary_options:
+        tcref = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE)
+        if (np.isscalar(tcref) and tcref == 0) or (not np.isscalar(tcref) and tcref[0] == 0):
+            if Aircraft.Wing.THICKNESS_TO_CHORD in aviary_options:
+                tc = aviary_options.get_val(Aircraft.Wing.THICKNESS_TO_CHORD)
+                aviary_options.set_val(Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE, tc, 'unitless')
+                if verbosity >= Verbosity.BRIEF:
+                    warnings.warn(
+                        'Assume Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE is the same '
+                        f'as Aircraft.Wing.THICKNESS_TO_CHORD {tc}.'
+                    )
 
 
-def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, verbosity=None):
+def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """
     Calculates option values that are derived from other options, and are not direct inputs.
     This function modifies the entries in the supplied collection, and for convenience also
@@ -140,14 +149,14 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     # no passenger info provided
     if not pax_provided and not design_pax_provided:
         if verbosity >= 1:
-            UserWarning(
+            warnings.warn(
                 'No passenger information has been provided for the aircraft, assuming '
                 'that this aircraft is not designed to carry passengers.'
             )
     # only mission passenger info provided
     if pax_provided and not design_pax_provided:
         if verbosity >= 1:
-            UserWarning(
+            warnings.warn(
                 'Passenger information for the aircraft as designed was not provided. '
                 'Assuming that the design passenger count is the same as the passenger '
                 'count for the flown mission.'
@@ -159,7 +168,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     # only design passenger info provided
     if not pax_provided and design_pax_provided:
         if verbosity >= 1:
-            UserWarning(
+            warnings.warn(
                 'Passenger information for the flown mission was not provided. '
                 'Assuming that the mission passenger count is the same as the design '
                 'passenger count.'
@@ -187,18 +196,18 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         # if sum of seat classes is zero (design pax is not), assume all economy
         if design_sum == 0:
             if verbosity >= 1:
-                UserWarning(
+                warnings.warn(
                     'Information on seat class distribution for aircraft design was '
-                    'not provided - assuming that all passengers are economy class.'
+                    f'not provided - assuming that all passengers {design_pax} are economy class.'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, design_pax)
         else:
             if verbosity >= 1:
-                UserWarning(
-                    'Sum of all passenger classes does not equal total number of '
-                    'passengers provided for aircraft design. Overriding '
+                warnings.warn(
+                    f'Sum of all passenger classes {design_sum} does not equal total number of '
+                    f'passengers provided for aircraft design {design_pax}. Overriding '
                     'Aircraft.CrewPayload.Design.NUM_PASSENGERS with the sum of '
-                    'passenger classes for design.'
+                    f'passenger classes for design {design_sum}.'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, design_sum)
 
@@ -207,18 +216,18 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
         # if sum of seat classes is zero (mission pax is not), assume all economy
         if mission_sum == 0:
             if verbosity >= 1:
-                UserWarning(
+                warnings.warn(
                     'Information on seat class distribution for current mission was '
-                    'not provided - assuming that all passengers are economy class.'
+                    f'not provided - assuming that all passengers {mission_pax} are economy class.'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS, mission_pax)
         else:
             if verbosity >= 1:
-                UserWarning(
-                    'Sum of all passenger classes does not equal total number of '
-                    'passengers provided for current mission. Overriding '
+                warnings.warn(
+                    f'Sum of all passenger classes {mission_sum} does not equal total number of '
+                    f'passengers provided for current mission {mission_pax}. Overriding '
                     'Aircraft.CrewPayload.NUM_PASSENGERS with the sum of '
-                    'passenger classes for the flown mission.'
+                    f'passenger classes for the flown mission {mission_sum}.'
                 )
             aviary_options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, mission_sum)
 
@@ -227,7 +236,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
     mission_pax = aviary_options.get_val(Aircraft.CrewPayload.NUM_PASSENGERS)
     if mission_pax > design_pax:
         if verbosity >= 1:
-            UserWarning(
+            warnings.warn(
                 f'The aircraft is designed for {design_pax} passengers but the current '
                 f'mission is being flown with {mission_pax} passengers. The mission '
                 'will be flown using the mass of these extra passengers and baggage, '
@@ -236,35 +245,35 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
     if mass_method == LegacyCode.FLOPS:
         # First Class
-        if aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS
-        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS):
+        des_num_first = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
+        num_first = aviary_options.get_val(Aircraft.CrewPayload.NUM_FIRST_CLASS)
+        if num_first > des_num_first:
             if verbosity >= 1:
-                UserWarning(
-                    'More first class passengers are flying in this mission than there are '
-                    'available first class seats on the aircraft. Assuming these passengers '
+                warnings.warn(
+                    f'More first class passengers {num_first} are flying in this mission than there are '
+                    f'available first class seats on the aircraft {des_num_first}. Assuming these passengers '
                     'have the same mass as other first class passengers, but are sitting in '
                     'different seats.'
                 )
         # Business Class
-        if aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS
-        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS):
+        des_num_business = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
+        num_business = aviary_options.get_val(Aircraft.CrewPayload.NUM_BUSINESS_CLASS)
+        if num_business > des_num_business:
             if verbosity >= 1:
-                UserWarning(
-                    'More business class passengers are flying in this mission than there are '
-                    'available business class seats on the aircraft. Assuming these passengers '
+                warnings.warn(
+                    f'More business class passengers {num_business} are flying in this mission than there are '
+                    f'available business class seats on the aircraft {des_num_business}. Assuming these passengers '
                     'have the same mass as other business class passengers, but are sitting in '
                     'different seats.'
                 )
         # Economy Class
-        if aviary_options.get_val(
-            Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS
-        ) < aviary_options.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS):
+        des_num_econ = aviary_options.get_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
+        num_econ = aviary_options.get_val(Aircraft.CrewPayload.NUM_ECONOMY_CLASS)
+        if num_econ > des_num_econ:
             if verbosity >= 1:
-                UserWarning(
-                    'More economy class passengers are flying in this mission than there are '
-                    'available economy class seats on the aircraft. Assuming these passengers '
+                warnings.warn(
+                    f'More economy class passengers {num_econ} are flying in this mission than there are '
+                    f'available economy class seats on the aircraft {des_num_econ}. Assuming these passengers '
                     'have the same mass as other economy class passengers, but are sitting in '
                     'different seats.'
                 )
@@ -401,6 +410,7 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
     # Process FLOPS based crew variables
     if mass_method == LegacyCode.FLOPS:
+        # TODO: check if this is excuted.
         # Check flight attendants
         if (
             Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS not in aviary_options
@@ -444,7 +454,10 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
         # check cabin crew against flight attendants & galley crew
         if Aircraft.CrewPayload.NUM_CABIN_CREW in aviary_options:
-            cabin_crew_calc = flight_crew_count + galley_crew_count
+            flight_attendants_count = aviary_options.get_val(
+                Aircraft.CrewPayload.NUM_FLIGHT_ATTENDANTS
+            )
+            cabin_crew_calc = flight_attendants_count + galley_crew_count
             cabin_crew_provided = aviary_options.get_val(Aircraft.CrewPayload.NUM_CABIN_CREW)
             if cabin_crew_calc != cabin_crew_provided:
                 warnings.warn(
@@ -456,8 +469,8 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
 
         if Aircraft.CrewPayload.BAGGAGE_MASS_PER_PASSENGER not in aviary_options:
             baggage_mass_per_pax = 35.0
-            if Mission.Design.RANGE in aviary_options:
-                design_range = aviary_options.get_val(Mission.Design.RANGE, 'nmi')
+            if Aircraft.Design.RANGE in aviary_options:
+                design_range = aviary_options.get_val(Aircraft.Design.RANGE, 'nmi')
 
                 if design_range <= 900.0:
                     baggage_mass_per_pax = 35.0
@@ -477,31 +490,32 @@ def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=_MetaData, ve
             if isinstance(num_fulselage_engines, (list, np.ndarray)):
                 num_fulselage_engines = num_fulselage_engines[0]
 
-        if (
-            Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
-            and num_fulselage_engines > 1
-            and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
-        ):
-            HHT = 1
-            warnings.warn(
-                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified and '
-                'Aircraft.Engine.NUM_FUSELAGE_ENGINES = '
-                f'{aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)}'
-                ' assume T-Tail configuration. Setting '
-                ' Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 1'
+        if Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not in aviary_options:
+            if (
+                Aircraft.Engine.NUM_FUSELAGE_ENGINES in aviary_options
+                and num_fulselage_engines > 1
+                and aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT
+            ):
+                HHT = 1
+                warnings.warn(
+                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified and '
+                    'Aircraft.Engine.NUM_FUSELAGE_ENGINES = '
+                    f'{aviary_options.get_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES)}'
+                    ' assume T-Tail configuration. Setting '
+                    ' Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 1'
+                )
+            else:
+                HHT = 0
+                warnings.warn(
+                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION not specified '
+                    'assume conventional tail configuration. Setting '
+                    'Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION = 0'
+                )
+            aviary_options.set_val(
+                Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION,
+                val=HHT,
+                units='unitless',
             )
-        else:
-            HHT = 0
-            warnings.warn(
-                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION not specified '
-                'assume conventional tail configuration. Setting '
-                'Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION = 0'
-            )
-        aviary_options.set_val(
-            Aircraft.HorizontalTail.VERTICAL_TAIL_FRACTION,
-            val=HHT,
-            units='unitless',
-        )
 
     return aviary_options
 
@@ -590,7 +604,7 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
 def preprocess_propulsion(
     aviary_options: AviaryValues,
     engine_models: list = None,
-    meta_data=_MetaData,
+    meta_data=CoreMetaData,
     verbosity=None,
 ):
     """
@@ -639,7 +653,7 @@ def preprocess_propulsion(
 
     # update_list has keys of all variables that are already defined, and must
     # be vectorized
-    update_list = list(get_keys(complete_options_list))
+    update_list = list(complete_options_list.keys())
 
     # Vectorize engine variables. Only update variables in update_list that are relevant
     # to engines (defined by _get_engine_variables())
@@ -700,14 +714,23 @@ def preprocess_propulsion(
                         vec.append(default_value)
                     else:
                         # save value from aviary_options
-                        if isiterable(aviary_val):
+                        if isiterable(aviary_val) and len(aviary_val) > 1:
                             if multidimensional:
                                 vec.extend(aviary_val)
                             else:
-                                # if aviary_val is an iterable, just grab val for this engine
-                                vec.append(aviary_val[i])
+                                try:
+                                    # check variable exists at this index - if not, use default
+                                    aviary_val[i]
+                                except IndexError:
+                                    vec.append(default_value)
+                                else:
+                                    # if aviary_val is an iterable, just grab val for this engine
+                                    vec.append(aviary_val[i])
                         else:
-                            vec.append(aviary_val)
+                            if isiterable(aviary_val):
+                                vec.extend(aviary_val)
+                            else:
+                                vec.append(aviary_val)
                 else:
                     # save value from EngineModel
                     if isiterable(engine_val) and multidimensional:
@@ -755,14 +778,14 @@ def preprocess_propulsion(
         if total_engines_calc == 0:
             if num_engines > 1:
                 num_wing_engines_all[i] = num_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         f'Mount location for engines of type <{eng_name}> not '
                         'specified. Wing-mounted engines are assumed.'
                     )
             else:
                 num_fuse_engines_all[i] = num_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         f'Mount location for single engine of type <{eng_name}> not '
                         'specified. Assuming it is fuselage-mounted.'
@@ -785,14 +808,14 @@ def preprocess_propulsion(
             num_unspecified_engines = num_engines - num_fuse_engines - num_wing_engines
             if num_unspecified_engines > 1:
                 num_wing_engines_all[i] = num_wing_engines + num_unspecified_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         'Mount location was not defined for all engines of EngineModel '
                         f'<{eng_name}> - unspecified engines are assumed wing-mounted.'
                     )
             elif num_unspecified_engines == 1 and num_wing_engines != 0:
                 num_fuse_engines_all[i] = num_fuse_engines + num_unspecified_engines
-                if verbosity >= Verbosity.BRIEF:  # BRIEF, VERBOSE, DEBUG
+                if verbosity >= Verbosity.VERBOSE:  # VERBOSE, DEBUG
                     warnings.warn(
                         'Mount location was not defined for all engine of EngineModel '
                         f'<{eng_name}> - unspecified engine is assumed fuselage-mounted.'
@@ -809,9 +832,6 @@ def preprocess_propulsion(
     aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, num_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_WING_ENGINES, num_wing_engines_all)
     aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, num_fuse_engines_all)
-
-    if Mission.Summary.FUEL_FLOW_SCALER not in aviary_options:
-        aviary_options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
 
     num_engines = aviary_options.get_val(Aircraft.Engine.NUM_ENGINES)
     total_num_engines = int(sum(num_engines_all))
