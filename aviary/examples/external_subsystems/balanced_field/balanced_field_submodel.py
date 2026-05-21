@@ -25,7 +25,7 @@ def create_balance_field_subprob(aviary_inputs, use_spoiler=False):
             Mission.Takeoff.LIFT_COEFFICIENT_MAX,
             (
                 'traj.takeoff_brake_release_to_engine_failure.initial_states:mass',
-                Mission.Summary.GROSS_MASS
+                Mission.GROSS_MASS
             ),
         ],
         outputs=[
@@ -99,10 +99,10 @@ def create_prob(aviary_inputs, use_spoiler=False):
 
     subprob = om.Problem()
 
-    #ivc = om.IndepVarComp(Mission.Summary.GROSS_MASS, val=1.0, units='lbm')
+    #ivc = om.IndepVarComp(Mission.GROSS_MASS, val=1.0, units='lbm')
     #subprob.model.add_subsystem('takeoff_mass_ivc', ivc, promotes=['*'])
     #subprob.model.connect(
-    #    Mission.Summary.GROSS_MASS,
+    #    Mission.GROSS_MASS,
     #    "traj.takeoff_brake_release_to_engine_failure.states:mass",
     #    flat_src_indices=[0],
     #)

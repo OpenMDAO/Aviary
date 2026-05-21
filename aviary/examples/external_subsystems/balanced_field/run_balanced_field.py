@@ -22,7 +22,7 @@ local_phase_info = deepcopy(phase_info)
 # but it is unclear which ones need to be tuned by the user.
 
 # local_phase_info['post_mission']['external_subsystems'] = [BalancedFieldBuilder()]
-local_phase_info['post_mission']['balanced_field'] = True
+# local_phase_info['post_mission']['balanced_field'] = True
 
 prob = AviaryProblem()
 
@@ -30,6 +30,9 @@ prob.load_inputs(
     'models/aircraft/advanced_single_aisle/advanced_single_aisle_FLOPS.csv',
     local_phase_info,
 )
+
+prob.load_external_subsystems([BalancedFieldBuilder()])
+
 
 # A few values that aren't in the csv file.
 prob.aviary_inputs.set_val(Mission.Takeoff.FUEL, 577.0, units='lbm')
