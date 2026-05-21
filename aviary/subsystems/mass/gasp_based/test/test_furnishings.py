@@ -60,14 +60,14 @@ class FurnishingMassTestCase2(unittest.TestCase):
     """Test mass-weight conversion"""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.equipment_and_operating_items as equip
+        import aviary.subsystems.mass.gasp_based.furnishings as furnishings
 
-        equip.GRAV_ENGLISH_LBM = 1.1
+        furnishings.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.equipment_and_operating_items as equip
+        import aviary.subsystems.mass.gasp_based.furnishings as furnishings
 
-        equip.GRAV_ENGLISH_LBM = 1.0
+        furnishings.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
         options = get_option_defaults()
