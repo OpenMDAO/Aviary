@@ -761,6 +761,51 @@ class HighLiftTestCase(unittest.TestCase):
         assert_check_partials(data, atol=5e-10, rtol=1e-12)
 
 
+class HighLiftTestCase2(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+        aviary_options = get_option_defaults()
+        aviary_options.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, val=2)
+
+        self.prob.model.add_subsystem('HL', HighLiftMass(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS_COEFFICIENT, val=1.9)
+        self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.3125, units='ft**2')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_CHORD_RATIO, val=0.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_CHORD_RATIO, val=0.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.TAPER_RATIO, val=0.33, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.SLAT_SPAN_RATIO, val=0.9, units='unitless')
+        self.prob.model.set_input_defaults(Aircraft.Wing.FLAP_SPAN_RATIO, val=0.65)
+        self.prob.model.set_input_defaults(
+            Aircraft.Design.WING_LOADING, val=128.0, units='lbf/ft**2'
+        )
+        self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
+        self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.81878299, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
+        self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974356, units='ft')
+        self.prob.model.set_input_defaults(Mission.Landing.LIFT_COEFFICIENT_MAX, val=2.3648)
+
+        setup_model_options(self.prob, aviary_options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        expected_values = {
+            Aircraft.Wing.HIGH_LIFT_MASS: 2940.12660159,
+        }
+        tol = 5e-4
+
+        for var_name, expected_val in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob[var_name], expected_val, tol)
+
+        data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(data, atol=5e-10, rtol=1e-12)
+
+
 # this is the large single aisle 1 V3 test case
 @use_tempdirs
 class ControlMassTestCase(unittest.TestCase):
@@ -2136,4 +2181,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = HighLiftTestCase2()
+    test.setUp()
+    test.test_case1()
