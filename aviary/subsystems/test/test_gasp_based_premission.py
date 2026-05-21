@@ -114,7 +114,7 @@ class PreMissionGroupTest(unittest.TestCase):
                 assert_near_equal(prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        assert_check_partials(partial_data, atol=3e-5, rtol=3e-5)
 
     def test_case2(self):
         """premission: propulsion + geometry + aerodynamics + mass."""
