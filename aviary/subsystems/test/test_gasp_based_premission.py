@@ -1,6 +1,6 @@
 import unittest
 
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -112,6 +112,9 @@ class PreMissionGroupTest(unittest.TestCase):
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
     def test_case2(self):
         """premission: propulsion + geometry + aerodynamics + mass."""
@@ -495,4 +498,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = PreMissionGroupTest()
+    test.setUp()
+    test.test_case1()
