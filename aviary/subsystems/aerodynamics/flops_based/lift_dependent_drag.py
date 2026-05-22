@@ -40,7 +40,7 @@ class LiftDependentDrag(om.ExplicitComponent):
             'pressure_drag_coeff',
             shape=nn,
             units='unitless',
-            desc='Pressure (lift independent) drag coefficient.'
+            desc='Pressure (lift independent) drag coefficient.',
         )
 
     def setup_partials(self):
@@ -325,15 +325,11 @@ class LiftDependentDrag(om.ExplicitComponent):
             dCD_dmach + dCD_dCL * ddelCL_dmach
         )
         partials['pressure_drag_coeff', Dynamic.Vehicle.LIFT] = dCD_dCL * ddelCL_dL
-        partials['pressure_drag_coeff', Dynamic.Atmosphere.STATIC_PRESSURE] = (
-            dCD_dCL * ddelCL_dP
-        )
+        partials['pressure_drag_coeff', Dynamic.Atmosphere.STATIC_PRESSURE] = dCD_dCL * ddelCL_dP
         partials['pressure_drag_coeff', Aircraft.Wing.AREA] = dCD_dCL * ddelCL_dSref
         partials['pressure_drag_coeff', Aircraft.Wing.ASPECT_RATIO] = dCD_dAR
         partials['pressure_drag_coeff', Aircraft.Wing.THICKNESS_TO_CHORD] = dCD_dTC
-        partials['pressure_drag_coeff', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = (
-            dCD_dCAM
-        )
+        partials['pressure_drag_coeff', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dCD_dCAM
         partials['pressure_drag_coeff', Aircraft.Wing.SWEEP] = dCD_dSW25
         partials['pressure_drag_coeff', Aircraft.Design.LIFT_COEFFICIENT] = -dCD_dCL
         partials['pressure_drag_coeff', Aircraft.Design.MACH] = -dCD_dmach

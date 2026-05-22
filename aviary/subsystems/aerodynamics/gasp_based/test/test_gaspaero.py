@@ -1109,7 +1109,11 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
             BWBLiftCoeffClean(num_nodes=2, output_alpha=True),
             promotes=['*'],
         )
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT_COEFFICIENT, val=[0.416944444, 0.416944444], units='unitless')
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            val=[0.416944444, 0.416944444],
+            units='unitless',
+        )
         prob.model.set_input_defaults('lift_curve_slope', [5.9489522, 5.9489522], units='unitless')
         prob.model.set_input_defaults(
             'body_lift_curve_slope', [3.04416704, 3.04416704], units='unitless'
@@ -1146,7 +1150,11 @@ class DragCoefTest(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT_COEFFICIENT, [0.09930717, 0.09930717], units='unitless')
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            [0.09930717, 0.09930717],
+            units='unitless',
+        )
 
         prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults('flap_defl', 10.0, units='deg')
@@ -1187,7 +1195,11 @@ class DragCoefTest(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(Dynamic.Mission.ALTITUDE, [0.0, 0.0], units='ft')
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT_COEFFICIENT, [0.153386101, 0.153386101], units='unitless')
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            [0.153386101, 0.153386101],
+            units='unitless',
+        )
 
         prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults('flap_defl', 0.0, units='deg')
@@ -1230,7 +1242,11 @@ class DragCoefCleanTest(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(Dynamic.Atmosphere.MACH, [0.8, 0.8], units='unitless')
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT_COEFFICIENT, [0.41069701, 0.41069701], units='unitless')
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            [0.41069701, 0.41069701],
+            units='unitless',
+        )
 
         # user inputs
         prob.model.set_input_defaults(
@@ -1273,7 +1289,11 @@ class DragCoefCleanTest(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(Dynamic.Atmosphere.MACH, [0.8, 0.8], units='unitless')
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT_COEFFICIENT, [0.407537609, 0.407537609], units='unitless')
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            [0.407537609, 0.407537609],
+            units='unitless',
+        )
 
         # user inputs
         prob.model.set_input_defaults(

@@ -149,7 +149,6 @@ class AccelPhase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
-
         return phase
 
 

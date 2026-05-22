@@ -154,7 +154,7 @@ class TakeoffAeroGroup(om.Group):
         else:
             self.promotes(
                 'ground_effect',
-                outputs=[('lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT)]
+                outputs=[('lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT)],
             )
 
         self.add_subsystem(

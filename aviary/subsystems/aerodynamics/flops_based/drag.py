@@ -91,10 +91,9 @@ class ScaledCD(om.ExplicitComponent):
 
         dF = np.zeros_like(CD_prescaled)
         dF[idx_sup] = CD_prescaled[idx_sup]
-        partials[
-            Dynamic.Vehicle.DRAG_COEFFICIENT,
-            Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR
-        ] = dF
+        partials[Dynamic.Vehicle.DRAG_COEFFICIENT, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR] = (
+            dF
+        )
 
 
 class SimpleDrag(om.ExplicitComponent):

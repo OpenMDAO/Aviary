@@ -185,7 +185,6 @@ class FlightPhase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
-
         return phase
 
     def _extra_ode_init_kwargs(self):

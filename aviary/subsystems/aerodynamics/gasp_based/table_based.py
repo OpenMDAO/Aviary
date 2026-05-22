@@ -97,7 +97,7 @@ class TabularCruiseAero(om.Group):
             + extra_promotes,
             promotes_outputs=[
                 ('lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT),
-                ('drag_coefficient', 'CD_prescaled')
+                ('drag_coefficient', 'CD_prescaled'),
             ],
         )
 

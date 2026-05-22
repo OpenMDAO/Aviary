@@ -96,9 +96,9 @@ class CLFromLift(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         lift_req, q, wing_area = inputs.values()
         J[Dynamic.Vehicle.LIFT_COEFFICIENT, 'lift_req'] = 1 / (q * wing_area)
-        J[Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = (
-            -lift_req / (q**2 * wing_area)
-        )
+        J[Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = -lift_req / (
+            q**2 * wing_area
+         )
         J[Dynamic.Vehicle.LIFT_COEFFICIENT, Aircraft.Wing.AREA] = -lift_req / (q * wing_area**2)
 
 

@@ -211,8 +211,8 @@ class LandingSegment(TwoDOFODE):
             ],
             promotes_outputs=[
                 (Dynamic.Vehicle.DRAG_COEFFICIENT, 'touchdown_CD'),
-                (Dynamic.Vehicle.LIFT_COEFFICIENT, 'touchdown_CL')
-                ],
+                (Dynamic.Vehicle.LIFT_COEFFICIENT, 'touchdown_CL'),
+            ],
         )
         # GASP seems to run groundroll with flaps up and gear down (IWLD=2)
         self.set_input_defaults('t_init_flaps_td', 1e10)  # never deploy
