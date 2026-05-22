@@ -319,7 +319,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         promotes = ['*']
 
         if self.code_origin is FLOPS:
-            promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
+            promotes = [
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                Dynamic.Vehicle.LIFT_COEFFICIENT,
+            ]
 
         elif self.code_origin is GASP:
             # GASP default is 'cruise'
@@ -330,27 +335,36 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 promotes = [
                     Dynamic.Vehicle.DRAG,
                     Dynamic.Vehicle.LIFT,
-                    'CL',
-                    'CD',
+                    Dynamic.Vehicle.DRAG_COEFFICIENT,
+                    Dynamic.Vehicle.LIFT_COEFFICIENT,
                     'flap_factor',
                     'gear_factor',
                 ]
 
             elif method in ('cruise', 'tabular_cruise'):
                 if method == 'tabular_cruise':
-                    promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
+                    promotes = [
+                        Dynamic.Vehicle.DRAG,
+                        Dynamic.Vehicle.LIFT,
+                        Dynamic.Vehicle.DRAG_COEFFICIENT,
+                        Dynamic.Vehicle.LIFT_COEFFICIENT,
+                    ]
                 else:
                     if 'output_alpha' in subsystem_options:
                         if subsystem_options['output_alpha']:
                             promotes = [
                                 Dynamic.Vehicle.DRAG,
                                 Dynamic.Vehicle.LIFT,
+                                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                                Dynamic.Vehicle.LIFT_COEFFICIENT,
                                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                             ]
                     else:
                         promotes = [
                             Dynamic.Vehicle.DRAG,
                             Dynamic.Vehicle.LIFT,
+                            Dynamic.Vehicle.DRAG_COEFFICIENT,
+                            Dynamic.Vehicle.LIFT_COEFFICIENT,
                             'CL_max',
                         ]
 
