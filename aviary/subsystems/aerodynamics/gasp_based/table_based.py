@@ -344,7 +344,11 @@ class TabularLowSpeedAero(om.Group):
             units='unitless',
             input_names=['CL_max_free', 'dCL_max_flaps', 'dCL_max_ground'],
         )
-        self.add_subsystem('coef_sum', adder, promotes=['*'])
+        self.add_subsystem(
+            'coef_sum',
+            adder,
+            promotes=['*', ('CL', Dynamic.Vehicle.LIFT_COEFFICIENT)],
+        )
 
         # convert coefficients to forces
         self.add_subsystem(

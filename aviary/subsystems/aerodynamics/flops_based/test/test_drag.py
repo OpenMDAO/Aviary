@@ -91,7 +91,7 @@ class SimpleDragTest(unittest.TestCase):
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
         assert_near_equal(
-            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            prob.get_val(Dynamic.Vehicle.DRAG_COEFFICIENT),
             mission_simple_CD[case_name],
             1e-6,
         )
@@ -168,7 +168,7 @@ class TotalDragTest(unittest.TestCase):
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
         assert_near_equal(
-            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            prob.get_val(Dynamic.Vehicle.DRAG_COEFFICIENT),
             mission_total_CD[case_name],
             1e-6,
         )

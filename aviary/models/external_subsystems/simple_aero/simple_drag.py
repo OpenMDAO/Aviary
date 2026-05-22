@@ -23,7 +23,7 @@ class SimpleDragCoeff(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         add_aviary_input(self, Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless', shape=nn)
-        add_aviary_input(self, Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless', shape=nn)
+        add_aviary_output(self, Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless', shape=nn)
 
     def setup_partials(self):
         nn = self.options['num_nodes']
