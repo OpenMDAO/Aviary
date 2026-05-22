@@ -21,7 +21,7 @@ from aviary.validation_cases.validation_tests import (
     Version,
 )
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
 
@@ -199,6 +199,50 @@ class BWBFuselageMassTest(unittest.TestCase):
 
 
 @use_tempdirs
+class BWBFuselageMassTest2(unittest.TestCase):
+    """Tests fuselage mass calculation for BWB. check mass-weight conversion."""
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+
+        fuselage.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+
+        fuselage.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        case_name = 'BWBsimpleFLOPS'
+        prob = om.Problem()
+
+        prob.model.add_subsystem(
+            'fuselage',
+            BWBFuselageMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            self,
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Design.GROSS_MASS,
+                Aircraft.Fuselage.CABIN_AREA,
+            ],
+            output_keys=[],
+            version=Version.BWB,
+            check_values=False,
+            atol=1e-10,
+        )
+
+
+@use_tempdirs
 class BWBAftBodyMassTest(unittest.TestCase):
     """Tests aft body mass calculation for BWB."""
 
@@ -240,5 +284,58 @@ class BWBAftBodyMassTest(unittest.TestCase):
         )
 
 
+@use_tempdirs
+class BWBAftBodyMassTest2(unittest.TestCase):
+    """Tests aft body mass calculation for BWB."""
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+
+        fuselage.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.fuselage as fuselage
+
+        fuselage.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        case_name = 'BWBsimpleFLOPS'
+        prob = om.Problem()
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3, units='unitless')
+
+        prob.model.add_subsystem(
+            'aftbody',
+            BWBAftBodyMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
+
+        setup_model_options(prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+
+        flops_validation_test(
+            self,
+            prob,
+            case_name,
+            input_keys=[
+                Aircraft.Design.GROSS_MASS,
+                Aircraft.Fuselage.PLANFORM_AREA,
+                Aircraft.Fuselage.CABIN_AREA,
+                Aircraft.Fuselage.LENGTH,
+                Aircraft.Wing.ROOT_CHORD,
+                Aircraft.Wing.COMPOSITE_FRACTION,
+            ],
+            output_keys=[],
+            version=Version.BWB,
+            check_values=False,
+        )
+
+
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWBAftBodyMassTest2()
+    test.setUp()
+    test.test_case1()

@@ -17,7 +17,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 @use_tempdirs
@@ -123,14 +123,14 @@ class AlternatePassengerServiceMassTest2(unittest.TestCase):
     """Test mass-weight conversion."""
 
     def setUp(self):
-        import aviary.subsystems.mass.flops_based.nacelle as nacelle
+        import aviary.subsystems.mass.flops_based.passenger_service as service
 
-        nacelle.GRAV_ENGLISH_LBM = 1.1
+        service.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.flops_based.nacelle as nacelle
+        import aviary.subsystems.mass.flops_based.passenger_service as service
 
-        nacelle.GRAV_ENGLISH_LBM = 1.0
+        service.GRAV_ENGLISH_LBM = 1.0
 
     def test_case(self):
         prob = om.Problem()
