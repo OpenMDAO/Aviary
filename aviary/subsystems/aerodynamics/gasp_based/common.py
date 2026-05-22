@@ -98,7 +98,7 @@ class CLFromLift(om.ExplicitComponent):
         J[Dynamic.Vehicle.LIFT_COEFFICIENT, 'lift_req'] = 1 / (q * wing_area)
         J[Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = -lift_req / (
             q**2 * wing_area
-         )
+        )
         J[Dynamic.Vehicle.LIFT_COEFFICIENT, Aircraft.Wing.AREA] = -lift_req / (q * wing_area**2)
 
 

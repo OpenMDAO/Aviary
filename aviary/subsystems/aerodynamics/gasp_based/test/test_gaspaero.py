@@ -445,7 +445,11 @@ class LiftCoeffCleanTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model.set_input_defaults(Dynamic.Vehicle.LIFT_COEFFICIENT, [-0.08640507, -0.08640507], units='unitless')
+        prob.model.set_input_defaults(
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            [-0.08640507, -0.08640507],
+            units='unitless',
+        )
         prob.model.set_input_defaults('lift_curve_slope', [5.975, 5.975], units='unitless')
         prob.model.set_input_defaults('lift_ratio', [0.0357, 0.0357], units='unitless')
         prob.model.set_input_defaults(Aircraft.Wing.ZERO_LIFT_ANGLE, -1.2, units='deg')
