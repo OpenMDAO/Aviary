@@ -60,7 +60,7 @@ wetted_area_overide = get_flops_case_names(
     ]
 )
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
 
 # for integration tests for canard, see issue #1091.
