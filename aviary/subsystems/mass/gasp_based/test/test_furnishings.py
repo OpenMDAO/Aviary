@@ -60,14 +60,14 @@ class FurnishingMassTestCase2(unittest.TestCase):
     """Test mass-weight conversion"""
 
     def setUp(self):
-        import aviary.subsystems.mass.gasp_based.equipment_and_operating_items as equip
+        import aviary.subsystems.mass.gasp_based.furnishings as furnishings
 
-        equip.GRAV_ENGLISH_LBM = 1.1
+        furnishings.GRAV_ENGLISH_LBM = 1.1
 
     def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.equipment_and_operating_items as equip
+        import aviary.subsystems.mass.gasp_based.furnishings as furnishings
 
-        equip.GRAV_ENGLISH_LBM = 1.0
+        furnishings.GRAV_ENGLISH_LBM = 1.0
 
     def test_case1(self):
         options = get_option_defaults()
@@ -286,6 +286,115 @@ class BWBFurnishingMassTestCase2(unittest.TestCase):
     """
     Created based on GASP BWB model
     GROSS_MASS < 10000
+    """
+
+    def setUp(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'furnishing',
+            BWBFurnishingMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 9999.0, units='lbm')  # arbitrary
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
+        )  # arbitrary
+        prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')  # arbitrary
+        prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2'
+        )  # arbitrary
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 590.935, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBFurnishingMassTestCase3(unittest.TestCase):
+    """
+    Created based on GASP BWB model
+    GROSS_MASS > 10000.0
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.furnishings as furnishings
+
+        furnishings.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.furnishings as furnishings
+
+        furnishings.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        """
+        USE_EMPIRICAL_EQUATION = True
+        SMOOTH_MASS_DISCONTINUITIES = False
+        """
+        self.options = get_option_defaults()
+        self.options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        self.options.set_val(
+            Aircraft.Furnishings.USE_EMPIRICAL_EQUATION, val=True, units='unitless'
+        )
+
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem(
+            'furnishing',
+            BWBFurnishingMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(
+            Aircraft.Design.GROSS_MASS, 150000, units='lbm'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LENGTH, 71.5245514, units='ft'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Furnishings.MASS_SCALER, 40.0, units='unitless'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2'
+        )  # generic_BWB_GASP.csv
+
+        setup_model_options(self.prob, self.options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 10245.33033502, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBFurnishingMassTestCase4(unittest.TestCase):
+    """
+    Created based on GASP BWB model
+    GROSS_MASS < 10000
+    Test mass-weight conversion
     """
 
     def setUp(self):
