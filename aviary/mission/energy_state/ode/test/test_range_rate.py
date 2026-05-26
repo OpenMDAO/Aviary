@@ -4,7 +4,7 @@ import openmdao.api as om
 
 from aviary.mission.energy_state.ode.range_rate import RangeRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
-from aviary.validation_cases.validation_data.flops_data.full_mission_test_data import data
+from aviary.validation_cases.validation_data.test_data.full_mission_test_data import data
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 

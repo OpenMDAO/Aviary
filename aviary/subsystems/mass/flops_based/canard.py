@@ -12,7 +12,7 @@ class CanardMass(om.ExplicitComponent):
     """
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Canard.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Canard.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Canard.MASS_SCALER, units='unitless')
@@ -23,7 +23,7 @@ class CanardMass(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        togw = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        togw = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         area = inputs[Aircraft.Canard.AREA]
         taper_ratio = inputs[Aircraft.Canard.TAPER_RATIO]
 
@@ -36,7 +36,7 @@ class CanardMass(om.ExplicitComponent):
         area = inputs[Aircraft.Canard.AREA]
         taper_ratio = inputs[Aircraft.Canard.TAPER_RATIO]
         scaler = inputs[Aircraft.Canard.MASS_SCALER]
-        gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
         gross_weight_exp = gross_weight**0.2
 
@@ -52,6 +52,6 @@ class CanardMass(om.ExplicitComponent):
             0.53 * area * (taper_ratio + 0.5) * gross_weight_exp / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.Canard.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Canard.MASS, Aircraft.Design.GROSS_MASS] = (
             0.106 * area * scaler * (taper_ratio + 0.5)
         ) / gross_weight**0.8

@@ -48,7 +48,6 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
         options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
-        options.set_val(Mission.Summary.FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.5)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
 
@@ -66,7 +65,9 @@ class PropulsionMissionTest(unittest.TestCase):
 
         self.prob.model.add_subsystem(
             'propulsion',
-            PropulsionMission(num_nodes=nn, aviary_options=options, engine_models=[engine]),
+            PropulsionMission(
+                num_nodes=nn, aviary_options=options, user_options={}, engine_models=[engine]
+            ),
             promotes=['*'],
         )
 
@@ -240,6 +241,7 @@ class PropulsionMissionTest(unittest.TestCase):
         prop = PropulsionMission(
             num_nodes=nn,
             aviary_options=options,
+            user_options={},
             engine_models=engine_models,
         )
         model.add_subsystem('propulsion', prop, promotes=['*'])
@@ -279,7 +281,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
         expected_nox_rate = np.array(
             [
-                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
                 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
             ]
         )
@@ -330,6 +332,7 @@ class PropulsionMissionTest(unittest.TestCase):
         prop = PropulsionMission(
             num_nodes=nn,
             aviary_options=options,
+            user_options={},
             engine_models=[engine],
         )
         model.add_subsystem('propulsion', prop, promotes=['*'])
@@ -393,6 +396,7 @@ class PropulsionMissionTest(unittest.TestCase):
         prop = PropulsionMission(
             num_nodes=nn,
             aviary_options=options,
+            user_options={},
             engine_models=engine_models,
         )
         model.add_subsystem('propulsion', prop, promotes=['*'])
@@ -468,6 +472,7 @@ class PropulsionMissionTest(unittest.TestCase):
         prop = PropulsionMission(
             num_nodes=nn,
             aviary_options=options,
+            user_options={},
             engine_models=[engine],
         )
         model.add_subsystem('propulsion', prop, promotes=['*'])

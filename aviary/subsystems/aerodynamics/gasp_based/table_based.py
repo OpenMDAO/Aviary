@@ -9,7 +9,7 @@ from aviary.subsystems.aerodynamics.gasp_based.common import AeroForces, TimeRam
 from aviary.utils.csv_data_file import read_data_file
 from aviary.utils.data_interpolator_builder import build_data_interpolator
 from aviary.utils.functions import get_path
-from aviary.utils.named_values import NamedValues, get_items, get_keys
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -355,7 +355,7 @@ class TabularLowSpeedAero(om.Group):
             # takeoff defaults
             self.set_input_defaults('dt_gear', 7)
         else:
-            # TODO default gear duration for landing?
+            # should set default gear duration for landing? See issue # 1087
             pass
 
         if self.options['retract_flaps']:
@@ -365,7 +365,7 @@ class TabularLowSpeedAero(om.Group):
         else:
             # landing defaults
             self.set_input_defaults('flap_defl', 40 * np.ones(nn))
-            # TODO default flap duration for landing?
+            # should set default flap duration for landing? See issue # 1087
 
         self.set_input_defaults(Dynamic.Mission.ALTITUDE, np.zeros(nn))
         self.set_input_defaults(Dynamic.Atmosphere.MACH, np.zeros(nn))
@@ -383,7 +383,7 @@ class GearDragIncrement(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
@@ -407,7 +407,7 @@ class GearDragIncrement(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
         self.declare_partials('dCD', ['flap_defl'], rows=arange, cols=arange)
-        self.declare_partials('dCD', [Mission.Design.GROSS_MASS, Aircraft.Wing.AREA])
+        self.declare_partials('dCD', [Aircraft.Design.GROSS_MASS, Aircraft.Wing.AREA])
 
     def compute(self, inputs, outputs):
         gross_mass_initial, wing_area, flap_defl = inputs.values()
@@ -426,7 +426,7 @@ class GearDragIncrement(om.ExplicitComponent):
         grfe = 0.0033 * gross_wt_initial**0.785
         grcd = grfe / wing_area
 
-        J['dCD', Mission.Design.GROSS_MASS] = (
+        J['dCD', Aircraft.Design.GROSS_MASS] = (
             (0.0033 * 0.785 * gross_wt_initial ** (0.785 - 1) / wing_area)
             * (1 - 0.454545 * flap_defl / 50)
             * GRAV_ENGLISH_LBM
@@ -464,12 +464,10 @@ def _build_free_aero_interp(
     required_outputs = {'lift_coefficient', 'drag_coefficient'}
 
     missing_variables = []
-    if not required_inputs <= get_keys(interp_data):
-        missing_variables.append([key for key in required_inputs.difference(get_keys(interp_data))])
-    if not connect_training_data and not required_outputs <= get_keys(interp_data):
-        missing_variables.append(
-            [key for key in required_outputs.difference(get_keys(interp_data))]
-        )
+    if not required_inputs <= interp_data.keys():
+        missing_variables.append([key for key in required_inputs.difference(interp_data.keys())])
+    if not connect_training_data and not required_outputs <= interp_data.keys():
+        missing_variables.append([key for key in required_outputs.difference(interp_data.keys())])
     if missing_variables:
         raise KeyError(
             f'GASP-based aerodynamics interpolation missing required variables: {missing_variables}'
@@ -547,12 +545,10 @@ def _build_flaps_aero_interp(
     required_outputs = {'delta_lift_coefficient', 'delta_drag_coefficient'}
 
     missing_variables = []
-    if not required_inputs <= get_keys(interp_data):
-        missing_variables.extend([key for key in required_inputs.difference(get_keys(interp_data))])
-    if not connect_training_data and not required_outputs <= get_keys(interp_data):
-        missing_variables.extend(
-            [key for key in required_outputs.difference(get_keys(interp_data))]
-        )
+    if not required_inputs <= interp_data.keys():
+        missing_variables.extend([key for key in required_inputs.difference(interp_data.keys())])
+    if not connect_training_data and not required_outputs <= interp_data.keys():
+        missing_variables.extend([key for key in required_outputs.difference(interp_data.keys())])
     if missing_variables:
         raise KeyError(
             f'GASP-based aerodynamics interpolation missing required variables: {missing_variables}'
@@ -614,12 +610,10 @@ def _build_ground_aero_interp(
     required_outputs = {'delta_lift_coefficient', 'delta_drag_coefficient'}
 
     missing_variables = []
-    if not required_inputs <= get_keys(interp_data):
-        missing_variables.append([key for key in required_inputs.difference(get_keys(interp_data))])
-    if not connect_training_data and not required_outputs <= get_keys(interp_data):
-        missing_variables.append(
-            [key for key in required_outputs.difference(get_keys(interp_data))]
-        )
+    if not required_inputs <= interp_data.keys():
+        missing_variables.append([key for key in required_inputs.difference(interp_data.keys())])
+    if not connect_training_data and not required_outputs <= interp_data.keys():
+        missing_variables.append([key for key in required_outputs.difference(interp_data.keys())])
     if missing_variables:
         raise KeyError(
             f'GASP-based aerodynamics interpolation missing required variables: {missing_variables}'
@@ -670,7 +664,7 @@ def _structure_special_grid(aero_data):
     data = []
     keys = []
     units = []
-    for idx, (key, (val, unit)) in enumerate(get_items(aero_data)):
+    for idx, (key, (val, unit)) in enumerate(aero_data.items()):
         if idx < 2:
             data.append(val)
             keys.append(key)

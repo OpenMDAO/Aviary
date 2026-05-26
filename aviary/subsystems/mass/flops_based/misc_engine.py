@@ -41,8 +41,8 @@ class EngineMiscMass(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        # TODO temporarily using engine-level additional mass and multiplying
-        #      by num_engines to get propulsion-level additional mass
+        # temporarily using engine-level additional mass and multiplying
+        # by num_engines to get propulsion-level additional mass, see issue # 1095
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         addtl_mass = sum(inputs[Aircraft.Engine.ADDITIONAL_MASS] * num_engines)
@@ -55,8 +55,8 @@ class EngineMiscMass(om.ExplicitComponent):
         outputs[Aircraft.Propulsion.TOTAL_MISC_MASS] = misc_mass
 
     def compute_partials(self, inputs, J):
-        # TODO temporarily using engine-level additional mass and multiplying
-        #      by num_engines to get propulsion-level additional mass
+        # temporarily using engine-level additional mass and multiplying
+        # by num_engines to get propulsion-level additional mass, see issue # 1095
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
 
         addtl_mass = inputs[Aircraft.Engine.ADDITIONAL_MASS] * num_engines

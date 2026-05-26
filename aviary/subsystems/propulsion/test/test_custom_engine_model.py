@@ -103,13 +103,13 @@ class SimpleTestEngine(EngineModel):
         aviary_inputs = AviaryValues()
         super().__init__(name, options=aviary_inputs)
 
-    def build_pre_mission(self, aviary_inputs=AviaryValues()):
+    def build_pre_mission(self, aviary_inputs=AviaryValues(), subsystem_options=None):
         return PreMissionEngine()
 
-    def build_mission(self, num_nodes, aviary_inputs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         return SimpleEngine(num_nodes=num_nodes)
 
-    def get_controls(self, **kwargs):
+    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         controls_dict = {
             'different_throttle': {
                 'units': 'unitless',
@@ -121,7 +121,7 @@ class SimpleTestEngine(EngineModel):
         }
         return controls_dict
 
-    def get_pre_mission_bus_variables(self, aviary_inputs):
+    def get_pre_mission_bus_variables(self, aviary_inputs, mission_info=None):
         bus_dict = {
             'y': {
                 'mission_name': 'y',
@@ -130,7 +130,7 @@ class SimpleTestEngine(EngineModel):
         }
         return bus_dict
 
-    def get_initial_guesses(self):
+    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         initial_guesses_dict = {
             'different_throttle': {
                 'val': 0.05,
@@ -180,7 +180,7 @@ class CustomEngineTest(unittest.TestCase):
         # Load aircraft and options data from user
         # Allow for user overrides here
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             phase_info,
         )
 
@@ -202,7 +202,7 @@ class CustomEngineTest(unittest.TestCase):
 
         # check that the different throttle initial guess has been set correctly
         initial_guesses = prob.get_val('traj.cruise.controls:different_throttle')[0]
-        assert_near_equal(float(initial_guesses), 0.05)
+        assert_near_equal(initial_guesses, 0.05)
 
         # and run mission
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=False)

@@ -12,17 +12,17 @@ from aviary.variable_info.enums import LegacyCode
 class TestFortranToAviary(unittest.TestCase):
     """Test fortran_to_aviary legacy code input file conversion utility by comparing against already converted input files."""
 
-    def prepare_and_run(self, filepath, out_file=None, legacy_code=LegacyCode.GASP):
+    def prepare_and_run(self, filepath, output_file=None, legacy_code=LegacyCode.GASP):
         # Specify the output file
         filename = filepath.split('.')[0] + '.csv'
-        if not out_file:
-            out_file = Path.cwd() / Path('TEST_' + filename)
+        if not output_file:
+            output_file = Path.cwd() / Path('TEST_' + filename)
         else:
-            out_file = Path(out_file)
+            output_file = Path(output_file)
         legacy_code = legacy_code
 
         # Execute the conversion
-        fortran_to_aviary(filepath, legacy_code, out_file, force=True, verbosity=0)
+        fortran_to_aviary(filepath, legacy_code, output_file, force=True, verbosity=0)
 
     def compare_files(self, filepath, skip_list=['# created ']):
         """
@@ -58,60 +58,60 @@ class TestFortranToAviary(unittest.TestCase):
                     raise Exception(exc_string)
 
     def test_large_single_aisle(self):
-        filepath = 'models/aircraft/large_single_aisle_1/large_single_aisle_1_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/large_single_aisle_1_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_large_single_aisle_1_GASP.csv'
 
         self.prepare_and_run(
             filepath,
-            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
         )
         self.compare_files(comparison_filepath)
 
     def test_small_single_aisle(self):
-        filepath = 'models/aircraft/small_single_aisle/small_single_aisle_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/small_single_aisle_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_small_single_aisle_GASP.csv'
 
         self.prepare_and_run(
             filepath,
-            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
         )
         self.compare_files(comparison_filepath)
 
     def test_diff_configuration(self):
-        filepath = 'utils/test/data/configuration_test_data_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/configuration_test_data_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_configuration_GASP.csv'
 
-        self.prepare_and_run(filepath, out_file=Path.cwd() / Path('TEST_' + comparison_filepath))
+        self.prepare_and_run(filepath, output_file=Path.cwd() / Path('TEST_' + comparison_filepath))
         self.compare_files(comparison_filepath)
 
     def test_bwb_gasp(self):
-        filepath = 'models/aircraft/blended_wing_body/generic_BWB_GASP.dat'
+        filepath = 'validation_cases/validation_data/legacy_files/generic_BWB_GASP.dat'
         comparison_filepath = 'utils/test/data/converter_test_BWB_GASP.csv'
 
         self.prepare_and_run(
             filepath,
-            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
         )
         self.compare_files(comparison_filepath)
 
     def test_bwb_detailed_flops(self):
-        filepath = 'models/aircraft/blended_wing_body/bwb_detailed_FLOPS.in'
+        filepath = 'validation_cases/validation_data/legacy_files/bwb_detailed_FLOPS.in'
         comparison_filepath = 'utils/test/data/converter_test_BWB_detailed_FLOPS.csv'
 
         self.prepare_and_run(
             filepath,
-            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             legacy_code=LegacyCode.FLOPS,
         )
         self.compare_files(comparison_filepath)
 
     def test_bwb_simple_flops(self):
-        filepath = 'models/aircraft/blended_wing_body/bwb_simple_FLOPS.in'
+        filepath = 'validation_cases/validation_data/legacy_files/bwb_simple_FLOPS.in'
         comparison_filepath = 'utils/test/data/converter_test_BWB_simple_FLOPS.csv'
 
         self.prepare_and_run(
             filepath,
-            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             legacy_code=LegacyCode.FLOPS,
         )
         self.compare_files(comparison_filepath)
@@ -121,11 +121,13 @@ class TestFortranToAviary(unittest.TestCase):
         # using the fortran-to-Aviary converter and was not evaluated for comparison to the original.
         # Thus, until this file is evaluated, this test is purely a regression test.
 
-        filepath = 'models/aircraft/advanced_single_aisle/N3CC_generic_low_speed_polars_FLOPS.txt'
+        filepath = (
+            'validation_cases/validation_data/legacy_files/N3CC_generic_low_speed_polars_FLOPS.txt'
+        )
         comparison_filepath = 'utils/test/data/converter_test_advanced_single_aisle_FLOPS.csv'
         self.prepare_and_run(
             filepath,
-            out_file=Path.cwd() / Path('TEST_' + comparison_filepath),
+            output_file=Path.cwd() / Path('TEST_' + comparison_filepath),
             legacy_code=LegacyCode.FLOPS,
         )
         self.compare_files(comparison_filepath)
@@ -133,3 +135,5 @@ class TestFortranToAviary(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # test = TestFortranToAviary()
+    # test.test_advanced_single_aisle()

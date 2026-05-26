@@ -15,7 +15,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Test the setup and run of a large single aisle commercial transport aircraft using
     FLOPS mass method, GASP aero method, and TWO_DEGREES_OF_FREEDOM mission method.
-    Expected outputs based on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    Expected outputs based on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -25,9 +25,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_3_FwGm_IPOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwGm.csv',
             local_phase_info,
-            max_iter=100,
+            max_iter=50,
             verbosity=0,
             optimizer='IPOPT',
         )
@@ -39,9 +39,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            Mission.Design.GROSS_MASS: 177536.28,
-            Mission.Summary.OPERATING_MASS: 101262.9,
-            Mission.Summary.TOTAL_FUEL_MASS: 38417.3,
+            Aircraft.Design.GROSS_MASS: 177536.28,
+            Mission.OPERATING_MASS: 101262.9,
+            Mission.TOTAL_FUEL: 38417.3,
             Mission.Landing.GROUND_DISTANCE: 2613.4,
             'traj.desc2.timeseries.distance': 3675.0,
         }
@@ -57,7 +57,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     def bench_test_swap_3_FwGm_SNOPT(self):
         local_phase_info = deepcopy(phase_info)
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwGm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwGm.csv',
             local_phase_info,
             verbosity=1,
             optimizer='SNOPT',
@@ -70,9 +70,9 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
         # There are no truth values for these.
         expected_values = {
-            Mission.Design.GROSS_MASS: 177536.28,
-            Mission.Summary.OPERATING_MASS: 101262.9,
-            Mission.Summary.TOTAL_FUEL_MASS: 38417.3,
+            Aircraft.Design.GROSS_MASS: 177536.28,
+            Mission.OPERATING_MASS: 101262.9,
+            Mission.TOTAL_FUEL: 38417.3,
             Mission.Landing.GROUND_DISTANCE: 2613.4,
             'traj.desc2.timeseries.distance': 3675.0,
         }
@@ -83,6 +83,8 @@ class ProblemPhaseTestCase(unittest.TestCase):
                     assert_near_equal(prob.get_val(var_name)[-1], expected_val, tolerance=rtol)
                 else:
                     assert_near_equal(prob.get_val(var_name), expected_val, tolerance=rtol)
+
+        self.assertTrue(prob.result.success)
 
 
 if __name__ == '__main__':

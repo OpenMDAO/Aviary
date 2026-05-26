@@ -20,7 +20,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
     """
     Setup of a large single aisle commercial transport aircraft using
     FLOPS mass and aero method and ENERGY_STATE mission method. Expected outputs based
-    on 'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv' model.
+    on 'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv' model.
     """
 
     def setUp(self):
@@ -199,7 +199,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='IPOPT')
     def test_bench_FwFm_IPOPT(self):
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
@@ -212,7 +212,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
     @require_pyoptsparse(optimizer='SNOPT')
     def test_bench_FwFm_SNOPT(self):
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=1,
             max_iter=50,
@@ -223,7 +223,7 @@ class TestBenchFwFmSerial(ProblemPhaseTestCase):
         compare_against_expected_values(prob, self.expected_dict)
 
         # This is one of the few places we test energy-state + simple takeoff.
-        overall_fuel = prob.get_val(Mission.Summary.TOTAL_FUEL_MASS)
+        overall_fuel = prob.get_val(Mission.TOTAL_FUEL)
 
         # Making sure we include the fuel mass consumed in take-off and taxi.
         self.assertGreater(overall_fuel, 40000.0)
@@ -235,14 +235,14 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
     N_PROCS = 3
 
-    @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_FwFm_SNOPT_MPI(self):
+    @require_pyoptsparse(optimizer='IPOPT')
+    def test_bench_FwFm_IPOPT_MPI(self):
         prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
-            optimizer='SNOPT',
+            optimizer='IPOPT',
         )
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)

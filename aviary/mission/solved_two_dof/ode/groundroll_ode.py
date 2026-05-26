@@ -27,6 +27,7 @@ class GroundrollODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
+        user_options = self.options['user_options']
 
         # TODO: paramport
         self.add_subsystem('params', ParamPort(), promotes=['*'])
@@ -48,22 +49,36 @@ class GroundrollODE(TwoDOFODE):
         )
 
         kwargs = {
-            'num_nodes': nn,
-            'aviary_inputs': aviary_options,
             'method': 'low_speed',
         }
         for subsystem in subsystems:
             # check if subsystem_options has entry for a subsystem of this name
             if subsystem.name in subsystem_options:
                 kwargs.update(subsystem_options[subsystem.name])
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
                 self.add_subsystem(
                     subsystem.name,
                     system,
-                    promotes_inputs=subsystem.mission_inputs(**kwargs),
-                    promotes_outputs=subsystem.mission_outputs(**kwargs),
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
                 )
+
             if isinstance(subsystem, AerodynamicsBuilder):
                 self.promotes(
                     subsystem.name,

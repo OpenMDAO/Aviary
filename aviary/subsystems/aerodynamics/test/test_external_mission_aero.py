@@ -34,7 +34,9 @@ class TestExternalAero(av.TestSubsystemBuilder):
         prob = av.AviaryProblem()
 
         # Load aircraft and options data from user
-        prob.load_inputs('models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv', phase_info)
+        prob.load_inputs(
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv', phase_info
+        )
         prob.load_external_subsystems([SimpleAeroBuilder()])
         prob.check_and_preprocess_inputs()
 

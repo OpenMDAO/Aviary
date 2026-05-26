@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
@@ -52,12 +52,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
           path: actions
-          
+
       - name: Get Updated Assignees
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
@@ -83,12 +83,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
           path: actions
-          
+
       - name: Get Reviewers
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
@@ -114,12 +114,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             .github/actions
           path: actions
-          
+
       - name: Get PR Data
         run: |
           echo "number=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
@@ -139,4 +139,4 @@ jobs:
               "action": "${{ env.action }}"
             }
 
-          
+

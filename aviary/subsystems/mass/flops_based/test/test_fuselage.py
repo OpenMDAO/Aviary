@@ -189,7 +189,7 @@ class BWBFuselageMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Fuselage.CABIN_AREA,
             ],
             output_keys=Aircraft.Fuselage.MASS,
@@ -228,7 +228,7 @@ class BWBAftBodyMassTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[
-                Mission.Design.GROSS_MASS,
+                Aircraft.Design.GROSS_MASS,
                 Aircraft.Fuselage.PLANFORM_AREA,
                 Aircraft.Fuselage.CABIN_AREA,
                 Aircraft.Fuselage.LENGTH,

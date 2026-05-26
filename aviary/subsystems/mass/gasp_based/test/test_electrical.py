@@ -2,14 +2,15 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.electrical import ElectricalMass
-
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class ElectricalTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
@@ -29,7 +30,7 @@ class ElectricalTestCase1(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -69,7 +70,7 @@ class ElectricalTestCase2(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=16.0, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -91,6 +92,7 @@ class ElectricalTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ElectricalTestCase3(unittest.TestCase):
     """BWB Parameters"""
 
@@ -110,7 +112,7 @@ class ElectricalTestCase3(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, val=11.45, units='lbm'
         )  # generic_BWB_GASP.csv
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000.0, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=150000.0, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)

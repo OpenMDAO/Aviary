@@ -45,10 +45,10 @@ class CoreMassBuilder(MassBuilder):
 
         super().__init__(name=name, meta_data=meta_data)
 
-    def build_pre_mission(self, aviary_inputs, **kwargs):
+    def build_pre_mission(self, aviary_inputs, subsystem_options=None):
         code_origin = self.code_origin
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         mass_group = None
@@ -62,16 +62,18 @@ class CoreMassBuilder(MassBuilder):
 
         return mass_group
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         # by default there is no mass mission, but call super for safety/future-proofing
         try:
-            method = kwargs['method']
+            method = subsystem_options['method']
         except KeyError:
             method = None
         mass_group = None
 
         if method != 'external':
-            mass_group = super().build_mission(num_nodes, aviary_inputs)
+            mass_group = super().build_mission(
+                num_nodes, aviary_inputs, user_options, subsystem_options
+            )
 
         return mass_group
 
@@ -106,7 +108,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'# Mass estimation: {method}')
 
             f.write('||||\n')
-            f.write(f'|####**AIRCRAFT DESIGN DETAILS:**####|||\n')
+            f.write('|####**AIRCRAFT DESIGN DETAILS:**####|||\n')
             f.write('||||\n')
 
             f.write('\n| Name | Value | Units |\n')
@@ -152,6 +154,7 @@ class CoreMassBuilder(MassBuilder):
             )
             if val != 0.0 or val != 'Not Found in Model':
                 f.write(f'|{tab}Main Gear|{val}|{units}|\n')
+
             val, units = find_variable_in_problem(
                 Aircraft.LandingGear.NOSE_GEAR_MASS, prob, self.meta_data
             )
@@ -164,6 +167,12 @@ class CoreMassBuilder(MassBuilder):
                 val = [val]
             f.write(f'|Nacelles|{np.dot(val, num_engines)}|{units}|\n')
             f.write('||||\n')
+
+            val, units = find_variable_in_problem(
+                Aircraft.Design.STRUCTURAL_MASS_INCREMENT, prob, self.meta_data
+            )
+            if val != 0.0 or val != 'Not Found in Model':
+                f.write(f'|{tab}Additional Structural Mass|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.Design.STRUCTURE_MASS, prob, self.meta_data
@@ -239,6 +248,9 @@ class CoreMassBuilder(MassBuilder):
 
             val, units = find_variable_in_problem(Aircraft.AntiIcing.MASS, prob, self.meta_data)
             f.write(f'|{tab}Anti-Icing|{val}|{units}|\n')
+
+            val, units = find_variable_in_problem(Aircraft.OxygenSystem.MASS, prob, self.meta_data)
+            f.write(f'|{tab}Oxygen System|{val}|{units}|\n')
             f.write('||||\n')
 
             val, units = find_variable_in_problem(
@@ -262,7 +274,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|####**MISSION SPECIFIC DETAILS:**####|||\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.Summary.USEFUL_LOAD, prob, self.meta_data)
+            val, units = find_variable_in_problem(Mission.USEFUL_LOAD, prob, self.meta_data)
             f.write(f'|Useful Load|{val}|{units}|\n')
 
             val1, units = find_variable_in_problem(
@@ -294,9 +306,7 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Oil|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.OPERATING_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.OPERATING_MASS, prob, self.meta_data)
             f.write(f'|**Operating Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
@@ -316,11 +326,9 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|{tab}Cargo|{val}|{units}|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(
-                Mission.Summary.ZERO_FUEL_MASS, prob, self.meta_data
-            )
+            val, units = find_variable_in_problem(Mission.ZERO_FUEL_MASS, prob, self.meta_data)
             f.write(f'|**Zero Fuel Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
-            val, units = find_variable_in_problem(Mission.Summary.GROSS_MASS, prob, self.meta_data)
+            val, units = find_variable_in_problem(Mission.GROSS_MASS, prob, self.meta_data)
             f.write(f'|**Gross Mass**|**{val}**|**{units}**|\n')

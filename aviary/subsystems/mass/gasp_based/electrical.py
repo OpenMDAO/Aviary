@@ -16,7 +16,7 @@ class ElectricalMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Propulsion.TOTAL_NUM_ENGINES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, units='lbm')
 
         add_aviary_output(self, Aircraft.Electrical.MASS, units='lbm')
@@ -27,7 +27,7 @@ class ElectricalMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         num_engines = self.options[Aircraft.Propulsion.TOTAL_NUM_ENGINES]
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         elec_mass_coeff = inputs[Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER] * GRAV_ENGLISH_LBM
 
         if PAX <= 12:
@@ -59,6 +59,6 @@ class ElectricalMass(om.ExplicitComponent):
             delectrical_wt_delec_mass_coeff
         ) / GRAV_ENGLISH_LBM
 
-        J[Aircraft.Electrical.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Electrical.MASS, Aircraft.Design.GROSS_MASS] = (
             delectrical_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
         )

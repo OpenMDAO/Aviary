@@ -18,7 +18,7 @@ class AvionicsMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Avionics.MASS, units='lbm')
 
@@ -29,7 +29,7 @@ class AvionicsMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
         avionics_wt = 27.0
 
@@ -46,13 +46,13 @@ class AvionicsMass(om.ExplicitComponent):
                 # Should we use use 4 sigmoid functions (one for each transition zone) instead?
                 avionics_wt = 35.538 * np.exp(0.0002 * gross_wt_initial)
             else:
-                if gross_wt_initial >= 3000.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 3000.0:
                     avionics_wt = 65.0
-                if gross_wt_initial >= 5500.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 5500.0:
                     avionics_wt = 113.0
-                if gross_wt_initial >= 7500.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 7500.0:
                     avionics_wt = 163.0
-                if gross_wt_initial >= 11000.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial >= 11000.0:
                     avionics_wt = 340.0
         if PAX >= 20 and PAX < 30:
             avionics_wt = 400.0
@@ -69,7 +69,7 @@ class AvionicsMass(om.ExplicitComponent):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
 
-        gross_wt_initial = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
         if PAX < 20:
             if smooth:
@@ -79,6 +79,6 @@ class AvionicsMass(om.ExplicitComponent):
         else:
             davionics_wt_dgross_wt_initial = 0.0
 
-        J[Aircraft.Avionics.MASS, Mission.Design.GROSS_MASS] = (
+        J[Aircraft.Avionics.MASS, Aircraft.Design.GROSS_MASS] = (
             davionics_wt_dgross_wt_initial / GRAV_ENGLISH_LBM
         )

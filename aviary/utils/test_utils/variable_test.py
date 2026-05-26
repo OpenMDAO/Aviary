@@ -3,7 +3,7 @@ import os
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 
 base_path = os.path.abspath(os.path.join(__file__, '..', '..', '..'))
 
@@ -168,7 +168,7 @@ def assert_match_varnames(system, MetaData=None, exclude_inputs=None, exclude_ou
     sys_outputs = prob.model.list_outputs(out_stream=None, prom_name=True)
     sys_outputs = set([val[1]['prom_name'] for val in sys_outputs])
 
-    proper_var_names = set([key for key in (_MetaData if MetaData is None else MetaData)])
+    proper_var_names = set([key for key in (CoreMetaData if MetaData is None else MetaData)])
 
     input_overlap = sys_inputs.intersection(proper_var_names)
     output_overlap = sys_outputs.intersection(proper_var_names)

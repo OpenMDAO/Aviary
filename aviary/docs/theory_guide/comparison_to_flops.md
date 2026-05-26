@@ -190,11 +190,12 @@ performance calculation with additional trajectory segments.
 
 ### Off-design missions
 
-Off-design, or economic, missions (defined in FLOPS using the $RERUN namelist)
-are possible by manually setting up additional mission segments and linking the
-starting conditions to the results of the design mission analysis. This process
-will become more automated in the future, including the ability to assemble
-payload-range diagrams.
+Off-design missions (defined in FLOPS using the $RERUN namelist) are possible 
+utilizing Aviary's off-design analysis capability using the Settings.PROBLEM_TYPE
+variable. There is no automatic functionality for translating these $RERUN 
+namelists so the user must do this manually. Payload-range diagrams can be 
+automatically generated using the Settings.PAYLOAD_RANGE variable for
+ENERGY_STATE equations of motion.
 
 ### Optimization and parametric variation
 

@@ -10,7 +10,7 @@ class LandingCalc(om.ExplicitComponent):
     """Calculate the distance covered over the ground and approach velocity during landing."""
 
     def setup(self):
-        add_aviary_input(self, Mission.Landing.TOUCHDOWN_MASS, val=150_000)
+        add_aviary_input(self, Mission.FINAL_MASS, val=150_000)
 
         add_aviary_input(
             self,
@@ -33,14 +33,14 @@ class LandingCalc(om.ExplicitComponent):
             [
                 Mission.Landing.LIFT_COEFFICIENT_MAX,
                 Aircraft.Wing.AREA,
-                Mission.Landing.TOUCHDOWN_MASS,
+                Mission.FINAL_MASS,
             ],
         )
         self.declare_partials(Mission.Landing.GROUND_DISTANCE, '*')
 
     def compute(self, inputs, outputs):
         rho_SL = RHO_SEA_LEVEL_METRIC
-        landing_weight = inputs[Mission.Landing.TOUCHDOWN_MASS] * GRAV_ENGLISH_LBM
+        landing_weight = inputs[Mission.FINAL_MASS] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
@@ -59,7 +59,7 @@ class LandingCalc(om.ExplicitComponent):
 
     def compute_partials(self, inputs, J):
         rho_SL = RHO_SEA_LEVEL_METRIC
-        landing_weight = inputs[Mission.Landing.TOUCHDOWN_MASS] * GRAV_ENGLISH_LBM
+        landing_weight = inputs[Mission.FINAL_MASS] * GRAV_ENGLISH_LBM
         rho = inputs[Dynamic.Atmosphere.DENSITY]
         planform_area = inputs[Aircraft.Wing.AREA]
         Cl_ldg_max = inputs[Mission.Landing.LIFT_COEFFICIENT_MAX]
@@ -83,7 +83,7 @@ class LandingCalc(om.ExplicitComponent):
             * (-landing_weight)
             / (planform_area**2 * Cl_app)
         )
-        J[Mission.Landing.INITIAL_VELOCITY, Mission.Landing.TOUCHDOWN_MASS] = (
+        J[Mission.Landing.INITIAL_VELOCITY, Mission.FINAL_MASS] = (
             17.18644
             * 0.5
             * (landing_weight / (planform_area * Cl_app)) ** (-0.5)
@@ -91,7 +91,7 @@ class LandingCalc(om.ExplicitComponent):
             / (planform_area * Cl_app)
         )
 
-        J[Mission.Landing.GROUND_DISTANCE, Mission.Landing.TOUCHDOWN_MASS] = (
+        J[Mission.Landing.GROUND_DISTANCE, Mission.FINAL_MASS] = (
             105 * GRAV_ENGLISH_LBM / (planform_area * rho_ratio * Cl_app * 1.69)
         )
         J[Mission.Landing.GROUND_DISTANCE, Aircraft.Wing.AREA] = (
@@ -125,7 +125,7 @@ class LandingGroup(om.Group):
             'calcs',
             LandingCalc(),
             promotes_inputs=[
-                Mission.Landing.TOUCHDOWN_MASS,
+                Mission.FINAL_MASS,
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
                 Mission.Landing.LIFT_COEFFICIENT_MAX,

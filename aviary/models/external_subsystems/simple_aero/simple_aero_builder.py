@@ -10,7 +10,7 @@ class SimpleAeroBuilder(SubsystemBuilder):
 
     _default_name = 'simple_aero'
 
-    def build_mission(self, num_nodes, aviary_inputs, **kwargs):
+    def build_mission(self, num_nodes, aviary_inputs, user_options, subsystem_options):
         """
         Build an OpenMDAO system for the mission computations of the subsystem.
 
@@ -26,7 +26,7 @@ class SimpleAeroBuilder(SubsystemBuilder):
         )
         return aero_group
 
-    def mission_inputs(self, **kwargs):
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         promotes = [
             Dynamic.Atmosphere.STATIC_PRESSURE,
             Dynamic.Atmosphere.MACH,
@@ -35,44 +35,44 @@ class SimpleAeroBuilder(SubsystemBuilder):
         ]
         return promotes
 
-    def mission_outputs(self, **kwargs):
+    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         promotes = [
             Dynamic.Vehicle.DRAG,
             Dynamic.Vehicle.LIFT,
         ]
         return promotes
 
-    def get_parameters(self, aviary_inputs=None, phase_info=None):
+    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a dictionary of fixed values for the subsystem.
+        Return a dictionary of parameters for the subsystem. (Optional)
 
-        Optional, used if subsystems have fixed values.
-
-        Used in the phase builders when other parameters are added to the phase.
-
-        This is distinct from `get_design_vars` in a nuanced way. Design variables are variables
-        that are optimized by the problem that are not at the phase level. An example would be
-        something that occurs in the pre-mission level of the problem. Parameters are fixed values
-        that are held constant throughout a phase, but if `opt=True`, they are able to change during
-        the optimization.
+        A parameter is a value that does not vary over the trajectory. Adding a variable name to
+        this list promotes the input to the top of the Aviary model, where it is either implicitly
+        connected to any pre-mission component that produces it, or it assumes the value set in
+        the csv file. Parameters can be constant or they can be computed in premission. They can
+        also be declared as design variables set by the optimizer if you pass `opt=True` in the
+        parameter's dictionary.
 
         Parameters
         ----------
-        phase_info : dict
-            The phase_info subdict for this phase.
+        aviary_inputs : dict
+            Dictionary containing the aircraft definition.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
-        fixed_values : dict
-            A dictionary where the keys are the names of the fixed variables
-            and the values are dictionaries with the following keys:
+        dict
+            A dictionary where the keys are the names of the fixed parameters and the values are
+            dictionaries with the following keys:
 
             - 'value': float or array
                 The fixed value for the variable.
             - 'units': str
                 The units for the fixed value (optional).
-            - any additional keyword arguments required by OpenMDAO for the fixed
-              variable.
+            - any additional keyword arguments required by OpenMDAO for the fixed variable.
         """
         params = {}
         params[Aircraft.Wing.AREA] = {
@@ -82,7 +82,7 @@ class SimpleAeroBuilder(SubsystemBuilder):
         }
         return params
 
-    def needs_mission_solver(self, aviary_inputs):
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is

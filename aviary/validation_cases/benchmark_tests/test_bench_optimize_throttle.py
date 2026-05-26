@@ -112,7 +112,7 @@ class OptimizeThrottleTestCase(unittest.TestCase):
         prob = AviaryProblem()
 
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             phase_info,
             verbosity=0,
         )
@@ -138,8 +138,8 @@ class OptimizeThrottleTestCase(unittest.TestCase):
 
         self.assertTrue(prob.result.success)
 
-        gross_mass = prob.get_val(Mission.Summary.GROSS_MASS, units='lbm')
-        assert_near_equal(gross_mass, 160506.0, tolerance=1e-3)
+        gross_mass = prob.get_val(Mission.GROSS_MASS, units='lbm')
+        assert_near_equal(gross_mass, 161090.7, tolerance=1e-3)
 
         cruise_throttle = prob.get_val('traj.cruise.timeseries.throttle')
         assert_near_equal(cruise_throttle[-1], 0.6925, tolerance=1e-2)

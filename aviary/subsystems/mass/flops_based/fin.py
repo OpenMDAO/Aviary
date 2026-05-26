@@ -15,7 +15,7 @@ class FinMass(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fins.NUM_FINS)
 
     def setup(self):
-        add_aviary_input(self, Mission.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fins.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fins.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Fins.MASS_SCALER, units='unitless')
@@ -28,7 +28,7 @@ class FinMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         num_fins = self.options[Aircraft.Fins.NUM_FINS]
         if num_fins > 0:
-            togw = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+            togw = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
             area = inputs[Aircraft.Fins.AREA]
             taper_ratio = inputs[Aircraft.Fins.TAPER_RATIO]
 
@@ -43,7 +43,7 @@ class FinMass(om.ExplicitComponent):
             area = inputs[Aircraft.Fins.AREA]
             taper_ratio = inputs[Aircraft.Fins.TAPER_RATIO]
             scaler = inputs[Aircraft.Fins.MASS_SCALER]
-            gross_weight = inputs[Mission.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+            gross_weight = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
 
             area_exp = area**0.85
             gross_weight_exp = gross_weight**0.3
@@ -62,6 +62,6 @@ class FinMass(om.ExplicitComponent):
                 * gross_weight_exp
                 / GRAV_ENGLISH_LBM
             )
-            J[Aircraft.Fins.MASS, Mission.Design.GROSS_MASS] = (
+            J[Aircraft.Fins.MASS, Aircraft.Design.GROSS_MASS] = (
                 0.096 * area_exp * num_fins * scaler * (taper_ratio + 0.5)
             ) / gross_weight**0.7

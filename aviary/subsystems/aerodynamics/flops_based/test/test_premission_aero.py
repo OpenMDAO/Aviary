@@ -1,0 +1,165 @@
+import unittest
+
+import openmdao.api as om
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
+
+from aviary.subsystems.aerodynamics.flops_based.premission_aero import Design, TakeoffLoverD
+from aviary.variable_info.variables import Aircraft, Mission
+
+
+@use_tempdirs
+class DesignMCLTest(unittest.TestCase):
+    def test_derivs_supersonic1(self):
+        # Case: THICKNESS_TO_CHORD < 0.065 and MAX_MACH > 1
+
+        prob = om.Problem()
+        model = prob.model
+
+        options = {}
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 1.2
+
+        model.add_subsystem(
+            'design',
+            Design(**options),
+            promotes_inputs=['*'],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
+        )
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
+        prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
+        prob.set_val(Aircraft.Wing.SWEEP, val=2.0191)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.04000001)
+
+        prob.run_model()
+
+        derivs = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+
+        assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.753238], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.909926], 1e-6)
+
+    def test_derivs_subsonic1(self):
+        # Case: THICKNESS_TO_CHORD > 0.065 and MAX_MACH < 1
+
+        prob = om.Problem()
+        model = prob.model
+
+        options = {}
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 0.9
+
+        model.add_subsystem(
+            'design',
+            Design(**options),
+            promotes_inputs=['*'],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
+        )
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
+        prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
+        prob.set_val(Aircraft.Wing.SWEEP, val=2.191)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.12)
+
+        prob.run_model()
+
+        derivs = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+
+        assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.671145], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
+
+    def test_derivs_supersonic2(self):
+        # Case: THICKNESS_TO_CHORD > 0.065 and MAX_MACH > 1
+
+        prob = om.Problem()
+        model = prob.model
+
+        options = {}
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 1.2
+
+        model.add_subsystem(
+            'design',
+            Design(**options),
+            promotes_inputs=['*'],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
+        )
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
+        prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
+        prob.set_val(Aircraft.Wing.SWEEP, val=2.191)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.12)
+
+        prob.run_model()
+
+        derivs = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+
+        assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.671145], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.683002], 1e-6)
+
+    def test_derivs_subsonic2(self):
+        # Case: THICKNESS_TO_CHORD <= 0.065 and MAX_MACH < 1
+
+        prob = om.Problem()
+        model = prob.model
+
+        options = {}
+        options[Aircraft.Wing.AIRFOIL_TECHNOLOGY] = 1.0
+        options[Mission.Constraints.MAX_MACH] = 0.9
+
+        model.add_subsystem(
+            'design',
+            Design(**options),
+            promotes_inputs=['*'],
+            promotes_outputs=[Aircraft.Design.MACH, Aircraft.Design.LIFT_COEFFICIENT],
+        )
+        prob.setup(force_alloc_complex=True)
+
+        prob.set_val(Aircraft.Wing.ASPECT_RATIO, val=11.05)
+        prob.set_val(Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN, val=1.0)
+        prob.set_val(Aircraft.Wing.SWEEP, val=2.191)
+        prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.03)
+
+        prob.run_model()
+
+        derivs = prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
+
+        assert_near_equal(prob.get_val(Aircraft.Design.MACH), [0.740390], 1e-6)
+        assert_near_equal(prob.get_val(Aircraft.Design.LIFT_COEFFICIENT), [0.753], 1e-6)
+
+
+class LoverDTest(unittest.TestCase):
+    "Test L_over_D computation in TakeoffLoverD class"
+
+    def setUp(self):
+        self.prob = om.Problem()
+
+        self.prob.model.add_subsystem('comp', TakeoffLoverD(), promotes=['*'])
+
+        self.prob.model.set_input_defaults(Aircraft.Wing.ASPECT_RATIO, val=9, units='unitless')
+        self.prob.model.set_input_defaults(
+            Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2, units='unitless'
+        )
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+    def test_case1(self):
+        self.prob.run_model()
+
+        tol = 1e-5
+
+        assert_near_equal(self.prob[Mission.Takeoff.LIFT_OVER_DRAG], 11.214129201, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+if __name__ == '__main__':
+    unittest.main()

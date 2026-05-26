@@ -2,14 +2,15 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.mass.gasp_based.furnishings import FurnishingMass, BWBFurnishingMass
-
+from aviary.subsystems.mass.gasp_based.furnishings import BWBFurnishingMass, FurnishingMass
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class FurnishingMassTestCase1(unittest.TestCase):
     """Created based on EquipMassTestCase1"""
 
@@ -26,7 +27,7 @@ class FurnishingMassTestCase1(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft'
@@ -52,7 +53,7 @@ class FurnishingMassTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 13266.56, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
 class FurnishingMassTestCase2(unittest.TestCase):
@@ -85,7 +86,7 @@ class FurnishingMassTestCase2(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
@@ -100,9 +101,10 @@ class FurnishingMassTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class FurnishingMassTestCase3(unittest.TestCase):
     """
     Created based on GASP BWB model where SWF is DHYDRAL
@@ -124,7 +126,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
         self.prob.model.set_input_defaults(
             Aircraft.Fuselage.AVG_DIAMETER, val=19.365, units='ft'
@@ -153,7 +155,7 @@ class FurnishingMassTestCase3(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 3348.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_case2(self):
         """
@@ -169,12 +171,14 @@ class FurnishingMassTestCase3(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 3348.0, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBFurnishingMassTestCase1(unittest.TestCase):
     """
     Created based on GASP BWB model
+    GROSS_MASS > 10000.0
     """
 
     def setUp(self):
@@ -192,7 +196,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
         )
 
         prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, 150000, units='lbm'
+            Aircraft.Design.GROSS_MASS, 150000, units='lbm'
         )  # generic_BWB_GASP.csv
         prob.model.set_input_defaults(
             Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
@@ -222,7 +226,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.863, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
     def test_case2(self):
         # case 2A
@@ -240,7 +244,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 18839.863, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         # case 2B
         self.options.set_val(
@@ -257,7 +261,7 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
         # assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 11269.863, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
         # case 2C
         self.options.set_val(
@@ -274,9 +278,10 @@ class BWBFurnishingMassTestCase1(unittest.TestCase):
         assert_near_equal(self.prob[Aircraft.Furnishings.MASS], 18839.863, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBFurnishingMassTestCase2(unittest.TestCase):
     """
     Created based on GASP BWB model
@@ -294,7 +299,7 @@ class BWBFurnishingMassTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 9999.0, units='lbm')  # arbitrary
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 9999.0, units='lbm')  # arbitrary
         prob.model.set_input_defaults(
             Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
         )  # arbitrary

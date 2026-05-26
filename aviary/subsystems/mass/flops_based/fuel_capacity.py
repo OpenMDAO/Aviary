@@ -1,8 +1,9 @@
 import openmdao.api as om
+from openmdao.utils.units import convert_units
 
+from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
-from openmdao.utils.units import convert_units
 
 
 class FuelCapacityGroup(om.Group):
@@ -117,7 +118,7 @@ class WingFuelCapacity(om.ExplicitComponent):
     """Compute the maximum fuel that can be carried in the wing's enclosed space."""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
+        add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_AREA, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, units='unitless')
@@ -149,7 +150,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
 
         else:
-            fuel_density = convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
+            fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
             volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -164,7 +165,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
             fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
 
-        outputs[Aircraft.Fuel.WING_FUEL_CAPACITY] = fuel_cap_wing
+        outputs[Aircraft.Fuel.WING_FUEL_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
         wing_ref_cap_terma = inputs[Aircraft.Fuel.WING_REF_CAPACITY_TERM_A]
@@ -193,7 +194,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
 
         else:
-            fuel_density = convert_units(inputs[Aircraft.Fuel.DENSITY], 'lbm/galUS', 'lbm/ft**3')
+            fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
             volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
             span = inputs[Aircraft.Wing.SPAN]
             taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
@@ -203,10 +204,9 @@ class WingFuelCapacity(om.ExplicitComponent):
             tr_fact = 1.0 - taper_ratio / den**2
             dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
 
-            conversion_factor = convert_units(1.0, 'lbm/galUS', 'lbm/ft**3')
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.DENSITY] = (
                 volume_fraction * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
-            ) * conversion_factor
+            )
 
             partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_FUEL_FRACTION] = (
                 fuel_density * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span

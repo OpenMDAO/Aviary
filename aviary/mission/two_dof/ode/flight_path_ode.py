@@ -5,7 +5,6 @@ from aviary.mission.two_dof.ode.flight_path_eom import FlightPathEOM
 from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
-from aviary.subsystems.propulsion.propulsion_builder import PropulsionBuilder
 from aviary.variable_info.enums import AlphaModes, SpeedType
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -45,10 +44,11 @@ class FlightPathODE(TwoDOFODE):
         aviary_options = self.options['aviary_options']
         alpha_mode = self.options['alpha_mode']
         input_speed_type = self.options['input_speed_type']
+        user_options = self.options['user_options']
 
         print_level = 0
 
-        kwargs = {'num_nodes': nn, 'aviary_inputs': aviary_options, 'method': 'low_speed'}
+        kwargs = {'method': 'low_speed'}
         if self.options['clean']:
             kwargs['method'] = 'cruise'
             kwargs['output_alpha'] = False
@@ -114,22 +114,29 @@ class FlightPathODE(TwoDOFODE):
             )
 
         for subsystem in subsystems:
-            system = subsystem.build_mission(**kwargs)
+            system = subsystem.build_mission(
+                num_nodes=nn,
+                aviary_inputs=aviary_options,
+                user_options=user_options,
+                subsystem_options=kwargs,
+            )
             if system is not None:
-                if isinstance(subsystem, PropulsionBuilder):
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
-                else:
-                    self.add_subsystem(
-                        subsystem.name,
-                        system,
-                        promotes_inputs=subsystem.mission_inputs(**kwargs),
-                        promotes_outputs=subsystem.mission_outputs(**kwargs),
-                    )
+                mission_in = subsystem.mission_inputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                mission_out = subsystem.mission_outputs(
+                    aviary_inputs=aviary_options,
+                    user_options=user_options,
+                    subsystem_options=kwargs,
+                )
+                self.add_subsystem(
+                    subsystem.name,
+                    system,
+                    promotes_inputs=mission_in,
+                    promotes_outputs=mission_out,
+                )
 
         self.add_subsystem(
             'flight_path_eom',

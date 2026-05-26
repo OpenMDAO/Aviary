@@ -47,7 +47,7 @@ from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import LegacyCode
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variable_meta_data import _MetaData as BaseMetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Dynamic, Mission
 
 
@@ -1474,11 +1474,13 @@ class LandingTrajectory:
             # We need to create parameters for just the inputs we have.
             # They mostly come from the low-speed aero subsystem.
 
-            aero = CoreAerodynamicsBuilder('aerodynamics', BaseMetaData, LegacyCode('FLOPS'))
+            aero = CoreAerodynamicsBuilder('aerodynamics', CoreMetaData, LegacyCode('FLOPS'))
 
-            args = {'method': 'low_speed'}
+            subsystem_options = {'method': 'low_speed'}
 
-            params = aero.get_parameters(aviary_options, **args)
+            params = aero.get_parameters(
+                aviary_inputs=aviary_options, subsystem_options=subsystem_options
+            )
 
             # takeoff introduces this one.
             params[Mission.Landing.LIFT_COEFFICIENT_MAX] = {

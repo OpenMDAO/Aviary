@@ -39,7 +39,7 @@ def convert_propeller_map(
     This is a utility class to convert a propeller map file to Aviary format.
     Currently, there is only one option: from GASP format to Aviary format.
     As an Aviary command, the usage is:
-    aviary convert_prop_table -f GASP input_file output_file.
+    aviary convert propeller_table -f GASP input_file output_file.
     """
     timestamp = datetime.now().strftime('%m/%d/%y at %H:%M')
     user = getpass.getuser()
@@ -175,7 +175,7 @@ def _exec_PMC(args, user_args):
     convert_propeller_map(
         input_file=args.input_file,
         output_file=args.output_file,
-        # data_format=args.data_format,
+        # data_format=args.format,
         round_data=args.round,
     )
 

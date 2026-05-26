@@ -21,7 +21,6 @@ class EngineSizingTest1(unittest.TestCase):
 
         options = AviaryValues()
         options.set_val(Aircraft.Engine.DATA_FILE, filename)
-        options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, True)
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
         options.set_val(Aircraft.Engine.FLIGHT_IDLE_THRUST_FRACTION, 0.0)
@@ -30,13 +29,11 @@ class EngineSizingTest1(unittest.TestCase):
         options.set_val(Aircraft.Engine.GEOPOTENTIAL_ALT, False)
 
         engine = EngineDeck(name='engine', options=options)
-        # options.set_val(Aircraft.Engine.SCALE_PERFORMANCE, False)
         # engine2 = EngineDeck(name='engine2', options=options)
         # preprocess_propulsion(options, [engine, engine2])
 
         ref_thrust = engine.get_item(Aircraft.Engine.REFERENCE_SLS_THRUST)
         options = {
-            Aircraft.Engine.SCALE_PERFORMANCE: True,
             Aircraft.Engine.REFERENCE_SLS_THRUST: ref_thrust,
         }
 

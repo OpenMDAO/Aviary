@@ -6,20 +6,18 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.equipment_and_useful_load import (
     BWBEquipMassGroup,
-    EquipMassSum,
-    EquipMassGroup,
-    UsefulLoadMass,
-    UsefulLoadMassGroup,
     EquipAndUsefulLoadMassGroup,
+    EquipMassGroup,
+    UsefulLoadMassGroup,
 )
-
+from aviary.subsystems.mass.gasp_based.mass_summation import SystemsEquipmentMass, UsefulLoadMass
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
-class FixedEquipMassTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+class EquipmentMassSummationTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -29,7 +27,7 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
             'equip',
-            EquipMassSum(),
+            SystemsEquipmentMass(),
             promotes=['*'],
         )
 
@@ -44,9 +42,6 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Hydraulics.MASS, val=1487.78, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Electrical.MASS, val=2231.0, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.OxygenSystem.MASS, val=50, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, val=0.0, units='lbm'
-        )
 
         setup_model_options(self.prob, options)
 
@@ -62,8 +57,8 @@ class FixedEquipMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class FixedEquipMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+class EquipMassGroupTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -86,7 +81,7 @@ class FixedEquipMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
@@ -129,8 +124,8 @@ class FixedEquipMassGroupTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class UsefulMassTestCase1(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+class UsefulMassSumTest(unittest.TestCase):
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -174,14 +169,14 @@ class UsefulMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 5341.36, tol)
+        assert_near_equal(self.prob[Mission.USEFUL_LOAD], 5341.36, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
 class UsefulMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -236,7 +231,7 @@ class UsefulMassGroupTest(unittest.TestCase):
 
 
 class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -259,7 +254,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, val=0.14, units='unitless'
         )
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, val=129.4, units='ft')
         self.prob.model.set_input_defaults(Aircraft.Wing.SPAN, val=117.8, units='ft')
         self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
@@ -330,7 +325,7 @@ class FixedEquipAndUsefulMassGroupTest(unittest.TestCase):
 
 @use_tempdirs
 class BWBFixedEquipMassGroupTest(unittest.TestCase):
-    """Created based on GASP BWB model"""
+    """Created based on GASP BWB model."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -352,7 +347,7 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Hydraulics.GEAR_MASS_COEFFICIENT, 0.135, units='unitless'
         )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')
@@ -393,10 +388,8 @@ class BWBFixedEquipMassGroupTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
-class BWBUsefulMassTestCase1(unittest.TestCase):
-    """
-    Created based on GASP BWB modele
-    """
+class BWBUsefulMassSumTest(unittest.TestCase):
+    """Created based on GASP BWB model."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -438,7 +431,7 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob[Mission.Summary.USEFUL_LOAD], 4321.8, tol)
+        assert_near_equal(self.prob[Mission.USEFUL_LOAD], 4321.8, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -446,7 +439,7 @@ class BWBUsefulMassTestCase1(unittest.TestCase):
 
 @use_tempdirs
 class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
-    """this is the large single aisle 1 V3 test case"""
+    """this is the large single aisle 1 V3 test case."""
 
     def setUp(self):
         options = get_option_defaults()
@@ -482,7 +475,7 @@ class BWBFixedEquipAndUsefulMassGroupTest(unittest.TestCase):
         prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Fuselage.LENGTH, 71.5245514, units='ft')
         prob.model.set_input_defaults(Aircraft.Wing.SPAN, 146.38501, units='ft')
         prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, 7800.0, units='lbm')

@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 import openmdao.api as om
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
@@ -57,8 +57,17 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         p.set_val(Aircraft.Wing.FORM_FACTOR, 1.25, units='unitless')
         p.set_val(Dynamic.Atmosphere.SPEED_OF_SOUND, 968.076 * np.ones(nn), units='ft/s')
         p.set_val(Dynamic.Atmosphere.DENSITY, 0.000659904 * np.ones(nn), units='slug/ft**3')
-        p.set_val('mach', 0.8 * np.ones(nn), units='unitless')
         p.set_val('mass', 170_000 * np.ones(nn), units='lbm')
+
+        if input_speed_type is SpeedType.TAS:
+            p.set_val(Dynamic.Mission.VELOCITY, 250, units='kn')
+            p.set_val('dTAS_dr', np.zeros(nn), units='kn/km')
+        elif input_speed_type is SpeedType.EAS:
+            p.set_val('EAS', 250, units='kn')
+            p.set_val('dEAS_dr', np.zeros(nn), units='kn/km')
+        else:
+            p.set_val('mach', 0.8 * np.ones(nn), units='unitless')
+            p.set_val('dmach_dr', np.zeros(nn), units='1/km')
 
         if not ground_roll:
             p.set_val(Dynamic.Mission.FLIGHT_PATH_ANGLE, 0.0 * np.ones(nn), units='rad')
@@ -92,32 +101,33 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         c_gamma = np.cos(np.radians(gamma))
         s_gamma = np.sin(np.radians(gamma))
 
-        # 1. Test that forces balance along the velocity axis
-        assert_near_equal(drag + thrust_req * s_gamma, thrust_req * c_alphai, tolerance=1.0e-12)
+        # Test values for the flight case.
+        if ground_roll is False:
+            # 1. Test that forces balance along the velocity axis
+            assert_near_equal(drag + thrust_req * s_gamma, thrust_req * c_alphai, tolerance=1.0e-12)
 
-        # 2. Test that forces balance normal to the velocity axis
-        assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma, tolerance=1.0e-12)
+            # 2. Test that forces balance normal to the velocity axis
+            assert_near_equal(lift + thrust_req * s_alphai, weight * c_gamma, tolerance=1.0e-12)
 
-        # 3. Test that dt_dr is the inverse of true airspeed
-        assert_near_equal(tas, 1 / dt_dr, tolerance=1.0e-12)
+            # 3. Test that dt_dr is the inverse of true airspeed
+            assert_near_equal(tas, 1 / dt_dr, tolerance=1.0e-12)
 
-        # 4. Test that the inverse of dt_dr is true airspeed
-        assert_near_equal(tas, 1 / dt_dr, tolerance=1.0e-12)
+            # 4. Test that the inverse of dt_dr is true airspeed
+            assert_near_equal(tas, 1 / dt_dr, tolerance=1.0e-12)
 
-        # 5. Test that fuelflow (lbf/s) * dt_dr (s/ft) is equal to dmass_dr
-        assert_near_equal(fuelflow * dt_dr, dmass_dr, tolerance=1.0e-12)
+            # 5. Test that fuelflow (lbf/s) * dt_dr (s/ft) is equal to dmass_dr
+            assert_near_equal(fuelflow * dt_dr, dmass_dr, tolerance=1.0e-12)
 
-        p.check_partials(out_stream=None, method='cs', excludes=['*params*', '*aero*'])
-        # issue #495
-        # dTAS_dt_approx wrt flight_path_angle | abs | fwd-fd | 1.8689625335382314
-        # dTAS_dt_approx wrt flight_path_angle | rel | fwd-fd | 1.0
-        # assert_check_partials(cpd, atol=1e-6, rtol=1e-6)
+        cpd = p.check_partials(compact_print=True, method='cs', excludes=['*params*', '*aero*'])
+        assert_check_partials(cpd, atol=1e-6, rtol=1e-6)
 
     def test_steady_level_flight(self):
-        # issue #494: why not ground_roll in [True] ?
-        for ground_roll in [False]:
-            with self.subTest(msg=f'ground_roll={ground_roll}'):
-                self._test_unsteady_solved_ode(ground_roll=ground_roll)
+        for ground_roll in [False, True]:
+            for in_type in [SpeedType.TAS, SpeedType.EAS, SpeedType.MACH]:
+                with self.subTest(msg=f'ground_roll={ground_roll} in_type={in_type}'):
+                    self._test_unsteady_solved_ode(
+                        ground_roll=ground_roll, input_speed_type=in_type
+                    )
 
 
 if __name__ == '__main__':

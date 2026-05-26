@@ -5,11 +5,6 @@ from aviary.subsystems.mass.flops_based.distributed_prop import distributed_engi
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
-# TODO: update non-transport components to new standard to remove these variables
-_wing_engine_count_factor = 'aircraft:propulsion:control:wing_engine_count_factor'
-_fuse_engine_count_factor = 'aircraft:propulsion:control:fuselage_engine_count_factor'
-_max_mach = 'aircraft:design:dimensions:max_mach'
-
 
 class TransportHydraulicsGroupMass(om.ExplicitComponent):
     """

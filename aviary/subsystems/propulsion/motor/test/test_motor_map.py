@@ -18,7 +18,7 @@ class TestGearbox(unittest.TestCase):
 
         motor_map = MotorMap(num_nodes=3)
         motor_map.options[Aircraft.Engine.Motor.DATA_FILE] = (
-            'aviary/models/motors/electric_motor_1800Nm_6000rpm.csv'
+            'aviary/models/engines/motors/electric_motor_1800Nm_6000rpm.csv'
         )
         prob.model.add_subsystem('motor_map', motor_map, promotes=['*'])
 

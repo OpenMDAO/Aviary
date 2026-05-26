@@ -1,17 +1,18 @@
+from copy import deepcopy
 import unittest
 
 import aviary.api as av
 from aviary.utils.merge_variable_metadata import merge_meta_data
 
-dict1 = av.CoreMetaData.copy()
+dict1 = deepcopy(av.CoreMetaData)
 # this is the baseline Aviary-core metadata
-dict2 = av.CoreMetaData.copy()
+dict2 = deepcopy(av.CoreMetaData)
 # This is the baseline Aviary-core metadata with a few variables added onto it
-dict3 = av.CoreMetaData.copy()
+dict3 = deepcopy(av.CoreMetaData)
 # This is the baseline Aviary-core metadata with a few variables added onto it, including some duplicates from dict2 that have the same metadata
-dict4 = av.CoreMetaData.copy()
+dict4 = deepcopy(av.CoreMetaData)
 # This is the baseline Aviary-core metadata with a few variables added onto it, include a duplicate from dict2 that has different metadata
-merged_dicts_23 = av.CoreMetaData.copy()
+merged_dicts_23 = deepcopy(av.CoreMetaData)
 # This is the expected result of merging dict2 with dict3
 
 ############################################ Make dict2 ############################################
@@ -239,7 +240,7 @@ merged_dicts_13 = dict3.copy()  # This is the expected result of merging dict1 w
 merged_dicts_24_msg = 'You have attempted to merge metadata dictionaries that contain the same variable with different metadata. The offending variable present in multiple dictionaries is "aircraft:engine:color".'
 
 ############################################ Make dict5 ############################################
-dict5 = av.CoreMetaData.copy()
+dict5 = deepcopy(av.CoreMetaData)
 
 av.add_meta_data(
     'aircraft:fuselage:eccentricity',
@@ -251,7 +252,7 @@ av.add_meta_data(
 )
 
 ############################################ Make dict6 ############################################
-dict6 = av.CoreMetaData.copy()
+dict6 = deepcopy(av.CoreMetaData)
 
 av.add_meta_data(
     'aircraft:fuselage:eccentricity',

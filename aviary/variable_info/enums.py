@@ -199,12 +199,12 @@ class ProblemType(Enum):
     close to design range. This causes the empty weight and the fuel
     weight to change.
 
-    ALTERNATE: Requires a pre-sized aircraft. It holds the design gross
+    OFF_DESIGN_MIN_FUEL: Requires a pre-sized aircraft. It holds the design gross
     weight and empty weight constant. It then varies the fuel weight
     and actual gross weight until the range closes to the off-design
     range.
 
-    FALLOUT: Requires a pre-sized aircraft. It holds the design gross
+    OFF_DESIGN_MAX_RANGE: Requires a pre-sized aircraft. It holds the design gross
     weight and empty weight constant. Using the specified actual
     gross weight, it will then find the maximum distance the off-design
     aircraft can fly.
@@ -218,8 +218,8 @@ class ProblemType(Enum):
     """
 
     SIZING = 'sizing'
-    ALTERNATE = 'alternate'
-    FALLOUT = 'fallout'
+    OFF_DESIGN_MIN_FUEL = 'off_design_min_fuel'
+    OFF_DESIGN_MAX_RANGE = 'off_design_max_range'
     MULTI_MISSION = 'multimission'
 
 
@@ -256,11 +256,10 @@ class ThrottleAllocation(Enum):
 class Transcription(Enum):
     """
     Sets the Dymos Transcription for each phase.
-    See Dymos documentation for more details: https://openmdao.github.io/dymos/getting_started/transcriptions.html
+    See Dymos documentation for more details: https://openmdao.github.io/dymos/getting_started/transcriptions.html.
 
     COLLOCATION uses implicit pseudospectral method for discritizing state and control history over time.
     PICARDShooting uses explicit numerical integration to propagate the initial state subject to controls.
-
     """
 
     COLLOCATION = 'collocation'

@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 
-from aviary.interface.download_models import _exec_hangar, _setup_hangar_parser
 from aviary.interface.graphical_input import _exec_flight_profile, _setup_flight_profile_parser
 from aviary.interface.plot_drag_polar import _exec_plot_drag_polar, _setup_plot_drag_polar_parser
 from aviary.interface.run_aviary import _exec_run_aviary, _setup_run_aviary_parser
@@ -43,16 +42,67 @@ def _load_and_exec(script_name, user_args):
     exec(code, globals_dict)  # nosec: private, internal use only
 
 
+# Conversion subcommands map (for 'aviary convert' sub-sub-commands)
+_convert_command_map = {
+    'aero_table': (
+        _setup_ATC_parser,
+        _exec_ATC,
+        'Convert FLOPS- or GASP-formatted aero data files into Aviary csv format.',
+    ),
+    'engine_deck': (
+        _setup_EDC_parser,
+        _exec_EDC,
+        'Convert FLOPS- or GASP-formatted engine decks into Aviary csv format.',
+    ),
+    'fortran_to_aviary': (
+        _setup_F2A_parser,
+        _exec_F2A,
+        'Convert legacy Fortran (FLOPS or GASP) input file to Aviary input file.',
+    ),
+    'propeller_table': (
+        _setup_PMC_parser,
+        _exec_PMC,
+        'Convert GASP-formatted propeller map file into Aviary csv format.',
+    ),
+}
+
+
+def _setup_convert_parser(parser):
+    """Set up parser for the 'convert' subcommand with sub-sub-commands."""
+    subparsers = parser.add_subparsers(
+        title='Conversion Types', metavar='', dest='convert_type', help='Type of data to convert'
+    )
+
+    for name, (parser_setup_func, executor, help_str) in sorted(_convert_command_map.items()):
+        subparser = subparsers.add_parser(name, help=help_str)
+        parser_setup_func(subparser)
+        subparser.set_defaults(executor=executor)
+
+
+def _exec_convert(options, user_args):
+    """Execute the appropriate conversion command based on sub-sub-command."""
+    if not hasattr(options, 'executor'):
+        # No sub-sub-command was specified, show help
+        print(
+            'Error: Please specify a conversion type (aero_table, engine_deck, fortran_to_aviary, or propeller_table)'
+        )
+        print("Use 'aviary convert -h' for more information.")
+        sys.exit(1)
+
+    # Execute the appropriate conversion function
+    options.executor(options, user_args)
+
+
 _command_map = {
     'check': (
         _setup_installation_test,
         _exec_installation_test,
         'Verify Aviary installation',
     ),
-    'fortran_to_aviary': (
-        _setup_F2A_parser,
-        _exec_F2A,
-        'Convert legacy Fortran (FLOPS OR GASP) input file to Aviary input file.',
+    'convert': (
+        _setup_convert_parser,
+        _exec_convert,
+        'Convert legacy formatted data files (aero_table, engine_deck, fortran_to_aviary, propeller_table) to Aviary format.',
     ),
     'run_mission': (
         _setup_run_aviary_parser,
@@ -68,27 +118,6 @@ _command_map = {
         _dashboard_setup_parser,
         _dashboard_cmd,
         'Open the results dashboard for a provided Aviary run.',
-    ),
-    'hangar': (
-        _setup_hangar_parser,
-        _exec_hangar,
-        'Copy aircraft and engine models included with Aviary to specified folder. Allows users '
-        'who did not install Aviary locally to still access model files.',
-    ),
-    'convert_engine': (
-        _setup_EDC_parser,
-        _exec_EDC,
-        'Convert FLOPS- or GASP-formatted engine decks into Aviary csv format.',
-    ),
-    'convert_aero_table': (
-        _setup_ATC_parser,
-        _exec_ATC,
-        'Convert FLOPS- or GASP-formatted aero data files into Aviary csv format.',
-    ),
-    'convert_prop_table': (
-        _setup_PMC_parser,
-        _exec_PMC,
-        'Convert GASP-formatted propeller map file into Aviary csv format.',
     ),
     'plot_drag_polar': (
         _setup_plot_drag_polar_parser,
@@ -142,7 +171,8 @@ def aviary_cmd():
 
     if len(args) == 1 and len(user_args) == 0:
         # if command requires arguments but is run without any, return help for that command
-        if args[0] not in ('check', 'draw_mission', 'run_mission', 'plot_drag_polar'):
+        # 'convert' is a special case as it requires a sub-sub-command
+        if args[0] not in ('check', 'draw_mission', 'run_mission', 'plot_drag_polar', 'convert'):
             parser.parse_args([args[0], '-h'])
 
     if not set(args).intersection(subs.choices) and len(args) == 1 and os.path.isfile(cmdargs[0]):

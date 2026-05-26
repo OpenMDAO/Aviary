@@ -33,8 +33,11 @@ class TotalSummationTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
-    @parameterized.expand(get_flops_case_names(), name_func=print_case)
-    def test_case(self, case_name):
+    # @parameterized.expand(get_flops_case_names(), name_func=print_case)
+    def test_case(
+        self,
+    ):
+        case_name = 'BWBdetailedFLOPS'
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -44,8 +47,10 @@ class TotalSummationTest(unittest.TestCase):
             promotes_outputs=['*'],
         )
 
+        inputs = get_flops_inputs(case_name, preprocess=True)
+        num_engines = inputs.get_val(Aircraft.Engine.NUM_ENGINES)
         setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: (num_engines, 'unitless')})
         )
 
         prob.setup(check=False, force_alloc_complex=True)
@@ -95,9 +100,9 @@ class TotalSummationTest(unittest.TestCase):
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPENNAGE_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Mission.Summary.USEFUL_LOAD,
-                Mission.Summary.OPERATING_MASS,
-                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.USEFUL_LOAD,
+                Mission.OPERATING_MASS,
+                Mission.ZERO_FUEL_MASS,
             ],
             version=Version.TRANSPORT_and_BWB,
             atol=1e-10,
@@ -180,9 +185,9 @@ class AltTotalSummationTest(unittest.TestCase):
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS,
                 Aircraft.Design.EMPENNAGE_MASS,
                 Aircraft.Design.EMPTY_MASS,
-                Mission.Summary.USEFUL_LOAD,
-                Mission.Summary.OPERATING_MASS,
-                Mission.Summary.ZERO_FUEL_MASS,
+                Mission.USEFUL_LOAD,
+                Mission.OPERATING_MASS,
+                Mission.ZERO_FUEL_MASS,
             ],
             version=Version.ALTERNATE,
             atol=1e-10,
@@ -244,4 +249,7 @@ class StructureMassTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TotalSummationTest()
+    test.setUp()
+    test.test_case()

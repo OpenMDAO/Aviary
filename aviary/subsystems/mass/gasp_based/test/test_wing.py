@@ -4,12 +4,17 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.subsystems.mass.gasp_based.wing import WingMassGroup, WingMassSolve, WingMassTotal
-from aviary.subsystems.mass.gasp_based.wing import BWBWingMassSolve, BWBWingMassGroup
+from aviary.subsystems.mass.gasp_based.wing import (
+    BWBWingMassGroup,
+    BWBWingMassSolve,
+    WingMassGroup,
+    WingMassSolve,
+    WingMassTotal,
+)
+from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
-from aviary.utils.aviary_values import AviaryValues
 
 
 class WingMassSolveTestCase(unittest.TestCase):
@@ -19,7 +24,7 @@ class WingMassSolveTestCase(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('wingfuel', WingMassSolve(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
         self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(
@@ -88,7 +93,7 @@ class WingMassSolveTestCase2(unittest.TestCase):
     def test_case1(self):
         prob = om.Problem()
         prob.model.add_subsystem('wingfuel', WingMassSolve(), promotes=['*'])
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
         prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
         prob.model.set_input_defaults(
@@ -426,7 +431,7 @@ class WingMassGroupTestCase1(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
         self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(
@@ -478,7 +483,7 @@ class WingMassGroupTestCase2(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
         self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(
@@ -537,7 +542,7 @@ class WingMassGroupTestCase3(unittest.TestCase):
             promotes=['*'],
         )
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
         self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(
@@ -587,7 +592,7 @@ class WingMassGroupTestCase4(unittest.TestCase):
         self.prob = om.Problem()
         self.prob.model.add_subsystem('group', WingMassGroup(), promotes=['*'])
 
-        self.prob.model.set_input_defaults(Mission.Design.GROSS_MASS, val=175400, units='lbm')
+        self.prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, val=175400, units='lbm')
         self.prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, val=3645, units='lbm')
         self.prob.model.set_input_defaults('c_strut_braced', val=1.0, units='unitless')
         self.prob.model.set_input_defaults(
@@ -644,7 +649,7 @@ class BWBWingMassSolveTestCase(unittest.TestCase):
         prob = self.prob = om.Problem()
         prob.model.add_subsystem('wingfuel', BWBWingMassSolve(), promotes=['*'])
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, 1068.88854499, units='lbm')
         prob.model.set_input_defaults('c_strut_braced', 1.0, units='unitless')
         prob.model.set_input_defaults(
@@ -715,7 +720,7 @@ class BWBWingMassGroupTest(unittest.TestCase):
             promotes=['*'],
         )
 
-        prob.model.set_input_defaults(Mission.Design.GROSS_MASS, 150000, units='lbm')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
         prob.model.set_input_defaults(Aircraft.Wing.HIGH_LIFT_MASS, 1068.88854499, units='lbm')
         prob.model.set_input_defaults('c_strut_braced', 1.0, units='unitless')
         prob.model.set_input_defaults(

@@ -9,7 +9,7 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.options import list_options as list_options_func
 from aviary.utils.preprocessors import preprocess_options
-from aviary.validation_cases.validation_data.flops_data.FLOPS_Test_Data import (
+from aviary.validation_cases.validation_data.test_data.FLOPS_Test_Data import (
     FLOPS_Lacking_Test_Data,
     FLOPS_Test_Data,
 )

@@ -3,6 +3,7 @@ import os
 IGNORE_LIST = []
 
 packages = [
+    'core',
     'interface',
     'utils',
     'variable_info',

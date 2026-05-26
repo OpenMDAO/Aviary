@@ -42,14 +42,14 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         # Commonly referenced values
         aviary_inputs.set_val(
-            Mission.Summary.GROSS_MASS,
+            Mission.GROSS_MASS,
             val=aviary_group.initialization_guesses['actual_takeoff_mass'],
             units='lbm',
         )
 
         if 'target_range' in aviary_group.post_mission_info:
             aviary_inputs.set_val(
-                Mission.Summary.RANGE,
+                Mission.RANGE,
                 wrapped_convert_units(aviary_group.post_mission_info['target_range'], 'NM'),
                 units='NM',
             )
@@ -61,7 +61,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             aviary_group.require_range_residual = False
             # still instantiate target_range because it is used for default guesses
             # for phase comps
-            aviary_group.target_range = aviary_inputs.get_val(Mission.Design.RANGE, units='NM')
+            aviary_group.target_range = aviary_inputs.get_val(Aircraft.Design.RANGE, units='NM')
 
     def get_default_phase_info(self, aviary_group):
         """
@@ -113,7 +113,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         """
         takeoff_options = Takeoff(
             airport_altitude=0.0,  # ft
-            num_engines=aviary_group.aviary_inputs.get_val(Aircraft.Engine.NUM_ENGINES),
         )
 
         # Build and add takeoff subsystem
@@ -364,21 +363,38 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         if aviary_group.pre_mission_info['include_takeoff']:
             self._add_post_mission_takeoff_systems(aviary_group)
         else:
-            first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
-
-            # Since we don't have the takeoff subsystem, we need to use the gross mass as the
+            # Since we don't have the simple_takeoff subsystem, we need to use Mission.Takeoff.FINAL_MASS as the
             # source for the mass at the beginning of the first flight phase. It turns out to be
             # more robust to use a constraint rather than connecting it directly.
+            first_flight_phase_name = list(aviary_group.mission_info.keys())[0]
             first_flight_phase = aviary_group.traj._phases[first_flight_phase_name]
             first_flight_phase.set_state_options(
                 Dynamic.Vehicle.MASS, fix_initial=False, input_initial=False
+            )
+
+            # Calculate how much fuel is burned in taxi and takeoff
+            aviary_group.add_subsystem(
+                'takeoff_mass_comp',
+                om.ExecComp(
+                    'takeoff_mass = gross_mass - taxi_out_fuel_burn - takeoff_fuel_burn',
+                    takeoff_mass={'units': 'lbm'},
+                    gross_mass={'units': 'lbm'},
+                    taxi_out_fuel_burn={'units': 'lbm'},
+                    takeoff_fuel_burn={'units': 'lbm'},
+                ),
+                promotes_inputs=[
+                    ('gross_mass', Mission.GROSS_MASS),
+                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_TAXI_OUT),
+                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL),
+                ],
+                promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
             )
 
             # connect summary mass to the initial guess of mass in the first phase
             eq = aviary_group.add_subsystem(
                 f'link_{first_flight_phase_name}_mass',
                 om.EQConstraintComp(),
-                promotes_inputs=[('rhs:mass', Mission.Summary.GROSS_MASS)],
+                promotes_inputs=[('rhs:mass', Mission.Takeoff.FINAL_MASS)],
             )
 
             # TODO: replace hard_coded ref for this constraint.
@@ -409,15 +425,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 range_resid={'val': 30, 'units': 'NM'},
             ),
             promotes_inputs=[
-                ('actual_range', Mission.Summary.RANGE),
+                ('actual_range', Mission.RANGE),
                 'target_range',
             ],
             promotes_outputs=[('range_resid', Mission.Constraints.RANGE_RESIDUAL)],
-        )
-
-        # TODO: replace hard_coded ref for this constraint.
-        aviary_group.post_mission.add_constraint(
-            Mission.Constraints.MASS_RESIDUAL, equals=0.0, ref=1.0e5
         )
 
     def _add_post_mission_takeoff_systems(self, aviary_group):
@@ -439,7 +450,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         if phase_options.get('mach_optimize', False):
             # Create an ExecComp to compute the difference in mach
             mach_diff_comp = om.ExecComp(
-                'mach_resid_for_connecting_takeoff = final_mach - initial_mach'
+                'mach_resid_for_connecting_takeoff = final_mach - initial_mach',
+                initial_mach={'units': 'unitless'},
+                final_mach={'units': 'unitless'},
             )
             aviary_group.add_subsystem('mach_diff_comp', mach_diff_comp)
 
@@ -495,14 +508,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         last_regular_phase = aviary_group.regular_phases[-1]
         aviary_group.connect(
-            f'traj.{last_regular_phase}.states:mass',
-            Mission.Landing.TOUCHDOWN_MASS,
-            src_indices=[-1],
-        )
-        aviary_group.connect(
             f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,
-            src_indices=[0],
+            src_indices=[-1],
         )
 
     def set_phase_initial_guesses(
@@ -543,7 +551,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         guess_dict = deepcopy(guesses)
 
         if 'mass' not in guess_dict:
-            mass_guess = aviary_group.aviary_inputs.get_val(Mission.Design.GROSS_MASS, units='lbm')
+            mass_guess = aviary_group.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
             guess_dict['mass'] = (mass_guess, 'lbm')
 

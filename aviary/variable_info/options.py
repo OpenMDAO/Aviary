@@ -2,11 +2,11 @@ from aviary.subsystems.propulsion.engine_deck import EngineDeck
 from aviary.utils.aviary_values import AviaryValues
 from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
-from aviary.variable_info.variable_meta_data import _MetaData
+from aviary.variable_info.variable_meta_data import CoreMetaData
 from aviary.variable_info.variables import Aircraft
 
 
-def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
+def get_option_defaults(engine=True, meta_data=CoreMetaData) -> AviaryValues:
     """
     Returns a deep copy of the collection of all options for which default values exist.
 
@@ -38,7 +38,7 @@ def get_option_defaults(engine=True, meta_data=_MetaData) -> AviaryValues:
     return option_defaults
 
 
-def is_option(key, meta_data=_MetaData) -> bool:
+def is_option(key, meta_data=CoreMetaData) -> bool:
     """
     Returns True if the variable is defined as an option in the MetaData.
 

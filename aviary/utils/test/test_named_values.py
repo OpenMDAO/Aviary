@@ -2,7 +2,7 @@
 
 import unittest
 
-from aviary.utils.named_values import NamedValues, get_items, get_keys, get_values
+from aviary.utils.named_values import NamedValues
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -108,26 +108,38 @@ class NamedValuesTest(unittest.TestCase):
 
         self.assertFalse(_nokey in _data1)
 
-        # default (None, None)
-        aval, aunits = a.get_item(_nokey)
-
-        self.assertIsNone(aval)
-        self.assertIsNone(aunits)
+        try:
+            aval, aunits = a.get_item(_nokey)
+        except KeyError as e:
+            if str(e) != "'key not found: ## no key ##'":
+                print(str(e))
+                raise AssertionError(
+                    'Did not receive expected error message for empty key in get_items()'
+                )
 
         val = 42
         units = 'min'
+        original_val = 42
+        original_units = 'min'
 
-        aval, aunits = a.get_item(_nokey, (val, units))
+        try:
+            aval, aunits = a.get_item(_nokey)
+        except KeyError:
+            pass
+        else:
+            raise AssertionError(
+                'Did not receive expected error message for nonexistent key in get_items()'
+            )
 
-        self.assertEqual(val, aval)
-        self.assertEqual(units, aunits)
+        self.assertEqual(val, original_val)
+        self.assertEqual(units, original_units)
 
         key = 'elapsed_time'
         a.set_val(key, val, units)
 
         val = a.get_val(key, units)
 
-        self.assertEqual(val, aval)
+        self.assertEqual(val, original_val)
 
         new_val = 42 * 60  # min -> s
 
@@ -138,14 +150,18 @@ class NamedValuesTest(unittest.TestCase):
         # unit conversion is local; item is unchanged
         val, units = a.get_item(key)
 
-        self.assertEqual(val, aval)
-        self.assertEqual(units, aunits)
+        self.assertEqual(val, original_val)
+        self.assertEqual(units, original_units)
 
-        # still missing: default (None, None)
-        aval, aunits = a.get_item(_nokey)
-
-        self.assertIsNone(aval)
-        self.assertIsNone(aunits)
+        # still missing
+        try:
+            aval, aunits = a.get_item(_nokey)
+        except KeyError as e:
+            if str(e) != "'key not found: ## no key ##'":
+                print(str(e))
+                raise AssertionError(
+                    'Did not receive expected error message for empty key in get_items()'
+                )
 
         key = _nokey
         val = 314159
@@ -178,15 +194,15 @@ class NamedValuesTest(unittest.TestCase):
         b = tuple(d)
         self.assertEqual(a, b)
 
-        b = tuple(get_items(d))
+        b = tuple(d.items())
         self.assertEqual(a, b)
 
         a = tuple(iter(_data1))
-        b = tuple(get_keys(d))
+        b = tuple(d.keys())
         self.assertEqual(a, b)
 
         a = tuple(_data1.values())
-        b = tuple(get_values(d))
+        b = tuple(d.values())
         self.assertEqual(a, b)
 
         # Sized
@@ -207,9 +223,14 @@ class NamedValuesTest(unittest.TestCase):
         self._do_test_full_equal(a, b, ())
 
         # make sure it is deleted
-        aval, aunits = a.get_item('NUM_FUSELAGES')
-        self.assertIsNone(aval)
-        self.assertIsNone(aunits)
+        try:
+            aval, aunits = a.get_item('NUM_FUSELAGES')
+        except KeyError:
+            pass
+        else:
+            raise AssertionError(
+                'Did not receive expected error message for nonexistent key in get_items()'
+            )
 
         # size
         self.assertEqual(len(_data4), len(a))
@@ -238,7 +259,7 @@ _data1 = {
     'NUM_FUSELAGES': (1, 'unitless'),
     'NUM_ENGINES': (2, 'unitless'),
     Aircraft.CrewPayload.BAGGAGE_MASS: (7500, 'lbm'),
-    Mission.Design.RANGE: (3500, 'NM'),
+    Aircraft.Design.RANGE: (3500, 'NM'),
 }
 
 

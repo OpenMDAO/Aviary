@@ -4,7 +4,6 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.mass.gasp_based.avionics import AvionicsMass
-
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Mission
@@ -30,7 +29,7 @@ class AvionicsTestCase1(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -71,7 +70,7 @@ class AvionicsTestCase2(unittest.TestCase):
         avionics.GRAV_ENGLISH_LBM = 1.1
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=175400, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)
@@ -113,7 +112,7 @@ class AvionicsTestCase3(unittest.TestCase):
         )
 
         self.prob.model.set_input_defaults(
-            Mission.Design.GROSS_MASS, val=150000, units='lbm'
+            Aircraft.Design.GROSS_MASS, val=150000, units='lbm'
         )  # large_single_aisle_1_GASP.csv
 
         setup_model_options(self.prob, options)

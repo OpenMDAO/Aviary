@@ -26,7 +26,7 @@ class TestReports(unittest.TestCase):
     def test_timeseries_report(self):
         local_phase_info = deepcopy(phase_info)
         self.prob = run_aviary(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,
             optimizer='SLSQP',
             max_iter=0,
@@ -93,7 +93,7 @@ class TestReports(unittest.TestCase):
         # Make sure it also works when a user forgets to create metadata.
 
         class ExtraBuilder(SubsystemBuilder):
-            def build_pre_mission(self, aviary_inputs):
+            def build_pre_mission(self, aviary_inputs, subsystem_options=None):
                 comp = om.ExecComp(['z = 2*x', 'p = q'])
                 wing_group = om.Group()
                 wing_group.add_subsystem(
@@ -121,7 +121,7 @@ class TestReports(unittest.TestCase):
 
         prob = AviaryProblem()
         prob.load_inputs(
-            'models/aircraft/test_aircraft/aircraft_for_bench_FwFm.csv',
+            'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             local_phase_info,
         )
 
@@ -149,11 +149,13 @@ class TestReports(unittest.TestCase):
         prob.add_objective()
         prob.setup()
         prob.run_aviary_problem()
-        prob.run_off_design_mission(problem_type='fallout', mission_gross_mass=115000)
-        prob.run_off_design_mission(problem_type='alternate', mission_range=1250)
+        prob.run_off_design_mission(problem_type='off_design_max_range', mission_gross_mass=115000)
+        prob.run_off_design_mission(problem_type='off_design_min_fuel', mission_range=1250)
         assert Path('testflo_off_design_1_out').is_dir()
         assert Path('testflo_off_design_out').is_dir()
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = TestReports()
+    test.test_multiple_off_design_report_directories()

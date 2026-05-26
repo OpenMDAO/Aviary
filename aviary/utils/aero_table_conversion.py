@@ -57,7 +57,7 @@ def convert_aero_table(input_file=None, output_file=None, data_format=None):
     """This is a utility class to convert a legacy aero data file to Aviary format.
     There are two options for the legacy aero data file format: FLOPS and GASP.
     As an Aviary command, the usage is:
-    aviary convert_aero_table -F {FLOPS|GASP|GASP_ALT} input_file output_file.
+    aviary convert aero_table -F {FLOPS|GASP|GASP_ALT} input_file output_file.
     Note: In case of GASP, reading of a possible cd0 table is not implemented yet.
     """
     data_format = CodeOrigin(data_format)
