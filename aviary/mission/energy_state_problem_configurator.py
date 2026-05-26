@@ -241,34 +241,32 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         ----------
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
+        phases : list[Phase]
+            List of all phases in the trajectory.
         connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
+            When True, phases are connected directly in openmdao. When false, the phases are not
+            connected, and a constraint is added to drive the difference to zero.
         """
         # connect regular_phases with each other if you are optimizing alt or mach
         self.link_phases_helper_with_options(
             aviary_group,
             aviary_group.regular_phases,
-            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         self.link_phases_helper_with_options(
-            aviary_group, aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+            aviary_group, aviary_group.regular_phases, Dynamic.Atmosphere.MACH
         )
 
         # connect reserve phases with each other if you are optimizing alt or mach
         self.link_phases_helper_with_options(
             aviary_group,
             aviary_group.reserve_phases,
-            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         self.link_phases_helper_with_options(
-            aviary_group, aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
+            aviary_group, aviary_group.reserve_phases, Dynamic.Atmosphere.MACH
         )
 
         # connect mass and distance between all phases regardless of reserve /

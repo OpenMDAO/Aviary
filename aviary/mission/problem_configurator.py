@@ -144,13 +144,27 @@ class ProblemConfiguratorBase:
         """
         pass
 
-    def link_phases_helper_with_options(self, aviary_group, phases, option_name, var, **kwargs):
+    def link_phases_helper_with_options(self, aviary_group, phases, var, **kwargs):
+        """
+        Links phases based on the options in the phase_info.
+
+        Parameters
+        ----------
+        aviary_group : AviaryGroup
+            Aviary model that owns this builder.
+        phases : List(Phase)
+            All linkable phases in this trajectory.
+        var : str
+            Aivary state or control to be linked across the phase boundaries.
+        """
+        mission = aviary_group.mission_info
         # Initialize a list to keep track of indices where option_name is True
         true_option_indices = []
 
         # Loop through phases to find where option_name is True
         for idx, phase_name in enumerate(phases):
-            if aviary_group.mission_info[phase_name]['user_options'].get(option_name, False):
+            option_name = f'{var}_optimize'
+            if mission[phase_name]['user_options'].get(option_name, False):
                 true_option_indices.append(idx)
 
         # Determine the groups of phases to link based on consecutive indices

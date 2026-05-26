@@ -197,14 +197,12 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         self.link_phases_helper_with_options(
             aviary_group,
             aviary_group.regular_phases,
-            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         self.link_phases_helper_with_options(
             aviary_group,
             aviary_group.regular_phases,
-            'mach_optimize',
             Dynamic.Atmosphere.MACH,
         )
 
@@ -212,14 +210,12 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
         self.link_phases_helper_with_options(
             aviary_group,
             aviary_group.reserve_phases,
-            'altitude_optimize',
             Dynamic.Mission.ALTITUDE,
             ref=1.0e4,
         )
         self.link_phases_helper_with_options(
             aviary_group,
             aviary_group.reserve_phases,
-            'mach_optimize',
             Dynamic.Atmosphere.MACH,
         )
 

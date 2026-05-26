@@ -1178,10 +1178,6 @@ class AviaryGroup(om.Group):
                     phases_to_link.append(phase_name)
 
             if len(phases_to_link) > 1:  # TODO: hack
-                # go phase by phase and either directly link if two standard phases, or use linkage
-                # constraint if either are analytic
-                # TODO need more unified way to handle this instead of splitting between AviaryGroup
-                #      and configurators
                 for ii in range(len(phases) - 1):
                     phase1, phase2 = phases[ii : ii + 2]
                     opt1 = self.mission_info[phase1]['user_options']
@@ -1190,11 +1186,14 @@ class AviaryGroup(om.Group):
                     integrates_mass2 = opt2['phase_type'] is PhaseType.BREGUET_RANGE
 
                     if integrates_mass1 or integrates_mass2:
-                        # TODO need ref value for these linkage constraints
-                        self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
+                        connected = False
                     else:
-                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
+                        connected = true_unless_mpi
 
+                    self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=connected)
+
+        # TODO need more unified way to handle this instead of splitting between AviaryGroup
+        #      and configurators
         self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
 
         self.configurator.check_trajectory(self)
