@@ -1140,13 +1140,13 @@ class BWBFuselageMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
         dFusWt_dgross_wt_initial = (
             0.167 * c_fuselage * 1.8 * (gross_wt_initial**-0.833) * (area_cabin**1.06)
-        ) / GRAV_ENGLISH_LBM
+        )
         dFusWt_darea_cabin = (
             1.06 * c_fuselage * 1.8 * (gross_wt_initial**0.167) * (area_cabin**0.06)
-        )
-        dFusWt_darea_aft_to_total = c_fuselage * fus_SA * uwt_aft
+        ) / GRAV_ENGLISH_LBM
+        dFusWt_darea_aft_to_total = c_fuselage * fus_SA * uwt_aft / GRAV_ENGLISH_LBM
         dFusWt_duwt_aft = c_fuselage * fus_SA * area_aft_to_total
-        dFusWt_dfus_SA = c_fuselage * area_aft_to_total * uwt_aft
+        dFusWt_dfus_SA = c_fuselage * area_aft_to_total * uwt_aft / GRAV_ENGLISH_LBM
 
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.MASS_COEFFICIENT] = dFusWt_dc_fuselage
         J[Aircraft.Fuselage.MASS, Aircraft.Design.GROSS_MASS] = dFusWt_dgross_wt_initial
