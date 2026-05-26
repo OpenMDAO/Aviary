@@ -36,7 +36,7 @@ full_xdsm.connect('post', 'opt', '')  # Blank
 
 # 7. Outputs to the right-hand side
 full_xdsm.add_output('pre', 'Pre~Results', side='right')
-full_xdsm.add_output('miss', 'Miss~Results', side='right')
+full_xdsm.add_output('miss', 'Mission~Results', side='right')
 full_xdsm.add_output('post', 'Post~Results', side='right')
 
 full_xdsm.write('aviary_full_xdsm', build=True)
@@ -65,7 +65,7 @@ simple_xdsm.add_system('aviary', 'Function', 'AviaryProblem')
 # Connections with ~ for spaces
 simple_xdsm.add_input('aviary', 'User~Inputs')
 simple_xdsm.connect('opt', 'aviary', 'Design~Variables')
-simple_xdsm.connect('aviary', 'opt', ['Constraints', 'Objectives'])
+simple_xdsm.connect('aviary', 'opt', ['Constraints,', 'Objectives'])
 
 simple_xdsm.add_process(['opt', 'aviary', 'opt'])
 
