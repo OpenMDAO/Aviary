@@ -4,7 +4,7 @@ setup and execution. These tasks include consistency checking between related va
 
 A general rule of thumb for verbosity is VERBOSE or higher is preferred if no user-set values are
 being replaced. BRIEF is the default, so it should only be used when it is actually important the
-user it notified at run-time that something happened.
+user is notified at run-time that something happened.
 """
 
 import warnings
