@@ -23,12 +23,13 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 omit_cases = ['LargeSingleAisle2FLOPS']
 omit_cases.append('LargeSingleAisle2FLOPSalt')
 omit_cases.append('BWBsimpleFLOPS')
 omit_cases.append('BWBdetailedFLOPS')
+omit_cases.append('BWB300FLOPS')
 
 
 @use_tempdirs
