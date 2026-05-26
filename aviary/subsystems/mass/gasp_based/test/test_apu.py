@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.apu import APUMass
 from aviary.variable_info.functions import setup_model_options
@@ -9,6 +10,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class ApuTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
@@ -38,6 +40,7 @@ class ApuTestCase1(unittest.TestCase):
         )  # large_single_aisle_1_GASP.csv
 
 
+@use_tempdirs
 class ApuTestCase2(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
@@ -76,6 +79,7 @@ class ApuTestCase2(unittest.TestCase):
         )  # large_single_aisle_1_GASP.csv
 
 
+@use_tempdirs
 class ApuTestCase3(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 

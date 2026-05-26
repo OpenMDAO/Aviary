@@ -16,7 +16,7 @@ from aviary.subsystems.mass.gasp_based.design_load import (
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class LoadSpeedsTestCase1(unittest.TestCase):
@@ -1462,7 +1462,6 @@ class BWBDesignLoadGroupTestCaseNonsmooth(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-15, rtol=1e-15)
 
 
-@use_tempdirs
 class BWBDesignLoadGroupTestCaseSmooth(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()

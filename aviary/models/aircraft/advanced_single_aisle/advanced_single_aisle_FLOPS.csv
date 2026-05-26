@@ -32,6 +32,7 @@ aircraft:design:lift_dependent_drag_coeff_factor,0.93,unitless
 aircraft:design:subsonic_drag_coeff_factor,0.95,unitless
 aircraft:design:supersonic_drag_coeff_factor,1,unitless
 aircraft:design:touchdown_mass_max,108976.4,lbm
+aircraft:design:type,transport
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
@@ -87,6 +88,7 @@ aircraft:horizontal_tail:aspect_ratio,5.22699386503068,unitless
 aircraft:horizontal_tail:laminar_flow_lower,0,unitless
 aircraft:horizontal_tail:laminar_flow_upper,29,unitless
 aircraft:horizontal_tail:mass_scaler,1.42225,unitless
+aircraft:horizontal_tail:num_tails,1,unitless
 aircraft:horizontal_tail:sweep,30.5853213018973,deg
 aircraft:horizontal_tail:taper_ratio,0.2734375,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.115,unitless
