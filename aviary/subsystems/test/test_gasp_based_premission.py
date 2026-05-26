@@ -1,6 +1,6 @@
 import unittest
 
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -46,7 +46,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, val=2.3648, units='unitless')
@@ -112,6 +112,9 @@ class PreMissionGroupTest(unittest.TestCase):
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
 
     def test_case2(self):
         """premission: propulsion + geometry + aerodynamics + mass."""
@@ -200,6 +203,9 @@ class PreMissionGroupTest(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
+
 
 @use_tempdirs
 class BWBPreMissionGroupTest(unittest.TestCase):
@@ -270,7 +276,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.run_model()
@@ -339,6 +345,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
+
     def test_case_geom(self):
         """premission: geometry."""
         prob = self.prob
@@ -358,7 +367,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.run_model()
@@ -395,6 +404,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
+
     def test_case_geom_mass(self):
         """premission: geometry + mass."""
         prob = self.prob
@@ -414,7 +426,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.set_val(
@@ -492,6 +504,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
 
 
 if __name__ == '__main__':

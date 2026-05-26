@@ -704,6 +704,44 @@ class BWBFuselageMassTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=4e-11, rtol=1e-12)
 
 
+class BWBFuselageMassTestCase2(unittest.TestCase):
+    """GASP data. Test mass-weight conversion"""
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.fuel as fuel
+
+        fuel.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.fuel as fuel
+
+        fuel.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        prob = self.prob = om.Problem()
+        prob.model.add_subsystem('fuselage', BWBFuselageMass(), promotes=['*'])
+
+        prob.model.set_input_defaults(Aircraft.Fuselage.MASS_COEFFICIENT, 0.889, units='unitless')
+        prob.model.set_input_defaults(Aircraft.Fuselage.WETTED_AREA, 4573.8833, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000.0, units='lbm')
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.WETTED_AREA_RATIO_AFTBODY_TO_TOTAL, 0.2, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.AFTBODY_MASS_PER_UNIT_AREA, 5.0, units='lbm/ft**2'
+        )
+        prob.model.set_input_defaults(Aircraft.Fuselage.CABIN_AREA, 1283.5249, units='ft**2')
+
+        prob.setup(check=False, force_alloc_complex=True)
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.Fuselage.MASS], 25397.12037004, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=4e-11, rtol=1e-12)
+
+
 class BWBFuelMassTestCase(unittest.TestCase):
     """Using BWB data."""
 

@@ -1,7 +1,8 @@
+import warnings
 from math import floor, log10
 
 import numpy as np
-import warnings
+import openmdao.api as om
 
 from aviary.variable_info.enums import Verbosity
 
@@ -150,6 +151,20 @@ def set_warning_format(verbosity):
 
         warnings.formatwarning = simplified_warning
         warnings.simplefilter('ignore', DeprecationWarning)
+
+        # Suppress the specific rhs_checking warning from Dymos internal components
+        warnings.filterwarnings(
+            action='ignore',
+            category=om.SolverWarning,
+            message=".*'rhs_checking' is active but no redundant adjoint dependencies were found.*",
+        )
+
+        # Suppress the OpenMDAO atomic group warning
+        warnings.filterwarnings(
+            action='ignore',
+            category=om.OpenMDAOWarning,
+            message='.*will be treated as atomic for the purposes of determining.*',
+        )
 
     elif verbosity == Verbosity.VERBOSE:
 
