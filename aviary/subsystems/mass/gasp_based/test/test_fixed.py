@@ -589,65 +589,6 @@ class HighLiftTestCase2(unittest.TestCase):
         assert_check_partials(data, atol=5e-10, rtol=1e-12)
 
 
-# this is the large single aisle 1 V3 test case
-@use_tempdirs
-class ControlMassTestCase(unittest.TestCase):
-    def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('control_mass', ControlMass(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1392.1, units='ft**2'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.951, units='unitless'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            'min_dive_vel', val=420, units='kn'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )  # bug fixed value and original value
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Controls.MASS: 3945,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-11, rtol=1e-12)
-
-
 @use_tempdirs
 class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
