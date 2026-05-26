@@ -16,6 +16,7 @@ parts:
   chapters:
     - file: user_guide/aviary_fundamentals
       sections:
+        - file: user_guide/fundamentals/how_aviary_works
         - file: user_guide/fundamentals/variables
         - file: user_guide/fundamentals/input_files
           sections:
