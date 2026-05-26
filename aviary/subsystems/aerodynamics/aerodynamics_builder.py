@@ -711,6 +711,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         return params
 
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        """Call get_timeseries() on all engine models and return combined result."""
+        timeseries_vars = [
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+        ]
+        return timeseries_vars
+
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         if self.code_origin is GASP and not self.tabular:
             return {

@@ -302,7 +302,6 @@ class FlightPhaseBase(PhaseBuilder):
         ##################
         phase.add_timeseries_output(Dynamic.Mission.ALTITUDE_RATE, units='ft/s')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless')
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
             units='kW',
@@ -313,7 +312,6 @@ class FlightPhaseBase(PhaseBuilder):
         )
 
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless')
 
         if throttle_enforcement != 'control':
             phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless')

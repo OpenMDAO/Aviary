@@ -252,9 +252,7 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
 
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT)
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT)
         phase.add_timeseries_output('thrust_req', units='lbf')
         phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 

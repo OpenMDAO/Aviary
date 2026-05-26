@@ -173,13 +173,11 @@ class SimpleCruisePhase(PhaseBuilder):
         phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless')
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')

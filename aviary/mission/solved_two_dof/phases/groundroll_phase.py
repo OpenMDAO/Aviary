@@ -163,10 +163,8 @@ class GroundrollPhase(PhaseBuilder):
 
         phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK)
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG)
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT)
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT)
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output(Dynamic.Vehicle.MASS)
         phase.add_timeseries_output('normal_force')

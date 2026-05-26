@@ -142,10 +142,8 @@ class AccelPhase(PhaseBuilder):
         # Timeseries Outputs
         phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless')
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 

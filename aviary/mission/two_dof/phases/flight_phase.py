@@ -171,14 +171,12 @@ class FlightPhase(PhaseBuilder):
         # Add timeseries outputs
         phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless')
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
         phase.add_timeseries_output('TAS_violation', output_name='TAS_violation', units='kn')
         phase.add_timeseries_output('theta', output_name='theta', units='deg')

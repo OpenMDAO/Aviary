@@ -265,11 +265,9 @@ class TakeoffPhase(PhaseBuilder):
 
         # Add timeseries outputs
         phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless')
         phase.add_timeseries_output('EAS', units='kn')
         phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
         phase.add_timeseries_output('normal_force')
         phase.add_timeseries_output('time', units='s', output_name='time')
