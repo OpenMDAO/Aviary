@@ -16,6 +16,7 @@ from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import (
     flops_validation_test,
     get_flops_case_names,
+    get_flops_inputs,
     get_flops_options,
     print_case,
     Version,
@@ -251,8 +252,7 @@ class BWBAftBodyMassTest(unittest.TestCase):
 
     @parameterized.expand(get_flops_case_names(only=bwb_cases), name_func=print_case)
     def test_case1(self, case_name):
-        aviary_options = AviaryValues()
-        aviary_options.set_val(Aircraft.Engine.NUM_FUSELAGE_ENGINES, 3, units='unitless')
+        flops_inputs = get_flops_inputs(case_name)
         prob = self.prob
 
         prob.model.add_subsystem(
@@ -264,7 +264,7 @@ class BWBAftBodyMassTest(unittest.TestCase):
 
         prob.model_options['*'] = get_flops_options(case_name, preprocess=True)
 
-        setup_model_options(self.prob, aviary_options)
+        setup_model_options(self.prob, flops_inputs)
         self.prob.setup(check=False, force_alloc_complex=True)
 
         flops_validation_test(
@@ -335,7 +335,4 @@ class BWBAftBodyMassTest2(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = BWBAftBodyMassTest2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
