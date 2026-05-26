@@ -31,6 +31,7 @@ aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
 aircraft:design:range,2960.0,NM
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless
+aircraft:design:type,transport,unitless
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.945,unitless
 aircraft:electrical:mass_scaler,1.0,unitless
@@ -85,6 +86,7 @@ aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:area,407.335370699457,ft**2
 aircraft:horizontal_tail:aspect_ratio,5.444,unitless
 aircraft:horizontal_tail:mass_scaler,1.0,unitless
+aircraft:horizontal_tail:num_tails,1,unitless
 aircraft:horizontal_tail:taper_ratio,0.3008,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.1195,unitless
 aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless

@@ -175,5 +175,63 @@ class BWBACMassTestCase1(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+@use_tempdirs
+class BWBACMassTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.air_conditioning as ac
+
+        ac.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.air_conditioning as ac
+
+        ac.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
+
+        prob = self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'ac',
+            BWBACMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT,
+            1.155,
+            units='unitless',  # generic_BWB_GASP.csv
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Design.GROSS_MASS, 150000.0, units='lbm'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LENGTH, 71.52455, units='ft'
+        )  # dont know where from
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
+        )  # dont know where from
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1183.24239307, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
 if __name__ == '__main__':
     unittest.main()

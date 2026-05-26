@@ -148,14 +148,14 @@ class BodyTankCalculations(om.ExplicitComponent):
         if verbosity >= Verbosity.BRIEF:
             if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 if not self.warned_mass:
-                    print('Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank')
+                    print('req_fuel_mass > max_wingfuel_mass, adding a body tank')
                 self.warned_mass = True
             else:
                 self.warned_mass = False
 
             if (req_fuel_wt < max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 if not self.warned_vol:
-                    print('Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank')
+                    print('design_fuel_vol > max_wingfuel_vol, adding a body tank')
                 self.warned_vol = True
             else:
                 self.warned_vol = False
@@ -1140,13 +1140,13 @@ class BWBFuselageMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
         dFusWt_dgross_wt_initial = (
             0.167 * c_fuselage * 1.8 * (gross_wt_initial**-0.833) * (area_cabin**1.06)
-        ) / GRAV_ENGLISH_LBM
+        )
         dFusWt_darea_cabin = (
             1.06 * c_fuselage * 1.8 * (gross_wt_initial**0.167) * (area_cabin**0.06)
-        )
-        dFusWt_darea_aft_to_total = c_fuselage * fus_SA * uwt_aft
+        ) / GRAV_ENGLISH_LBM
+        dFusWt_darea_aft_to_total = c_fuselage * fus_SA * uwt_aft / GRAV_ENGLISH_LBM
         dFusWt_duwt_aft = c_fuselage * fus_SA * area_aft_to_total
-        dFusWt_dfus_SA = c_fuselage * area_aft_to_total * uwt_aft
+        dFusWt_dfus_SA = c_fuselage * area_aft_to_total * uwt_aft / GRAV_ENGLISH_LBM
 
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.MASS_COEFFICIENT] = dFusWt_dc_fuselage
         J[Aircraft.Fuselage.MASS, Aircraft.Design.GROSS_MASS] = dFusWt_dgross_wt_initial

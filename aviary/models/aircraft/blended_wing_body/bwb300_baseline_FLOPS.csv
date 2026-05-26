@@ -107,7 +107,7 @@ aircraft:horizontal_tail:num_tails,1,unitless
 aircraft:horizontal_tail:sweep,0.0,deg
 aircraft:horizontal_tail:taper_ratio,0.714,unitless
 aircraft:horizontal_tail:thickness_to_chord,0.1,unitless
-aircraft:horizontal_tail:vertical_tail_fraction,0.0,unitless
+aircraft:horizontal_tail:vertical_tail_mount_location,0.0,unitless
 aircraft:horizontal_tail:wetted_area_scaler,1.0,unitless
 aircraft:hydraulics:mass_scaler,1.0,unitless
 aircraft:hydraulics:system_pressure,3000.0,psi
@@ -140,7 +140,7 @@ aircraft:vertical_tail:wetted_area_scaler,1.0,unitless
 aircraft:wing:aeroelastic_tailoring_factor,0.0,unitless
 aircraft:wing:airfoil_technology,2.0,unitless
 # aircraft:wing:aspect_ratio,5.4252,unitless
-aircraft:wing:aspect_ratio_reference,0.0,unitless
+# aircraft:wing:aspect_ratio_reference,0.0,unitless
 aircraft:wing:bending_material_mass_scaler,1.0,unitless
 aircraft:wing:chord_per_semispan_distribution,-1.0,48.25,33.2,18.97,14.19,10.2,3.22,unitless
 aircraft:wing:composite_fraction,0.85,unitless

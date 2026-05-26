@@ -2262,7 +2262,6 @@ class HighLiftMass(om.ExplicitComponent):
                     * VFLAP**0.2733
                     / GRAV_ENGLISH_LBM
                 )
-
         elif (
             flap_type is FlapType.SINGLE_SLOTTED
             or flap_type is FlapType.DOUBLE_SLOTTED
