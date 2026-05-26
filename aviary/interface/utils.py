@@ -152,7 +152,7 @@ def set_warning_format(verbosity):
         warnings.formatwarning = simplified_warning
         warnings.simplefilter('ignore', DeprecationWarning)
 
-        # Suppress ONLY the specific rhs_checking warning from Dymos internal components
+        # Suppress the specific rhs_checking warning from Dymos internal components
         warnings.filterwarnings(
             action='ignore',
             category=om.SolverWarning,
