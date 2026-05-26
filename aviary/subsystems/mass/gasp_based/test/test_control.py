@@ -6,23 +6,10 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
-from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.subsystems.mass.gasp_based.control import ControlMassGroup
-from aviary.subsystems.mass.gasp_based.fixed import (
-    ElectricAugmentationMass,
-    FixedMassGroup,
-    HighLiftMass,
-    LandingGearMassGroup,
-    MassParameters,
-    PayloadGroup,
-    HorizontalTailMass,
-    VerticalTailMass,
-    # ControlMassGroup,
-)
-from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.functions import extract_options, setup_model_options
+from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft
 
 
 # this is the large single aisle 1 V3 test case
@@ -82,54 +69,6 @@ class ControlMassTestCase(unittest.TestCase):
 
         data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=1e-11, rtol=1e-12)
-
-
-@use_tempdirs
-class GearTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
-    def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('gear_mass', LandingGearMassGroup(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MASS_COEFFICIENT, val=0.04, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS_FRACTION, val=0.85, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.CLEARANCE_RATIO, val=0.2, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.AVG_DIAMETER, val=7.35, units='ft'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.VERTICAL_MOUNT_LOCATION, val=0, units='unitless'
-        )
-
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.LandingGear.TOTAL_MASS: 7511,
-            Aircraft.LandingGear.MAIN_GEAR_MASS: 6384.35,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=3e-11, rtol=1e-12)
 
 
 @use_tempdirs
