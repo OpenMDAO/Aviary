@@ -59,7 +59,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
             + 78.0 * business_class_count
             + 44.0 * economy_class_count
             + 2.6 * pax_compart_length * (fuse_max_width + fuse_max_height) * fuse_count
-        ) * scaler + extra_wt
+        ) * scaler + extra_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
