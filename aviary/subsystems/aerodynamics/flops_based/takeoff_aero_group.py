@@ -146,14 +146,16 @@ class TakeoffAeroGroup(om.Group):
                     has_diag_partials=True,
                 ),
                 promotes_inputs=['ground_effect_lift'],
-                promotes_outputs=['climb_lift_coefficient'],
+                promotes_outputs=[('climb_lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT)],
             )
 
             self.connect('ground_effect.lift_coefficient', 'ground_effect_lift')
-            self.connect('climb_lift_coefficient', 'aero_forces.CL')
 
         else:
-            self.connect('ground_effect.lift_coefficient', 'aero_forces.CL')
+            self.promotes(
+                'ground_effect',
+                outputs=[('lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT)],
+            )
 
         self.add_subsystem(
             'add_extra_drag_coefficients',
@@ -164,13 +166,17 @@ class TakeoffAeroGroup(om.Group):
                 has_diag_partials=True,
             ),
             promotes_inputs=['ground_effect_drag'],
-            promotes_outputs=['climb_drag_coefficient'],
+            promotes_outputs=[('climb_drag_coefficient', Dynamic.Vehicle.DRAG_COEFFICIENT)],
         )
 
         self.connect('ground_effect.drag_coefficient', 'ground_effect_drag')
-        self.connect('climb_drag_coefficient', 'aero_forces.CD')
 
-        inputs = [Dynamic.Atmosphere.DYNAMIC_PRESSURE, Aircraft.Wing.AREA]
+        inputs = [
+            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            Aircraft.Wing.AREA,
+        ]
         outputs = [Dynamic.Vehicle.LIFT, Dynamic.Vehicle.DRAG]
 
         self.add_subsystem(

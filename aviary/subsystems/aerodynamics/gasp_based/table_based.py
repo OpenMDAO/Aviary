@@ -23,8 +23,8 @@ aliases = {
     Dynamic.Vehicle.ANGLE_OF_ATTACK: ['alpha', 'angle_of_attack', 'AoA'],
     'flap_deflection': ['flap_deflection'],
     'hob': ['hob'],
-    'lift_coefficient': ['cl', 'lift_coefficient'],
-    'drag_coefficient': ['cd', 'drag_coefficient'],
+    Dynamic.Vehicle.LIFT_COEFFICIENT: ['cl', 'lift_coefficient'],
+    Dynamic.Vehicle.DRAG_COEFFICIENT: ['cd', 'drag_coefficient'],
     'delta_lift_coefficient': ['delta_cl', 'dcl'],
     'delta_drag_coefficient': ['delta_cd', 'dcd'],
 }
@@ -95,7 +95,10 @@ class TabularCruiseAero(om.Group):
                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
             ]
             + extra_promotes,
-            promotes_outputs=[('lift_coefficient', 'CL'), ('drag_coefficient', 'CD_prescaled')],
+            promotes_outputs=[
+                ('lift_coefficient', Dynamic.Vehicle.LIFT_COEFFICIENT),
+                ('drag_coefficient', 'CD_prescaled'),
+            ],
         )
 
         #
@@ -330,7 +333,7 @@ class TabularLowSpeedAero(om.Group):
             'CL', vec_size=nn, units='unitless', input_names=['CL_free', 'dCL_ground', 'dCL_flaps']
         )
         adder.add_equation(
-            'CD',
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
             vec_size=nn,
             units='unitless',
             input_names=['CD_free', 'dCD_ground', 'dCD_flaps', 'dCD_gear'],
@@ -341,7 +344,11 @@ class TabularLowSpeedAero(om.Group):
             units='unitless',
             input_names=['CL_max_free', 'dCL_max_flaps', 'dCL_max_ground'],
         )
-        self.add_subsystem('coef_sum', adder, promotes=['*'])
+        self.add_subsystem(
+            'coef_sum',
+            adder,
+            promotes=['*', ('CL', Dynamic.Vehicle.LIFT_COEFFICIENT)],
+        )
 
         # convert coefficients to forces
         self.add_subsystem(
