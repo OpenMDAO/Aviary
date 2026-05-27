@@ -140,26 +140,12 @@ class AccelPhase(PhaseBuilder):
         phase.add_parameter(Dynamic.Mission.ALTITUDE, opt=False, units='ft', val=alt)
 
         # Timeseries Outputs
-        phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
-        phase.add_timeseries_output(
-            Dynamic.Atmosphere.MACH,
-            output_name=Dynamic.Atmosphere.MACH,
-            units='unitless',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            units='deg',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
-
-        # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
+        phase.add_timeseries_output('EAS', units='kn')
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         return phase
 
