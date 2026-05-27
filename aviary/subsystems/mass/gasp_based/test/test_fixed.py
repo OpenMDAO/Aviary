@@ -1081,7 +1081,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFEREMCE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
