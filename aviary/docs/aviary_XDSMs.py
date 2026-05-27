@@ -14,7 +14,7 @@ full_xdsm.add_system('post', 'Function', 'Post-Mission')
 # Shows the loop: Optimizer -> Pre -> Miss -> Post -> back to Optimizer
 full_xdsm.add_process(['opt', 'pre', 'miss', 'post', 'opt'])
 
-# 3. Efull_xdsmternal Inputs (Routed from the left instead of taking up a matrix row)
+# 3. full_xdsm Inputs (Routed from the left instead of taking up a matrix row)
 full_xdsm.add_input('pre', 'User~Inputs')
 full_xdsm.add_input('miss', 'User~Inputs')
 full_xdsm.add_input('post', 'User~Inputs')
