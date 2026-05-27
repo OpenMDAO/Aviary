@@ -63,8 +63,8 @@ class Aircraft:
         COCKPIT_CONTROL_MASS_SCALER = 'aircraft:controls:cockpit_control_mass_scaler'
         CONTROL_MASS_INCREMENT = 'aircraft:controls:control_mass_increment'
         MASS = 'aircraft:controls:mass'
-        STABILITY_AUGMENTATION_SYSTEM_BASE_MASS = (
-            'aircraft:controls:stability_augmentation_system_base_mass'
+        STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS = (
+            'aircraft:controls:stability_augmentation_system_reference_mass'
         )
         STABILITY_AUGMENTATION_SYSTEM_MASS = 'aircraft:controls:stability_augmentation_system_mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = (

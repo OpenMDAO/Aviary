@@ -188,9 +188,9 @@ class TotalEngineMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
 
 
-class PODMass(om.ExplicitComponent):
+class EnginePODMass(om.ExplicitComponent):
     """
-    Computation of engine POD mass and total engine POD mass.
+    Computation of engine pod mass and total engine pod mass.
     """
 
     def initialize(self):
@@ -342,7 +342,7 @@ class AdditionalEngineMass(om.ExplicitComponent):
 
 class WingMountEngineMass(om.ExplicitComponent):
     """
-    Computation of total engine mass, nacelle mass, pylon mass, total engine POD mass,
+    Computation of total engine mass, nacelle mass, pylon mass, total engine pod mass,
     additional engine mass.
     """
 
@@ -600,12 +600,12 @@ class EngineMassGroup(om.Group):
         )
         self.add_subsystem(
             'engine_pod',
-            PODMass(),
+            EnginePODMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
         self.add_subsystem(
-            'addn_engine',
+            'additional_engine',
             AdditionalEngineMass(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],

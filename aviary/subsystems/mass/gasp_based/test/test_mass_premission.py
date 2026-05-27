@@ -269,7 +269,7 @@ class MassPremissionTestCase2(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -622,7 +622,7 @@ class MassPremissionTestCase3(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -965,7 +965,7 @@ class MassPremissionTestCase4(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1316,7 +1316,7 @@ class MassSummationTestCase5(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1662,7 +1662,7 @@ class MassSummationTestCase6(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -2012,7 +2012,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -2423,7 +2423,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=30, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # not in file
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -2792,7 +2792,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=30.0, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=1, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=1, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -3160,7 +3160,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, 0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, 0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'

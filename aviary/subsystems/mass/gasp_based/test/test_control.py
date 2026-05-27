@@ -38,7 +38,7 @@ class ControlMassTestCase(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -92,7 +92,7 @@ class BWBControlMassTestCase(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, 0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, 0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
@@ -156,7 +156,7 @@ class ControlGroupTestCase1(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -231,7 +231,7 @@ class ControlGroupTestCase2(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'

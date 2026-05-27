@@ -19,7 +19,7 @@ class MiscControlMass(om.ExplicitComponent):
         self.add_input('min_dive_vel', val=700, units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(
-            self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS, units='lbm'
+            self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, units='lbm'
         )
         add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
@@ -46,7 +46,7 @@ class MiscControlMass(om.ExplicitComponent):
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
             [
                 Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER,
-                Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS,
+                Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS,
             ],
         )
 
@@ -55,8 +55,9 @@ class MiscControlMass(om.ExplicitComponent):
 
         c_mass_trend_cockpit_control = inputs[Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT]
 
-        stab_aug_base_wt = (
-            inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS] * GRAV_ENGLISH_LBM
+        stab_aug_ref_wt = (
+            inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS]
+            * GRAV_ENGLISH_LBM
         )
         CK15 = inputs[Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER]
         CK19 = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER]
@@ -65,7 +66,7 @@ class MiscControlMass(om.ExplicitComponent):
             c_mass_trend_cockpit_control * (gross_wt_initial / 1000.0) ** 0.41
         )
         cockpit_control_wt = CK15 * intermediate_cockpit_control_wt
-        stab_control_wt = CK19 * stab_aug_base_wt
+        stab_control_wt = CK19 * stab_aug_ref_wt
 
         outputs[Aircraft.Controls.COCKPIT_CONTROL_MASS] = cockpit_control_wt / GRAV_ENGLISH_LBM
         outputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS] = (
@@ -76,17 +77,17 @@ class MiscControlMass(om.ExplicitComponent):
         gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
         c_mass_trend_cockpit_control = inputs[Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT]
 
-        stab_aug_base_wt = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS]
+        stab_aug_ref_wt = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS]
         CK15 = inputs[Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER]
         CK19 = inputs[Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER]
 
         J[
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER,
-        ] = stab_aug_base_wt
+        ] = stab_aug_ref_wt
         J[
             Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS,
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS,
         ] = CK19
 
         J[

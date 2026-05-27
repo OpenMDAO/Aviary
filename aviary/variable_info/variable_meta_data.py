@@ -588,11 +588,11 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_BASE_MASS,
+    Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKSAS', 'FLOPS': None},
     units='lbm',
-    desc='base mass of stability augmentation system',
+    desc='reference mass of stability augmentation system',
     default_value=0,
 )
 
@@ -601,7 +601,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='mass of stability augmentation system',
+    desc='scaled mass of stability augmentation system',
     default_value=0,
 )
 
