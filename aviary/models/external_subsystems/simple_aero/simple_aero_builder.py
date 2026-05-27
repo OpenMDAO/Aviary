@@ -39,6 +39,8 @@ class SimpleAeroBuilder(SubsystemBuilder):
         promotes = [
             Dynamic.Vehicle.DRAG,
             Dynamic.Vehicle.LIFT,
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
         ]
         return promotes
 

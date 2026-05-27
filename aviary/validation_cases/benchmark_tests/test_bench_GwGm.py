@@ -107,7 +107,7 @@ class ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test = ProblemPhaseTestCase()
-    # test.setUp()
-    # test.test_bench_GwGm_IPOPT_Breguet_Cruise()
+    # unittest.main()
+    test = ProblemPhaseTestCase()
+    test.setUp()
+    test.test_bench_GwGm_IPOPT_Breguet_Cruise()

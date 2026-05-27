@@ -6553,12 +6553,32 @@ add_meta_data(
 )
 
 add_meta_data(
+    Dynamic.Vehicle.DRAG_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='unitless',
+    desc='Current total drag coefficient experienced by the vehicle',
+    default_value=1.0,
+    multivalue=True,
+)
+
+add_meta_data(
     Dynamic.Vehicle.LIFT,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbf',
     desc='Current total lift produced by the vehicle',
     default_value=0.0,
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.LIFT_COEFFICIENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='unitless',
+    desc='Current total lift coefficient produced by the vehicle',
+    default_value=1.0,
     multivalue=True,
 )
 
