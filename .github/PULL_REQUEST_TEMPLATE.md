@@ -10,6 +10,6 @@ Summary of PR.
 
 None
 
-### New Dependencies
+### AI Usage
 
 None
