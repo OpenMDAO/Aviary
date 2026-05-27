@@ -31,8 +31,8 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, units='lbf')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
-        add_aviary_output(self, Aircraft.Fuel.TOTAL_VOLUME, units='galUS')  # not computed nor used
 
+        add_aviary_output(self, Aircraft.Fuel.TOTAL_VOLUME, units='galUS')  # not computed nor used
         add_aviary_output(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
     def setup_partials(self):

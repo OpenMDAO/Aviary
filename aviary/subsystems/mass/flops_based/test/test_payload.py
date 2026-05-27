@@ -31,7 +31,7 @@ cargo_test_data['1'] = AviaryValues(
 
 cargo_data_sets = [key for key in cargo_test_data]
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
 
 @use_tempdirs
