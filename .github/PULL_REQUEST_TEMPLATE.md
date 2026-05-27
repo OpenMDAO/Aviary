@@ -12,4 +12,4 @@ None
 
 ### AI Usage
 
-None
+Disclose any AI usage in this PR, including models used and files affected.
