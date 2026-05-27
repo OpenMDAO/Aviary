@@ -37,8 +37,8 @@ class TestCruiseAero(unittest.TestCase):
         cl_exp = np.array([0.5968, 0.5975, 0.5974, 0.5974, 0.5566, 0.5833, 0.6113, 0.6257])
         cd_exp = np.array([0.0307, 0.0307, 0.0307, 0.0307, 0.0296, 0.0310, 0.0326, 0.0334])
 
-        assert_near_equal(prob['CL'], cl_exp, tolerance=0.005)
-        assert_near_equal(prob['CD'], cd_exp, tolerance=0.009)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT_COEFFICIENT], cl_exp, tolerance=0.005)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], cd_exp, tolerance=0.009)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=4e-7, rtol=2e-7)
@@ -58,8 +58,8 @@ class TestCruiseAero(unittest.TestCase):
         cl_exp = np.array([0.6304, 0.5059])
         cd_exp = cl_exp / np.array([18.608, 18.425])
 
-        assert_near_equal(prob['CL'], cl_exp, tolerance=0.005)
-        assert_near_equal(prob['CD'], cd_exp, tolerance=0.005)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT_COEFFICIENT], cl_exp, tolerance=0.005)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], cd_exp, tolerance=0.005)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=9e-8, rtol=2e-7)
@@ -112,8 +112,8 @@ class TestLowSpeedAero(unittest.TestCase):
         cd_exp = 0.0572 * np.ones(4)
 
         # TODO yikes @ tolerances
-        assert_near_equal(prob['CL'], cl_exp, tolerance=0.1)
-        assert_near_equal(prob['CD'], cd_exp, tolerance=0.3)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT_COEFFICIENT], cl_exp, tolerance=0.1)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], cd_exp, tolerance=0.3)
 
         partial_data = prob.check_partials(
             method='fd', out_stream=None
@@ -161,8 +161,8 @@ class TestLowSpeedAero(unittest.TestCase):
         cd_exp = np.array([0.1087, 0.1070, 0.1019, 0.0969, 0.0661, 0.0641, 0.0644, 0.0680])
 
         # TODO yikes @ tolerances
-        assert_near_equal(prob['CL'], cl_exp, tolerance=0.02)
-        assert_near_equal(prob['CD'], cd_exp, tolerance=0.09)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT_COEFFICIENT], cl_exp, tolerance=0.02)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], cd_exp, tolerance=0.09)
 
         partial_data = prob.check_partials(
             method='fd', out_stream=None
@@ -250,8 +250,8 @@ class BWBCruiseAeroTest(unittest.TestCase):
         cl_exp = np.array([0.1509, 0.410764, -0.0384316])
         cd_exp = np.array([0.00610224, 0.0205816, 0.00460256])
 
-        assert_near_equal(prob['CL'], cl_exp, tolerance=0.001)
-        assert_near_equal(prob['CD'], cd_exp, tolerance=0.001)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT_COEFFICIENT], cl_exp, tolerance=0.001)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], cd_exp, tolerance=0.001)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=4e-7, rtol=2e-7)
@@ -271,8 +271,8 @@ class BWBCruiseAeroTest(unittest.TestCase):
         cl_exp = np.array([0.1276112, 0.05515637])
         cd_exp = np.array([0.00599297, 0.00570541])
 
-        assert_near_equal(prob['CL'], cl_exp, tolerance=0.001)
-        assert_near_equal(prob['CD'], cd_exp, tolerance=0.001)
+        assert_near_equal(prob[Dynamic.Vehicle.LIFT_COEFFICIENT], cl_exp, tolerance=0.001)
+        assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], cd_exp, tolerance=0.001)
 
         partial_data = prob.check_partials(method='cs', out_stream=None)
         assert_check_partials(partial_data, atol=9e-8, rtol=2e-7)
