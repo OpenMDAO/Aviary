@@ -29,11 +29,11 @@ class ScaledCD(om.ExplicitComponent):
             'CD_prescaled', val=np.ones(nn), units='unitless', desc='total drag coefficient'
         )
 
-        self.add_output('CD', val=np.ones(nn), units='unitless', desc='total drag')
+        add_aviary_output(self, Dynamic.Vehicle.DRAG_COEFFICIENT, shape=nn, units='unitless')
 
     def setup_partials(self):
         self.declare_partials(
-            'CD',
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
             [
                 'CD_prescaled',
                 Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR,
@@ -41,12 +41,21 @@ class ScaledCD(om.ExplicitComponent):
             ],
         )
 
-        self.declare_partials('CD', Dynamic.Atmosphere.MACH, dependent=False)
+        self.declare_partials(
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Atmosphere.MACH,
+            dependent=False,
+        )
 
         nn = self.options['num_nodes']
         rows_cols = np.arange(nn)
 
-        self.declare_partials('CD', 'CD_prescaled', rows=rows_cols, cols=rows_cols)
+        self.declare_partials(
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            'CD_prescaled',
+            rows=rows_cols,
+            cols=rows_cols,
+        )
 
     def compute(self, inputs, outputs):
         FCDSUB = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
@@ -58,7 +67,7 @@ class ScaledCD(om.ExplicitComponent):
         idx_sup = np.where(M >= 1.0)
         CD_scaled = CD_prescaled * FCDSUB
         CD_scaled[idx_sup] = CD_prescaled[idx_sup] * FCDSUP
-        outputs['CD'] = CD_scaled
+        outputs[Dynamic.Vehicle.DRAG_COEFFICIENT] = CD_scaled
 
     def compute_partials(self, inputs, partials):
         FCDSUB = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
@@ -74,15 +83,17 @@ class ScaledCD(om.ExplicitComponent):
         dCD = np.ones_like(CD_prescaled)
         dCD[idx_sub] = FCDSUB
         dCD[idx_sup] = FCDSUP
-        partials['CD', 'CD_prescaled'] = dCD
+        partials[Dynamic.Vehicle.DRAG_COEFFICIENT, 'CD_prescaled'] = dCD
 
         dF = np.zeros_like(CD_prescaled)
         dF[idx_sub] = CD_prescaled[idx_sub]
-        partials['CD', Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR] = dF
+        partials[Dynamic.Vehicle.DRAG_COEFFICIENT, Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR] = dF
 
         dF = np.zeros_like(CD_prescaled)
         dF[idx_sup] = CD_prescaled[idx_sup]
-        partials['CD', Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR] = dF
+        partials[Dynamic.Vehicle.DRAG_COEFFICIENT, Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR] = (
+            dF
+        )
 
 
 class SimpleDrag(om.ExplicitComponent):
@@ -95,10 +106,8 @@ class SimpleDrag(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='m**2')
-
         add_aviary_input(self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, shape=nn, units='N/m**2')
-
-        self.add_input('CD', val=np.ones(nn), units='unitless', desc='total drag coefficient')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG_COEFFICIENT, shape=nn, units='unitless')
 
         add_aviary_output(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
@@ -110,7 +119,7 @@ class SimpleDrag(om.ExplicitComponent):
 
         self.declare_partials(
             Dynamic.Vehicle.DRAG,
-            [Dynamic.Atmosphere.DYNAMIC_PRESSURE, 'CD'],
+            [Dynamic.Atmosphere.DYNAMIC_PRESSURE, Dynamic.Vehicle.DRAG_COEFFICIENT],
             rows=rows_cols,
             cols=rows_cols,
         )
@@ -118,18 +127,18 @@ class SimpleDrag(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         S = inputs[Aircraft.Wing.AREA]
         q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
-        CD = inputs['CD']
+        CD = inputs[Dynamic.Vehicle.DRAG_COEFFICIENT]
 
         outputs[Dynamic.Vehicle.DRAG] = q * S * CD
 
     def compute_partials(self, inputs, partials):
         S = inputs[Aircraft.Wing.AREA]
         q = inputs[Dynamic.Atmosphere.DYNAMIC_PRESSURE]
-        CD = inputs['CD']
+        CD = inputs[Dynamic.Vehicle.DRAG_COEFFICIENT]
 
         partials[Dynamic.Vehicle.DRAG, Aircraft.Wing.AREA] = q * CD
         partials[Dynamic.Vehicle.DRAG, Dynamic.Atmosphere.DYNAMIC_PRESSURE] = S * CD
-        partials[Dynamic.Vehicle.DRAG, 'CD'] = q * S
+        partials[Dynamic.Vehicle.DRAG, Dynamic.Vehicle.DRAG_COEFFICIENT] = q * S
 
 
 class TotalDrag(om.Group):

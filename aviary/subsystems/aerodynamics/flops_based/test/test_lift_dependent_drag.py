@@ -45,7 +45,7 @@ class LiftDependentDragTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(
-            prob.get_val('CD'),
+            prob.get_val('pressure_drag_coeff'),
             [0.01445345, 0.01278088, 0.01124887, 0.00982434, 0.00844742, 0.0],
             1e-6,
         )
@@ -84,7 +84,7 @@ class LiftDependentDragTest(unittest.TestCase):
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
         assert_near_equal(
-            prob.get_val('CD'),
+            prob.get_val('pressure_drag_coeff'),
             [0.01333307, 0.02305564, 0.0465636, 0.51400999, 0.79391369, 0.82316212],
             1e-6,
         )
