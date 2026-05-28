@@ -2744,6 +2744,37 @@ class ControlMass(om.ExplicitComponent):
         J[Aircraft.Controls.MASS, Aircraft.Controls.CONTROL_MASS_INCREMENT] = 1
 
 
+class LandingMass(om.ExplicitComponent):
+    """Maximum landing mass is maximum takeoff gross mass times the ratio of landing/takeoff mass."""
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Design.GROSS_MASS)
+        add_aviary_input(self, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO)
+
+        add_aviary_output(self, Aircraft.Design.TOUCHDOWN_MASS_MAX)
+
+    def setup_partials(self):
+        self.declare_partials('*', '*')
+
+    def compute(self, inputs, outputs):
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
+        landing_to_takeoff_mass_ratio = inputs[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO]
+
+        outputs[Aircraft.Design.TOUCHDOWN_MASS_MAX] = gross_mass * landing_to_takeoff_mass_ratio
+
+    def compute_partials(self, inputs, J):
+        gross_mass = inputs[Aircraft.Design.GROSS_MASS]
+        landing_to_takeoff_mass_ratio = inputs[Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO]
+
+        J[Aircraft.Design.TOUCHDOWN_MASS_MAX, Aircraft.Design.GROSS_MASS] = (
+            landing_to_takeoff_mass_ratio
+        )
+
+        J[Aircraft.Design.TOUCHDOWN_MASS_MAX, Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO] = (
+            gross_mass
+        )
+
+
 class TotalLandingGearMass(om.ExplicitComponent):
     """Computation of total mass of landing gear."""
 
@@ -2755,7 +2786,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.VERTICAL_MOUNT_LOCATION, units='unitless')
         add_aviary_input(self, Aircraft.LandingGear.MASS_COEFFICIENT, units='unitless')
-        add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Design.TOUCHDOWN_MASS_MAX, units='lbm')
         add_aviary_input(
             self,
             Aircraft.Nacelle.CLEARANCE_RATIO,
@@ -2772,7 +2803,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
             Aircraft.LandingGear.TOTAL_MASS,
             [
                 Aircraft.LandingGear.MASS_COEFFICIENT,
-                Aircraft.Design.GROSS_MASS,
+                Aircraft.Design.TOUCHDOWN_MASS_MAX,
                 Aircraft.Nacelle.CLEARANCE_RATIO,
                 Aircraft.Nacelle.AVG_DIAMETER,
                 Aircraft.LandingGear.TOTAL_MASS_SCALER,
@@ -2782,7 +2813,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        landing_wt = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX] * GRAV_ENGLISH_LBM
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
         CK12 = inputs[Aircraft.LandingGear.TOTAL_MASS_SCALER]
@@ -2809,13 +2840,13 @@ class TotalLandingGearMass(om.ExplicitComponent):
             wing_loc, 0.005, -0.01 / 320
         ) + c_gear_mass * sigmoidX(wing_loc, 0.005, 0.01 / 320)
 
-        landing_gear_wt = c_gear_mass_modified * gross_wt_initial
+        landing_gear_wt = c_gear_mass_modified * landing_wt
 
         outputs[Aircraft.LandingGear.TOTAL_MASS] = CK12 * landing_gear_wt / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         c_gear_mass = inputs[Aircraft.LandingGear.MASS_COEFFICIENT]
-        gross_wt_initial = inputs[Aircraft.Design.GROSS_MASS] * GRAV_ENGLISH_LBM
+        landing_wt = inputs[Aircraft.Design.TOUCHDOWN_MASS_MAX] * GRAV_ENGLISH_LBM
         wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
         clearance_ratio = inputs[Aircraft.Nacelle.CLEARANCE_RATIO]
         nacelle_diam = inputs[Aircraft.Nacelle.AVG_DIAMETER]
@@ -2832,7 +2863,7 @@ class TotalLandingGearMass(om.ExplicitComponent):
         dLGW_dCGW = (
             (0.85 * (1.0 + 0.1765 * gear_height / 6.0)) * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
             + sigmoidX(wing_loc, 0.005, 0.01 / 320.0)
-        ) * gross_wt_initial
+        ) * landing_wt
 
         dGH_dCR = (
             (
@@ -2852,12 +2883,12 @@ class TotalLandingGearMass(om.ExplicitComponent):
         ) + c_gear_mass * sigmoidX(wing_loc, 0.005, 0.01 / 320.0)
 
         dLGW_dCR = max(
-            (c_gear_mass * 0.85 * 0.1765 / 6 * dGH_dCR * gross_wt_initial)
+            (c_gear_mass * 0.85 * 0.1765 / 6 * dGH_dCR * landing_wt)
             * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
         )
 
         dLGW_dND = max(
-            (c_gear_mass * 0.85 * 0.1765 / 6 * dGH_dND * gross_wt_initial)
+            (c_gear_mass * 0.85 * 0.1765 / 6 * dGH_dND * landing_wt)
             * sigmoidX(wing_loc, 0.005, -0.01 / 320.0)
         )
 
@@ -2873,10 +2904,12 @@ class TotalLandingGearMass(om.ExplicitComponent):
             dLGW_dND / GRAV_ENGLISH_LBM
         )
 
-        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Design.GROSS_MASS] = c_gear_mass_modified
+        J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.Design.TOUCHDOWN_MASS_MAX] = (
+            c_gear_mass_modified
+        )
 
         J[Aircraft.LandingGear.TOTAL_MASS, Aircraft.LandingGear.TOTAL_MASS_SCALER] = (
-            c_gear_mass_modified * gross_wt_initial
+            c_gear_mass_modified * landing_wt
         ) / GRAV_ENGLISH_LBM
 
 
@@ -2929,6 +2962,9 @@ class LandingGearMass(om.ExplicitComponent):
 
 class LandingGearMassGroup(om.Group):
     def setup(self):
+        self.add_subsystem(
+            'landing_mass', LandingMass(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
         self.add_subsystem(
             'total_landing_gear',
             TotalLandingGearMass(),
