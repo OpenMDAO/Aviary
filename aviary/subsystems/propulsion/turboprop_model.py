@@ -417,14 +417,26 @@ class TurbopropModel(EngineModel):
 
         return params
 
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         linked_vars = super().get_linked_variables()  # calls from EngineModel
         if self.shaft_power_model is not None:
-            linked_vars += self.shaft_power_model.get_linked_variables(aviary_inputs=aviary_inputs)
+            linked_vars += self.shaft_power_model.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
         if self.gearbox_model is not None:
-            linked_vars += self.gearbox_model.get_linked_variables(aviary_inputs=aviary_inputs)
+            linked_vars += self.gearbox_model.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
         if self.propeller_model is not None:
-            linked_vars += self.propeller_model.get_linked_variables(aviary_inputs=aviary_inputs)
+            linked_vars += self.propeller_model.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
 
         return linked_vars
 

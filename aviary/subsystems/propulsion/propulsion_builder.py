@@ -190,11 +190,15 @@ class CorePropulsionBuilder(PropulsionBuilder):
         return constraints
 
     # NOTE no unittests!
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """Call get_linked_variables() on all engine models and return combined result."""
         linked_vars = {}
         for engine in self.engine_models:
-            engine_linked_vars = engine.get_linked_variables(aviary_inputs=aviary_inputs)
+            engine_linked_vars = engine.get_linked_variables(
+                aviary_inputs=aviary_inputs,
+                user_options=user_options,
+                subsystem_options=subsystem_options,
+            )
             linked_vars.update(engine_linked_vars)
 
         return linked_vars

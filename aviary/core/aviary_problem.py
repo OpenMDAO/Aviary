@@ -513,7 +513,7 @@ class AviaryProblem(om.Problem):
         else:
             self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=None, verbosity=None):
+    def add_driver(self, optimizer='IPOPT', use_coloring=True, max_iter=50, verbosity=None):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -577,39 +577,39 @@ class AviaryProblem(om.Problem):
                 isumm, iprint = 6, 0
             elif verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                 isumm, iprint = 6, 9
-            driver.opt_settings['iSumm'] = isumm
-            driver.opt_settings['iPrint'] = iprint
+            driver.opt_settings.setdefault('iSumm', isumm)
+            driver.opt_settings.setdefault('iPrint', iprint)
             # Optimizer Settings #
-            driver.opt_settings['Major iterations limit'] = max_iter
-            driver.opt_settings['Major optimality tolerance'] = 1e-4
-            driver.opt_settings['Major feasibility tolerance'] = 1e-6
+            driver.opt_settings.setdefault('Major iterations limit', max_iter)
+            driver.opt_settings.setdefault('Major optimality tolerance', 1e-4)
+            driver.opt_settings.setdefault('Major feasibility tolerance', 1e-6)
 
         elif driver.options['optimizer'] == 'IPOPT':
             # Print Options #
             if verbosity == Verbosity.QUIET:
                 print_level = 0
-                driver.opt_settings['print_user_options'] = 'no'
+                driver.opt_settings.setdefault('print_user_options', 'no')
             elif verbosity == Verbosity.BRIEF:
                 print_level = 3  # minimum to get exit status
-                driver.opt_settings['print_user_options'] = 'no'
-                driver.opt_settings['print_frequency_iter'] = 10
+                driver.opt_settings.setdefault('print_user_options', 'no')
+                driver.opt_settings.setdefault('print_frequency_iter', 10)
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
             else:  # DEBUG
                 print_level = 7
-            driver.opt_settings['print_level'] = print_level
+            driver.opt_settings.setdefault('print_level', print_level)
             # Optimizer Settings #
-            driver.opt_settings['tol'] = 1.0e-6
-            driver.opt_settings['mu_init'] = 1e-5
-            driver.opt_settings['max_iter'] = max_iter
+            driver.opt_settings.setdefault('tol', 1.0e-6)
+            driver.opt_settings.setdefault('mu_init', 1e-5)
+            driver.opt_settings.setdefault('max_iter', max_iter)
             # for faster convergence
-            driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
-            driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
-            driver.opt_settings['mu_strategy'] = 'monotone'
+            driver.opt_settings.setdefault('nlp_scaling_method', 'gradient-based')
+            driver.opt_settings.setdefault('alpha_for_y', 'safer-min-dual-infeas')
+            driver.opt_settings.setdefault('mu_strategy', 'monotone')
             # Shugo's recommended settings for robustness
-            # driver.opt_settings['mu_init'] = 1.0
-            # driver.opt_settings['nlp_scaling_method'] = 'none'
-            # driver.opt_settings['limited_memory_max_history'] = 50
+            # driver.opt_settings.setdefault('mu_init', 1.0)
+            # driver.opt_settings.setdefault('nlp_scaling_method', 'none')
+            # driver.opt_settings.setdefault('limited_memory_max_history', 50)
 
         elif driver.options['optimizer'] == 'SLSQP':
             # Print Options #
