@@ -413,6 +413,16 @@ class FlightPhaseBase(PhaseBuilder):
 
         return transcription
 
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
+
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""
         # TODO: support subsystems and meta_data in the base class

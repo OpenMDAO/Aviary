@@ -629,6 +629,19 @@ class PhaseBuilder(ABC):
         """
         return {}
 
+    def get_linked_variables(self):
+        """
+        Return a list of variable names that will be linked when this phase is connected to another
+        phase that shares the variable.
+
+        Analytic phases should define a
+
+        Returns
+        -------
+        linked_vars : list of variables to link between phases
+        """
+        return []
+
 
 _registered_phase_builder_types = []
 

@@ -456,3 +456,15 @@ class AviaryOptionsDictionary(om.OptionsDictionary):
                 units=units,
                 desc=desc,
             )
+
+            name = f'{stem}_ref0'
+            default = defaults.get(name, 0.0)
+            desc = f'Additive scale factor "ref0" for {stem}.\n'
+            desc += 'Default is 0.0'
+            self.declare(
+                name=name,
+                default=default,
+                types=float,
+                units=units,
+                desc=desc,
+            )
