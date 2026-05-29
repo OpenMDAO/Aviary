@@ -1,11 +1,19 @@
 import numpy as np
 import openmdao.api as om
+import warnings
 
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Cold import atm_data as cold_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Polar import atm_data as polar_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import atm_data as tropical_210A
 from aviary.subsystems.atmosphere.data.StandardAtm1976 import atm_data as USatm1976
+from aviary.subsystems.atmosphere.data.MarsReference2024 import atm_data as MarsReference2024
+from aviary.subsystems.atmosphere.data.MarsHellasHot import atm_data as MarsHellasHot
+from aviary.subsystems.atmosphere.data.MarsHellasCold import atm_data as MarsHellasCold
+from aviary.subsystems.atmosphere.data.MarsEquatorHot import atm_data as MarsEquatorHot
+from aviary.subsystems.atmosphere.data.MarsEquatorCold import atm_data as MarsEquatorCold
+from aviary.subsystems.atmosphere.data.MarsPolarHot import atm_data as MarsPolarHot
+from aviary.subsystems.atmosphere.data.MarsPolarCold import atm_data as MarsPolarCold
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AtmosphereModel, SpeedType
 from aviary.variable_info.functions import add_aviary_option
@@ -102,30 +110,79 @@ class AtmosphereComp(om.ExplicitComponent):
 
         self._dt = self.options['delta_T_Celcius']
 
+        self._R0 = 0 # instantiate and add correct value later
         self._geometric = self.options['h_def'] == 'geometric'
-        self._R0 = 6_356_766  # (meters) The effective Earth Radius
         # From the U.S. Standard Atmosphere 1976 publication located here
         # https://www.ngdc.noaa.gov/stp/space-weather/online-publications/miscellaneous/us-standard-atmosphere-1976/us-standard-atmosphere_st76-1562_noaa.pdf
 
-        gamma = 1.4  # Ratio of specific heads
-        Rs = 8314.32  # J/(kmol*K), Gas constant
-        M_air = 28.97  # (kg/kmol), molar mass of dry air
-        self._R_air = Rs / M_air  # (J/ (kg * K)), gas constant for air
-        self._K = gamma * Rs / M_air  # (J/(kg * K))
-
-        self._S = 110.4  # (K) southerlands constant
-        self._beta = 1.458e-6  # (s*m*K**(1/2))
+        
+        Rs = 8314.32  # J/(kmol*K), Ideal Gas constant
 
         if self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.STANDARD:
             self.source_data = USatm1976
+            self.planet='Earth'
         elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.TROPICAL:
             self.source_data = tropical_210A
+            self.planet='Earth'
         elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.POLAR:
             self.source_data = polar_210A
+            self.planet='Earth'
         elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.HOT:
             self.source_data = hot_210A
+            self.planet='Earth'
         elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.COLD:
             self.source_data = cold_210A
+            self.planet='Earth'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_REFERENCE:
+            self.source_data = MarsReference2024
+            self.planet='Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_HELLAS_HOT:
+            self.source_data = MarsHellasHot
+            self.planet='Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_HELLAS_COLD:
+            self.source_data = MarsHellasCold
+            self.planet='Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_EQUATOR_HOT:
+            self.source_data = MarsEquatorHot
+            self.planet='Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_EQUATOR_COLD:
+            self.source_data = MarsEquatorCold
+            self.planet='Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_POLAR_HOT:
+            self.source_data = MarsPolarHot
+            self.planet='Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_POLAR_COLD:
+            self.source_data = MarsPolarCold
+            self.planet='Mars'
+        
+
+        # The constants below are used as a simplification to enable calculation of properties not given by by source data tables
+        if self.planet is 'Earth':
+            M_air = 28.97  # (kg/kmol), molar mass of dry air on Earth
+            gamma = 1.4  # Ratio of specific heats
+            self._S = 110.4  # (K) Southerlands constant for Earth air
+            self._beta = 1.458e-6  # (s*m*K**(1/2)) viscosity scaling coefficient
+            self._R0 = 6_356_766  # (meters) The effective Earth Radius
+        elif self.planet is 'Mars':
+            M_air = 43.34 # (kg/kmol), mean molar mass of Mars atmosphere https://descanso.jpl.nasa.gov/propagation/mars/MarsPub_sec4.pdf
+            gamma = 1.36 # Based on averaging values from Hellas_summar, Hellas_winter, Equatorial_summar, 
+            # Equatorial_winter, North_Pole_summer, North_Pole_Winter output from Mars-GRAM
+            # Mars atmosphere is 95% Co2 so we use the southerland constant for Co2 https://descanso.jpl.nasa.gov/propagation/mars/MarsPub_sec4.pdf 
+            self._S = 222 # (K) Southerlands constant for Mars atmosphere https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
+            self._beta = 1.503e-6 # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02
+            # https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
+            # self_beta = 1.370**10-5 * (273+self._S)/273**(3/2) 
+        else :   
+            warnings.warn('self.planet is not set.')
+            exit()
+
+        # Mars altitude output is referenced to the MOLA constant potential surface (areoid) which is already equivalent to geopotential.
+        if self.planet is not 'Earth' and self._geometric is 'geometric': 
+            warnings.warn('h_def = geometric is only applicable for Earth atmosphere models and will be ignored.')
+            self._geometric = False
+
+        self._R_air = Rs / M_air  # (J/ (kg * K)), gas constant for atmosphere
+        self._K = gamma * Rs / M_air  # (J/(kg * K))
 
         self.add_input(Dynamic.Mission.ALTITUDE, val=np.ones(nn), units='m')
 
@@ -184,6 +241,7 @@ class AtmosphereComp(om.ExplicitComponent):
         h = inputs[Dynamic.Mission.ALTITUDE]
 
         if self._geometric:
+            # convert geometric into geopotential altitude
             h = (
                 h / (self._R0 + h) * self._R0
             )  # Equation 19 from the U.S. Standard Atmosphere 1976 publication
