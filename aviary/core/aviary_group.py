@@ -1145,6 +1145,23 @@ class AviaryGroup(om.Group):
         if len(phases) <= 1:
             return
 
+        # New section starts here
+
+        # TODO: need to update the get_linked_variables api.
+        external_links = set()
+        for subsys in self.external_subsystems:
+            link_vars = subsys.get_linked_variables(aviary_inputs=self.aviary_inputs)
+            external_links.add(link_vars)
+
+        # TODO: We can support linking a phase with any upstream phase. A networkx graph might be
+        # a good choice.
+        phase1 = phase[0]
+        builder1 = self.phase_objects[0]
+        phase_links1 = builder1.get_linked_variables(aviary_inputs=self.aviary_inputs)
+        for phase, builder in zip(phases[1:], self.phase_objects[1:]):
+            phase2 = phase
+            builder2 = builder
+
         # In summary, the following code loops over all phases in self.mission_info, gets the linked
         # variables from each external subsystem in each phase, and stores the lists of linked
         # variables in lists_to_link. It then gets a list of unique variable names from
