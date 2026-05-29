@@ -17,6 +17,7 @@ from aviary.validation_cases.validation_tests import (
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class TransportInstrumentsMassTest(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()

@@ -23,8 +23,8 @@ class TestAeroForces(unittest.TestCase):
         prob.model.add_subsystem('comp', af, promotes=['*'])
         prob.setup(force_alloc_complex=True)
 
-        prob.set_val('CL', [1.0, 0.9, 0.8])
-        prob.set_val('CD', [1.0, 0.95, 0.85])
+        prob.set_val(Dynamic.Vehicle.LIFT_COEFFICIENT, [1.0, 0.9, 0.8])
+        prob.set_val(Dynamic.Vehicle.DRAG_COEFFICIENT, [1.0, 0.95, 0.85])
         prob.set_val(Dynamic.Atmosphere.DYNAMIC_PRESSURE, 1, units='psf')
         prob.set_val(Aircraft.Wing.AREA, 1370.3, units='ft**2')
 

@@ -43,7 +43,7 @@ class SimpleDragTest(unittest.TestCase):
         mission_keys = (
             Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             'CD_prescaled',
-            'CD',
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
             Dynamic.Atmosphere.MACH,
         )
 
@@ -90,7 +90,11 @@ class SimpleDragTest(unittest.TestCase):
         data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
-        assert_near_equal(prob.get_val('CD'), mission_simple_CD[case_name], 1e-6)
+        assert_near_equal(
+            prob.get_val(Dynamic.Vehicle.DRAG_COEFFICIENT),
+            mission_simple_CD[case_name],
+            1e-6,
+        )
         assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), mission_simple_drag[case_name], 1e-6)
 
 
@@ -122,7 +126,7 @@ class TotalDragTest(unittest.TestCase):
         )
 
         # drag = 4 digits precision
-        outputs_keys = ('CD_prescaled', 'CD', Dynamic.Vehicle.DRAG)
+        outputs_keys = ('CD_prescaled', Dynamic.Vehicle.DRAG_COEFFICIENT, Dynamic.Vehicle.DRAG)
 
         # using lowest precision from all available data should "always" work
         # - will a higher precision comparison work? find a practical tolerance that fits
@@ -163,7 +167,11 @@ class TotalDragTest(unittest.TestCase):
         data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=2.5e-10, rtol=1e-12)
 
-        assert_near_equal(prob.get_val('CD'), mission_total_CD[case_name], 1e-6)
+        assert_near_equal(
+            prob.get_val(Dynamic.Vehicle.DRAG_COEFFICIENT),
+            mission_total_CD[case_name],
+            1e-6,
+        )
         assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), mission_total_drag[case_name], 1e-6)
 
 
@@ -185,7 +193,7 @@ class ComputedDragTest(unittest.TestCase):
             'computed_drag',
             ComputedDrag(num_nodes=nn),
             promotes_inputs=['*'],
-            promotes_outputs=['CD', Dynamic.Vehicle.DRAG],
+            promotes_outputs=[Dynamic.Vehicle.DRAG_COEFFICIENT, Dynamic.Vehicle.DRAG],
         )
 
         prob.setup(force_alloc_complex=True)
@@ -208,7 +216,11 @@ class ComputedDragTest(unittest.TestCase):
         derivs = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(derivs, atol=1e-12, rtol=1e-12)
 
-        assert_near_equal(prob.get_val('CD'), [0.0249732, 0.0297451], 1e-6)
+        assert_near_equal(
+            prob.get_val(Dynamic.Vehicle.DRAG_COEFFICIENT),
+            [0.0249732, 0.0297451],
+            1e-6,
+        )
         assert_near_equal(prob.get_val(Dynamic.Vehicle.DRAG), [31350.8, 37268.8], 1e-6)
 
 
@@ -233,11 +245,10 @@ def _add_drag_coefficients(
     FCDSUP = flops_inputs.get_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR)
 
     idx_sup = np.where(M >= 1.0)
-    mission_data.set_val('CD', CD_scaled)
     CD = CD_scaled / FCDSUB
     CD[idx_sup] = CD_scaled[idx_sup] / FCDSUP
     mission_data.set_val('CD_prescaled', CD)
-    mission_data.set_val('CD', CD_scaled)
+    mission_data.set_val(Dynamic.Vehicle.DRAG_COEFFICIENT, CD_scaled)
 
     FCD0 = flops_inputs.get_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR)
     CD0 = CD0_scaled / FCD0

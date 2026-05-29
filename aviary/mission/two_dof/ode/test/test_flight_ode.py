@@ -67,8 +67,8 @@ class FlightODEClimbTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.0569239,
-            'CL': 0.58762109,
-            'CD': 0.02867741,
+            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.58762109,
+            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.02867741,
             Dynamic.Mission.ALTITUDE_RATE: 58.3497354,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
@@ -115,8 +115,8 @@ class FlightODEClimbTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99983993, 4.04378041],
-            'CL': [0.50719248, 0.61320271],
-            'CD': [0.02520388, 0.0312557],
+            Dynamic.Vehicle.LIFT_COEFFICIENT: [0.50719248, 0.61320271],
+            Dynamic.Vehicle.DRAG_COEFFICIENT: [0.02520388, 0.0312557],
             Dynamic.Mission.ALTITUDE_RATE: [52.68288688, 9.32639661],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
@@ -180,8 +180,8 @@ class FlightODEDescenTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.21974886, 1.20407839]),
-            'CL': np.array([0.51684124, 0.25916936]),
-            'CD': np.array([0.02633437, 0.01729238]),
+            Dynamic.Vehicle.LIFT_COEFFICIENT: np.array([0.51684124, 0.25916936]),
+            Dynamic.Vehicle.DRAG_COEFFICIENT: np.array([0.02633437, 0.01729238]),
             # ft/s
             Dynamic.Mission.ALTITUDE_RATE: np.array([-37.03297068, -44.19020778]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
@@ -226,8 +226,8 @@ class FlightODEDescenTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.2001692,
-            'CL': 0.50764259,
-            'CD': 0.02532094,
+            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.50764259,
+            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.02532094,
             Dynamic.Mission.ALTITUDE_RATE: -17.6942839,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 431.0014619,

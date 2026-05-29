@@ -14,7 +14,7 @@ from aviary.validation_cases.validation_tests import (
 )
 from aviary.variable_info.variables import Aircraft
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
 
 @use_tempdirs
