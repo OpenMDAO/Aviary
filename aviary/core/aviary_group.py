@@ -1153,8 +1153,6 @@ class AviaryGroup(om.Group):
         if comm.size > 1 and self.traj.options['parallel_phases']:
             connect_directly = False
 
-        # New linking section starts here
-
         # Assemble all linkable variables in the phases.
         link_vars_dict = {}
         for builder in self.phase_objects:
@@ -1209,25 +1207,42 @@ class AviaryGroup(om.Group):
                 if opt1 is False and opt2 is False:
                     continue
 
+                # If both ends are pinned with a constraint, don't link.
+                pin1 = phase_info1.get(f'{var}_final', (None, None))[0]
+                pin2 = phase_info2.get(f'{var}_initial', (None, None))[0]
+                if pin1 and pin2:
+                    continue
+
                 # Controls cannot connect directly.
                 connect = False if opt2 is not None else connect_directly
 
+                # Pinned front can't take input.
+                connect = False if pin2 else connect
+
                 kwargs = {}
                 if not connect:
+                    # Link with a constraint.
                     # Use ref from the previous phase.
                     # Time behaves a bit differently than the others.
                     if var == 'time':
-                        rvar = 'time_duration'
+                        ref, units = phase_info1.get(f'{var}_duration_ref')
+                        kwargs = {
+                            'ref': ref,
+                            'units': units,
+                        }
                     else:
-                        rvar = var
-                    ref, units = phase_info1.get(f'{rvar}_ref')
-                    ref0 = phase_info1.get(f'{rvar}_ref0')[0]
+                        ref, units = phase_info1.get(f'{var}_ref')
+                        ref0 = phase_info1.get(f'{var}_ref0')[0]
+                        kwargs = {
+                            'ref': ref,
+                            'ref0': ref0,
+                            'units': units,
+                        }
 
-                    kwargs = {
-                        'ref': ref,
-                        'ref0': ref0,
-                        'units': units,
-                    }
+                    #
+                    if opt2 is None and var is not 'time':
+                        phase = self.traj._phases[phase2]
+                        phase.set_state_options(var, input_initial=False)
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
@@ -1238,55 +1253,6 @@ class AviaryGroup(om.Group):
 
             # TODO: Apply any transformations of similar variables across boundary.
 
-
-        # In summary, the following code loops over all phases in self.mission_info, gets the linked
-        # variables from each external subsystem in each phase, and stores the lists of linked
-        # variables in lists_to_link. It then gets a list of unique variable names from
-        # lists_to_link and loops over them, creating a list of phase names for each variable and
-        # linking the phases using self.traj.link_phases().
-
-        #lists_to_link = []
-        #for idx, phase_name in enumerate(self.mission_info):
-            #phase_info = self.mission_info[phase_name]
-            #all_subsystem_options = phase_info.get('subsystem_options', {})
-
-            #lists_to_link.append([])
-            #for subsys in self.external_subsystems:
-                #lists_to_link[idx].extend(
-                    #subsys.get_linked_variables(
-                        #aviary_inputs=self.aviary_inputs,
-                        #user_options=self.mission_info[phase_name]['user_options'],
-                        #subsystem_options=all_subsystem_options.get(subsys.name, {}),
-                    #)
-                #)
-
-        ## get unique variable names from lists_to_link
-        #unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
-
-        ## loop over unique variable names
-        #for var in unique_vars:
-            #phases_to_link = []
-            #for idx, phase_name in enumerate(self.mission_info):
-                #if var in lists_to_link[idx]:
-                    #phases_to_link.append(phase_name)
-
-            #if len(phases_to_link) > 1:  # TODO: hack
-                #for ii in range(len(phases) - 1):
-                    #phase1, phase2 = phases[ii : ii + 2]
-                    #opt1 = self.mission_info[phase1]['user_options']
-                    #opt2 = self.mission_info[phase2]['user_options']
-                    #integrates_mass1 = opt1['phase_type'] is PhaseType.BREGUET_RANGE
-                    #integrates_mass2 = opt2['phase_type'] is PhaseType.BREGUET_RANGE
-
-                    #if integrates_mass1 or integrates_mass2:
-                        #connected = False
-                    #else:
-                        #connected = connect_directly
-
-                    #self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=connected)
-
-        # TODO need more unified way to handle this instead of splitting between AviaryGroup
-        #      and configurators
         self.configurator.link_phases(self, phases, connect_directly=connect_directly)
 
         self.configurator.check_trajectory(self)

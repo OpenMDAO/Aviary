@@ -247,13 +247,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             When True, phases are connected directly in openmdao. When false, the phases are not
             connected, and a constraint is added to drive the difference to zero.
         """
-        # Under MPI, the states aren't directly connected.
-        if not connect_directly:
-            for phase_name in phases[1:]:
-                phase = aviary_group.traj._phases[phase_name]
-                phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
-                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
-
+        # Boundary conditions for the first phase.
         phase = aviary_group.traj._phases[phases[0]]
 
         # Currently expects Distance to be an input.
