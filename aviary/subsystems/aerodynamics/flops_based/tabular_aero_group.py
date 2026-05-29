@@ -19,7 +19,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 aliases = {
     Dynamic.Mission.ALTITUDE: ['h', 'alt', 'altitude'],
     Dynamic.Atmosphere.MACH: ['m', 'mach'],
-    'lift_coefficient': ['cl', 'coefficient_of_lift', 'lift_coefficient'],
+    Dynamic.Vehicle.LIFT_COEFFICIENT: ['cl', 'coefficient_of_lift', 'lift_coefficient'],
     'lift_dependent_drag_coefficient': [
         'cdi',
         'lift_dependent_drag_coefficient',
@@ -142,7 +142,7 @@ class TabularAeroGroup(om.Group):
                 Aircraft.Wing.AREA,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=[('cl', 'lift_coefficient'), Dynamic.Vehicle.LIFT],
+            promotes_outputs=[Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Vehicle.LIFT],
         )
 
         if connect_training_data:
@@ -174,7 +174,7 @@ class TabularAeroGroup(om.Group):
         )
 
         self.add_subsystem(
-            Dynamic.Vehicle.DRAG,
+            'drag_coefficient',
             Drag(num_nodes=nn),
             promotes_inputs=[
                 Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR,
@@ -187,7 +187,7 @@ class TabularAeroGroup(om.Group):
                 Dynamic.Atmosphere.MACH,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=['CD', Dynamic.Vehicle.DRAG],
+            promotes_outputs=[Dynamic.Vehicle.DRAG_COEFFICIENT, Dynamic.Vehicle.DRAG],
         )
 
 

@@ -7,8 +7,8 @@ aircraft:apu:mass,778.0,lbm
 aircraft:avionics:mass,1349.0,lbm
 aircraft:controls:cockpit_control_mass_scaler,1.0,unitless
 aircraft:controls:control_mass_increment,0.0,lbm
-aircraft:controls:stability_augmentation_system_mass,0.0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1.0,unitless
+aircraft:controls:stability_augmentation_system_reference_mass,0.0,lbm
 aircraft:crew_and_payload:cargo_mass,0.0,lbm
 aircraft:crew_and_payload:catering_items_mass_per_passenger,6.0,lbm
 aircraft:crew_and_payload:design:cargo_mass,0.0,lbm

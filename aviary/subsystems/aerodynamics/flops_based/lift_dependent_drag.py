@@ -3,7 +3,7 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.variable_info.functions import add_aviary_input
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
@@ -37,14 +37,17 @@ class LiftDependentDrag(om.ExplicitComponent):
 
         # Declare outputs
         self.add_output(
-            'CD', shape=(nn), units='unitless', desc='Coefficient of lift dependent drag'
+            'pressure_drag_coeff',
+            shape=nn,
+            units='unitless',
+            desc='Pressure (lift independent) drag coefficient.',
         )
 
     def setup_partials(self):
         nn = self.options['num_nodes']
 
         self.declare_partials(
-            'CD',
+            'pressure_drag_coeff',
             [
                 Dynamic.Atmosphere.MACH,
                 Dynamic.Vehicle.LIFT,
@@ -64,7 +67,7 @@ class LiftDependentDrag(om.ExplicitComponent):
             Aircraft.Wing.THICKNESS_TO_CHORD,
         ]
 
-        self.declare_partials('CD', wrt)
+        self.declare_partials('pressure_drag_coeff', wrt)
 
     def edge_interp(self, A1, A2, FCDP1, FCDP2, dFCDP1, dFCDP2, A):
         den = 1.0 / ((A - A1) * FCDP1 - (A - A2) * FCDP2)
@@ -260,7 +263,7 @@ class LiftDependentDrag(om.ExplicitComponent):
         self.dFCDP_dDELM = dFCDP_dDELM
         self.dFCDP_dDELCL = dFCDP_dDELCL
 
-        outputs['CD'] = DCDP
+        outputs['pressure_drag_coeff'] = DCDP
 
     def compute_partials(self, inputs, partials):
         """
@@ -318,28 +321,34 @@ class LiftDependentDrag(om.ExplicitComponent):
         dFCDP_dSW25 = dFCDP_dA * dA_dSW25
         dCD_dSW25 = dDCDP_dFCDP * dFCDP_dSW25
 
-        partials['CD', Dynamic.Atmosphere.MACH] = dCD_dmach + dCD_dCL * ddelCL_dmach
-        partials['CD', Dynamic.Vehicle.LIFT] = dCD_dCL * ddelCL_dL
-        partials['CD', Dynamic.Atmosphere.STATIC_PRESSURE] = dCD_dCL * ddelCL_dP
-        partials['CD', Aircraft.Wing.AREA] = dCD_dCL * ddelCL_dSref
-        partials['CD', Aircraft.Wing.ASPECT_RATIO] = dCD_dAR
-        partials['CD', Aircraft.Wing.THICKNESS_TO_CHORD] = dCD_dTC
-        partials['CD', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dCD_dCAM
-        partials['CD', Aircraft.Wing.SWEEP] = dCD_dSW25
-        partials['CD', Aircraft.Design.LIFT_COEFFICIENT] = -dCD_dCL
-        partials['CD', Aircraft.Design.MACH] = -dCD_dmach
+        partials['pressure_drag_coeff', Dynamic.Atmosphere.MACH] = (
+            dCD_dmach + dCD_dCL * ddelCL_dmach
+        )
+        partials['pressure_drag_coeff', Dynamic.Vehicle.LIFT] = dCD_dCL * ddelCL_dL
+        partials['pressure_drag_coeff', Dynamic.Atmosphere.STATIC_PRESSURE] = dCD_dCL * ddelCL_dP
+        partials['pressure_drag_coeff', Aircraft.Wing.AREA] = dCD_dCL * ddelCL_dSref
+        partials['pressure_drag_coeff', Aircraft.Wing.ASPECT_RATIO] = dCD_dAR
+        partials['pressure_drag_coeff', Aircraft.Wing.THICKNESS_TO_CHORD] = dCD_dTC
+        partials['pressure_drag_coeff', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN] = dCD_dCAM
+        partials['pressure_drag_coeff', Aircraft.Wing.SWEEP] = dCD_dSW25
+        partials['pressure_drag_coeff', Aircraft.Design.LIFT_COEFFICIENT] = -dCD_dCL
+        partials['pressure_drag_coeff', Aircraft.Design.MACH] = -dCD_dmach
 
         if self.clamp_indices:
-            partials['CD', Dynamic.Atmosphere.MACH][self.clamp_indices] = 0.0
-            partials['CD', Dynamic.Vehicle.LIFT][self.clamp_indices] = 0.0
-            partials['CD', Dynamic.Atmosphere.STATIC_PRESSURE][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Wing.AREA][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Wing.ASPECT_RATIO][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Wing.THICKNESS_TO_CHORD][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Wing.SWEEP][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Design.LIFT_COEFFICIENT][self.clamp_indices] = 0.0
-            partials['CD', Aircraft.Design.MACH][self.clamp_indices] = 0.0
+            wrts = [
+                Dynamic.Atmosphere.MACH,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Atmosphere.STATIC_PRESSURE,
+                Aircraft.Wing.AREA,
+                Aircraft.Wing.ASPECT_RATIO,
+                Aircraft.Wing.THICKNESS_TO_CHORD,
+                Aircraft.Wing.MAX_CAMBER_AT_70_SEMISPAN,
+                Aircraft.Wing.SWEEP,
+                Aircraft.Design.LIFT_COEFFICIENT,
+                Aircraft.Design.MACH,
+            ]
+            for wrt in wrts:
+                partials['pressure_drag_coeff', wrt][self.clamp_indices] = 0.0
 
 
 # Tables
@@ -546,7 +555,7 @@ AR4 = np.array(
             0.010000, 0.014000, 0.019500, 0.031000, 0.046000,
         ],
         [
-            0.040000, 0.003200, 0.000600, 0.003500, 0.006800, 0.012200, 
+            0.040000, 0.003200, 0.000600, 0.003500, 0.006800, 0.012200,
             0.018000, 0.024000, 0.030000, 0.043000, 0.056000,
         ],
         [
@@ -763,7 +772,7 @@ ARS12 = np.array(
             0.025000, 0.037500, 0.050000, 0.072000, 0.129000,
         ],
         [
-            0.200000, 0.000000, 0.000400, 0.006000, 0.013500, 0.018000, 
+            0.200000, 0.000000, 0.000400, 0.006000, 0.013500, 0.018000,
             0.032000, 0.043500, 0.055000, 0.077000, 0.138000,
         ],
         [

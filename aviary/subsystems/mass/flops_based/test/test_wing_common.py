@@ -19,9 +19,9 @@ from aviary.validation_cases.validation_tests import (
     get_flops_case_names,
     print_case,
 )
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
 
 @use_tempdirs
@@ -275,6 +275,45 @@ class BWBWingMiscMassTest(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.MISC_MASS], 21498.83307778, 1e-9)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBWingMiscMassTest2(unittest.TestCase):
+    """Tests wing misc mass calculation for BWB."""
+
+    def setUp(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+
+        wing.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.flops_based.wing_common as wing
+
+        wing.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case(self):
+        aviary_options = AviaryValues()
+        aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        aviary_options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
+        prob = om.Problem()
+        prob.model.add_subsystem(
+            'wing_misc',
+            BWBWingMiscMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+
+        prob.model.set_input_defaults(Aircraft.Wing.COMPOSITE_FRACTION, 1.0, units='unitless')
+        prob.model.set_input_defaults('calculated_wing_area', 9165.7, units='ft**2')
+        prob.model.set_input_defaults(Aircraft.Wing.MISC_MASS_SCALER, 1.0, units='unitless')
+
+        setup_model_options(prob, aviary_options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.run_model()
+        assert_near_equal(prob[Aircraft.Wing.MISC_MASS], 19544.37814385, 1e-9)
+
+        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

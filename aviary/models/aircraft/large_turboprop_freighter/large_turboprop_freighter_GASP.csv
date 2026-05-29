@@ -34,7 +34,7 @@ aircraft:apu:mass, 756, lbm
 aircraft:avionics:mass, 936, lbm
 aircraft:controls:cockpit_control_mass_scaler, 1, unitless
 aircraft:controls:control_mass_increment, 0, lbm
-aircraft:controls:stability_augmentation_system_mass, 0, lbm
+aircraft:controls:stability_augmentation_system_reference_mass, 0, lbm
 aircraft:controls:stability_augmentation_system_mass_scaler, 1, unitless
 aircraft:hydraulics:flight_control_mass_coefficient, 0.102, unitless
 aircraft:hydraulics:gear_mass_coefficient, 0.11, unitless

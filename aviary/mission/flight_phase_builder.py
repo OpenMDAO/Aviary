@@ -300,53 +300,27 @@ class FlightPhaseBase(PhaseBuilder):
         ##################
         # Add Timeseries #
         ##################
+        phase.add_timeseries_output(Dynamic.Mission.ALTITUDE_RATE, units='ft/s')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
+            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+            units='kW',
         )
-
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
-
-        if phase_type is EquationsOfMotion.ENERGY_STATE:
-            phase.add_timeseries_output(
-                Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                output_name=Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS,
-                units='m/s',
-            )
-
         phase.add_timeseries_output(
             Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
             units='lbm/h',
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-            units='kW',
-        )
-
-        phase.add_timeseries_output(
-            Dynamic.Mission.ALTITUDE_RATE,
-            output_name=Dynamic.Mission.ALTITUDE_RATE,
-            units='ft/s',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
 
         if throttle_enforcement != 'control':
-            phase.add_timeseries_output(
-                Dynamic.Vehicle.Propulsion.THROTTLE,
-                output_name=Dynamic.Vehicle.Propulsion.THROTTLE,
-                units='unitless',
-            )
+            phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THROTTLE, units='unitless')
 
-        phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY,
-            output_name=Dynamic.Mission.VELOCITY,
-            units='m/s',
-        )
+        if phase_type is EquationsOfMotion.ENERGY_STATE:
+            phase.add_timeseries_output(Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS, units='m/s')
+
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='m/s')
 
         if phase_type is EquationsOfMotion.SOLVED_2DOF:
             phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE)

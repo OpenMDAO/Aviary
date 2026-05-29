@@ -4,6 +4,7 @@ import openmdao.api as om
 from aviary.subsystems.aerodynamics.aero_common import DynamicPressure
 from aviary.subsystems.aerodynamics.flops_based.drag import SimpleDrag
 from aviary.subsystems.aerodynamics.flops_based.lift import LiftEqualsWeight
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
@@ -21,30 +22,34 @@ class SimpleDragCoeff(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input('CL', val=np.zeros(nn), units='unitless')
-
-        self.add_output('CD', val=np.zeros(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT_COEFFICIENT, units='unitless', shape=nn)
+        add_aviary_output(self, Dynamic.Vehicle.DRAG_COEFFICIENT, units='unitless', shape=nn)
 
     def setup_partials(self):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
 
-        self.declare_partials('CD', 'CL', rows=arange, cols=arange)
+        self.declare_partials(
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+            rows=arange,
+            cols=arange,
+        )
 
     def compute(self, inputs, outputs, discrete_inputs=None, discrete_outputs=None):
         CD_zero = self.options['CD_zero']
         k = self.options['k']
 
-        cl = inputs['CL']
+        cl = inputs[Dynamic.Vehicle.LIFT_COEFFICIENT]
 
-        outputs['CD'] = CD_zero + k * cl**2
+        outputs[Dynamic.Vehicle.DRAG_COEFFICIENT] = CD_zero + k * cl**2
 
     def compute_partials(self, inputs, partials, discrete_inputs=None):
         k = self.options['k']
 
-        cl = inputs['CL']
+        cl = inputs[Dynamic.Vehicle.LIFT_COEFFICIENT]
 
-        partials['CD', 'CL'] = 2.0 * k * cl
+        partials[Dynamic.Vehicle.DRAG_COEFFICIENT, Dynamic.Vehicle.LIFT_COEFFICIENT] = 2.0 * k * cl
 
 
 class SimpleAeroGroup(om.Group):
@@ -74,21 +79,21 @@ class SimpleAeroGroup(om.Group):
                 Dynamic.Vehicle.MASS,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
             ],
-            promotes_outputs=['cl', Dynamic.Vehicle.LIFT],
+            promotes_outputs=[Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Vehicle.LIFT],
         )
 
         self.add_subsystem(
             'SimpleDragCoeff',
             SimpleDragCoeff(num_nodes=nn),
-            promotes_inputs=[('CL', 'cl')],
-            promotes_outputs=['CD'],
+            promotes_inputs=[(Dynamic.Vehicle.LIFT_COEFFICIENT, Dynamic.Vehicle.LIFT_COEFFICIENT)],
+            promotes_outputs=[Dynamic.Vehicle.DRAG_COEFFICIENT],
         )
 
         self.add_subsystem(
             'SimpleDrag',
             SimpleDrag(num_nodes=nn),
             promotes_inputs=[
-                'CD',
+                Dynamic.Vehicle.DRAG_COEFFICIENT,
                 Dynamic.Atmosphere.DYNAMIC_PRESSURE,
                 Aircraft.Wing.AREA,
             ],

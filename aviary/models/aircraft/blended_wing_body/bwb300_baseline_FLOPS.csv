@@ -18,7 +18,7 @@ aircraft:canard:thickness_to_chord,0.0,unitless
 aircraft:canard:wetted_area_scaler,1.0,unitless
 aircraft:crew_and_payload:cabin_crew_mass_scaler,1.0,unitless
 aircraft:crew_and_payload:cargo_container_mass_scaler,1.0,unitless
-aircraft:crew_and_payload:cargo_container_mass,23500.0,lbm
+#aircraft:crew_and_payload:cargo_container_mass,23500.0,lbm
 aircraft:crew_and_payload:design:num_business_class,76,unitless
 aircraft:crew_and_payload:design:num_economy_class,200,unitless
 aircraft:crew_and_payload:design:num_first_class,24,unitless
@@ -77,6 +77,7 @@ aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,2,unitless
 aircraft:fins:taper_ratio,0.464,unitless
 aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
+aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,1.0,unitless
 aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
@@ -151,7 +152,6 @@ aircraft:wing:input_station_distribution,0.0,0.0,0.2075,0.415,0.6927,0.928,1.0,u
 aircraft:wing:laminar_flow_lower,0.0,unitless
 aircraft:wing:laminar_flow_upper,0.0,unitless
 aircraft:wing:load_distribution_control,2.0,unitless
-aircraft:wing:load_fraction,1.0,unitless
 aircraft:wing:load_path_sweep_distribution,0.0,0.0,0.0,17.0,17.0,17.0,deg
 aircraft:wing:mass_scaler,1.0,unitless
 aircraft:wing:max_camber_at_70_semispan,2.0,unitless

@@ -181,7 +181,7 @@ class BWBFuselageMass(om.ExplicitComponent):
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         J[Aircraft.Fuselage.MASS, Aircraft.Design.GROSS_MASS] = (
             0.167 * 1.8 * gross_weight**-0.833 * cabin_area**1.06
-        )
+        ) * GRAV_ENGLISH_LBM
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.CABIN_AREA] = (
             1.06 * 1.8 * gross_weight**0.167 * cabin_area**0.06
         )
@@ -318,13 +318,13 @@ class BWBAftBodyMass(om.ExplicitComponent):
         )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
             (1.0 + 0.05 * num_fuse_eng) * 0.53 * gross_weight**0.2 * (0.5 + aftbody_tr)
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Fuselage.PLANFORM_AREA] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.PLANFORM_AREA] * fac
         )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] = (
             -(1.0 + 0.05 * num_fuse_eng) * 0.53 * gross_weight**0.2 * (0.5 + aftbody_tr)
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] * fac
         )
@@ -337,7 +337,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
             * aftbody_area
             * gross_weight**0.2
             * daftbody_tr_droot_chord
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] * fac
         )
@@ -350,7 +350,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
             * aftbody_area
             * gross_weight**0.2
             * daftbody_tr_dlength
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Fuselage.LENGTH] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.LENGTH] * fac
         )
@@ -366,7 +366,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
             * aftbody_area
             * gross_weight**0.2
             * daftbody_tr_drspc
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Wing.BWB_AFTBODY_MASS, 'Rear_spar_percent_chord'] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, 'Rear_spar_percent_chord'] * fac
         )
@@ -379,8 +379,10 @@ class BWBAftBodyMass(om.ExplicitComponent):
             * aftbody_area
             * gross_weight**0.2
             * daftbody_tr_drspcc
-        )
+        ) / GRAV_ENGLISH_LBM
         J[Aircraft.Wing.BWB_AFTBODY_MASS, 'Rear_spar_percent_chord_centerline'] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, 'Rear_spar_percent_chord_centerline'] * fac
         )
-        J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = -0.17 * aftbody_weight
+        J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
+            -0.17 * aftbody_weight
+        ) / GRAV_ENGLISH_LBM
