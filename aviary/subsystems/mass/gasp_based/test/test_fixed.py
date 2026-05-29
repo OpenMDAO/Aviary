@@ -1804,7 +1804,4 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = HighLiftTestCase2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
