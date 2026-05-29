@@ -36,7 +36,7 @@ class OxygenSystemMass(om.ExplicitComponent):
             if smooth:
                 oxygen_system_wt = 3 * sigmoidX(gross_wt_initial / 3000, 1.0, 0.01)
             else:
-                if gross_wt_initial > 3000.0:  # note: this technically creates a discontinuity
+                if gross_wt_initial > 3000.0:
                     oxygen_system_wt = 3.0
                 else:
                     oxygen_system_wt = 0.0

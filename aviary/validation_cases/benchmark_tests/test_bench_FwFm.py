@@ -235,14 +235,14 @@ class TestBenchFwFmParallel(ProblemPhaseTestCase):
 
     N_PROCS = 3
 
-    @require_pyoptsparse(optimizer='SNOPT')
-    def test_bench_FwFm_SNOPT_MPI(self):
+    @require_pyoptsparse(optimizer='IPOPT')
+    def test_bench_FwFm_IPOPT_MPI(self):
         prob = run_aviary(
             'validation_cases/validation_data/test_models/aircraft_for_bench_FwFm.csv',
             self.phase_info,
             verbosity=0,
             max_iter=50,
-            optimizer='SNOPT',
+            optimizer='IPOPT',
         )
         # self.assertTrue(prob.result.success)
         compare_against_expected_values(prob, self.expected_dict)

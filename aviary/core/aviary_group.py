@@ -111,19 +111,32 @@ class AviaryGroup(om.Group):
         # Find all variables that are shape_by_conn so we don't set their shape with a stale value
         # from the default metadata. We can only find these on the next level down because
         # aviary_group's setup is not complete until after configure.
-        sbc_vars = []
+        sbc_vars = set()
+        non_sbc_vars = set()
         for sub in self.system_iter(recurse=False, typ=om.Group):
             pr2abs = sub._resolver.prom2abs_iter('input')
-            sub_inputs = [
-                (k, v[0]) for k, v in pr2abs if k.startswith('aircraft') or k.startswith('mission')
-            ]
+            if sub.pathname == 'traj':
+                sub_inputs = [(k, v[0]) for k, v in pr2abs if k.startswith('parameters:')]
+            else:
+                sub_inputs = [
+                    (k, v[0])
+                    for k, v in pr2abs
+                    if k.startswith('aircraft') or k.startswith('mission')
+                ]
             abs2meta = sub._var_abs2meta['input']
 
             for data in sub_inputs:
                 prom_name, abs_name = data
+                if prom_name.startswith('parameters:'):
+                    # Parameters haven't been pully promoted out of traj at this point.
+                    prom_name = prom_name.removeprefix('parameters:')
                 meta = abs2meta[abs_name]
                 if meta.get('shape_by_conn') is True:
-                    sbc_vars.append(prom_name)
+                    sbc_vars.add(prom_name)
+                else:
+                    non_sbc_vars.add(prom_name)
+
+        sbc_only_vars = sbc_vars - non_sbc_vars
 
         for key in aviary_metadata:
             if ':' not in key or key.startswith('dynamic:'):
@@ -147,7 +160,7 @@ class AviaryGroup(om.Group):
                     continue
 
             kwargs = {'units': units}
-            if key not in sbc_vars:
+            if key not in sbc_only_vars:
                 # Default val if var doesn't use shape_by_conn.
                 kwargs['val'] = val
 
@@ -685,7 +698,7 @@ class AviaryGroup(om.Group):
         # TODO: Should some of this stuff be moved into the phase builder?
         self.configurator.set_phase_options(self, phase_name, phase_idx, phase, full_options, comm)
 
-        return phase
+        return phase, phase_object
 
     def add_phases(self, parallel_phases=True, verbosity=None, comm=None):
         """
@@ -737,10 +750,12 @@ class AviaryGroup(om.Group):
         for phase_idx, phase_name in enumerate(mission_info):
             # Create and add phases.
             # This also expands mission_info to include all keys.
-            phase = traj.add_phase(phase_name, self._get_phase(phase_name, phase_idx, comm))
+            phase, builder = self._get_phase(phase_name, phase_idx, comm)
+            traj.add_phase(phase_name, phase)
 
             phase_info = mission_info[phase_name]
-            external_parameters[phase_name] = {}
+            external_parameters[phase_name] = builder.get_parameters()
+
             user_options = phase_info.get('user_options', {})
             all_subsystem_options = phase_info.get('subsystem_options', {})
 
@@ -1112,7 +1127,7 @@ class AviaryGroup(om.Group):
         # easier for users to access Mission.FINAL_MASS, Mission.FINAL_TIME,
         # and Mission.RANGE.
         self.connect(
-            f'traj.{final_phase}.states:mass',
+            f'traj.{final_phase}.timeseries.mass',
             'state_output.mass_in',
             src_indices=[-1],
         )

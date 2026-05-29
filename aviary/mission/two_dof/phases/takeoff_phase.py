@@ -9,7 +9,8 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variable_meta_data import CoreMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class TakeoffPhaseOptions(AviaryOptionsDictionary):
@@ -69,7 +70,7 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
         self.add_state_options('flight_path_angle', units='rad', defaults=defaults)
 
         defaults = {
-            'angle_of_attack_ref': np.deg2rad(5),
+            'angle_of_attack_ref': np.deg2rad(15),
             'angle_of_attack_bounds': (np.deg2rad(-30), np.deg2rad(30)),
             'angle_of_attack_optimize': True,
         }
@@ -263,17 +264,14 @@ class TakeoffPhase(PhaseBuilder):
             )
 
         # Add timeseries outputs
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
+        phase.add_timeseries_output('EAS', units='kn')
+        phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
+        phase.add_timeseries_output('normal_force')
         phase.add_timeseries_output('time', units='s', output_name='time')
         phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
-
-        phase.add_timeseries_output('normal_force')
-        phase.add_timeseries_output(Dynamic.Atmosphere.MACH)
-        phase.add_timeseries_output('EAS', units='kn')
-
-        phase.add_timeseries_output(Dynamic.Vehicle.LIFT)
-        phase.add_timeseries_output('CL')
-        phase.add_timeseries_output('CD')
-        phase.add_timeseries_output('fuselage_pitch', output_name='theta', units='deg')
 
         return phase
 
@@ -284,6 +282,15 @@ class TakeoffPhase(PhaseBuilder):
             'ground_roll': self.user_options.get_val('ground_roll'),
             'rotation': self.user_options.get_val('rotation'),
         }
+
+    def get_parameters(self):
+        params = {}
+        params[Aircraft.Wing.INCIDENCE] = {
+            'shape': (1,),
+            'units': CoreMetaData[Aircraft.Wing.INCIDENCE]['units'],
+            'static_target': True,
+        }
+        return params
 
 
 # Adding initial guess metadata

@@ -38,8 +38,11 @@ class TestReports(unittest.TestCase):
             'altitude_rate (ft/s)',
             'distance (m)',
             'drag (lbf)',
+            'drag_coefficient (unitless)',
             'electric_power_in_total (kW)',
             'fuel_flow_rate_negative_total (lbm/h)',
+            'lift (lbf)',
+            'lift_coefficient (unitless)',
             'mach (unitless)',
             'mach_rate (1/s)',
             'mass (kg)',
@@ -56,8 +59,11 @@ class TestReports(unittest.TestCase):
                 '8.333333333333337',
                 '1.0',
                 '21108.341035874902',
+                '0.260025166162475',
                 '0.0',
                 '-10492.721631142893',
+                '175399.99981311447',
+                '2.1606820743889306',
                 '0.2',
                 '0.0001354166666666668',
                 '79560.101698',
@@ -144,15 +150,21 @@ class TestReports(unittest.TestCase):
         )
         prob.check_and_preprocess_inputs()
         prob.build_model()
-        prob.add_driver('SLSQP', max_iter=50)
+
+        # We are only checking file locations, so don't run the whole optimization.
+        prob.add_driver('SLSQP', max_iter=1)
+
         prob.add_design_variables()
         prob.add_objective()
         prob.setup()
         prob.run_aviary_problem()
         prob.run_off_design_mission(problem_type='off_design_max_range', mission_gross_mass=115000)
         prob.run_off_design_mission(problem_type='off_design_min_fuel', mission_range=1250)
-        assert Path('testflo_off_design_1_out').is_dir()
-        assert Path('testflo_off_design_out').is_dir()
+
+        stem = prob._metadata['pathname']
+
+        assert Path(f'{stem}_off_design_1_out').is_dir()
+        assert Path(f'{stem}_off_design_out').is_dir()
 
 
 if __name__ == '__main__':

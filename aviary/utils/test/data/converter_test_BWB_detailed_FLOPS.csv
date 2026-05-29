@@ -21,7 +21,6 @@ aircraft:design:gross_mass,874099,lbm
 aircraft:design:landing_to_takeoff_mass_ratio,0.8,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1,unitless
 aircraft:design:range,7750,NM
-aircraft:design:thrust_takeoff_per_eng,0.25,lbf
 aircraft:design:type,BWB,unitless
 aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,1,unitless
@@ -102,6 +101,7 @@ AERIN.FLLDG,11000
 AERIN.FLTO,11000
 AERIN.ITPAER,2
 AERIN.MYAERO,0
+AERIN.THROFF,0.25
 AERIN.XLLAM,0
 CONFIN.CH,39000
 CONFIN.GW,874099

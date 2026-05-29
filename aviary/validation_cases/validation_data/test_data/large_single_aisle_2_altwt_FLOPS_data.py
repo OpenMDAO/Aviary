@@ -244,8 +244,6 @@ inputs.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 17.35)
 # TODO: should this be a user input or should it be hard coded somewhere assuming it will
 # never change?
 inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.0175)
-# lbf TODO: where should this get connected from?
-inputs.set_val(Aircraft.Design.THRUST_TAKEOFF_PER_ENG, 27301.0, 'lbf')
 
 # Settings
 # ---------------------------
@@ -271,7 +269,7 @@ outputs.set_val(Aircraft.Design.STRUCTURE_MASS, struct_mass, struct_mass_units)
 sys_equip_mass = 32232.0
 sys_equip_mass_units = 'lbm'
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, sys_equip_mass, sys_equip_mass_units)
-outputs.set_val(Mission.USEFUL_LOAD, 10071.93, 'lbm')
+outputs.set_val(Mission.OPERATING_ITEMS_MASS, 10071.93, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.ZERO_FUEL_MASS, 142837.0, 'lbm')
 

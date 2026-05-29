@@ -2,18 +2,21 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.mass.gasp_based.air_conditioning import ACMass, BWBACMass
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
+@use_tempdirs
 class ACMassTestCase1(unittest.TestCase):
     """this is the large single aisle 1 V3 test case"""
 
     def setUp(self):
         options = get_option_defaults()
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -43,10 +46,33 @@ class ACMassTestCase1(unittest.TestCase):
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
+        """case gross_wt_initial > 3500.0"""
         self.prob.run_model()
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1324.0561, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+    def test_case2(self):
+        """case gross_wt_initial < 3500.0"""
+        self.prob.set_val(Aircraft.Design.GROSS_MASS, 3400.0, units='lbm')
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 5.0, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+    def test_case3(self):
+        """case gross_wt_initial = 3500.0"""
+        self.prob.set_val(Aircraft.Design.GROSS_MASS, 3500.0, units='lbm')
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 664.52807185, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
@@ -69,7 +95,7 @@ class ACMassTestCase2(unittest.TestCase):
 
     def test_case1(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=180, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -100,6 +126,7 @@ class ACMassTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBACMassTestCase1(unittest.TestCase):
     """
     Created based on GASP BWB model
@@ -107,7 +134,7 @@ class BWBACMassTestCase1(unittest.TestCase):
 
     def setUp(self):
         options = get_option_defaults()
-        options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
 
         prob = self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -143,6 +170,64 @@ class BWBACMassTestCase1(unittest.TestCase):
 
         tol = 1e-7
         assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1301.56663237, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)
+
+
+@use_tempdirs
+class BWBACMassTestCase2(unittest.TestCase):
+    """
+    Test mass-weight conversion
+    """
+
+    def setUp(self):
+        import aviary.subsystems.mass.gasp_based.air_conditioning as ac
+
+        ac.GRAV_ENGLISH_LBM = 1.1
+
+    def tearDown(self):
+        import aviary.subsystems.mass.gasp_based.air_conditioning as ac
+
+        ac.GRAV_ENGLISH_LBM = 1.0
+
+    def test_case1(self):
+        options = get_option_defaults()
+        options.set_val(Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES, val=True, units='unitless')
+
+        prob = self.prob = om.Problem()
+        self.prob.model.add_subsystem(
+            'ac',
+            BWBACMass(),
+            promotes=['*'],
+        )
+
+        prob.model.set_input_defaults(
+            Aircraft.AirConditioning.MASS_COEFFICIENT,
+            1.155,
+            units='unitless',  # generic_BWB_GASP.csv
+        )
+        prob.model.set_input_defaults(
+            Aircraft.Design.GROSS_MASS, 150000.0, units='lbm'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.LENGTH, 71.52455, units='ft'
+        )  # dont know where from
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, 10.0, units='psi'
+        )  # generic_BWB_GASP.csv
+        prob.model.set_input_defaults(
+            Aircraft.Fuselage.HYDRAULIC_DIAMETER, 19.365, units='ft'
+        )  # dont know where from
+
+        setup_model_options(self.prob, options)
+
+        self.prob.setup(check=False, force_alloc_complex=True)
+
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob[Aircraft.AirConditioning.MASS], 1183.24239307, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=8e-12, rtol=1e-12)

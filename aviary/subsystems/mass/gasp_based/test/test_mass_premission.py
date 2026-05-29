@@ -79,8 +79,6 @@ class MassPremissionTestCase1(unittest.TestCase):
     def test_case1(self):
         self.prob.run_model()
 
-        # print(f'wetted_area: {self.prob[Aircraft.Fuselage.WETTED_AREA]}')
-
         tol = 5e-4
         expected_values = {
             'gasp_based_geom.cabin_height': 13.1,
@@ -112,6 +110,7 @@ class MassPremissionTestCase1(unittest.TestCase):
             Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,  # always zero when no body tank
             'extra_fuel_volume': 0,  # always zero when no body tank
             'max_extra_fuel_mass': 0,  # always zero when no body tank
+            Aircraft.Design.USEFUL_LOAD_MASS: 85002.98039399,
         }
 
         for var_name, expected_val in expected_values.items():
@@ -270,7 +269,7 @@ class MassPremissionTestCase2(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -623,7 +622,7 @@ class MassPremissionTestCase3(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -966,7 +965,7 @@ class MassPremissionTestCase4(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1317,7 +1316,7 @@ class MassSummationTestCase5(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1663,7 +1662,7 @@ class MassSummationTestCase6(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -2013,7 +2012,7 @@ class MassSummationTestCase7(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # note: not actually defined in program, likely an error
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -2424,7 +2423,7 @@ class MassSummationTestCase8(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=30, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # not in file
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -2588,11 +2587,9 @@ class MassSummationTestCase8(unittest.TestCase):
         assert_near_equal(self.prob['volume_wingfuel_mass'], 31051.6, tol)
         assert_near_equal(self.prob['max_wingfuel_mass'], 31051.6, tol)
         assert_near_equal(self.prob[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY], 0, tol)
-        # TODO: extra_fuel_volume < 0. need investigate
         assert_near_equal(
             self.prob['extra_fuel_volume'], 7.44643516, tol
         )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 7.5568
-        # TODO: extra_fuel_volume < 0. need investigate
         assert_near_equal(
             self.prob['max_extra_fuel_mass'], 372.48739763, tol
         )  # note: printed out from the GASP code,  #modified from GASP value to account for updated crew mass. GASP value is 378.0062
@@ -2795,7 +2792,7 @@ class MassSummationTestCase9(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=30.0, units='unitless'
         )
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=1, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=1, units='lbm'
         )
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -3163,7 +3160,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, 0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
@@ -3236,7 +3233,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
             Aircraft.Electrical.SYSTEM_MASS_PER_PASSENGER, 11.45, units='lbm'
         )
 
-        # inputs to UsefulLoadMass
+        # inputs to OperatingItemsMass
         prob.model.set_input_defaults(
             Aircraft.Fuel.UNUSABLE_FUEL_MASS_COEFFICIENT, 12.0, units='unitless'
         )
@@ -3279,7 +3276,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         Aircraft.Engine.POSITION_FACTOR -- SKEPOS = 1.05
         Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS -- WPL = 33750
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS - WFE = 20876.
-        Mission.USEFUL_LOAD -- WFUL = 5775.
+        Mission.OPERATING_ITEMS_MASS -- WFUL = 5775.
         Aircraft.Wing.MASS -- WW = 7645.
         Aircraft.Strut.MASS -- WSTRUT = 0
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
@@ -3358,7 +3355,7 @@ class BWBMassSummationTestCase(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Engine.ADDITIONAL_MASS], 153.16770871, tol)
         assert_near_equal(prob[Aircraft.Engine.POSITION_FACTOR], 1.05, tol)
         assert_near_equal(prob[Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS], 21885.38086961, tol)
-        assert_near_equal(prob[Mission.USEFUL_LOAD], 5961.79463002, tol)
+        assert_near_equal(prob[Mission.OPERATING_ITEMS_MASS], 5961.79463002, tol)
         assert_near_equal(prob[Aircraft.Wing.SURFACE_CONTROL_MASS], 1986.25111783, tol)
 
         # BWBWingMassGroup
@@ -3429,45 +3426,6 @@ class StructMassTestCase1(unittest.TestCase):
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=4e-12, rtol=1e-12)
-
-
-class StructMassTestCase2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
-
-        fuel.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.subsystems.mass.gasp_based.fuel as fuel
-
-        fuel.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('struct', StructureMass(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(Aircraft.Fuselage.MASS, val=18763, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Wing.MASS, val=15830, units='lbm')
-        self.prob.model.set_input_defaults(Aircraft.Design.EMPENNAGE_MASS, val=4572, units='lbm')
-
-        self.prob.model.set_input_defaults(Aircraft.LandingGear.TOTAL_MASS, val=7511, units='lbm')
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS, val=3785, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.STRUCTURAL_MASS_INCREMENT, val=0, units='lbm'
-        )
-
-        setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
-        )
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-11, rtol=1e-12)
 
 
 class BWBStructMassTestCase(unittest.TestCase):

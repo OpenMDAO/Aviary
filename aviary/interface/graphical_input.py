@@ -17,6 +17,12 @@ from matplotlib.figure import Figure
 # used for unit conversion of numerical data
 from openmdao.utils.units import convert_units
 
+try:
+    from numpy import trapz
+except ImportError:
+    # Trapz is deprecated in the latest numpy
+    from numpy import trapezoid as trapz
+
 
 def get_screen_geometry():
     """
@@ -1727,7 +1733,7 @@ def estimate_total_range_trapezoidal(times, mach_numbers, units):
     speeds = np.array(mach_numbers) * speed_of_sound
 
     # Use numpy's trapz function to integrate
-    total_range = np.trapz(speeds, times_sec)  # in meters
+    total_range = trapz(speeds, times_sec)  # in meters
     range_unit = units[1]
     # m and ft are small units for range, change to larger ones
     if range_unit == 'm':

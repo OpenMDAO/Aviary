@@ -202,7 +202,7 @@ class CustomEngineTest(unittest.TestCase):
 
         # check that the different throttle initial guess has been set correctly
         initial_guesses = prob.get_val('traj.cruise.controls:different_throttle')[0]
-        assert_near_equal(float(initial_guesses), 0.05)
+        assert_near_equal(initial_guesses, 0.05)
 
         # and run mission
         dm.run_problem(prob, run_driver=True, simulate=False, make_plots=False)

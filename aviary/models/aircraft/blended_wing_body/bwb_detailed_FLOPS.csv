@@ -20,7 +20,6 @@ aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_business,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_first,4,unitless
 aircraft:crew_and_payload:design:num_seats_abreast_economy,6,unitless
-aircraft:crew_and_payload:design:num_economy_class,340,unitless
 aircraft:crew_and_payload:design:seat_pitch_business,39,inch
 aircraft:crew_and_payload:design:seat_pitch_first,61,inch
 aircraft:crew_and_payload:design:seat_pitch_economy,32,inch
@@ -159,7 +158,6 @@ aircraft:wing:wetted_area_scaler,1.0,unitless
 mission:constraints:max_mach,0.85,unitless
 aircraft:design:gross_mass,874099,lbm
 aircraft:design:range,7750,NM
-aircraft:design:thrust_takeoff_per_eng,0.25,lbf
 mission:landing:initial_velocity,140,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:landing:rolling_friction_coefficient,0.025,unitless

@@ -59,12 +59,16 @@ class Aircraft:
         WETTED_AREA_SCALER = 'aircraft:canard:wetted_area_scaler'
 
     class Controls:
+        COCKPIT_CONTROL_MASS = 'aircraft:controls:cockpit_control_mass'
         COCKPIT_CONTROL_MASS_SCALER = 'aircraft:controls:cockpit_control_mass_scaler'
         CONTROL_MASS_INCREMENT = 'aircraft:controls:control_mass_increment'
         MASS = 'aircraft:controls:mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS = 'aircraft:controls:stability_augmentation_system_mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = (
             'aircraft:controls:stability_augmentation_system_mass_scaler'
+        )
+        STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS = (
+            'aircraft:controls:stability_augmentation_system_reference_mass'
         )
 
     class CrewPayload:
@@ -169,13 +173,13 @@ class Aircraft:
         SUPERSONIC_DRAG_COEFF_FACTOR = 'aircraft:design:supersonic_drag_coeff_factor'
         SYSTEMS_AND_EQUIPMENT_MASS = 'aircraft:design:systems_and_equipment_mass'
         SYSTEMS_AND_EQUIPMENT_MASS_BASE = 'aircraft:design:systems_and_equipment_mass_base'
-        THRUST_TAKEOFF_PER_ENG = 'aircraft:design:thrust_takeoff_per_eng'
         THRUST_TO_WEIGHT_RATIO = 'aircraft:design:thrust_to_weight_ratio'
         TOTAL_WETTED_AREA = 'aircraft:design:total_wetted_area'
         TOUCHDOWN_MASS_MAX = 'aircraft:design:touchdown_mass_max'
         TYPE = 'aircraft:design:type'
         ULF_CALCULATED_FROM_MANEUVER = 'aircraft:design:ulf_calculated_from_maneuver'
         USE_ALT_MASS = 'aircraft:design:use_alt_mass'
+        USEFUL_LOAD_MASS = 'aircraft:design:useful_load_mass'
         WETTED_AREAS = 'aircraft:design:wetted_areas'
         WING_LOADING = 'aircraft:design:wing_loading'
         ZERO_LIFT_DRAG_COEFF_FACTOR = 'aircraft:design:zero_lift_drag_coeff_factor'
@@ -631,7 +635,9 @@ class Dynamic:
         BATTERY_STATE_OF_CHARGE = 'battery_state_of_charge'
         CUMULATIVE_ELECTRIC_ENERGY_USED = 'cumulative_electric_energy_used'
         DRAG = 'drag'
+        DRAG_COEFFICIENT = 'drag_coefficient'
         LIFT = 'lift'
+        LIFT_COEFFICIENT = 'lift_coefficient'
         MASS = 'mass'
         MASS_RATE = 'mass_rate'
 
@@ -672,6 +678,7 @@ class Mission:
     FINAL_TIME = 'mission:final_time'
     FUEL = 'mission:fuel'
     GROSS_MASS = 'mission:gross_mass'
+    OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'
     RESERVE_FUEL = 'mission:reserve_fuel'
@@ -679,7 +686,6 @@ class Mission:
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
     TOTAL_FUEL = 'mission:total_fuel'
     TOTAL_RESERVE_FUEL = 'mission:total_reserve_fuel'
-    USEFUL_LOAD = 'mission:useful_load'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 
     class Constraints:
@@ -730,6 +736,7 @@ class Mission:
         ASCENT_DURATION = 'mission:takeoff:ascent_duration'
         ASCENT_T_INITIAL = 'mission:takeoff:ascent_t_initial'
         BRAKING_FRICTION_COEFFICIENT = 'mission:takeoff:braking_friction_coefficient'
+        CLIMBOUT_THRUST_FRACTION = 'mission:takeoff:climbout_thrust_fraction'
         DECISION_SPEED_INCREMENT = 'mission:takeoff:decision_speed_increment'
         DRAG_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:drag_coefficient_flap_increment'
         DRAG_COEFFICIENT_MIN = 'mission:takeoff:drag_coefficient_min'

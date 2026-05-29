@@ -7,7 +7,7 @@ from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
 from aviary.mission.two_dof.ode.flight_ode import FlightODE
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
@@ -67,8 +67,8 @@ class FlightODEClimbTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 5.0569239,
-            'CL': 0.58762109,
-            'CD': 0.02867741,
+            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.58762109,
+            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.02867741,
             Dynamic.Mission.ALTITUDE_RATE: 58.3497354,  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
@@ -104,6 +104,7 @@ class FlightODEClimbTestCase(unittest.TestCase):
         self.prob.set_val('interference_independent_of_shielded_area', 1.89927266)
         self.prob.set_val('drag_loss_due_to_shielded_wing_area', 68.02065834)
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
+        self.prob.set_val(Aircraft.Wing.INCIDENCE, 0.0, units='deg')
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
 
@@ -114,8 +115,8 @@ class FlightODEClimbTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: [3.99983993, 4.04378041],
-            'CL': [0.50719248, 0.61320271],
-            'CD': [0.02520388, 0.0312557],
+            Dynamic.Vehicle.LIFT_COEFFICIENT: [0.50719248, 0.61320271],
+            Dynamic.Vehicle.DRAG_COEFFICIENT: [0.02520388, 0.0312557],
             Dynamic.Mission.ALTITUDE_RATE: [52.68288688, 9.32639661],  # ft/s
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
@@ -179,8 +180,8 @@ class FlightODEDescenTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: np.array([3.21974886, 1.20407839]),
-            'CL': np.array([0.51684124, 0.25916936]),
-            'CD': np.array([0.02633437, 0.01729238]),
+            Dynamic.Vehicle.LIFT_COEFFICIENT: np.array([0.51684124, 0.25916936]),
+            Dynamic.Vehicle.DRAG_COEFFICIENT: np.array([0.02633437, 0.01729238]),
             # ft/s
             Dynamic.Mission.ALTITUDE_RATE: np.array([-37.03297068, -44.19020778]),
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
@@ -225,8 +226,8 @@ class FlightODEDescenTestCase(unittest.TestCase):
 
         testvals = {
             Dynamic.Vehicle.ANGLE_OF_ATTACK: 4.2001692,
-            'CL': 0.50764259,
-            'CD': 0.02532094,
+            Dynamic.Vehicle.LIFT_COEFFICIENT: 0.50764259,
+            Dynamic.Vehicle.DRAG_COEFFICIENT: 0.02532094,
             Dynamic.Mission.ALTITUDE_RATE: -17.6942839,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 431.0014619,
