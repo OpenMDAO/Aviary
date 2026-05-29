@@ -1153,10 +1153,17 @@ class AviaryGroup(om.Group):
 
         lists_to_link = []
         for idx, phase_name in enumerate(self.mission_info):
+            phase_info = self.mission_info[phase_name]
+            all_subsystem_options = phase_info.get('subsystem_options', {})
+
             lists_to_link.append([])
-            for external_subsystem in self.external_subsystems:
+            for subsys in self.external_subsystems:
                 lists_to_link[idx].extend(
-                    external_subsystem.get_linked_variables(aviary_inputs=self.aviary_inputs)
+                    subsys.get_linked_variables(
+                        aviary_inputs=self.aviary_inputs,
+                        user_options=self.mission_info[phase_name]['user_options'],
+                        subsystem_options=all_subsystem_options.get(subsys.name, {}),
+                    )
                 )
 
         # get unique variable names from lists_to_link
