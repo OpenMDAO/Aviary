@@ -55,7 +55,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
                 assert_near_equal(self.prob[var_name], expected_val, tol)
 
         data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=3e-11, rtol=1e-12)
+        assert_check_partials(data, atol=1e-12, rtol=1e-12)
 
 
 @use_tempdirs
@@ -98,11 +98,8 @@ class FixedMassGroupTestCase2(unittest.TestCase):
         self.prob.run_model()
 
         data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=3e-11, rtol=1e-12)
+        assert_check_partials(data, atol=1e-12, rtol=1e-12)
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FixedMassGroupTestCase2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()
