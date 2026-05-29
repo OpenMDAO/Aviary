@@ -247,46 +247,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             When True, phases are connected directly in openmdao. When false, the phases are not
             connected, and a constraint is added to drive the difference to zero.
         """
-        # connect regular_phases with each other if you are optimizing alt or mach
-        #self.link_phases_helper_with_options(
-            #aviary_group,
-            #aviary_group.regular_phases,
-            #Dynamic.Mission.ALTITUDE,
-            #ref=1.0e4,
-        #)
-        #self.link_phases_helper_with_options(
-            #aviary_group, aviary_group.regular_phases, Dynamic.Atmosphere.MACH
-        #)
-
-        ## connect reserve phases with each other if you are optimizing alt or mach
-        #self.link_phases_helper_with_options(
-            #aviary_group,
-            #aviary_group.reserve_phases,
-            #Dynamic.Mission.ALTITUDE,
-            #ref=1.0e4,
-        #)
-        #self.link_phases_helper_with_options(
-            #aviary_group, aviary_group.reserve_phases, Dynamic.Atmosphere.MACH
-        #)
-
-        ## connect mass and distance between all phases regardless of reserve /
-        ## non-reserve status
-        #aviary_group.traj.link_phases(
-            #phases, ['time'], ref=None if connect_directly else 1e3, connected=connect_directly
-        #)
-        #aviary_group.traj.link_phases(
-            #phases,
-            #[Dynamic.Vehicle.MASS],
-            #ref=None if connect_directly else 1e6,
-            #connected=connect_directly,
-        #)
-        #aviary_group.traj.link_phases(
-            #phases,
-            #[Dynamic.Mission.DISTANCE],
-            #ref=None if connect_directly else 1e3,
-            #connected=connect_directly,
-        #)
-
         # Under MPI, the states aren't directly connected.
         if not connect_directly:
             for phase_name in phases[1:]:

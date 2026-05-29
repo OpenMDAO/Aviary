@@ -1191,37 +1191,49 @@ class AviaryGroup(om.Group):
             phase_info2 = self.mission_info[phase2]['user_options']
             vars2 = link_vars_dict[phase2]
 
+            # Don't link to first reserve phase.
+            if self.reserve_phases and phase2 == self.reserve_phases[0]:
+                continue
+
             # Find common vars across 1-2 boundary
             common = vars1.union(vars2)
 
-            for var in common:
+            # Sort because of MPI
+            for var in sorted(common):
 
-                opt1 = phase_info1.get(f'{var}_optimize', True)
-                opt2 = phase_info2.get(f'{var}_optimize', True)
+                # Controls: True or False, everything else: None
+                opt1 = phase_info1.get(f'{var}_optimize', None)
+                opt2 = phase_info2.get(f'{var}_optimize', None)
 
                 # If both sides are static controls, don't link.
-                if not (opt1 or opt2):
+                if opt1 is False and opt2 is False:
                     continue
 
-                # If one side is a static control, use constraint instead of connection.
-                connect = False if not opt1 or not opt2 else connect_directly
+                # Controls cannot connect directly.
+                connect = False if opt2 is not None else connect_directly
 
-                # Use ref from the previous phase.
-                # Time behaves a bit differently than the others.
-                if var == 'time':
-                    rvar = 'time_duration'
-                else:
-                    rvar = var
-                ref, units = phase_info1.get(f'{rvar}_ref')
-                ref0 = phase_info1.get(f'{rvar}_ref0')[0]
+                kwargs = {}
+                if not connect:
+                    # Use ref from the previous phase.
+                    # Time behaves a bit differently than the others.
+                    if var == 'time':
+                        rvar = 'time_duration'
+                    else:
+                        rvar = var
+                    ref, units = phase_info1.get(f'{rvar}_ref')
+                    ref0 = phase_info1.get(f'{rvar}_ref0')[0]
+
+                    kwargs = {
+                        'ref': ref,
+                        'ref0': ref0,
+                        'units': units,
+                    }
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=connect,
                     vars=[var],
-                    ref=ref,
-                    ref0=ref0,
-                    units=units,
+                    **kwargs,
                 )
 
             # TODO: Apply any transformations of similar variables across boundary.
