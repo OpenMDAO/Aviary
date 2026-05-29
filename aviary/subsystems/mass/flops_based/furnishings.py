@@ -24,7 +24,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_WIDTH, units='ft')
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
-        add_aviary_input(self, Aircraft.Furnishings.EXTRA_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Furnishings.ADDITIONAL_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -33,7 +33,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
 
         self.declare_partials(
             Aircraft.Furnishings.MASS,
-            Aircraft.Furnishings.EXTRA_MASS,
+            Aircraft.Furnishings.ADDITIONAL_MASS,
             val=1.0,
         )
 
@@ -51,7 +51,7 @@ class TransportFurnishingsGroupMass(om.ExplicitComponent):
 
         fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         fuse_max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
-        extra_wt = inputs[Aircraft.Furnishings.EXTRA_MASS] * GRAV_ENGLISH_LBM
+        extra_wt = inputs[Aircraft.Furnishings.ADDITIONAL_MASS] * GRAV_ENGLISH_LBM
 
         outputs[Aircraft.Furnishings.MASS] = (
             127.0 * flight_crew_count
@@ -111,7 +111,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.MAX_HEIGHT, units='ft')
         add_aviary_input(self, Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, units='deg')
         add_aviary_input(self, Aircraft.BWB.NUM_BAYS, units='unitless')
-        add_aviary_input(self, Aircraft.Furnishings.EXTRA_MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Furnishings.ADDITIONAL_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -120,7 +120,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
 
         self.declare_partials(
             Aircraft.Furnishings.MASS,
-            Aircraft.Furnishings.EXTRA_MASS,
+            Aircraft.Furnishings.ADDITIONAL_MASS,
             val=1.0,
         )
 
@@ -133,7 +133,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         fuse_max_width = inputs[Aircraft.Fuselage.MAX_WIDTH]
         fuse_max_height = inputs[Aircraft.Fuselage.MAX_HEIGHT]
-        extra_wt = inputs[Aircraft.Furnishings.EXTRA_MASS] * GRAV_ENGLISH_LBM
+        extra_wt = inputs[Aircraft.Furnishings.ADDITIONAL_MASS] * GRAV_ENGLISH_LBM
 
         weight = (
             127.0 * flight_crew_count

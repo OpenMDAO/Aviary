@@ -3089,7 +3089,7 @@ add_meta_data(
 # ============================================================================
 
 add_meta_data(
-    Aircraft.Furnishings.EXTRA_MASS,
+    Aircraft.Furnishings.ADDITIONAL_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'CW(16)', 'FLOPS': None},
     units='lbm',

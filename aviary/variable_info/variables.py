@@ -291,7 +291,7 @@ class Aircraft:
         WING_VOLUME_STRUCTURAL_MAX = 'aircraft:fuel:wing_volume_structural_max'
 
     class Furnishings:
-        EXTRA_MASS = 'aircraft:furnishings:extra_mass'
+        ADDITIONAL_MASS = 'aircraft:furnishings:additional_mass'
         MASS = 'aircraft:furnishings:mass'
         MASS_BASE = 'aircraft:furnishings:mass_base'
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
