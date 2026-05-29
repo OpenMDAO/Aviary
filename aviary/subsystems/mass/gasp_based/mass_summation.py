@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Mission
 
 
@@ -110,8 +110,8 @@ class PropulsionMass(om.ExplicitComponent):
         # TODO These variables need cleanup, proper names, etc.
         #      They should probably be removed and we pass the couple individual masses that make it
         #      up here instead
-        self.add_input('eng_comb_mass', units='lbm')
-        self.add_input('prop_mass_all', units='lbm')
+        self.add_input('eng_comb_mass', units='lbm', desc='WPSTAR as in WingMountEngineMass')
+        self.add_input('prop_mass_sum', units='lbm', desc='WPROP: mass of all propellers')
         add_aviary_input(self, Aircraft.Battery.MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Propulsion.MASS, units='lbm')
@@ -122,11 +122,11 @@ class PropulsionMass(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         fuel_sys_mass = inputs[Aircraft.Fuel.FUEL_SYSTEM_MASS]
         eng_comb_mass = inputs['eng_comb_mass']
-        prop_mass_all = inputs['prop_mass_all']
+        prop_mass_sum = inputs['prop_mass_sum']
         battery_mass = inputs[Aircraft.Battery.MASS]
 
         outputs[Aircraft.Propulsion.MASS] = (
-            fuel_sys_mass + eng_comb_mass + prop_mass_all + battery_mass
+            fuel_sys_mass + eng_comb_mass + prop_mass_sum + battery_mass
         )
 
 
