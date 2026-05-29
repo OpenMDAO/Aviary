@@ -2193,6 +2193,7 @@ class LandingMass(om.ExplicitComponent):
             gross_mass
         )
 
+
 class TotalLandingGearMass(om.ExplicitComponent):
     """Computation of total mass of landing gear."""
 
