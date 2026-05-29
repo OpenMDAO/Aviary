@@ -118,6 +118,6 @@ class BatteryBuilder(SubsystemBuilder):
         }
         return params
 
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         # link cumulative electric energy between phases
         return [Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED]
