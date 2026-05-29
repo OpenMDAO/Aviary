@@ -17,13 +17,13 @@ def build_akima_coefs(out_stream, raw_data, units):
     units: Float ('SI', or 'English')
         Describes the input units in either SI or English.
         If SI units are selected then the data should be input as:
-            altitude: m, 
-            temp: degK, 
-            pressure: mb, 
+            altitude: m,
+            temp: degK,
+            pressure: mb,
             density: kg/m**3
         If English units are selected then the data should be input as:
-            altitude: ft, 
-            temp: degF, 
+            altitude: ft,
+            temp: degF,
             pressure: inHg60
             density: lbm/ft**3
 
