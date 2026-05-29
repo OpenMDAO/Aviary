@@ -8,15 +8,14 @@ from openmdao.utils.testing_utils import use_tempdirs
 from aviary import constants
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.subsystems.mass.gasp_based.fixed import (
-    ControlMass,
     ElectricAugmentationMass,
-    EngineMass,
     FixedMassGroup,
     HighLiftMass,
     LandingGearMassGroup,
     MassParameters,
     PayloadGroup,
-    TailMass,
+    HorizontalTailMass,
+    VerticalTailMass,
 )
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import extract_options, setup_model_options
@@ -393,227 +392,11 @@ class ElectricAugmentationTestCase(unittest.TestCase):
 
 
 @use_tempdirs
-class EngineTestCase1(unittest.TestCase):  # this is the large single aisle 1 V3 test case
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'engine',
-            EngineMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=0.21366, units='lbm/lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=29500.0, units='lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.MASS_SPECIFIC, val=3, units='lbm/ft**2'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=339.58, units='ft**2'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
-        )  # bug fixed value and original value
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
-            'eng_comb_mass': 14370.8,
-            'wing_mounted_mass': 24446.343040697346,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=2e-11, rtol=1e-12)
-
-
-@use_tempdirs
-class EngineTestCase2(unittest.TestCase):
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14)
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'engine',
-            EngineMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=0.21366, units='lbm/lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=29500.0, units='lbf'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.MASS_SPECIFIC, val=3, units='lbm/ft**2'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=339.58, units='ft**2'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.PYLON_FACTOR, val=1.25, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.Propeller.MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            'aug_mass', val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=0.35, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
-        )  # bug fixed value and original value
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606.0,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 3785.0,
-            Aircraft.Engine.ADDITIONAL_MASS: 1765.0 / 2,
-            'eng_comb_mass': 14370.8,
-            'prop_mass_all': 0,
-            'wing_mounted_mass': 24446.343040697346,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=2e-11, rtol=1e-12)
-
-
-# arbitrary test case with multiple engine types
-@use_tempdirs
-class EngineTestCaseMultiEngine(unittest.TestCase):
-    def test_case_1(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-
-        options.set_val(Aircraft.Engine.NUM_ENGINES, np.array([2, 4]))
-        options.set_val(Aircraft.Propulsion.TOTAL_NUM_WING_ENGINES, 6)
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, np.array([0.14, 0.19]))
-
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'engine',
-            EngineMass(),
-            promotes=['*'],
-        )
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SPECIFIC, val=[0.21366, 0.15], units='lbm/lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.SCALED_SLS_THRUST, val=[29500.0, 18000], units='lbf'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.MASS_SPECIFIC, val=[3, 2.45], units='lbm/ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, val=[339.58, 235.66], units='ft**2'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.PYLON_FACTOR, val=[1.25, 1.28], units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.MASS_SCALER, val=[1, 0.9], units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Propulsion.MISC_MASS_SCALER, val=1, units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.Engine.WING_LOCATIONS, val=[0.35, 0.0, 0.1], units='unitless'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_MASS, val=6384.35, units='lbm'
-        )
-        self.prob.model.set_input_defaults(
-            Aircraft.LandingGear.MAIN_GEAR_LOCATION, val=0.15, units='unitless'
-        )
-
-        self.prob.model_options['*'] = extract_options(options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-        self.prob.run_model()
-
-        tol = 5e-4
-        expected_values = {
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS: 23405.94,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 8074.09809932,
-            Aircraft.Engine.ADDITIONAL_MASS: [882.4158, 513.0],
-            'eng_comb_mass': 26142.7716,
-            'wing_mounted_mass': 41417.49593562,
-        }
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-8, rtol=1e-8)
-
-
-@use_tempdirs
 class TailTestCase(unittest.TestCase):  # this is the large single aisle 1 V3 test case
     def setUp(self):
         self.prob = om.Problem()
-        self.prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
+        self.prob.model.add_subsystem('h_tail', HorizontalTailMass(), promotes=['*'])
+        self.prob.model.add_subsystem('v_tail', VerticalTailMass(), promotes=['*'])
 
         self.prob.model.set_input_defaults(
             Aircraft.VerticalTail.TAPER_RATIO, val=0.801, units='unitless'
@@ -804,65 +587,6 @@ class HighLiftTestCase2(unittest.TestCase):
 
         data = self.prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(data, atol=5e-10, rtol=1e-12)
-
-
-# this is the large single aisle 1 V3 test case
-@use_tempdirs
-class ControlMassTestCase(unittest.TestCase):
-    def setUp(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem('control_mass', ControlMass(), promotes=['*'])
-
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, val=0.95, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.AREA, val=1392.1, units='ft**2'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.GROSS_MASS, val=175400, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, val=3.951, units='unitless'
-        )  # bug fixed value
-        self.prob.model.set_input_defaults(
-            'min_dive_vel', val=420, units='kn'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, val=1, units='unitless'
-        )  # bug fixed value and original value
-        self.prob.model.set_input_defaults(
-            Aircraft.Controls.CONTROL_MASS_INCREMENT, val=0, units='lbm'
-        )  # bug fixed value and original value
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Controls.MASS: 3945,
-        }
-        tol = 5e-4
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-11, rtol=1e-12)
 
 
 @use_tempdirs
@@ -1123,7 +847,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1204,6 +928,9 @@ class FixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.HorizontalTail.MASS: 2285,
             Aircraft.VerticalTail.MASS: 2312,
             Aircraft.Wing.HIGH_LIFT_MASS: 4082.1,
+            Aircraft.Controls.COCKPIT_CONTROL_MASS: 137.25749725,
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS: 0.0,
+            Aircraft.Wing.SURFACE_CONTROL_MASS: 3807.92115815,
             Aircraft.Controls.MASS: 3945,
             Aircraft.LandingGear.TOTAL_MASS: 7511,
             Aircraft.Propulsion.TOTAL_ENGINE_MASS: 12606,
@@ -1354,7 +1081,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
         )  # bug fixed value and original value
         self.prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless'
@@ -1492,7 +1219,7 @@ class FixedMassGroupTestCase2(unittest.TestCase):
             Aircraft.Engine.ADDITIONAL_MASS: 1765 / 2,
             'eng_comb_mass': 14599.28196478,
             'wing_mounted_mass': 24027.6,
-            'prop_mass_all': 0,
+            'prop_mass_sum': 0,
         }
         tol = 5e-4
 
@@ -1755,66 +1482,13 @@ class BWBPayloadGroupTestCase(unittest.TestCase):
         assert_check_partials(data, atol=1e-12, rtol=1e-12)
 
 
-class BWBEngineTestCase(unittest.TestCase):
-    "GASP BWB model"
-
-    def setUp(self):
-        options = get_option_defaults()
-        options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
-        options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.04373)
-
-        prob = self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'engine',
-            EngineMass(),
-            promotes=['*'],
-        )
-
-        prob.model.set_input_defaults(Aircraft.Engine.MASS_SPECIFIC, 0.178884, units='lbm/lbf')
-        prob.model.set_input_defaults(Aircraft.Engine.SCALED_SLS_THRUST, 19580.1602, units='lbf')
-        prob.model.set_input_defaults(Aircraft.Nacelle.MASS_SPECIFIC, 2.5, units='lbm/ft**2')
-        prob.model.set_input_defaults(
-            Aircraft.Nacelle.SURFACE_AREA, 194.957186763, units='ft**2'
-        )  # 6.76*3.14159265*9.18
-        prob.model.set_input_defaults(Aircraft.Engine.PYLON_FACTOR, 1.25, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Propulsion.MISC_MASS_SCALER, 1.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.Engine.WING_LOCATIONS, 0.0, units='unitless')
-        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_MASS, 6630.0, units='lbm')
-        prob.model.set_input_defaults(Aircraft.LandingGear.MAIN_GEAR_LOCATION, 0, units='unitless')
-
-        setup_model_options(self.prob, options)
-
-        self.prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Propulsion.TOTAL_ENGINE_MASS: 7005.15475443,
-            Aircraft.Nacelle.MASS: 487.39296691,
-            'pylon_mass': 558.757916785,
-            # Aircraft.Propulsion.TOTAL_ENGINE_POD_MASS: 2092.30176475,
-            Aircraft.Engine.ADDITIONAL_MASS: 153.16770871,
-            'eng_comb_mass': 7311.49017184,
-            'wing_mounted_mass': 0,
-        }
-        tol = 1e-7
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=2e-9, rtol=1e-12)
-
-
 class BWBTailTestCase(unittest.TestCase):
     """GASP BWB model"""
 
     def setUp(self):
         prob = self.prob = om.Problem()
-        prob.model.add_subsystem('tail', TailMass(), promotes=['*'])
+        prob.model.add_subsystem('h_tail', HorizontalTailMass(), promotes=['*'])
+        prob.model.add_subsystem('v_tail', VerticalTailMass(), promotes=['*'])
 
         prob.model.set_input_defaults(Aircraft.VerticalTail.TAPER_RATIO, 0.366, units='unitless')
         prob.model.set_input_defaults(Aircraft.VerticalTail.ASPECT_RATIO, 1.705, units='unitless')
@@ -1923,59 +1597,6 @@ class BWBHighLiftTestCase(unittest.TestCase):
         assert_check_partials(data, atol=5e-10, rtol=1e-12)
 
 
-@use_tempdirs
-class BWBControlMassTestCase(unittest.TestCase):
-    """GAST BWB model"""
-
-    def setUp(self):
-        prob = self.prob = om.Problem()
-        prob.model.add_subsystem('control_mass', ControlMass(), promotes=['*'])
-
-        prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_COEFFICIENT, 0.5, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Wing.AREA, 2142.85714286, units='ft**2')
-        prob.model.set_input_defaults(Aircraft.Design.GROSS_MASS, 150000, units='lbm')
-        prob.model.set_input_defaults(
-            Aircraft.Wing.ULTIMATE_LOAD_FACTOR, 3.97744787, units='unitless'
-        )
-        prob.model.set_input_defaults('min_dive_vel', 420, units='kn')
-        prob.model.set_input_defaults(
-            Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, 1, units='unitless'
-        )
-        prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER, 1, units='unitless'
-        )
-        prob.model.set_input_defaults(Aircraft.Controls.CONTROL_MASS_INCREMENT, 0, units='lbm')
-
-        prob.setup(check=False, force_alloc_complex=True)
-
-    def test_case1(self):
-        self.prob.run_model()
-
-        expected_values = {
-            Aircraft.Wing.SURFACE_CONTROL_MASS: 2045.5556421,
-            Aircraft.Controls.MASS: 2174.28611375,
-        }
-        tol = 1e-7
-
-        for var_name, expected_val in expected_values.items():
-            with self.subTest(var=var_name):
-                assert_near_equal(self.prob[var_name], expected_val, tol)
-
-        data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(data, atol=1e-11, rtol=1e-12)
-
-
 class BWBGearTestCase(unittest.TestCase):
     """GASP BWB model"""
 
@@ -2019,6 +1640,7 @@ class BWBGearTestCase(unittest.TestCase):
         assert_check_partials(data, atol=3e-11, rtol=1e-12)
 
 
+@use_tempdirs
 class BWBFixedMassGroupTestCase1(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
@@ -2097,7 +1719,7 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
             Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, 16.5, units='unitless'
         )
         prob.model.set_input_defaults(
-            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, 0, units='lbm'
+            Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, 0, units='lbm'
         )
         prob.model.set_input_defaults(
             Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, 1, units='unitless'
