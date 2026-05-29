@@ -551,6 +551,15 @@ add_meta_data(
 # ========================================================
 
 add_meta_data(
+    Aircraft.Controls.COCKPIT_CONTROL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='cockpit controls mass',
+    default_value=1.0,
+)
+
+add_meta_data(
     Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CK15', 'FLOPS': None},
@@ -581,9 +590,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKSAS', 'FLOPS': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='mass of stability augmentation system',
+    desc='scaled mass of stability augmentation system',
     default_value=0,
 )
 
@@ -594,6 +603,15 @@ add_meta_data(
     units='unitless',
     desc='technology factor on stability augmentation system mass',
     default_value=1,
+)
+
+add_meta_data(
+    Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKSAS', 'FLOPS': None},
+    units='lbm',
+    desc='reference mass of stability augmentation system',
+    default_value=0,
 )
 
 #   _____                            _____                    _                       _

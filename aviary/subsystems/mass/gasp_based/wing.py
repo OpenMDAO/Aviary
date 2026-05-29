@@ -3,7 +3,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 class WingMassSolve(om.ImplicitComponent):
@@ -258,16 +258,14 @@ class WingMassSolve(om.ImplicitComponent):
         )
 
 
-class WingMassTotal(om.ExplicitComponent):
-    """Computation of wing mass, strut mass, and wing fold mass."""
+class StrutAndFoldMass(om.ExplicitComponent):
+    """Computation of strut mass, and wing fold mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Wing.HAS_FOLD)
         add_aviary_option(self, Aircraft.Wing.HAS_STRUT)
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Wing.MASS_SCALER)
-
         self.add_input(
             'isolated_wing_mass',
             val=1500,
@@ -283,11 +281,8 @@ class WingMassTotal(om.ExplicitComponent):
             add_aviary_input(self, Aircraft.Wing.FOLDING_AREA, units='ft**2')
             add_aviary_input(self, Aircraft.Wing.FOLD_MASS_COEFFICIENT, units='unitless')
 
-        add_aviary_output(self, Aircraft.Wing.MASS, units='lbm')
         add_aviary_output(self, Aircraft.Strut.MASS, units='lbm')
         add_aviary_output(self, Aircraft.Wing.FOLD_MASS, units='lbm')
-
-        self.declare_partials(Aircraft.Wing.MASS, '*')
 
         if self.options[Aircraft.Wing.HAS_STRUT]:
             self.declare_partials(
@@ -305,17 +300,13 @@ class WingMassTotal(om.ExplicitComponent):
             )
 
     def compute(self, inputs, outputs):
-        CK8 = inputs[Aircraft.Wing.MASS_SCALER]
         isolated_wing_wt = inputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
 
-        strut_wt = 0
-        fold_wt = 0
-
-        # TODO output the wing mass subcomponents?
         if self.options[Aircraft.Wing.HAS_STRUT]:
             c_strut_mass = inputs[Aircraft.Strut.MASS_COEFFICIENT]
-
             strut_wt = c_strut_mass * isolated_wing_wt
+        else:
+            strut_wt = 0
 
         if self.options[Aircraft.Wing.HAS_FOLD]:
             wing_area = inputs[Aircraft.Wing.AREA]
@@ -325,9 +316,71 @@ class WingMassTotal(om.ExplicitComponent):
             wt_per_area = isolated_wing_wt / wing_area
             temp_fold_wt = folding_area * wt_per_area
             fold_wt = c_wing_fold * temp_fold_wt
+        else:
+            fold_wt = 0
 
         outputs[Aircraft.Strut.MASS] = strut_wt / GRAV_ENGLISH_LBM
         outputs[Aircraft.Wing.FOLD_MASS] = fold_wt / GRAV_ENGLISH_LBM
+
+    def compute_partials(self, inputs, J):
+        isolated_wing_wt = inputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
+
+        if self.options[Aircraft.Wing.HAS_STRUT]:
+            c_strut_mass = inputs[Aircraft.Strut.MASS_COEFFICIENT]
+
+            J[Aircraft.Strut.MASS, Aircraft.Strut.MASS_COEFFICIENT] = (
+                isolated_wing_wt / GRAV_ENGLISH_LBM
+            )
+            J[Aircraft.Strut.MASS, 'isolated_wing_mass'] = c_strut_mass
+
+        if self.options[Aircraft.Wing.HAS_FOLD]:
+            wing_area = inputs[Aircraft.Wing.AREA]
+            folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
+            c_wing_fold = inputs[Aircraft.Wing.FOLD_MASS_COEFFICIENT]
+
+            wt_per_area = isolated_wing_wt / wing_area
+            temp_fold_wt = folding_area * wt_per_area
+
+            J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.AREA] = (
+                -c_wing_fold * folding_area * isolated_wing_wt / wing_area**2 / GRAV_ENGLISH_LBM
+            )
+            J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLDING_AREA] = (
+                c_wing_fold * wt_per_area / GRAV_ENGLISH_LBM
+            )
+            J[Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLD_MASS_COEFFICIENT] = (
+                temp_fold_wt / GRAV_ENGLISH_LBM
+            )
+            J[Aircraft.Wing.FOLD_MASS, 'isolated_wing_mass'] = (
+                c_wing_fold * folding_area / wing_area
+            )
+
+
+class WingMassTotal(om.ExplicitComponent):
+    """Computation of wing mass."""
+
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.MASS_SCALER)
+
+        self.add_input(
+            'isolated_wing_mass',
+            val=1500,
+            units='lbm',
+            desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
+        )
+
+        add_aviary_input(self, Aircraft.Strut.MASS, units='lbm')
+        add_aviary_input(self, Aircraft.Wing.FOLD_MASS, units='lbm')
+
+        add_aviary_output(self, Aircraft.Wing.MASS, units='lbm')
+
+        self.declare_partials(Aircraft.Wing.MASS, '*')
+
+    def compute(self, inputs, outputs):
+        CK8 = inputs[Aircraft.Wing.MASS_SCALER]
+        isolated_wing_wt = inputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
+
+        strut_wt = inputs[Aircraft.Strut.MASS] * GRAV_ENGLISH_LBM
+        fold_wt = inputs[Aircraft.Wing.FOLD_MASS] * GRAV_ENGLISH_LBM
 
         total_wing_wt = isolated_wing_wt + strut_wt + fold_wt
         outputs[Aircraft.Wing.MASS] = CK8 * total_wing_wt / GRAV_ENGLISH_LBM
@@ -335,52 +388,14 @@ class WingMassTotal(om.ExplicitComponent):
     def compute_partials(self, inputs, J):
         CK8 = inputs[Aircraft.Wing.MASS_SCALER]
         isolated_wing_wt = inputs['isolated_wing_mass'] * GRAV_ENGLISH_LBM
-        strut_wt = 0
-        fold_wt = 0
+        strut_wt = inputs[Aircraft.Strut.MASS] * GRAV_ENGLISH_LBM
+        fold_wt = inputs[Aircraft.Wing.FOLD_MASS] * GRAV_ENGLISH_LBM
 
-        if self.options[Aircraft.Wing.HAS_STRUT]:
-            c_strut_mass = inputs[Aircraft.Strut.MASS_COEFFICIENT]
+        J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = CK8
 
-            J[Aircraft.Wing.MASS, Aircraft.Strut.MASS_COEFFICIENT] = J[
-                Aircraft.Strut.MASS, Aircraft.Strut.MASS_COEFFICIENT
-            ] = isolated_wing_wt / GRAV_ENGLISH_LBM
-            J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = 1 + c_strut_mass
-            J[Aircraft.Strut.MASS, 'isolated_wing_mass'] = c_strut_mass
-            strut_wt = c_strut_mass * isolated_wing_wt
+        J[Aircraft.Wing.MASS, Aircraft.Strut.MASS] = CK8
 
-        if self.options[Aircraft.Wing.HAS_FOLD]:
-            wing_area = inputs[Aircraft.Wing.AREA]
-            folding_area = inputs[Aircraft.Wing.FOLDING_AREA]
-            c_wing_fold = inputs[Aircraft.Wing.FOLD_MASS_COEFFICIENT]
-
-            wt_per_area = isolated_wing_wt / wing_area
-            temp_fold_wt = folding_area * wt_per_area
-
-            J[Aircraft.Wing.MASS, Aircraft.Wing.AREA] = J[
-                Aircraft.Wing.FOLD_MASS, Aircraft.Wing.AREA
-            ] = -c_wing_fold * folding_area * isolated_wing_wt / wing_area**2 / GRAV_ENGLISH_LBM
-            J[Aircraft.Wing.MASS, Aircraft.Wing.FOLDING_AREA] = J[
-                Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLDING_AREA
-            ] = c_wing_fold * wt_per_area / GRAV_ENGLISH_LBM
-            J[Aircraft.Wing.MASS, Aircraft.Wing.FOLD_MASS_COEFFICIENT] = J[
-                Aircraft.Wing.FOLD_MASS, Aircraft.Wing.FOLD_MASS_COEFFICIENT
-            ] = temp_fold_wt / GRAV_ENGLISH_LBM
-            J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = 1 + c_wing_fold * folding_area / wing_area
-            J[Aircraft.Wing.FOLD_MASS, 'isolated_wing_mass'] = (
-                c_wing_fold * folding_area / wing_area
-            )
-            fold_wt = c_wing_fold * temp_fold_wt
-
-        if self.options[Aircraft.Wing.HAS_FOLD] and self.options[Aircraft.Wing.HAS_STRUT]:
-            J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = CK8 * (
-                1 + c_wing_fold * folding_area / wing_area + c_strut_mass
-            )
-
-        if (
-            self.options[Aircraft.Wing.HAS_STRUT] is False
-            and self.options[Aircraft.Wing.HAS_FOLD] is False
-        ):
-            J[Aircraft.Wing.MASS, 'isolated_wing_mass'] = 1
+        J[Aircraft.Wing.MASS, Aircraft.Wing.FOLD_MASS] = CK8
 
         J[Aircraft.Wing.MASS, Aircraft.Wing.MASS_SCALER] = (
             isolated_wing_wt + strut_wt + fold_wt
@@ -723,6 +738,12 @@ class WingMassGroup(om.Group):
         )
 
         self.add_subsystem(
+            'strut_and_fold',
+            StrutAndFoldMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
+        self.add_subsystem(
             'total_mass',
             WingMassTotal(),
             promotes_inputs=connected_inputs_total + higher_level_inputs_total,
@@ -776,6 +797,12 @@ class BWBWingMassGroup(om.Group):
             promotes_outputs=connected_outputs_isolated,
         )
 
+        self.add_subsystem(
+            'strut_and_fold',
+            StrutAndFoldMass(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
+        )
         self.add_subsystem(
             'total_mass',
             WingMassTotal(),

@@ -5,7 +5,7 @@ aircraft:apu:mass,928,lbm
 aircraft:avionics:mass,1959,lbm
 aircraft:controls:cockpit_control_mass_scaler,1,unitless
 aircraft:controls:control_mass_increment,0,lbm
-aircraft:controls:stability_augmentation_system_mass,0,lbm
+aircraft:controls:stability_augmentation_system_reference_mass,0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1,unitless
 aircraft:crew_and_payload:catering_items_mass_per_passenger,7.6,lbm
 aircraft:crew_and_payload:design:num_passengers,180,unitless
