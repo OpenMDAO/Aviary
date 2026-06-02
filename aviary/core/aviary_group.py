@@ -1579,7 +1579,7 @@ class AviaryGroup(om.Group):
             for key, val_dict in initial_guesses.items():
                 # Process the guess variable (handles array interpolation)
                 val = process_guess_var(val_dict['val'], key, phase)
-                units=val_dict.get('units', None)
+                units = val_dict.get('units', None)
 
                 # Identify the type of the guess (state or control)
                 var_type = val_dict['type']
