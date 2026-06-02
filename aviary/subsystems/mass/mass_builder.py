@@ -162,8 +162,8 @@ class CoreMassBuilder(MassBuilder):
                 f.write(f'|{tab}Nose Gear|{val}|{units}|\n')
 
             # OTHER STRUCTURES (NOT IN GROUP) #
-            f.write('|Nacelles|||\n')
             val, units = find_variable_in_problem(Aircraft.Nacelle.MASS, prob, self.meta_data)
+            f.write(f'|Nacelles|{np.dot(val, num_engines)[0]}||\n')
             for i, engine in enumerate(engine_models):
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = val[i]
