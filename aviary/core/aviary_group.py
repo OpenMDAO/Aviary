@@ -1198,6 +1198,9 @@ class AviaryGroup(om.Group):
 
             # Sort because of MPI
             for var in sorted(common):
+                # Analytic phase, handle this input later.
+                if f'{var}_input' in vars2:
+                    continue
 
                 # Controls: True or False, everything else: None
                 opt1 = phase_info1.get(f'{var}_optimize', None)
@@ -1239,7 +1242,7 @@ class AviaryGroup(om.Group):
                             'units': units,
                         }
 
-                    #
+                    # Make sure states options are correct for this.
                     if opt2 is None and var is not 'time':
                         phase = self.traj._phases[phase2]
                         phase.set_state_options(var, input_initial=False)
@@ -1251,7 +1254,16 @@ class AviaryGroup(om.Group):
                     **kwargs,
                 )
 
-            # TODO: Apply any transformations of similar variables across boundary.
+
+            # Analytic phases may take a single start input that needs to connect
+            # Sort because of MPI
+            for var in sorted(vars2):
+                if not var.startswith('input_'):
+                    continue
+
+
+
+        # TODO: Apply any transformations of similar variables across boundary.
 
         self.configurator.link_phases(self, phases, connect_directly=connect_directly)
 
