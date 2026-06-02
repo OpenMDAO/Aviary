@@ -1499,6 +1499,7 @@ class AviaryGroup(om.Group):
         # any mission that does not have any dymos phases, there is nothing to set.
         if not hasattr(self, 'traj'):
             return
+
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity
         # override for just this method
         if verbosity is not None:
@@ -1511,7 +1512,7 @@ class AviaryGroup(om.Group):
         if parent_prob is not None and parent_prefix != '':
             target_prob = parent_prob
 
-        traj = self.traj
+        traj = target_prob.traj
 
         # Determine which phases to loop over, fetching them from the trajectory
         phase_items = traj._phases.items()
@@ -1519,12 +1520,6 @@ class AviaryGroup(om.Group):
         # Loop over each phase and set initial guesses for the state and control
         # variables
         for idx, (phase_name, phase) in enumerate(phase_items):
-            # TODO: This will be uncommented when an openmdao bug is fixed.
-            # We are using a workaround for now.
-            # if not phase._is_local:
-            #     # Don't set anything if phase is not on this proc.
-            #     continue
-
             if self.mission_method is SOLVED_2DOF:
                 self.phase_objects[idx].apply_initial_guesses(self, 'traj', phase)
 
@@ -1539,14 +1534,14 @@ class AviaryGroup(om.Group):
                 guesses = {}
 
             # Add subsystem guesses
-            self._add_subsystem_guesses(phase_name, phase, target_prob, parent_prefix)
+            self._add_subsystem_guesses(phase_name, phase)
 
             # Set initial guesses for states, controls and time for each phase.
             self.configurator.set_phase_initial_guesses(
                 self, phase_name, phase, guesses, target_prob, parent_prefix
             )
 
-    def _add_subsystem_guesses(self, phase_name, phase, target_prob, parent_prefix):
+    def _add_subsystem_guesses(self, phase_name, phase):
         """
         Adds the initial guesses for each subsystem of a given phase to the problem. This method
         first fetches all subsystems associated with the given phase. It then loops over each
@@ -1582,23 +1577,17 @@ class AviaryGroup(om.Group):
 
             # Loop over each guess
             for key, val_dict in initial_guesses.items():
+                # Process the guess variable (handles array interpolation)
+                val = process_guess_var(val_dict['val'], key, phase)
+                units = val_dict.get('units', None)
+
                 # Identify the type of the guess (state or control)
                 var_type = val_dict['type']
                 if 'state' in var_type:
-                    path_string = 'states'
+                    phase.set_state_val(key, vals=val, units=units)
+
                 elif 'control' in var_type:
-                    path_string = 'controls'
-
-                # Process the guess variable (handles array interpolation)
-                # val['val'] = self.process_guess_var(val['val'], key, phase)
-                val = process_guess_var(val_dict['val'], key, phase)
-
-                # Set the initial guess in the problem
-                target_prob.set_val(
-                    parent_prefix + f'traj.{phase_name}.{path_string}:{key}',
-                    val,
-                    units=val_dict.get('units', None),
-                )
+                    phase.set_control_val(key, vals=val, units=units)
 
     def add_fuel_reserve_component(
         self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL
