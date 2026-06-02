@@ -29,7 +29,9 @@ class MassSummation(om.Group):
         self.add_subsystem(
             'propulsion_mass', PropulsionMass(), promotes_inputs=['*'], promotes_outputs=['*']
         )
-
+        self.add_subsystem(
+            'controls_mass', FlightControls(), promotes_inputs=['*'], promotes_outputs=['*']
+        )
         # Systems and equipment mass calculations are not combined into a single group to avoid an
         # additional layer of groups (standard is one component, alternate would be a group)
         if alt_mass:
@@ -170,6 +172,20 @@ class PropulsionMass(om.ExplicitComponent):
         outputs[Aircraft.Propulsion.MASS] = (
             thrust_rev_mass + misc_prop_mass + fuel_sys_mass + total_eng_mass + battery_mass
         )
+
+
+# "compute" controls mass for reporting. FLOPS only computes one variable in this category
+class FlightControls(om.ExplicitComponent):
+    def setup(self):
+        add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS)
+
+        add_aviary_output(self, Aircraft.Controls.MASS)
+
+    def setup_partials(self):
+        self.declare_partials(Aircraft.Controls.MASS, Aircraft.Wing.SURFACE_CONTROL_MASS, val=1)
+
+    def compute(self, inputs, outputs):
+        outputs[Aircraft.Controls.MASS] = inputs[Aircraft.Wing.SURFACE_CONTROL_MASS]
 
 
 class SystemsEquipmentMass(om.ExplicitComponent):
