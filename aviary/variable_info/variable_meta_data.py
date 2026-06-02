@@ -4342,7 +4342,7 @@ add_meta_data(
         'FLOPS': None,
     },
     units='lbm',
-    desc='estimated mass of the nacelles for each engine model',
+    desc='estimated mass of a single nacelle for each engine model',
     default_value=0.0,
     multivalue=True,
 )

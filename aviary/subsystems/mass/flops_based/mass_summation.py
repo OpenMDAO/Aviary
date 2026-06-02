@@ -117,14 +117,19 @@ class StructureMass(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Design.STRUCTURE_MASS, units='lbm')
 
     def setup_partials(self):
-        num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+        num_engine_type = len(num_engines)
 
         self.declare_partials(Aircraft.Design.STRUCTURE_MASS, '*', val=1)
         self.declare_partials(
-            Aircraft.Design.STRUCTURE_MASS, Aircraft.Nacelle.MASS, val=np.ones(num_engine_type)
+            Aircraft.Design.STRUCTURE_MASS,
+            Aircraft.Nacelle.MASS,
+            val=np.ones(num_engine_type) * num_engines,
         )
 
     def compute(self, inputs, outputs):
+        num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
+
         empennage_mass = inputs[Aircraft.Design.EMPENNAGE_MASS]
         fuselage_mass = inputs[Aircraft.Fuselage.MASS]
         landing_gear_mass = inputs[Aircraft.LandingGear.TOTAL_MASS]
@@ -137,7 +142,7 @@ class StructureMass(om.ExplicitComponent):
             + empennage_mass
             + fuselage_mass
             + landing_gear_mass
-            + np.sum(nacelle_mass)
+            + np.dot(nacelle_mass, num_engines)
             + paint_mass
         )
 
