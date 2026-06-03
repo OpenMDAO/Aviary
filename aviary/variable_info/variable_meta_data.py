@@ -7113,7 +7113,7 @@ add_meta_data(
     # historical_name={
     #     'FLOPS': ['&DEFTOL.TOLIN.BRAKMU', 'BALFLD.BRAKMU'],
     #     'GASP': None,
-    historical_name={'FLOPS': None, 'GASP': None},
+    historical_name={'FLOPS': None, 'GASP': 'INGASP.MUB'},
     default_value=0.3,
     units='unitless',
     desc='landing coefficient of friction, with brakes on',
@@ -7585,7 +7585,7 @@ add_meta_data(
     Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.UM',
         # ['&DEFTOL.TOLIN.ROLLMU', 'BALFLD.ROLLMU'],
         'FLOPS': 'TOLIN.ROLLMU',
     },
