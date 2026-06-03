@@ -319,7 +319,7 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 7148.277290864326, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([11.65]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.6643]))
-outputs.set_val(Aircraft.Nacelle.MASS, 1612.2, 'lbm')
+outputs.set_val(Aircraft.Nacelle.MASS, 806.0988, 'lbm')
 nacelle_wetted_area = np.array([228.34])
 nacelle_wetted_area_units = 'ft**2'
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)
