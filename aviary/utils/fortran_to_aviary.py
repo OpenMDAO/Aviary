@@ -909,6 +909,12 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         drag_scaler = round(drag_scaler * tech_factor, round_position)
         input_values.set_val(Aircraft.Wing.DRAG_FACTOR, [drag_scaler], 'unitless')
 
+    # The default values in meta data are for FLOPS based.
+    if Mission.Landing.BRAKING_FRICTION_COEFFICIENT not in input_values:
+        input_values.set_val(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, [0.4], 'unitless')
+    if Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT not in input_values:
+        input_values.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, [0.02], 'unitless')
+
     # Variables required by GASP, but no default values are provided in GASP
     missing_vars = []
     if Aircraft.Wing.ZERO_LIFT_ANGLE not in input_values:
