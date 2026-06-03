@@ -1,7 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_LANDING, RHO_SEA_LEVEL_ENGLISH
+from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
@@ -578,6 +578,11 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             units='lbm',
             desc='WL: aircraft mass at start of landing',
         )
+        self.add_input(
+            Mission.Landing.BRAKING_FRICTION_COEFFICIENT,
+            units='lbm',
+            desc='braking friction coefficient',
+        )
 
         self.add_output(
             'ground_roll_distance',
@@ -593,6 +598,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             desc='average acceleration/decelleration based on starting speed (TAS) and rollout distance',
         )
 
+    def setup_partials(self):
         self.declare_partials(
             'ground_roll_distance',
             [
@@ -600,6 +606,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
                 'density_ratio',
                 'touchdown_CD',
                 'touchdown_CL',
+                Mission.Landing.BRAKING_FRICTION_COEFFICIENT,
                 'thrust_idle',
                 Dynamic.Vehicle.MASS,
                 'CL_max',
@@ -614,6 +621,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
                 'density_ratio',
                 'touchdown_CD',
                 'touchdown_CL',
+                Mission.Landing.BRAKING_FRICTION_COEFFICIENT,
                 'thrust_idle',
                 Dynamic.Vehicle.MASS,
                 'CL_max',
@@ -636,6 +644,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
                 Dynamic.Vehicle.MASS,
                 'CL_max',
                 Mission.Landing.STALL_VELOCITY,
+                Mission.Landing.BRAKING_FRICTION_COEFFICIENT,
             ],
         )
 
@@ -653,11 +662,12 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             delay_distance,
             CL_max,
             mass,
+            mu_landing,
         ) = inputs.values()
 
         weight = mass * GRAV_ENGLISH_LBM
         G = GRAV_ENGLISH_GASP
-        MUB = MU_LANDING
+        MUB = mu_landing
 
         DLRL = touchdown_CD - (MUB * touchdown_CL)
         ARAT = DLRL / (CL_max * (TAS_stall / TAS_touchdown) ** 2)
@@ -687,10 +697,11 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             delay_distance,
             CL_max,
             mass,
+            mu_landing,
         ) = inputs.values()
         weight = mass * GRAV_ENGLISH_LBM
         G = GRAV_ENGLISH_GASP
-        MUB = MU_LANDING
+        MUB = mu_landing
 
         DLRL = touchdown_CD - (MUB * touchdown_CL)
         ARAT = DLRL / (CL_max * (TAS_stall / TAS_touchdown) ** 2)
@@ -700,21 +711,30 @@ class LandingGroundRollComponent(om.ExplicitComponent):
 
         dDLRL_dTouchdownCD = 1
         dDLRL_dTouchdownCL = -MUB
+        dDLRL_dMUB = -touchdown_CL
 
         dARAT_dTouchdownCD = dDLRL_dTouchdownCD / (CL_max * (TAS_stall / TAS_touchdown) ** 2)
         dARAT_dTouchdownCL = dDLRL_dTouchdownCL / (CL_max * (TAS_stall / TAS_touchdown) ** 2)
+        dARAT_dMUB = dDLRL_dMUB / (CL_max * (TAS_stall / TAS_touchdown) ** 2)
         dARAT_dClMax = -DLRL / (CL_max**2 * (TAS_stall / TAS_touchdown) ** 2)
         dARAT_dTasStall = -2 * DLRL / (CL_max * (TAS_stall**3 / TAS_touchdown**2))
         dARAT_dTasTouchdown = 2 * TAS_touchdown * DLRL / (CL_max * (TAS_stall) ** 2)
 
         dFRAT_dThrustIdle = -1 / weight
         dFRAT_dWeight = thrust_idle / weight**2
+        dFRAT_dMUB = 1
 
         dALN_dTouchdownCD = (
             1 / (FRAT / (FRAT + ARAT)) * (-FRAT / (FRAT + ARAT) ** 2) * dARAT_dTouchdownCD
         )
         dALN_dTouchdownCL = (
             1 / (FRAT / (FRAT + ARAT)) * (-FRAT / (FRAT + ARAT) ** 2) * dARAT_dTouchdownCL
+        )
+        dALN_dMUB = (
+            1
+            / (FRAT / (FRAT + ARAT))
+            * (dFRAT_dMUB * (FRAT + ARAT) - FRAT * (dFRAT_dMUB + dARAT_dMUB))
+            / (FRAT + ARAT) ** 2
         )
         dALN_dThrustIdle = (
             1
@@ -753,6 +773,12 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             * (DLRL * dALN_dTouchdownCL - ALN * dDLRL_dTouchdownCL)
             / DLRL**2
         )
+        J['ground_roll_distance', Mission.Landing.BRAKING_FRICTION_COEFFICIENT] = dGRD_dMUB = (
+            -13.0287
+            * (wing_loading_land / density_ratio)
+            * (DLRL * dALN_dMUB - ALN * dDLRL_dMUB)
+            / DLRL**2
+        )
         J['ground_roll_distance', 'thrust_idle'] = dGRD_dThrustIdle = (
             -13.0287 * wing_loading_land * dALN_dThrustIdle / (density_ratio * DLRL)
         )
@@ -771,6 +797,7 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         J[Mission.Landing.GROUND_DISTANCE, 'density_ratio'] = dGRD_dDensityRatio
         J[Mission.Landing.GROUND_DISTANCE, 'touchdown_CD'] = dGRD_dTouchdownCD
         J[Mission.Landing.GROUND_DISTANCE, 'touchdown_CL'] = dGRD_dTouchdownCL
+        J[Mission.Landing.GROUND_DISTANCE, Mission.Landing.BRAKING_FRICTION_COEFFICIENT] = dGRD_dMUB
         J[Mission.Landing.GROUND_DISTANCE, 'thrust_idle'] = dGRD_dThrustIdle
         J[Mission.Landing.GROUND_DISTANCE, Dynamic.Vehicle.MASS] = dGRD_dWeight * GRAV_ENGLISH_LBM
         J[Mission.Landing.GROUND_DISTANCE, 'CL_max'] = dGRD_dClMax
@@ -791,6 +818,9 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         )
         J['average_acceleration', 'touchdown_CL'] = (
             -(TAS_touchdown**2.0) / (ground_roll_distance**2 * 2.0 * G) * dGRD_dTouchdownCL
+        )
+        J['average_acceleration', Mission.Landing.BRAKING_FRICTION_COEFFICIENT] = (
+            -(TAS_touchdown**2.0) / (ground_roll_distance**2 * 2.0 * G) * dGRD_dMUB
         )
         J['average_acceleration', 'thrust_idle'] = (
             -(TAS_touchdown**2.0) / (ground_roll_distance**2 * 2.0 * G) * dGRD_dThrustIdle

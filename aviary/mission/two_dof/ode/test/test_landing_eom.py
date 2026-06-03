@@ -141,6 +141,7 @@ class GroundRollTestCase(unittest.TestCase):
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)
+        self.prob.model.set_input_defaults(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, val=0.4)
         self.prob.model.set_input_defaults(
             Mission.Landing.STALL_VELOCITY, val=109.73, units='kn'
         )  # note: EAS in GASP, although at this altitude they are nearly identical
@@ -197,6 +198,7 @@ class GroundRollTestCase2(unittest.TestCase):
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)
+        self.prob.model.set_input_defaults(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, val=0.4)
         self.prob.model.set_input_defaults(
             Mission.Landing.STALL_VELOCITY, val=109.73, units='kn'
         )  # note: EAS in GASP, although at this altitude they are nearly identical
