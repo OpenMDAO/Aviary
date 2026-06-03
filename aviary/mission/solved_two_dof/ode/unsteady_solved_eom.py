@@ -2,9 +2,9 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils.units import convert_units
 
-from aviary.constants import GRAV_ENGLISH_LBM, GRAV_METRIC_GASP, MU_TAKEOFF
+from aviary.constants import GRAV_ENGLISH_LBM, GRAV_METRIC_GASP
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 LBF_TO_N = convert_units(1.0, 'lbf', 'N')
 
@@ -56,6 +56,11 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             val=np.zeros(nn),
             desc='angle of attack',
             units='rad',
+        )
+        self.add_input(
+            Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+            units='unitless',
+            desc='braking friction coefficient',
         )
 
         if not self.options['ground_roll']:
@@ -136,6 +141,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         self.declare_partials(
             of=['dTAS_dt', 'normal_force', 'load_factor'], wrt=[Aircraft.Wing.INCIDENCE]
         )
+        if self.options['ground_roll']:
+            self.declare_partials(of='dTAS_dt', wrt=Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         self.declare_partials(
             of=['normal_force', 'dTAS_dt'],
@@ -238,7 +245,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         m = weight / g
 
         if self.options['ground_roll']:
-            mu = MU_TAKEOFF
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
             gamma = 0.0
         else:
             mu = 0.0
@@ -291,7 +298,7 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
 
         if self.options['ground_roll']:
-            mu = MU_TAKEOFF
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
             gamma = 0.0
         else:
             mu = 0.0
@@ -382,4 +389,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             partials['dgam_dt_approx', Dynamic.Mission.FLIGHT_PATH_ANGLE] = dgam_dr * drdot_dgam
             partials['load_factor', Dynamic.Mission.FLIGHT_PATH_ANGLE] = (
                 (lift + tsai) / (weight * cgam**2) * sgam
+            )
+        else:
+            partials['dTAS_dt', Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT] = (
+                -(weight - lift - tsai) / m
             )

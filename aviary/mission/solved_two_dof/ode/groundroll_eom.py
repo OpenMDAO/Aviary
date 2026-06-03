@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
+from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GroundrollEOM(om.ExplicitComponent):
@@ -54,6 +54,11 @@ class GroundrollEOM(om.ExplicitComponent):
             desc='angle of attack',
             units='deg',
         )
+        self.add_input(
+            Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+            units='lbm',
+            desc='braking friction coefficient',
+        )
 
         self.add_output(
             Dynamic.Mission.VELOCITY_RATE,
@@ -93,7 +98,13 @@ class GroundrollEOM(om.ExplicitComponent):
             rows=arange,
             cols=arange,
         )
-        self.declare_partials(Dynamic.Mission.VELOCITY_RATE, Aircraft.Wing.INCIDENCE)
+        self.declare_partials(
+            Dynamic.Mission.VELOCITY_RATE,
+            [
+                Aircraft.Wing.INCIDENCE,
+                Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+            ],
+        )
         self.declare_partials(
             Dynamic.Mission.ALTITUDE_RATE,
             [Dynamic.Mission.VELOCITY, Dynamic.Mission.FLIGHT_PATH_ANGLE],
@@ -141,7 +152,7 @@ class GroundrollEOM(om.ExplicitComponent):
         self.declare_partials('angle_of_attack_rate', ['*'])
 
     def compute(self, inputs, outputs):
-        mu = MU_TAKEOFF
+        mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -179,7 +190,7 @@ class GroundrollEOM(om.ExplicitComponent):
         outputs['angle_of_attack_rate'] = np.zeros(nn)
 
     def compute_partials(self, inputs, J):
-        mu = MU_TAKEOFF
+        mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -250,6 +261,9 @@ class GroundrollEOM(om.ExplicitComponent):
         )
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
             GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
+        )
+        J[Dynamic.Mission.VELOCITY_RATE, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT] = (
+            (-normal_force) * GRAV_ENGLISH_GASP / weight
         )
 
         J[Dynamic.Mission.ALTITUDE_RATE, Dynamic.Mission.VELOCITY] = np.sin(gamma)

@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TestUnsteadySolvedEOM(unittest.TestCase):
@@ -30,6 +30,7 @@ class TestUnsteadySolvedEOM(unittest.TestCase):
         p.set_val(Dynamic.Vehicle.LIFT, 175_000, units='lbf')
         p.set_val(Dynamic.Vehicle.DRAG, 20_000, units='lbf')
         p.set_val(Aircraft.Wing.INCIDENCE, 0.0, units='deg')
+        p.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02, units='unitless')
 
         if not ground_roll:
             p.set_val(Dynamic.Vehicle.ANGLE_OF_ATTACK, 0.0, units='deg')

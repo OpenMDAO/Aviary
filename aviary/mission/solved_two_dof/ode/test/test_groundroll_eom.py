@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.solved_two_dof.ode.groundroll_eom import GroundrollEOM
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GroundrollEOMTestCase(unittest.TestCase):
@@ -32,6 +32,7 @@ class GroundrollEOMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg'
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -84,6 +85,7 @@ class GroundrollEOMTestCase2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
         prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')

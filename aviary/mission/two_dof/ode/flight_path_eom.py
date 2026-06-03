@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
+from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
 from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class FlightPathEOM(om.ExplicitComponent):
@@ -11,8 +11,6 @@ class FlightPathEOM(om.ExplicitComponent):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self._mu = MU_TAKEOFF
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -71,7 +69,6 @@ class FlightPathEOM(om.ExplicitComponent):
         )
 
         if not ground_roll:
-            self._mu = 0.0
             self.add_output(
                 Dynamic.Mission.ALTITUDE_RATE,
                 val=np.ones(nn),
@@ -95,6 +92,11 @@ class FlightPathEOM(om.ExplicitComponent):
                 desc='angle of attack',
                 units='deg',
             )
+        self.add_input(
+            Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
+            units='lbm',
+            desc='braking friction coefficient',
+        )
 
         self.add_output(
             Dynamic.Mission.DISTANCE_RATE,
@@ -139,6 +141,10 @@ class FlightPathEOM(om.ExplicitComponent):
         )
 
         self.declare_partials(Dynamic.Mission.VELOCITY_RATE, [Aircraft.Wing.INCIDENCE])
+        if ground_roll:
+            self.declare_partials(
+                Dynamic.Mission.VELOCITY_RATE, [Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+            )
 
         if not ground_roll:
             self.declare_partials(
@@ -217,7 +223,10 @@ class FlightPathEOM(om.ExplicitComponent):
         self.declare_partials('fuselage_pitch', [Aircraft.Wing.INCIDENCE])
 
     def compute(self, inputs, outputs):
-        mu = MU_TAKEOFF if self.options['ground_roll'] else 0.0
+        if self.options['ground_roll']:
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+        else:
+            mu = 0.0
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -265,7 +274,10 @@ class FlightPathEOM(om.ExplicitComponent):
         outputs['load_factor'] = load_factor
 
     def compute_partials(self, inputs, J):
-        mu = MU_TAKEOFF if self.options['ground_roll'] else 0.0
+        if self.options['ground_roll']:
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+        else:
+            mu = 0.0
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -347,6 +359,10 @@ class FlightPathEOM(om.ExplicitComponent):
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
             GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
         )
+        if self.options['ground_roll']:
+            J[Dynamic.Mission.VELOCITY_RATE, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT] = (
+                -normal_force * GRAV_ENGLISH_GASP / weight
+            )
 
         # TODO: check partials, esp. for alphas
         if not self.options['ground_roll']:

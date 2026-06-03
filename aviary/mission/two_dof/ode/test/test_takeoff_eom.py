@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GroundrollEOMTestCase(unittest.TestCase):
@@ -31,6 +31,7 @@ class GroundrollEOMTestCase(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
         self.prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -81,6 +82,7 @@ class GroundrollEOMTestCase2(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
         prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -114,6 +116,7 @@ class RotationEOMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg'
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -166,6 +169,7 @@ class RotationEOMTestCase2(unittest.TestCase):
         )
         prob.model.set_input_defaults(Aircraft.Wing.INCIDENCE, val=0, units='deg')
         prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
@@ -196,6 +200,7 @@ class AscentEOMTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg'
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.setup(check=False, force_alloc_complex=True)
 
@@ -245,6 +250,7 @@ class AscentEOMTestCase2(unittest.TestCase):
             Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(2), units='rad'
         )
         prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(2), units='deg')
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
