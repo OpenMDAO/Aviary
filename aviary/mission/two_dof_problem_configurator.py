@@ -701,10 +701,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # Breguet phase should have nothing else to set.
             return
 
-        # Set initial guesses for the rotation mass and flight duration
-        rotation_mass = aviary_group.initialization_guesses['rotation_mass']
-        flight_duration = aviary_group.initialization_guesses['flight_duration']
-
         control_keys = ['velocity_rate', 'throttle']
         state_keys = [
             'altitude',
@@ -728,47 +724,25 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             if 'time' == guess_key:
                 if phase_name == 'ascent':
                     # These variables are promoted to the top.
-                    init_path = Mission.Takeoff.ASCENT_T_INITIAL
-                    dura_path = Mission.Takeoff.ASCENT_DURATION
+                    target_prob.set_val(Mission.Takeoff.ASCENT_T_INITIAL, val[0], units=units)
+                    target_prob.set_val(Mission.Takeoff.ASCENT_DURATION, val[1], units=units)
                 else:
-                    init_path = parent_prefix + f'traj.{phase_name}.t_initial'
-                    dura_path = parent_prefix + f'traj.{phase_name}.t_duration'
-
-                target_prob.set_val(init_path, val[0], units=units)
-                target_prob.set_val(dura_path, val[1], units=units)
+                    phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
             else:
                 # Set initial guess for control variables
                 if guess_key in control_keys:
-                    try:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                            process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
-
-                    except KeyError:
-                        try:
-                            target_prob.set_val(
-                                parent_prefix
-                                + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                                process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
-
-                        except KeyError:
-                            target_prob.set_val(
-                                parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                                {guess_key},
-                                process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
+                    phase.set_control_val(
+                        guess_key,
+                        vals=process_guess_var(val, guess_key, phase),
+                        units=units,
+                    )
 
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                        process_guess_var(val, guess_key, phase),
+                    phase.set_state_val(
+                        guess_key,
+                        vals=process_guess_var(val, guess_key, phase),
                         units=units,
                     )
 
@@ -791,12 +765,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # initial guesses using some knowledge of the mission duration and other variables
         # that are only available after calling `create_vehicle`. Thus these initial guess
         # values are not included in the `phase_info` object.
-        base_phase = phase_name.removeprefix('reserve_')
-
         if 'mass' not in guesses:
-            mass_guess = rotation_mass
+            # Set initial guesses for the rotation mass and flight duration
+            rotation_mass = aviary_group.initialization_guesses['rotation_mass']
 
             # Set the mass guess as the initial value for the mass state variable
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.states:mass', mass_guess, units='lbm'
-            )
+            phase.set_state_val('mass', rotation_mass, units='lbm')
