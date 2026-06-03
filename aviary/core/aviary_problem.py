@@ -1247,7 +1247,7 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        parent_prob : om.Problem, optional
+        parent_prob : AviaryGroup, optional
             If provided along with ``parent_prefix``, initial guesses are set on this parent problem
             instead of ``self``. Used internally for nested problem setups.
         parent_prefix : str, optional
