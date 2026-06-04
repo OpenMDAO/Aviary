@@ -986,7 +986,7 @@ class AviaryProblem(om.Problem):
                 )
             objectives.append((model, output, weight))
             # objectives = [
-            # ('model1', Mission.FUEL, 1),
+            # ('model1', Mission.FUEL_MASS, 1),
             # ('model2', Mission.CO2, 1),
             #  ...
             # ]
@@ -1080,7 +1080,7 @@ class AviaryProblem(om.Problem):
         missions : list of str
             Subsystem names corresponding to different missions (e.g., ``['model1', 'model2']``).
         outputs : list of str
-            Output variable names to include from each mission (e.g., ``[Mission.FUEL,
+            Output variable names to include from each mission (e.g., ``[Mission.FUEL_MASS,
             Mission.GROSS_MASS]``).
         mission_weights : list of float, optional
             Weights assigned to each mission. Normalized internally to sum to 1.0. If None, equal
