@@ -12,7 +12,7 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class GroundrollODETestCase(unittest.TestCase):
@@ -52,6 +52,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
         self.prob.set_val(Dynamic.Mission.VELOCITY, [75, 150], units='kn')
         self.prob.set_val(Dynamic.Vehicle.MASS, [100000, 100000], units='lbm')
+        self.prob.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         self.prob.run_model()
 
@@ -107,6 +108,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
+        # self.prob.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         set_params_for_unit_tests(self.prob)
 
@@ -201,3 +203,6 @@ class AscentODETestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    test = GroundrollODETestCase()
+    test.setUp()
+    # test.test_groundroll_partials()

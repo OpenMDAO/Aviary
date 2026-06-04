@@ -62,6 +62,8 @@ class FlightPathODE(TwoDOFODE):
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        else:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         subsystems = self.options['subsystems']
 
