@@ -54,9 +54,10 @@ class GroundrollEOM(om.ExplicitComponent):
             desc='angle of attack',
             units='deg',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
-            units='lbm',
+            units='unitless',
             desc='braking friction coefficient',
         )
 

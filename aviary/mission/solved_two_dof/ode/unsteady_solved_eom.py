@@ -57,7 +57,8 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
             desc='angle of attack',
             units='rad',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
             units='unitless',
             desc='braking friction coefficient',

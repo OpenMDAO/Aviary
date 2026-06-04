@@ -578,9 +578,10 @@ class LandingGroundRollComponent(om.ExplicitComponent):
             units='lbm',
             desc='WL: aircraft mass at start of landing',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Mission.Landing.BRAKING_FRICTION_COEFFICIENT,
-            units='lbm',
+            units='unitless',
             desc='braking friction coefficient',
         )
 
