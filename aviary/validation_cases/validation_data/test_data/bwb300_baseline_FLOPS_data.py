@@ -90,9 +90,9 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)  # FRFIN
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')  # FULAUX
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')  # FULAUX
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)  # WFSYS
-inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
+inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
@@ -181,7 +181,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)  # FFFSUB
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)  # FFFSUP
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)  # DFFAC
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)  # FFFAC
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')  # FLEAK
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')  # FLEAK
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)  # WPMISC
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)  # IDLE
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)  # NONEG
@@ -328,7 +328,7 @@ outputs.set_val(Aircraft.Electrical.MASS, 2646.5272348061812, 'lbm')  # WELEC
 outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 787493.65267017565, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 3656.7260445688612, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1314.83910317, 'lbm')  # WUF
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 787493.65267018, 'lbm')  # FULWMX
+outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 787493.65267018, 'lbm')  # FULWMX
 
 outputs.set_val(Aircraft.Fins.MASS, 2822.1415450307886, 'lbm')  # WFIN
 outputs.set_val(Aircraft.Furnishings.MASS, 52096.553437128503, 'lbm')  # WFURN

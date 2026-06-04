@@ -560,26 +560,26 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
         if Aircraft.Fuel.TOTAL_CAPACITY not in aviary_options:
             # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
             # TODO these are default values, double check they need to actually be set here
-            if Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY not in aviary_options:
-                aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
+            if Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY not in aviary_options:
+                aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 
-            if Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY not in aviary_options:
-                aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+            if Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY not in aviary_options:
+                aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
         else:
             total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
             try:
-                wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')
+                wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')
             except KeyError:
                 wing_capacity = None
             try:
                 fuselage_capacity = aviary_options.get_val(
-                    Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 'lbm'
+                    Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 'lbm'
                 )
             except KeyError:
                 fuselage_capacity = None
             try:
                 auxiliary_capacity = aviary_options.get_val(
-                    Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'lbm'
+                    Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'lbm'
                 )
             except KeyError:
                 auxiliary_capacity = None

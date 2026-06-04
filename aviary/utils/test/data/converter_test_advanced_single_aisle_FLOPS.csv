@@ -37,7 +37,7 @@ aircraft:design:use_alt_mass,False,unitless
 aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
 aircraft:engine:additional_mass_fraction,0.0,unitless
-aircraft:engine:constant_fuel_consumption,0.0,lbm/h
+aircraft:engine:constant_fuel_mass_consumption,0.0,lbm/h
 aircraft:engine:flight_idle_max_fraction,1.0,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:fuel_flow_scaler_constant_term,0.0,unitless
@@ -58,10 +58,10 @@ aircraft:fins:area,0.0,ft**2
 aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10.0,unitless
-aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
+aircraft:fuel:auxiliary_fuel_mass_capacity,0.0,lbm
 aircraft:fuel:density,6.7,lbm/galUS
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
-aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
+aircraft:fuel:fuselage_fuel_mass_capacity,0.0,lbm
 aircraft:fuel:ignore_fuel_capacity_constraint,False,unitless
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,0.0,lbm
@@ -161,7 +161,7 @@ mission:takeoff:angle_of_attack_runway,0.0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
 mission:takeoff:drag_coefficient_min,0.05,unitless
 mission:takeoff:final_altitude,35.0,ft
-mission:takeoff:fuel,0.0,lbm
+mission:takeoff:fuel_mass,0.0,lbm
 mission:takeoff:lift_coefficient_max,2.0,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
 mission:takeoff:spoiler_drag_coefficient,0.085,unitless

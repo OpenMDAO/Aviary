@@ -217,7 +217,7 @@ class FlightPhaseBase(PhaseBuilder):
         # Add States #
         ##############
         if phase_type is EquationsOfMotion.ENERGY_STATE:
-            rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
+            rate_source = Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = 'dmass_dr'
 
@@ -307,7 +307,7 @@ class FlightPhaseBase(PhaseBuilder):
             units='kW',
         )
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             units='lbm/h',
         )
 

@@ -87,7 +87,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         )
         weight = p.model.get_val('mass', units='lbm') * GRAV_ENGLISH_LBM
         fuelflow = p.model.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         dmass_dr = p.model.get_val('dmass_dr', units='lbm/ft')
         dt_dr = p.model.get_val('dt_dr', units='s/ft')

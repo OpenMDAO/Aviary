@@ -1943,7 +1943,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
+    Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -2789,7 +2789,7 @@ add_meta_data(
 # ===========================
 
 add_meta_data(
-    Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
+    Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -2857,7 +2857,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY,
+    Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -2969,7 +2969,16 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.WING_FUEL_CAPACITY,
+    Aircraft.Fuel.WING_FUEL_FRACTION,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKWF', 'FLOPS': None},
+    units='unitless',
+    desc='fraction of total theoretical wing volume used for wing fuel',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -2977,15 +2986,6 @@ add_meta_data(
     },
     units='lbm',
     desc='fuel capacity of the auxiliary tank',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_FUEL_FRACTION,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKWF', 'FLOPS': None},
-    units='unitless',
-    desc='fraction of total theoretical wing volume used for wing fuel',
     default_value=0.0,
 )
 
@@ -6656,7 +6656,7 @@ add_meta_data(
 # )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE,
+    Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm/h',
@@ -6667,7 +6667,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
+    Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm/h',
@@ -6677,7 +6677,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+    Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm/h',
@@ -6687,7 +6687,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_TOTAL,
+    Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_TOTAL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm/h',
@@ -6853,7 +6853,7 @@ add_meta_data(
 #  ============================================================================================================================================
 
 add_meta_data(
-    Mission.BLOCK_FUEL,
+    Mission.BLOCK_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
@@ -6879,7 +6879,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.FUEL,
+    Mission.FUEL_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
@@ -6932,25 +6932,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.RESERVE_FUEL,
-    meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
-    units='lbm',
-    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Mission.RESERVE_FUEL_ADDITIONAL,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None},
-    option=True,
-    units='lbm',
-    desc='required fuel reserves: directly in lbm',
-    default_value=0,
-)
-
-add_meta_data(
     Mission.RESERVE_FUEL_MARGIN,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
@@ -6962,7 +6943,26 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.TOTAL_FUEL,
+    Mission.RESERVE_FUEL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='fuel burned during reserve phases, this does not include fuel burned in regular phases',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.RESERVE_FUEL_MASS_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.FRESF', 'FLOPS': None},
+    option=True,
+    units='lbm',
+    desc='required fuel reserves: directly in lbm',
+    default_value=0,
+)
+
+add_meta_data(
+    Mission.TOTAL_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WFA', 'FLOPS': None},
     units='lbm',
@@ -6972,12 +6972,12 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.TOTAL_RESERVE_FUEL,
+    Mission.TOTAL_RESERVE_FUEL_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
     desc='the total fuel reserves which is the sum of: '
-    'Mission.RESERVE_FUEL, Mission.RESERVE_FUEL_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
+    'Mission.RESERVE_FUEL_MASS, Mission.RESERVE_FUEL_MASS_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
     default_value=0,
 )
 
@@ -7003,7 +7003,7 @@ add_meta_data(
 # ===========================================================================
 
 add_meta_data(
-    Mission.Constraints.EXCESS_FUEL_CAPACITY,
+    Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
@@ -7513,7 +7513,7 @@ add_meta_data(
     # Note user override (no scaling)
     # Note FLOPS calculated as part of mission analysis, and not as
     # part of takeoff
-    Mission.Takeoff.FUEL,
+    Mission.Takeoff.FUEL_MASS,
     meta_data=_MetaData,
     historical_name={
         'GASP': None,
@@ -7667,7 +7667,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Taxi.FUEL_TAXI_IN,
+    Mission.Taxi.FUEL_MASS_TAXI_IN,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
@@ -7677,7 +7677,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Mission.Taxi.FUEL_TAXI_OUT,
+    Mission.Taxi.FUEL_MASS_TAXI_OUT,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',

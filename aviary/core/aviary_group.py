@@ -631,7 +631,7 @@ class AviaryGroup(om.Group):
                 ('gross_mass', Mission.GROSS_MASS),
                 ('zero_fuel_mass', Mission.ZERO_FUEL_MASS),
             ],
-            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL)],
+            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL_MASS)],
         )
 
     def _add_premission_external_subsystem_masses(self):
@@ -900,7 +900,7 @@ class AviaryGroup(om.Group):
                 fuel_burned={'units': 'lbm'},
             ),
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
-            promotes_outputs=[('fuel_burned', Mission.FUEL)],
+            promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
         )
 
         self.connect(
@@ -921,7 +921,7 @@ class AviaryGroup(om.Group):
             post_mission.add_subsystem(
                 'reserve_fuel_burned',
                 ecomp,
-                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL)],
+                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS)],
             )
 
             # timeseries has to be used because Breguet cruise phases don't have
@@ -944,16 +944,16 @@ class AviaryGroup(om.Group):
         post_mission.add_subsystem(
             'total_fuel_mass_con',
             om.ExecComp(
-                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel',
+                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel_mass',
                 total_fuel_mass_constraint={'units': 'lbm'},
                 total_fuel_mass={'units': 'lbm'},
                 mission_fuel_burned={'units': 'lbm'},
-                reserve_fuel={'units': 'lbm'},
+                reserve_fuel_mass={'units': 'lbm'},
             ),
             promotes_inputs=[
-                ('total_fuel_mass', Mission.TOTAL_FUEL),
-                ('mission_fuel_burned', Mission.FUEL),
-                ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
+                ('total_fuel_mass', Mission.TOTAL_FUEL_MASS),
+                ('mission_fuel_burned', Mission.FUEL_MASS),
+                ('reserve_fuel_mass', Mission.TOTAL_RESERVE_FUEL_MASS),
             ],
             promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)],
         )
@@ -1054,9 +1054,9 @@ class AviaryGroup(om.Group):
             promotes_inputs=[
                 ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
                 ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-                ('overall_fuel', Mission.TOTAL_FUEL),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
-            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY)],
         )
 
         # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
@@ -1076,7 +1076,7 @@ class AviaryGroup(om.Group):
 
         if not ignore_capacity_constraint:
             self.add_constraint(
-                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=1.0e5, units='lbm'
+                Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY, lower=0, ref=1.0e5, units='lbm'
             )
         else:
             if verbosity >= Verbosity.BRIEF:
@@ -1096,10 +1096,10 @@ class AviaryGroup(om.Group):
                 fuel_burned_taxi_in={'units': 'lbm'},
             ),
             promotes_inputs=[
-                ('mission_fuel_burned', Mission.FUEL),
-                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_TAXI_IN),
+                ('mission_fuel_burned', Mission.FUEL_MASS),
+                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_MASS_TAXI_IN),
             ],
-            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)],
+            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL_MASS)],
         )
 
     def link_phases(self, verbosity=None, comm=None):
@@ -1590,7 +1590,7 @@ class AviaryGroup(om.Group):
                     phase.set_control_val(key, vals=val, units=units)
 
     def add_fuel_reserve_component(
-        self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL
+        self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL_MASS
     ):
         if post_mission:
             reserve_calc_location = self.post_mission
@@ -1629,26 +1629,26 @@ class AviaryGroup(om.Group):
                 src_indices=[-1],
             )
 
-        reserve_fuel_additional = self.aviary_inputs.get_val(
-            Mission.RESERVE_FUEL_ADDITIONAL, units='lbm'
+        reserve_fuel_mass_additional = self.aviary_inputs.get_val(
+            Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm'
         )
-        reserve_fuel = om.ExecComp(
-            'reserve_fuel = reserve_fuel_margin_mass + reserve_fuel_additional + reserve_fuel_burned',
-            reserve_fuel={'units': 'lbm', 'shape': 1},
+        reserve_fuel_mass = om.ExecComp(
+            'reserve_fuel_mass = reserve_fuel_margin_mass + reserve_fuel_mass_additional + reserve_fuel_burned',
+            reserve_fuel_mass={'units': 'lbm', 'shape': 1},
             reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
-            reserve_fuel_additional={'units': 'lbm', 'val': reserve_fuel_additional},
+            reserve_fuel_mass_additional={'units': 'lbm', 'val': reserve_fuel_mass_additional},
             reserve_fuel_burned={'units': 'lbm', 'val': 0},
         )
 
         reserve_calc_location.add_subsystem(
-            'reserve_fuel',
-            reserve_fuel,
+            'reserve_fuel_mass',
+            reserve_fuel_mass,
             promotes_inputs=[
                 'reserve_fuel_margin_mass',
-                ('reserve_fuel_additional', Mission.RESERVE_FUEL_ADDITIONAL),
-                ('reserve_fuel_burned', Mission.RESERVE_FUEL),
+                ('reserve_fuel_mass_additional', Mission.RESERVE_FUEL_MASS_ADDITIONAL),
+                ('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS),
             ],
-            promotes_outputs=[('reserve_fuel', reserves_name)],
+            promotes_outputs=[('reserve_fuel_mass', reserves_name)],
         )
 
     def _validate_phase_info_modifier(self, phase_info_modifier):

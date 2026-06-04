@@ -384,8 +384,8 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 ),
                 promotes_inputs=[
                     ('gross_mass', Mission.GROSS_MASS),
-                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_TAXI_OUT),
-                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL),
+                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_MASS_TAXI_OUT),
+                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL_MASS),
                 ],
                 promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
             )
