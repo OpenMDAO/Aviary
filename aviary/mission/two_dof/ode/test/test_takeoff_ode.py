@@ -108,7 +108,6 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.Fuselage.FORM_FACTOR, 1.05557953)
-        # self.prob.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
 
         set_params_for_unit_tests(self.prob)
 
@@ -203,6 +202,3 @@ class AscentODETestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    test = GroundrollODETestCase()
-    test.setUp()
-    # test.test_groundroll_partials()
