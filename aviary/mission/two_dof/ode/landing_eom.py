@@ -32,14 +32,9 @@ class GlideConditionComponent(om.ExplicitComponent):
     """Compute the initial conditions of the 2DOF glide phase."""
 
     def setup(self):
-        self.add_input(Dynamic.Atmosphere.DENSITY, val=0.0, units='slug/ft**3', desc='air density')
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, val=0.0, units='slug/ft**3')
         add_aviary_input(self, Mission.Landing.MAXIMUM_SINK_RATE, val=900.0)
-        self.add_input(
-            Dynamic.Vehicle.MASS,
-            val=0.0,
-            units='lbm',
-            desc='aircraft mass at start of landing',
-        )
+        add_aviary_input(self, Dynamic.Vehicle.MASS, val=0.0, units='lbm')
         add_aviary_input(self, Aircraft.Wing.AREA, val=1.0)
         add_aviary_input(self, Mission.Landing.GLIDE_TO_STALL_RATIO, val=1.3)
         self.add_input(
