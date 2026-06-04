@@ -336,7 +336,7 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 5778, 'lbm')
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, 11.65, 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, 1.6643)
 outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * 228.34, 'ft**2')
-outputs.set_val(Aircraft.Nacelle.MASS, 1612.2, 'lbm')
+outputs.set_val(Aircraft.Nacelle.MASS, 806.0988, 'lbm')
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, 228.34, 'ft**2')
 
 outputs.set_val(Aircraft.Paint.MASS, 582.3, 'lbm')
