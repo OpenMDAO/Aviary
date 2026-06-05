@@ -337,25 +337,8 @@ class SolvedTwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
             # Set initial guess for control variables
             if guess_key in control_keys:
-                try:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                        process_guess_var(val, guess_key, phase),
-                        units=units,
-                    )
-
-                except KeyError:
-                    try:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                            process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
-
-                    except KeyError:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                            {guess_key},
-                            process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
+                phase.set_control_val(
+                    guess_key,
+                    vals=process_guess_var(val, guess_key, phase),
+                    units=units,
+                )

@@ -124,8 +124,7 @@ class Aircraft:
             SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
 
     class Design:
-        # These variables are values that do not fall into a particular aircraft
-        # component.
+        # These variables are values that do not fall into a particular aircraft component.
         BASE_AREA = 'aircraft:design:base_area'
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'

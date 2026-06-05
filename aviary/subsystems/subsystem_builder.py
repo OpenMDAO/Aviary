@@ -192,14 +192,19 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
-        Return a list of variable names that will be linked between phases.
+        Return a list of variable names that will be linked when this phase is connected to another
+        phase that shares the variable.
 
         Parameters
         ----------
         aviary_inputs : dict
             A dictionary containing the inputs to the subsystem.
+        user_options : dict
+            Dictionary of user options for this phase.
+        subsystem_options : dict
+            Dictionary of optional arguments for this subsystem in this phase.
 
         Returns
         -------
