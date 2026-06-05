@@ -319,13 +319,13 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         num_engine_type = len(self.options[Aircraft.Engine.NUM_ENGINES])
 
         self.add_input(
-            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations - 1, units='deg'
+            'BWB_LOAD_PATH_SWEEP_DISTRIBUTION', shape=num_input_stations + 1, units='deg'
         )
         self.add_input(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_input_stations + 2, units='unitless'
         )
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations, units='unitless'
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_input_stations + 2, units='unitless'
         )
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
@@ -358,25 +358,24 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         num_integration_stations = self.options[Aircraft.Wing.NUM_INTEGRATION_STATIONS]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         rate_span = (wingspan - width) / wingspan
 
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=width.dtype
-        )
-        if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
-            bwb_input_station_dist[1] = width / 2.0
-        else:
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        bwb_input_station_dist = np.zeros(len(input_station_dist) + 2, dtype=width.dtype)
+        bwb_input_station_dist[2:] = input_station_dist
+
+        if self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
             bwb_input_station_dist = np.where(
                 bwb_input_station_dist <= 1.0,
                 bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
                 bwb_input_station_dist + width / 2.0,  # else
             )
-            bwb_input_station_dist[0] = 0.0
-            bwb_input_station_dist[1] = width / 2.0
+        bwb_input_station_dist[0] = 0.0
+        bwb_input_station_dist[1] = width / 2.0
+
         inp_stations_mod = []
         for x in bwb_input_station_dist:
             if x > 1.0:

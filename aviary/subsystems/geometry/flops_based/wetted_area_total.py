@@ -553,10 +553,10 @@ class BWBWingWettedArea(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.GLOVE_AND_BAT, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         self.add_input(
-            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations, units='unitless'
+            'BWB_CHORD_PER_SEMISPAN_DISTRIBUTION', shape=num_inp_stations + 2, units='unitless'
         )
         self.add_input(
-            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations, units='unitless'
+            'BWB_THICKNESS_TO_CHORD_DISTRIBUTION', shape=num_inp_stations + 2, units='unitless'
         )
 
         add_aviary_output(self, Aircraft.Wing.WETTED_AREA, units='ft**2')
@@ -573,9 +573,10 @@ class BWBWingWettedArea(om.ExplicitComponent):
 
         # This part is repeated in BWBWingPrelim()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
-        )
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        bwb_input_station_dist = np.zeros(num_inp_stations + 2, dtype=width.dtype)
+        bwb_input_station_dist[2:] = input_station_dist
+
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
             bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
