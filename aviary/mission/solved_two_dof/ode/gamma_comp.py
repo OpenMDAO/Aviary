@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.variable_info.functions import add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -27,12 +28,7 @@ class GammaComp(om.ExplicitComponent):
             desc='second derivative of altitude wrt range',
         )
 
-        self.add_output(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            shape=nn,
-            units='rad',
-            desc='flight path angle',
-        )
+        add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
         self.add_output(
             'dgam_dr',

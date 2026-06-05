@@ -3,6 +3,7 @@ import unittest
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
@@ -15,6 +16,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class TaxiTestCase(unittest.TestCase):
     """Test computation of taxi group."""
 

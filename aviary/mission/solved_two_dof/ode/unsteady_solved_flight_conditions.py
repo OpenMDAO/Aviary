@@ -3,6 +3,7 @@ import openmdao.api as om
 
 from aviary import constants
 from aviary.variable_info.enums import SpeedType
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -65,24 +66,11 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         ground_roll = self.options['ground_roll']
         ar = np.arange(self.options['num_nodes'])
 
-        self.add_input(
-            Dynamic.Atmosphere.DENSITY,
-            val=np.zeros(nn),
-            units='kg/m**3',
-            desc='density of air',
-        )
-        self.add_input(
-            Dynamic.Atmosphere.SPEED_OF_SOUND,
-            val=np.zeros(nn),
-            units='m/s',
-            desc='speed of sound',
-        )
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='kg/m**3')
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=np.zeros(nn), units='m/s')
 
-        self.add_output(
-            Dynamic.Atmosphere.DYNAMIC_PRESSURE,
-            val=np.zeros(nn),
-            units='N/m**2',
-            desc='dynamic pressure',
+        add_aviary_output(
+            self, Dynamic.Atmosphere.DYNAMIC_PRESSURE, val=np.zeros(nn), units='N/m**2'
         )
 
         self.add_output(
@@ -93,12 +81,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
         )
 
         if not ground_roll:
-            self.add_input(
-                Dynamic.Mission.FLIGHT_PATH_ANGLE,
-                shape=nn,
-                units='rad',
-                desc='flight path angle',
-            )
+            add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
             self.declare_partials(
                 of='dTAS_dt_approx',
@@ -108,7 +91,8 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
             )
 
         if in_type is SpeedType.TAS:
-            self.add_input(
+            add_aviary_input(
+                self,
                 Dynamic.Mission.VELOCITY,
                 val=np.zeros(nn),
                 units='m/s',
@@ -128,12 +112,7 @@ class UnsteadySolvedFlightConditions(om.ExplicitComponent):
                 units='m/s',
                 desc='equivalent air speed',
             )
-            self.add_output(
-                Dynamic.Atmosphere.MACH,
-                val=np.zeros(nn),
-                units='unitless',
-                desc='Mach number',
-            )
+            add_aviary_output(self, Dynamic.Atmosphere.MACH, val=np.zeros(nn), units='unitless')
 
             self.declare_partials(
                 of=Dynamic.Atmosphere.DYNAMIC_PRESSURE,

@@ -4,6 +4,7 @@ import numpy as np
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
 from aviary.mission.two_dof.ode.flight_ode import FlightODE
@@ -17,6 +18,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class FlightODEClimbTestCase(unittest.TestCase):
     """Test 2-degrees-of-freedom climb ODE."""
 
@@ -245,6 +247,3 @@ class FlightODEDescenTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = DescentODETestCase()
-    # test.setUp()
-    # test.test_high_alt()

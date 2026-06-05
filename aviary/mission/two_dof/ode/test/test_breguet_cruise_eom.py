@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.mission.two_dof.ode.breguet_cruise_eom import ElectricRangeComp, RangeComp
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class TestBreguetResults(unittest.TestCase):
     """Test cruise range and time in RangeComp component."""
 
@@ -50,6 +52,7 @@ class TestBreguetResults(unittest.TestCase):
         assert_check_partials(partial_data, atol=tol, rtol=tol)
 
 
+@use_tempdirs
 class TestBreguetPartials(unittest.TestCase):
     def setUp(self):
         nn = 10
@@ -231,7 +234,4 @@ class TestElectricBreguetResults(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestBreguetPartials2()
-    test.setUp()
-    test.test_partials()
+    unittest.main()
