@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -19,38 +20,24 @@ class AccelerationRates(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
 
-        self.add_input(
-            Dynamic.Vehicle.MASS,
-            val=np.ones(nn) * 1e6,
-            units='lbm',
-            desc='total mass of the aircraft',
+        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn) * 1e6, units='lbm')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='lbf')
+        add_aviary_input(
+            self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.zeros(nn), units='lbf'
         )
-        self.add_input(
-            Dynamic.Vehicle.DRAG,
-            val=np.zeros(nn),
-            units='lbf',
-            desc='drag on aircraft',
-        )
-        self.add_input(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.zeros(nn),
-            units='lbf',
-            desc='total thrust',
-        )
-        self.add_input(
-            Dynamic.Mission.VELOCITY,
-            val=np.zeros(nn),
-            units='ft/s',
-            desc='true air speed',
+        add_aviary_input(
+            self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='ft/s', desc='true air speed'
         )
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
             val=np.zeros(nn),
             units='ft/s**2',
             desc='rate of change of true air speed',
         )
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE_RATE,
             val=np.zeros(nn),
             units='ft/s',
