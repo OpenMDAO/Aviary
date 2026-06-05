@@ -196,11 +196,7 @@ class BWBComputeDetailedWingDistTest(unittest.TestCase):
         self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [
-                0.0,
-                0.5,
-                1.0,
-            ],  # always set [0, 0.5, 1] but actual value in the middle will be computed
+            [1.0],  # always set [1] but actual value in the middle will be computed
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -360,7 +356,7 @@ class BWBWingPrelimTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    z = BWBUpdateDetailedWingDistTest()
-    z.setUp()
-    z.test_case2()
+    unittest.main()
+    # z = BWBUpdateDetailedWingDistTest()
+    # z.setUp()
+    # z.test_case2()

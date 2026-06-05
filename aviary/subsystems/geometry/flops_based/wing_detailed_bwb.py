@@ -229,9 +229,9 @@ class BWBComputeDetailedWingDist(om.ExplicitComponent):
         verbosity = self.options[Settings.VERBOSITY]
 
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
-        if num_inp_stations != 3:
+        if num_inp_stations != 1:
             raise ValueError(
-                'Aircraft.Wing.INPUT_STATION_DISTRIBUTION should be length 3, '
+                'Aircraft.Wing.INPUT_STATION_DISTRIBUTION should be length 1, '
                 f'however {num_inp_stations} values were provided.'
             )
 

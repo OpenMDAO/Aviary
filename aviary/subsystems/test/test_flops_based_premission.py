@@ -1234,3 +1234,6 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # z = BWBPreMissionGroupTest()
+    # z.setUp()
+    # z.test_case_all_subsystems()

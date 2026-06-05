@@ -701,7 +701,7 @@ class BWBWingTest(unittest.TestCase):
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            [0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -764,7 +764,7 @@ class BWBWingTest(unittest.TestCase):
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.0, 0.2075, 0.415, 0.6927, 0.928, 1.0],
+            [0.2075, 0.415, 0.6927, 0.928, 1.0],
             units='unitless',
         )
         prob.model.add_subsystem(
@@ -803,7 +803,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
         options.set_val(Aircraft.Fuselage.SIMPLE_LAYOUT, val=True, units='unitless')
         options.set_val(Aircraft.BWB.DETAILED_WING_PROVIDED, val=False, units='unitless')
-        options.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [0.0, 0.5, 1.0], units='unitless')
+        options.set_val(Aircraft.Wing.INPUT_STATION_DISTRIBUTION, [1.0], units='unitless')
         options.set_val(Aircraft.BWB.MAX_NUM_BAYS, 0, units='unitless')
         options.set_val(Aircraft.BWB.NUM_BAYS, [2], units='unitless')
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
@@ -1055,7 +1055,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         options.set_val(Aircraft.Wing.DETAILED_WING, val=True, units='unitless')
         options.set_val(
             Aircraft.Wing.INPUT_STATION_DISTRIBUTION,
-            [0.0, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
+            [0.4, 0.45, 0.5, 0.55, 0.6, 0.6499, 0.7, 0.75, 0.8, 0.85, 0.8999, 0.95, 1],
             units='unitless',
         )
         options.set_val(Aircraft.Propulsion.TOTAL_NUM_FUSELAGE_ENGINES, 3, units='unitless')
@@ -1078,8 +1078,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
             val=[
-                -1.0,
-                58.03,
                 0.4491,
                 0.3884,
                 0.3317,
@@ -1098,8 +1096,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         prob.set_val(
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION,
             val=[
-                -1.0,
-                0.15,
                 0.1132,
                 0.0928,
                 0.0822,
@@ -1117,7 +1113,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         )
         prob.set_val(
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION,
-            val=[0.0, 0, 0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
+            val=[0, 0, 0, 0, 0, 0, 42.9, 42.9, 42.9, 42.9, 42.9, 42.9],
         )
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, 86.75)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
@@ -1361,3 +1357,6 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+    # z = BWBDetailedPrepGeomTest()
+    # z.setUp()
+    # z.test_case1()
