@@ -1,6 +1,5 @@
 import numpy as np
 import openmdao.api as om
-import warnings
 
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Cold import atm_data as cold_210A
 from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Hot import atm_data as hot_210A
@@ -96,7 +95,14 @@ class AtmosphereComp(om.ExplicitComponent):
             desc='The definition of altitude provided as input to the component.  If "geometric",'
             'it will be converted to geopotential based on Equation 19 in the original standard.',
         )
-        add_aviary_option(self, Settings.ATMOSPHERE_MODEL)
+
+        self.options.declare(
+            Settings.ATMOSPHERE_MODEL,
+            values=tuple(AtmosphereModel),
+            default=AtmosphereModel.STANDARD,
+            desc='The type of atmosphere model to use to determine atmospheric properties for the whole mission.',
+        )
+
         self.options.declare(
             'delta_T_Celcius',
             types=(float, int),
@@ -169,17 +175,10 @@ class AtmosphereComp(om.ExplicitComponent):
             self._S = 222  # (K) Southerlands constant for Mars atmosphere https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
             self._beta = 1.503e-6  # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02
             # https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
-            # self_beta = 1.370**10-5 * (273+self._S)/273**(3/2)
-        else:
-            warnings.warn('self.planet is not set.')
-            exit()
+            # Calculated via the equation: self_beta = 1.370**10-5 * (273+self._S)/273**(3/2)
+            self._R0 =  3_396_200 # (meters) Mean Equatorial Radius of Mars
 
         # Mars altitude output is referenced to the MOLA constant potential surface (areoid) which is already equivalent to geopotential.
-        if self.planet is not 'Earth' and self._geometric is 'geometric':
-            warnings.warn(
-                'h_def = geometric is only applicable for Earth atmosphere models and will be ignored.'
-            )
-            self._geometric = False
 
         self._R_air = Rs / M_air  # (J/ (kg * K)), gas constant for atmosphere
         self._K = gamma * Rs / M_air  # (J/(kg * K))
