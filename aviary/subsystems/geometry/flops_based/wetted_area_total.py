@@ -564,7 +564,6 @@ class BWBWingWettedArea(om.ExplicitComponent):
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
-        verbosity = self.options[Settings.VERBOSITY]
         width = inputs[Aircraft.Fuselage.MAX_WIDTH][0]
         wingspan = inputs[Aircraft.Wing.SPAN][0]
         if wingspan <= 0.0:
@@ -573,8 +572,9 @@ class BWBWingWettedArea(om.ExplicitComponent):
 
         # This part is repeated in BWBWingPrelim()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
+        num_bwb_stations = num_inp_stations + 2
         input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
-        bwb_input_station_dist = np.zeros(num_inp_stations + 2, dtype=width.dtype)
+        bwb_input_station_dist = np.zeros(num_bwb_stations, dtype=width.dtype)
         bwb_input_station_dist[2:] = input_station_dist
 
         bwb_input_station_dist = np.where(
@@ -597,7 +597,7 @@ class BWBWingWettedArea(om.ExplicitComponent):
             Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
-        for n in range(1, num_inp_stations):
+        for n in range(1, num_bwb_stations):
             avg_toc = (bwb_thickness_to_chord_dist[n - 1] + bwb_thickness_to_chord_dist[n]) / 2.0
             ckt = 2.0 + 0.387 * avg_toc
             if bwb_chord_per_semispan_dist[n] <= 5.0:

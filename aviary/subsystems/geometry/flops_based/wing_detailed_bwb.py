@@ -135,17 +135,16 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             )
         xl_out = root_chord / rear_spar_percent_chord_side
 
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = length
-        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = xl_out
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][2:] = inputs[
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION
         ]
-
         # User will input nondimensionalized chord, which we dimensionalize for use downstream.
         # Note: this code nondimensionalizes by element, which implies that the user might mix
         # dimensional and nondimensionalized elements, which seems unlikely.
-        idx = np.where(inputs[Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION] < 5.0)
+        idx = np.where(outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'] < 5.0)
         outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][idx] *= rate_span
+        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][0] = length
+        outputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION'][1] = xl_out
 
         outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][0] = side_tc
         outputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION'][1] = side_tc
@@ -153,6 +152,7 @@ class BWBUpdateDetailedWingDist(om.ExplicitComponent):
             Aircraft.Wing.THICKNESS_TO_CHORD_DISTRIBUTION
         ]
 
+        outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][0:2] = 0.0
         outputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION'][2:] = inputs[
             Aircraft.Wing.LOAD_PATH_SWEEP_DISTRIBUTION
         ]
@@ -431,9 +431,11 @@ class BWBWingPrelim(om.ExplicitComponent):
 
         # This part is repeated in BWBWingWettedArea()
         num_inp_stations = len(self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION])
-        bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
-        )
+        num_bwb_stations = num_inp_stations + 2
+        input_station_dist = self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION]
+        bwb_input_station_dist = np.zeros(num_bwb_stations, dtype=width.dtype)
+        bwb_input_station_dist[2:] = input_station_dist
+
         bwb_input_station_dist = np.where(
             bwb_input_station_dist <= 1.0,
             bwb_input_station_dist * rate_span + width / wingspan,  # if x <= 1.0
@@ -457,7 +459,7 @@ class BWBWingPrelim(om.ExplicitComponent):
             Y1 = bwb_input_station_dist[0] * wingspan / 2.0
         else:
             Y1 = bwb_input_station_dist[0]
-        for n in range(1, num_inp_stations):
+        for n in range(1, num_bwb_stations):
             if bwb_chord_per_semispan_distribution[n] <= 5.0:
                 C2 = bwb_chord_per_semispan_distribution[n] * wingspan / 2.0
             else:
