@@ -176,7 +176,7 @@ class AtmosphereComp(om.ExplicitComponent):
             self._beta = 1.503e-6  # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02
             # https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
             # Calculated via the equation: self_beta = 1.370**10-5 * (273+self._S)/273**(3/2)
-            self._R0 =  3_396_200 # (meters) Mean Equatorial Radius of Mars
+            self._R0 = 3_396_200  # (meters) Mean Equatorial Radius of Mars
 
         # Mars altitude output is referenced to the MOLA constant potential surface (areoid) which is already equivalent to geopotential.
 
