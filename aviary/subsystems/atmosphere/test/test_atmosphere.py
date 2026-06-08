@@ -741,5 +741,98 @@ class MarsReference2024TempOffset(unittest.TestCase):
                 assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
 
 
+class MarsReference2024Geometric(unittest.TestCase):
+    def setUp(self):
+        self.prob = om.Problem()
+
+        self.prob.model.add_subsystem(
+            'atmo',
+            AtmosphereComp(delta_T_Celcius=0, num_nodes=7, h_def='geometric'),
+            promotes=['*'],
+        )
+
+        options = AviaryValues()
+        options.set_val(Settings.ATMOSPHERE_MODEL, val=AtmosphereModel.MARS_REFERENCE)
+        setup_model_options(self.prob, options)
+
+        self.prob.set_solver_print(level=0)
+
+        self.prob.setup(
+            force_alloc_complex=True,
+            check=False,
+        )
+        self.prob.set_val(
+            Dynamic.Mission.ALTITUDE, [-5000, 0, 5000, 10000, 30000, 60000, 80000], units='m'
+        )
+
+    def test_case1(self):
+        tol = 1e-6
+        self.prob.run_model()
+
+        # # MarsReference2024 test values
+        # # Reference values based on altitudes of [-5000, 0, 5000, 10000, 30000, 60000, 80000] m
+        expected_temp = [
+            214.0,
+            214.0,
+            212.90367517,
+            205.06165228,
+            175.32748498,
+            144.92608122,
+            138.76963819,
+        ]  # (K)
+        expected_pressure = [
+            1.00063894e03,
+            6.36000000e02,
+            4.03263659e02,
+            2.54700751e02,
+            3.36257797e01,
+            9.85028628e-01,
+            6.05868760e-02,
+        ]  # (Pa)
+        expected_density = [
+            2.45157229e-02,
+            1.55000000e-02,
+            9.90639679e-03,
+            6.48607867e-03,
+            1.00353097e-03,
+            3.55496703e-05,
+            2.34696016e-06,
+        ]  # (kg/m**3)
+        expected_sos = [
+            236.28995258,
+            236.28995258,
+            235.68391712,
+            231.30264265,
+            213.8766485,
+            194.45165464,
+            190.27669372,
+        ]  # (m/s)
+        expected_viscosity = [
+            1.07917817e-05,
+            1.07917817e-05,
+            1.07359540e-05,
+            1.03346336e-05,
+            8.78183710e-06,
+            7.14661229e-06,
+            6.81036963e-06,
+        ]  # (Pa*s)
+
+        expected_values = {
+            (Dynamic.Atmosphere.TEMPERATURE, 'K'): expected_temp,
+            (Dynamic.Atmosphere.STATIC_PRESSURE, 'Pa'): expected_pressure,
+            (Dynamic.Atmosphere.DENSITY, 'kg/m**3'): expected_density,
+            (Dynamic.Atmosphere.SPEED_OF_SOUND, 'm/s'): expected_sos,
+            (Dynamic.Atmosphere.DYNAMIC_VISCOSITY, 'Pa*s'): expected_viscosity,
+        }
+
+        for (var_name, units), expected in expected_values.items():
+            with self.subTest(var=var_name):
+                assert_near_equal(self.prob.get_val(var_name, units=units), expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+
+        assert_check_partials(partial_data)
+
+
 if __name__ == '__main__':
     unittest.main()
