@@ -1056,7 +1056,9 @@ class AviaryGroup(om.Group):
                 ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
                 ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
-            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY)],
+            promotes_outputs=[
+                ('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY)
+            ],
         )
 
         # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem

@@ -722,7 +722,9 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         input_values.set_val(Aircraft.Wing.NUM_FLAP_SEGMENTS, [num_flap_segments], 'unitless')
 
     ## FUEL RESERVES ##
-    reserve_fuel_mass_additional = input_values.get_val(Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm')[0]
+    reserve_fuel_mass_additional = input_values.get_val(
+        Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm'
+    )[0]
     if reserve_fuel_mass_additional <= 0:
         # This is a percentage of mission fuel
         input_values.set_val(

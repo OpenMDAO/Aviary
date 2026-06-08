@@ -285,7 +285,9 @@ def mission_report(prob: AviaryProblem, **kwargs):
             )
             totals.set_val(
                 'Excess Fuel Capacity',
-                prob.get_val(f'{var_name}mission:constraints:excess_fuel_mass_capacity', units='lbm')[0],
+                prob.get_val(
+                    f'{var_name}mission:constraints:excess_fuel_mass_capacity', units='lbm'
+                )[0],
                 units='lbm',
             )
             totals.set_val('Total Time', final_time - initial_time, 'min')

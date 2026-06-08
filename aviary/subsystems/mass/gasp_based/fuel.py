@@ -454,7 +454,9 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         J['max_extra_fuel_mass', Aircraft.Fuel.DENSITY] = dmax_extra_fuel_wt_drho_fuel
 
-        J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'fuel_mass_required'] = dextra_fuel_wt_dreq_fuel_wt
+        J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'fuel_mass_required'] = (
+            dextra_fuel_wt_dreq_fuel_wt
+        )
         J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'max_wingfuel_mass'] = (
             dextra_fuel_wt_dmax_wingfuel_wt
         )
