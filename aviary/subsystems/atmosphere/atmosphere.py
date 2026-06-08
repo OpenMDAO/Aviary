@@ -161,13 +161,13 @@ class AtmosphereComp(om.ExplicitComponent):
             self.planet = 'Mars'
 
         # The constants below are used as a simplification to enable calculation of properties not given by by source data tables
-        if self.planet is 'Earth':
+        if self.planet == 'Earth':
             M_air = 28.97  # (kg/kmol), molar mass of dry air on Earth
             gamma = 1.4  # Ratio of specific heats
             self._S = 110.4  # (K) Southerlands constant for Earth air
             self._beta = 1.458e-6  # (s*m*K**(1/2)) viscosity scaling coefficient
             self._R0 = 6_356_766  # (meters) The effective Earth Radius
-        elif self.planet is 'Mars':
+        elif self.planet == 'Mars':
             M_air = 43.34  # (kg/kmol), mean molar mass of Mars atmosphere https://descanso.jpl.nasa.gov/propagation/mars/MarsPub_sec4.pdf
             gamma = 1.36  # Based on averaging values from Hellas_summar, Hellas_winter, Equatorial_summar,
             # Equatorial_winter, North_Pole_summer, North_Pole_Winter output from Mars-GRAM
