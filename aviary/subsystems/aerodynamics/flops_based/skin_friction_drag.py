@@ -39,9 +39,9 @@ class SkinFrictionDrag(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
 
-        # TODO: Bring this into the variable hierarchy.
-        self.options.declare(
-            'excrescences_drag',
+        add_aviary_option(
+            self,
+            Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
             default=0.06,
             desc='Drag contribution of excrescences as a percentage.',
         )
@@ -177,14 +177,14 @@ class SkinFrictionDrag(om.ExplicitComponent):
 
         # Add drag for excrescences.
 
-        # TODO - Per component not completely implemented in aviary 1.0
+        # See issue #1184 - Per component not completely implemented in aviary 1.0
         # Var mission_skin_friction_drag_corrections_count is a vector over components and is added
         # to the drag.
         # This may be "dead weight" from FLOPS - D.J.
 
         # An additional six percent of the skin friction drag is added to for excrescences
         # (miscellaneous).
-        CDF *= 1.0 + self.options['excrescences_drag']
+        CDF *= 1.0 + self.options[Aircraft.Design.EXCRESCENCE_DRAG_FACTOR]
 
         outputs['skin_friction_drag_coeff'] = CDF
 
@@ -257,7 +257,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         den = 1.0 / mission_wing_area
         CDF = np.einsum('j,ij,j->i', wetted_area, cf, form_factor) * den
 
-        excr = 1.0 + self.options['excrescences_drag']
+        excr = 1.0 + self.options[Aircraft.Design.EXCRESCENCE_DRAG_FACTOR]
         CDF *= excr
         DCDF_dwet = excr * np.einsum('ij,j->ij', cf, form_factor) * den
         DCDF_dcf = excr * wetted_area * form_factor * den
