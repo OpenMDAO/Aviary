@@ -69,6 +69,7 @@ class AtmosphereModel(Enum):
     MARS_EQUATOR_COLD = 'mars_equator_cold'
     MARS_POLAR_HOT = 'mars_polar_hot'
     MARS_POLAR_COLD = 'mars_polar_cold'
+    VENUS_REFERENCE = 'venus_reference'
 
 
 class CodeOrigin(Enum):

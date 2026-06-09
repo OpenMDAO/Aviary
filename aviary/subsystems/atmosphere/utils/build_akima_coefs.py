@@ -17,15 +17,9 @@ def build_akima_coefs(out_stream, raw_data, units):
     units: Float ('SI', or 'English')
         Describes the input units in either SI or English.
         If SI units are selected then the data should be input as:
-            altitude: m,
-            temp: degK,
-            pressure: mb,
-            density: kg/m**3
+            (altitude: m, temp: degK, pressure: mb, density: kg/m**3)
         If English units are selected then the data should be input as:
-            altitude: ft,
-            temp: degF,
-            pressure: inHg60
-            density: lbm/ft**3
+            (altitude: ft, temp: degF, pressure: inHg60, density: lbm/ft**3)
 
     Returns
     -------
@@ -156,11 +150,11 @@ if __name__ == '__main__':
         )
         input('Press Enter to continue: ')
 
-        from aviary.subsystems.atmosphere.data.MarsPolarCold import (
+        from aviary.subsystems.atmosphere.data.MIL_SPEC_210A_Tropical import (
             _raw_data,
         )  # replace this with your new raw data
 
-        _raw_data_units = 'SI'  # replace this with your units ('SI' or 'English')
+        _raw_data_units = 'English'  # replace this with your units ('SI' or 'English')
 
         import sys
 

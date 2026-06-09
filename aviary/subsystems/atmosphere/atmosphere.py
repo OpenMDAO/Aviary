@@ -13,6 +13,7 @@ from aviary.subsystems.atmosphere.data.MarsEquatorHot import atm_data as MarsEqu
 from aviary.subsystems.atmosphere.data.MarsEquatorCold import atm_data as MarsEquatorCold
 from aviary.subsystems.atmosphere.data.MarsPolarHot import atm_data as MarsPolarHot
 from aviary.subsystems.atmosphere.data.MarsPolarCold import atm_data as MarsPolarCold
+from aviary.subsystems.atmosphere.data.VenusReference2021 import atm_data as VenusReference2021
 from aviary.subsystems.atmosphere.flight_conditions import FlightConditions
 from aviary.variable_info.enums import AtmosphereModel, SpeedType
 from aviary.variable_info.functions import add_aviary_option
@@ -159,6 +160,9 @@ class AtmosphereComp(om.ExplicitComponent):
         elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.MARS_POLAR_COLD:
             self.source_data = MarsPolarCold
             self.planet = 'Mars'
+        elif self.options[Settings.ATMOSPHERE_MODEL] is AtmosphereModel.VENUS_REFERENCE:
+            self.source_data = VenusReference2021
+            self.planet = 'Venus'
 
         # The constants below are used as a simplification to enable calculation of properties not given by by source data tables
         if self.planet == 'Earth':
@@ -169,7 +173,7 @@ class AtmosphereComp(om.ExplicitComponent):
             self._R0 = 6_356_766  # (meters) The effective Earth Radius
         elif self.planet == 'Mars':
             M_air = 43.34  # (kg/kmol), mean molar mass of Mars atmosphere https://descanso.jpl.nasa.gov/propagation/mars/MarsPub_sec4.pdf
-            gamma = 1.36  # Based on averaging values from Hellas_summar, Hellas_winter, Equatorial_summar,
+            gamma = 1.36  # Ratio of specific heats, Based on averaging values from Hellas_summar, Hellas_winter, Equatorial_summar,
             # Equatorial_winter, North_Pole_summer, North_Pole_Winter output from Mars-GRAM
             # Mars atmosphere is 95% Co2 so we use the southerland constant for Co2 https://descanso.jpl.nasa.gov/propagation/mars/MarsPub_sec4.pdf
             self._S = 222  # (K) Southerlands constant for Mars atmosphere https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
@@ -177,8 +181,15 @@ class AtmosphereComp(om.ExplicitComponent):
             # https://doc.comsol.com/5.6/doc/com.comsol.help.cfd/cfd_ug_fluidflow_high_mach.08.27.html
             # Calculated via the equation: self_beta = 1.370**10-5 * (273+self._S)/273**(3/2)
             self._R0 = 3_396_200  # (meters) Mean Equatorial Radius of Mars
-
-        # Mars altitude output is referenced to the MOLA constant potential surface (areoid) which is already equivalent to geopotential.
+        elif self.planet == 'Venus':
+            # 96% CO2 atmosphere
+            M_air = 43.45 # (kg/kmol) Venus, 12 Apr 2024, by Cedric Gillmann et al. https://arxiv.org/html/2404.07669v2
+            # source Venus before Venus Express, Taylor et al 2006 
+            gamma = 1.29 # Ratio of specific heats, based on averaging the reference data from Venus-GRAM. Actual values are 1.24 at the surface and 1.45 at 150km
+            self._S = 222 # (K) we use the constant for CO2 which is simillar to Mars because this atmosphere is primarily driven by CO2 interaction.
+            self._beta = 1.503e-6 # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02, the same way as was done for Mars
+            # the only input the the equation os self._S so this result is the same as Mars
+            self._R0 = 6_051_800 # (meters) Mean Equatorial Radius
 
         self._R_air = Rs / M_air  # (J/ (kg * K)), gas constant for atmosphere
         self._K = gamma * Rs / M_air  # (J/(kg * K))
