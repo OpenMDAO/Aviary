@@ -42,7 +42,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         add_aviary_option(
             self,
             Aircraft.Design.EXCRESCENCE_DRAG_FACTOR,
-            default=0.06,
+            val=0.06,
             desc='Drag contribution of excrescences as a percentage.',
         )
 
