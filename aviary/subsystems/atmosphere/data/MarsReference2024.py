@@ -6,7 +6,7 @@ DATA_ORIGIN_NOTE = """
 
     Notes:
     The data table contains data from -8000 meters to 80,000 meters altitude.
-    The altitude is measured based on with altitudes referenced to the MOLA (Mars Orbiter Laser Altimeter) constant potential surface (areoid).
+    The altitude is referenced to the MOLA (Mars Orbiter Laser Altimeter) constant potential surface (areoid).
     Dust level = 0.3
     Year = 2000 
     F107 = 68.0
