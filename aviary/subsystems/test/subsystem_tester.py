@@ -16,24 +16,35 @@ def skipIfMissingDependencies(builder):
 
 class TestSubsystemBuilder(unittest.TestCase):
     @staticmethod
-    def import_builder(path_to_builder: str, base_package='aviary.models.external_subsystems'):
+    def import_builder(path_to_builder: str):
         """
-        Import a subsystem builder.
+        Import a subsystem builder class. If the path can not be found, the "base path"
+        `aviary.models.external_subsystems` is prepended to the provided `path_to_builder`.
 
-        This is intended to be used with skipIfMissingDependencies
+        Intended for use with `skipIfMissingDependencies`.
+
+        Parameters
+        ----------
+        path_to_builder : str
+            Path to the builder class.
+
+        Returns
+        -------
+        type or str
+            The builder class, or an error string for `skipIfMissingDependencies`.
         """
+        base_path = 'aviary.models.external_subsystems'
+        module_path, class_name = path_to_builder.rsplit('.', 1)
         try:
-            package, method = path_to_builder.rsplit('.', 1)
-            package_path, package_name = package.rsplit('.', 1)
-            module_path = (
-                '.'.join([path_to_builder, package_path]) if package_path else path_to_builder
-            )
-            module = import_module(package_name, module_path)
-            builder = getattr(module, method)
+            try:
+                module = import_module(module_path)
+            except ModuleNotFoundError:
+                module = import_module(base_path + '.' + module_path)
+            builder = getattr(module, class_name)
         except ImportError:
             builder = 'Skipping due to missing dependencies'
         except AttributeError:
-            builder = method + ' could not be imported from ' + base_package + '.' + package
+            builder = class_name + ' could not be imported from ' + module_path
         return builder
 
     def setUp(self):
