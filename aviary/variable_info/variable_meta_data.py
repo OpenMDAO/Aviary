@@ -1185,7 +1185,7 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO this should be removed from metadata (intermediate calculation)
+# See issue #1182. this should be removed from metadata (intermediate calculation)
 add_meta_data(
     Aircraft.Design.CHARACTERISTIC_LENGTHS,
     meta_data=_MetaData,
