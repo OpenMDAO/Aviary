@@ -361,133 +361,133 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             When True, then connected=True. This allows the connections to be
             handled by constraints if `phases` is a parallel group under MPI.
         """
-        for ii in range(len(phases) - 1):
-            phase1, phase2 = phases[ii : ii + 2]
-            info1 = aviary_group.mission_info[phase1]
-            info2 = aviary_group.mission_info[phase2]
-            phase_builder1 = info1['user_options']['phase_type']
-            phase_builder2 = info2['user_options']['phase_type']
+        #for ii in range(len(phases) - 1):
+            #phase1, phase2 = phases[ii : ii + 2]
+            #info1 = aviary_group.mission_info[phase1]
+            #info2 = aviary_group.mission_info[phase2]
+            #phase_builder1 = info1['user_options']['phase_type']
+            #phase_builder2 = info2['user_options']['phase_type']
 
-            integrate_mass1 = phase_builder1 is PhaseType.BREGUET_RANGE
-            integrate_mass2 = phase_builder2 is PhaseType.BREGUET_RANGE
+            #integrate_mass1 = phase_builder1 is PhaseType.BREGUET_RANGE
+            #integrate_mass2 = phase_builder2 is PhaseType.BREGUET_RANGE
 
-            if integrate_mass1 or integrate_mass2:
-                # if either phase integrates mass we have to use a linkage_constraint.
-                # This phase use the prefix "initial" for time and distance, but not mass.
-                if integrate_mass2:
-                    prefix = 'initial_'
-                else:
-                    prefix = ''
+            #if integrate_mass1 or integrate_mass2:
+                ## if either phase integrates mass we have to use a linkage_constraint.
+                ## This phase use the prefix "initial" for time and distance, but not mass.
+                #if integrate_mass2:
+                    #prefix = 'initial_'
+                #else:
+                    #prefix = ''
 
-                aviary_group.traj.add_linkage_constraint(
-                    phase1, phase2, 'time', prefix + 'time', connected=True
-                )
-                aviary_group.traj.add_linkage_constraint(
-                    phase1, phase2, 'distance', prefix + 'distance', connected=True
-                )
-                aviary_group.traj.add_linkage_constraint(
-                    phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
-                )
+                #aviary_group.traj.add_linkage_constraint(
+                    #phase1, phase2, 'time', prefix + 'time', connected=True
+                #)
+                #aviary_group.traj.add_linkage_constraint(
+                    #phase1, phase2, 'distance', prefix + 'distance', connected=True
+                #)
+                #aviary_group.traj.add_linkage_constraint(
+                    #phase1, phase2, 'mass', 'mass', connected=False, ref=1.0e5
+                #)
 
-                # This isn't computed, but is instead set in the cruise phase_info.
-                # We still need altitude continuity.
-                # Note: if both sides are Breguet Range, the user is doing something odd like a
-                # step cruise, so don't enforce a constraint.
-                if not (integrate_mass1 and integrate_mass2):
-                    aviary_group.traj.add_linkage_constraint(
-                        phase1, phase2, 'altitude', 'altitude', connected=False, ref=1.0e4
-                    )
-            else:
-                # we always want time, distance, and mass to be continuous.
+                ## This isn't computed, but is instead set in the cruise phase_info.
+                ## We still need altitude continuity.
+                ## Note: if both sides are Breguet Range, the user is doing something odd like a
+                ## step cruise, so don't enforce a constraint.
+                #if not (integrate_mass1 and integrate_mass2):
+                    #aviary_group.traj.add_linkage_constraint(
+                        #phase1, phase2, 'altitude', 'altitude', connected=False, ref=1.0e4
+                    #)
+            #else:
+                ## we always want time, distance, and mass to be continuous.
 
-                # Time and mass are always available.
-                states_to_link = {
-                    'time': connect_directly,
-                    Dynamic.Vehicle.MASS: False,
-                }
+                ## Time and mass are always available.
+                #states_to_link = {
+                    #'time': connect_directly,
+                    #Dynamic.Vehicle.MASS: False,
+                #}
 
-                # Distance is a constraint for SIMPLE_CRUISE
-                if (
-                    phase_builder1 is PhaseType.SIMPLE_CRUISE
-                    or phase_builder2 is PhaseType.SIMPLE_CRUISE
-                ):
-                    if phase_builder2 is PhaseType.SIMPLE_CRUISE:
-                        prefix = 'initial_'
-                    else:
-                        prefix = ''
+                ## Distance is a constraint for SIMPLE_CRUISE
+                #if (
+                    #phase_builder1 is PhaseType.SIMPLE_CRUISE
+                    #or phase_builder2 is PhaseType.SIMPLE_CRUISE
+                #):
+                    #if phase_builder2 is PhaseType.SIMPLE_CRUISE:
+                        #prefix = 'initial_'
+                    #else:
+                        #prefix = ''
 
-                    aviary_group.traj.add_linkage_constraint(
-                        phase1,
-                        phase2,
-                        'distance',
-                        prefix + 'distance',
-                        connected=False,
-                        ref=100.0,
-                    )
-                else:
-                    # Add distance to the linked states.
-                    states_to_link[Dynamic.Mission.DISTANCE] = connect_directly
+                    #aviary_group.traj.add_linkage_constraint(
+                        #phase1,
+                        #phase2,
+                        #'distance',
+                        #prefix + 'distance',
+                        #connected=False,
+                        #ref=100.0,
+                    #)
+                #else:
+                    ## Add distance to the linked states.
+                    #states_to_link[Dynamic.Mission.DISTANCE] = connect_directly
 
-                # Alititude is more complicated. SIMPLE_CRUISE should be a constraint.
-                # if both phases are reserve phases or neither is a reserve phase
-                # (we are not on the boundary between the regular and reserve missions)
-                # and neither phase is ground roll or rotation (altitude isn't a state):
-                # we want altitude to be continuous as well
-                if (
-                    phase_builder1 is PhaseType.SIMPLE_CRUISE
-                    or phase_builder2 is PhaseType.SIMPLE_CRUISE
-                ):
-                    aviary_group.traj.add_linkage_constraint(
-                        phase1, phase2, 'altitude', 'altitude', connected=False, ref=1.0e4
-                    )
+                ## Alititude is more complicated. SIMPLE_CRUISE should be a constraint.
+                ## if both phases are reserve phases or neither is a reserve phase
+                ## (we are not on the boundary between the regular and reserve missions)
+                ## and neither phase is ground roll or rotation (altitude isn't a state):
+                ## we want altitude to be continuous as well
+                #if (
+                    #phase_builder1 is PhaseType.SIMPLE_CRUISE
+                    #or phase_builder2 is PhaseType.SIMPLE_CRUISE
+                #):
+                    #aviary_group.traj.add_linkage_constraint(
+                        #phase1, phase2, 'altitude', 'altitude', connected=False, ref=1.0e4
+                    #)
 
-                elif (
-                    (
-                        (phase1 in aviary_group.reserve_phases)
-                        == (phase2 in aviary_group.reserve_phases)
-                    )
-                    and not info1['user_options'].get('ground_roll')
-                    and phase_builder1 is not PhaseType.TWO_DOF_TAKEOFF
-                ):  # required for convergence of FwGm
-                    states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
+                #elif (
+                    #(
+                        #(phase1 in aviary_group.reserve_phases)
+                        #== (phase2 in aviary_group.reserve_phases)
+                    #)
+                    #and not info1['user_options'].get('ground_roll')
+                    #and phase_builder1 is not PhaseType.TWO_DOF_TAKEOFF
+                #):  # required for convergence of FwGm
+                    #states_to_link[Dynamic.Mission.ALTITUDE] = connect_directly
 
-                # if either phase is rotation, we need to connect velocity
-                # ascent to accel also requires velocity
-                # TODO: This may need refined now that trajectories are more flexible.
-                if phase_builder1 is PhaseType.TWO_DOF_TAKEOFF:
-                    states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
-                    # if the first phase is rotation, we also need alpha
-                    if info1['user_options'].get('rotation'):
-                        states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
+                ## if either phase is rotation, we need to connect velocity
+                ## ascent to accel also requires velocity
+                ## TODO: This may need refined now that trajectories are more flexible.
+                #if phase_builder1 is PhaseType.TWO_DOF_TAKEOFF:
+                    #states_to_link[Dynamic.Mission.VELOCITY] = connect_directly
+                    ## if the first phase is rotation, we also need alpha
+                    #if info1['user_options'].get('rotation'):
+                        #states_to_link[Dynamic.Vehicle.ANGLE_OF_ATTACK] = False
 
-                for state, connected in states_to_link.items():
-                    # in initial guesses, all of the states, other than time use
-                    # the same name
-                    initial_guesses1 = info1['initial_guesses']
-                    initial_guesses2 = info2['initial_guesses']
+                #for state, connected in states_to_link.items():
+                    ## in initial guesses, all of the states, other than time use
+                    ## the same name
+                    #initial_guesses1 = info1['initial_guesses']
+                    #initial_guesses2 = info2['initial_guesses']
 
-                    # if a state is in the initial guesses, get the units of the
-                    # initial guess
-                    kwargs = {}
-                    if not connected:
-                        # Some better scaling of the linkage constraint.
-                        if state in initial_guesses1:
-                            val, units = initial_guesses1[state]
-                            if isinstance(val, (tuple, list)):
-                                val = abs(val[-1])
-                        elif state in initial_guesses2:
-                            val, units = initial_guesses2[state]
-                            if isinstance(val, (tuple, list)):
-                                val = abs(val[0])
-                        else:
-                            val, units = info1['user_options'][f'{state}_ref']
+                    ## if a state is in the initial guesses, get the units of the
+                    ## initial guess
+                    #kwargs = {}
+                    #if not connected:
+                        ## Some better scaling of the linkage constraint.
+                        #if state in initial_guesses1:
+                            #val, units = initial_guesses1[state]
+                            #if isinstance(val, (tuple, list)):
+                                #val = abs(val[-1])
+                        #elif state in initial_guesses2:
+                            #val, units = initial_guesses2[state]
+                            #if isinstance(val, (tuple, list)):
+                                #val = abs(val[0])
+                        #else:
+                            #val, units = info1['user_options'][f'{state}_ref']
 
-                        kwargs['ref'] = val
-                        kwargs['units'] = units
+                        #kwargs['ref'] = val
+                        #kwargs['units'] = units
 
-                    aviary_group.traj.link_phases(
-                        [phase1, phase2], [state], connected=connected, **kwargs
-                    )
+                    #aviary_group.traj.link_phases(
+                        #[phase1, phase2], [state], connected=connected, **kwargs
+                    #)
 
         aviary_group.promotes(
             'traj',

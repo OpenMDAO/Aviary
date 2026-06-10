@@ -149,6 +149,15 @@ class AccelPhase(PhaseBuilder):
 
         return phase
 
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            #Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.VELOCITY,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
 
 AccelPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),

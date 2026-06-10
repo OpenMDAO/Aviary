@@ -194,6 +194,15 @@ class FlightPhase(PhaseBuilder):
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
 
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
+
     def get_parameters(self):
         params = {}
         params[Aircraft.Wing.INCIDENCE] = {

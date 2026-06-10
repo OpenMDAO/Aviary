@@ -154,6 +154,15 @@ class BreguetCruisePhase(PhaseBuilder):
 
         return phase
 
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            'initial_distance',
+            'initial_time',
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.MACH,
+        ]
+        return linked_vars
+
 
 BreguetCruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),

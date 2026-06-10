@@ -1194,7 +1194,7 @@ class AviaryGroup(om.Group):
                 continue
 
             # Find common vars across 1-2 boundary
-            common = vars1.union(vars2)
+            common = vars1.intersection(vars2)
 
             # Sort because of MPI
             for var in sorted(common):
@@ -1234,8 +1234,12 @@ class AviaryGroup(om.Group):
                             'units': units,
                         }
                     else:
-                        ref, units = phase_info1.get(f'{var}_ref')
-                        ref0 = phase_info1.get(f'{var}_ref0')[0]
+                        ref, units = phase_info1.get(f'{var}_ref', (None, None))
+                        ref0 = phase_info1.get(f'{var}_ref0', (None, None))[0]
+                        if ref is None:
+                            ref, units = phase_info2.get(f'{var}_ref', (None, None))
+                            ref0 = phase_info2.get(f'{var}_ref0', (None, None))[0]
+
                         kwargs = {
                             'ref': ref,
                             'ref0': ref0,
@@ -1243,10 +1247,11 @@ class AviaryGroup(om.Group):
                         }
 
                     # Make sure states options are correct for this.
-                    if opt2 is None and var is not 'time':
+                    if opt2 is None and var != 'time':
                         phase = self.traj._phases[phase2]
                         phase.set_state_options(var, input_initial=False)
 
+                print(phase1, phase2, var)
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=connect,
@@ -1254,14 +1259,59 @@ class AviaryGroup(om.Group):
                     **kwargs,
                 )
 
-
-            # Analytic phases may take a single start input that needs to connect
+            # Target analytic phases may take a single start input that needs to connect
             # Sort because of MPI
             for var in sorted(vars2):
-                if not var.startswith('input_'):
+                if not var.startswith('initial_'):
                     continue
 
+                source = var.lstrip('initial_')
+                if source not in vars1:
+                    continue
 
+                # Link with a constraint.
+                # Use ref from the previous phase.
+                # Time behaves a bit differently than the others.
+                if source == 'time':
+                    ref, units = phase_info1.get(f'{source}_duration_ref')
+                    kwargs = {
+                        'ref': ref,
+                        'units': units,
+                    }
+                else:
+                    ref, units = phase_info1.get(f'{source}_ref', (None, None))
+                    ref0 = phase_info1.get(f'{source}_ref0', (None, None))[0]
+                    if ref is None:
+                        ref, units = phase_info2.get(f'{source}_ref', (None, None))
+                        ref0 = phase_info2.get(f'{source}_ref0', (None, None))[0]
+                    kwargs = {
+                        'ref': ref,
+                        'ref0': ref0,
+                        'units': units,
+                    }
+
+                    print(phase1, phase2, source, var)
+                    self.traj.add_linkage_constraint(
+                        phase1, phase2, source, var, connected=False
+                    )
+
+            # Source analytic phases should still connect to the timeseries.
+            # Sort because of MPI
+            for var in sorted(vars1):
+                if not var.startswith('initial_'):
+                    continue
+
+                var = var.lstrip('initial_')
+                if var not in vars2:
+                    continue
+
+                print(phase1, phase2, source, var)
+                self.traj.link_phases(
+                    phases=[phase1, phase2],
+                    connected=connect,
+                    vars=[var],
+                    **kwargs,
+                )
 
         # TODO: Apply any transformations of similar variables across boundary.
 
