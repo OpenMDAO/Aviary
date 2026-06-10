@@ -43,7 +43,7 @@ from aviary.variable_info.enums import (
     Verbosity,
 )
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 ENERGY_STATE = EquationsOfMotion.ENERGY_STATE
@@ -1195,13 +1195,11 @@ class AviaryGroup(om.Group):
 
             # Find common vars across 1-2 boundary
             common = vars1.intersection(vars2)
+            upstream_analytic = [item for item in vars1 if item.startswith('initial_')]
+            downstream_analytic = [item for item in vars2 if item.startswith('initial_')]
 
             # Sort because of MPI
             for var in sorted(common):
-                # Analytic phase, handle this input later.
-                if f'{var}_input' in vars2:
-                    continue
-
                 # Controls: True or False, everything else: None
                 opt1 = phase_info1.get(f'{var}_optimize', None)
                 opt2 = phase_info2.get(f'{var}_optimize', None)
@@ -1216,11 +1214,28 @@ class AviaryGroup(om.Group):
                 if pin1 and pin2:
                     continue
 
-                # Controls cannot connect directly.
-                connect = False if opt2 is not None else connect_directly
 
-                # Pinned front can't take input.
-                connect = False if pin2 else connect
+                if var == 'time':
+                    # Always connect time.
+                    connect = connect_directly
+
+                elif var == Dynamic.Vehicle.ANGLE_OF_ATTACK:
+                    # This has been troublesome if connected directly.
+                    connect = False
+
+                elif len(downstream_analytic) > 0 or len(upstream_analytic) > 0:
+                    # Constraints seem to work better with the analytic phases.
+                    connect = False
+
+                else:
+                    # Controls cannot connect directly.
+                    connect = False if opt2 is not None else connect_directly
+
+                    # Pinned front can't take input.
+                    connect = False if pin2 else connect
+
+                if var == 'mass':
+                    connect = False
 
                 kwargs = {}
                 if not connect:
@@ -1261,10 +1276,7 @@ class AviaryGroup(om.Group):
 
             # Target analytic phases may take a single start input that needs to connect
             # Sort because of MPI
-            for var in sorted(vars2):
-                if not var.startswith('initial_'):
-                    continue
-
+            for var in sorted(downstream_analytic):
                 source = var.lstrip('initial_')
                 if source not in vars1:
                     continue
@@ -1292,15 +1304,12 @@ class AviaryGroup(om.Group):
 
                     print(phase1, phase2, source, var)
                     self.traj.add_linkage_constraint(
-                        phase1, phase2, source, var, connected=False
+                        phase1, phase2, source, var, connected=False, **kwargs
                     )
 
             # Source analytic phases should still connect to the timeseries.
             # Sort because of MPI
-            for var in sorted(vars1):
-                if not var.startswith('initial_'):
-                    continue
-
+            for var in sorted(upstream_analytic):
                 var = var.lstrip('initial_')
                 if var not in vars2:
                     continue
@@ -1308,7 +1317,7 @@ class AviaryGroup(om.Group):
                 print(phase1, phase2, source, var)
                 self.traj.link_phases(
                     phases=[phase1, phase2],
-                    connected=connect,
+                    connected=False,
                     vars=[var],
                     **kwargs,
                 )
