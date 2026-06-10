@@ -10,6 +10,8 @@ CoreMassBuilder : the interface for Aviary's core mass subsystem builder
 
 import numpy as np
 
+from openmdao.utils.units import convert_units
+
 from aviary.interface.utils import find_variable_in_problem
 from aviary.subsystems.mass.flops_based.mass_premission import MassPremission as MassPremissionFLOPS
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission as MassPremissionGASP
@@ -107,71 +109,80 @@ class CoreMassBuilder(MassBuilder):
             method = self.code_origin.value + '-derived relations'
             f.write(f'# Mass estimation: {method}')
 
-            f.write('||||\n')
-            f.write('|####**AIRCRAFT DESIGN DETAILS:**####|||\n')
-            f.write('||||\n')
-
             f.write('\n| Name | Value | Units |\n')
             f.write('|:-|:-|:-|\n')
             val, units = find_variable_in_problem(Aircraft.Wing.MASS, prob, self.meta_data)
             f.write(f'|Wing|{val}|{units}|\n')
-            f.write('||||\n')
 
+            # EMPENNAGE MASS GROUP #
             val, units = find_variable_in_problem(
                 Aircraft.Design.EMPENNAGE_MASS, prob, self.meta_data
             )
             f.write(f'|Empennage Group|{val}|{units}|\n')
 
+            # canard reporting optional
             val, units = find_variable_in_problem(Aircraft.Canard.MASS, prob, self.meta_data)
-            if val != 0.0 or val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|{tab}Canard|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.HorizontalTail.MASS, prob, self.meta_data
             )
-            if val != 0.0 or val != 'Not Found in Model':
-                f.write(f'|{tab}Horizontal Tail|{val}|{units}|\n')
+            f.write(f'|{tab}Horizontal Tail|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.VerticalTail.MASS, prob, self.meta_data)
-            if val != 0.0 or val != 'Not Found in Model':
-                f.write(f'|{tab}Vertical Tail|{val}|{units}|\n')
+            f.write(f'|{tab}Vertical Tail|{val}|{units}|\n')
 
+            # fin reporting optional
             val, units = find_variable_in_problem(Aircraft.Fins.MASS, prob, self.meta_data)
-            if val != 0.0 or val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|{tab}Fins|{val}|{units}|\n')
-            f.write('||||\n')
 
             val, units = find_variable_in_problem(Aircraft.Fuselage.MASS, prob, self.meta_data)
             f.write(f'|Fuselage|{val}|{units}|\n')
-            f.write('||||\n')
 
+            # LANDING GEAR GROUP #
             val, units = find_variable_in_problem(
                 Aircraft.LandingGear.TOTAL_MASS, prob, self.meta_data
             )
             f.write(f'|Landing Gear Group|{val}|{units}|\n')
+
+            # main gear reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.LandingGear.MAIN_GEAR_MASS, prob, self.meta_data
             )
-            if val != 0.0 or val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|{tab}Main Gear|{val}|{units}|\n')
 
+            # nose gear reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.LandingGear.NOSE_GEAR_MASS, prob, self.meta_data
             )
-            if val != 0.0 or val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|{tab}Nose Gear|{val}|{units}|\n')
-            f.write('||||\n')
+
+            # OTHER STRUCTURES (NOT IN GROUP) #
+            val, units = find_variable_in_problem(Aircraft.Nacelle.MASS, prob, self.meta_data)
+            f.write(f'|Nacelles|{np.dot(val, num_engines)[0]}||\n')
+            for i, engine in enumerate(engine_models):
+                if isinstance(val, (np.ndarray, list, tuple)):
+                    val = val[i]
+                f.write(f'|{tab}{engine.name}|{val} ({val * num_engines[i]} total)|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.Nacelle.MASS, prob, self.meta_data)
             if val == 0.0:
                 val = [val]
-            f.write(f'|Nacelles|{np.dot(val, num_engines)}|{units}|\n')
-            f.write('||||\n')
 
+            # paint reporting optional
+            val, units = find_variable_in_problem(Aircraft.Paint.MASS, prob, self.meta_data)
+            if val != 'Not Found in Model':
+                f.write(f'|Paint|{val}|{units}|\n')
+
+            # additional structural mass reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Design.STRUCTURAL_MASS_INCREMENT, prob, self.meta_data
             )
-            if val != 0.0 or val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|{tab}Additional Structural Mass|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
@@ -180,138 +191,178 @@ class CoreMassBuilder(MassBuilder):
             f.write(f'|**Structure Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
+            # PROPULSION GROUP #
             val, units = find_variable_in_problem(Aircraft.Propulsion.MASS, prob, self.meta_data)
             f.write(f'|Propulsion Group|{val}|{units}|\n')
+
             val, units = find_variable_in_problem(
                 Aircraft.Propulsion.TOTAL_ENGINE_MASS, prob, self.meta_data
             )
             f.write(f'|{tab}Engines|{val}|{units}|\n')
+
             val, units = find_variable_in_problem(Aircraft.Engine.MASS, prob, self.meta_data)
             for i, engine in enumerate(engine_models):
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = val[i]
                 f.write(f'|{tab}{tab}{engine.name}|{val} ({val * num_engines[i]} total)|{units}|\n')
 
+            # thrust reverser reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Propulsion.TOTAL_THRUST_REVERSERS_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Thrust Reversers|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Thrust Reversers|{val}|{units}|\n')
 
+            # fuel system reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Fuel.FUEL_SYSTEM_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Fuel System|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Fuel System|{val}|{units}|\n')
 
+            # misc propulsion mass reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Propulsion.TOTAL_MISC_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Miscellaneous|{val}|{units}|\n')
-            f.write('||||\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Miscellaneous|{val}|{units}|\n')
 
+            # battery reporting optional
             val, units = find_variable_in_problem(Aircraft.Battery.MASS, prob, self.meta_data)
-            if val != 0.0 and val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|{tab}Battery|{val}|{units}|\n')
-            f.write('|||\n')
 
+            # SYSTEMS AND EQUIPMENT GROUP #
             val, units = find_variable_in_problem(
                 Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, prob, self.meta_data
             )
             f.write(f'|Systems and Equipment|{val}|{units}|\n')
+
+            # all systems and equipment group items reporting optional
             val, units = find_variable_in_problem(Aircraft.Controls.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Flight Controls|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Flight Controls|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.APU.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Auxiliary Power|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Auxiliary Power|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.Instruments.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Instruments|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Instruments|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.Hydraulics.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Hydraulics|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Hydraulics|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.Electrical.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Electrical|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Electrical|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.Avionics.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Avionics|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Avionics|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.Furnishings.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Furnishings|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Furnishings|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.AirConditioning.MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Environmental Control|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Environmental Control|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.APU.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Auxiliary Power|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Auxiliary Power|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.AntiIcing.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Anti-Icing|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Anti-Icing|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Aircraft.OxygenSystem.MASS, prob, self.meta_data)
-            f.write(f'|{tab}Oxygen System|{val}|{units}|\n')
-            f.write('||||\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Oxygen System|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.Design.EXTERNAL_SUBSYSTEMS_MASS, prob, self.meta_data
             )
+            # TODO find individual mass names that got added by each subsystem and report?
             f.write(f'|External Subsystems|{val}|{units}|\n')
-            f.write('||||\n')
 
+            # empty mass margin reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Design.EMPTY_MASS_MARGIN, prob, self.meta_data
             )
-            if val != 0.0 or val != 'Not Found in Model':
+            if val != 'Not Found in Model':
                 f.write(f'|Empty Mass Margin|{val}|{units}|\n')
-            f.write('||||\n')
 
             val, units = find_variable_in_problem(Aircraft.Design.EMPTY_MASS, prob, self.meta_data)
             f.write(f'|**Empty Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
-            f.write('||||\n')
-            f.write(f'|####**MISSION SPECIFIC DETAILS:**####|||\n')
-            f.write('||||\n')
-
+            # OPERATING ITEMS GROUP #
             val, units = find_variable_in_problem(
                 Mission.OPERATING_ITEMS_MASS, prob, self.meta_data
             )
             f.write(f'|Operating Items|{val}|{units}|\n')
 
-            val1, units = find_variable_in_problem(
-                Aircraft.CrewPayload.CABIN_CREW_MASS, prob, self.meta_data
-            )
-            val2, units = find_variable_in_problem(
+            # crew mass reporting optional
+            val1, units1 = find_variable_in_problem(
                 Aircraft.CrewPayload.FLIGHT_CREW_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Crew|{val1 + val2}|{units}|\n')
+            val2, units2 = find_variable_in_problem(
+                Aircraft.CrewPayload.CABIN_CREW_MASS, prob, self.meta_data
+            )
+            if val1 != 'Not Found in Model' or val2 != 'Not Found in Model':
+                crew_sum = 0
+                units = units1
+                if not isinstance(val1, str):
+                    crew_sum += val1
+                if not isinstance(val2, str):
+                    # need to make sure summing masses of the same units
+                    if units1 != units2:
+                        crew_sum += convert_units(val2, units2, units1)
+                    else:
+                        crew_sum += val2
+                f.write(f'|{tab}Total Crew|{crew_sum}|{units}|\n')
+                f.write(f'|{tab}{tab}Flight Crew|{val1}|{units1}|\n')
+                f.write(f'|{tab}{tab}Cabin Crew|{val2}|{units2}|\n')
 
+            # passenger service reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Passenger Service|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Passenger Service|{val}|{units}|\n')
 
+            # cargo container reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.CrewPayload.CARGO_CONTAINER_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Cargo Containers|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Cargo Containers|{val}|{units}|\n')
 
+            # unusable fuel mass reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Fuel.UNUSABLE_FUEL_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Unusable Fuel|{val}|{units}|\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Unusable Fuel|{val}|{units}|\n')
 
+            # engine oil reporting optional
             val, units = find_variable_in_problem(
                 Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Oil|{val}|{units}|\n')
-            f.write('||||\n')
+            if val != 'Not Found in Model':
+                f.write(f'|{tab}Oil|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(Mission.OPERATING_MASS, prob, self.meta_data)
             f.write(f'|**Operating Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
 
+            # PAYLOAD MASS GROUP #
             val, units = find_variable_in_problem(
                 Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, prob, self.meta_data
             )
@@ -320,17 +371,34 @@ class CoreMassBuilder(MassBuilder):
             val, units = find_variable_in_problem(
                 Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, prob, self.meta_data
             )
-            f.write(f'|{tab}Passengers|{val}|{units}|\n')
+            f.write(f'|{tab}Passengers and Baggage|{val}|{units}|\n')
 
             val, units = find_variable_in_problem(
                 Aircraft.CrewPayload.CARGO_MASS, prob, self.meta_data
             )
             f.write(f'|{tab}Cargo|{val}|{units}|\n')
-            f.write('||||\n')
 
             val, units = find_variable_in_problem(Mission.ZERO_FUEL_MASS, prob, self.meta_data)
             f.write(f'|**Zero Fuel Mass**|**{val}**|**{units}**|\n')
             f.write('||||\n')
+
+            # FUEL GROUP #
+            val1, units1 = find_variable_in_problem(Mission.FUEL, prob, self.meta_data)
+            val2, units2 = find_variable_in_problem(Mission.RESERVE_FUEL, prob, self.meta_data)
+            if val1 != 'Not Found in Model' or val2 != 'Not Found in Model':
+                fuel_sum = 0
+                units = units1
+                if not isinstance(val1, str):
+                    fuel_sum += val1
+                if not isinstance(val2, str):
+                    # need to make sure summing masses of the same units
+                    if units1 != units2:
+                        fuel_sum += convert_units(val2, units2, units1)
+                    else:
+                        fuel_sum += val2
+                f.write(f'|Total Fuel|{fuel_sum}|{units}|\n')
+                f.write(f'|{tab}Mission Fuel|{val1}|{units1}|\n')
+                f.write(f'|{tab}Reserve Fuel|{val2}|{units2}|\n')
 
             val, units = find_variable_in_problem(Mission.GROSS_MASS, prob, self.meta_data)
             f.write(f'|**Gross Mass**|**{val}**|**{units}**|\n')
