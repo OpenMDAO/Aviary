@@ -186,9 +186,6 @@ class SkinFrictionDrag(om.ExplicitComponent):
         # An additional six percent of the skin friction drag is added to for excrescences
         # (miscellaneous).
         CDF *= 1.0 + inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
-        import pdb
-
-        pdb.set_trace()
 
         outputs['skin_friction_drag_coeff'] = CDF
 

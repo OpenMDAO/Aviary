@@ -15,7 +15,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
 
-# @use_tempdirs
+@use_tempdirs
 class MissionDragTest(unittest.TestCase):
     def test_basic_large_single_aisle_1(self):
         flops_inputs = get_flops_inputs('LargeSingleAisle1FLOPS')
