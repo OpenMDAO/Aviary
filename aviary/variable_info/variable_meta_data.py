@@ -1185,7 +1185,7 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO this should be removed from metadata (intermediate calculation)
+# See issue #1182. this should be removed from metadata (intermediate calculation)
 add_meta_data(
     Aircraft.Design.CHARACTERISTIC_LENGTHS,
     meta_data=_MetaData,
@@ -1454,12 +1454,12 @@ add_meta_data(
     Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.WLPCT',
         'FLOPS': 'AERIN.WRATIO',  # ['&DEFINE.AERIN.WRATIO', 'ESB.WRATIO'],
     },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
-    default_value=0.0,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -7116,7 +7116,7 @@ add_meta_data(
     # historical_name={
     #     'FLOPS': ['&DEFTOL.TOLIN.BRAKMU', 'BALFLD.BRAKMU'],
     #     'GASP': None,
-    historical_name={'FLOPS': None, 'GASP': None},
+    historical_name={'FLOPS': None, 'GASP': 'INGASP.MUB'},
     default_value=0.3,
     units='unitless',
     desc='landing coefficient of friction, with brakes on',
@@ -7588,7 +7588,7 @@ add_meta_data(
     Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.UM',
         # ['&DEFTOL.TOLIN.ROLLMU', 'BALFLD.ROLLMU'],
         'FLOPS': 'TOLIN.ROLLMU',
     },
