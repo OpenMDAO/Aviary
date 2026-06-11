@@ -1454,12 +1454,12 @@ add_meta_data(
     Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.WLPCT',
         'FLOPS': 'AERIN.WRATIO',  # ['&DEFINE.AERIN.WRATIO', 'ESB.WRATIO'],
     },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
-    default_value=0.0,
+    default_value=1.0,
 )
 
 add_meta_data(
