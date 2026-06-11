@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Mission
 from aviary.models.missions.energy_state_default import phase_info
 import aviary.api as av
 
@@ -87,3 +87,10 @@ class FuelBurnTestCases(unittest.TestCase):
 
         assert_near_equal(fuel_burned, 13234.43186723, tol)
         assert_near_equal(block_fuel, 13334.43186723, tol)
+
+
+if __name__ == '__main__':
+    # unittest.main()
+    test = FuelBurnTestCases()
+    test.setUp()
+    test.test_taxi_in_fuel_burned()
