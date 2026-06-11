@@ -42,7 +42,7 @@ class SkinFrictionDragTest(unittest.TestCase):
         model.add_subsystem(
             'CDf',
             SkinFrictionDrag(num_nodes=nn, **options),
-            promotes_inputs=[Aircraft.Wing.AREA],
+            promotes_inputs=[Aircraft.Wing.AREA, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG],
             promotes_outputs=['skin_friction_drag_coeff'],
         )
 
@@ -55,6 +55,7 @@ class SkinFrictionDragTest(unittest.TestCase):
         prob.set_val('CDf.laminar_fractions_upper', lam_up)
         prob.set_val('CDf.laminar_fractions_lower', lam_low)
         prob.set_val(Aircraft.Wing.AREA, 198.0)
+        prob.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
         prob.run_model()
 
@@ -125,7 +126,7 @@ class SkinFrictionDragTest(unittest.TestCase):
         model.add_subsystem(
             'CDf',
             SkinFrictionDrag(num_nodes=nn, **options),
-            promotes_inputs=[Aircraft.Wing.AREA],
+            promotes_inputs=[Aircraft.Wing.AREA, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG],
             promotes_outputs=['skin_friction_drag_coeff'],
         )
 
@@ -138,6 +139,7 @@ class SkinFrictionDragTest(unittest.TestCase):
         prob.set_val('CDf.laminar_fractions_upper', lam_up)
         prob.set_val('CDf.laminar_fractions_lower', lam_low)
         prob.set_val(Aircraft.Wing.AREA, 198.0)
+        prob.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
         prob.run_model()
 

@@ -20,6 +20,7 @@ inputs.set_val(Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR, 0.9098393811349
 inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
 inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)
 inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 0.930890028006548)
+inputs.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
 # Air Conditioning
 # ---------------------------
