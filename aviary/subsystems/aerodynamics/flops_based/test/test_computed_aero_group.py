@@ -191,7 +191,7 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)
         flops_inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
         flops_inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)
-        flops_inputs.set_val(Aircraft.Design.EXCRESCENCE_DRAG_FACTOR, 0.06)
+        flops_inputs.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
@@ -348,7 +348,7 @@ class MissionDragTest(unittest.TestCase):
         flops_inputs.set_val(Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR, 1.0)
         flops_inputs.set_val(Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR, 1.0)
         flops_inputs.set_val(Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR, 1.0)
-        flops_inputs.set_val(Aircraft.Design.EXCRESCENCE_DRAG_FACTOR, 0.06)
+        flops_inputs.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
         key = Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST
         flops_inputs.set_val(key, *(flops_outputs.get_item(key)))
@@ -504,6 +504,6 @@ class MissionDragTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = MissionDragTest()
-    test.test_basic_large_single_aisle_1()
+    unittest.main()
+    # test = MissionDragTest()
+    # test.test_basic_large_single_aisle_1()
