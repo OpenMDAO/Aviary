@@ -291,13 +291,15 @@ class TakeoffPhase(PhaseBuilder):
         linked_vars = [
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.VELOCITY,
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
             Dynamic.Vehicle.MASS,
             'time',
         ]
 
         if not (ground_roll or rotation):
             linked_vars.append(Dynamic.Mission.ALTITUDE)
+
+        if rotation:
+            linked_vars.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
 
         return linked_vars
 

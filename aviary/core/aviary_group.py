@@ -1266,7 +1266,7 @@ class AviaryGroup(om.Group):
                         phase = self.traj._phases[phase2]
                         phase.set_state_options(var, input_initial=False)
 
-                print(phase1, phase2, var)
+                print(phase1, phase2, var, connect)
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=connect,
@@ -1302,7 +1302,7 @@ class AviaryGroup(om.Group):
                         'units': units,
                     }
 
-                    print(phase1, phase2, source, var)
+                    print(phase1, phase2, source, var, False)
                     self.traj.add_linkage_constraint(
                         phase1, phase2, source, var, connected=False, **kwargs
                     )
@@ -1314,7 +1314,7 @@ class AviaryGroup(om.Group):
                 if var not in vars2:
                     continue
 
-                print(phase1, phase2, source, var)
+                print(phase1, phase2, source, var, False)
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=False,
