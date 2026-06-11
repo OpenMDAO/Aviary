@@ -135,8 +135,8 @@ gasp_default_values = NamedValues(
         'INGASP.XWQLF': (0.4, 'unitless'),
         'INGASP.YMG': (0.15, 'unitless'),
         'INGASP.YWFOLD': (0.0, 'ft'),
-        'INGASP.UM': (0.025, 'unitless'),
-        'INGASP.MUB': (0.3, 'unitless'),
+        'INGASP.UM': (0.02, 'unitless'),
+        'INGASP.MUB': (0.4, 'unitless'),
     }
 )
 
