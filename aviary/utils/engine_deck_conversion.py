@@ -7,7 +7,6 @@ import numpy as np
 import openmdao.api as om
 from openmdao.components.interp_util.interp import InterpND
 
-from aviary.interface.utils import round_it
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
@@ -15,6 +14,7 @@ from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
 from aviary.utils.functions import get_aviary_resource_path, get_path
 from aviary.utils.named_values import NamedValues
+from aviary.utils.utils import round_it
 from aviary.variable_info.enums import EngineDeckType
 from aviary.variable_info.variables import Dynamic
 

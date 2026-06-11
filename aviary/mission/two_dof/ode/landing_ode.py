@@ -243,6 +243,7 @@ class LandingSegment(TwoDOFODE):
         )
 
         self.set_input_defaults(Mission.Landing.INITIAL_MACH, val=0.1)
+        self.set_input_defaults(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, val=0.4)
 
         # landing doesn't change flap or gear position
         self.set_input_defaults('t_init_flaps_app', val=1e10)

@@ -62,6 +62,8 @@ class FlightPathODE(TwoDOFODE):
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        else:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         subsystems = self.options['subsystems']
 
@@ -169,3 +171,5 @@ class FlightPathODE(TwoDOFODE):
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.zeros(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units='lbm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='kn')
+        if self.options['ground_roll']:
+            self.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)

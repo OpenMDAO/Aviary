@@ -3,6 +3,7 @@ import unittest
 import openmdao
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 from packaging import version
 
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
@@ -15,6 +16,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class DLandTestCase(unittest.TestCase):
     """Test 2DOF landing group."""
 
@@ -72,6 +74,3 @@ class DLandTestCase(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    # test = DLandTestCase()
-    # test.setUp()
-    # test.test_dland()

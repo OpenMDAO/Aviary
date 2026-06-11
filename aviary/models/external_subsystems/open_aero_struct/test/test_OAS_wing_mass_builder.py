@@ -4,7 +4,7 @@ import unittest
 import aviary.api as av
 from aviary.subsystems.test.subsystem_tester import skipIfMissingDependencies
 
-path_to_builder = 'OAS_weight.OAS_wing_weight_builder.OASWingWeightBuilder'
+path_to_builder = 'open_aero_struct.OAS_wing_mass_builder.OASWingMassBuilder'
 OASWingWeightBuilder = av.TestSubsystemBuilder.import_builder(path_to_builder)
 
 

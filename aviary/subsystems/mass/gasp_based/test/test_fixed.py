@@ -906,6 +906,7 @@ class FixedMassGroupTestCase1(unittest.TestCase):
         self.prob.model.set_input_defaults(Aircraft.Design.WING_LOADING, val=128)
         self.prob.model.set_input_defaults(Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, val=0.15)
         self.prob.model.set_input_defaults(Aircraft.Wing.CENTER_CHORD, val=17.48974)
+        self.prob.model.set_input_defaults(Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO, val=1.0)
 
         setup_model_options(self.prob, options)
 
@@ -1803,7 +1804,4 @@ class BWBFixedMassGroupTestCase1(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = HighLiftTestCase2()
-    test.setUp()
-    test.test_case1()
+    unittest.main()

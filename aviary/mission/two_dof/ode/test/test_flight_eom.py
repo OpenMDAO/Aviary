@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.flight_eom import EOMRates
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class DescentTestCase(unittest.TestCase):
     """
     These tests compare the output of the climb EOM to the output from GASP. There are some discrepancies.
@@ -91,6 +93,7 @@ class DescentTestCase2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class ClimbTestCase(unittest.TestCase):
     """
     These tests compare the output of the climb EOM to the output from GASP. There are some discrepancies.

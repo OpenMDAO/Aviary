@@ -354,7 +354,7 @@ def override_aviary_vars(
                 # These variables are ones that are computed in both GASP and FLOPS when both
                 # geometries are present. Aviary determines which one to favor, and which to
                 # remove by overriding it.
-                # TODO: What if user wants to override one of these?
+                # See issue #1176. What if user wants to override one of these?
                 continue
 
             elif name in external_overrides:
@@ -421,7 +421,7 @@ def setup_trajectory_params(
     are being used in the trajectory, and for the variables which are
     not options it adds them as a parameter of the trajectory.
     """
-    # TODO: variables_to_add is required, so should be an arg, not a kwarg.
+    # See note # 1178: variables_to_add is required, so should be an arg, not a kwarg.
     if variables_to_add is None:
         variables_to_add = []
 
@@ -448,7 +448,7 @@ def setup_trajectory_params(
 
     # Process the core mission inputs last, because some of them might have already
     # been covered by the phase builders.
-    # TODO: As we use more builders, we may reach the point where we don't need
+    # See issue #1179: As we use more builders, we may reach the point where we don't need
     # to do these anymore.
     for key in sorted(variables_to_add):
         if key in already_added:
@@ -468,7 +468,7 @@ def setup_trajectory_params(
                 except TypeError:
                     val = aviary_variables.get_val(key)
 
-            # TODO temp line to ignore dynamic mission variables, will not work
+            # See note #1180 temp line to ignore dynamic mission variables, will not work
             #      if names change to 'dynamic:mission:*'
             if ':' not in key:
                 continue
@@ -578,7 +578,7 @@ def setup_model_options(
         prefix = ''  # the original default value
     prob.model_options[f'{prefix}*'] = extract_options(aviary_inputs, meta_data)
 
-    # TODO: Modify this method for multi mission/model.
+    # See issue #1177. Modify this method for multi mission/model
 
     if engine_models is None:
         # Required in multi-mission cases
@@ -596,7 +596,7 @@ def setup_model_options(
     for idx, engine_model in enumerate(engine_models):
         eng_name = engine_model.name
 
-        # TODO: For future flexibility, need get a list of options per engine (these are
+        # See issue #1175. For future flexibility, need get a list of options per engine (these are
         # EngineDeck required options), so custom multiengine works
         opt_names = [
             Aircraft.Engine.Motor.DATA_FILE,

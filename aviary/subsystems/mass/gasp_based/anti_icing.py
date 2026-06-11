@@ -58,9 +58,6 @@ class AntiIcingMass(om.ExplicitComponent):
         dicing_weight_dvtail_area = 0.5 * 22.7 * (SSUM**-0.5) / GRAV_ENGLISH_LBM
 
         if smooth:
-            import pdb
-
-            # pdb.set_trace()
             mu = self.options['mu']
             sm_fac = d_smooth_max(icing_wt, 0.0, mu)
             dicing_weight_dwing_area = sm_fac * dicing_weight_dwing_area

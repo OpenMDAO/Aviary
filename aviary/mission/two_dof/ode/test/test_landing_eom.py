@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.two_dof.ode.landing_eom import (
@@ -12,6 +13,7 @@ from aviary.mission.two_dof.ode.landing_eom import (
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class LandingAltTestCase(unittest.TestCase):
     """Test computation of initial altitude in LandingAltitudeComponent component."""
 
@@ -36,6 +38,7 @@ class LandingAltTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class GlideTestCase(unittest.TestCase):
     """Test computation of initial velocity and stall velocity in GlideConditionComponent component."""
 
@@ -141,6 +144,7 @@ class GroundRollTestCase(unittest.TestCase):
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)
+        self.prob.model.set_input_defaults(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, val=0.4)
         self.prob.model.set_input_defaults(
             Mission.Landing.STALL_VELOCITY, val=109.73, units='kn'
         )  # note: EAS in GASP, although at this altitude they are nearly identical
@@ -197,6 +201,7 @@ class GroundRollTestCase2(unittest.TestCase):
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)
+        self.prob.model.set_input_defaults(Mission.Landing.BRAKING_FRICTION_COEFFICIENT, val=0.4)
         self.prob.model.set_input_defaults(
             Mission.Landing.STALL_VELOCITY, val=109.73, units='kn'
         )  # note: EAS in GASP, although at this altitude they are nearly identical

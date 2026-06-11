@@ -123,7 +123,7 @@ class PreMissionGroupTest(unittest.TestCase):
 
         assert not isinstance(
             prob.model.traj.phases, om.ParallelGroup
-        )  # TODO: redo for multimissions
+        )  # See issue #1186. redo for multimissions
 
 
 if __name__ == '__main__':

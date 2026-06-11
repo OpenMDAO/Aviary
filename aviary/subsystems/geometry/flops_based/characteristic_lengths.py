@@ -230,7 +230,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
         J[Aircraft.Fuselage.FINENESS, Aircraft.Fuselage.REF_DIAMETER] = -length / avg_diam**2.0
 
-    # NOTE this code is currently unused!!
+    # See issue #1182. NOTE this code is currently unused!!
     def _compute_additional_fuselages(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):
@@ -261,7 +261,7 @@ class FuselageCharacteristicLengths(om.ExplicitComponent):
 
             idx += 1
 
-    # NOTE this code is currently unused!!
+    # See issue #1182. NOTE this code is currently unused!!
     def _compute_additional_vertical_tails(
         self, inputs, outputs, discrete_inputs=None, discrete_outputs=None
     ):

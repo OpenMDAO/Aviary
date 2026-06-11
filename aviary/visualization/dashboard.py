@@ -1025,7 +1025,7 @@ def dashboard(script_name, port=0, run_in_background=False):
     if not os.path.isfile(problem_recorder_path):
         issue_warning(f'Problem case recorder file {problem_recorder_path} does not exist.')
 
-    # TODO - use lists and functions to do this with a lot less code
+    # See issue #1174. Use lists and functions to do this with a lot less code
     ####### Model Tab #######
     model_tabs_list = []
 

@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -14,42 +15,48 @@ class EOMRates(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
             val=np.zeros(nn),
             units='ft/s',
             desc='true air speed',
         )
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             val=np.zeros(nn),
             units='lbf',
             desc='net thrust',
         )
-        self.add_input(
-            Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='lbf', desc='net drag on aircraft'
+        add_aviary_input(
+            self, Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='lbf', desc='net drag on aircraft'
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.MASS,
             val=np.zeros(nn),
             units='lbm',
             desc='mass of aircraft',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
             val=np.ones(nn),
             units='rad',
             desc='angle of attack of aircraft',
         )
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.ALTITUDE_RATE,
             val=np.zeros(nn),
             units='ft/s',
             desc='rate of change of altitude',
         )
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE_RATE,
             val=np.zeros(nn),
             units='ft/s',
@@ -61,12 +68,7 @@ class EOMRates(om.ExplicitComponent):
             units='lbf',
             desc='lift required in order to maintain calculated flight path angle',
         )
-        self.add_output(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            val=np.ones(nn),
-            units='rad',
-            desc='flight path angle',
-        )
+        add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.ones(nn), units='rad')
 
     def setup_partials(self):
         nn = self.options['num_nodes']

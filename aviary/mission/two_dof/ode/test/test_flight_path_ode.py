@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.flight_path_ode import FlightPathODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
@@ -11,9 +12,10 @@ from aviary.utils.test_utils.default_subsystems import get_default_mission_subsy
 from aviary.utils.test_utils.IO_test_util import check_prob_outputs
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class FlightPathODETestCase(unittest.TestCase):
     """Test 2-degrees-of-freedom flight path ODE."""
 

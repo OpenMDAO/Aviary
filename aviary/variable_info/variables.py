@@ -612,11 +612,11 @@ class Dynamic:
         typically used by the Equations of Motion to determine vehicle states at each timestep.
         """
 
-        # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
+        # See issue #1173. Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
         ALTITUDE = 'altitude'
         ALTITUDE_RATE = 'altitude_rate'
         ALTITUDE_RATE_MAX = 'altitude_rate_max'
-        # TODO Angle of Attack
+        # See issue #1173. Angle of Attack
         DISTANCE = 'distance'
         DISTANCE_RATE = 'distance_rate'
         FLIGHT_PATH_ANGLE = 'flight_path_angle'
