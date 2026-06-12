@@ -767,8 +767,8 @@ class AviaryProblem(om.Problem):
 
         # Dictionary for default reference values
         default_ref_values = {
-            'mass': -5e4,
-            'hybrid_objective': -5e4,
+            'mass': 5e4,
+            'hybrid_objective': 5e4,
             'fuel_burned': 1e4,
             'fuel': 1e4,
         }
@@ -2019,7 +2019,7 @@ class AviaryProblem(om.Problem):
         takeoff_mass = self.model.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
         obj_comp = om.ExecComp(
-            f'obj = -final_mass / {takeoff_mass} + final_time / 5.',
+            f'obj = final_mass / {takeoff_mass} + final_time / 5.',
             final_mass={'units': 'lbm'},
             final_time={'units': 'h'},
         )

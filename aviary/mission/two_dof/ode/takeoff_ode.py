@@ -72,6 +72,10 @@ class TakeOffODE(TwoDOFODE):
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        else:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
+        if rotation:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
@@ -278,3 +282,5 @@ class TakeOffODE(TwoDOFODE):
         if ground_roll:
             self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE, val=np.zeros(nn), units='kn/s')
             self.set_input_defaults(Aircraft.Wing.INCIDENCE, val=1.0, units='deg')
+        if ground_roll or rotation:
+            self.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
