@@ -39,14 +39,9 @@ class ProblemConfiguratorBase:
         msg = 'This pmethod must be defined in your problem configurator.'
         raise NotImplementedError(msg)
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this builder.
 
         Returns
         -------

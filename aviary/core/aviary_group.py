@@ -488,7 +488,7 @@ class AviaryGroup(om.Group):
             geom_code_origin = (FLOPS, GASP)
 
         # which geometry method gets prioritized in case of conflicting outputs
-        code_origin_to_prioritize = self.configurator.get_code_origin(self)
+        code_origin_to_prioritize = self.configurator.get_code_origin()
 
         geom = CoreGeometryBuilder(
             'geometry',
@@ -1214,10 +1214,13 @@ class AviaryGroup(om.Group):
                 if pin1 and pin2:
                     continue
 
-
                 if var == 'time':
                     # Always connect time.
                     connect = connect_directly
+
+                elif self.mission_method is TWO_DEGREES_OF_FREEDOM and var == 'mass':
+                    # In twodof, we didn't connect the mass directly.
+                    connect = False
 
                 elif var == Dynamic.Vehicle.ANGLE_OF_ATTACK:
                     # This has been troublesome if connected directly.
@@ -1234,32 +1237,9 @@ class AviaryGroup(om.Group):
                     # Pinned front can't take input.
                     connect = False if pin2 else connect
 
-                if var == 'mass':
-                    connect = False
-
                 kwargs = {}
                 if not connect:
-                    # Link with a constraint.
-                    # Use ref from the previous phase.
-                    # Time behaves a bit differently than the others.
-                    if var == 'time':
-                        ref, units = phase_info1.get(f'{var}_duration_ref')
-                        kwargs = {
-                            'ref': ref,
-                            'units': units,
-                        }
-                    else:
-                        ref, units = phase_info1.get(f'{var}_ref', (None, None))
-                        ref0 = phase_info1.get(f'{var}_ref0', (None, None))[0]
-                        if ref is None:
-                            ref, units = phase_info2.get(f'{var}_ref', (None, None))
-                            ref0 = phase_info2.get(f'{var}_ref0', (None, None))[0]
-
-                        kwargs = {
-                            'ref': ref,
-                            'ref0': ref0,
-                            'units': units,
-                        }
+                    kwargs = self._find_scaling(var, phase_info1, phase_info2)
 
                     # Make sure states options are correct for this.
                     if opt2 is None and var != 'time':
@@ -1267,7 +1247,6 @@ class AviaryGroup(om.Group):
                         if var in phase.state_options:
                             phase.set_state_options(var, input_initial=False)
 
-                print(phase1, phase2, var, connect)
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=connect,
@@ -1282,31 +1261,11 @@ class AviaryGroup(om.Group):
                 if source not in vars1:
                     continue
 
-                # Link with a constraint.
-                # Use ref from the previous phase.
-                # Time behaves a bit differently than the others.
-                if source == 'time':
-                    ref, units = phase_info1.get(f'{source}_duration_ref')
-                    kwargs = {
-                        'ref': ref,
-                        'units': units,
-                    }
-                else:
-                    ref, units = phase_info1.get(f'{source}_ref', (None, None))
-                    ref0 = phase_info1.get(f'{source}_ref0', (None, None))[0]
-                    if ref is None:
-                        ref, units = phase_info2.get(f'{source}_ref', (None, None))
-                        ref0 = phase_info2.get(f'{source}_ref0', (None, None))[0]
-                    kwargs = {
-                        'ref': ref,
-                        'ref0': ref0,
-                        'units': units,
-                    }
+                kwargs = self._find_scaling(source, phase_info1, phase_info2)
 
-                    print(phase1, phase2, source, var, False)
-                    self.traj.add_linkage_constraint(
-                        phase1, phase2, source, var, connected=False, **kwargs
-                    )
+                self.traj.add_linkage_constraint(
+                    phase1, phase2, source, var, connected=False, **kwargs
+                )
 
             # Source analytic phases should still connect to the timeseries.
             # Sort because of MPI
@@ -1315,7 +1274,8 @@ class AviaryGroup(om.Group):
                 if var not in vars2:
                     continue
 
-                print(phase1, phase2, source, var, False)
+                kwargs = self._find_scaling(var, phase_info1, phase_info2)
+
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=False,
@@ -1323,11 +1283,39 @@ class AviaryGroup(om.Group):
                     **kwargs,
                 )
 
-        # TODO: Apply any transformations of similar variables across boundary.
+        # TODO: Apply any coordinate transformations of similar variables across boundary.
 
         self.configurator.link_phases(self, phases, connect_directly=connect_directly)
 
         self.configurator.check_trajectory(self)
+
+    def _find_scaling(self, var, phase_info1, phase_info2):
+        """
+        Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
+        """
+        if var == 'time':
+            # Time behaves a bit differently than the others.
+            ref0 = None
+            ref, units = phase_info2.get(f'{var}_initial_ref', (None, None))
+            if ref is None:
+                ref, units = phase_info1.get(f'{var}_duration_ref', (None, None))
+        else:
+            # First, pull from the scaling from upstream phase.
+            ref, units = phase_info1.get(f'{var}_ref', (None, None))
+            ref0 = phase_info1.get(f'{var}_ref0', (None, None))[0]
+            if ref is None:
+                ref, units = phase_info2.get(f'{var}_ref', (None, None))
+                ref0 = phase_info2.get(f'{var}_ref0', (None, None))[0]
+
+        kwargs = {}
+        if ref is not None:
+            kwargs['ref'] = ref
+        if ref0 is not None:
+            kwargs['ref0'] = ref0
+        if ref is not None:
+            kwargs['units'] = units
+
+        return kwargs
 
     def _add_bus_variables_and_connect(self):
         all_subsystems = self.subsystems

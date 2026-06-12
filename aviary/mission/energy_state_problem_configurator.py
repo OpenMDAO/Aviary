@@ -86,14 +86,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         return phase_info
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
 
         Returns
         -------
