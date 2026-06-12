@@ -74,7 +74,7 @@ prob.set_initial_guesses()
 #TODO: ALEX, ask find_feasible question
 # prob.find_feasible()
 prob.run_aviary_problem(suppress_solver_print= False)
-with open("aviary\examples\small_uav\level2_newvars.txt", "w") as f:
+with open("aviary/examples/small_uav/level2_newvars.txt", "w") as f:
         prob.model.list_vars(print_arrays=True,out_stream=f, units=True)
 # try:
 #     prob.run_aviary_problem(suppress_solver_print= False)
