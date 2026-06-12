@@ -208,6 +208,8 @@ class Motor(om.ExplicitComponent):
 #TODO: reading in of data should be changed later:
 from aviary.subsystems.propulsion.rc_electric.Parsing.PropDataReader import PropDataReader
 xt, ct, cp = PropDataReader()
+ct = ct.flatten()
+cp = cp.flatten()
 order = np.lexsort((xt[:,3], xt[:,2], xt[:,1], xt[:,0]))
 xt = xt[order]
 
