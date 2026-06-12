@@ -1264,7 +1264,8 @@ class AviaryGroup(om.Group):
                     # Make sure states options are correct for this.
                     if opt2 is None and var != 'time':
                         phase = self.traj._phases[phase2]
-                        phase.set_state_options(var, input_initial=False)
+                        if var in phase.state_options:
+                            phase.set_state_options(var, input_initial=False)
 
                 print(phase1, phase2, var, connect)
                 self.traj.link_phases(
