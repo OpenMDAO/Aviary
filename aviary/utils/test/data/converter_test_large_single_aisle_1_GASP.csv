@@ -27,6 +27,7 @@ aircraft:design:drag_coefficient_increment,0.00175,unitless
 aircraft:design:drag_divergence_shift,0.033,unitless
 aircraft:design:emergency_equipment_mass,50.0,lbm
 aircraft:design:gross_mass,175400.0,lbm
+aircraft:design:landing_to_takeoff_mass_ratio,0.9423,unitless
 aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
@@ -147,6 +148,7 @@ aircraft:wing:vertical_mount_location,0.0,unitless
 aircraft:wing:zero_lift_angle,-1.2,deg
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1.0,s
+mission:landing:braking_friction_coefficient,0.4,unitless
 mission:landing:glide_to_stall_ratio,1.3,unitless
 mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900.0,ft/min
@@ -154,6 +156,7 @@ mission:landing:obstacle_height,50.0,ft
 mission:landing:touchdown_sink_rate,5.0,ft/s
 mission:reserve_fuel_additional,4998,lbm
 mission:takeoff:decision_speed_increment,10.0,kn
+mission:takeoff:rolling_friction_coefficient,0.02,unitless
 mission:takeoff:rotation_speed_increment,5.0,kn
 mission:taxi:duration,0.1677,h
 settings:aerodynamics_method,GASP
@@ -217,7 +220,6 @@ INGASP.TBO,3500
 INGASP.TR,1
 INGASP.VCLMB,270
 INGASP.WENG,6130
-INGASP.WLPCT,0.9423
 INGASP.WNAC,0
 INGASP.WPLX,0
 INGASP.WPYLON,0

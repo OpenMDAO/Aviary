@@ -113,7 +113,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
 
     def setup_partials(self):
-        # TODO: Analytic derivs will be challenging, but possible.
+        # See issue #1188. Analytic derivs will be challenging, but possible.
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
@@ -142,7 +142,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
         # wing and is ignored
-        # TODO There are also no checks that number of engine locations is consistent with
+        # See issue #1189. There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
 
         target_dy = (inp_stations[-1] - inp_stations[0]) / num_integration_stations
@@ -354,7 +354,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         self.add_output('calculated_wing_area', units='ft**2')
 
     def setup_partials(self):
-        # TODO: Analytic derivs will be challenging, but possible.
+        # See issue #1188. Analytic derivs will be challenging, but possible.
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
@@ -418,7 +418,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
         # wing and is ignored
-        # TODO There are also no checks that number of engine locations is consistent with
+        # See issue #1189. There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
 
         target_dy = (inp_stations_mod[-1] - inp_stations_mod[0]) / num_integration_stations
