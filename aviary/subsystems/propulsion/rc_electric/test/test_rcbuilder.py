@@ -63,4 +63,4 @@ esc_power = prob.get_val('rc_electric.esc.power', units='W')
 motor_power = prob.get_val('rc_electric.motor.power', units='W')
 prop_power = prob.get_val(Dynamic.Vehicle.Propulsion.PROP_POWER, units='W')
 power_residual = battery_power + esc_power + motor_power - prop_power
-# print(battery_power, esc_power, motor_power, prop_power)
+ #print(battery_power, esc_power, motor_power, prop_power)

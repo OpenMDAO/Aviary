@@ -277,21 +277,6 @@ class FlightPhaseBase(PhaseBuilderBase):
         #         add_constraints=True,
         #     )
         
-        #TODO Alex modify
-        self.add_control(
-            'electric_current',
-            Dynamic.Vehicle.Propulsion.CURRENT,
-            rate_targets=None,
-            add_constraints=True,
-        )
-
-        self.add_control(
-            'electric_current_max',
-            Dynamic.Vehicle.Propulsion.CURRENT_MAX,
-            rate_targets=None,
-            add_constraints=True,
-        )
-        
         # For heterogeneous-engine cases, we may have throttle allocation control.
         if phase_type is EquationsOfMotion.HEIGHT_ENERGY and num_engine_type > 1:
             allocation = user_options['throttle_allocation']
