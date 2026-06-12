@@ -1,6 +1,6 @@
 import numpy as np
 import openmdao.api as om
-import openmdao.jax as omj
+
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Settings
 
@@ -209,6 +209,8 @@ class Motor(om.ExplicitComponent):
 #TODO: reading in of data should be changed later:
 from aviary.subsystems.propulsion.rc_electric.Parsing.PropDataReader import PropDataReader
 xt, ct, cp = PropDataReader()
+ct = ct. flatten()
+cp = cp.flatten()
 order = np.lexsort((xt[:,3], xt[:,2], xt[:,1], xt[:,0]))
 xt = xt[order]
 
