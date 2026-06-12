@@ -833,6 +833,7 @@ class MarsReference2024Geometric(unittest.TestCase):
 
         assert_check_partials(partial_data)
 
+
 class VenusReference2021TestCase1(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -853,9 +854,7 @@ class VenusReference2021TestCase1(unittest.TestCase):
             force_alloc_complex=True,
             check=False,
         )
-        self.prob.set_val(
-            Dynamic.Mission.ALTITUDE, [0, 20000, 60000, 100_000, 140_000], units='m'
-        )
+        self.prob.set_val(Dynamic.Mission.ALTITUDE, [0, 20000, 60000, 100_000, 140_000], units='m')
 
     def test_case1(self):
         tol = 1e-6
@@ -864,10 +863,34 @@ class VenusReference2021TestCase1(unittest.TestCase):
         # # MarsReference2024 test values
         # # Reference values based on altitudes of [0, 20000, 60000, 100_000, 140_000] m
         expected_temp = [735.3, 580.15373493, 260.78698987, 171.79217223, 180.78311551]  # (K)
-        expected_pressure = [9.21000000e+06, 2.23851198e+06, 2.20277689e+04, 2.17264730e+00, 1.91702893e-05]  # (Pa)
-        expected_density = [6.48000000e+01, 2.03136169e+01, 4.38717066e-01, 6.50102839e-05, 2.75367723e-10]  # (kg/m**3)
-        expected_sos = [426.03533001, 378.42940837, 253.72092923, 205.92781816, 211.24783454]  # (m/s) * This estimate is not very accurate.
-        expected_viscosity = [3.13045720e-05, 2.61827952e-05, 1.31108940e-05, 8.59403184e-06, 9.07035998e-06]  # (Pa*s)
+        expected_pressure = [
+            9.21000000e06,
+            2.23851198e06,
+            2.20277689e04,
+            2.17264730e00,
+            1.91702893e-05,
+        ]  # (Pa)
+        expected_density = [
+            6.48000000e01,
+            2.03136169e01,
+            4.38717066e-01,
+            6.50102839e-05,
+            2.75367723e-10,
+        ]  # (kg/m**3)
+        expected_sos = [
+            426.03533001,
+            378.42940837,
+            253.72092923,
+            205.92781816,
+            211.24783454,
+        ]  # (m/s) * This estimate is not very accurate.
+        expected_viscosity = [
+            3.13045720e-05,
+            2.61827952e-05,
+            1.31108940e-05,
+            8.59403184e-06,
+            9.07035998e-06,
+        ]  # (Pa*s)
 
         expected_values = {
             (Dynamic.Atmosphere.TEMPERATURE, 'K'): expected_temp,
@@ -885,7 +908,6 @@ class VenusReference2021TestCase1(unittest.TestCase):
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
 
         assert_check_partials(partial_data)
-
 
 
 if __name__ == '__main__':

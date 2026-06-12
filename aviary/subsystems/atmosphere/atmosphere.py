@@ -183,13 +183,13 @@ class AtmosphereComp(om.ExplicitComponent):
             self._R0 = 3_396_200  # (meters) Mean Equatorial Radius of Mars
         elif self.planet == 'Venus':
             # 96% CO2 atmosphere
-            M_air = 43.45 # (kg/kmol) Venus, 12 Apr 2024, by Cedric Gillmann et al. https://arxiv.org/html/2404.07669v2
-            # source Venus before Venus Express, Taylor et al 2006 
-            gamma = 1.29 # Ratio of specific heats, based on averaging the reference data from Venus-GRAM. Actual values are 1.24 at the surface and 1.45 at 150km
-            self._S = 222 # (K) we use the constant for CO2 which is simillar to Mars because this atmosphere is primarily driven by CO2 interaction.
-            self._beta = 1.503e-6 # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02, the same way as was done for Mars
+            M_air = 43.45  # (kg/kmol) Venus, 12 Apr 2024, by Cedric Gillmann et al. https://arxiv.org/html/2404.07669v2
+            # source Venus before Venus Express, Taylor et al 2006
+            gamma = 1.29  # Ratio of specific heats, based on averaging the reference data from Venus-GRAM. Actual values are 1.24 at the surface and 1.45 at 150km
+            self._S = 222  # (K) we use the constant for CO2 which is simillar to Mars because this atmosphere is primarily driven by CO2 interaction.
+            self._beta = 1.503e-6  # (s*m*K**(1/2)) viscosity scaling coefficient calculated from other constants listed for C02, the same way as was done for Mars
             # the only input the the equation os self._S so this result is the same as Mars
-            self._R0 = 6_051_800 # (meters) Mean Equatorial Radius
+            self._R0 = 6_051_800  # (meters) Mean Equatorial Radius
 
         self._R_air = Rs / M_air  # (J/ (kg * K)), gas constant for atmosphere
         self._K = gamma * Rs / M_air  # (J/(kg * K))
