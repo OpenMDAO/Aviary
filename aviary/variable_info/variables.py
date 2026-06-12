@@ -43,6 +43,12 @@ class Aircraft:
         PASSENGER_LEADING_EDGE_SWEEP = (
             'aircraft:blended_wing_body_design:passenger_leading_edge_sweep'
         )
+        REAR_SPAR_PERCENT_CHORD_CENTERLINE = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_centerline'
+        )
+        REAR_SPAR_PERCENT_CHORD_ROOT = (
+            'aircraft:blended_wing_body_design:rear_spar_percent_chord_root'
+        )
 
     class Canard:
         AREA = 'aircraft:canard:area'

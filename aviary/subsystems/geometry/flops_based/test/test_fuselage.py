@@ -95,6 +95,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58, units='ft')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, val=0.7, units='unitless')
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
@@ -102,7 +103,7 @@ class BWBSimpleCabinLayoutTest(unittest.TestCase):
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 63.96019518, tolerance=1e-9)
+        assert_near_equal(root_chord, 63.96019518 / 0.7, tolerance=1e-9)
         area_cabin = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
         assert_near_equal(area_cabin, 5173.1872025, tolerance=1e-9)
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
@@ -142,7 +143,8 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.setup(check=False, force_alloc_complex=True)
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
-        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, val=0.7, units='unitless')
         prob.run_model()
 
         num_bays = prob.get_val(Aircraft.BWB.NUM_BAYS)
@@ -164,7 +166,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(cabin_area, 4697.33181006, tolerance=1e-9)
 
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 38.5, tolerance=1e-9)
+        assert_near_equal(root_chord, 38.5 / 0.7, tolerance=1e-9)
 
     def test_case2(self):
         """bwb300_baseline"""
@@ -191,7 +193,8 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         # prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=50.0, units='ft')
-        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, val=0.7, units='unitless')
         prob.run_model()
 
         fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
@@ -213,7 +216,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(cabin_area, 2988.87966179, tolerance=1e-9)
 
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 38.5, tolerance=1e-9)
+        assert_near_equal(root_chord, 38.5 / 0.7, tolerance=1e-9)
 
     def test_case3(self):
         """bwb300_baseline, MAX_NUM_BAYS=4, MAX_BAY_WIDTH=10.0"""
@@ -241,7 +244,8 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=60.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
         # prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=50.0, units='ft')
-        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, val=0.7, units='unitless')
         prob.run_model()
 
         bay_width = prob.get_val('bay_width')
@@ -266,7 +270,7 @@ class BWBDetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(cabin_area, 2988.87966179, tolerance=1e-9)
 
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 57.40164466, tolerance=1e-9)
+        assert_near_equal(root_chord, 57.40164466 / 0.7, tolerance=1e-9)
 
 
 @use_tempdirs
@@ -288,8 +292,7 @@ class BWBFuselagePrelimTest(unittest.TestCase):
 
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, val=64.58, units='ft')
         prob.set_val(Aircraft.Fuselage.MAX_HEIGHT, val=17, units='ft')
-        prob.set_val(Aircraft.Wing.ROOT_CHORD, val=7.71, units='ft')
-        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.set_val(Aircraft.Wing.ROOT_CHORD, val=7.71 / 0.7, units='ft')
         prob.run_model()
 
         ref_diameter = prob.get_val(Aircraft.Fuselage.REF_DIAMETER)

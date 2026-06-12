@@ -823,7 +823,8 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         prob.set_val(Aircraft.Fuselage.MAX_WIDTH, 64.58, units='ft')
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, 45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, 0.11, units='unitless')
-        prob.set_val('Rear_spar_percent_chord', 0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, 0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, 0.7, units='unitless')
         # BWBComputeDetailedWingDist
         prob.set_val(Aircraft.Wing.OUTBOARD_SEMISPAN, val=86.75)
         prob.set_val(Aircraft.Wing.THICKNESS_TO_CHORD, val=0.11)
@@ -872,7 +873,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         Testing FLOPS data case:
         Aircraft.BWB.NUM_BAYS -- NBAY = 5
         Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH -- XLP = 96.25
-        Aircraft.Wing.ROOT_CHORD -- XLW = 63.960195184412598
+        Aircraft.Wing.ROOT_CHORD -- XLW = 63.960195184412598, ROOT_CHORD = XLW / 0.7
         Aircraft.Fuselage.CABIN_AREA -- ACABIN = 5173.1872025046832
         Aircraft.Fuselage.MAX_HEIGHT -- DF = 15.125
         Aircraft.Wing.INPUT_STATION_DISTRIBUTION -- ETAW = [0, 32.29, 1]
@@ -917,7 +918,7 @@ class BWBSimplePrepGeomTest(unittest.TestCase):
         pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
         assert_near_equal(pax_compart_length, 96.25, tolerance=1e-8)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 63.96019518, tolerance=1e-8)
+        assert_near_equal(root_chord, 63.96019518 / 0.7, tolerance=1e-8)
         area_cabin = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
         assert_near_equal(area_cabin, 5173.1872025, tolerance=1e-8)
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
@@ -1073,7 +1074,8 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         # BWBDetailedCabinLayout
         prob.set_val(Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP, val=45.0, units='deg')
         prob.set_val(Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD, val=0.11, units='unitless')
-        prob.set_val('Rear_spar_percent_chord', val=0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE, 0.7, units='unitless')
+        prob.set_val(Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT, 0.7, units='unitless')
         # BWBUpdateDetailedWingDist
         prob.set_val(
             Aircraft.Wing.CHORD_PER_SEMISPAN_DISTRIBUTION,
@@ -1171,7 +1173,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         Aircraft.Fuselage.MAX_WIDTH -- WF = 80.22
         Aircraft.Fuselage.MAX_HEIGHT -- DF = 12.35
         Aircraft.Fuselage.CABIN_AREA -- ACABIN = 4697.33
-        Aircraft.Wing.ROOT_CHORD -- XLW = 38.50
+        Aircraft.Wing.ROOT_CHORD -- XLW = 38.50, ROOT_CHORD = XLW / 0.7
         Aircraft.Fuselage.AVG_DIAMETER -- XD = 46.2868886894979
         Aircraft.Fuselage.PLANFORM_AREA -- FPAREA = 6710.4740143724875
         Aircraft.Wing.AREA -- SW = 12109.9
@@ -1218,7 +1220,7 @@ class BWBDetailedPrepGeomTest(unittest.TestCase):
         cabin_area = prob.get_val(Aircraft.Fuselage.CABIN_AREA)
         assert_near_equal(cabin_area, 4697.33181006, tolerance=1e-9)
         root_chord = prob.get_val(Aircraft.Wing.ROOT_CHORD)
-        assert_near_equal(root_chord, 38.5, tolerance=1e-9)
+        assert_near_equal(root_chord, 38.5 / 0.7, tolerance=1e-9)
 
         # BWBUpdateDetailedWingDist
         out1 = prob.get_val('BWB_CHORD_PER_SEMISPAN_DISTRIBUTION')

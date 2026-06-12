@@ -386,6 +386,24 @@ add_meta_data(
     default_value=0.0,
 )
 
+add_meta_data(
+    Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},  # RSPCHD internal to FLOPS
+    units='unitless',
+    desc='BWB rear spar percent chord at the centerline. The cabin generally ends here.',
+    default_value=0.7,
+)
+
+add_meta_data(
+    Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},  # RSPSOB internal to FLOPS
+    units='unitless',
+    desc='BWB rear spar percent chord at the wing root. The cabin generally ends here.',
+    default_value=0.7,
+)
+
 #   _____                                      _
 #  / ____|                                    | |
 # | |        __ _   _ __     __ _   _ __    __| |
@@ -5948,7 +5966,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={
         'GASP': 'INGASP.CROOTW',
-        'FLOPS': 'WTIN.XLW',
+        'FLOPS': 'WTIN.XLOUT',
     },
     units='ft',
     desc='wing chord length at at the wing/fuselage intersection',

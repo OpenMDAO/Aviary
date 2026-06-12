@@ -201,18 +201,8 @@ class BWBAftBodyMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Wing.ROOT_CHORD, units='ft')
         add_aviary_input(self, Aircraft.Wing.COMPOSITE_FRACTION, units='unitless')
-        self.add_input(
-            'Rear_spar_percent_chord',
-            0.7,
-            units='unitless',
-            desc='RSPSOB: Rear spar percent chord for BWB at side of body',
-        )
-        self.add_input(
-            'Rear_spar_percent_chord_centerline',
-            0.7,
-            units='unitless',
-            desc='RSPCHD: Rear spar percent chord for BWB at fuselage centerline',
-        )
+        add_aviary_input(self, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE)
+        add_aviary_input(self, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT)
 
         add_aviary_output(self, Aircraft.Fuselage.AFTBODY_MASS, units='lbm')
         add_aviary_output(self, Aircraft.Wing.BWB_AFTBODY_MASS, units='lbm')
@@ -226,8 +216,8 @@ class BWBAftBodyMass(om.ExplicitComponent):
                 Aircraft.Fuselage.CABIN_AREA,
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Wing.ROOT_CHORD,
-                'Rear_spar_percent_chord',
-                'Rear_spar_percent_chord_centerline',
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
             ],
         )
         self.declare_partials(
@@ -239,8 +229,8 @@ class BWBAftBodyMass(om.ExplicitComponent):
                 Aircraft.Fuselage.LENGTH,
                 Aircraft.Wing.ROOT_CHORD,
                 Aircraft.Wing.COMPOSITE_FRACTION,
-                'Rear_spar_percent_chord',
-                'Rear_spar_percent_chord_centerline',
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT,
+                Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE,
             ],
         )
 
@@ -252,22 +242,24 @@ class BWBAftBodyMass(om.ExplicitComponent):
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         length = inputs[Aircraft.Fuselage.LENGTH]
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
-        rear_spar_percent_chord_centerline = inputs['Rear_spar_percent_chord_centerline']
+        rear_spar_percent_chord = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT]
+        rear_spar_percent_chord_centerline = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE]
         comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
 
         if rear_spar_percent_chord <= 0.0 or rear_spar_percent_chord >= 1.0:
             if verbosity > Verbosity.BRIEF:
-                raise ValueError('Rear_spar_percent_chord must be within 0 and 1.')
+                msg = f'{Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT} must be within 0 and 1.'
+                raise ValueError(msg)
         if rear_spar_percent_chord_centerline <= 0.0 or rear_spar_percent_chord_centerline >= 1.0:
             if verbosity > Verbosity.BRIEF:
-                raise ValueError('Rear_spar_percent_chord_centerline must be within 0 and 1.')
+                msg = f'{Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE} must be within 0 and 1.'
+                raise ValueError()
         if length <= 0.0:
             if verbosity > Verbosity.BRIEF:
                 raise ValueError('Aircraft.Fuselage.LENGTH must be positive.')
 
         aftbody_area = fuse_area - cabin_area
-        aftbody_tr = ((1.0 - rear_spar_percent_chord) * root_chord / rear_spar_percent_chord) / (
+        aftbody_tr = ((1.0 - rear_spar_percent_chord) * root_chord) / (
             (1.0 - rear_spar_percent_chord_centerline) * length
         )
         aftbody_weight = (
@@ -288,13 +280,13 @@ class BWBAftBodyMass(om.ExplicitComponent):
         cabin_area = inputs[Aircraft.Fuselage.CABIN_AREA]
         length = inputs[Aircraft.Fuselage.LENGTH]
         root_chord = inputs[Aircraft.Wing.ROOT_CHORD]
-        rear_spar_percent_chord = inputs['Rear_spar_percent_chord']
-        rear_spar_percent_chord_centerline = inputs['Rear_spar_percent_chord_centerline']
+        rear_spar_percent_chord = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT]
+        rear_spar_percent_chord_centerline = inputs[Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE]
         comp_frac = inputs[Aircraft.Wing.COMPOSITE_FRACTION]
         fac = 1.0 - 0.17 * comp_frac
 
         aftbody_area = fuse_area - cabin_area
-        aftbody_tr = ((1.0 - rear_spar_percent_chord) * root_chord / rear_spar_percent_chord) / (
+        aftbody_tr = ((1.0 - rear_spar_percent_chord) * root_chord) / (
             (1.0 - rear_spar_percent_chord_centerline) * length
         )
         aftbody_weight = (
@@ -328,7 +320,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] = (
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.CABIN_AREA] * fac
         )
-        daftbody_tr_droot_chord = ((1.0 - rear_spar_percent_chord) / rear_spar_percent_chord) / (
+        daftbody_tr_droot_chord = ((1.0 - rear_spar_percent_chord)) / (
             (1.0 - rear_spar_percent_chord_centerline) * length
         )
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] = (
@@ -342,7 +334,7 @@ class BWBAftBodyMass(om.ExplicitComponent):
             J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Wing.ROOT_CHORD] * fac
         )
         daftbody_tr_dlength = -(
-            (1.0 - rear_spar_percent_chord) * root_chord / rear_spar_percent_chord
+            (1.0 - rear_spar_percent_chord) * root_chord
         ) / ((1.0 - rear_spar_percent_chord_centerline) * length**2)
         J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.Fuselage.LENGTH] = (
             (1.0 + 0.05 * num_fuse_eng)
@@ -356,32 +348,31 @@ class BWBAftBodyMass(om.ExplicitComponent):
         )
         daftbody_tr_drspc = (
             -1.0
-            / rear_spar_percent_chord**2
             * root_chord
             / ((1.0 - rear_spar_percent_chord_centerline) * length)
         )
-        J[Aircraft.Fuselage.AFTBODY_MASS, 'Rear_spar_percent_chord'] = (
+        J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] = (
             (1.0 + 0.05 * num_fuse_eng)
             * 0.53
             * aftbody_area
             * gross_weight**0.2
             * daftbody_tr_drspc
         ) / GRAV_ENGLISH_LBM
-        J[Aircraft.Wing.BWB_AFTBODY_MASS, 'Rear_spar_percent_chord'] = (
-            J[Aircraft.Fuselage.AFTBODY_MASS, 'Rear_spar_percent_chord'] * fac
+        J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] = (
+            J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_ROOT] * fac
         )
         daftbody_tr_drspcc = (
-            (1.0 - rear_spar_percent_chord) * root_chord / rear_spar_percent_chord
+            (1.0 - rear_spar_percent_chord) * root_chord
         ) / ((1.0 - rear_spar_percent_chord_centerline) ** 2 * length)
-        J[Aircraft.Fuselage.AFTBODY_MASS, 'Rear_spar_percent_chord_centerline'] = (
+        J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE] = (
             (1.0 + 0.05 * num_fuse_eng)
             * 0.53
             * aftbody_area
             * gross_weight**0.2
             * daftbody_tr_drspcc
         ) / GRAV_ENGLISH_LBM
-        J[Aircraft.Wing.BWB_AFTBODY_MASS, 'Rear_spar_percent_chord_centerline'] = (
-            J[Aircraft.Fuselage.AFTBODY_MASS, 'Rear_spar_percent_chord_centerline'] * fac
+        J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE] = (
+            J[Aircraft.Fuselage.AFTBODY_MASS, Aircraft.BWB.REAR_SPAR_PERCENT_CHORD_CENTERLINE] * fac
         )
         J[Aircraft.Wing.BWB_AFTBODY_MASS, Aircraft.Wing.COMPOSITE_FRACTION] = (
             -0.17 * aftbody_weight

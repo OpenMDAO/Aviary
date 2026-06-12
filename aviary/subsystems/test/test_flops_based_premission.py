@@ -534,7 +534,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.SPAN], 238.08, tol)
         # BWBSimpleCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 96.25, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 63.96 / 0.7, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 5173.187202504683, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 15.125, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 5.0, 1e-4)
@@ -782,7 +782,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         assert_near_equal(prob[Aircraft.Wing.SPAN], 253.720756, tol)
         # DetailedCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 78.61013558, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5 / 0.7, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 4697.33181006, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 12.35302131, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 7.0, tol)
@@ -1031,7 +1031,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # DetailedCabinLayout
         assert_near_equal(prob[Aircraft.Fuselage.MAX_WIDTH], 49.77182929, tolerance=1e-9)
         assert_near_equal(prob[Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH], 81.60326742, tol)
-        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5, tol)
+        assert_near_equal(prob[Aircraft.Wing.ROOT_CHORD], 38.5 / 0.7, tol)
         assert_near_equal(prob[Aircraft.Fuselage.CABIN_AREA], 2988.879661796, tol)
         assert_near_equal(prob[Aircraft.Fuselage.MAX_HEIGHT], 20.89043646, tol)
         assert_near_equal(prob[Aircraft.BWB.NUM_BAYS], 4.0, tol)
