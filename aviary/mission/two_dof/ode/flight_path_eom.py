@@ -1,9 +1,9 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM, MU_TAKEOFF
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.constants import GRAV_ENGLISH_GASP, GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class FlightPathEOM(om.ExplicitComponent):
@@ -11,8 +11,6 @@ class FlightPathEOM(om.ExplicitComponent):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
-        self._mu = MU_TAKEOFF
 
     def initialize(self):
         self.options.declare('num_nodes', types=int)
@@ -28,39 +26,18 @@ class FlightPathEOM(om.ExplicitComponent):
         nn = self.options['num_nodes']
         ground_roll = self.options['ground_roll']
 
-        self.add_input(Dynamic.Vehicle.MASS, val=np.ones(nn), desc='aircraft mass', units='lbm')
-        self.add_input(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
+        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
+        add_aviary_input(
+            self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='lbf'
         )
-        self.add_input(
-            Dynamic.Vehicle.LIFT,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.LIFT,
-            units='lbf',
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='lbf')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='lbf')
+        add_aviary_input(
+            self, Dynamic.Mission.VELOCITY, val=np.ones(nn), desc='true air speed', units='ft/s'
         )
-        self.add_input(
-            Dynamic.Vehicle.DRAG,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.DRAG,
-            units='lbf',
-        )
-        self.add_input(
-            Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
-            desc='true air speed',
-            units='ft/s',
-        )
-        self.add_input(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            val=np.ones(nn),
-            desc='flight path angle',
-            units='rad',
-        )
-
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.ones(nn), units='rad')
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0)
+        add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
         self.add_output(
             Dynamic.Mission.VELOCITY_RATE,
@@ -71,7 +48,6 @@ class FlightPathEOM(om.ExplicitComponent):
         )
 
         if not ground_roll:
-            self._mu = 0.0
             self.add_output(
                 Dynamic.Mission.ALTITUDE_RATE,
                 val=np.ones(nn),
@@ -89,12 +65,7 @@ class FlightPathEOM(om.ExplicitComponent):
                     'dymos.state_units:rad',
                 ],
             )
-            self.add_input(
-                Dynamic.Vehicle.ANGLE_OF_ATTACK,
-                val=np.ones(nn),
-                desc='angle of attack',
-                units='deg',
-            )
+            add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.ones(nn), units='deg')
 
         self.add_output(
             Dynamic.Mission.DISTANCE_RATE,
@@ -139,6 +110,10 @@ class FlightPathEOM(om.ExplicitComponent):
         )
 
         self.declare_partials(Dynamic.Mission.VELOCITY_RATE, [Aircraft.Wing.INCIDENCE])
+        if ground_roll:
+            self.declare_partials(
+                Dynamic.Mission.VELOCITY_RATE, [Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+            )
 
         if not ground_roll:
             self.declare_partials(
@@ -217,7 +192,10 @@ class FlightPathEOM(om.ExplicitComponent):
         self.declare_partials('fuselage_pitch', [Aircraft.Wing.INCIDENCE])
 
     def compute(self, inputs, outputs):
-        mu = MU_TAKEOFF if self.options['ground_roll'] else 0.0
+        if self.options['ground_roll']:
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+        else:
+            mu = 0.0
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -265,7 +243,10 @@ class FlightPathEOM(om.ExplicitComponent):
         outputs['load_factor'] = load_factor
 
     def compute_partials(self, inputs, J):
-        mu = MU_TAKEOFF if self.options['ground_roll'] else 0.0
+        if self.options['ground_roll']:
+            mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
+        else:
+            mu = 0.0
 
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]
@@ -347,6 +328,10 @@ class FlightPathEOM(om.ExplicitComponent):
         J[Dynamic.Mission.VELOCITY_RATE, Dynamic.Vehicle.LIFT] = (
             GRAV_ENGLISH_GASP * (-mu * dNF_dLift) / weight
         )
+        if self.options['ground_roll']:
+            J[Dynamic.Mission.VELOCITY_RATE, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT] = (
+                -normal_force * GRAV_ENGLISH_GASP / weight
+            )
 
         # TODO: check partials, esp. for alphas
         if not self.options['ground_roll']:

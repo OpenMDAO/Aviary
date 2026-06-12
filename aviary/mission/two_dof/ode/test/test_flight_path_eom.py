@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.flight_path_eom import FlightPathEOM
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
 
 
+@use_tempdirs
 class FlightPathEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.ground_roll = False
@@ -15,6 +17,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
         self.fp = self.prob.model.add_subsystem(
             'group', FlightPathEOM(num_nodes=2, ground_roll=self.ground_roll), promotes=['*']
         )
+        self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         self.prob.setup(check=False, force_alloc_complex=True)
 
     def test_case1(self):
@@ -83,6 +86,7 @@ class FlightPathEOMTestCase2(unittest.TestCase):
         prob.model.add_subsystem(
             'group', FlightPathEOM(num_nodes=2, ground_roll=False), promotes=['*']
         )
+        prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
