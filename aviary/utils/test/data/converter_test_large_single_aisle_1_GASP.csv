@@ -154,7 +154,7 @@ mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900.0,ft/min
 mission:landing:obstacle_height,50.0,ft
 mission:landing:touchdown_sink_rate,5.0,ft/s
-mission:reserve_fuel_additional,4998,lbm
+mission:reserve_fuel_mass_additional,4998,lbm
 mission:takeoff:decision_speed_increment,10.0,kn
 mission:takeoff:rolling_friction_coefficient,0.02,unitless
 mission:takeoff:rotation_speed_increment,5.0,kn

@@ -251,7 +251,7 @@ class TakeOffODE(TwoDOFODE):
                     'dmass_dv',
                 ],
                 promotes_inputs=[
-                    ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                    ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                     'dt_dv',
                 ],
             )

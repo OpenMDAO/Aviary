@@ -73,7 +73,7 @@ class FlightODEClimbTestCase(unittest.TestCase):
             # TAS (kts -> ft/s) * cos(gamma), 253.6827 * 1.68781 *
             # cos(0.13331060446181708)
             Dynamic.Mission.DISTANCE_RATE: 424.19921863,  # ft/s
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -13447.98081484,  # lbm/h
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: -13447.98081484,  # lbm/h
             'theta': 0.22495483,  # rad (12.8021 deg)
             # rad (7.638135 deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: 0.13669486,
@@ -121,7 +121,7 @@ class FlightODEClimbTestCase(unittest.TestCase):
             # TAS (kts -> ft/s) * cos(gamma), [319, 459] kts
             # ft/s
             Dynamic.Mission.DISTANCE_RATE: [536.0936254, 774.32986512],
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: [
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: [
                 -11418.00064615,
                 -6042.88107957,
             ],
@@ -187,7 +187,7 @@ class FlightODEDescenTestCase(unittest.TestCase):
             # TAS (ft/s) * cos(gamma), [458.67774, 437.62297] kts
             Dynamic.Mission.DISTANCE_RATE: [773.50001989, 737.22403068],  # ft/s
             # lbm/h
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: np.array(
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: np.array(
                 [-452.29666667, -997.48350936]
             ),
             'EAS': [418.57187298, 590.73344999],  # ft/s ([247.95894, 349.99997] kts)
@@ -231,7 +231,7 @@ class FlightODEDescenTestCase(unittest.TestCase):
             Dynamic.Mission.ALTITUDE_RATE: -17.6942839,
             # TAS (ft/s) * cos(gamma) = 255.5613 * 1.68781 * cos(-0.0440083)
             Dynamic.Mission.DISTANCE_RATE: 431.0014619,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL: -1295.1511839,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL: -1295.1511839,
             # rad (-2.52149 deg)
             Dynamic.Mission.FLIGHT_PATH_ANGLE: -0.04103086,
         }

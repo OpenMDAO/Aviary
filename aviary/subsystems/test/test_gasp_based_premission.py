@@ -106,7 +106,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 16048.0025,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 848.5301,
             Mission.OPERATING_MASS: 96954.6194,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 0,
         }
 
         for var_name, expected in expected_values.items():
@@ -196,7 +196,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 15694.0515,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 867.4514906,
             Mission.OPERATING_MASS: 96008.12976964,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 0,
         }
 
         for var_name, expected in expected_values.items():
@@ -338,7 +338,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 8627.6738,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 751.74213602,
             Mission.OPERATING_MASS: 82064.29761786,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 3876.43000743,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 3876.43000743,
         }
 
         for var_name, expected in expected_values.items():
@@ -498,7 +498,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 8627.72,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 751.7973,
             Mission.OPERATING_MASS: 82062.193,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 3878.938,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 3878.938,
         }
 
         for var_name, expected in expected_values.items():

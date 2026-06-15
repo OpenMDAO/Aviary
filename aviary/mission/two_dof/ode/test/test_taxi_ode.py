@@ -48,7 +48,7 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0, units='ft')
         self.prob.set_val(Mission.Taxi.MACH, 0.1, units='unitless')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -1512,
             units='lbm/h',
         )

@@ -26,7 +26,7 @@ class TaxiFuelComponentTestCase(unittest.TestCase):
         self.prob.setup(force_alloc_complex=True)
 
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -1512,
             units='lbm/h',
         )
