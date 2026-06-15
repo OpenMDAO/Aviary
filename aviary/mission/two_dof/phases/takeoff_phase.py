@@ -283,6 +283,26 @@ class TakeoffPhase(PhaseBuilder):
             'rotation': self.user_options.get_val('rotation'),
         }
 
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        ground_roll = self.user_options.get_val('ground_roll')
+        rotation = self.user_options.get_val('rotation')
+
+        linked_vars = [
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.VELOCITY,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+
+        if not (ground_roll or rotation):
+            linked_vars.append(Dynamic.Mission.ALTITUDE)
+
+        if not ground_roll:
+            linked_vars.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+
+        return linked_vars
+
     def get_parameters(self):
         params = {}
         params[Aircraft.Wing.INCIDENCE] = {

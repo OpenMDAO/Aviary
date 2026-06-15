@@ -185,6 +185,16 @@ class SimpleCruisePhase(PhaseBuilder):
 
         return phase
 
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            'initial_distance',
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
+
 
 SimpleCruisePhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
