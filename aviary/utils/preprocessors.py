@@ -47,6 +47,13 @@ def preprocess_options(
             verbosity = meta_data[Settings.VERBOSITY]['default_value']
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
+    if Settings.AERODYNAMICS_METHOD in aviary_options:
+        aero_method = aviary_options.get_val(Settings.AERODYNAMICS_METHOD)
+    else:
+        raise UserWarning(
+            'AERODYNAMICS_METHOD not specified. Cannot preprocess fuel aerodynamic inputs.'
+        )
+
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
 
@@ -81,6 +88,17 @@ def preprocess_options(
                         'Setting Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE to the same value as '
                         f'Aircraft.Wing.THICKNESS_TO_CHORD ({tc}).'
                     )
+
+    try:
+        excrescences_drag = aviary_options.get_val(
+            Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 'unitless'
+        )
+    except KeyError:
+        if aero_method == LegacyCode.FLOPS:
+            excrescences_drag = 0.06
+        else:
+            excrescences_drag = 0.075
+        aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, excrescences_drag)
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
