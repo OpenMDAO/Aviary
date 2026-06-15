@@ -162,7 +162,7 @@ def subsystem_report(prob: AviaryProblem):
 
     multi_mission = prob.problem_type is ProblemType.MULTI_MISSION
     if multi_mission:
-        # TODO: We need to rewrite the reports to support multimission. This may require
+        # See issue #1186. We need to rewrite the reports to support multimission. This may require
         # standardizing how all attributes work in AviaryProblem (things like prob.model.get_val
         # don't work with multi-mission but does for normal problems). End goal is to loop through
         # each mission and get reports for each mission. Show in dashboard in nested tabs (new
@@ -172,7 +172,7 @@ def subsystem_report(prob: AviaryProblem):
     else:
         model = prob.model
 
-    subsystems = model.subsystems  # TODO: redo for multimissions
+    subsystems = model.subsystems  # See issue #1186. redo for multimissions
 
     for subsystem in subsystems:
         subsystem.report(prob, reports_folder)
@@ -242,7 +242,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
     for name, model in models.items():
         # read per-phase data from trajectory
         data = {}
-        for idx, phase in enumerate(model.mission_info):  # TODO: redo for multimissions
+        for idx, phase in enumerate(model.mission_info):  # See issue #1186. redo for multimissions
             # TODO for traj in trajectories, currently assuming single one named "traj"
             # TODO delta mass and fuel consumption need to be tracked separately
             fuel_burn = _get_phase_diff(model, 'traj', phase, 'mass', 'lbm', [-1, 0])
@@ -497,7 +497,7 @@ def timeseries_csv(prob: AviaryProblem, **kwargs):
     multi_mission = prob.problem_type == ProblemType.MULTI_MISSION
     if multi_mission:
         for _, model in prob.aviary_groups_dict.items():
-            # TODO: We need to rewrite this report to support multimission
+            # See issue #1186. We need to rewrite this report to support multimission
             # For now, just write the first mission's csv file.
             break
     else:

@@ -2,7 +2,7 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math import dSigmoidXdx, sigmoidX
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
@@ -133,7 +133,7 @@ class ACMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
 
-        self.add_output(Aircraft.AirConditioning.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.AirConditioning.MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.AirConditioning.MASS,
@@ -210,7 +210,7 @@ class BWBACMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Fuselage.HYDRAULIC_DIAMETER, units='ft')
 
-        self.add_output(Aircraft.AirConditioning.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.AirConditioning.MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.AirConditioning.MASS,

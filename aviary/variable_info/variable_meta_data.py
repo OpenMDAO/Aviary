@@ -551,6 +551,15 @@ add_meta_data(
 # ========================================================
 
 add_meta_data(
+    Aircraft.Controls.COCKPIT_CONTROL_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    units='lbm',
+    desc='cockpit controls mass',
+    default_value=1.0,
+)
+
+add_meta_data(
     Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CK15', 'FLOPS': None},
@@ -581,9 +590,9 @@ add_meta_data(
 add_meta_data(
     Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.SKSAS', 'FLOPS': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='mass of stability augmentation system',
+    desc='scaled mass of stability augmentation system',
     default_value=0,
 )
 
@@ -594,6 +603,15 @@ add_meta_data(
     units='unitless',
     desc='technology factor on stability augmentation system mass',
     default_value=1,
+)
+
+add_meta_data(
+    Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'INGASP.SKSAS', 'FLOPS': None},
+    units='lbm',
+    desc='reference mass of stability augmentation system',
+    default_value=0,
 )
 
 #   _____                            _____                    _                       _
@@ -955,7 +973,8 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.CW(14)', 'FLOPS': None},
     units='lbm',
-    desc='unit mass of ULD (unit load device) for cargo handling per passenger',
+    desc='unit mass of ULD (unit load device) for cargo handling per passenger. Used to calculate'
+    'Aicraft.CrewPayload.CARGO_CONTAINER_MASS',
     default_value=0.0,
     types=float,
     option=True,
@@ -1046,7 +1065,8 @@ add_meta_data(
         'FLOPS': 'WTIN.NPF',  # ['&DEFINE.WTIN.NPF', 'WTS.NPF'],
     },
     units='unitless',
-    desc='number of first class passengers that the aircraft is designed to accommodate. In GASP, the input is the percentage of total number of passengers.',
+    desc='number of first class passengers that the aircraft is designed to accommodate. In GASP, '
+    'the input is the percentage of total number of passengers.',
     types=int,
     option=True,
     default_value=0,
@@ -1165,6 +1185,7 @@ add_meta_data(
     default_value=0.0,
 )
 
+# See issue #1182. this should be removed from metadata (intermediate calculation)
 add_meta_data(
     Aircraft.Design.CHARACTERISTIC_LENGTHS,
     meta_data=_MetaData,
@@ -1433,12 +1454,12 @@ add_meta_data(
     Aircraft.Design.LANDING_TO_TAKEOFF_MASS_RATIO,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.WLPCT',
         'FLOPS': 'AERIN.WRATIO',  # ['&DEFINE.AERIN.WRATIO', 'ESB.WRATIO'],
     },
     units='unitless',
     desc='ratio of maximum landing mass to maximum takeoff mass',
-    default_value=0.0,
+    default_value=1.0,
 )
 
 add_meta_data(
@@ -4324,7 +4345,7 @@ add_meta_data(
         'FLOPS': None,
     },
     units='lbm',
-    desc='estimated mass of the nacelles for each engine model',
+    desc='estimated mass of a single nacelle for each engine model',
     default_value=0.0,
     multivalue=True,
 )
@@ -7095,7 +7116,7 @@ add_meta_data(
     # historical_name={
     #     'FLOPS': ['&DEFTOL.TOLIN.BRAKMU', 'BALFLD.BRAKMU'],
     #     'GASP': None,
-    historical_name={'FLOPS': None, 'GASP': None},
+    historical_name={'FLOPS': None, 'GASP': 'INGASP.MUB'},
     default_value=0.3,
     units='unitless',
     desc='landing coefficient of friction, with brakes on',
@@ -7567,7 +7588,7 @@ add_meta_data(
     Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT,
     meta_data=_MetaData,
     historical_name={
-        'GASP': None,
+        'GASP': 'INGASP.UM',
         # ['&DEFTOL.TOLIN.ROLLMU', 'BALFLD.ROLLMU'],
         'FLOPS': 'TOLIN.ROLLMU',
     },

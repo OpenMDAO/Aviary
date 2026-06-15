@@ -59,12 +59,16 @@ class Aircraft:
         WETTED_AREA_SCALER = 'aircraft:canard:wetted_area_scaler'
 
     class Controls:
+        COCKPIT_CONTROL_MASS = 'aircraft:controls:cockpit_control_mass'
         COCKPIT_CONTROL_MASS_SCALER = 'aircraft:controls:cockpit_control_mass_scaler'
         CONTROL_MASS_INCREMENT = 'aircraft:controls:control_mass_increment'
         MASS = 'aircraft:controls:mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS = 'aircraft:controls:stability_augmentation_system_mass'
         STABILITY_AUGMENTATION_SYSTEM_MASS_SCALER = (
             'aircraft:controls:stability_augmentation_system_mass_scaler'
+        )
+        STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS = (
+            'aircraft:controls:stability_augmentation_system_reference_mass'
         )
 
     class CrewPayload:
@@ -120,8 +124,7 @@ class Aircraft:
             SEAT_PITCH_FIRST = 'aircraft:crew_and_payload:design:seat_pitch_first'
 
     class Design:
-        # These variables are values that do not fall into a particular aircraft
-        # component.
+        # These variables are values that do not fall into a particular aircraft component.
         BASE_AREA = 'aircraft:design:base_area'
         CG_DELTA = 'aircraft:design:cg_delta'
         CHARACTERISTIC_LENGTHS = 'aircraft:design:characteristic_lengths'
@@ -609,11 +612,11 @@ class Dynamic:
         typically used by the Equations of Motion to determine vehicle states at each timestep.
         """
 
-        # TODO Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
+        # See issue #1173. Vehicle summary forces, torques, etc. in X,Y,Z axes should also go here
         ALTITUDE = 'altitude'
         ALTITUDE_RATE = 'altitude_rate'
         ALTITUDE_RATE_MAX = 'altitude_rate_max'
-        # TODO Angle of Attack
+        # See issue #1173. Angle of Attack
         DISTANCE = 'distance'
         DISTANCE_RATE = 'distance_rate'
         FLIGHT_PATH_ANGLE = 'flight_path_angle'

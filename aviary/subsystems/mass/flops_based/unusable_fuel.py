@@ -63,7 +63,7 @@ class TransportUnusableFuelMass(om.ExplicitComponent):
         thrust_factor = distributed_thrust_factor(max_sls_thrust, num_eng)
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        # TODO: check if this is really a volume
+        # This is a volume: lbm / (lbm/galUS)
         # outputs[Aircraft.Fuel.TOTAL_VOLUME] = total_capacity / density_ratio
 
         outputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS] = (

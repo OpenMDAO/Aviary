@@ -93,7 +93,7 @@ class EnginePodMassTest(unittest.TestCase):
         prob.run_model()
 
         mass = prob.get_val(Aircraft.Engine.POD_MASS)
-        expected_mass = np.array([525.0, 60.0, 362.14285714])
+        expected_mass = np.array([575.0, 75.0, 416.4285714])
 
         assert_near_equal(mass, expected_mass, tolerance=1e-10)
 
