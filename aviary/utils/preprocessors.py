@@ -97,7 +97,7 @@ def preprocess_options(
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
         # In GASP, default excrescence drag is different
-        if aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.GASP:
+        elif aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.GASP:
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.075)
 
 
