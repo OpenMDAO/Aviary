@@ -7725,7 +7725,9 @@ add_meta_data(
     Settings.ATMOSPHERE_MODEL,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
-    desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold.',
+    desc='The atmospheric model used. Chose one of: standard, tropical, polar, hot, cold, '
+    'mars_reference, mars_hellas_hot, mars_hellas_cold, mars_equator_hot, '
+    'mars_equator_cold, mars_polar_hot, mars_polar_cold, venus_reference',
     option=True,
     types=AtmosphereModel,
     default_value=AtmosphereModel.STANDARD,
