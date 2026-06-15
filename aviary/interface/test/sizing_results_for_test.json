@@ -204,12 +204,6 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:design:percent_excrescence_drag",
-        0.06,
-        "unitless",
-        "<class 'float'>"
-    ],
-    [
         "aircraft:design:touchdown_mass_max",
         152800.0,
         "lbm",
@@ -1123,6 +1117,12 @@
         2,
         "unitless",
         "<class 'int'>"
+    ],
+    [
+        "aircraft:design:percent_excrescence_drag",
+        0.06,
+        "unitless",
+        "<class 'float'>"
     ],
     [
         "mission:gross_mass",

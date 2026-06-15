@@ -82,6 +82,15 @@ def preprocess_options(
                         f'Aircraft.Wing.THICKNESS_TO_CHORD ({tc}).'
                     )
 
+    # In FLOPS, excrescence drag percentage is not able to be set via the input file
+    # Therefore, it appears to have been hardcoded into the method
+    # Here we set the default value to that fixed value
+    if (
+        aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
+        and Aircraft.Design.PERCENT_EXCRESCENCE_DRAG not in aviary_options
+    ):
+        aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
+
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """

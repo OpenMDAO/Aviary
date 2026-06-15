@@ -30,7 +30,6 @@ aircraft:design:cruise_mach,0.785,unitless
 aircraft:design:empty_mass_margin_scaler,0.0,unitless
 aircraft:design:gross_mass,181200.0,lbm
 aircraft:design:lift_dependent_drag_coeff_factor,0.909839381134961,unitless
-aircraft:design:percent_excrescence_drag,0.06,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless

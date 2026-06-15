@@ -28,7 +28,6 @@ aircraft:design:empty_mass_margin_scaler,0.00514,unitless
 aircraft:design:gross_mass,174200.0,lbm
 aircraft:design:landing_to_takeoff_mass_ratio,0.84,unitless
 aircraft:design:lift_dependent_drag_coeff_factor,1.0,unitless
-aircraft:design:percent_excrescence_drag,0.06,unitless
 aircraft:design:range,2960.0,NM
 aircraft:design:subsonic_drag_coeff_factor,1.0,unitless
 aircraft:design:supersonic_drag_coeff_factor,1.0,unitless

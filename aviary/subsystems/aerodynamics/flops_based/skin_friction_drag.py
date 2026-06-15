@@ -183,7 +183,7 @@ class SkinFrictionDrag(om.ExplicitComponent):
         # to the drag.
         # This may be "dead weight" from FLOPS - D.J.
 
-        # An additional six percent of the skin friction drag is added to for excrescences
+        # An additional percentage of the skin friction drag is added to for excrescences
         # (miscellaneous).
         CDF *= 1.0 + inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
 

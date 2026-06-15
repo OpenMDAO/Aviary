@@ -1414,7 +1414,7 @@ add_meta_data(
     desc='A flag used by Jeff V. Bowles to debug GASP code during his 53 years supporting the '
     'development of GASP. This flag is planted here to thank him for his hard work and dedication, '
     "Aviary wouldn't be what it is today without his help.",
-)  # Jeff started working as a summer intern in 1970.
+)
 
 add_meta_data(
     Aircraft.Design.INTERFERENCE_DRAG_FACTOR,
