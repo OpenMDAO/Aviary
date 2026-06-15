@@ -1084,9 +1084,9 @@ class AviaryGroup(om.Group):
             if verbosity >= Verbosity.BRIEF:
                 warnings.warn(
                     'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore '
-                    'EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem. The '
+                    'EXCESS_FUEL_MASS_CAPACITY constraint was not added to the Aviary problem. The '
                     'aircraft may not have enough space for fuel, so check the value of '
-                    'Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
+                    'Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY for details.'
                 )
 
         post_mission.add_subsystem(
