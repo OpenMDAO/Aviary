@@ -47,6 +47,13 @@ def preprocess_options(
             verbosity = meta_data[Settings.VERBOSITY]['default_value']
             aviary_options.set_val(Settings.VERBOSITY, verbosity)
 
+    if Settings.AERODYNAMICS_METHOD in aviary_options:
+        aero_method = aviary_options.get_val(Settings.AERODYNAMICS_METHOD)
+    else:
+        raise UserWarning(
+            'AERODYNAMICS_METHOD not specified. Cannot preprocess fuel aerodynamic inputs.'
+        )
+
     preprocess_crewpayload(aviary_options, meta_data, verbosity)
     preprocess_fuel_capacities(aviary_options, verbosity)
 
@@ -82,14 +89,16 @@ def preprocess_options(
                         f'Aircraft.Wing.THICKNESS_TO_CHORD ({tc}).'
                     )
 
-    # In FLOPS, excrescence drag percentage is not able to be set via the input file
-    # Therefore, it appears to have been hardcoded into the method
-    # Here we set the default value to that fixed value
-    if (
-        aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
-        and Aircraft.Design.PERCENT_EXCRESCENCE_DRAG not in aviary_options
-    ):
-        aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
+    if Aircraft.Design.PERCENT_EXCRESCENCE_DRAG not in aviary_options:
+        # In FLOPS, excrescence drag percentage is not able to be set via the input file
+        # Therefore, it appears to have been hardcoded into the method
+        # Here we set the default value to that fixed value
+        if aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS:
+            aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
+
+        # In GASP, default excrescence drag is different
+        if aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.GASP:
+            aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.075)
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
