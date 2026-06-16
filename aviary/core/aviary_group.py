@@ -1216,8 +1216,9 @@ class AviaryGroup(om.Group):
                 if pin1 and pin2:
                     continue
 
-                if var == 'time':
-                    # Always connect time.
+                if var == 'time' or var == 'distance':
+                    # Connecting these directly makes the problem more robust to mistakes in the
+                    # user-assigned initial conditions.
                     connect = connect_directly
 
                 elif self.mission_method is TWO_DEGREES_OF_FREEDOM and var == 'mass':
@@ -1259,28 +1260,38 @@ class AviaryGroup(om.Group):
             # Target analytic phases may take a single start input that needs to connect
             # Sort because of MPI
             for var in sorted(downstream_analytic):
-                source = var.lstrip('initial_')
+                source = var.removeprefix('initial_')
                 if source not in vars1:
                     continue
 
-                kwargs = self._find_scaling(source, phase_info1, phase_info2)
+                if source == 'time' or source == 'distance':
+                    connected = connect_directly
+                    kwargs = {}
+                else:
+                    connected = False
+                    kwargs = self._find_scaling(source, phase_info1, phase_info2)
 
                 self.traj.add_linkage_constraint(
-                    phase1, phase2, source, var, connected=False, **kwargs
+                    phase1, phase2, source, var, connected=connected, **kwargs
                 )
 
             # Source analytic phases should still connect to the timeseries.
             # Sort because of MPI
             for var in sorted(upstream_analytic):
-                var = var.lstrip('initial_')
+                var = var.removeprefix('initial_')
                 if var not in vars2:
                     continue
 
-                kwargs = self._find_scaling(var, phase_info1, phase_info2)
+                if var == 'time' or var == 'distance':
+                    connected = connect_directly
+                    kwargs = {}
+                else:
+                    connected = False
+                    kwargs = self._find_scaling(var, phase_info1, phase_info2)
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
-                    connected=False,
+                    connected=connected,
                     vars=[var],
                     **kwargs,
                 )
