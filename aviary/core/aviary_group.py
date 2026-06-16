@@ -1216,6 +1216,8 @@ class AviaryGroup(om.Group):
                 if pin1 and pin2:
                     continue
 
+                connect = connect_directly
+
                 if var == 'time' or var == 'distance':
                     # Connecting these directly makes the problem more robust to mistakes in the
                     # user-assigned initial conditions.
@@ -1233,12 +1235,13 @@ class AviaryGroup(om.Group):
                     # Constraints seem to work better with the analytic phases.
                     connect = False
 
-                else:
+                elif opt2 is not None :
                     # Controls cannot connect directly.
-                    connect = False if opt2 is not None else connect_directly
+                    connect = False
 
+                elif pin2:
                     # Pinned front can't take input.
-                    connect = False if pin2 else connect
+                    connect = False
 
                 kwargs = {}
                 if not connect:
