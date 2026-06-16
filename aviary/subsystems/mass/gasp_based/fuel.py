@@ -47,7 +47,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
-        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
         self.add_output(
             'extra_fuel_volume',
             val=0,
@@ -67,7 +67,7 @@ class BodyTankCalculations(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
             ['fuel_mass_required', 'max_wingfuel_mass'],
         )
         self.declare_partials(
@@ -190,7 +190,7 @@ class BodyTankCalculations(om.ExplicitComponent):
             else:
                 max_fuel_avail = (max_fuel_avail_est + max_fuel_avail_new) / 2.0
 
-        outputs[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY] = extra_fuel_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY] = extra_fuel_wt / GRAV_ENGLISH_LBM
         outputs['extra_fuel_volume'] = extra_fuel_volume
         outputs['max_extra_fuel_mass'] = max_extra_fuel_wt / GRAV_ENGLISH_LBM
 
@@ -454,8 +454,10 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         J['max_extra_fuel_mass', Aircraft.Fuel.DENSITY] = dmax_extra_fuel_wt_drho_fuel
 
-        J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'fuel_mass_required'] = dextra_fuel_wt_dreq_fuel_wt
-        J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'max_wingfuel_mass'] = (
+        J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'fuel_mass_required'] = (
+            dextra_fuel_wt_dreq_fuel_wt
+        )
+        J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'max_wingfuel_mass'] = (
             dextra_fuel_wt_dmax_wingfuel_wt
         )
 

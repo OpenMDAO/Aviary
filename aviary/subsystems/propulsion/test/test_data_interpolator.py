@@ -33,7 +33,7 @@ class DataInterpolationTest(unittest.TestCase):
 
         outputs = {
             Dynamic.Vehicle.Propulsion.THRUST: 'lbf',
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE: 'lbm/h',
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE: 'lbm/h',
         }
 
         test_mach_list = np.linspace(0, 0.85, 5)
@@ -68,7 +68,7 @@ class DataInterpolationTest(unittest.TestCase):
             units='lbf',
         )
         engine_data.add_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE + '_train',
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE + '_train',
             val=np.array(fuel_flow_rate),
             units='lbm/h',
         )
@@ -97,7 +97,7 @@ class DataInterpolationTest(unittest.TestCase):
         prob.run_model()
 
         interp_thrust = prob.get_val(Dynamic.Vehicle.Propulsion.THRUST, 'lbf')
-        interp_fuel_flow = prob.get_val(Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE, 'lbm/h')
+        interp_fuel_flow = prob.get_val(Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE, 'lbm/h')
 
         # fmt: off
         expected_thrust = [

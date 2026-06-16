@@ -609,7 +609,7 @@ def setup_model_options(
             Aircraft.Engine.RPM_DESIGN,
             Aircraft.Engine.FIXED_RPM,
             Aircraft.Engine.REFERENCE_SLS_THRUST,
-            Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION,
+            Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION,
         ]
         opts = {}
         for key in opt_names:

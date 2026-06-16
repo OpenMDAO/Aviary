@@ -10,11 +10,11 @@ aircraft:design:cockpit_control_mass_coefficient,16.5,unitless
 aircraft:design:drag_coefficient_increment,0.00175,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-mission:reserve_fuel_additional,3000.,lbm
+mission:reserve_fuel_mass_additional,3000.,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:drag_divergence_shift,0.033,unitless
-aircraft:engine:constant_fuel_consumption,0.,lbm/h
+aircraft:engine:constant_fuel_mass_consumption,0.,lbm/h
 aircraft:engine:data_file,models/engines/turbofan_23k_1.csv,unitless
 aircraft:engine:global_throttle, True, unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
@@ -183,8 +183,8 @@ aircraft:fins:mass_scaler,1.0,unitless
 aircraft:fins:mass,0.0,lbm
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,10.0,unitless
-aircraft:fuel:auxiliary_fuel_capacity,0.0,lbm
-aircraft:fuel:fuselage_fuel_capacity,0.0,lbm
+aircraft:fuel:auxiliary_fuel_mass_capacity,0.0,lbm
+aircraft:fuel:fuselage_fuel_mass_capacity,0.0,lbm
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,45694.0,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1.0,unitless
@@ -239,7 +239,7 @@ mission:constraints:max_mach,0.8,unitless
 mission:landing:braking_friction_coefficient,0.4,unitless
 mission:landing:lift_coefficient_max,2.0,unitless
 aircraft:design:cruise_mach,0.8,unitless
-mission:takeoff:fuel,577,lbm
+mission:takeoff:fuel_mass,577,lbm
 mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless
