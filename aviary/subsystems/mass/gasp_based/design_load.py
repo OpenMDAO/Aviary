@@ -677,7 +677,7 @@ class LoadFactors(om.ExplicitComponent):
             units='kn',
             desc='V9: intermediate value. Typically it is maximum flight speed.',
         )
-        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', val=250, units='kn', desc='VDMIN: dive velocity')
         self.add_input(
             'max_maneuver_factor',
             val=0.72,

@@ -852,7 +852,7 @@ class FuselageMass(om.ExplicitComponent):
             units='ft',
             desc='ELRW: length of pylon for fuselage mounted engines',
         )
-        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', val=419.75918333, units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         # MAT is not computed in Aviary
