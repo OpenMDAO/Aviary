@@ -1231,9 +1231,9 @@ class AviaryGroup(om.Group):
                     # This has been troublesome if connected directly.
                     connect = False
 
-                elif len(downstream_analytic) > 0 or len(upstream_analytic) > 0:
-                    # Constraints seem to work better with the analytic phases.
-                    connect = False
+                #elif len(downstream_analytic) > 0 or len(upstream_analytic) > 0:
+                #    # Constraints seem to work better with the analytic phases.
+                #    connect = True
 
                 elif opt2 is not None :
                     # Controls cannot connect directly.
@@ -1259,6 +1259,7 @@ class AviaryGroup(om.Group):
                     vars=[var],
                     **kwargs,
                 )
+                print(var, phase1, phase2, connect)
 
             # Target analytic phases may take a single start input that needs to connect
             # Sort because of MPI
