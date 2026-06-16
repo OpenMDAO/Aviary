@@ -36,7 +36,7 @@
         "<class 'int'>"
     ],
     [
-        "mission:reserve_fuel_additional",
+        "mission:reserve_fuel_mass_additional",
         3000.0,
         "lbm",
         "<class 'float'>"
@@ -248,7 +248,7 @@
         "<class 'numpy.ndarray'>"
     ],
     [
-        "aircraft:engine:constant_fuel_consumption",
+        "aircraft:engine:constant_fuel_mass_consumption",
         [
             0.0
         ],
@@ -478,7 +478,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:fuel:auxiliary_fuel_capacity",
+        "aircraft:fuel:auxiliary_fuel_mass_capacity",
         0.0,
         "lbm",
         "<class 'float'>"
@@ -490,7 +490,7 @@
         "<class 'float'>"
     ],
     [
-        "aircraft:fuel:fuselage_fuel_capacity",
+        "aircraft:fuel:fuselage_fuel_mass_capacity",
         0.0,
         "lbm",
         "<class 'float'>"
@@ -1005,7 +1005,7 @@
         "<class 'float'>"
     ],
     [
-        "mission:takeoff:fuel",
+        "mission:takeoff:fuel_mass",
         577.0,
         "lbm",
         "<class 'float'>"

@@ -103,7 +103,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             desc='mass of the aircraft',
         )
 
-        add_aviary_input(self, Mission.Takeoff.FUEL, val=10.0e3)
+        add_aviary_input(self, Mission.Takeoff.FUEL_MASS, val=10.0e3)
 
         self.add_input(
             Dynamic.Atmosphere.DENSITY,
@@ -148,7 +148,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
         self.declare_partials(
             Mission.Takeoff.FINAL_MASS,
-            Mission.Takeoff.FUEL,
+            Mission.Takeoff.FUEL_MASS,
             val=-1.0,
         )
 
@@ -193,7 +193,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             rolling_distance + rotation_distance + climbout_distance
         )
         outputs[Mission.Takeoff.FINAL_VELOCITY] = V2
-        outputs[Mission.Takeoff.FINAL_MASS] = gross_mass - inputs[Mission.Takeoff.FUEL]
+        outputs[Mission.Takeoff.FINAL_MASS] = gross_mass - inputs[Mission.Takeoff.FUEL_MASS]
         outputs[Mission.Takeoff.FINAL_ALTITUDE] = 35
 
     def compute_partials(self, inputs, J):
@@ -319,7 +319,7 @@ class TakeoffGroup(om.Group):
             ),
             promotes_inputs=[
                 ('gross_mass', Mission.GROSS_MASS),
-                ('taxi_out_fuel_burned', Mission.Taxi.FUEL_TAXI_OUT),
+                ('taxi_out_fuel_burned', Mission.Taxi.FUEL_MASS_TAXI_OUT),
             ],
             promotes_outputs=['end_of_taxi_mass'],
         )
@@ -346,7 +346,7 @@ class TakeoffGroup(om.Group):
                 ('mass', 'end_of_taxi_mass'),
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
-                Mission.Takeoff.FUEL,
+                Mission.Takeoff.FUEL_MASS,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 Mission.Takeoff.CLIMBOUT_THRUST_FRACTION,

@@ -31,7 +31,7 @@ data.set_val(
 )
 
 data.set_val(
-    Mission.Takeoff.FUEL,
+    Mission.Takeoff.FUEL_MASS,
     val=577,
     units='lbm',
 )
@@ -100,7 +100,7 @@ data.set_val(
 
 data.set_val(
     # outputs
-    Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE,
+    Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE,
     val=[
         16602.302762413,
         5551.61304633633,

@@ -37,7 +37,7 @@ class TurbopropMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-        options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+        options.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 1)
         options.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, False)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -101,7 +101,7 @@ class TurbopropMissionTest(unittest.TestCase):
         tailpipe_thrust = self.prob.get_val('thrust_summation.turboshaft_thrust', units='lbf')
         # max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE, units='lbm/h'
         )
 
         results = []

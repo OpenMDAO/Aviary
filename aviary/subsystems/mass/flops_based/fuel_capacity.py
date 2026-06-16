@@ -11,18 +11,21 @@ class FuelCapacityGroup(om.Group):
 
     def setup(self):
         self.add_subsystem(
-            'wing_fuel_capacity', WingFuelCapacity(), promotes_inputs=['*'], promotes_outputs=['*']
+            'wing_fuel_mass_capacity',
+            WingFuelCapacity(),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
         self.add_subsystem(
-            'fuselage_fuel_capacity',
+            'fuselage_fuel_mass_capacity',
             FuselageFuelCapacity(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
 
         self.add_subsystem(
-            'auxiliary_fuel_capacity',
+            'auxiliary_fuel_mass_capacity',
             AuxFuelCapacity(),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
@@ -41,20 +44,22 @@ class FuselageFuelCapacity(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
-        add_aviary_output(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, Aircraft.Fuel.TOTAL_CAPACITY, val=1.0
+            Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, Aircraft.Fuel.TOTAL_CAPACITY, val=1.0
         )
         self.declare_partials(
-            Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, Aircraft.Fuel.WING_FUEL_CAPACITY, val=-1.0
+            Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
+            Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
+            val=-1.0,
         )
 
     def compute(self, inputs, outputs):
-        outputs[Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY] = (
-            inputs[Aircraft.Fuel.TOTAL_CAPACITY] - inputs[Aircraft.Fuel.WING_FUEL_CAPACITY]
+        outputs[Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY] = (
+            inputs[Aircraft.Fuel.TOTAL_CAPACITY] - inputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY]
         )
 
 
@@ -63,26 +68,30 @@ class AuxFuelCapacity(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm')
-        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, Aircraft.Fuel.TOTAL_CAPACITY, val=1.0
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, Aircraft.Fuel.TOTAL_CAPACITY, val=1.0
         )
         self.declare_partials(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, Aircraft.Fuel.WING_FUEL_CAPACITY, val=-1.0
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
+            Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
+            val=-1.0,
         )
         self.declare_partials(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, val=-1.0
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
+            Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
+            val=-1.0,
         )
 
     def compute(self, inputs, outputs):
-        outputs[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY] = (
+        outputs[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY] = (
             inputs[Aircraft.Fuel.TOTAL_CAPACITY]
-            - inputs[Aircraft.Fuel.WING_FUEL_CAPACITY]
-            - inputs[Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY]
+            - inputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY]
+            - inputs[Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY]
         )
 
 
@@ -90,27 +99,27 @@ class TotalFuelCapacity(om.ExplicitComponent):
     """Compute the total fuel that can be carried in all tanks."""
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, units='lbm')
+        add_aviary_input(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
         add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_CAPACITY, val=1.0
+            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, val=1.0
         )
         self.declare_partials(
-            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, val=1.0
+            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, val=1.0
         )
         self.declare_partials(
-            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, val=1.0
+            Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, val=1.0
         )
 
     def compute(self, inputs, outputs):
         outputs[Aircraft.Fuel.TOTAL_CAPACITY] = (
-            inputs[Aircraft.Fuel.WING_FUEL_CAPACITY]
-            + inputs[Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY]
-            + inputs[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY]
+            inputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY]
+            + inputs[Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY]
+            + inputs[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY]
         )
 
 
@@ -129,7 +138,7 @@ class WingFuelCapacity(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD, units='unitless')
 
-        add_aviary_output(self, Aircraft.Fuel.WING_FUEL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, units='lbm')
 
     def setup_partials(self):
         self.declare_partials('*', '*')
@@ -165,7 +174,7 @@ class WingFuelCapacity(om.ExplicitComponent):
             )
             fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
 
-        outputs[Aircraft.Fuel.WING_FUEL_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
         wing_ref_cap_terma = inputs[Aircraft.Fuel.WING_REF_CAPACITY_TERM_A]
@@ -175,23 +184,23 @@ class WingFuelCapacity(om.ExplicitComponent):
             wing_ref_cap_area = inputs[Aircraft.Fuel.WING_REF_CAPACITY_AREA]
             wing_ref_cap_termb = inputs[Aircraft.Fuel.WING_REF_CAPACITY_TERM_B]
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY] = 1.0
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY] = 1.0
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A] = (
-                wing_area**1.5 - wing_ref_cap_area**1.5
-            )
+            partials[
+                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY_TERM_A
+            ] = wing_area**1.5 - wing_ref_cap_area**1.5
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B] = (
-                wing_area - wing_ref_cap_area
-            )
+            partials[
+                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B
+            ] = wing_area - wing_ref_cap_area
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.AREA] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.AREA] = (
                 1.5 * wing_ref_cap_terma * wing_area**0.5 + wing_ref_cap_termb
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY_AREA] = (
-                -1.5 * wing_ref_cap_terma * wing_ref_cap_area**0.5 - wing_ref_cap_termb
-            )
+            partials[
+                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REF_CAPACITY_AREA
+            ] = -1.5 * wing_ref_cap_terma * wing_ref_cap_area**0.5 - wing_ref_cap_termb
 
         else:
             fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
@@ -204,15 +213,15 @@ class WingFuelCapacity(om.ExplicitComponent):
             tr_fact = 1.0 - taper_ratio / den**2
             dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.DENSITY] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.DENSITY] = (
                 volume_fraction * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Fuel.WING_FUEL_FRACTION] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_FUEL_FRACTION] = (
                 fuel_density * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.SPAN] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.SPAN] = (
                 -fuel_density
                 * volume_fraction
                 * (2 / 3)
@@ -222,7 +231,7 @@ class WingFuelCapacity(om.ExplicitComponent):
                 / span**2
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.TAPER_RATIO] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.TAPER_RATIO] = (
                 fuel_density
                 * volume_fraction
                 * (2 / 3)
@@ -232,11 +241,11 @@ class WingFuelCapacity(om.ExplicitComponent):
                 / span
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.THICKNESS_TO_CHORD] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.THICKNESS_TO_CHORD] = (
                 fuel_density * volume_fraction * (2 / 3) * wing_area**2 * tr_fact / span
             )
 
-            partials[Aircraft.Fuel.WING_FUEL_CAPACITY, Aircraft.Wing.AREA] = (
+            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.AREA] = (
                 2.0
                 * fuel_density
                 * volume_fraction

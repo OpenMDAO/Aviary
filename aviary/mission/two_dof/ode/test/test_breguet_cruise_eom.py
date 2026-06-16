@@ -23,7 +23,7 @@ class TestBreguetResults(unittest.TestCase):
         self.prob.set_val('TAS_cruise', 458.8, units='kn')
         self.prob.set_val('mass', np.linspace(171481, 171481 - 10000, nn), units='lbm')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -70,7 +70,7 @@ class TestBreguetPartials(unittest.TestCase):
             'mass', np.linspace(171481, 171481 - 10000, nn), units='lbm'
         )
         self.prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -127,7 +127,7 @@ class TestBreguetPartials2(unittest.TestCase):
         )
         prob.model.set_input_defaults('mass', np.linspace(171481, 171481 - 10000, nn), units='lbm')
         prob.model.set_input_defaults(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -152,7 +152,7 @@ class TestBreguetResults2(unittest.TestCase):
         self.prob.set_val('TAS_cruise', 458.8, units='kn')
         self.prob.set_val('mass', np.linspace(171481, 171481 - 10000, nn), units='lbm')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -5870
             * np.ones(
                 nn,
@@ -168,7 +168,7 @@ class TestBreguetResults2(unittest.TestCase):
         r = self.prob.get_val('cruise_range', units='NM')
         t = self.prob.get_val('cruise_time', units='h')
         fuel_flow = -self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
         )
 
         v_avg = (V[:-1] + V[1:]) / 2

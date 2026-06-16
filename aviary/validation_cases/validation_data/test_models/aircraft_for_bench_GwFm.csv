@@ -22,7 +22,7 @@ aircraft:design:drag_coefficient_increment,0.00175,unitless
 aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-mission:reserve_fuel_additional,4998,lbm
+mission:reserve_fuel_mass_additional,4998,lbm
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
 aircraft:design:drag_divergence_shift,0.033,unitless
@@ -154,7 +154,7 @@ aircraft:design:cruise_mach,0.785,unitless
 mission:gross_mass,175400,lbm
 mission:takeoff:airport_altitude,0,ft
 mission:takeoff:drag_coefficient_flap_increment,0.0085,unitless
-mission:takeoff:fuel,577,lbm
+mission:takeoff:fuel_mass,577,lbm
 mission:takeoff:lift_coefficient_flap_increment,0.4182,unitless
 mission:takeoff:lift_coefficient_max,3.0,unitless
 mission:takeoff:lift_over_drag,17.354,unitless
