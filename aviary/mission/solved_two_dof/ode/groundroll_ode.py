@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.mission.solved_two_dof.ode.groundroll_eom import GroundrollEOM
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
@@ -28,9 +27,6 @@ class GroundrollODE(TwoDOFODE):
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
         user_options = self.options['user_options']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere()
 
@@ -124,12 +120,10 @@ class GroundrollODE(TwoDOFODE):
                 'dmass_dv',
             ],
             promotes_inputs=[
-                ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                 'dt_dv',
             ],
         )
-
-        ParamPort.set_default_vals(self)
 
         if self.options['set_input_defaults']:
             self.set_input_defaults('t_init_flaps', val=100.0)

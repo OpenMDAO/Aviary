@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.constants import GRAV_ENGLISH_LBM
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.mission.solved_two_dof.ode.unsteady_solved_ode import UnsteadySolvedODE
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
@@ -87,7 +87,7 @@ class TestUnsteadySolvedODE(unittest.TestCase):
         )
         weight = p.model.get_val('mass', units='lbm') * GRAV_ENGLISH_LBM
         fuelflow = p.model.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         dmass_dr = p.model.get_val('dmass_dr', units='lbm/ft')
         dt_dr = p.model.get_val('dt_dr', units='s/ft')

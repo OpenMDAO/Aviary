@@ -235,7 +235,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilder):
             upper=1e9,
             ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -249,15 +249,9 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilder):
 
         phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
         return phase
 
@@ -436,7 +430,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -452,19 +446,11 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilder):
 
         phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            'v_over_v_stall', output_name='v_over_v_stall', units='unitless'
-        )
+        phase.add_timeseries_output('v_over_v_stall', units='unitless')
 
         return phase
 
@@ -769,7 +755,7 @@ class TakeoffRotateToLiftoff(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -791,19 +777,11 @@ class TakeoffRotateToLiftoff(PhaseBuilder):
             ref=max_angle_of_attack,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
-        phase.add_timeseries_output(
-            'v_over_v_stall', output_name='v_over_v_stall', units='unitless'
-        )
+        phase.add_timeseries_output('v_over_v_stall', units='unitless')
 
         return phase
 
@@ -1048,7 +1026,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1072,15 +1050,9 @@ class TakeoffLiftoffToObstacle(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         obstacle_height, units = aviary_options.get_item(Mission.Takeoff.OBSTACLE_HEIGHT)
 
@@ -1358,7 +1330,7 @@ class TakeoffObstacleToMicP2(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1382,15 +1354,9 @@ class TakeoffObstacleToMicP2(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         final_altitude, units = user_options['mic_altitude']
 
@@ -1662,7 +1628,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1686,15 +1652,9 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         # start engine cutback phase at this range, where this phase ends
         # TODO: what is the difference between distance_max and final_range?
@@ -1945,7 +1905,7 @@ class TakeoffEngineCutback(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1969,15 +1929,9 @@ class TakeoffEngineCutback(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         phase.add_boundary_constraint('v_over_v_stall', loc='final', lower=1.25, ref=1.25)
 
@@ -2234,7 +2188,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -2258,15 +2212,9 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         mic_range, units = user_options['mic_range']
 
@@ -2534,7 +2482,7 @@ class TakeoffMicP1ToClimb(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -2558,15 +2506,9 @@ class TakeoffMicP1ToClimb(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         mic_range, units = user_options['mic_range']
 
@@ -2766,7 +2708,7 @@ class TakeoffBrakeToAbort(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 

@@ -11,7 +11,8 @@ from aviary.variable_info.enums import ProblemType, Verbosity
 
 class TwoDOFTestCase(unittest.TestCase):
     def setUp(self) -> None:
-        self.sized_mass = 171044.0
+        # This mass needs to be kept up to date with the sized mass for the GwGm benchmark.
+        self.sized_mass = 171414.17
         self.sized_range = 3675
         self.phase_info = deepcopy(phase_info)
 

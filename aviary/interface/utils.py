@@ -1,52 +1,14 @@
-from math import floor, log10
-
-import numpy as np
 import warnings
 
+import numpy as np
+import openmdao.api as om
+
 from aviary.variable_info.enums import Verbosity
+from aviary.utils.utils import round_it
 
 # TODO openMDAO has generate_table() that might be able to replace this
 
-# TODO rounding might have other use cases, move to utils if so
-# It is confirmed that both functions are used else where.
-
-
-def round_it(x, sig=None):
-    """
-    Round a float to a specified significance.
-    If the number is equal to zero, "0" will be returned, regardless of the number of significant digits specified
-    If the number is NaN, directly returns it (stays NaN).
-
-    Parameters
-    ----------
-    x : str or float
-        the float that needs to be rounded.
-    sig : int
-        the number of significant digits to include (If this is unspecified, the number will be rounded to two decimal places).
-
-    Returns
-    -------
-        The rounded number, or provided string if not convertible to float, or original
-        number if it is NaN
-    """
-    # default sig figs to 2 decimal places out
-    if isinstance(x, str):
-        try:
-            x = float(x)
-        except ValueError:
-            return x
-
-    if np.isnan(x):
-        # return NaNs directly back to markdown report
-        return x
-
-    if not sig:
-        sig = len(str(round(x))) + 2
-
-    if x != 0:
-        return round(x, sig - int(floor(log10(abs(x)))) - 1)
-    else:
-        return 0
+# It is confirmed that all three functions are used else where.
 
 
 def write_markdown_variable_table(open_file, problem, outputs, metadata):
@@ -150,6 +112,20 @@ def set_warning_format(verbosity):
 
         warnings.formatwarning = simplified_warning
         warnings.simplefilter('ignore', DeprecationWarning)
+
+        # Suppress the specific rhs_checking warning from Dymos internal components
+        warnings.filterwarnings(
+            action='ignore',
+            category=om.SolverWarning,
+            message=".*'rhs_checking' is active but no redundant adjoint dependencies were found.*",
+        )
+
+        # Suppress the OpenMDAO atomic group warning
+        warnings.filterwarnings(
+            action='ignore',
+            category=om.OpenMDAOWarning,
+            message='.*will be treated as atomic for the purposes of determining.*',
+        )
 
     elif verbosity == Verbosity.VERBOSE:
 

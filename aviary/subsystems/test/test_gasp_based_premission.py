@@ -1,6 +1,6 @@
 import unittest
 
-from openmdao.utils.assert_utils import assert_near_equal
+from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.core.aviary_problem import AviaryProblem
@@ -46,7 +46,7 @@ class PreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, val=2.3648, units='unitless')
@@ -97,7 +97,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS: 6366.3591,
             # GASP original 21078.3911, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 24_897.7475,
-            Mission.USEFUL_LOAD: 5341.4317956,
+            Mission.OPERATING_ITEMS_MASS: 5341.4317956,
             Aircraft.Engine.ADDITIONAL_MASS: 850.90095,
             Aircraft.Wing.MASS: 16206.8122,
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1740.2606,
@@ -106,12 +106,15 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 16048.0025,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 848.5301,
             Mission.OPERATING_MASS: 96954.6194,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 0,
         }
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
 
     def test_case2(self):
         """premission: propulsion + geometry + aerodynamics + mass."""
@@ -184,7 +187,7 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.LandingGear.MAIN_GEAR_MASS: 6366.3591,
             # GASP original 21078.3911, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 24_897.7475,
-            Mission.USEFUL_LOAD: 5332.684,
+            Mission.OPERATING_ITEMS_MASS: 5332.684,
             Aircraft.Engine.ADDITIONAL_MASS: 827.5372,
             Aircraft.Wing.MASS: 15651.64198957,
             Aircraft.Fuel.FUEL_SYSTEM_MASS: 1779.06667944,
@@ -193,12 +196,15 @@ class PreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 15694.0515,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 867.4514906,
             Mission.OPERATING_MASS: 96008.12976964,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 0,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 0,
         }
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
 
 
 @use_tempdirs
@@ -235,7 +241,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         Aircraft.AirConditioning.MASS -- WAC = 1301.57
         Aircraft.Furnishings.MASS -- 11269.88
         Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS -- WFE = 20876.
-        Mission.USEFUL_LOAD -- WFUL = 5775.
+        Mission.OPERATING_ITEMS_MASS -- WFUL = 5775.
         Aircraft.Engine.ADDITIONAL_MASS -- not in GASP
         Aircraft.Wing.FOLD_MASS -- WWFOLD = 107.9
         Aircraft.Wing.MASS -- WW = 7645.
@@ -270,7 +276,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.run_model()
@@ -322,7 +328,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Furnishings.MASS: 11269.876,
             # GASP original 20876.453, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 22_991.435,
-            Mission.USEFUL_LOAD: 5971.7946,
+            Mission.OPERATING_ITEMS_MASS: 5971.7946,
             Aircraft.Engine.ADDITIONAL_MASS: 153.1677,
             Aircraft.Wing.FOLD_MASS: 107.8736151,
             Aircraft.Wing.MASS: 6962.31442344,
@@ -332,12 +338,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 8627.6738,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 751.74213602,
             Mission.OPERATING_MASS: 82064.29761786,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 3876.43000743,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 3876.43000743,
         }
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
 
     def test_case_geom(self):
         """premission: geometry."""
@@ -358,7 +367,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.run_model()
@@ -395,6 +404,9 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
 
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
+
     def test_case_geom_mass(self):
         """premission: geometry + mass."""
         prob = self.prob
@@ -414,7 +426,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
         )
 
         setup_model_options(prob, self.gasp_inputs)
-        prob.setup(check=False)
+        prob.setup(check=False, force_alloc_complex=True)
         set_aviary_initial_values(prob, self.gasp_inputs)
 
         prob.set_val(
@@ -476,7 +488,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Furnishings.MASS: 11269.876,
             # GASP original 20876.453, added controls mass
             Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS: 22_991.435,
-            Mission.USEFUL_LOAD: 5971.7946,
+            Mission.OPERATING_ITEMS_MASS: 5971.7946,
             Aircraft.Engine.ADDITIONAL_MASS: 153.1677,
             Aircraft.Wing.FOLD_MASS: 107.8335,
             Aircraft.Wing.MASS: 6959.7262,
@@ -486,12 +498,15 @@ class BWBPreMissionGroupTest(unittest.TestCase):
             Aircraft.Propulsion.MASS: 8627.72,
             Aircraft.Fuel.WING_VOLUME_DESIGN: 751.7973,
             Mission.OPERATING_MASS: 82062.193,
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: 3878.938,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: 3878.938,
         }
 
         for var_name, expected in expected_values.items():
             with self.subTest(var=var_name):
                 assert_near_equal(prob[var_name], expected, tol)
+
+        partial_data = self.prob.check_partials(out_stream=None, method='cs')
+        assert_check_partials(partial_data, atol=3e-9, rtol=3e-9)
 
 
 if __name__ == '__main__':

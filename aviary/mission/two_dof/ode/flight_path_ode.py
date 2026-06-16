@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.mission.two_dof.ode.flight_path_eom import FlightPathEOM
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.mass.mass_to_weight import MassToWeight
 from aviary.variable_info.enums import AlphaModes, SpeedType
@@ -63,13 +62,10 @@ class FlightPathODE(TwoDOFODE):
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        else:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         subsystems = self.options['subsystems']
-
-        # TODO: paramport
-        flight_path_params = ParamPort()
-
-        self.add_subsystem('params', flight_path_params, promotes=['*'])
 
         self.add_atmosphere(input_speed_type=input_speed_type)
 
@@ -165,7 +161,6 @@ class FlightPathODE(TwoDOFODE):
 
         self.add_excess_rate_comps(nn)
 
-        ParamPort.set_default_vals(self)
         if not self.options['clean']:
             self.set_input_defaults('t_init_flaps', val=47.5)
             self.set_input_defaults('t_init_gear', val=37.3)
@@ -176,3 +171,5 @@ class FlightPathODE(TwoDOFODE):
         self.set_input_defaults(Dynamic.Atmosphere.MACH, val=np.zeros(nn), units='unitless')
         self.set_input_defaults(Dynamic.Vehicle.MASS, val=np.zeros(nn), units='lbm')
         self.set_input_defaults(Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='kn')
+        if self.options['ground_roll']:
+            self.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)

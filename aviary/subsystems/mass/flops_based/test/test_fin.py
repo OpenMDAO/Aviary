@@ -16,7 +16,7 @@ from aviary.validation_cases.validation_tests import (
     print_case,
     Version,
 )
-from aviary.variable_info.variables import Aircraft, Mission
+from aviary.variable_info.variables import Aircraft
 
 
 fin_test_data = {}
@@ -33,7 +33,7 @@ fin_test_data['1'] = AviaryValues(
 
 fin_data_sets = [key for key in fin_test_data]
 
-bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS']
+bwb_cases = ['BWBsimpleFLOPS', 'BWBdetailedFLOPS', 'BWB300FLOPS']
 
 
 class FinMassTest(unittest.TestCase):

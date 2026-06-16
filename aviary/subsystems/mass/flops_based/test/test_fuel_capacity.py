@@ -63,10 +63,10 @@ class FuelCapacityGroupTest(unittest.TestCase):
             prob,
             case_name,
             input_keys=[
-                Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
+                Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
                 Aircraft.Fuel.WING_FUEL_FRACTION,
                 Aircraft.Fuel.DENSITY,
-                Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY,
+                Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.SPAN,
                 Aircraft.Wing.TAPER_RATIO,
@@ -138,7 +138,7 @@ class WingFuelCapacityTest(unittest.TestCase):
                 Aircraft.Wing.THICKNESS_TO_CHORD,
                 Aircraft.Fuel.WING_REF_CAPACITY_TERM_A,
             ],
-            output_keys=Aircraft.Fuel.WING_FUEL_CAPACITY,
+            output_keys=Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
             atol=1e-10,
             # TODO: No wing fuel capacity validation data, check only partials
             check_values=False,
@@ -149,8 +149,8 @@ fuse_capacity_data = {}
 fuse_capacity_data['1'] = AviaryValues(
     {
         Aircraft.Fuel.TOTAL_CAPACITY: (100.0, 'lbm'),
-        Aircraft.Fuel.WING_FUEL_CAPACITY: (73.0, 'lbm'),
-        Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY: (27.0, 'lbm'),
+        Aircraft.Fuel.WING_FUEL_MASS_CAPACITY: (73.0, 'lbm'),
+        Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY: (27.0, 'lbm'),
     }
 )
 
@@ -172,8 +172,8 @@ class FuselageFuelCapacityTest(unittest.TestCase):
             prob,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
-            input_keys=[Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_CAPACITY],
-            output_keys=Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY,
+            input_keys=[Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY],
+            output_keys=Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
             tol=1.0e-10,
             atol=1e-10,
         )
@@ -183,9 +183,9 @@ aux_capacity_data = {}
 aux_capacity_data['1'] = AviaryValues(
     {
         Aircraft.Fuel.TOTAL_CAPACITY: (100.0, 'lbm'),
-        Aircraft.Fuel.WING_FUEL_CAPACITY: (25.0, 'lbm'),
-        Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY: (33.0, 'lbm'),
-        Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: (42.0, 'lbm'),
+        Aircraft.Fuel.WING_FUEL_MASS_CAPACITY: (25.0, 'lbm'),
+        Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY: (33.0, 'lbm'),
+        Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: (42.0, 'lbm'),
     }
 )
 
@@ -213,10 +213,10 @@ class AuxFuelCapacityTest(unittest.TestCase):
             output_validation_data=validation_data,
             input_keys=[
                 Aircraft.Fuel.TOTAL_CAPACITY,
-                Aircraft.Fuel.WING_FUEL_CAPACITY,
-                Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY,
+                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
+                Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
             ],
-            output_keys=Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
+            output_keys=Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
             tol=1.0e-10,
             atol=1e-10,
         )
@@ -228,9 +228,9 @@ class AuxFuelCapacityTest(unittest.TestCase):
 total_capacity_data = {}
 total_capacity_data['1'] = AviaryValues(
     {
-        Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY: (100.0, 'lbm'),
-        Aircraft.Fuel.WING_FUEL_CAPACITY: (25.0, 'lbm'),
-        Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY: (33.0, 'lbm'),
+        Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: (100.0, 'lbm'),
+        Aircraft.Fuel.WING_FUEL_MASS_CAPACITY: (25.0, 'lbm'),
+        Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY: (33.0, 'lbm'),
         Aircraft.Fuel.TOTAL_CAPACITY: (158.0, 'lbm'),
     }
 )
@@ -257,9 +257,9 @@ class TotalFuelCapacityTest(unittest.TestCase):
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
-                Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
-                Aircraft.Fuel.WING_FUEL_CAPACITY,
-                Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY,
+                Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
+                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
+                Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
             ],
             output_keys=Aircraft.Fuel.TOTAL_CAPACITY,
             tol=1.0e-10,

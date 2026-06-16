@@ -5,7 +5,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
 from packaging import version
 
-from aviary.mission.two_dof.ode.params import set_params_for_unit_tests
+from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
@@ -48,7 +48,7 @@ class TaxiTestCase(unittest.TestCase):
         self.prob.set_val(Mission.Takeoff.AIRPORT_ALTITUDE, 0, units='ft')
         self.prob.set_val(Mission.Taxi.MACH, 0.1, units='unitless')
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             -1512,
             units='lbm/h',
         )

@@ -6,7 +6,7 @@ from aviary.mission.initial_guess_builders import InitialGuessIntegrationVariabl
 from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
@@ -145,10 +145,12 @@ class BreguetCruisePhase(PhaseBuilder):
         phase.add_parameter('initial_distance', opt=False, val=0.0, units='NM', static_target=True)
         phase.add_parameter('initial_time', opt=False, val=0.0, units='s', static_target=True)
 
-        phase.add_timeseries_output('time', units='s', output_name='time')
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
+        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Vehicle.MASS, units='lbm')
-        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
-        phase.add_timeseries_output(Dynamic.Mission.DISTANCE, units='nmi')
+        phase.add_timeseries_output('time', units='s', output_name='time')
 
         return phase
 

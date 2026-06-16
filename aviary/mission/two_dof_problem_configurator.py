@@ -2,7 +2,6 @@ import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM, RHO_SEA_LEVEL_ENGLISH
 from aviary.mission.two_dof.ode.landing_ode import LandingSegment
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.taxi_ode import TaxiSegment
 from aviary.mission.two_dof.phases.accel_phase import AccelPhase
 from aviary.mission.two_dof.phases.breguet_cruise_phase import (
@@ -490,13 +489,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                         [phase1, phase2], [state], connected=connected, **kwargs
                     )
 
-        # add all params and promote them to aviary_group level
-        ParamPort.promote_params(
-            aviary_group,
-            trajs=['traj'],
-            phases=[[*aviary_group.regular_phases, *aviary_group.reserve_phases]],
-        )
-
         aviary_group.promotes(
             'traj',
             inputs=[
@@ -543,11 +535,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         aviary_group.connect('traj.ascent.timeseries.time', 'h_fit.time_cp')
         aviary_group.connect('traj.ascent.timeseries.altitude', 'h_fit.h_cp')
-
-        # promote all ParamPort inputs
-        param_list = list(ParamPort.param_data)
-        aviary_group.promotes('taxi', inputs=param_list)
-        aviary_group.promotes('landing', inputs=param_list)
         aviary_group.connect('taxi.mass', 'vrot.mass')
 
         if len(phases) > 1:
@@ -714,10 +701,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             # Breguet phase should have nothing else to set.
             return
 
-        # Set initial guesses for the rotation mass and flight duration
-        rotation_mass = aviary_group.initialization_guesses['rotation_mass']
-        flight_duration = aviary_group.initialization_guesses['flight_duration']
-
         control_keys = ['velocity_rate', 'throttle']
         state_keys = [
             'altitude',
@@ -741,47 +724,25 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
             if 'time' == guess_key:
                 if phase_name == 'ascent':
                     # These variables are promoted to the top.
-                    init_path = Mission.Takeoff.ASCENT_T_INITIAL
-                    dura_path = Mission.Takeoff.ASCENT_DURATION
+                    target_prob.set_val(Mission.Takeoff.ASCENT_T_INITIAL, val[0], units=units)
+                    target_prob.set_val(Mission.Takeoff.ASCENT_DURATION, val[1], units=units)
                 else:
-                    init_path = parent_prefix + f'traj.{phase_name}.t_initial'
-                    dura_path = parent_prefix + f'traj.{phase_name}.t_duration'
-
-                target_prob.set_val(init_path, val[0], units=units)
-                target_prob.set_val(dura_path, val[1], units=units)
+                    phase.set_time_val(initial=val[0], duration=val[1], units=units)
 
             else:
                 # Set initial guess for control variables
                 if guess_key in control_keys:
-                    try:
-                        target_prob.set_val(
-                            parent_prefix + f'traj.{phase_name}.controls:{guess_key}',
-                            process_guess_var(val, guess_key, phase),
-                            units=units,
-                        )
-
-                    except KeyError:
-                        try:
-                            target_prob.set_val(
-                                parent_prefix
-                                + f'traj.{phase_name}.polynomial_controls:{guess_key}',
-                                process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
-
-                        except KeyError:
-                            target_prob.set_val(
-                                parent_prefix + f'traj.{phase_name}.bspline_controls:',
-                                {guess_key},
-                                process_guess_var(val, guess_key, phase),
-                                units=units,
-                            )
+                    phase.set_control_val(
+                        guess_key,
+                        vals=process_guess_var(val, guess_key, phase),
+                        units=units,
+                    )
 
                 # Set initial guess for state variables
                 elif guess_key in state_keys:
-                    target_prob.set_val(
-                        parent_prefix + f'traj.{phase_name}.states:{guess_key}',
-                        process_guess_var(val, guess_key, phase),
+                    phase.set_state_val(
+                        guess_key,
+                        vals=process_guess_var(val, guess_key, phase),
                         units=units,
                     )
 
@@ -804,49 +765,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         # initial guesses using some knowledge of the mission duration and other variables
         # that are only available after calling `create_vehicle`. Thus these initial guess
         # values are not included in the `phase_info` object.
-        base_phase = phase_name.removeprefix('reserve_')
-
         if 'mass' not in guesses:
-            # Determine a mass guess depending on the phase name
-            if base_phase in ['groundroll', 'rotation', 'ascent', 'accel', 'climb1']:
-                mass_guess = rotation_mass
-            elif base_phase == 'climb2':
-                mass_guess = 0.99 * rotation_mass
-            elif 'desc' in base_phase:
-                mass_guess = 0.9 * aviary_group.cruise_mass_final
+            # Set initial guesses for the rotation mass and flight duration
+            rotation_mass = aviary_group.initialization_guesses['rotation_mass']
 
             # Set the mass guess as the initial value for the mass state variable
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.states:mass', mass_guess, units='lbm'
-            )
-
-        if 'time' not in guesses:
-            # Determine initial time and duration guesses depending on the phase name
-            if 'desc1' == base_phase:
-                t_initial = flight_duration * 0.9
-                t_duration = flight_duration * 0.04
-            elif 'desc2' in base_phase:
-                t_initial = flight_duration * 0.94
-                t_duration = 5000
-
-            # Set the time guesses as the initial values for the time-related
-            # trajectory variables
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.t_initial', t_initial, units='s'
-            )
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.t_duration', t_duration, units='s'
-            )
-
-        if 'distance' not in guesses and phase_type is not PhaseType.SIMPLE_CRUISE:
-            # Determine initial distance guesses depending on the phase name
-            if 'desc1' == base_phase:
-                ys = [aviary_group.target_range * 0.97, aviary_group.target_range * 0.99]
-            elif 'desc2' in base_phase:
-                ys = [aviary_group.target_range * 0.99, aviary_group.target_range]
-            # Set the distance guesses as the initial values for the distance state
-            # variable
-            target_prob.set_val(
-                parent_prefix + f'traj.{phase_name}.states:distance',
-                phase.interp(Dynamic.Mission.DISTANCE, ys=ys),
-            )
+            phase.set_state_val('mass', rotation_mass, units='lbm')

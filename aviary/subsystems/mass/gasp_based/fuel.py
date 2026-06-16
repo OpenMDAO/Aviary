@@ -47,7 +47,7 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
 
         # WFXTRA: extra amount of fuel that is required but does not fit in wings
-        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, units='lbm')
+        add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
         self.add_output(
             'extra_fuel_volume',
             val=0,
@@ -67,7 +67,7 @@ class BodyTankCalculations(om.ExplicitComponent):
 
     def setup_partials(self):
         self.declare_partials(
-            Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY,
+            Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY,
             ['fuel_mass_required', 'max_wingfuel_mass'],
         )
         self.declare_partials(
@@ -148,14 +148,14 @@ class BodyTankCalculations(om.ExplicitComponent):
         if verbosity >= Verbosity.BRIEF:
             if (req_fuel_wt > max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 if not self.warned_mass:
-                    print('Warning: req_fuel_mass > max_wingfuel_mass, adding a body tank')
+                    print('req_fuel_mass > max_wingfuel_mass, adding a body tank')
                 self.warned_mass = True
             else:
                 self.warned_mass = False
 
             if (req_fuel_wt < max_wingfuel_wt) and (design_fuel_vol > max_wingfuel_vol):
                 if not self.warned_vol:
-                    print('Warning: design_fuel_vol > max_wingfuel_vol, adding a body tank')
+                    print('design_fuel_vol > max_wingfuel_vol, adding a body tank')
                 self.warned_vol = True
             else:
                 self.warned_vol = False
@@ -190,7 +190,7 @@ class BodyTankCalculations(om.ExplicitComponent):
             else:
                 max_fuel_avail = (max_fuel_avail_est + max_fuel_avail_new) / 2.0
 
-        outputs[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY] = extra_fuel_wt / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY] = extra_fuel_wt / GRAV_ENGLISH_LBM
         outputs['extra_fuel_volume'] = extra_fuel_volume
         outputs['max_extra_fuel_mass'] = max_extra_fuel_wt / GRAV_ENGLISH_LBM
 
@@ -454,8 +454,10 @@ class BodyTankCalculations(om.ExplicitComponent):
 
         J['max_extra_fuel_mass', Aircraft.Fuel.DENSITY] = dmax_extra_fuel_wt_drho_fuel
 
-        J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'fuel_mass_required'] = dextra_fuel_wt_dreq_fuel_wt
-        J[Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'max_wingfuel_mass'] = (
+        J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'fuel_mass_required'] = (
+            dextra_fuel_wt_dreq_fuel_wt
+        )
+        J[Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'max_wingfuel_mass'] = (
             dextra_fuel_wt_dmax_wingfuel_wt
         )
 
@@ -1140,13 +1142,13 @@ class BWBFuselageMass(om.ExplicitComponent):
         ) / GRAV_ENGLISH_LBM
         dFusWt_dgross_wt_initial = (
             0.167 * c_fuselage * 1.8 * (gross_wt_initial**-0.833) * (area_cabin**1.06)
-        ) / GRAV_ENGLISH_LBM
+        )
         dFusWt_darea_cabin = (
             1.06 * c_fuselage * 1.8 * (gross_wt_initial**0.167) * (area_cabin**0.06)
-        )
-        dFusWt_darea_aft_to_total = c_fuselage * fus_SA * uwt_aft
+        ) / GRAV_ENGLISH_LBM
+        dFusWt_darea_aft_to_total = c_fuselage * fus_SA * uwt_aft / GRAV_ENGLISH_LBM
         dFusWt_duwt_aft = c_fuselage * fus_SA * area_aft_to_total
-        dFusWt_dfus_SA = c_fuselage * area_aft_to_total * uwt_aft
+        dFusWt_dfus_SA = c_fuselage * area_aft_to_total * uwt_aft / GRAV_ENGLISH_LBM
 
         J[Aircraft.Fuselage.MASS, Aircraft.Fuselage.MASS_COEFFICIENT] = dFusWt_dc_fuselage
         J[Aircraft.Fuselage.MASS, Aircraft.Design.GROSS_MASS] = dFusWt_dgross_wt_initial

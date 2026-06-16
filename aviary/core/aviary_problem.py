@@ -513,7 +513,7 @@ class AviaryProblem(om.Problem):
         else:
             self.model.link_phases(verbosity=verbosity, comm=self.comm)
 
-    def add_driver(self, optimizer=None, use_coloring=None, max_iter=None, verbosity=None):
+    def add_driver(self, optimizer='IPOPT', use_coloring=True, max_iter=50, verbosity=None):
         """
         Add an optimization driver to the Aviary problem.
 
@@ -577,39 +577,39 @@ class AviaryProblem(om.Problem):
                 isumm, iprint = 6, 0
             elif verbosity > Verbosity.BRIEF:  # VERBOSE, DEBUG
                 isumm, iprint = 6, 9
-            driver.opt_settings['iSumm'] = isumm
-            driver.opt_settings['iPrint'] = iprint
+            driver.opt_settings.setdefault('iSumm', isumm)
+            driver.opt_settings.setdefault('iPrint', iprint)
             # Optimizer Settings #
-            driver.opt_settings['Major iterations limit'] = max_iter
-            driver.opt_settings['Major optimality tolerance'] = 1e-4
-            driver.opt_settings['Major feasibility tolerance'] = 1e-6
+            driver.opt_settings.setdefault('Major iterations limit', max_iter)
+            driver.opt_settings.setdefault('Major optimality tolerance', 1e-4)
+            driver.opt_settings.setdefault('Major feasibility tolerance', 1e-6)
 
         elif driver.options['optimizer'] == 'IPOPT':
             # Print Options #
             if verbosity == Verbosity.QUIET:
                 print_level = 0
-                driver.opt_settings['print_user_options'] = 'no'
+                driver.opt_settings.setdefault('print_user_options', 'no')
             elif verbosity == Verbosity.BRIEF:
                 print_level = 3  # minimum to get exit status
-                driver.opt_settings['print_user_options'] = 'no'
-                driver.opt_settings['print_frequency_iter'] = 10
+                driver.opt_settings.setdefault('print_user_options', 'no')
+                driver.opt_settings.setdefault('print_frequency_iter', 10)
             elif verbosity == Verbosity.VERBOSE:
                 print_level = 5
             else:  # DEBUG
                 print_level = 7
-            driver.opt_settings['print_level'] = print_level
+            driver.opt_settings.setdefault('print_level', print_level)
             # Optimizer Settings #
-            driver.opt_settings['tol'] = 1.0e-6
-            driver.opt_settings['mu_init'] = 1e-5
-            driver.opt_settings['max_iter'] = max_iter
+            driver.opt_settings.setdefault('tol', 1.0e-6)
+            driver.opt_settings.setdefault('mu_init', 1e-5)
+            driver.opt_settings.setdefault('max_iter', max_iter)
             # for faster convergence
-            driver.opt_settings['nlp_scaling_method'] = 'gradient-based'
-            driver.opt_settings['alpha_for_y'] = 'safer-min-dual-infeas'
-            driver.opt_settings['mu_strategy'] = 'monotone'
+            driver.opt_settings.setdefault('nlp_scaling_method', 'gradient-based')
+            driver.opt_settings.setdefault('alpha_for_y', 'safer-min-dual-infeas')
+            driver.opt_settings.setdefault('mu_strategy', 'monotone')
             # Shugo's recommended settings for robustness
-            # driver.opt_settings['mu_init'] = 1.0
-            # driver.opt_settings['nlp_scaling_method'] = 'none'
-            # driver.opt_settings['limited_memory_max_history'] = 50
+            # driver.opt_settings.setdefault('mu_init', 1.0)
+            # driver.opt_settings.setdefault('nlp_scaling_method', 'none')
+            # driver.opt_settings.setdefault('limited_memory_max_history', 50)
 
         elif driver.options['optimizer'] == 'SLSQP':
             # Print Options #
@@ -744,7 +744,7 @@ class AviaryProblem(om.Problem):
             ),
             promotes_inputs=[
                 ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
-                ('overall_fuel', Mission.TOTAL_FUEL),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
             promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
         )
@@ -767,8 +767,8 @@ class AviaryProblem(om.Problem):
 
         # Dictionary for default reference values
         default_ref_values = {
-            'mass': -5e4,
-            'hybrid_objective': -5e4,
+            'mass': 5e4,
+            'hybrid_objective': 5e4,
             'fuel_burned': 1e4,
             'fuel': 1e4,
         }
@@ -795,7 +795,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective('obj_comp.obj')
 
             elif objective_type == 'fuel_burned':
-                self.model.add_objective(Mission.FUEL, ref=ref)
+                self.model.add_objective(Mission.FUEL_MASS, ref=ref)
 
             elif objective_type == 'fuel':
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
@@ -986,7 +986,7 @@ class AviaryProblem(om.Problem):
                 )
             objectives.append((model, output, weight))
             # objectives = [
-            # ('model1', Mission.FUEL, 1),
+            # ('model1', Mission.FUEL_MASS, 1),
             # ('model2', Mission.CO2, 1),
             #  ...
             # ]
@@ -1003,7 +1003,7 @@ class AviaryProblem(om.Problem):
         objectives_cleaned = []
         for model, output, weight in objectives:
             if output == 'fuel_burned':
-                output = Mission.FUEL
+                output = Mission.FUEL_MASS
                 # default scaling is valid only if this is the only argument and the ref has not yet been set
                 if len(args) == 1 and ref == None:
                     # set a default ref
@@ -1080,7 +1080,7 @@ class AviaryProblem(om.Problem):
         missions : list of str
             Subsystem names corresponding to different missions (e.g., ``['model1', 'model2']``).
         outputs : list of str
-            Output variable names to include from each mission (e.g., ``[Mission.FUEL,
+            Output variable names to include from each mission (e.g., ``[Mission.FUEL_MASS,
             Mission.GROSS_MASS]``).
         mission_weights : list of float, optional
             Weights assigned to each mission. Normalized internally to sum to 1.0. If None, equal
@@ -1247,7 +1247,7 @@ class AviaryProblem(om.Problem):
 
         Parameters
         ----------
-        parent_prob : om.Problem, optional
+        parent_prob : AviaryGroup, optional
             If provided along with ``parent_prefix``, initial guesses are set on this parent problem
             instead of ``self``. Used internally for nested problem setups.
         parent_prefix : str, optional
@@ -1793,7 +1793,7 @@ class AviaryProblem(om.Problem):
             unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
-            fuel_2 = self.get_val(Mission.FUEL)[0]
+            fuel_2 = self.get_val(Mission.FUEL_MASS)[0]
 
             # Operating mass includes unusable fuel, don't double count
             max_usable_fuel = fuel_capacity - unusable_fuel
@@ -1855,7 +1855,7 @@ class AviaryProblem(om.Problem):
                 )[0]
 
                 range_3 = max_fuel_pyld_range_prob.get_val(Mission.RANGE)[0]
-                fuel_3 = max_fuel_pyld_range_prob.get_val(Mission.FUEL)[0]
+                fuel_3 = max_fuel_pyld_range_prob.get_val(Mission.FUEL_MASS)[0]
 
                 prob_3_skip = False
             else:
@@ -1888,7 +1888,7 @@ class AviaryProblem(om.Problem):
 
             payload_4 = ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0]
             range_4 = ferry_range_prob.get_val(Mission.RANGE)[0]
-            fuel_4 = ferry_range_prob.get_val(Mission.FUEL)[0]
+            fuel_4 = ferry_range_prob.get_val(Mission.FUEL_MASS)[0]
 
             # if max fuel + payload mission was skipped, max_fuel_pyld_range_prob is the same as ferry_range_prob
             if prob_3_skip:
@@ -2019,7 +2019,7 @@ class AviaryProblem(om.Problem):
         takeoff_mass = self.model.aviary_inputs.get_val(Aircraft.Design.GROSS_MASS, units='lbm')
 
         obj_comp = om.ExecComp(
-            f'obj = -final_mass / {takeoff_mass} + final_time / 5.',
+            f'obj = final_mass / {takeoff_mass} + final_time / 5.',
             final_mass={'units': 'lbm'},
             final_time={'units': 'h'},
         )

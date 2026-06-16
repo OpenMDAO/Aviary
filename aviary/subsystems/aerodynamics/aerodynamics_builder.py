@@ -319,7 +319,12 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
         promotes = ['*']
 
         if self.code_origin is FLOPS:
-            promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
+            promotes = [
+                Dynamic.Vehicle.DRAG,
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                Dynamic.Vehicle.LIFT_COEFFICIENT,
+            ]
 
         elif self.code_origin is GASP:
             # GASP default is 'cruise'
@@ -330,27 +335,36 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
                 promotes = [
                     Dynamic.Vehicle.DRAG,
                     Dynamic.Vehicle.LIFT,
-                    'CL',
-                    'CD',
+                    Dynamic.Vehicle.DRAG_COEFFICIENT,
+                    Dynamic.Vehicle.LIFT_COEFFICIENT,
                     'flap_factor',
                     'gear_factor',
                 ]
 
             elif method in ('cruise', 'tabular_cruise'):
                 if method == 'tabular_cruise':
-                    promotes = [Dynamic.Vehicle.DRAG, Dynamic.Vehicle.LIFT]
+                    promotes = [
+                        Dynamic.Vehicle.DRAG,
+                        Dynamic.Vehicle.LIFT,
+                        Dynamic.Vehicle.DRAG_COEFFICIENT,
+                        Dynamic.Vehicle.LIFT_COEFFICIENT,
+                    ]
                 else:
                     if 'output_alpha' in subsystem_options:
                         if subsystem_options['output_alpha']:
                             promotes = [
                                 Dynamic.Vehicle.DRAG,
                                 Dynamic.Vehicle.LIFT,
+                                Dynamic.Vehicle.DRAG_COEFFICIENT,
+                                Dynamic.Vehicle.LIFT_COEFFICIENT,
                                 Dynamic.Vehicle.ANGLE_OF_ATTACK,
                             ]
                     else:
                         promotes = [
                             Dynamic.Vehicle.DRAG,
                             Dynamic.Vehicle.LIFT,
+                            Dynamic.Vehicle.DRAG_COEFFICIENT,
+                            Dynamic.Vehicle.LIFT_COEFFICIENT,
                             'CL_max',
                         ]
 
@@ -697,6 +711,14 @@ class CoreAerodynamicsBuilder(AerodynamicsBuilder):
 
         return params
 
+    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        """Call get_timeseries() on all engine models and return combined result."""
+        timeseries_vars = [
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
+            Dynamic.Vehicle.LIFT_COEFFICIENT,
+        ]
+        return timeseries_vars
+
     def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
         if self.code_origin is GASP and not self.tabular:
             return {
@@ -889,9 +911,16 @@ AERO_2DOF_INPUTS = [
     Aircraft.Wing.ZERO_LIFT_ANGLE,
 ]
 
-AERO_2DOF_TABULAR_LS_INPUTS = [Aircraft.Wing.SPAN, Aircraft.Wing.HEIGHT]
+AERO_2DOF_TABULAR_LS_INPUTS = [
+    Mission.Takeoff.AIRPORT_ALTITUDE,
+    Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF,
+    Aircraft.Wing.SPAN,
+    Aircraft.Wing.HEIGHT,
+]
 
 AERO_LS_2DOF_INPUTS = [
+    Mission.Takeoff.AIRPORT_ALTITUDE,
+    Aircraft.Wing.FLAP_DEFLECTION_TAKEOFF,
     Mission.Takeoff.DRAG_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_FLAP_INCREMENT,
     Mission.Takeoff.LIFT_COEFFICIENT_MAX,

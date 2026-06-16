@@ -83,7 +83,7 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.7752)
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)
@@ -172,7 +172,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -233,7 +233,7 @@ inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL, 659, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL_MASS, 659, 'lbm')
 
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
@@ -269,7 +269,7 @@ outputs.set_val(Aircraft.Design.STRUCTURE_MASS, struct_mass, struct_mass_units)
 sys_equip_mass = 32232.0
 sys_equip_mass_units = 'lbm'
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, sys_equip_mass, sys_equip_mass_units)
-outputs.set_val(Mission.USEFUL_LOAD, 10071.93, 'lbm')
+outputs.set_val(Mission.OPERATING_ITEMS_MASS, 10071.93, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.ZERO_FUEL_MASS, 142837.0, 'lbm')
 
@@ -300,7 +300,7 @@ outputs.set_val(Aircraft.Electrical.MASS, 2640.6, 'lbm')
 outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 1726.0, 'lbm')
-outputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 3.9, 'lbm')
+outputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 3.9, 'lbm')
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 386.93, 'lbm')
 
 furnishings_mass = 17857.0
@@ -336,7 +336,7 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 5778, 'lbm')
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, 11.65, 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, 1.6643)
 outputs.set_val(Aircraft.Nacelle.TOTAL_WETTED_AREA, 2 * 228.34, 'ft**2')
-outputs.set_val(Aircraft.Nacelle.MASS, 1612.2, 'lbm')
+outputs.set_val(Aircraft.Nacelle.MASS, 806.0988, 'lbm')
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, 228.34, 'ft**2')
 
 outputs.set_val(Aircraft.Paint.MASS, 582.3, 'lbm')

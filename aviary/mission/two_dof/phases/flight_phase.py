@@ -8,7 +8,8 @@ from aviary.mission.phase_builder import PhaseBuilder
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.enums import SpeedType
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variable_meta_data import CoreMetaData
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 class FlightPhaseOptions(AviaryOptionsDictionary):
@@ -143,7 +144,7 @@ class FlightPhase(PhaseBuilder):
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
@@ -168,40 +169,19 @@ class FlightPhase(PhaseBuilder):
             phase.add_parameter('EAS', opt=False, units='kn', val=EAS_target)
 
         # Add timeseries outputs
-        phase.add_timeseries_output(
-            Dynamic.Atmosphere.MACH,
-            output_name=Dynamic.Atmosphere.MACH,
-            units='unitless',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.ANGLE_OF_ATTACK, units='deg')
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
+        phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
-        phase.add_timeseries_output(
-            Dynamic.Mission.VELOCITY,
-            output_name=Dynamic.Mission.VELOCITY,
-            units='kn',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
+        phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
         phase.add_timeseries_output('TAS_violation', output_name='TAS_violation', units='kn')
-        phase.add_timeseries_output(
-            Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            output_name=Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            units='deg',
-        )
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            output_name=Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            units='deg',
-        )
         phase.add_timeseries_output('theta', output_name='theta', units='deg')
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
-        # TODO: These should be promoted in the 2dof mission outputs.
-        phase.add_timeseries_output('aerodynamics.CL', output_name='CL', units='unitless')
-        phase.add_timeseries_output('aerodynamics.CD', output_name='CD', units='unitless')
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
+        phase.add_timeseries_output(Dynamic.Mission.VELOCITY, units='kn')
 
         return phase
 
@@ -213,6 +193,15 @@ class FlightPhase(PhaseBuilder):
             'mach_target': self.user_options.get_val('mach_target'),
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
+
+    def get_parameters(self):
+        params = {}
+        params[Aircraft.Wing.INCIDENCE] = {
+            'shape': (1,),
+            'units': CoreMetaData[Aircraft.Wing.INCIDENCE]['units'],
+            'static_target': True,
+        }
+        return params
 
 
 # Adding initial guess metadata

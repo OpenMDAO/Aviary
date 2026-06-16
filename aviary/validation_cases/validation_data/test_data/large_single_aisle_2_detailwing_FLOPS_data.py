@@ -75,7 +75,7 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
@@ -162,7 +162,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -228,7 +228,7 @@ inputs.set_val(Aircraft.Design.RANGE, 2960.0, 'NM')
 inputs.set_val(Mission.Constraints.MAX_MACH, 0.82)
 # TODO investigate the origin of these values (taken from benchmark tests)
 # TODO: where should this get connected from?
-inputs.set_val(Mission.Takeoff.FUEL, 577, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL_MASS, 577, 'lbm')
 
 # region TODO: should this come from aero?
 inputs.set_val(Mission.Landing.LIFT_COEFFICIENT_MAX, 3)
@@ -258,7 +258,7 @@ outputs.set_val(Mission.OPERATING_MASS, 95267.0, 'lbm')
 outputs.set_val(Aircraft.Propulsion.MASS, 19232.0, 'lbm')
 outputs.set_val(Aircraft.Design.STRUCTURE_MASS, 44648.0, 'lbm')
 outputs.set_val(Aircraft.Design.SYSTEMS_AND_EQUIPMENT_MASS, 24174.0, 'lbm')
-outputs.set_val(Mission.USEFUL_LOAD, 6760.42285438, 'lbm')
+outputs.set_val(Mission.OPERATING_ITEMS_MASS, 6760.42285438, 'lbm')
 outputs.set_val(Aircraft.Design.TOTAL_WETTED_AREA, 8319.07, 'ft**2')
 outputs.set_val(Mission.ZERO_FUEL_MASS, 131744.0, 'lbm')
 
@@ -319,7 +319,7 @@ outputs.set_val(Aircraft.LandingGear.TOTAL_MASS, 7148.277290864326, 'lbm')
 
 outputs.set_val(Aircraft.Nacelle.CHARACTERISTIC_LENGTH, np.array([11.65]), 'ft')
 outputs.set_val(Aircraft.Nacelle.FINENESS, np.array([1.6643]))
-outputs.set_val(Aircraft.Nacelle.MASS, 1612.2, 'lbm')
+outputs.set_val(Aircraft.Nacelle.MASS, 806.0988, 'lbm')
 nacelle_wetted_area = np.array([228.34])
 nacelle_wetted_area_units = 'ft**2'
 outputs.set_val(Aircraft.Nacelle.WETTED_AREA, nacelle_wetted_area, nacelle_wetted_area_units)

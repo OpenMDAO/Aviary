@@ -1,7 +1,6 @@
 import numpy as np
 import openmdao.api as om
 
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.takeoff_eom import TakeoffEOM
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.subsystems.aerodynamics.aerodynamics_builder import AerodynamicsBuilder
@@ -73,12 +72,13 @@ class TakeOffODE(TwoDOFODE):
         ] + ['aircraft:*']
         if not self.options['ground_roll']:
             EOM_inputs.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+        else:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
+        if rotation:
+            EOM_inputs.append(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT)
 
         subsystems = self.options['subsystems']
         subsystem_options = self.options['subsystem_options']
-
-        # TODO: paramport
-        self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_atmosphere(input_speed_type=input_speed_type)
 
@@ -251,15 +251,13 @@ class TakeOffODE(TwoDOFODE):
                     'dmass_dv',
                 ],
                 promotes_inputs=[
-                    ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                    ('mass_rate', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                     'dt_dv',
                 ],
             )
 
         if not (ground_roll or rotation):
             self.add_excess_rate_comps(nn)
-
-        ParamPort.set_default_vals(self)
 
         self.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
         self.set_input_defaults(Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='deg')
@@ -284,3 +282,5 @@ class TakeOffODE(TwoDOFODE):
         if ground_roll:
             self.set_input_defaults(Dynamic.Mission.VELOCITY_RATE, val=np.zeros(nn), units='kn/s')
             self.set_input_defaults(Aircraft.Wing.INCIDENCE, val=1.0, units='deg')
+        if ground_roll or rotation:
+            self.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)

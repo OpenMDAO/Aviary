@@ -4,7 +4,7 @@ import openmdao.api as om
 from aviary.constants import GRAV_ENGLISH_LBM
 from aviary.utils.math import d_smooth_max, dSigmoidXdx, sigmoidX, smooth_max
 from aviary.variable_info.enums import GASPEngineType
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
@@ -349,7 +349,7 @@ class FurnishingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
 
-        self.add_output(Aircraft.Furnishings.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.Furnishings.MASS,
@@ -439,7 +439,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
 
-        self.add_output(Aircraft.Furnishings.MASS, units='lbm')
+        add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
         self.declare_partials(
             Aircraft.Furnishings.MASS,

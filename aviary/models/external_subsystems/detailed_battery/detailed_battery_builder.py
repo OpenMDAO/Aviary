@@ -87,7 +87,7 @@ class DetailedBatteryBuilder(SubsystemBuilder):
 
         return states_dict
 
-    def get_linked_variables(self, aviary_inputs=None):
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         """
         Return the list of linked variables for the battery subsystem; in this case
         it's our two state variables.

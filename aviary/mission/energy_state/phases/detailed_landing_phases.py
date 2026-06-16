@@ -257,7 +257,7 @@ class LandingApproachToMicP3(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -282,15 +282,9 @@ class LandingApproachToMicP3(PhaseBuilder):
             ref=angle_of_attack_ref,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         initial_height, units = user_options['initial_height']
 
@@ -581,7 +575,7 @@ class LandingObstacleToFlare(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -594,15 +588,9 @@ class LandingObstacleToFlare(PhaseBuilder):
 
         phase.add_control(Dynamic.Vehicle.ANGLE_OF_ATTACK, opt=False, units='deg')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         obstacle_height, units = aviary_options.get_item(Mission.Landing.OBSTACLE_HEIGHT)
 
@@ -848,7 +836,7 @@ class LandingFlareToTouchdown(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -880,15 +868,9 @@ class LandingFlareToTouchdown(PhaseBuilder):
             rate_targets='angle_of_attack_rate',
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         phase.add_timeseries_output('required_thrust', units='lbf')
 
@@ -1087,7 +1069,7 @@ class LandingTouchdownToNoseDown(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1114,15 +1096,9 @@ class LandingTouchdownToNoseDown(PhaseBuilder):
             ref=max_angle_of_attack,
         )
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
         return phase
 
@@ -1297,7 +1273,7 @@ class LandingNoseDownToStop(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1311,15 +1287,9 @@ class LandingNoseDownToStop(PhaseBuilder):
 
         phase.add_parameter(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=0.0, opt=False, units='deg')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            output_name=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            units='lbf',
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
 
-        phase.add_timeseries_output(
-            Dynamic.Vehicle.DRAG, output_name=Dynamic.Vehicle.DRAG, units='lbf'
-        )
+        phase.add_timeseries_output(Dynamic.Vehicle.DRAG, units='lbf')
 
         return phase
 

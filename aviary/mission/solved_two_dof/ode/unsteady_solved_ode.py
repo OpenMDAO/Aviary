@@ -2,7 +2,6 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import RHO_SEA_LEVEL_ENGLISH as rho_sl
-from aviary.mission.two_dof.ode.params import ParamPort
 from aviary.mission.two_dof.ode.two_dof_ode import TwoDOFODE
 from aviary.mission.solved_two_dof.ode.gamma_comp import GammaComp
 from aviary.mission.solved_two_dof.ode.unsteady_solved_eom import UnsteadySolvedEOM
@@ -52,13 +51,6 @@ class UnsteadySolvedODE(TwoDOFODE):
             desc='If true then no flaps or gear are included. Useful for high-speed flight phases.',
         )
         self.options.declare(
-            'include_param_comp',
-            types=bool,
-            default=True,
-            desc='If true then add a ParamComp to this ODE. Useful for smaller usages '
-            'of this ODE not within a full trajectory or a pre-mission group.',
-        )
-        self.options.declare(
             'input_speed_type',
             default=SpeedType.TAS,
             types=SpeedType,
@@ -91,10 +83,6 @@ class UnsteadySolvedODE(TwoDOFODE):
         user_options = self.options['user_options']
         subsystems = self.options['subsystems']
         throttle_enforcement = self.options['throttle_enforcement']
-
-        if self.options['include_param_comp']:
-            # TODO: paramport
-            self.add_subsystem('params', ParamPort(), promotes=['*'])
 
         self.add_subsystem(
             name='atmosphere',
@@ -283,14 +271,11 @@ class UnsteadySolvedODE(TwoDOFODE):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                 'dt_dr',
             ],
             promotes_outputs=['dmass_dr'],
         )
-
-        if self.options['include_param_comp']:
-            ParamPort.set_default_vals(self)
 
         onn = np.ones(nn)
         self.set_input_defaults(

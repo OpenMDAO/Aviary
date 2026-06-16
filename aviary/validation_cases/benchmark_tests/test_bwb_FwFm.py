@@ -121,7 +121,7 @@ class BWBProblemPhaseTestCase(unittest.TestCase):
         )
 
         assert_near_equal(
-            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
             239188.4,
             tolerance=rtol,
         )
@@ -198,19 +198,19 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
         # There are no truth values for these.
         assert_near_equal(
             prob.get_val(Mission.GROSS_MASS, units='lbm'),
-            615233.67861433,
+            564852.60335347,
             tolerance=rtol,
         )
 
         assert_near_equal(
             prob.get_val(Mission.OPERATING_MASS, units='lbm'),
-            327094.09117139,
+            292372.93171789,
             tolerance=rtol,
         )
 
         assert_near_equal(
-            prob.get_val(Mission.TOTAL_FUEL, units='lbm'),
-            225439.58744294,
+            prob.get_val(Mission.TOTAL_FUEL_MASS, units='lbm'),
+            209779.67163558,
             tolerance=rtol,
         )
 
@@ -218,4 +218,7 @@ class BWB300ProblemPhaseTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = BWB300ProblemPhaseTestCase()
+    test.setUp()
+    test.test_bench_bwb300_FwFm_SNOPT()

@@ -40,9 +40,6 @@ class TrappedFuelCapacity(om.ExplicitComponent):
         trapped_fuel_1_wt = unusable_fuel_coeff * (wing_area**0.5) * fuel_vol_frac / 0.430
         trapped_fuel_2_wt = unusable_fuel_coeff * 0.18 * (wing_area**0.5)
 
-        import pdb
-
-        # pdb.set_trace()
         if smooth:
             smoother = sigmoidX(fuel_vol_frac, x0, mu)
             trapped_fuel_wt = smoother * trapped_fuel_1_wt + (1 - smoother) * trapped_fuel_2_wt

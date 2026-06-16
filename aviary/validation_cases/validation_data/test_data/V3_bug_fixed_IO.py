@@ -102,7 +102,7 @@ V3_bug_fixed_options.set_val(
     Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, val=16.5, units='unitless'
 )
 V3_bug_fixed_options.set_val(
-    Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_MASS, val=0, units='lbm'
+    Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, val=0, units='lbm'
 )
 V3_bug_fixed_options.set_val(Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, val=1, units='unitless')
 V3_bug_fixed_options.set_val(Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, val=1, units='unitless')

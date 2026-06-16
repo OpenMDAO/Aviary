@@ -113,7 +113,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.ENG_POD_INERTIA_FACTOR, units='unitless')
 
     def setup_partials(self):
-        # TODO: Analytic derivs will be challenging, but possible.
+        # See issue #1188. Analytic derivs will be challenging, but possible.
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
@@ -142,7 +142,7 @@ class DetailedWingBendingFact(om.ExplicitComponent):
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
         # wing and is ignored
-        # TODO There are also no checks that number of engine locations is consistent with
+        # See issue #1189. There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
 
         target_dy = (inp_stations[-1] - inp_stations[0]) / num_integration_stations
@@ -354,7 +354,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         self.add_output('calculated_wing_area', units='ft**2')
 
     def setup_partials(self):
-        # TODO: Analytic derivs will be challenging, but possible.
+        # See issue #1188. Analytic derivs will be challenging, but possible.
         self.declare_partials('*', '*', method='cs')
 
     def compute(self, inputs, outputs):
@@ -365,7 +365,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         rate_span = (wingspan - width) / wingspan
 
         bwb_input_station_dist = np.array(
-            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=float
+            self.options[Aircraft.Wing.INPUT_STATION_DISTRIBUTION], dtype=width.dtype
         )
         if not self.options[Aircraft.BWB.DETAILED_WING_PROVIDED]:
             bwb_input_station_dist[1] = width / 2.0
@@ -390,22 +390,21 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         load_path_sweep = inputs['BWB_LOAD_PATH_SWEEP_DISTRIBUTION']
         load_path_sweep_mod = np.array(load_path_sweep[1:])
 
-        ar = inputs[Aircraft.Wing.ASPECT_RATIO]
-        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE]
-        if arref[0] == 0:  # this could happen if Aircraft.Wing.ASPECT_RATIO is not an input
-            arref[0] = ar[0]
-            if verbosity >= Verbosity.BRIEF:
-                warnings.warn(
-                    'Aircraft.Wing.ASPECT_RATIO_REFERENCE is not provided. '
-                    'Assume it is the same as Aircraft.Wing.ASPECT_RATIO.'
-                )
+        ar = inputs[Aircraft.Wing.ASPECT_RATIO][0]
+        arref = inputs[Aircraft.Wing.ASPECT_RATIO_REFERENCE][0]
+        ar_scale_factor = arref / ar
+        if (
+            ar_scale_factor == 0.0
+        ):  # this could happen if Aircraft.Wing.ASPECT_RATIO is not input by user
+            ar_scale_factor = 1.0
+
         chord = inputs['BWB_CHORD_PER_SEMISPAN_DISTRIBUTION']
         chord_mod = []
         for x in chord:
             if x > 5.0:
                 chord_mod.append(2 * x / wingspan)
             else:
-                chord_mod.append(x * arref[0] / ar[0])
+                chord_mod.append(x * ar_scale_factor)
         chord_mod = np.array(chord_mod)
 
         fstrt = inputs[Aircraft.Wing.STRUT_BRACING_FACTOR]
@@ -414,15 +413,12 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         thickness_to_chord = inputs['BWB_THICKNESS_TO_CHORD_DISTRIBUTION']
         tc = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
         tcref = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_REFERENCE]
-        thickness_to_chord_mod = []
-        for x in thickness_to_chord:
-            thickness_to_chord_mod.append(x * tc[0] / tcref[0])
-        thickness_to_chord_mod = np.array(thickness_to_chord_mod)[1:]
+        thickness_to_chord_mod = thickness_to_chord[1:] * tc[0] / tcref[0]
 
         # NOTE changes to FLOPS routines based on LEAPS1 improved multiengine effort
         # odd numbers of wing mounted engines assume the "odd" engine out is not on the
         # wing and is ignored
-        # TODO There are also no checks that number of engine locations is consistent with
+        # See issue #1189. There are also no checks that number of engine locations is consistent with
         # half of number of wing mounted engines, which should get added to preprocessor
 
         target_dy = (inp_stations_mod[-1] - inp_stations_mod[0]) / num_integration_stations
@@ -454,9 +450,8 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
         )
         chord_int_stations = chord_interp.evaluate_spline(chord_mod[1:], compute_derivative=False)
-        if arref > 0.0:
-            # Scale
-            chord_int_stations *= arref / ar
+        # Scale
+        chord_int_stations *= ar_scale_factor
 
         del_load = (
             dy
@@ -483,7 +478,6 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         )
         csw = 1.0 / np.cos(sweep_int_stations[:-1] * np.pi / 180.0)
         emi = (del_moment + dy * load_path_length[1:]) * csw
-        em = np.sum(emi)
 
         tc_interp = InterpND(
             method='slinear', points=(inp_stations_mod), x_interp=integration_stations
@@ -491,6 +485,7 @@ class BWBDetailedWingBendingFact(om.ExplicitComponent):
         tc_int_stations = tc_interp.evaluate_spline(
             thickness_to_chord_mod, compute_derivative=False
         )
+
         if tcref > 0.0:
             tc_int_stations *= tc / tcref
 
