@@ -47,7 +47,7 @@ class TailVolCoef(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
 
-        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, val=13.1, units='ft')
+        add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
 
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
 
