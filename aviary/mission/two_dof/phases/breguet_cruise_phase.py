@@ -160,6 +160,7 @@ class BreguetCruisePhase(PhaseBuilder):
             'initial_time',
             Dynamic.Mission.ALTITUDE,
             Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
         ]
         return linked_vars
 
