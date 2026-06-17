@@ -1329,10 +1329,8 @@ class HighLiftMass(om.ExplicitComponent):
         )
 
         add_aviary_output(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
-        self.add_output(
-            'flap_mass', val=0, units='lbm', desc='WFLAP: mass of trailing edge devices'
-        )
-        self.add_output('slat_mass', val=0, units='lbm', desc='WLED: mass of leading edge devices')
+        self.add_output('flap_mass', units='lbm', desc='WFLAP: mass of trailing edge devices')
+        self.add_output('slat_mass', units='lbm', desc='WLED: mass of leading edge devices')
 
     def setup_partials(self):
         self.declare_partials(
