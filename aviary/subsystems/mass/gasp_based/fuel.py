@@ -50,7 +50,6 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
         self.add_output(
             'extra_fuel_volume',
-            val=0,
             units='ft**3',
             desc='FVOLXTRA: excess required design fuel volume (including fuel margin) greater than geometric fuel volume of wings',
         )  # there is no FVOLXTRA in GASP
