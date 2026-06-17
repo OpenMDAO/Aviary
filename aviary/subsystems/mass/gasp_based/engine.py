@@ -381,7 +381,6 @@ class WingMountEngineMass(om.ExplicitComponent):
         if has_hybrid_system:
             self.add_input(
                 'aug_mass',
-                val=400,
                 units='lbm',
                 desc='WEAUG: mass of electrical augmentation system',
             )
@@ -400,14 +399,12 @@ class WingMountEngineMass(om.ExplicitComponent):
 
         self.add_output(
             'eng_comb_mass',
-            val=0,
             units='lbm',
             desc='WPSTAR: combined mass of dry engine and engine installation,'
             ' includes mass of electrical augmentation system',
         )
         self.add_output(
             'wing_mounted_mass',
-            val=0,
             units='lbm',
             desc='WM: mass of gear and engine, basically everything mounted on the wing',
         )
