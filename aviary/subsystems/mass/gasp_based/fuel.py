@@ -31,12 +31,11 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
         self.add_input(
             'fuel_mass_min',
-            val=2000,
             units='lbm',
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )
         self.add_input('fuel_mass_required', units='lbm', desc='WFAREQ: no margin')
-        self.add_input('max_wingfuel_mass', val=6, units='lbm', desc='WFWMX: maximum wingfuel mass')
+        self.add_input('max_wingfuel_mass', units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
