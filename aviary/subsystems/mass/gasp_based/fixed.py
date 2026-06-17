@@ -35,7 +35,6 @@ class MassParameters(om.ExplicitComponent):
 
         self.add_input(
             'max_mach',
-            val=0.9,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
         )
@@ -47,13 +46,11 @@ class MassParameters(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
         self.add_output(
             'c_strut_braced',
-            val=0,
             units='unitless',
             desc='SKSTR: reduction in bending moment factor for strut braced wing',
         )
         self.add_output(
             'c_gear_loc',
-            val=0,
             units='unitless',
             desc='SKGEAR: landing gear location factor',
         )
