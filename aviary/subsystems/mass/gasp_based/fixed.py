@@ -60,7 +60,7 @@ class MassParameters(om.ExplicitComponent):
             shape=num_engine_type,
             units='unitless',
         )
-        self.add_output('half_sweep', val=0, units='rad', desc='SWC2: wing chord half sweep angle')
+        self.add_output('half_sweep', units='rad', desc='SWC2: wing chord half sweep angle')
 
     def setup_partials(self):
         self.declare_partials(
@@ -235,7 +235,7 @@ class PayloadGroup(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, units='lbm')
 
-        self.add_output('payload_mass_des', val=0, units='lbm', desc='WPLDES: design payload')
+        self.add_output('payload_mass_des', units='lbm', desc='WPLDES: design payload')
         self.add_output(
             'payload_mass_max',
             units='lbm',
@@ -1323,7 +1323,6 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, units='unitless')
         self.add_input(
             'density',
-            val=RHO_SEA_LEVEL_ENGLISH,
             units='slug/ft**3',
             desc='RHO: Density of air',
         )
