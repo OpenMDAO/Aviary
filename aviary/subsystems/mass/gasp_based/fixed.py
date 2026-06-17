@@ -854,7 +854,6 @@ class VerticalTailMass(om.ExplicitComponent):
 
         self.add_output(
             'loc_MAC_vtail',
-            val=0,
             units='ft',
             desc='XVMAC: location of mean aerodynamic chord on the vertical tail',
         )
