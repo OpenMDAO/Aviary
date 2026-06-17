@@ -409,7 +409,7 @@ class WingMountEngineMass(om.ExplicitComponent):
             desc='WM: mass of gear and engine, basically everything mounted on the wing',
         )
 
-        self.add_output('prop_mass_sum', val=0, units='lbm', desc='WPROP: mass of all propellers')
+        self.add_output('prop_mass_sum', units='lbm', desc='WPROP: mass of all propellers')
 
     def setup_partials(self):
         has_hybrid_system = self.options[Aircraft.Electrical.HAS_HYBRID_SYSTEM]
