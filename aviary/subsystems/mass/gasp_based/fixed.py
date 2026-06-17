@@ -238,7 +238,6 @@ class PayloadGroup(om.ExplicitComponent):
         self.add_output('payload_mass_des', val=0, units='lbm', desc='WPLDES: design payload')
         self.add_output(
             'payload_mass_max',
-            val=0,
             units='lbm',
             desc='WPLMAX: maximum payload that the aircraft is being asked to carry'
             ' (design payload + cargo)',
@@ -278,25 +277,21 @@ class ElectricAugmentationMass(om.ExplicitComponent):
     def setup(self):
         self.add_input(
             'motor_power',
-            val=200,
             units='kW',
             desc='MOTRKW: power of augmentation motor',
         )
         self.add_input(
             'motor_voltage',
-            val=50,
             units='V',
             desc='VOLTS: voltage of augmentation system',
         )
         self.add_input(
             'max_amp_per_wire',
-            val=50,
             units='A',
             desc='AMPSPW: maximum amperage of each cable in augmentation system',
         )
         self.add_input(
             'safety_factor',
-            val=1.33,
             units='unitless',
             desc='REDUNCY: cable mass redundancy/safety factor',
         )
@@ -305,74 +300,62 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 
         self.add_input(
             'wire_area',
-            val=0.0015,
             units='ft**2',
             desc='ACSWIRE: cross sectional area of electrical augmentation system wire',
         )
         self.add_input(
             'rho_wire',
-            val=1,
             units='lbm/ft**3',
             desc='DENWIRE: density of wire for electrical augmentation system',
         )
         self.add_input(
             'battery_energy',
-            val=1,
             units='MJ',
             desc='EBATT: energy coming from the battery',
         )
         self.add_input(
             'motor_eff',
-            val=1,
             units='unitless',
             desc='EFF_MTR: efficiency of electrical augmentation motor',
         )
         self.add_input(
             'inverter_eff',
-            val=1,
             units='unitless',
             desc='EFF_INV: efficiency of electrical augmentation inverter/controller',
         )
         self.add_input(
             'transmission_eff',
-            val=1,
             units='unitless',
             desc='EFF_TRN: efficiency of electrical augmentation system power transmission',
         )
         self.add_input(
             'battery_eff',
-            val=1,
             units='unitless',
             desc='EFF_BAT: efficiency of electrical augmentation battery storage',
         )
         self.add_input(
             'rho_battery',
-            val=200,
             units='MJ/lb',
             desc='ENGYDEN: energy density of electrical augmentation system battery',
         )
         self.add_input(
             'motor_spec_mass',
-            val=10,
             units='hp/lbm',
             desc='SWT_MTR: specific mass of electrical augmentation motor',
         )
         self.add_input(
             'inverter_spec_mass',
-            val=10,
             units='kW/lbm',
             desc='SWT_INV: specific mass of electrical augmentation inverter',
         )
         self.add_input(
             'TMS_spec_mass',
-            val=10,
             units='lbm/kW',
             desc='SWT_TMS: specific mass of thermal managements system',
         )
 
         self.add_output(
             'aug_mass',
-            val=0,
             units='lbm',
             desc='WEAUG: mass of electrical augmentation system',
         )
