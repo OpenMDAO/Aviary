@@ -1323,6 +1323,7 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, units='unitless')
         self.add_input(
             'density',
+            val=RHO_SEA_LEVEL_ENGLISH,
             units='slug/ft**3',
             desc='RHO: Density of air',
         )
