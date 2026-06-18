@@ -54,13 +54,10 @@ class BodyTankCalculations(om.ExplicitComponent):
         )  # there is no FVOLXTRA in GASP
         self.add_output(
             'max_extra_fuel_mass',
-            val=0,
             units='lbm',
             desc='WFXTRAMX: mass of fuel that fits in extra_fuel_volume',
         )  # there is no WFXTRAMX in GASP
-        self.add_output(
-            'wingfuel_mass_min', val=0, units='lbm', desc='WFWMIN: minimum wing fuel mass'
-        )
+        self.add_output('wingfuel_mass_min', units='lbm', desc='WFWMIN: minimum wing fuel mass')
         add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm', desc='WFAMAX')
 
     def setup_partials(self):
@@ -503,13 +500,11 @@ class FuelComponents(om.ExplicitComponent):
 
         self.add_output(
             'OEM_wingfuel_mass',
-            val=0,
             units='lbm',
             desc='WFWOWE: wing fuel mass when operating empty',
         )
         self.add_output(
             'OEM_fuel_vol',
-            val=0,
             units='ft**3',
             desc='FVOLW: wing tank fuel volume when carrying maximum fuel',
         )
@@ -517,19 +512,16 @@ class FuelComponents(om.ExplicitComponent):
 
         self.add_output(
             'payload_mass_max_fuel',
-            val=0,
             units='lbm',
             desc='WPLMXF: allowable payload mass with maximum fuel',
         )
         self.add_output(
             'volume_wingfuel_mass',
-            val=0,
             units='lbm',
-            desc=' mass of wing fuel based on volume, sometimes set as WFWMX in GASP, depending on if it exceeds the OEM fuel mass',
+            desc='mass of wing fuel based on volume, sometimes set as WFWMX in GASP, '
+            'depending on if it exceeds the OEM fuel mass',
         )
-        self.add_output(
-            'max_wingfuel_mass', val=0, units='lbm', desc='WFWMX: maximum wingfuel mass'
-        )
+        self.add_output('max_wingfuel_mass', units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
 
     def setup_partials(self):
