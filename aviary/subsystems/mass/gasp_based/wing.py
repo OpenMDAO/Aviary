@@ -412,7 +412,6 @@ class BWBWingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
         self.add_input(
             'c_strut_braced',
-            val=1.00000001,
             units='unitless',
             desc='SKSTR: reduction in bending moment factor for strut braced wing',
         )
@@ -422,7 +421,6 @@ class BWBWingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Engine.POSITION_FACTOR, shape=num_engine_type)
         self.add_input(
             'c_gear_loc',
-            val=1.000000001,
             units='unitless',
             desc='SKGEAR: landing gear location factor',
         )
@@ -439,7 +437,6 @@ class BWBWingMassSolve(om.ImplicitComponent):
 
         self.add_output(
             'isolated_wing_mass',
-            val=12973.96759,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
