@@ -1167,7 +1167,6 @@ class FuelMass(om.ExplicitComponent):
 
         self.add_input(
             'payload_mass_max',
-            val=46040,
             units='lbm',
             desc='WPLMAX: maximum payload that the aircraft is being asked to carry (design payload + cargo)',
         )
@@ -1178,7 +1177,6 @@ class FuelMass(om.ExplicitComponent):
         self.add_output('fuel_mass_required', units='lbm', desc='WFAREQ')
         self.add_output(
             'fuel_mass_min',
-            val=0,
             units='lbm',
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )
