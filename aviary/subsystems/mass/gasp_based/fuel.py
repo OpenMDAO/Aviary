@@ -1160,7 +1160,7 @@ class FuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.OPERATING_MASS, units='lbm')
-        self.add_input('payload_mass_des', val=36000, units='lbm', desc='WPLDES: design payload')
+        self.add_input('payload_mass_des', units='lbm', desc='WPLDES: design payload')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
