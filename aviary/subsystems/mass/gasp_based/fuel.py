@@ -822,7 +822,6 @@ class FuselageMass(om.ExplicitComponent):
     def setup(self):
         self.add_input(
             'fus_mass_full',
-            val=4000,
             units='lbm',
             desc='WX: mass of fuselage and contents, including empennage',
         )
@@ -834,7 +833,6 @@ class FuselageMass(om.ExplicitComponent):
         # pylon_len is not computed in Aviary
         self.add_input(
             'pylon_len',
-            val=0,
             units='ft',
             desc='ELRW: length of pylon for fuselage mounted engines',
         )
@@ -842,9 +840,7 @@ class FuselageMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         # MAT is not computed in Aviary
-        self.add_input(
-            'MAT', val=0, units='lbm', desc='WAT: Weight of the Fuselage Acoustic Treatment'
-        )
+        self.add_input('MAT', units='lbm', desc='WAT: Weight of the Fuselage Acoustic Treatment')
 
         add_aviary_output(self, Aircraft.Fuselage.MASS, units='lbm')
 
