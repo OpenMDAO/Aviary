@@ -744,7 +744,7 @@ class AviaryProblem(om.Problem):
             ),
             promotes_inputs=[
                 ('ascent_duration', Mission.Takeoff.ASCENT_DURATION),
-                ('overall_fuel', Mission.TOTAL_FUEL),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
             promotes_outputs=[('reg_objective', Mission.Objectives.FUEL)],
         )
@@ -795,7 +795,7 @@ class AviaryProblem(om.Problem):
                 self.model.add_objective('obj_comp.obj')
 
             elif objective_type == 'fuel_burned':
-                self.model.add_objective(Mission.FUEL, ref=ref)
+                self.model.add_objective(Mission.FUEL_MASS, ref=ref)
 
             elif objective_type == 'fuel':
                 self.model.add_objective(Mission.Objectives.FUEL, ref=ref)
@@ -986,7 +986,7 @@ class AviaryProblem(om.Problem):
                 )
             objectives.append((model, output, weight))
             # objectives = [
-            # ('model1', Mission.FUEL, 1),
+            # ('model1', Mission.FUEL_MASS, 1),
             # ('model2', Mission.CO2, 1),
             #  ...
             # ]
@@ -1003,7 +1003,7 @@ class AviaryProblem(om.Problem):
         objectives_cleaned = []
         for model, output, weight in objectives:
             if output == 'fuel_burned':
-                output = Mission.FUEL
+                output = Mission.FUEL_MASS
                 # default scaling is valid only if this is the only argument and the ref has not yet been set
                 if len(args) == 1 and ref == None:
                     # set a default ref
@@ -1080,7 +1080,7 @@ class AviaryProblem(om.Problem):
         missions : list of str
             Subsystem names corresponding to different missions (e.g., ``['model1', 'model2']``).
         outputs : list of str
-            Output variable names to include from each mission (e.g., ``[Mission.FUEL,
+            Output variable names to include from each mission (e.g., ``[Mission.FUEL_MASS,
             Mission.GROSS_MASS]``).
         mission_weights : list of float, optional
             Weights assigned to each mission. Normalized internally to sum to 1.0. If None, equal
@@ -1793,7 +1793,7 @@ class AviaryProblem(om.Problem):
             unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 
-            fuel_2 = self.get_val(Mission.FUEL)[0]
+            fuel_2 = self.get_val(Mission.FUEL_MASS)[0]
 
             # Operating mass includes unusable fuel, don't double count
             max_usable_fuel = fuel_capacity - unusable_fuel
@@ -1855,7 +1855,7 @@ class AviaryProblem(om.Problem):
                 )[0]
 
                 range_3 = max_fuel_pyld_range_prob.get_val(Mission.RANGE)[0]
-                fuel_3 = max_fuel_pyld_range_prob.get_val(Mission.FUEL)[0]
+                fuel_3 = max_fuel_pyld_range_prob.get_val(Mission.FUEL_MASS)[0]
 
                 prob_3_skip = False
             else:
@@ -1888,7 +1888,7 @@ class AviaryProblem(om.Problem):
 
             payload_4 = ferry_range_prob.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0]
             range_4 = ferry_range_prob.get_val(Mission.RANGE)[0]
-            fuel_4 = ferry_range_prob.get_val(Mission.FUEL)[0]
+            fuel_4 = ferry_range_prob.get_val(Mission.FUEL_MASS)[0]
 
             # if max fuel + payload mission was skipped, max_fuel_pyld_range_prob is the same as ferry_range_prob
             if prob_3_skip:

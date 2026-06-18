@@ -193,7 +193,7 @@ class Aircraft:
     class Engine:
         ADDITIONAL_MASS = 'aircraft:engine:additional_mass'
         ADDITIONAL_MASS_FRACTION = 'aircraft:engine:additional_mass_fraction'
-        CONSTANT_FUEL_CONSUMPTION = 'aircraft:engine:constant_fuel_consumption'
+        CONSTANT_FUEL_MASS_CONSUMPTION = 'aircraft:engine:constant_fuel_mass_consumption'
         DATA_FILE = 'aircraft:engine:data_file'
         FIXED_RPM = 'aircraft:engine:fixed_rpm'
         FLIGHT_IDLE_MAX_FRACTION = 'aircraft:engine:flight_idle_max_fraction'
@@ -263,13 +263,13 @@ class Aircraft:
         TAPER_RATIO = 'aircraft:fins:taper_ratio'
 
     class Fuel:
-        AUXILIARY_FUEL_CAPACITY = 'aircraft:fuel:auxiliary_fuel_capacity'
+        AUXILIARY_FUEL_MASS_CAPACITY = 'aircraft:fuel:auxiliary_fuel_mass_capacity'
         BURN_PER_PASSENGER_MILE = 'aircraft:fuel:burn_per_passenger_mile'
         DENSITY = 'aircraft:fuel:density'
         FUEL_SYSTEM_MASS = 'aircraft:fuel:fuel_system_mass'
         FUEL_SYSTEM_MASS_COEFFICIENT = 'aircraft:fuel:fuel_system_mass_coefficient'
         FUEL_SYSTEM_MASS_SCALER = 'aircraft:fuel:fuel_system_mass_scaler'
-        FUSELAGE_FUEL_CAPACITY = 'aircraft:fuel:fuselage_fuel_capacity'
+        FUSELAGE_FUEL_MASS_CAPACITY = 'aircraft:fuel:fuselage_fuel_mass_capacity'
         IGNORE_FUEL_CAPACITY_CONSTRAINT = 'aircraft:fuel:ignore_fuel_capacity_constraint'
         NUM_TANKS = 'aircraft:fuel:num_tanks'
         TOTAL_CAPACITY = 'aircraft:fuel:total_capacity'
@@ -278,8 +278,8 @@ class Aircraft:
         UNUSABLE_FUEL_MASS_COEFFICIENT = 'aircraft:fuel:unusable_fuel_mass_coefficient'
         UNUSABLE_FUEL_MASS_SCALER = 'aircraft:fuel:unusable_fuel_mass_scaler'
         VOLUME_MARGIN = 'aircraft:fuel:volume_margin'
-        WING_FUEL_CAPACITY = 'aircraft:fuel:wing_fuel_capacity'
         WING_FUEL_FRACTION = 'aircraft:fuel:wing_fuel_fraction'
+        WING_FUEL_MASS_CAPACITY = 'aircraft:fuel:wing_fuel_mass_capacity'
         WING_REF_CAPACITY = 'aircraft:fuel:wing_ref_capacity'
         WING_REF_CAPACITY_AREA = 'aircraft:fuel:wing_ref_capacity_area'
         WING_REF_CAPACITY_TERM_A = 'aircraft:fuel:wing_ref_capacity_term_a'
@@ -645,10 +645,10 @@ class Dynamic:
             ELECTRIC_POWER_IN = 'electric_power_in'
             ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
             # EXIT_AREA = 'exit_area'
-            FUEL_FLOW_RATE = 'fuel_flow_rate'
-            FUEL_FLOW_RATE_NEGATIVE = 'fuel_flow_rate_negative'
-            FUEL_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
-            FUEL_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
+            FUEL_MASS_FLOW_RATE = 'fuel_flow_rate'
+            FUEL_MASS_FLOW_RATE_NEGATIVE = 'fuel_flow_rate_negative'
+            FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL = 'fuel_flow_rate_negative_total'
+            FUEL_MASS_FLOW_RATE_TOTAL = 'fuel_flow_rate_total'
             HYBRID_THROTTLE = 'hybrid_throttle'
             NOX_RATE = 'nox_rate'
             NOX_RATE_TOTAL = 'nox_rate_total'
@@ -672,24 +672,24 @@ class Mission:
     # These values are inputs and outputs to/from mission analysis for the given mission
     # (whether it is design or off-design). In design these may be constrained to design values,
     # but in off-design they independently represent the final analysis based on the user selection.
-    BLOCK_FUEL = 'mission:block_fuel'
+    BLOCK_FUEL_MASS = 'mission:block_fuel_mass'
     FINAL_MASS = 'mission:final_mass'
     FINAL_TIME = 'mission:final_time'
-    FUEL = 'mission:fuel'
+    FUEL_MASS = 'mission:fuel_mass'
     GROSS_MASS = 'mission:gross_mass'
     OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'
-    RESERVE_FUEL = 'mission:reserve_fuel'
-    RESERVE_FUEL_ADDITIONAL = 'mission:reserve_fuel_additional'
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'
-    TOTAL_FUEL = 'mission:total_fuel'
-    TOTAL_RESERVE_FUEL = 'mission:total_reserve_fuel'
+    RESERVE_FUEL_MASS = 'mission:reserve_fuel_mass'
+    RESERVE_FUEL_MASS_ADDITIONAL = 'mission:reserve_fuel_mass_additional'
+    TOTAL_FUEL_MASS = 'mission:total_fuel_mass'
+    TOTAL_RESERVE_FUEL_MASS = 'mission:total_reserve_fuel_mass'
     ZERO_FUEL_MASS = 'mission:zero_fuel_mass'
 
     class Constraints:
         # these can be residuals (for equality constraints), upper bounds, or lower bounds
-        EXCESS_FUEL_CAPACITY = 'mission:constraints:excess_fuel_capacity'
+        EXCESS_FUEL_MASS_CAPACITY = 'mission:constraints:excess_fuel_mass_capacity'
         GEARBOX_SHAFT_POWER_RESIDUAL = 'mission:constraints:gearbox_shaft_power_residual'
         MASS_RESIDUAL = 'mission:constraints:mass_residual'
         MAX_MACH = 'mission:constraints:max_mach'
@@ -744,7 +744,7 @@ class Mission:
         FINAL_MACH = 'mission:takeoff:final_mach'
         FINAL_MASS = 'mission:takeoff:final_mass'
         FINAL_VELOCITY = 'mission:takeoff:final_velocity'
-        FUEL = 'mission:takeoff:fuel'
+        FUEL_MASS = 'mission:takeoff:fuel_mass'
         GROUND_DISTANCE = 'mission:takeoff:ground_distance'
         LIFT_COEFFICIENT_FLAP_INCREMENT = 'mission:takeoff:lift_coefficient_flap_increment'
         LIFT_COEFFICIENT_MAX = 'mission:takeoff:lift_coefficient_max'
@@ -759,8 +759,8 @@ class Mission:
 
     class Taxi:
         DURATION = 'mission:taxi:duration'
-        FUEL_TAXI_IN = 'mission:taxi:fuel_taxi_in'
-        FUEL_TAXI_OUT = 'mission:taxi:fuel_taxi_out'
+        FUEL_MASS_TAXI_IN = 'mission:taxi:fuel_mass_taxi_in'
+        FUEL_MASS_TAXI_OUT = 'mission:taxi:fuel_mass_taxi_out'
         MACH = 'mission:taxi:mach'
 
 

@@ -106,10 +106,10 @@ inputs.set_val(Aircraft.Fins.NUM_FINS, 0)
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.7752)
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
-inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
+inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 0.93202)
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)
@@ -217,7 +217,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lb/h')
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lb/h')
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
@@ -315,7 +315,7 @@ inputs.set_val(Mission.Landing.OBSTACLE_HEIGHT, 50.0, 'ft')
 inputs.set_val(Mission.Landing.SPOILER_DRAG_COEFFICIENT, 0.085000)
 inputs.set_val(Mission.Landing.SPOILER_LIFT_COEFFICIENT, -0.810000)
 inputs.set_val(Mission.Takeoff.THRUST_INCIDENCE, 0.0, 'deg')
-inputs.set_val(Mission.Takeoff.FUEL, 577.0, 'lbm')
+inputs.set_val(Mission.Takeoff.FUEL_MASS, 577.0, 'lbm')
 
 # Settings
 # ---------------------------
@@ -363,7 +363,7 @@ outputs.set_val(Aircraft.Electrical.MASS, 2375.0, 'lbm')
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 518.0, 'lbm')
 outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 33136.4, 'lbm')
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 462.0, 'lbm')
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 33136.4, 'lbm')
+outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 33136.4, 'lbm')
 
 outputs.set_val(Aircraft.Fins.MASS, 0.0, 'lbm')
 

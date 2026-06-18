@@ -341,7 +341,7 @@ class BWBPreMissionGroupTest(unittest.TestCase):
                 # TransportAvionicsMass
                 Aircraft.Avionics.MASS,
                 # FuelCapacityGroup
-                Aircraft.Fuel.WING_FUEL_CAPACITY,
+                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
                 Aircraft.Fuel.TOTAL_CAPACITY,
                 # EngineMass
                 Aircraft.Engine.MASS,
@@ -617,7 +617,7 @@ class BWBPreMissionGroupCSVTest1(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2896.223816950469, tol)
         # FuelCapacityGroup
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 2385712.4988316689, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 2385712.4988316689, tol)
         assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 2385712.4988316689, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 17825.63336233, tol)
@@ -865,7 +865,7 @@ class BWBPreMissionGroupCSVTest2(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2778.5110590964073, tol)
         # FuelCapacityGroup
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 1197720.2419621395, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 1197720.2419621395, tol)
         assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 1197720.2419621395, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 17825.63336233, tol)
@@ -1115,7 +1115,7 @@ class BWB300PreMissionGroupCSVTest(unittest.TestCase):
         # TransportAvionicsMass
         assert_near_equal(prob[Aircraft.Avionics.MASS], 2280.13561342, tol)
         # FuelCapacityGroup
-        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_CAPACITY], 787493.65267018, tol)
+        assert_near_equal(prob[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY], 787493.65267018, tol)
         assert_near_equal(prob[Aircraft.Fuel.TOTAL_CAPACITY], 787493.65267018, tol)
         # EngineMass
         assert_near_equal(prob[Aircraft.Engine.MASS], 44541.857940875525 / 2, tol)

@@ -271,7 +271,7 @@ class UnsteadySolvedODE(TwoDOFODE):
                 has_diag_partials=True,
             ),
             promotes_inputs=[
-                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL),
+                ('fuelflow', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL),
                 'dt_dr',
             ],
             promotes_outputs=['dmass_dr'],

@@ -102,7 +102,7 @@ class TestBatteryMission(unittest.TestCase):
         )
         expected_scalar_values = {
             cumulative_energy_var: (38.46817379, 'kW*h'),
-            av.Mission.FUEL: (1249.64666191, 'lbm'),
+            av.Mission.FUEL_MASS: (1249.64666191, 'lbm'),
         }
 
         for var_name, (expected, units) in expected_scalar_values.items():

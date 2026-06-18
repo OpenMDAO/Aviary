@@ -144,7 +144,7 @@ class FlightPhase(PhaseBuilder):
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
@@ -174,7 +174,7 @@ class FlightPhase(PhaseBuilder):
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
