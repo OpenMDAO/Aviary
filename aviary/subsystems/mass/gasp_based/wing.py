@@ -357,6 +357,7 @@ class WingMassTotal(om.ExplicitComponent):
 
         self.add_input(
             'isolated_wing_mass',
+            # val=1500,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
