@@ -357,7 +357,6 @@ class WingMassTotal(om.ExplicitComponent):
 
         self.add_input(
             'isolated_wing_mass',
-            val=1500,
             units='lbm',
             desc='WW: wing mass including high lift devices (but excluding struts and fold effects)',
         )
@@ -428,9 +427,7 @@ class BWBWingMassSolve(om.ImplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.AVG_DIAMETER, units='ft')
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_ROOT, units='unitless')
-        self.add_input(
-            'half_sweep', val=0.3947081519, units='rad', desc='SWC2: wing half-chord sweep angle'
-        )
+        self.add_input('half_sweep', units='rad', desc='SWC2: wing half-chord sweep angle')
         add_aviary_input(
             self, Aircraft.Fuselage.LIFT_COEFFICIENT_RATIO_BODY_TO_WING, units='unitless'
         )
