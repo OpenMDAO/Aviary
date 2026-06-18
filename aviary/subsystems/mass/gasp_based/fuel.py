@@ -822,7 +822,6 @@ class FuselageMass(om.ExplicitComponent):
     def setup(self):
         self.add_input(
             'fus_mass_full',
-            val=4000,
             units='lbm',
             desc='WX: mass of fuselage and contents, including empennage',
         )
