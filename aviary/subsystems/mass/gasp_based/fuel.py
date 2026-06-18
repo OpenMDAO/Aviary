@@ -713,7 +713,6 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.MASS, units='lbm')
         self.add_input(
             'wing_mounted_mass',
-            val=24446.343040697346,
             units='lbm',
             desc='WM: mass of gear and engine (everything on wing that isn`t wing itself or fuel',
         )
@@ -722,13 +721,10 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         self.add_input('fuel_mass', units='lbm', desc='WFADES')
         add_aviary_input(self, Aircraft.Fuel.VOLUME_MARGIN, units='unitless')
-        self.add_input(
-            'wingfuel_mass_min', val=32850, units='lbm', desc='WFWMIN: minimum wing fuel mass'
-        )
+        self.add_input('wingfuel_mass_min', units='lbm', desc='WFWMIN: minimum wing fuel mass')
 
         self.add_output(
             'fus_mass_full',
-            val=0,
             units='lbm',
             desc='WX: mass of fuselage and contents, including empennage',
         )
