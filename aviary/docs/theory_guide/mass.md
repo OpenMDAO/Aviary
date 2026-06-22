@@ -52,5 +52,7 @@ The Fuel Capacity Group contains 4 subsystems:
 It is possible for Aviary to calculate negative fuel capacities depending on user overrides and the input wing geometry. These situations are not currently flagged to the user.
 
 # References
+For additional information, please see the following resources:
+
 [^FLOPS_weights]: The Flight Optimization System Weights Estimation Method. NASA Technology
 Transfer Program. URL: https://ntrs.nasa.gov/citations/20170005851
