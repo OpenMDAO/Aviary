@@ -85,9 +85,9 @@ inputs.set_val(Aircraft.Fins.MASS_SCALER, 1.0)  # FRFIN
 
 # Fuel
 # ---------------------------
-inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')  # FULAUX
+inputs.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')  # FULAUX
 inputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, 1.0)  # WFSYS
-inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')  # FULFMX
+inputs.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')  # FULFMX
 inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
@@ -166,7 +166,7 @@ inputs.set_val(Aircraft.Engine.SUBSONIC_FUEL_FLOW_SCALER, 1.0)  # FFFSUB
 inputs.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)  # FFFSUP
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)  # DFFAC
 inputs.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 0.0)  # FFFAC
-inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')  # FLEAK
+inputs.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')  # FLEAK
 inputs.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.0)  # WPMISC
 inputs.set_val(Aircraft.Engine.GENERATE_FLIGHT_IDLE, True)  # IDLE
 inputs.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)  # NONEG
@@ -290,6 +290,7 @@ inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
+inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
 #          OUTPUTS
@@ -329,7 +330,7 @@ outputs.set_val(Aircraft.Electrical.MASS, 4291.4778106479534, 'lbm')  # WELEC
 outputs.set_val(Aircraft.Fuel.TOTAL_CAPACITY, 1197720.2419621395, 'lbm')  # FMXTOT
 outputs.set_val(Aircraft.Fuel.FUEL_SYSTEM_MASS, 5444.9572934402777, 'lbm')  # WFSYS
 outputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS, 1732.78186198, 'lbm')  # WUF
-outputs.set_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 1197720.2419621395, 'lbm')  # FULWMX
+outputs.set_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 1197720.2419621395, 'lbm')  # FULWMX
 
 outputs.set_val(Aircraft.Fins.MASS, 3159.3781042368792, 'lbm')  # WFIN
 outputs.set_val(Aircraft.Furnishings.MASS, 57747.97136452, 'lbm')  # WFURN

@@ -163,7 +163,7 @@ class CoreMassBuilder(MassBuilder):
 
             # OTHER STRUCTURES (NOT IN GROUP) #
             val, units = find_variable_in_problem(Aircraft.Nacelle.MASS, prob, self.meta_data)
-            f.write(f'|Nacelles|{np.dot(val, num_engines)[0]}||\n')
+            f.write(f'|Nacelles|{np.dot(val, num_engines)}||\n')
             for i, engine in enumerate(engine_models):
                 if isinstance(val, (np.ndarray, list, tuple)):
                     val = val[i]
@@ -383,8 +383,8 @@ class CoreMassBuilder(MassBuilder):
             f.write('||||\n')
 
             # FUEL GROUP #
-            val1, units1 = find_variable_in_problem(Mission.FUEL, prob, self.meta_data)
-            val2, units2 = find_variable_in_problem(Mission.RESERVE_FUEL, prob, self.meta_data)
+            val1, units1 = find_variable_in_problem(Mission.FUEL_MASS, prob, self.meta_data)
+            val2, units2 = find_variable_in_problem(Mission.RESERVE_FUEL_MASS, prob, self.meta_data)
             if val1 != 'Not Found in Model' or val2 != 'Not Found in Model':
                 fuel_sum = 0
                 units = units1

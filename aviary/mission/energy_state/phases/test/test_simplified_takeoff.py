@@ -87,7 +87,7 @@ class FinalConditionsTest(unittest.TestCase):
 
         self.prob.model.set_input_defaults('v_stall', val=100, units='m/s')  # not actual value
         self.prob.model.set_input_defaults('mass', val=181200.0, units='lbm')  # check
-        self.prob.model.set_input_defaults(Mission.Takeoff.FUEL, val=577, units='lbm')  # check
+        self.prob.model.set_input_defaults(Mission.Takeoff.FUEL_MASS, val=577, units='lbm')  # check
         self.prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY,
             val=constants.RHO_SEA_LEVEL_ENGLISH,
@@ -162,8 +162,8 @@ class TakeoffGroupTest(unittest.TestCase):
         self.prob.model.add_subsystem('group_example', TakeoffGroup(), promotes=['*'])
 
         self.prob.model.set_input_defaults(Mission.GROSS_MASS, val=181300.0, units='lbm')  # check
-        self.prob.model.set_input_defaults(Mission.Taxi.FUEL_TAXI_OUT, val=101, units='lbm')
-        self.prob.model.set_input_defaults(Mission.Takeoff.FUEL, val=577, units='lbm')  # check
+        self.prob.model.set_input_defaults(Mission.Taxi.FUEL_MASS_TAXI_OUT, val=101, units='lbm')
+        self.prob.model.set_input_defaults(Mission.Takeoff.FUEL_MASS, val=577, units='lbm')  # check
         self.prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')  # check
         self.prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2.0000, units='unitless'

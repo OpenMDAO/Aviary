@@ -12,7 +12,7 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
     def setup(self):
         self.add_input(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             val=1.0,
             units='lbm/s',
             desc='fuel flow rate',
@@ -35,11 +35,11 @@ class TaxiFuelComponent(om.ExplicitComponent):
     def setup_partials(self):
         self.declare_partials(
             'taxi_fuel_consumed',
-            [Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL],
+            [Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL],
         )
         self.declare_partials(
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.declare_partials(Dynamic.Vehicle.MASS, Mission.GROSS_MASS, val=1)
 
@@ -54,10 +54,10 @@ class TaxiFuelComponent(om.ExplicitComponent):
 
         J[
             'taxi_fuel_consumed',
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         ] = -dt_taxi
 
         J[
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         ] = dt_taxi

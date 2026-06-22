@@ -33,7 +33,7 @@ class RangeComp(om.ExplicitComponent):
         )
 
         self.add_input(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             0.74 * np.ones(nn),
             units='lbm/h',
         )
@@ -84,7 +84,7 @@ class RangeComp(om.ExplicitComponent):
         self.declare_partials(
             'cruise_range',
             [
-                Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+                Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
                 'mass',
                 'TAS_cruise',
             ],
@@ -94,7 +94,7 @@ class RangeComp(om.ExplicitComponent):
         self.declare_partials(
             'cruise_time',
             [
-                Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+                Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
                 'mass',
                 'TAS_cruise',
             ],
@@ -115,7 +115,7 @@ class RangeComp(om.ExplicitComponent):
     def compute(self, inputs, outputs):
         v_x = inputs['TAS_cruise']
         m = inputs['mass']
-        FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL]
+        FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL]
         r0 = inputs['cruise_distance_initial']
         t0 = inputs['cruise_time_initial']
         r0 = r0[0]
@@ -155,7 +155,7 @@ class RangeComp(om.ExplicitComponent):
         W1 = m[:-1] * GRAV_ENGLISH_LBM
         W2 = m[1:] * GRAV_ENGLISH_LBM  # Final mass across each two-node pair
 
-        FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL]
+        FF = -inputs[Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL]
         FF_1 = FF[:-1]  # Initial fuel flow across each two-node pair
         FF_2 = FF[1:]  # Final fuel flow across each two_node pair
 
@@ -195,7 +195,7 @@ class RangeComp(om.ExplicitComponent):
         np.fill_diagonal(self._scratch_nn_x_nn[1:, :-1], dRange_dFF1)
         np.fill_diagonal(self._scratch_nn_x_nn[1:, 1:], dRange_dFF2)
 
-        J['cruise_range', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL][...] = (
+        J['cruise_range', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL][...] = (
             self._d_cumsum_dx @ self._scratch_nn_x_nn
         )[self._tril_rs, self._tril_cs]
 
@@ -221,8 +221,8 @@ class RangeComp(om.ExplicitComponent):
         # But the jacobian is in a flat format in row-major order. The rows associated
         # with the nonzero elements are stored in self._tril_rs.
 
-        J['cruise_time', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL][1:] = (
-            J['cruise_range', Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL][1:]
+        J['cruise_time', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL][1:] = (
+            J['cruise_range', Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL][1:]
             / vx_m[self._tril_rs[1:] - 1]
         )
         J['cruise_time', 'mass'][1:] = J['cruise_range', 'mass'][1:] / vx_m[self._tril_rs[1:] - 1]

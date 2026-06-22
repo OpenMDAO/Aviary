@@ -714,7 +714,7 @@ class TurbopropMission(om.Group):
         # system, also having it as an input causes feedback loop problem at the propulsion level
         skipped_inputs = [
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
             Dynamic.Vehicle.Propulsion.NOX_RATE,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER,
             Dynamic.Vehicle.Propulsion.SHAFT_POWER_MAX,

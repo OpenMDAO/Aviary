@@ -82,6 +82,16 @@ def preprocess_options(
                         f'Aircraft.Wing.THICKNESS_TO_CHORD ({tc}).'
                     )
 
+    if Aircraft.Design.PERCENT_EXCRESCENCE_DRAG not in aviary_options:
+        # In FLOPS, excrescence drag percentage is not able to be set via the input file
+        # Therefore, it appears to have been hardcoded into the method
+        # Here we set the default value to that fixed value
+        if (
+            Settings.AERODYNAMICS_METHOD in aviary_options
+            and aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
+        ):
+            aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
+
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """
@@ -560,26 +570,26 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
         if Aircraft.Fuel.TOTAL_CAPACITY not in aviary_options:
             # Aviary will need to calculate the total capacity and can only do so if we assume any missing subsystem capacities are zero
             # TODO these are default values, double check they need to actually be set here
-            if Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY not in aviary_options:
-                aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 0.0, 'lbm')
+            if Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY not in aviary_options:
+                aviary_options.set_val(Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 0.0, 'lbm')
 
-            if Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY not in aviary_options:
-                aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 0.0, 'lbm')
+            if Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY not in aviary_options:
+                aviary_options.set_val(Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 0.0, 'lbm')
         else:
             total_capacity = aviary_options.get_val(Aircraft.Fuel.TOTAL_CAPACITY, 'lbm')
             try:
-                wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_CAPACITY, 'lbm')
+                wing_capacity = aviary_options.get_val(Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, 'lbm')
             except KeyError:
                 wing_capacity = None
             try:
                 fuselage_capacity = aviary_options.get_val(
-                    Aircraft.Fuel.FUSELAGE_FUEL_CAPACITY, 'lbm'
+                    Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY, 'lbm'
                 )
             except KeyError:
                 fuselage_capacity = None
             try:
                 auxiliary_capacity = aviary_options.get_val(
-                    Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY, 'lbm'
+                    Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, 'lbm'
                 )
             except KeyError:
                 auxiliary_capacity = None

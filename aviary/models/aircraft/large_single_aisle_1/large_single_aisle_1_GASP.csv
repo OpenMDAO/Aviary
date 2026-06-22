@@ -20,7 +20,7 @@ aircraft:design:drag_coefficient_increment,0.00175,unitless
 aircraft:design:emergency_equipment_mass,50,lbm
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3,unitless
-mission:reserve_fuel_additional,4998,lbm
+mission:reserve_fuel_mass_additional,4998,lbm
 mission:reserve_fuel_margin,0,unitless
 aircraft:design:static_margin,0.03,unitless
 aircraft:design:structural_mass_increment,0,lbm
@@ -140,6 +140,7 @@ aircraft:wing:zero_lift_angle,-1.2,deg
 aircraft:design:cruise_altitude,37500,ft
 aircraft:design:gross_mass,175400,lbm
 aircraft:design:mach,0.8,unitless
+aircraft:design:percent_excrescence_drag,0.075,unitless
 aircraft:design:range,3675,NM
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
