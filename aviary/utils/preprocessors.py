@@ -87,8 +87,8 @@ def preprocess_options(
         # Therefore, it appears to have been hardcoded into the method
         # Here we set the default value to that fixed value
         if (
-                Settings.AERODYNAMICS_METHOD in aviary_options and 
-                aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
+            Settings.AERODYNAMICS_METHOD in aviary_options
+            and aviary_options.get_val(Settings.AERODYNAMICS_METHOD) is LegacyCode.FLOPS
         ):
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
