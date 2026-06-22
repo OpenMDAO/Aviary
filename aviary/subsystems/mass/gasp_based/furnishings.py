@@ -348,7 +348,6 @@ class FurnishingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Furnishings.ADDITIONAL_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -363,12 +362,6 @@ class FurnishingMass(om.ExplicitComponent):
             ],
         )
 
-        self.declare_partials(
-            Aircraft.Furnishings.MASS,
-            Aircraft.Furnishings.ADDITIONAL_MASS,
-            val=1.0,
-        )
-
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
@@ -381,22 +374,18 @@ class FurnishingMass(om.ExplicitComponent):
         cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
-        extra_wt = inputs[Aircraft.Furnishings.ADDITIONAL_MASS] * GRAV_ENGLISH_LBM
 
-        furnishing_wt = (
-            common_compute(
-                PAX,
-                smooth,
-                empirical,
-                en_type,
-                mu,
-                gross_wt_init,
-                fus_len,
-                cabin_width,
-                scaler,
-                acabin,
-            )
-            + extra_wt
+        furnishing_wt = common_compute(
+            PAX,
+            smooth,
+            empirical,
+            en_type,
+            mu,
+            gross_wt_init,
+            fus_len,
+            cabin_width,
+            scaler,
+            acabin,
         )
         outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM
 
@@ -458,7 +447,6 @@ class BWBFurnishingMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
         add_aviary_input(self, Aircraft.Furnishings.MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuselage.CABIN_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Furnishings.ADDITIONAL_MASS, units='lbm')
 
         add_aviary_output(self, Aircraft.Furnishings.MASS, units='lbm')
 
@@ -473,12 +461,6 @@ class BWBFurnishingMass(om.ExplicitComponent):
             ],
         )
 
-        self.declare_partials(
-            Aircraft.Furnishings.MASS,
-            Aircraft.Furnishings.ADDITIONAL_MASS,
-            val=1.0,
-        )
-
     def compute(self, inputs, outputs):
         PAX = self.options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         smooth = self.options[Aircraft.Design.SMOOTH_MASS_DISCONTINUITIES]
@@ -491,22 +473,18 @@ class BWBFurnishingMass(om.ExplicitComponent):
         cabin_width = inputs[Aircraft.Fuselage.HYDRAULIC_DIAMETER]
         scaler = inputs[Aircraft.Furnishings.MASS_SCALER]
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
-        extra_wt = inputs[Aircraft.Furnishings.ADDITIONAL_MASS] * GRAV_ENGLISH_LBM
 
-        furnishing_wt = (
-            common_compute(
-                PAX,
-                smooth,
-                empirical,
-                en_type,
-                mu,
-                gross_wt_init,
-                fus_len,
-                cabin_width,
-                scaler,
-                acabin,
-            )
-            + extra_wt
+        furnishing_wt = common_compute(
+            PAX,
+            smooth,
+            empirical,
+            en_type,
+            mu,
+            gross_wt_init,
+            fus_len,
+            cabin_width,
+            scaler,
+            acabin,
         )
 
         outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM
