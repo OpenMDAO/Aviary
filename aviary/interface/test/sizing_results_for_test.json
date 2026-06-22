@@ -1119,6 +1119,12 @@
         "<class 'int'>"
     ],
     [
+        "aircraft:design:percent_excrescence_drag",
+        0.06,
+        "unitless",
+        "<class 'float'>"
+    ],
+    [
         "mission:gross_mass",
         175400.0,
         "lbm",

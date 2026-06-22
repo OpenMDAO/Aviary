@@ -191,6 +191,7 @@ aircraft:furnishings:mass, 0, lbm
 aircraft:design:cruise_altitude, 21000, ft
 aircraft:design:gross_mass, 155000, lbm
 aircraft:design:mach, 0.475, unitless
+aircraft:design:percent_excrescence_drag,0.075,unitless
 aircraft:design:range, 2020, NM
 
 # Takeoff and Landing
