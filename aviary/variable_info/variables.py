@@ -290,7 +290,6 @@ class Aircraft:
         WING_VOLUME_STRUCTURAL_MAX = 'aircraft:fuel:wing_volume_structural_max'
 
     class Furnishings:
-        ADDITIONAL_MASS = 'aircraft:furnishings:additional_mass'
         MASS = 'aircraft:furnishings:mass'
         MASS_BASE = 'aircraft:furnishings:mass_base'
         MASS_SCALER = 'aircraft:furnishings:mass_scaler'
@@ -679,6 +678,7 @@ class Mission:
     FUEL_MASS = 'mission:fuel_mass'
     GROSS_MASS = 'mission:gross_mass'
     OPERATING_ITEMS_MASS = 'mission:operating_items_mass'
+    OPERATING_ITEMS_MASS_ADDITIONAL = 'mission:operating_items_mass_additional'
     OPERATING_MASS = 'mission:operating_mass'
     RANGE = 'mission:range'
     RESERVE_FUEL_MARGIN = 'mission:reserve_fuel_margin'

@@ -3092,15 +3092,6 @@ add_meta_data(
 # ============================================================================
 
 add_meta_data(
-    Aircraft.Furnishings.ADDITIONAL_MASS,
-    meta_data=_MetaData,
-    historical_name={'GASP': 'CW(16)', 'FLOPS': None},
-    units='lbm',
-    desc='Other operating items (e.g. external tank, Pylon). Mass scaler does not apply.',
-    default_value=0.0,
-)
-
-add_meta_data(
     # Note user override
     #    - see also: Aircraft.Furnishings.MASS_SCALER
     Aircraft.Furnishings.MASS,
@@ -6916,6 +6907,15 @@ add_meta_data(
     historical_name={'GASP': 'INGASP.WFUL', 'FLOPS': None},
     units='lbm',
     desc='Operating Items group. Includes crew, unusable fuel, and oil mass.',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Mission.OPERATING_ITEMS_MASS_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'CW(16)', 'FLOPS': None},
+    units='lbm',
+    desc='Other operating items (e.g. external tank, Pylon). Mass scaler does not apply.',
     default_value=0.0,
 )
 
