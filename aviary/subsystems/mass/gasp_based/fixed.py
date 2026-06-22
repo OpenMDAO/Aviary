@@ -2217,4 +2217,4 @@ class FixedMassGroup(om.Group):
                 inputs=['aug_mass'],
             )
 
-        self.set_input_defaults('min_dive_vel', val=420, units='kn')
+        self.set_input_defaults('min_dive_vel', units='kn')
