@@ -376,16 +376,7 @@ class FurnishingMass(om.ExplicitComponent):
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
 
         furnishing_wt = common_compute(
-            PAX,
-            smooth,
-            empirical,
-            en_type,
-            mu,
-            gross_wt_init,
-            fus_len,
-            cabin_width,
-            scaler,
-            acabin,
+            PAX, smooth, empirical, en_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
         )
         outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM
 
@@ -475,16 +466,7 @@ class BWBFurnishingMass(om.ExplicitComponent):
         acabin = inputs[Aircraft.Fuselage.CABIN_AREA]
 
         furnishing_wt = common_compute(
-            PAX,
-            smooth,
-            empirical,
-            en_type,
-            mu,
-            gross_wt_init,
-            fus_len,
-            cabin_width,
-            scaler,
-            acabin,
+            PAX, smooth, empirical, en_type, mu, gross_wt_init, fus_len, cabin_width, scaler, acabin
         )
 
         outputs[Aircraft.Furnishings.MASS] = furnishing_wt / GRAV_ENGLISH_LBM

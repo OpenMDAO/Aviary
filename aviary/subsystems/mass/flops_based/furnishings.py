@@ -138,9 +138,7 @@ class BWBFurnishingsGroupMass(om.ExplicitComponent):
                 + (fuse_max_width * (1.0 + 1.0 / cos) * fuse_max_height)
             )
 
-        weight = weight * scaler
-
-        outputs[Aircraft.Furnishings.MASS] = weight / GRAV_ENGLISH_LBM
+        outputs[Aircraft.Furnishings.MASS] = weight * scaler / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, J):
         flight_crew_count = self.options[Aircraft.CrewPayload.NUM_FLIGHT_CREW]
