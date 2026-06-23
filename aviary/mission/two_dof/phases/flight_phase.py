@@ -43,7 +43,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'altitude_bounds': (0.0, None),
-            'altitude_direct_link': False,
+            'altitude_direct_link': True,
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
