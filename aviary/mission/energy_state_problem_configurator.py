@@ -451,6 +451,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             # Create an ExecComp to compute the difference in mach
             mach_diff_comp = om.ExecComp(
                 'mach_resid_for_connecting_takeoff = final_mach - initial_mach',
+                mach_resid_for_connecting_takeoff={'units': 'unitless'},
                 initial_mach={'units': 'unitless'},
                 final_mach={'units': 'unitless'},
             )
