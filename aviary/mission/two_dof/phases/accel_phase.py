@@ -30,20 +30,26 @@ class AccelPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'mass_bounds': (0.0, None),
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
         defaults = {
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='NM', defaults=defaults)
 
         defaults = {
             'velocity_bounds': (0.0, None),
+            'velocity_direct_link': True,
         }
         self.add_state_options('velocity', units='kn', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             'reserve',
@@ -151,7 +157,6 @@ class AccelPhase(PhaseBuilder):
 
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         linked_vars = [
-            #Dynamic.Mission.ALTITUDE,
             Dynamic.Mission.DISTANCE,
             Dynamic.Mission.VELOCITY,
             Dynamic.Vehicle.MASS,

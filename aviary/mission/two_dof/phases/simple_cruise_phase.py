@@ -70,6 +70,14 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
+            name='distance_direct_link',
+            default=False,
+            types=bool,
+            desc='When True, directly link the initial distance parameter to the previous '
+            'phase. When False, use a constraint.'
+        )
+
+        self.declare(
             name='mach_direct_link',
             default=True,
             types=bool,

@@ -58,6 +58,37 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             'start between 25 and 45 minutes after the start of the mission.',
         )
 
+        self.declare(
+            name='time_initial_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial time parameter to the previous '
+            'phase. When False, use a constraint.'
+        )
+
+        self.declare(
+            name='altitude_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial altitude parameter to the previous '
+            'phase. When False, use a constraint.'
+        )
+
+        self.declare(
+            name='distance_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial distance parameter to the previous '
+            'phase. When False, use a constraint.'
+        )
+
+        self.declare(
+            name='mass_direct_link',
+            default=False,
+            types=bool,
+            desc='Because mass is output, this should always be false..'
+        )
+
 
 class BreguetCruisePhase(PhaseBuilder):
     """
