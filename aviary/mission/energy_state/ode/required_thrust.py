@@ -19,7 +19,8 @@ class RequiredThrust(om.ExplicitComponent):
         nn = self.options['num_nodes']
 
         add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='N', desc='drag force')
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.ALTITUDE_RATE,
             val=np.zeros(nn),
             units='m/s',
