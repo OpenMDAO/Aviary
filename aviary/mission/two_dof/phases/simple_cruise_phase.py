@@ -28,10 +28,16 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'mass_bounds': (0.0, None),
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'time_duration_bounds': (0, 3600),
+            'time_initial_bounds': (0.0, 100.0),
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(name='alt_cruise', default=0.0, units='ft', desc='Cruise altitude.')
 
@@ -56,28 +62,19 @@ class SimpleCruisePhaseOptions(AviaryOptionsDictionary):
         )
 
         self.declare(
-            'time_duration',
-            default=None,
-            units='s',
-            desc='The amount of time taken by this phase added as a constraint.',
+            name='altitude_direct_link',
+            default=False,
+            types=bool,
+            desc='When True, directly link the initial altitude parameter to the previous '
+            'phase. When False, use a constraint.'
         )
 
         self.declare(
-            name='time_duration_bounds',
-            default=(0, 3600),
-            units='s',
-            desc='Lower and upper bounds on the phase duration, in the form of a nested tuple: '
-            'i.e. ((20, 36), "min") This constrains the duration to be between 20 and 36 min.',
-        )
-
-        self.declare(
-            'time_initial_bounds',
-            types=tuple,
-            default=(0.0, 100.0),
-            units='s',
-            desc='Lower and upper bounds on the starting time for this phase relative to the '
-            'starting time of the mission, i.e., ((25, 45), "min") constrians this phase to '
-            'start between 25 and 45 minutes after the start of the mission.',
+            name='mach_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial mach parameter to the previous '
+            'phase. When False, use a constraint.'
         )
 
 
@@ -187,11 +184,11 @@ class SimpleCruisePhase(PhaseBuilder):
 
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         linked_vars = [
+            'time',
             'initial_distance',
             Dynamic.Atmosphere.MACH,
             Dynamic.Mission.ALTITUDE,
             Dynamic.Vehicle.MASS,
-            'time',
         ]
         return linked_vars
 

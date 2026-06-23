@@ -1213,29 +1213,35 @@ class AviaryGroup(om.Group):
                 # If both ends are pinned with a constraint, don't link.
                 pin1 = phase_info1.get(f'{var}_final', (None, None))[0]
                 pin2 = phase_info2.get(f'{var}_initial', (None, None))[0]
-                if pin1 and pin2:
+                if pin2:
+                    # Pinned front can't take input.
                     continue
 
-                connect = connect_directly
+                # MPI takes precedence, since we can't connect directly in the parallel group.
+                if var == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{var}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
 
-                if var == 'time' or var == 'distance':
-                    # Connecting these directly makes the problem more robust to mistakes in the
-                    # user-assigned initial conditions.
-                    connect = connect_directly
+                #if var == 'time' or var == 'distance':
+                    ## Connecting these directly makes the problem more robust to mistakes in the
+                    ## user-assigned initial conditions.
+                    #connect = connect_directly
 
-                elif self.mission_method is TWO_DEGREES_OF_FREEDOM and var == 'mass':
-                    # In twodof, we didn't connect the mass directly.
-                    connect = False
+                #elif self.mission_method is TWO_DEGREES_OF_FREEDOM and (var == 'mass' or  var == 'altitude'):
+                    ## In twodof, we didn't connect the mass directly.
+                    #connect = False
 
-                elif var == Dynamic.Vehicle.ANGLE_OF_ATTACK:
-                    # This has been troublesome if connected directly.
-                    connect = False
+                #elif var == Dynamic.Vehicle.ANGLE_OF_ATTACK:
+                    ## This has been troublesome if connected directly.
+                    #connect = False
 
                 #elif len(downstream_analytic) > 0 or len(upstream_analytic) > 0:
                 #    # Constraints seem to work better with the analytic phases.
                 #    connect = True
 
-                elif opt2 is not None :
+                if opt2 is False:
                     # Controls cannot connect directly.
                     connect = False
 
@@ -1259,7 +1265,6 @@ class AviaryGroup(om.Group):
                     vars=[var],
                     **kwargs,
                 )
-                print(var, phase1, phase2, connect)
 
             # Target analytic phases may take a single start input that needs to connect
             # Sort because of MPI

@@ -44,6 +44,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'mass_ref': 1e4,
             'mass_bounds': (0.0, None),
+            'mass_direct_link': True,
         }
         self.add_state_options('mass', units='kg', defaults=defaults)
 
@@ -51,18 +52,26 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'distance_ref': 1e6,
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 
-        self.add_control_options('altitude', units='ft')
+        defaults = {
+            'altitude_direct_link': True,
+        }
+        self.add_control_options('altitude', units='ft', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mach_ref': 0.5,
+            'mach_direct_link': True,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             name='throttle_enforcement',
