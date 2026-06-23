@@ -203,7 +203,4 @@ class OtherTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FlareEOMTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()
