@@ -87,3 +87,7 @@ class FuelBurnTestCases(unittest.TestCase):
 
         assert_near_equal(fuel_burned, 13234.43186723, tol)
         assert_near_equal(block_fuel, 13334.43186723, tol)
+
+
+if __name__ == '__main__':
+    unittest.main()

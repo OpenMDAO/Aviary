@@ -239,6 +239,7 @@ inputs.set_val(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.025)  # ROLLMU
 # ---------------------------
 inputs.set_val(Settings.EQUATIONS_OF_MOTION, EquationsOfMotion.ENERGY_STATE)
 inputs.set_val(Settings.MASS_METHOD, LegacyCode.FLOPS)
+inputs.set_val(Settings.AERODYNAMICS_METHOD, LegacyCode.FLOPS)
 
 # ---------------------------
 #          OUTPUTS

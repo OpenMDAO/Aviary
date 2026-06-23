@@ -31,6 +31,7 @@ aircraft:design:landing_to_takeoff_mass_ratio,0.9423,unitless
 aircraft:design:mach,0.78,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
+aircraft:design:percent_excrescence_drag,0.075,unitless
 aircraft:design:range,3480.0,NM
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
