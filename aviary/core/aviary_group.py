@@ -1241,6 +1241,8 @@ class AviaryGroup(om.Group):
                         phase = self.traj._phases[phase2]
                         if var in phase.state_options:
                             phase.set_state_options(var, input_initial=False)
+                if var == 'time':
+                    kwargs = {}
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],

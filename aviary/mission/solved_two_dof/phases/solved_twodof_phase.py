@@ -81,7 +81,7 @@ class SolvedTwoDOFPhaseOptions(AviaryOptionsDictionary):
         self.add_control_options('angle_of_attack', units='deg', defaults=defaults)
 
         defaults = {
-            'initial_time_direct_link': False,
+            'time_initial_direct_link': False,
         }
         self.add_time_options(units='ft', defaults=defaults)
 
