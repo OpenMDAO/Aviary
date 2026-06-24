@@ -2,12 +2,14 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.mission.energy_state.phases.simplified_landing import LandingCalc, LandingGroup
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class LandingCalcTest(unittest.TestCase):
     """Test computation in LandingCalc class (the simplified landing)."""
 
@@ -77,6 +79,7 @@ class LandingCalcTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class LandingGroupTest(unittest.TestCase):
     """Test the computation of LandingGroup."""
 

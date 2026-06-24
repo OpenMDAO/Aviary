@@ -2,11 +2,13 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.phases.build_takeoff import Takeoff
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class TakeoffPhaseTest(unittest.TestCase):
     """Test takeoff phase builder."""
 

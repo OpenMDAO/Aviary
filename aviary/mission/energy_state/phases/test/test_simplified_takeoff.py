@@ -8,6 +8,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary import constants
 from aviary.mission.energy_state.phases.simplified_takeoff import (
@@ -18,6 +19,7 @@ from aviary.mission.energy_state.phases.simplified_takeoff import (
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
+@use_tempdirs
 class StallSpeedTest(unittest.TestCase):
     """Test computation in StallSpeed class."""
 
@@ -78,6 +80,7 @@ class StallSpeedTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class FinalConditionsTest(unittest.TestCase):
     """Test final conditions computation in FinalTakeoffConditions class."""
 
@@ -154,6 +157,7 @@ class FinalConditionsTest2(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 
+@use_tempdirs
 class TakeoffGroupTest(unittest.TestCase):
     """Test computation in TakeoffGroup."""
 
