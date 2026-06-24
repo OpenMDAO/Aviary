@@ -34,6 +34,7 @@ class RequiredThrust(om.ExplicitComponent):
             desc=Dynamic.Mission.VELOCITY,
         )
         add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
             val=np.zeros(nn),
             units='m/s**2',
