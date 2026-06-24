@@ -295,6 +295,17 @@ class SolvedTwoDOFPhase(FlightPhaseBase):
             'throttle_enforcement': self.user_options.get_val('throttle_enforcement'),
         }
 
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Vehicle.ANGLE_OF_ATTACK,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
+
     def get_parameters(self):
         params = {}
         params[Aircraft.Wing.INCIDENCE] = {
