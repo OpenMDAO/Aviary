@@ -12,10 +12,11 @@ from aviary.subsystems.propulsion.engine_deck import normalize
 from aviary.subsystems.propulsion.utils import EngineModelVariables, default_units
 from aviary.utils.conversion_utils import _parse, _read_map, _rep
 from aviary.utils.csv_data_file import write_data_file
-from aviary.utils.functions import get_aviary_resource_path, get_path
+from aviary.utils.functions import get_aviary_resource_path
 from aviary.utils.named_values import NamedValues
 from aviary.utils.utils import round_it
 from aviary.variable_info.enums import EngineDeckType
+from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Dynamic
 
 
@@ -712,19 +713,22 @@ class AtmosCalc(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.MACH,
             val=np.zeros(nn),
             desc='current Mach number',
             units='unitless',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.TEMPERATURE,
             val=np.zeros(nn),
             desc='current atmospheric temperature',
             units='degR',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.STATIC_PRESSURE,
             _PSLS_PSF,
             units='psf',
