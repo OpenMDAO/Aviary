@@ -1234,15 +1234,9 @@ class AviaryGroup(om.Group):
 
                 kwargs = {}
                 if not connect:
-                    kwargs = self._find_scaling(var, phase_info1, phase_info2)
-
-                    # Make sure states options are correct for this.
-                    if opt2 is None and var != 'time':
-                        phase = self.traj._phases[phase2]
-                        if var in phase.state_options:
-                            phase.set_state_options(var, input_initial=False)
-                if var == 'time':
-                    kwargs = {}
+                    kwargs = self._find_scaling(
+                        var, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
@@ -1266,7 +1260,9 @@ class AviaryGroup(om.Group):
 
                 kwargs = {}
                 if not connect:
-                    kwargs = self._find_scaling(source, phase_info1, phase_info2)
+                    kwargs = self._find_scaling(
+                        var, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
 
                 self.traj.add_linkage_constraint(
                     phase1, phase2, source, var, connected=connect, **kwargs
@@ -1291,7 +1287,9 @@ class AviaryGroup(om.Group):
 
                 kwargs = {}
                 if not connect:
-                    kwargs = self._find_scaling(target, phase_info1, phase_info2)
+                    kwargs = self._find_scaling(
+                        var, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
@@ -1304,11 +1302,16 @@ class AviaryGroup(om.Group):
 
         self.configurator.check_trajectory(self)
 
-    def _find_scaling(self, var, phase_info1, phase_info2):
+    def _find_scaling(self, var, phase1, phase_info1, phase2, phase_info2, opt2):
         """
         Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
         """
         if var == 'time':
+            phase = self.traj._phases[phase1]
+            if phase.time_options['name'] != 'time':
+                # Time is not being integrated.
+                return {}
+
             # Time behaves a bit differently than the others.
             ref0 = None
             ref, units = phase_info2.get(f'{var}_initial_ref', (None, None))
@@ -1327,8 +1330,14 @@ class AviaryGroup(om.Group):
             kwargs['ref'] = ref
         if ref0 is not None:
             kwargs['ref0'] = ref0
-        if ref is not None:
+        if units is not None:
             kwargs['units'] = units
+
+        # Make sure states options are correct for this.
+        if opt2 is None and var != 'time':
+            phase = self.traj._phases[phase2]
+            if var in phase.state_options:
+                phase.set_state_options(var, input_initial=False)
 
         return kwargs
 
