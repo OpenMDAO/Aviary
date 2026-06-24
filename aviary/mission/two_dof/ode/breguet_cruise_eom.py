@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_ENGLISH_LBM
+from aviary.variable_info.functions import add_aviary_input
 from aviary.variable_info.variables import Dynamic
 
 
@@ -32,7 +33,8 @@ class RangeComp(om.ExplicitComponent):
             desc='mass at each node, monotonically nonincreasing',
         )
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             0.74 * np.ones(nn),
             units='lbm/h',
@@ -267,13 +269,15 @@ class ElectricRangeComp(om.ExplicitComponent):
             desc='range reference at which cruise begins',
         )
         self.add_input('TAS_cruise', val=0.0001 * np.ones(nn), units='NM/s', desc='true airspeed')
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
             10.0 * np.ones(nn),
             units='kW*h',
             desc='total energy consumption, comes from propulsion',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
             0.74 * np.ones(nn),
             units='kW',
