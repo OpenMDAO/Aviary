@@ -57,14 +57,14 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         self.add_state_options('distance', units='m', defaults=defaults)
 
         defaults = {
-            'altitude_direct_link': True,
+            'altitude_direct_link': False,
         }
         self.add_control_options('altitude', units='ft', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mach_ref': 0.5,
-            'mach_direct_link': True,
+            'mach_direct_link': False,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
