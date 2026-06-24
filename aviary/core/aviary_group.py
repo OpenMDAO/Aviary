@@ -43,7 +43,7 @@ from aviary.variable_info.enums import (
     Verbosity,
 )
 from aviary.variable_info.functions import setup_trajectory_params
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 TWO_DEGREES_OF_FREEDOM = EquationsOfMotion.TWO_DEGREES_OF_FREEDOM
 ENERGY_STATE = EquationsOfMotion.ENERGY_STATE
