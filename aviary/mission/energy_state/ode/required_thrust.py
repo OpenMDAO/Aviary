@@ -40,8 +40,8 @@ class RequiredThrust(om.ExplicitComponent):
             units='m/s**2',
             desc='rate of change of velocity',
         )
-        self.add_input(
-            Dynamic.Vehicle.MASS, val=np.zeros(nn), units='kg', desc='mass of the aircraft'
+        add_aviary_input(
+            self, Dynamic.Vehicle.MASS, val=np.zeros(nn), units='kg', desc='mass of the aircraft'
         )
         self.add_output('thrust_required', val=np.zeros(nn), units='N', desc='required thrust')
 
