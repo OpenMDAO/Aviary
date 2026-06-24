@@ -1308,14 +1308,16 @@ class AviaryGroup(om.Group):
         """
         phase = self.traj._phases[phase1]
         integrated_var = phase.time_options['name']
+        analytic = len(phase.state_options) < 1
 
-        if var == 'time':
-            if integrated_var != 'time':
-                # Time is not being integrated.
-                return {}
-        elif var == integrated_var:
-            # This is the integration variable, and its scaling is currently stored as time.
-            var = 'time'
+        if not analytic:
+            if var == 'time':
+                if integrated_var != 'time':
+                    # Time is not being integrated.
+                    return {}
+            elif var == integrated_var:
+                # This is the integration variable, and its scaling is currently stored as time.
+                var = 'time'
 
         if var == 'time':
             # Time behaves a bit differently than the others.
