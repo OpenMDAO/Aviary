@@ -1234,9 +1234,7 @@ class AviaryGroup(om.Group):
 
                 kwargs = {}
                 if not connect:
-                    kwargs = self._find_scaling(
-                        var, phase1, phase_info1, phase2, phase_info2, opt2
-                    )
+                    kwargs = self._find_scaling(var, phase1, phase_info1, phase2, phase_info2, opt2)
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
@@ -1261,7 +1259,7 @@ class AviaryGroup(om.Group):
                 kwargs = {}
                 if not connect:
                     kwargs = self._find_scaling(
-                        var, phase1, phase_info1, phase2, phase_info2, opt2
+                        source, phase1, phase_info1, phase2, phase_info2, opt2
                     )
 
                 self.traj.add_linkage_constraint(
@@ -1288,7 +1286,7 @@ class AviaryGroup(om.Group):
                 kwargs = {}
                 if not connect:
                     kwargs = self._find_scaling(
-                        var, phase1, phase_info1, phase2, phase_info2, opt2
+                        target, phase1, phase_info1, phase2, phase_info2, opt2
                     )
 
                 self.traj.link_phases(
