@@ -240,8 +240,8 @@ two_dof_phase_info = {
             'mass_ref': (150_000, 'lbm'),
             'mass_defect_ref': (150_000, 'lbm'),
             'distance_bounds': ((10.0, 100.0), 'NM'),
-            'distance_ref': (32., 'NM'),
-            'distance_defect_ref': (32., 'NM'),
+            'distance_ref': (32.0, 'NM'),
+            'distance_defect_ref': (32.0, 'NM'),
         },
         'initial_guesses': {
             'time': ([216.0, 1300.0], 's'),

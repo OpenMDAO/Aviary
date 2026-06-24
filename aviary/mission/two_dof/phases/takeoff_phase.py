@@ -288,7 +288,6 @@ class TakeoffPhase(PhaseBuilder):
             'rotation': self.user_options.get_val('rotation'),
         }
 
-
     def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
         ground_roll = self.user_options.get_val('ground_roll')
         rotation = self.user_options.get_val('rotation')

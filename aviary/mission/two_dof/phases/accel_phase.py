@@ -164,6 +164,7 @@ class AccelPhase(PhaseBuilder):
         ]
         return linked_vars
 
+
 AccelPhase._add_initial_guess_meta_data(
     InitialGuessIntegrationVariable(),
     desc='initial guess for initial time and duration specified as a tuple',

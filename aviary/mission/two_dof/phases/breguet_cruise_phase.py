@@ -63,7 +63,7 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             default=True,
             types=bool,
             desc='When True, directly link the initial time parameter to the previous '
-            'phase. When False, use a constraint.'
+            'phase. When False, use a constraint.',
         )
 
         self.declare(
@@ -71,7 +71,7 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             default=True,
             types=bool,
             desc='When True, directly link the initial altitude parameter to the previous '
-            'phase. When False, use a constraint.'
+            'phase. When False, use a constraint.',
         )
 
         self.declare(
@@ -79,14 +79,14 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             default=True,
             types=bool,
             desc='When True, directly link the initial distance parameter to the previous '
-            'phase. When False, use a constraint.'
+            'phase. When False, use a constraint.',
         )
 
         self.declare(
             name='mass_direct_link',
             default=False,
             types=bool,
-            desc='Because mass is output, this should always be false..'
+            desc='Because mass is output, this should always be false..',
         )
 
 
