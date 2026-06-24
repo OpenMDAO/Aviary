@@ -120,6 +120,7 @@ def add_aviary_output(
     meta_data=CoreMetaData,
     shape=None,
     primal_name=None,
+    tags=None,
 ):
     """
     This function provides a clean way to add variables from the
@@ -151,6 +152,9 @@ def add_aviary_output(
     primal_name : str or None
         Valid python name to represent the variable in compute_primal if 'name' is not a valid
         python name.
+    tags: str or list of strs or set of strs
+        User defined tags that can be used to filter what gets listed when calling list_inputs
+        and list_outputs.
     """
     meta = meta_data[varname]
     # units of None are overwritten with defaults. Overwriting units with None is
@@ -198,6 +202,7 @@ def add_aviary_output(
         desc=desc,
         shape_by_conn=shape_by_conn,
         primal_name=primal_name,
+        tags=tags,
     )
 
 

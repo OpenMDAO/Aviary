@@ -39,7 +39,8 @@ class FlightPathEOM(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0)
         add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
             val=np.ones(nn),
             desc='TAS rate',
@@ -48,14 +49,16 @@ class FlightPathEOM(om.ExplicitComponent):
         )
 
         if not ground_roll:
-            self.add_output(
+            add_aviary_output(
+                self,
                 Dynamic.Mission.ALTITUDE_RATE,
                 val=np.ones(nn),
                 desc='altitude rate',
                 units='ft/s',
                 tags=['dymos.state_rate_source:altitude', 'dymos.state_units:ft'],
             )
-            self.add_output(
+            add_aviary_output(
+                self,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
                 val=np.ones(nn),
                 desc='flight path angle rate',
@@ -67,7 +70,8 @@ class FlightPathEOM(om.ExplicitComponent):
             )
             add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.ones(nn), units='deg')
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE_RATE,
             val=np.ones(nn),
             desc='distance rate',
