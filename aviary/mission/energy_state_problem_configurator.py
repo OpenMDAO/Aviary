@@ -223,12 +223,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             **extra_options,
         )
 
-    def link_phases(self, aviary_group, phases, connect_directly=True):
+    def link_trajectory(self, aviary_group, phases):
         """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
+        Link or configure phase connections to other upstream or downstream components.
 
         This is called from AviaryProblem.link_phases
 
@@ -238,9 +235,6 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             Aviary model that owns this configurator.
         phases : list[Phase]
             List of all phases in the trajectory.
-        connect_directly : bool
-            When True, phases are connected directly in openmdao. When false, the phases are not
-            connected, and a constraint is added to drive the difference to zero.
         """
         # Boundary conditions for the first phase.
         phase = aviary_group.traj._phases[phases[0]]

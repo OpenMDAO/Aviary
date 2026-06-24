@@ -337,12 +337,9 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
                 'aerodynamics', {}
             ).setdefault('method', 'low_speed')
 
-    def link_phases(self, aviary_group, phases, connect_directly=True):
+    def link_trajectory(self, aviary_group, phases):
         """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
+        Link or configure phase connections to other upstream or downstream components.
 
         This is called from AviaryProblem.link_phases
 
@@ -350,11 +347,8 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
         ----------
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
-        connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
+        phases : list[Phase]
+            List of all phases in the trajectory.
         """
         aviary_group.promotes(
             'traj',
@@ -406,17 +400,6 @@ class TwoDOFProblemConfigurator(ProblemConfiguratorBase):
 
         if len(phases) > 1:
             self._add_groundroll_eq_constraint(aviary_group, phases)
-
-    def check_trajectory(self, aviary_group):
-        """
-        Checks the phase_info user options for any inconsistency.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
-        """
-        pass
 
     def _add_groundroll_eq_constraint(self, aviary_group, phases):
         """

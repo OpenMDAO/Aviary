@@ -197,6 +197,10 @@ class SubsystemBuilder(ABC):
         Return a list of variable names that will be linked when this phase is connected to another
         phase that shares the variable.
 
+        If you have an analytic phase, and you need to link an input parameter to the upstream
+        phase, prepend the name with _initial. For example, if you need to connect to mass, name
+        your parameter 'initial_mass'.
+
         Parameters
         ----------
         aviary_inputs : dict

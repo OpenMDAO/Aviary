@@ -1108,9 +1108,8 @@ class AviaryGroup(om.Group):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need special logic to do the Dymos
-        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
-        shown here.
+        If a variable is common to two phases, it can be linked via a direct connection or a
+        constraint.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity override for
         # just this method
@@ -1191,8 +1190,8 @@ class AviaryGroup(om.Group):
             phase_info2 = self.mission_info[phase2]['user_options']
             vars2 = link_vars_dict[phase2]
 
-            # Don't link to first reserve phase.
             if self.reserve_phases and phase2 == self.reserve_phases[0]:
+                # Don't link to first reserve phase.
                 continue
 
             # Find common vars across 1-2 boundary
@@ -1206,11 +1205,10 @@ class AviaryGroup(om.Group):
                 opt1 = phase_info1.get(f'{var}_optimize', None)
                 opt2 = phase_info2.get(f'{var}_optimize', None)
 
-                # If both sides are static controls, don't link.
                 if opt1 is False and opt2 is False:
+                    # If both sides are static controls, don't link.
                     continue
 
-                # If both ends are pinned with a constraint, don't link.
                 pin1 = phase_info1.get(f'{var}_final', (None, None))[0]
                 pin2 = phase_info2.get(f'{var}_initial', (None, None))[0]
                 if pin1 and pin2:
@@ -1275,30 +1273,32 @@ class AviaryGroup(om.Group):
             # Source analytic phases should still connect to the timeseries.
             # Sort because of MPI
             for var in sorted(upstream_analytic):
-                var = var.removeprefix('initial_')
-                if var not in vars2:
+                target = var.removeprefix('initial_')
+                if target not in vars2:
                     continue
 
-                if var == 'time':
+                if var in downstream_analytic or target in downstream_analytic:
+                    # Both phases are analytic, and we already linked this.
+                    continue
+
+                if target == 'time':
                     key = f'time_initial_direct_link'
                 else:
-                    key = f'{var}_direct_link'
+                    key = f'{target}_direct_link'
                 connect = connect_directly and phase_info2.get(key, connect_directly)
 
                 kwargs = {}
                 if not connect:
-                    kwargs = self._find_scaling(var, phase_info1, phase_info2)
+                    kwargs = self._find_scaling(target, phase_info1, phase_info2)
 
                 self.traj.link_phases(
                     phases=[phase1, phase2],
                     connected=connect,
-                    vars=[var],
+                    vars=[target],
                     **kwargs,
                 )
 
-        # TODO: Apply any coordinate transformations of similar variables across boundary.
-
-        self.configurator.link_phases(self, phases, connect_directly=connect_directly)
+        self.configurator.link_trajectory(self, phases)
 
         self.configurator.check_trajectory(self)
 
