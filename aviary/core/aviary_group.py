@@ -1306,12 +1306,18 @@ class AviaryGroup(om.Group):
         """
         Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
         """
+        phase = self.traj._phases[phase1]
+        integrated_var = phase.time_options['name']
+
         if var == 'time':
-            phase = self.traj._phases[phase1]
-            if phase.time_options['name'] != 'time':
+            if integrated_var != 'time':
                 # Time is not being integrated.
                 return {}
+        elif var == integrated_var:
+            # This is the integration variable, and its scaling is currently stored as time.
+            var = 'time'
 
+        if var == 'time':
             # Time behaves a bit differently than the others.
             ref0 = None
             ref, units = phase_info2.get(f'{var}_initial_ref', (None, None))
