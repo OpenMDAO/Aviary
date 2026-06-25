@@ -10,7 +10,7 @@ from aviary.examples.external_subsystems.custom_aero.custom_aero_builder import 
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_premission import RCPropPreMission
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_mission import RCPropMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
 
 

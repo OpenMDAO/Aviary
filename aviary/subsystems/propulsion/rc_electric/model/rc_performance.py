@@ -1,7 +1,18 @@
 import numpy as np
 import openmdao.api as om
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from functools import partial
+
+from aviary.variable_info.functions import add_aviary_input as _add_aviary_input
+from aviary.variable_info.functions import add_aviary_option as _add_aviary_option
+from aviary.variable_info.functions import add_aviary_output as _add_aviary_output
+from aviary.variable_info.variables import Settings
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.dbf_variable_meta_data import ExtendedMetaData
+
+# RC electric variables live in ExtendedMetaData; bind it onto the add_aviary_* helpers.
+add_aviary_input = partial(_add_aviary_input, meta_data=ExtendedMetaData)
+add_aviary_output = partial(_add_aviary_output, meta_data=ExtendedMetaData)
+add_aviary_option = partial(_add_aviary_option, meta_data=ExtendedMetaData)
 
 class Battery(om.ExplicitComponent):
     def initialize(self):

@@ -13,7 +13,7 @@ from aviary.subsystems.propulsion.rc_electric.model.rc_performance import Vector
 from aviary.subsystems.propulsion.rc_electric.model.rc_performance import PropCoefficients
 from aviary.subsystems.propulsion.rc_electric.model.rc_performance import PowerResiduals
 from aviary.subsystems.propulsion.rc_electric.model.rc_performance import PowerImplicit
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
 class TestBattery(unittest.TestCase):
     @use_tempdirs

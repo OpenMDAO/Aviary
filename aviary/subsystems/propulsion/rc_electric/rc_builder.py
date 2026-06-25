@@ -4,7 +4,8 @@ from aviary.utils.aviary_values import AviaryValues
 from aviary.subsystems.propulsion.engine_model import EngineModel
 
 from aviary.subsystems.subsystem_builder import SubsystemBuilder as SubsystemBuilderBase
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Mission
 
 class RCBuilder(EngineModel):
     def __init__(self, options: AviaryValues = None, name='rc_electric', power_balance_mode='feedforward'):

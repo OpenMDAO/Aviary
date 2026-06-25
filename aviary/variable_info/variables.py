@@ -34,9 +34,6 @@ class Aircraft:
         PACK_MASS = 'aircraft:battery:pack_mass'
         PACK_VOLUMETRIC_DENSITY = 'aircraft:battery:pack_volumetric_density'
         VOLUME = 'aircraft:battery:volume'
-        # === RC electric additions ===
-        VOLTAGE = 'aircraft:battery:voltage'
-        RESISTANCE = 'aircraft:battery:resistance'
 
     class BWB:
         DETAILED_WING_PROVIDED = 'aircraft:blended_wing_body_design:detailed_wing_provided'
@@ -246,13 +243,6 @@ class Aircraft:
             DATA_FILE = 'aircraft:engine:motor:data_file'
             MASS = 'aircraft:engine:motor:mass'
             TORQUE_MAX = 'aircraft:engine:motor:torque_max'
-            # === RC electric additions ===
-            IDLE_CURRENT = 'aircraft:engine:motor:idle_current'
-            MAX_CONT_CURRENT = 'aircraft:engine:motor:max_cont_current'
-            RESISTANCE = 'aircraft:engine:motor:resistance'
-            KV = 'aircraft:engine:motor:kv'
-            KV_EQ_SLOPE = 'aircraft:engine:motor:kv_eq_slope'
-            KV_EQ_INT = 'aircraft:engine:motor:kv_eq_int'
 
         class Propeller:
             ACTIVITY_FACTOR = 'aircraft:engine:propeller:activity_factor'
@@ -264,8 +254,6 @@ class Aircraft:
             NUM_BLADES = 'aircraft:engine:propeller:num_blades'
             TIP_MACH_MAX = 'aircraft:engine:propeller:tip_mach_max'
             TIP_SPEED_MAX = 'aircraft:engine:propeller:tip_speed_max'
-            # === RC electric additions ===
-            PITCH = 'aircraft:engine:propeller:pitch'
 
     class Fins:
         AREA = 'aircraft:fins:area'
@@ -654,9 +642,6 @@ class Dynamic:
 
         class Propulsion:
             # variables specific to the propulsion subsystem
-            # === RC electric additions ===
-            CURRENT = 'current_flow'
-            CURRENT_MAX = 'current_flow_max'
             ELECTRIC_POWER_IN = 'electric_power_in'
             ELECTRIC_POWER_IN_TOTAL = 'electric_power_in_total'
             # EXIT_AREA = 'exit_area'
@@ -669,8 +654,6 @@ class Dynamic:
             NOX_RATE_TOTAL = 'nox_rate_total'
             PROPELLER_TIP_SPEED = 'propeller_tip_speed'
             RPM = 'rotations_per_minute'
-            # === RC electric addition ===
-            RPM_MAX = 'rotations_per_minute_max'
             SHAFT_POWER = 'shaft_power'
             SHAFT_POWER_MAX = 'shaft_power_max'
             TEMPERATURE_T4 = 't4'
@@ -681,9 +664,6 @@ class Dynamic:
             THRUST_TOTAL = 'thrust_net_total'
             TORQUE = 'torque'
             TORQUE_MAX = 'torque_max'
-            # === RC electric additions ===
-            PROP_POWER = 'prop_power'
-            PROP_POWER_MAX = 'prop_power_max'
 
 
 class Mission:

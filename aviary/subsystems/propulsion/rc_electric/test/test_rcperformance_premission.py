@@ -6,7 +6,7 @@ from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_premission import RCPropPreMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.dbf_variables import Aircraft
 
 
 class TestRCPropPre(unittest.TestCase):

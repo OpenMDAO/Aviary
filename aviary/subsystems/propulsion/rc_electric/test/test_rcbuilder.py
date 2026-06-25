@@ -14,7 +14,8 @@ from aviary.utils.functions import get_path
 from aviary.utils.preprocessors import preprocess_propulsion
 from aviary.validation_cases.validation_tests import get_flops_inputs
 from aviary.variable_info.functions import setup_model_options
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Mission, Settings
 
 
 

@@ -1,15 +1,6 @@
-"""Consolidated regression tests for the small_uav RC powertrain / propeller surrogate.
+"""Consolidated regression tests for the small_uav RC powertrain / propeller surrogate."""
 
-These fold together the throwaway diagnostic scripts that were written while getting the
-climb+cruise example (`aviary/examples/small_uav/Takeoff_Cruise_Attempt.py`) to run:
 
-  * diag_prop_gradient.py -> propeller-surrogate training-data ranges + thrust/RPM slope
-  * diag_cruise_speed.py  -> cruise drag is reachable in a positive-slope thrust region
-  * diag_powertrain.py    -> the full RCPropMission solves, balances power, finite partials
-
-The point is to catch regressions in the propeller data file, the powertrain model, or the
-unit handling that previously broke the example with NaN / singular throttle-balance solves.
-"""
 import unittest
 
 import numpy as np
@@ -24,7 +15,7 @@ from aviary.subsystems.propulsion.rc_electric.model.rc_performance import (
 )
 from aviary.subsystems.propulsion.rc_electric.model.rcpropulsion_mission import RCPropMission
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
 # --- small_uav cruise operating point (matches Takeoff_Cruise_Attempt.py) ---
 MASS = 7.0000189            # kg gross

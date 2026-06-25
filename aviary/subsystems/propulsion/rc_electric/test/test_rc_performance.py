@@ -6,7 +6,8 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.atmosphere.atmosphere import Atmosphere
 from aviary.subsystems.propulsion.rc_electric.model.rc_performance import RCPropGroup, Vectorization, PropCoefficients
-from aviary.variable_info.variables import Aircraft, Dynamic, Settings
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Settings
 
 class RCPerformanceTest(unittest.TestCase):
     """Test computations for RC Performance Group."""

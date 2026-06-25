@@ -4,7 +4,7 @@ import openmdao.api as om
 from aviary.subsystems.propulsion.rc_electric.model.rc_performance import \
     Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, PowerImplicit, Vectorization, PowerResiduals
 from aviary.utils.aviary_values import AviaryValues
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
 
 class RCPropMission(om.Group):
