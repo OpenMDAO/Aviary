@@ -307,6 +307,25 @@ add_meta_data(
     default_value=0.0,
 )
 
+# === RC electric additions ===
+add_meta_data(
+    Aircraft.Battery.VOLTAGE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='V',
+    desc='Total voltage input from the battery pack',
+    default_value=0.0,
+)
+
+add_meta_data(
+    Aircraft.Battery.RESISTANCE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='ohm',
+    desc='Internal resistance of the battery pack',
+    default_value=0.0,
+)
+
 
 #  ____    _                      _              _    __          __  _                     ____                _
 # |  _ \  | |                    | |            | |   \ \        / / (_)                   |  _ \              | |
@@ -2596,6 +2615,63 @@ add_meta_data(
     multivalue=True,
 )
 
+# === RC electric additions ===
+add_meta_data(
+    Aircraft.Engine.Motor.IDLE_CURRENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='A',
+    desc='The idle or no-load current from a single motor.',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.MAX_CONT_CURRENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='A',
+    desc='Maximum continuous current that flows through a single motor.',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.RESISTANCE,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='ohm',
+    desc='Resistance from windings of a single motor.',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.KV,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='rpm/V',
+    desc='Speed constant of a single motor.',
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.KV_EQ_SLOPE,
+    meta_data=_MetaData,
+    units='unitless',
+    default_value=2105.53674,
+    desc='Slope of the linear fit relating motor KV to mass.',
+    option=True,
+    multivalue=True,
+)
+
+add_meta_data(
+    Aircraft.Engine.Motor.KV_EQ_INT,
+    meta_data=_MetaData,
+    units='unitless',
+    default_value=-80.83469,
+    desc='Intercept of the linear fit relating motor KV to mass.',
+    option=True,
+    multivalue=True,
+)
+
 #   ___                            _   _
 #  | _ \  _ _   ___   _ __   ___  | | | |  ___   _ _
 #  |  _/ | '_| / _ \ | '_ \ / -_) | | | | / -_) | '_|
@@ -2707,6 +2783,16 @@ add_meta_data(
     units='ft/s',
     desc='maximum allowable propeller linear tip speed',
     default_value=800.0,
+    multivalue=True,
+)
+
+# === RC electric additions ===
+add_meta_data(
+    Aircraft.Engine.Propeller.PITCH,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='inch',
+    desc='Forward distance a propeller advances through one revolution.',
     multivalue=True,
 )
 
@@ -6628,6 +6714,55 @@ add_meta_data(
 #  |_|   |_|   \___/ | .__/  \_,_| |_| /__/ |_| \___/ |_||_|
 #                    |_|
 # ==========================================================
+
+# === RC electric additions ===
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.CURRENT,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='A',
+    desc='Electrical current flow through an engine',
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.CURRENT_MAX,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='A',
+    desc='Electrical current flow through an engine at full throttle',
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.RPM_MAX,
+    meta_data=_MetaData,
+    historical_name={'GASP': ['RPM', 'RPMe'], 'FLOPS': None, 'LEAPS1': None},
+    units='rpm',
+    desc='Rotational rate of shaft, per engine, at max throttle condition.',
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.PROP_POWER,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='W',
+    desc='Power output from a propeller',
+    default_value=0.0,
+    multivalue=True,
+)
+
+add_meta_data(
+    Dynamic.Vehicle.Propulsion.PROP_POWER_MAX,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    units='W',
+    desc='Power output from a propeller at full throttle',
+    default_value=0.0,
+    multivalue=True,
+)
+# === end RC electric additions ===
 
 add_meta_data(
     Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN,
