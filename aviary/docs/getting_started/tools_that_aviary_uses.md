@@ -62,6 +62,9 @@ The program is comprised of modules representing the various technical disciplin
 
 Specifics on the capabilities of GASP can be found in its User's Guide[^GASPMAN].
 
+# Additional Reading
+For additional information, please see the original publications and manuals of FLOPS and GASP:
+
 [^FLOPS]: Flight Optimization System (FLOPS) Software v.9 (LAR-18934-1). NASA Technology
 Transfer Program. URL: https://software.nasa.gov/software/LAR-18934-1 [retrieved
 September 22, 2023]

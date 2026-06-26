@@ -5,6 +5,7 @@ aircraft:air_conditioning:mass_coefficient,1.65,unitless
 aircraft:anti_icing:mass,126.0,lbm
 aircraft:apu:mass,1014.0,lbm
 aircraft:avionics:mass,1504.0,lbm
+aircraft:blended_wing_body_design:passenger_leading_edge_sweep,50.0,deg
 aircraft:controls:cockpit_control_mass_scaler,1.0,unitless
 aircraft:controls:control_mass_increment,0.0,lbm
 aircraft:controls:stability_augmentation_system_mass_scaler,1.0,unitless
@@ -39,11 +40,13 @@ aircraft:design:type,transport,unitless
 aircraft:design:wing_loading,93.1,lbf/ft**2
 aircraft:electrical:system_mass_per_passenger,16.0,lbm
 aircraft:engine:additional_mass_fraction,0.165,unitless
+aircraft:engine:gearbox:shaft_power_design,0.0,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1.0,unitless
 aircraft:engine:mass_specific,0.21366,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1.0,unitless
+aircraft:engine:propeller:tip_speed_max,1000.0,ft/s
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_sls_thrust,28690.0,lbf
 aircraft:engine:scaled_sls_thrust,21162.0,lbf
@@ -58,10 +61,13 @@ aircraft:fuel:unusable_fuel_mass_coefficient,12.0,unitless
 aircraft:fuel:volume_margin,0.0,unitless
 aircraft:fuel:wing_fuel_fraction,0.5625,unitless
 aircraft:furnishings:mass,9114.0,lbm
+aircraft:fuselage:aftbody_mass_per_unit_area,5.0,lbm/ft**2
 aircraft:fuselage:aisle_width,24.0,inch
 aircraft:fuselage:delta_diameter,4.5,ft
 aircraft:fuselage:flat_plate_area_increment,0.25,ft**2
 aircraft:fuselage:form_factor,1.146,unitless
+aircraft:fuselage:lift_coefficient_ratio_body_to_wing,1.0,unitless
+aircraft:fuselage:lift_curve_slope_mach0,1.5708,1/rad
 aircraft:fuselage:mass_coefficient,102.82,unitless
 aircraft:fuselage:nose_fineness,1.0,unitless
 aircraft:fuselage:num_aisles,1,unitless
@@ -69,6 +75,7 @@ aircraft:fuselage:pilot_compartment_length,6.85,ft
 aircraft:fuselage:pressure_differential,7.5,psi
 aircraft:fuselage:seat_width,20.2,inch
 aircraft:fuselage:tail_fineness,1.18,unitless
+aircraft:fuselage:wetted_area_ratio_aftbody_to_total,0.25,unitless
 aircraft:fuselage:wetted_area_scaler,1.0,unitless
 aircraft:horizontal_tail:aspect_ratio,4.025,unitless
 aircraft:horizontal_tail:form_factor,1.7,unitless
@@ -93,6 +100,7 @@ aircraft:nacelle:core_diameter_ratio,1.2095,unitless
 aircraft:nacelle:fineness,1.715,unitless
 aircraft:nacelle:form_factor,1.5,unitless
 aircraft:nacelle:mass_specific,2.5,lbm/ft**2
+aircraft:nacelle:pylon_drag_factor,1.25,unitless
 aircraft:strut:area_ratio,0.32,unitless
 aircraft:strut:attachment_location,118.0,ft
 aircraft:strut:dimensional_location_specified,True,unitless

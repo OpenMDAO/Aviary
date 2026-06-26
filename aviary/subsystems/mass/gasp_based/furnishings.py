@@ -89,7 +89,7 @@ def common_compute(
         else:
             CPX_lin = 28.0 + 10.516 * (cabin_width - 5.667)
             CPX = (
-                28 * sigmoidX(CPX_lin / 28, 1, -0.01)
+                28.0 * sigmoidX(CPX_lin / 28, 1, -0.01)
                 + CPX_lin * sigmoidX(CPX_lin / 28, 1, 0.01) * sigmoidX(CPX_lin / 62, 1, -0.01)
                 + 62 * sigmoidX(CPX_lin / 62, 1, 0.01)
             )
