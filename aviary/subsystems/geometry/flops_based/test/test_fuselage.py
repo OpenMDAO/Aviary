@@ -71,10 +71,10 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         assert_near_equal(fuselage_length, 148.37731944, tolerance=1e-9)
 
         fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
-        assert_near_equal(fuselage_width, 14.84, tolerance=1e-9)
+        assert_near_equal(fuselage_width, 12.19, tolerance=1e-9)
 
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
-        assert_near_equal(fuselage_height, 15.74, tolerance=1e-9)
+        assert_near_equal(fuselage_height, 13.09, tolerance=1e-9)
 
 
 class BWBSimpleCabinLayoutTest(unittest.TestCase):

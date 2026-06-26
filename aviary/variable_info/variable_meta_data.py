@@ -3578,7 +3578,7 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuselage.SEAT_WIDTH,
+    Aircraft.Fuselage.SEAT_WIDTH_ECONOMY,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
     units='inch',

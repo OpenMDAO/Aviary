@@ -965,7 +965,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
         missing_vars.append('VMLFSL')
     if Aircraft.Fuselage.AISLE_WIDTH not in input_values:
         missing_vars.append('WAS')
-    if Aircraft.Fuselage.SEAT_WIDTH not in input_values:
+    if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in input_values:
         missing_vars.append('WS')
     if Aircraft.LandingGear.MAIN_GEAR_LOCATION not in input_values:
         missing_vars.append('YMG')
