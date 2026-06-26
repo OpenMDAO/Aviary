@@ -62,7 +62,7 @@ class FlightPathEOMTestCase(unittest.TestCase):
         self.prob.set_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, [1.0, 1.0], units='lbf')
         self.prob.set_val(Dynamic.Vehicle.LIFT, [1.0, 1.0], units='lbf')
         self.prob.set_val(Dynamic.Vehicle.DRAG, [1.0, 1.0], units='lbf')
-        
+
         tol = 1e-6
         self.prob.run_model()
 

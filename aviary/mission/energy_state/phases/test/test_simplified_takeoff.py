@@ -167,7 +167,7 @@ class FinalConditionsTest2(unittest.TestCase):
         prob.model.set_input_defaults(
             Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless'
         )  # check
-        
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')
