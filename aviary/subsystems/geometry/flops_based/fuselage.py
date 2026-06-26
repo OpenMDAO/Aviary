@@ -191,10 +191,13 @@ class DetailedCabinLayout(om.ExplicitComponent):
     """
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -211,10 +214,14 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        num_business_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         num_economy_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
         fuselage_multiplier = 1.0
 
         num_seat_abreast_first = self.options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST]
+        num_seat_abreast_business = self.options[
+            Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS
+        ]
         num_seat_abreast_economy = self.options[
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
         ]
@@ -232,6 +239,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
 
         # Though these are not user definable, the values here are typical for most transport
         aisle_width_first_class = 20.0  # inch
+        aisle_width_business_class = 19.0  # inch
         aisle_width_economy_class = 18.0  # inch
 
         # If there are less than 60 passengers on board, then the aisle should be slightly narrow.
@@ -252,18 +260,23 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # 4 or 6 as shown below that we are working with a widebody aircraft.
         if num_seat_abreast_first > 4:
             aisle_width_first_class = 18.0
+        if num_seat_abreast_business > 5:
+            aisle_width_first_class = 17.0
         if num_seat_abreast_economy > 6:
             aisle_width_economy_class = 15.0
 
         seat_pitch_first = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0 and num_first_class_pax > 0:
             seat_pitch_first = 38.0  # inch
+        seat_pitch_business = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
+        if seat_pitch_business <= 0 and num_business_class_pax > 0:
+            seat_pitch_business = 36.0  # inch
         seat_pitch_economy = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
         if seat_pitch_economy <= 0 and num_economy_class_pax > 0:
             seat_pitch_economy = 34.0  # inch
 
         # set maximum number of galleys based on statistics (this block is not from FLOPS)
-        num_pax = num_first_class_pax + num_economy_class_pax
+        num_pax = num_first_class_pax + num_business_class_pax + num_economy_class_pax
         if num_pax < 80:
             max_galleys = 1
             max_lav = 1
@@ -343,7 +356,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
             fuselage_multiplier = 0.95
 
         # Calculate the number of galleys, lavatories and closets
-        num_galleys = int(1 + ((num_first_class_pax + num_economy_class_pax) / 100))
+        num_galleys = int(1 + (num_pax / 100))
         if num_galleys > max_galleys:
             num_galleys = max_galleys
         num_lavas = int(1 + (num_economy_class_pax / 60)) + int(1 + (num_first_class_pax / 100))
@@ -378,17 +391,22 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # Calculate the number of rows of each class of passenger (not needed)
         if num_first_class_pax > 0:
             num_rows_first = int(np.ceil(num_first_class_pax / num_seat_abreast_first))
+        if num_business_class_pax > 0:
+            num_rows_business = int(np.ceil(num_business_class_pax / num_seat_abreast_business))
         if num_economy_class_pax > 0:
             num_rows_economy = int(np.ceil(num_economy_class_pax / num_seat_abreast_economy))
 
         # Calculate the fuselage width of the passenger seats
         width_first_class = (
-            num_aisles * aisle_width_first_class + num_seat_abreast_first * 20.0
+            num_aisles * aisle_width_first_class + num_seat_abreast_first * 25.0
+        ) / 12.0
+        width_business_class = (
+            num_aisles * aisle_width_business_class + num_seat_abreast_business * 20.0
         ) / 12.0
         width_economy_class = (
-            num_aisles * aisle_width_economy_class + num_seat_abreast_economy * 25.0
+            num_aisles * aisle_width_economy_class + num_seat_abreast_economy * 20.0
         ) / 12.0
-        width_fuselage = np.maximum(width_first_class, width_economy_class) * 1.06
+        width_fuselage = max(width_first_class, width_economy_class, width_business_class) * 1.06
         outputs[Aircraft.Fuselage.MAX_WIDTH] = width_fuselage
         outputs[Aircraft.Fuselage.MAX_HEIGHT] = width_fuselage + 0.9
 
