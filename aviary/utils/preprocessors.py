@@ -107,16 +107,19 @@ def preprocess_options(
             if design_type == AircraftTypes.TRANSPORT:
                 aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
         else:
-            if verbosity >= Verbosity.BRIEF:
-                raise UserWarning('Aircraft.Fuselage.SEAT_WIDTH_ECONOMY is not set.')
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                if verbosity >= Verbosity.BRIEF:
+                    raise UserWarning('Aircraft.Fuselage.SEAT_WIDTH_ECONOMY is not set.')
 
     if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
         if mass_method == LegacyCode.FLOPS:
             if design_type == AircraftTypes.TRANSPORT:
                 aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25.0, 'inch')
         else:
-            if verbosity >= Verbosity.BRIEF:
-                raise UserWarning('Aircraft.Fuselage.SEAT_WIDTH_FIRST is not set.')
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                if verbosity >= Verbosity.BRIEF:
+                    # raise UserWarning('Aircraft.Fuselage.SEAT_WIDTH_FIRST is not set.')
+                    pass
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
