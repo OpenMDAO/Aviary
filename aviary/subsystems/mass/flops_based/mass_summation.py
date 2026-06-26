@@ -420,7 +420,7 @@ class OperatingItemsMass(om.ExplicitComponent):
             + oil_mass
             + pass_service_mass
             + cargo_container_mass
-            + addition_operating_mass
+            + additional_operating_mass
         )
 
 
