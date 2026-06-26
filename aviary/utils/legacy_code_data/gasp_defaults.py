@@ -138,6 +138,16 @@ gasp_default_values = NamedValues(
         'INGASP.UM': (0.02, 'unitless'),
         'INGASP.MUB': (0.4, 'unitless'),
         'INGASP.PCT_EXCR': (0.075, 'unitless'),
+        'INGASP.FPYLND': (1.25, 'unitless'),
+        'INPROP.HPMSLS': (0.0, 'unitless'),  # In GASP, default 0.0 if KODECR=7
+        'INPROP.TSPDMX': (1000.0, 'ft/s'),
+        'INGASP.TCSTRT': (0.1, 'unitless'),
+        'INGASP.CKSTRT': (1.0, 'unitless'),
+        'INGASP.CLBqCLW': (1.0, 'unitless'),
+        'INGASP.SAFTqS': (0.25, 'unitless'),
+        'INGASP.UWT_AFT': (5.0, 'lbm/ft**2'),
+        'INGASP.SWP_FB': (50.0, 'deg'),
+        'INGASP.CLALPH_B0': (1.5708, '1/rad'),
     }
 )
 

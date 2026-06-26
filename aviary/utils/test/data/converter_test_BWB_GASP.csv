@@ -46,12 +46,14 @@ aircraft:design:type,BWB,unitless
 aircraft:design:wing_loading,70.0,lbf/ft**2
 aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
+aircraft:engine:gearbox:shaft_power_design,0.0,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1.0,unitless
 aircraft:engine:mass_specific,0.178884,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_fuselage_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1.0,unitless
+aircraft:engine:propeller:tip_speed_max,1000.0,ft/s
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_sls_thrust,28690.0,lbf
 aircraft:engine:scaled_sls_thrust,19580.2,lbf
