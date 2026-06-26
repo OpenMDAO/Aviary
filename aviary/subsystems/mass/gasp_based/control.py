@@ -16,7 +16,6 @@ class MiscControlMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
-        self.add_input('min_dive_vel', val=700, units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Design.COCKPIT_CONTROL_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(
             self, Aircraft.Controls.STABILITY_AUGMENTATION_SYSTEM_REFERENCE_MASS, units='lbm'
@@ -122,7 +121,7 @@ class SurfaceControlMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
-        self.add_input('min_dive_vel', val=700, units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SURFACE_CONTROL_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Controls.COCKPIT_CONTROL_MASS, units='lbm')
