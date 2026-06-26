@@ -6,6 +6,7 @@ from pathlib import Path
 from aviary.api import top_dir
 from aviary.utils.functions import convert_strings_to_data, get_path
 
+
 class TestGetPath(unittest.TestCase):
     """Test get_path function from string and Path object for absolute and relative path."""
 
