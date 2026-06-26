@@ -97,9 +97,14 @@ def preprocess_options(
     else:
         raise UserWarning('MASS_METHOD not specified. Cannot preprocess inputs.')
 
+    if Aircraft.Design.TYPE in aviary_options:
+        design_type = aviary_options.get_val(Aircraft.Design.TYPE)
+    else:
+        design_type = AircraftTypes.TRANSPORT
+
     if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
         if mass_method == LegacyCode.FLOPS:
-            if aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT:
+            if design_type == AircraftTypes.TRANSPORT:
                 aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0)
         else:
             if verbosity >= Verbosity.BRIEF:
