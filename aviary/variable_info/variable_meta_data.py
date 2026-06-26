@@ -3580,7 +3580,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.SEAT_WIDTH_BUSINESS,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the business class seats',
     option=True,
@@ -3590,7 +3590,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.SEAT_WIDTH_FIRST,
     meta_data=_MetaData,
-    historical_name={'GASP': 'INGASP.WS', 'FLOPS': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='inch',
     desc='width of the first class seats',
     option=True,
