@@ -231,7 +231,7 @@ class OperatingItemsMass(om.ExplicitComponent):
             + pass_service_mass
             + cargo_container_mass
             + emergency_equip_mass
-            + addition_operating_mass
+            + additional_operating_mass
         )
 
 
