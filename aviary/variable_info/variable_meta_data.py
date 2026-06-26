@@ -6915,7 +6915,7 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': 'CW(16)', 'FLOPS': None},
     units='lbm',
-    desc='Other operating items (e.g. external tank, Pylon).',
+    desc='Other operating items (e.g. external tanks, life rafts).',
     default_value=0.0,
 )
 
