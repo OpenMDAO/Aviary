@@ -140,6 +140,7 @@ aircraft:wing:zero_lift_angle,-1.2,deg
 aircraft:design:cruise_altitude,37500,ft
 aircraft:design:gross_mass,175400,lbm
 aircraft:design:mach,0.8,unitless
+aircraft:design:percent_excrescence_drag,0.075,unitless
 aircraft:design:range,3675,NM
 mission:landing:airport_altitude,0,ft
 mission:landing:braking_delay,1,s
