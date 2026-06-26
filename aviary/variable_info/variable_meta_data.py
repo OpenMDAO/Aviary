@@ -6911,6 +6911,15 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.OPERATING_ITEMS_MASS_ADDITIONAL,
+    meta_data=_MetaData,
+    historical_name={'GASP': 'CW(16)', 'FLOPS': None},
+    units='lbm',
+    desc='Other operating items (e.g. external tanks, life rafts).',
+    default_value=0.0,
+)
+
+add_meta_data(
     Mission.OPERATING_MASS,
     meta_data=_MetaData,
     # TODO: check with Aviary and GASPy engineers to ensure these are indeed
