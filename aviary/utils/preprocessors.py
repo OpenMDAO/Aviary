@@ -112,7 +112,7 @@ def preprocess_options(
 
     if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
         if mass_method == LegacyCode.FLOPS:
-            if aviary_options.get_val(Aircraft.Design.TYPE) == AircraftTypes.TRANSPORT:
+            if design_type == AircraftTypes.TRANSPORT:
                 aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25.0, 'inch')
         else:
             if verbosity >= Verbosity.BRIEF:
