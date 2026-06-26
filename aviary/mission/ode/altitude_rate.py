@@ -3,6 +3,7 @@ import openmdao.api as om
 
 import aviary.constants as constants
 from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 
 class AltitudeRate(om.ExplicitComponent):
@@ -16,28 +17,28 @@ class AltitudeRate(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-            val=np.ones(nn),
-            desc='current specific power',
+            shape=nn,
             units='m/s',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.ones(nn),
-            desc='current acceleration',
+            shape=nn,
             units='m/s**2',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
-            desc='current velocity',
+            shape=nn,
             units='m/s',
         )
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.ones(nn),
-            desc='current climb rate',
+            shape=nn,
             units='m/s',
         )
 

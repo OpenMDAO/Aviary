@@ -54,7 +54,7 @@ def create_opts2vals(all_options: list, output_units: dict = {}):
                 add_aviary_output(
                     self,
                     option_name,
-                    val=output_data['val'],
+                    # val=output_data['val'],
                     units=output_data['units'],
                 )
 

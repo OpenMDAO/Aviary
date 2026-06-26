@@ -26,51 +26,47 @@ class FlightPathEOM(om.ExplicitComponent):
         nn = self.options['num_nodes']
         ground_roll = self.options['ground_roll']
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
-        add_aviary_input(
-            self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='lbf'
-        )
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='lbf')
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='lbf')
-        add_aviary_input(
-            self, Dynamic.Mission.VELOCITY, val=np.ones(nn), desc='true air speed', units='ft/s'
-        )
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.ones(nn), units='rad')
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0)
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(nn), units='lbm')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=(nn), units='lbf')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=(nn), units='lbf')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=(nn), units='lbf')
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=(nn), units='ft/s')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=(nn), units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='deg')
         add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.ones(nn),
-            desc='TAS rate',
+            shape=(nn),
             units='ft/s**2',
             tags=['dymos.state_rate_source:velocity', 'dymos.state_units:kn'],
         )
 
         if not ground_roll:
-            self.add_output(
+            add_aviary_output(
+                self,
                 Dynamic.Mission.ALTITUDE_RATE,
-                val=np.ones(nn),
-                desc='altitude rate',
+                shape=(nn),
                 units='ft/s',
-                tags=['dymos.state_rate_source:altitude', 'dymos.state_units:ft'],
+                # tags=['dymos.state_rate_source:altitude', 'dymos.state_units:ft'],
             )
-            self.add_output(
+            add_aviary_output(
+                self,
                 Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-                val=np.ones(nn),
-                desc='flight path angle rate',
+                shape=(nn),
                 units='rad/s',
                 tags=[
                     'dymos.state_rate_source:flight_path_angle',
                     'dymos.state_units:rad',
                 ],
             )
-            add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.ones(nn), units='deg')
+            add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=(nn), units='deg')
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE_RATE,
-            val=np.ones(nn),
-            desc='distance rate',
+            shape=(nn),
             units='ft/s',
             tags=['dymos.state_rate_source:distance', 'dymos.state_units:ft'],
         )

@@ -17,9 +17,9 @@ class SizeEngine(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Engine.REFERENCE_SLS_THRUST, units='lbf')
 
     def setup(self):
-        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR)
 
-        add_aviary_output(self, Aircraft.Engine.SCALED_SLS_THRUST, val=0.0)
+        add_aviary_output(self, Aircraft.Engine.SCALED_SLS_THRUST)
 
         # variables that also may require scaling
         # TODO - inlet_weight <input>

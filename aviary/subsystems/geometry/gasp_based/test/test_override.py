@@ -14,7 +14,7 @@ from aviary.utils.process_input_decks import create_vehicle
 from aviary.utils.test_utils.default_subsystems import get_default_premission_subsystems
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 
 @use_tempdirs
@@ -133,6 +133,8 @@ class GASPOverrideTestCase(unittest.TestCase):
             warnings.simplefilter('ignore', om.PromotionWarning)
             prob.setup()
 
+        prob.set_val(Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=1.0)
+
         prob.run_model()
 
         assert_near_equal(self.prob[Aircraft.Wing.FORM_FACTOR], 2.47320154, 1e-6)
@@ -168,7 +170,7 @@ class GASPOverrideTestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = GASPOverrideTestCase()
-    test.setUp()
-    test.test_case_emp_geo()
+    unittest.main()
+    # test = GASPOverrideTestCase()
+    # test.setUp()
+    # test.test_case_aero_coeffs()

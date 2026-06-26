@@ -1,6 +1,6 @@
 import openmdao.api as om
 
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Dynamic, Mission
 
 
@@ -11,13 +11,12 @@ class TaxiFuelComponent(om.ExplicitComponent):
         add_aviary_option(self, Mission.Taxi.DURATION, units='s')
 
     def setup(self):
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
-            val=1.0,
             units='lbm/s',
-            desc='fuel flow rate',
         )
-        add_aviary_input(self, Mission.GROSS_MASS, val=175400.0)
+        add_aviary_input(self, Mission.GROSS_MASS)
 
         self.add_output(
             'taxi_fuel_consumed',
@@ -25,9 +24,9 @@ class TaxiFuelComponent(om.ExplicitComponent):
             units='lbm',
             desc='taxi_fuel_consumed',
         )
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Vehicle.MASS,
-            val=175000.0,
             units='lbm',
             desc='mass after taxi',
         )

@@ -18,57 +18,49 @@ class EOMRates(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
-            desc='true air speed',
         )
 
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.zeros(nn),
+            shape=nn,
             units='lbf',
-            desc='net thrust',
         )
-        add_aviary_input(
-            self, Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='lbf', desc='net drag on aircraft'
-        )
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='lbf')
         add_aviary_input(
             self,
             Dynamic.Vehicle.MASS,
-            val=np.zeros(nn),
+            shape=nn,
             units='lbm',
-            desc='mass of aircraft',
         )
         add_aviary_input(
             self,
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            val=np.ones(nn),
+            shape=nn,
             units='rad',
-            desc='angle of attack of aircraft',
         )
 
         add_aviary_output(
             self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
-            desc='rate of change of altitude',
         )
         add_aviary_output(
             self,
             Dynamic.Mission.DISTANCE_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
-            desc='rate of change of horizontal distance covered',
         )
         self.add_output(
             'required_lift',
-            val=np.zeros(nn),
+            shape=nn,
             units='lbf',
             desc='lift required in order to maintain calculated flight path angle',
         )
-        add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.ones(nn), units='rad')
+        add_aviary_output(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
     def setup_partials(self):
         nn = self.options['num_nodes']

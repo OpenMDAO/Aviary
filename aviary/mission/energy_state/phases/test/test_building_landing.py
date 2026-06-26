@@ -4,7 +4,7 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.mission.energy_state.phases.build_landing import Landing
-from aviary.variable_info.variables import Mission
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class LandingPhaseTest(unittest.TestCase):
@@ -22,6 +22,10 @@ class LandingPhaseTest(unittest.TestCase):
         prob = om.Problem()
         prob.model = landing
         prob.setup(force_alloc_complex=True)
+        prob.set_val(
+            Mission.FINAL_MASS,
+            val=150_000,
+        )
         prob.run_model()
         partial_data = prob.check_partials(
             out_stream=None, method='cs', compact_print=False, excludes=['*atmosphere*']

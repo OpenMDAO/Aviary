@@ -24,10 +24,10 @@ class TaxiSegment(TwoDOFODE):
         # (None, None) in option_to_var.py to avoid errors.
         # Pulling the default from the MetaData if it does not exist instead.
         # TODO find a better way to handle this
-        if Mission.Taxi.MACH not in options:
-            default_val = CoreMetaData[Mission.Taxi.MACH]['default_value']
-            options.set_val(Mission.Taxi.MACH, default_val, 'unitless')
-        add_opts2vals(self, create_opts2vals([Mission.Taxi.MACH]), options)
+        # if Mission.Taxi.MACH not in options:
+        #     default_val = CoreMetaData[Mission.Taxi.MACH]['default_value']
+        #     options.set_val(Mission.Taxi.MACH, default_val, 'unitless')
+        # add_opts2vals(self, create_opts2vals([Mission.Taxi.MACH]), options)
 
         alias_comp = om.ExecComp(
             'alt=airport_alt',

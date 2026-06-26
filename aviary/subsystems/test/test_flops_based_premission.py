@@ -15,12 +15,12 @@ from aviary.utils.test_utils.default_subsystems import (
     get_geom_and_mass_subsystems,
 )
 from aviary.validation_cases.validation_tests import (
+    Version,
     flops_validation_test,
     get_flops_case_names,
     get_flops_inputs,
     get_flops_outputs,
     print_case,
-    Version,
 )
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Mission, Settings

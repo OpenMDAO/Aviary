@@ -20,50 +20,49 @@ from aviary.variable_info.variables import Aircraft, Settings
 
 
 def add_aviary_input(
-    comp,
-    varname,
-    val=None,
-    units=None,
-    desc=None,
-    shape_by_conn=False,
-    meta_data=CoreMetaData,
-    shape=None,
-    primal_name=None,
+    comp: Component,
+    varname: str,
+    units: str | None = None,
+    desc: str | None = None,
+    shape_by_conn: bool = False,
+    meta_data: dict = CoreMetaData,
+    shape: tuple | None = None,
+    primal_name: str | None = None,
+    **kwargs,
 ):
     """
-    This function provides a clean way to add variables from the
-    variable hierarchy into components as Aviary inputs. It takes
-    the standard OpenMDAO inputs of the variable's name, initial
-    value, units, and description, as well as the component which
-    the variable is being added to.
+    This function provides a clean way to add variables from the variable hierarchy into components
+    as inputs. Unless explicitly provided, information on the variable's units and description come
+    from variable metadata. Default value is always taken from metadata.
+
+    Information
 
     Parameters
     ----------
     comp: Component
-        OpenMDAO component to add this variable.
+        OpenMDAO component the variable `varname` will be added as an input to.
     varname: str
         Name of variable.
-    val: float or ndarray
-        Default value for variable.
-    units: str
-        (Optional) when specifying val, units should also be specified.
-    desc: str
-        (Optional) description text for the variable.
-    shape_by_conn: bool
+    units: str, optional
+        Desired units for the variable. Units will be checked for compatibility with the default
+        units for this variable in metadata.
+    desc: str, optional
+        Description text for the variable.
+    shape_by_conn: bool, optional
         Set to True to infer the shape from the connected output.
-    meta_data: dict
-        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
-        be used.
-    shape: tuple
-        (Optional) shape for this input.
-    primal_name : str or None
-        Valid python name to represent the variable in compute_primal if 'name' is not a valid
-        python name.
+    meta_data: dict, optional
+        Aviary metadata dictionary. If unspecified, the default Aviary variable metadata will be used.
+    shape: tuple, optional
+        Shape for this input.
+    primal_name : str, optional
+        Valid Python name to represent the variable in compute_primal if 'name' is not a valid
+        Python name.
+    **kwargs
+        Extra arguments for `add_input`
     """
     meta = meta_data[varname]
-    # units of None are overwritten with defaults. Overwriting units with None is
-    # unnecessary as it will cause errors down the line if the default is not already
-    # None
+
+    val = meta['default_value']
     default_units = meta['units']
 
     if units is None:
@@ -72,28 +71,18 @@ def add_aviary_input(
     if desc is None:
         desc = meta['desc']
 
-    if val is None:
-        if shape is None:
-            val = meta['default_value']
-            if val is None:
-                val = 0.0
-        else:
-            val = meta['default_value']
-            if val is None:
-                val = np.zeros(shape)
-            else:
-                val = np.ones(shape) * val
+    if shape is not None:
+        val = np.ones(shape) * val
 
-        # val was not provided but different units were
-        if units != default_units:
-            try:
-                # convert the default units to requested units
-                val = wrapped_convert_units((val, default_units), units)
-            except ValueError:
-                raise ValueError(
-                    f'The requested units {units} for input {varname} in component '
-                    f'{comp.name} are invalid.'
-                )
+    if units != default_units:
+        try:
+            # convert the default units to requested units
+            val = wrapped_convert_units((val, default_units), units)
+        except ValueError:
+            raise ValueError(
+                f'The requested units {units} for input {varname} in component '
+                f'{comp.name} are invalid.'
+            )
 
     # check types
     val = cast_type(varname, val, meta_data)
@@ -107,55 +96,54 @@ def add_aviary_input(
         shape_by_conn=shape_by_conn,
         shape=shape,
         primal_name=primal_name,
+        **kwargs,
     )
 
 
 def add_aviary_output(
-    comp,
-    varname,
-    val=None,
-    units=None,
-    desc=None,
-    shape_by_conn=False,
-    meta_data=CoreMetaData,
-    shape=None,
-    primal_name=None,
+    comp: Component,
+    varname: str,
+    units: str | None = None,
+    desc: str | None = None,
+    shape_by_conn: bool = False,
+    meta_data: dict = CoreMetaData,
+    shape: tuple | None = None,
+    primal_name: str | None = None,
+    **kwargs,
 ):
     """
-    This function provides a clean way to add variables from the
-    variable hierarchy into components as Aviary outputs. It takes
-    the standard OpenMDAO inputs of the variable's name, initial
-    value, units, and description, as well as the component which
-    the variable is being added to.
+    This function provides a clean way to add variables from the variable hierarchy into components
+    as outputs. Unless explicitly provided, information on the variable's units and description come
+    from variable metadata. Default value is always taken from metadata.
+
+    Information
 
     Parameters
     ----------
     comp: Component
-        OpenMDAO component to add this variable.
+        OpenMDAO component the variable `varname` will be added as an output to.
     varname: str
         Name of variable.
-    val: float or ndarray
-        (Optional) Default value for variable. If not specified, the value from metadata
-        is used.
-    units: str
-        (Optional) when specifying val, units should also be specified.
-    desc: str
-        (Optional) description text for the variable.
-    shape_by_conn: bool
+    units: str, optional
+        Desired units for the variable. Units will be checked for compatibility with the default
+        units for this variable in metadata.
+    desc: str, optional
+        Description text for the variable.
+    shape_by_conn: bool, optional
         Set to True to infer the shape from the connected output.
-    meta_data: dict
-        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will
-        be used.
-    shape: tuple
-        (Optional) shape for this input.
-    primal_name : str or None
-        Valid python name to represent the variable in compute_primal if 'name' is not a valid
-        python name.
+    meta_data: dict, optional
+        Aviary metadata dictionary. If unspecified, the default Aviary variable metadata will be used.
+    shape: tuple, optional
+        Shape for this output.
+    primal_name : str, optional
+        Valid Python name to represent the variable in compute_primal if 'name' is not a valid
+        Python name.
+    **kwargs
+        Extra arguments for `add_output`
     """
     meta = meta_data[varname]
-    # units of None are overwritten with defaults. Overwriting units with None is
-    # unnecessary as it will cause errors down the line if the default is not already
-    # None
+
+    val = meta['default_value']
     default_units = meta['units']
 
     if units is None:
@@ -164,28 +152,18 @@ def add_aviary_output(
     if desc is None:
         desc = meta['desc']
 
-    if val is None:
-        if shape is None:
-            val = meta['default_value']
-            if val is None:
-                val = 0.0
-        else:
-            val = meta['default_value']
-            if val is None:
-                val = np.zeros(shape)
-            else:
-                val = np.ones(shape) * val
+    if shape is not None:
+        val = np.ones(shape) * val
 
-        # val was not provided but different units were
-        if units != default_units:
-            try:
-                # convert the default units to requested units
-                val = wrapped_convert_units((val, default_units), units)
-            except ValueError:
-                raise ValueError(
-                    f'The requested units {units} for output {varname} in component '
-                    f'{comp.name} are invalid.'
-                )
+    if units != default_units:
+        try:
+            # convert the default units to requested units
+            val = wrapped_convert_units((val, default_units), units)
+        except ValueError:
+            raise ValueError(
+                f'The requested units {units} for output {varname} in component '
+                f'{comp.name} are invalid.'
+            )
 
     # check types
     val = cast_type(varname, val, meta_data)
@@ -198,13 +176,22 @@ def add_aviary_output(
         desc=desc,
         shape_by_conn=shape_by_conn,
         primal_name=primal_name,
+        **kwargs,
     )
 
 
-def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_data=CoreMetaData):
+def add_aviary_option(
+    comp: Component,
+    name: str,
+    val=_unspecified,
+    units: str | None = None,
+    desc: str | None = None,
+    meta_data: dict = CoreMetaData,
+    **kwargs,
+):
     """
-    Adds an option to an Aviary component. Default values from the metadata are used unless a new
-    value is specified.
+    Adds an option from the Aviary variable hierarchy to a component. Default values are taken from
+    metadata where optional information is not provided.
 
     Parameters
     ----------
@@ -212,14 +199,16 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         OpenMDAO component to add this option.
     name: str
         Name of variable.
-    val: float or ndarray
-        (Optional) Default value for option. If not specified, the value from metadata is used.
-    desc: str
-        (Optional) description text for the variable.
-    units: str
-        (Optional) OpenMDAO units string. This can be specified for variables with units.
-    meta_data: dict
-        (Optional) Aviary metadata dictionary. If unspecified, the built-in metadata will be used.
+    val: float or ndarray, optional
+        Default value for option. If not specified, the value from metadata is used.
+    desc: str, optional
+        Description text for the variable.
+    units: str, optional
+        OpenMDAO units string. This can be specified for variables with units.
+    meta_data: dict, optional
+        Aviary metadata dictionary. If unspecified, the default Aviary variable metadata will be used.
+    **kwargs
+        Extra arguments for `add_option`
     """
     meta = meta_data[name]
 
@@ -230,9 +219,6 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
             'get be set to its intended value.'
         )
 
-    # units of None are overwritten with defaults. Overwriting units with None is
-    # unnecessary as it will cause errors down the line if the default is not already
-    # None
     default_units = meta['units']
 
     if units is None:
@@ -283,10 +269,12 @@ def add_aviary_option(comp, name, val=_unspecified, units=None, desc=None, meta_
         )
 
     elif isinstance(val, Enum):
-        comp.options.declare(name, default=val, types=types, desc=desc, set_function=enum_setter)
+        comp.options.declare(
+            name, default=val, types=types, desc=desc, set_function=enum_setter, **kwargs
+        )
 
     else:
-        comp.options.declare(name, default=val, types=types, desc=desc)
+        comp.options.declare(name, default=val, types=types, desc=desc, **kwargs)
 
 
 def override_aviary_vars(

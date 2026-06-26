@@ -4,18 +4,18 @@ import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
-    V3_bug_fixed_non_metadata,
-    V3_bug_fixed_options,
-)
 from aviary.subsystems.geometry.gasp_based.size_group import SizeGroup
 from aviary.subsystems.mass.gasp_based.mass_premission import MassPremission
 from aviary.subsystems.mass.gasp_based.mass_summation import StructureMass
 from aviary.utils.aviary_values import AviaryValues
+from aviary.validation_cases.validation_data.test_data.V3_bug_fixed_IO import (
+    V3_bug_fixed_non_metadata,
+    V3_bug_fixed_options,
+)
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Mission
 from aviary.variable_info.variable_meta_data import CoreMetaData
+from aviary.variable_info.variables import Aircraft, Mission
 
 
 @use_tempdirs
