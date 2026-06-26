@@ -221,7 +221,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
         emergency_equip_mass = inputs[Aircraft.Design.EMERGENCY_EQUIPMENT_MASS]
-        addition_operating_mass = inputs[Mission.OPERATING_ITEMS_MASS_ADDITIONAL]
+        additional_operating_mass = inputs[Mission.OPERATING_ITEMS_MASS_ADDITIONAL]
 
         outputs[Mission.OPERATING_ITEMS_MASS] = (
             cabin_crew_mass
