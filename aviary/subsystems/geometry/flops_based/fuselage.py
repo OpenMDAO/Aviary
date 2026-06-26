@@ -7,7 +7,7 @@ import openmdao.api as om
 from aviary.utils.math import smooth_int_tanh, d_smooth_int_tanh
 from aviary.variable_info.enums import Verbosity
 from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
-from aviary.variable_info.variables import Aircraft, Mission, Settings
+from aviary.variable_info.variables import Aircraft, Settings
 
 
 class FuselagePrelim(om.ExplicitComponent):
@@ -191,6 +191,9 @@ class DetailedCabinLayout(om.ExplicitComponent):
     """
 
     def initialize(self):
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS)
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST)
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS)
@@ -397,14 +400,24 @@ class DetailedCabinLayout(om.ExplicitComponent):
             num_rows_economy = int(np.ceil(num_economy_class_pax / num_seat_abreast_economy))
 
         # Calculate the fuselage width of the passenger seats
-        width_first_class = (
-            num_aisles * aisle_width_first_class + num_seat_abreast_first * 25.0
-        ) / 12.0
-        width_business_class = (
-            num_aisles * aisle_width_business_class + num_seat_abreast_business * 20.0
-        ) / 12.0
+        seat_width_first = self.options[Aircraft.Fuselage.SEAT_WIDTH_FIRST][0]
+        seat_width_business = self.options[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS][0]
+        seat_width_economy = self.options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY][0]
+        if num_first_class_pax > 0:
+            width_first_class = (
+                num_aisles * aisle_width_first_class + num_seat_abreast_first * seat_width_first
+            ) / 12.0
+        else:
+            width_first_class = 0.0
+        if num_business_class_pax > 0:
+            width_business_class = (
+                num_aisles * aisle_width_business_class
+                + num_seat_abreast_business * seat_width_business
+            ) / 12.0
+        else:
+            width_business_class = 0.0
         width_economy_class = (
-            num_aisles * aisle_width_economy_class + num_seat_abreast_economy * 20.0
+            num_aisles * aisle_width_economy_class + num_seat_abreast_economy * seat_width_economy
         ) / 12.0
         width_fuselage = max(width_first_class, width_economy_class, width_business_class) * 1.06
         outputs[Aircraft.Fuselage.MAX_WIDTH] = width_fuselage

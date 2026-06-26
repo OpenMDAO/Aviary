@@ -335,6 +335,8 @@ class Aircraft:
         PRESSURE_DIFFERENTIAL = 'aircraft:fuselage:pressure_differential'
         PRESSURIZED_WIDTH_ADDITIONAL = 'aircraft:fuselage:pressurized_width_additional'
         REF_DIAMETER = 'aircraft:fuselage:ref_diameter'
+        SEAT_WIDTH_BUSINESS = 'aircraft:fuselage:seat_width_business'
+        SEAT_WIDTH_FIRST = 'aircraft:fuselage:seat_width_first'
         SEAT_WIDTH_ECONOMY = 'aircraft:fuselage:seat_width_economy'
         SIDEBODY_THICKNESS_TO_CHORD = 'aircraft:fuselage:sidebody_thickness_to_chord'
         SIMPLE_LAYOUT = 'aircraft:fuselage:simple_layout'

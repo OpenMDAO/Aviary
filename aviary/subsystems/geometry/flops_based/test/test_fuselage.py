@@ -57,6 +57,8 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='unitless')
         # options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='unitless')
         options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20, units='inch')
 
         prob.model.add_subsystem(
             'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
