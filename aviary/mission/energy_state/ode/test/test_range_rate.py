@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.range_rate import RangeRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
@@ -9,6 +10,7 @@ from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class RangeRateTest(unittest.TestCase):
     def setUp(self):
         """Test using data from validation_cases/validation_data/flops_data/full_mission_test_data.py."""

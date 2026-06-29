@@ -59,7 +59,7 @@ def read_data_file(
     """
     verbosity = Verbosity(verbosity)
 
-    filepath = get_path(filename)
+    filepath = get_path(filename, verbosity)
 
     data = NamedValues()
     comments = []

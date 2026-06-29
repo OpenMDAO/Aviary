@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.landing_ode import FlareODE
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
@@ -18,6 +19,7 @@ from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class FlareODETest(unittest.TestCase):
     """Test against data of detailed_landing_flare from models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py."""
 

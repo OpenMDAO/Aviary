@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.breguet_cruise_ode import (
     BreguetCruiseODE,
@@ -16,6 +17,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class CruiseODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -77,6 +79,7 @@ class CruiseODETestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class ElectricCruiseODETestCase(unittest.TestCase):
     """This test uses a makeup electrical engine to test electrical Breguet cruise ODE."""
 

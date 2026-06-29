@@ -21,7 +21,8 @@ class StallSpeed(om.ExplicitComponent):
             desc='mass of the aircraft',
         )
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.DENSITY,
             val=1.225,
             units='kg/m**3',
@@ -105,7 +106,8 @@ class FinalTakeoffConditions(om.ExplicitComponent):
 
         add_aviary_input(self, Mission.Takeoff.FUEL_MASS, val=10.0e3)
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.DENSITY,
             val=1.225,
             units='kg/m**3',

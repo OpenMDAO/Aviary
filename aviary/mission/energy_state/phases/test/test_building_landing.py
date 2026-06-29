@@ -2,11 +2,13 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.phases.build_landing import Landing
 from aviary.variable_info.variables import Mission
 
 
+@use_tempdirs
 class LandingPhaseTest(unittest.TestCase):
     """Test landing phase builder."""
 

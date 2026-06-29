@@ -14,7 +14,6 @@ class GroundrollEOM(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        arange = np.arange(nn)
 
         add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
         add_aviary_input(
@@ -68,6 +67,13 @@ class GroundrollEOM(om.ExplicitComponent):
         add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, val=np.ones(nn), units='ft/s')
         self.add_output('normal_force', val=np.ones(nn), desc='normal forces', units='lbf')
         self.add_output('fuselage_pitch', val=np.ones(nn), desc='fuselage pitch angle', units='deg')
+        self.add_output(
+            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
+        )
+
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        arange = np.arange(nn)
 
         self.declare_partials(Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, '*')
         self.declare_partials(
@@ -129,10 +135,6 @@ class GroundrollEOM(om.ExplicitComponent):
             val=1,
         )
         self.declare_partials('fuselage_pitch', Aircraft.Wing.INCIDENCE, val=-1)
-
-        self.add_output(
-            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
-        )
 
         self.declare_partials('angle_of_attack_rate', ['*'])
 
