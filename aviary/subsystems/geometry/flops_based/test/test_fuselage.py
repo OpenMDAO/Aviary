@@ -78,6 +78,46 @@ class DetailedCabinLayoutTest(unittest.TestCase):
         fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
         assert_near_equal(fuselage_height, 13.09, tolerance=1e-9)
 
+    def test_case2(self):
+        """with business class (modeled from Boeing 777-300ER)"""
+        prob = self.prob
+        options = self.aviary_options = AviaryValues()
+        options.set_val(Settings.VERBOSITY, 1, units='unitless')
+
+        options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 56)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, 78)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS, 330)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST, 4)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS, 6)
+        options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 10)
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 83, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 62, units='inch')
+        options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
+        options.set_val(Aircraft.Engine.NUM_ENGINES, [2], units='unitless')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 22, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, 21, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 18, units='inch')
+
+        prob.model.add_subsystem(
+            'layout', DetailedCabinLayout(), promotes_outputs=['*'], promotes_inputs=['*']
+        )
+        setup_model_options(self.prob, options)
+        prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Aircraft.Design.RANGE, val=7370.0, units='NM')
+        prob.run_model()
+
+        pax_compart_length = prob.get_val(Aircraft.Fuselage.PASSENGER_COMPARTMENT_LENGTH)
+        assert_near_equal(pax_compart_length, 254.26333333, tolerance=1e-9)
+
+        fuselage_length = prob.get_val(Aircraft.Fuselage.LENGTH)
+        assert_near_equal(fuselage_length, 294.26333333, tolerance=1e-9)
+
+        fuselage_width = prob.get_val(Aircraft.Fuselage.MAX_WIDTH)
+        assert_near_equal(fuselage_width, 18.55, tolerance=1e-9)
+
+        fuselage_height = prob.get_val(Aircraft.Fuselage.MAX_HEIGHT)
+        assert_near_equal(fuselage_height, 19.45, tolerance=1e-9)
+
 
 class BWBSimpleCabinLayoutTest(unittest.TestCase):
     """Test simple cabin layout computation."""
@@ -304,4 +344,7 @@ class BWBFuselagePrelimTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
+    test = DetailedCabinLayoutTest()
+    test.setUp()
+    test.test_case2()
