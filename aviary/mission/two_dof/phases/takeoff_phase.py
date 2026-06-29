@@ -35,11 +35,13 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
             'mass_bounds': (0.0, 200_000.0),
             'mass_ref': 100_000.0,
             'mass_defect_ref': 100.0,
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
         defaults = {
             'time_duration_bounds': (1.0, 100.0),
+            'initial_time_direct_link': True,
         }
         self.add_time_options(units='s', defaults=defaults)
 
@@ -47,6 +49,7 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'distance_bounds': (0.0, 10000.0),
             'distance_ref': 3000.0,
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='ft', defaults=defaults)
 
@@ -60,6 +63,7 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
             'altitude_ref': 100.0,
             'altitude_bounds': (0.0, 700.0),
             'altitude_constraint_ref': 100.0,
+            'altitude_direct_link': False,
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
@@ -73,6 +77,7 @@ class TakeoffPhaseOptions(AviaryOptionsDictionary):
             'angle_of_attack_ref': np.deg2rad(15),
             'angle_of_attack_bounds': (np.deg2rad(-30), np.deg2rad(30)),
             'angle_of_attack_optimize': True,
+            'angle_of_attack_direct_link': False,
         }
         # NOTE: Sometimes alpha is a control, and sometimes a state. This actually works
         # for making sure both sets of options are in there.
@@ -282,6 +287,25 @@ class TakeoffPhase(PhaseBuilder):
             'ground_roll': self.user_options.get_val('ground_roll'),
             'rotation': self.user_options.get_val('rotation'),
         }
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        ground_roll = self.user_options.get_val('ground_roll')
+        rotation = self.user_options.get_val('rotation')
+
+        linked_vars = [
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Mission.VELOCITY,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+
+        if not (ground_roll or rotation):
+            linked_vars.append(Dynamic.Mission.ALTITUDE)
+
+        if not ground_roll:
+            linked_vars.append(Dynamic.Vehicle.ANGLE_OF_ATTACK)
+
+        return linked_vars
 
     def get_parameters(self):
         params = {}

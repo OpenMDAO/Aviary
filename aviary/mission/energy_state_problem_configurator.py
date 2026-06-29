@@ -86,14 +86,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         return phase_info
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -228,12 +223,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             **extra_options,
         )
 
-    def link_phases(self, aviary_group, phases, connect_directly=True):
+    def link_trajectory(self, aviary_group, phases):
         """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
+        Link or configure phase connections to other upstream or downstream components.
 
         This is called from AviaryProblem.link_phases
 
@@ -241,61 +233,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         ----------
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
-        connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
+        phases : list[Phase]
+            List of all phases in the trajectory.
         """
-        # connect regular_phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group, aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
-        )
-
-        # connect reserve phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group, aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
-        )
-
-        # connect mass and distance between all phases regardless of reserve /
-        # non-reserve status
-        aviary_group.traj.link_phases(
-            phases, ['time'], ref=None if connect_directly else 1e3, connected=connect_directly
-        )
-        aviary_group.traj.link_phases(
-            phases,
-            [Dynamic.Vehicle.MASS],
-            ref=None if connect_directly else 1e6,
-            connected=connect_directly,
-        )
-        aviary_group.traj.link_phases(
-            phases,
-            [Dynamic.Mission.DISTANCE],
-            ref=None if connect_directly else 1e3,
-            connected=connect_directly,
-        )
-
-        # Under MPI, the states aren't directly connected.
-        if not connect_directly:
-            for phase_name in phases[1:]:
-                phase = aviary_group.traj._phases[phase_name]
-                phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
-                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
-
+        # Boundary conditions for the first phase.
         phase = aviary_group.traj._phases[phases[0]]
 
         # Currently expects Distance to be an input.

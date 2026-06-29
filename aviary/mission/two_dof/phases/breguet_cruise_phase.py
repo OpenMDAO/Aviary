@@ -58,6 +58,37 @@ class BreguetCruisePhaseOptions(AviaryOptionsDictionary):
             'start between 25 and 45 minutes after the start of the mission.',
         )
 
+        self.declare(
+            name='time_initial_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial time parameter to the previous '
+            'phase. When False, use a constraint.',
+        )
+
+        self.declare(
+            name='altitude_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial altitude parameter to the previous '
+            'phase. When False, use a constraint.',
+        )
+
+        self.declare(
+            name='distance_direct_link',
+            default=True,
+            types=bool,
+            desc='When True, directly link the initial distance parameter to the previous '
+            'phase. When False, use a constraint.',
+        )
+
+        self.declare(
+            name='mass_direct_link',
+            default=False,
+            types=bool,
+            desc='Because mass is output, this should always be false..',
+        )
+
 
 class BreguetCruisePhase(PhaseBuilder):
     """
@@ -153,6 +184,16 @@ class BreguetCruisePhase(PhaseBuilder):
         phase.add_timeseries_output('time', units='s', output_name='time')
 
         return phase
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            'initial_time',
+            'initial_distance',
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+        ]
+        return linked_vars
 
 
 BreguetCruisePhase._add_initial_guess_meta_data(

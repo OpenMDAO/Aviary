@@ -488,7 +488,7 @@ class AviaryGroup(om.Group):
             geom_code_origin = (FLOPS, GASP)
 
         # which geometry method gets prioritized in case of conflicting outputs
-        code_origin_to_prioritize = self.configurator.get_code_origin(self)
+        code_origin_to_prioritize = self.configurator.get_code_origin()
 
         geom = CoreGeometryBuilder(
             'geometry',
@@ -1108,9 +1108,8 @@ class AviaryGroup(om.Group):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need special logic to do the Dymos
-        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
-        shown here.
+        If a variable is common to two phases, it can be linked via a direct connection or a
+        constraint.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity override for
         # just this method
@@ -1147,66 +1146,206 @@ class AviaryGroup(om.Group):
         if len(phases) <= 1:
             return
 
-        # In summary, the following code loops over all phases in self.mission_info, gets the linked
-        # variables from each external subsystem in each phase, and stores the lists of linked
-        # variables in lists_to_link. It then gets a list of unique variable names from
-        # lists_to_link and loops over them, creating a list of phase names for each variable and
-        # linking the phases using self.traj.link_phases().
-
-        lists_to_link = []
-        for idx, phase_name in enumerate(self.mission_info):
-            phase_info = self.mission_info[phase_name]
-            all_subsystem_options = phase_info.get('subsystem_options', {})
-
-            lists_to_link.append([])
-            for subsys in self.external_subsystems:
-                lists_to_link[idx].extend(
-                    subsys.get_linked_variables(
-                        aviary_inputs=self.aviary_inputs,
-                        user_options=self.mission_info[phase_name]['user_options'],
-                        subsystem_options=all_subsystem_options.get(subsys.name, {}),
-                    )
-                )
-
-        # get unique variable names from lists_to_link
-        unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
-
         # Phase linking.
         # If we are under mpi, and traj.phases is running in parallel, then let the optimizer handle
         # the linkage constraints.  Note that we can technically parallelize connected phases, but
         # it requires a solver that we would like to avoid.
-        true_unless_mpi = True
+        connect_directly = True
         if comm.size > 1 and self.traj.options['parallel_phases']:
-            true_unless_mpi = False
+            connect_directly = False
 
-        # loop over unique variable names
-        for var in unique_vars:
-            phases_to_link = []
-            for idx, phase_name in enumerate(self.mission_info):
-                if var in lists_to_link[idx]:
-                    phases_to_link.append(phase_name)
+        # Assemble all linkable variables in the phases.
+        link_vars_dict = {}
+        for builder in self.phase_objects:
+            phase_name = builder.name
+            phase_info = self.mission_info[phase_name]
+            all_subsystem_options = phase_info.get('subsystem_options', {})
 
-            if len(phases_to_link) > 1:  # TODO: hack
-                # go phase by phase and either directly link if two standard phases, or use linkage
-                # constraint if either are analytic
-                # TODO need more unified way to handle this instead of splitting between AviaryGroup
-                #      and configurators
-                for ii in range(len(phases) - 1):
-                    phase1, phase2 = phases[ii : ii + 2]
-                    opt1 = self.mission_info[phase1]['user_options']
-                    opt2 = self.mission_info[phase2]['user_options']
-                    integrates_mass1 = opt1['phase_type'] is PhaseType.BREGUET_RANGE
-                    integrates_mass2 = opt2['phase_type'] is PhaseType.BREGUET_RANGE
+            link_vars = set()
+            for subsys in self.external_subsystems:
+                sub_vars = subsys.get_linked_variables(
+                    aviary_inputs=self.aviary_inputs,
+                    user_options=self.mission_info[phase_name]['user_options'],
+                    subsystem_options=all_subsystem_options.get(subsys.name, {}),
+                )
+                link_vars = link_vars.union(sub_vars)
 
-                    if integrates_mass1 or integrates_mass2:
-                        # TODO need ref value for these linkage constraints
-                        self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
-                    else:
-                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
+            phase_vars = builder.get_linked_variables()
+            link_vars = link_vars.union(phase_vars)
 
-        self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
+            link_vars_dict[phase_name] = link_vars
+
+        builder2 = self.phase_objects[0]
+        for builder in self.phase_objects[1:]:
+            # Upstream phase is previous phase.
+            # TODO: Linking a different phase should be possible.
+            builder1 = builder2
+            builder2 = builder
+
+            phase1 = builder1.name
+            phase_info1 = self.mission_info[phase1]['user_options']
+            vars1 = link_vars_dict[phase1]
+
+            phase2 = builder2.name
+            phase_info2 = self.mission_info[phase2]['user_options']
+            vars2 = link_vars_dict[phase2]
+
+            if self.reserve_phases and phase2 == self.reserve_phases[0]:
+                # Don't link to first reserve phase.
+                continue
+
+            # Find common vars across 1-2 boundary
+            common = vars1.intersection(vars2)
+            upstream_analytic = [item for item in vars1 if item.startswith('initial_')]
+            downstream_analytic = [item for item in vars2 if item.startswith('initial_')]
+
+            # Sort because of MPI
+            for var in sorted(common):
+                # Controls: True or False, everything else: None
+                opt1 = phase_info1.get(f'{var}_optimize', None)
+                opt2 = phase_info2.get(f'{var}_optimize', None)
+
+                if opt1 is False and opt2 is False:
+                    # If both sides are static controls, don't link.
+                    continue
+
+                pin1 = phase_info1.get(f'{var}_final', (None, None))[0]
+                pin2 = phase_info2.get(f'{var}_initial', (None, None))[0]
+                if pin1 and pin2:
+                    # When both ends are pinned, no need to add a duplicate constraint.
+                    continue
+
+                # MPI takes precedence, since we can't connect directly in the parallel group.
+                # Otherwise, this key allows the user to control whether the phase is connected
+                # or constrained on each input.
+                if var == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{var}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
+
+                if opt2 is False:
+                    # Controls cannot connect directly.
+                    connect = False
+
+                elif pin2:
+                    # Pinned front can't take input.
+                    connect = False
+
+                kwargs = {}
+                if not connect:
+                    kwargs = self._find_scaling(var, phase1, phase_info1, phase2, phase_info2, opt2)
+
+                self.traj.link_phases(
+                    phases=[phase1, phase2],
+                    connected=connect,
+                    vars=[var],
+                    **kwargs,
+                )
+
+            # Target analytic phases may take a single start input that needs to connect
+            # Sort because of MPI
+            for var in sorted(downstream_analytic):
+                source = var.removeprefix('initial_')
+                if source not in vars1:
+                    continue
+
+                if source == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{source}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
+
+                kwargs = {}
+                if not connect:
+                    kwargs = self._find_scaling(
+                        source, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
+
+                self.traj.add_linkage_constraint(
+                    phase1, phase2, source, var, connected=connect, **kwargs
+                )
+
+            # Source analytic phases should still connect to the timeseries.
+            # Sort because of MPI
+            for var in sorted(upstream_analytic):
+                target = var.removeprefix('initial_')
+                if target not in vars2:
+                    continue
+
+                if var in downstream_analytic or target in downstream_analytic:
+                    # Both phases are analytic, and we already linked this.
+                    continue
+
+                if target == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{target}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
+
+                kwargs = {}
+                if not connect:
+                    kwargs = self._find_scaling(
+                        target, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
+
+                self.traj.link_phases(
+                    phases=[phase1, phase2],
+                    connected=connect,
+                    vars=[target],
+                    **kwargs,
+                )
+
+        self.configurator.link_trajectory(self, phases)
 
         self.configurator.check_trajectory(self)
+
+    def _find_scaling(self, var, phase1, phase_info1, phase2, phase_info2, opt2):
+        """
+        Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
+        """
+        phase = self.traj._phases[phase1]
+        integrated_var = phase.time_options['name']
+        analytic = len(phase.state_options) < 1
+
+        if not analytic:
+            if var == 'time':
+                if integrated_var != 'time':
+                    # Time is not being integrated.
+                    return {}
+            elif var == integrated_var:
+                # This is the integration variable, and its scaling is currently stored as time.
+                var = 'time'
+
+        if var == 'time':
+            # Time behaves a bit differently than the others.
+            ref0 = None
+            ref, units = phase_info2.get(f'{var}_initial_ref', (None, None))
+            if ref is None:
+                ref, units = phase_info1.get(f'{var}_duration_ref', (None, None))
+        else:
+            # First, pull from the scaling from upstream phase.
+            ref, units = phase_info1.get(f'{var}_ref', (None, None))
+            ref0 = phase_info1.get(f'{var}_ref0', (None, None))[0]
+            if ref is None:
+                ref, units = phase_info2.get(f'{var}_ref', (None, None))
+                ref0 = phase_info2.get(f'{var}_ref0', (None, None))[0]
+
+        kwargs = {}
+        if ref is not None:
+            kwargs['ref'] = ref
+        if ref0 is not None:
+            kwargs['ref0'] = ref0
+        if units is not None:
+            kwargs['units'] = units
+
+        # Make sure states options are correct for this.
+        if opt2 is None and var != 'time':
+            phase = self.traj._phases[phase2]
+            if var in phase.state_options:
+                phase.set_state_options(var, input_initial=False)
+
+        return kwargs
 
     def _add_bus_variables_and_connect(self):
         all_subsystems = self.subsystems
