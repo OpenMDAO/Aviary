@@ -204,6 +204,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY)
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
+        add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
         add_aviary_input(self, Aircraft.Design.RANGE, units='NM')
@@ -216,6 +217,8 @@ class DetailedCabinLayout(om.ExplicitComponent):
         self.declare_partials('*', '*', method='fd', form='forward')
 
     def compute(self, inputs, outputs):
+        verbosity = self.options[Settings.VERBOSITY]
+
         num_first_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         num_business_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         num_economy_class_pax = self.options[Aircraft.CrewPayload.Design.NUM_ECONOMY_CLASS]
@@ -228,17 +231,49 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_seat_abreast_economy = self.options[
             Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY
         ]
+
         # The 200 was derived from B757 - the largest single aisle western desig.
         if num_economy_class_pax > 200:
             if num_seat_abreast_economy <= 0:
                 num_seat_abreast_economy = 8
-            if num_seat_abreast_first > 0 and num_seat_abreast_first <= 0:
+                if verbosity > Verbosity.BRIEF:
+                    print('Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = 8')
+            if num_first_class_pax > 0 and num_seat_abreast_first <= 0:
                 num_seat_abreast_first = num_seat_abreast_economy - 2
+                if verbosity > Verbosity.BRIEF:
+                    print(
+                        f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST = '
+                        '{num_seat_abreast_first}'
+                    )
+            if num_business_class_pax > 0 and num_seat_abreast_business <= 0:
+                num_seat_abreast_business = num_seat_abreast_economy - 2
+                if verbosity > Verbosity.BRIEF:
+                    print(
+                        f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BASINESS = '
+                        '{num_seat_abreast_business}'
+                    )
 
         if num_seat_abreast_first <= 0 and num_first_class_pax > 0:
             num_seat_abreast_first = 4
+            if verbosity > Verbosity.BRIEF:
+                print(
+                    f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST = '
+                    '{num_seat_abreast_first}'
+                )
         if num_seat_abreast_economy <= 0 and num_economy_class_pax > 0:
             num_seat_abreast_economy = 6
+            if verbosity > Verbosity.BRIEF:
+                print(
+                    f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = '
+                    '{num_seat_abreast_economy}'
+                )
+        if num_seat_abreast_business <= 0 and num_business_class_pax > 0:
+            num_seat_abreast_business = 5
+            if verbosity > Verbosity.BRIEF:
+                print(
+                    f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS = '
+                    '{num_seat_abreast_business}'
+                )
 
         # Though these are not user definable, the values here are typical for most transport
         aisle_width_first_class = 20.0  # inch
@@ -246,11 +281,16 @@ class DetailedCabinLayout(om.ExplicitComponent):
         aisle_width_economy_class = 18.0  # inch
 
         # If there are less than 60 passengers on board, then the aisle should be slightly narrow.
-        # Also, if the number of passengers abreast was not specified, then set it to 5 as 6 is too much
-        # for a typical short range transport.
+        # Also, if the number of passengers abreast was not specified, then set it to 5 because 6
+        # is too much for a typical short range transport.
         if num_economy_class_pax < 60:
             if num_seat_abreast_economy <= 0:
                 num_seat_abreast_economy = 5
+                if verbosity > Verbosity.BRIEF:
+                    print(
+                        f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = '
+                        '{num_seat_abreast_economy}'
+                    )
             aisle_width_economy_class = 15.0
 
         if num_seat_abreast_economy > 6:
@@ -271,12 +311,18 @@ class DetailedCabinLayout(om.ExplicitComponent):
         seat_pitch_first = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST][0]
         if seat_pitch_first <= 0 and num_first_class_pax > 0:
             seat_pitch_first = 38.0  # inch
+            if verbosity > Verbosity.BRIEF:
+                print('Set Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST = 38.0 inches')
         seat_pitch_business = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS][0]
         if seat_pitch_business <= 0 and num_business_class_pax > 0:
             seat_pitch_business = 36.0  # inch
+            if verbosity > Verbosity.BRIEF:
+                print('Set Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS = 36.0 inches')
         seat_pitch_economy = self.options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY][0]
         if seat_pitch_economy <= 0 and num_economy_class_pax > 0:
             seat_pitch_economy = 34.0  # inch
+            if verbosity > Verbosity.BRIEF:
+                print('Set Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY = 34.0 inches')
 
         # set maximum number of galleys based on statistics (this block is not from FLOPS)
         num_pax = num_first_class_pax + num_business_class_pax + num_economy_class_pax
@@ -327,10 +373,12 @@ class DetailedCabinLayout(om.ExplicitComponent):
         # The above settings are necessary because FLOPS didn't cover all the scenarios.
         # They will be over written if FLOPS covered a particular scenario as we see below.
 
+        num_first_business_pax = num_first_class_pax + num_business_class_pax
+
         # Set constraints on the maximum number of galleys and other items so that we don't have
         # a flying kitchen or closet or whatever.
         # Note: Some of these may need relaxing for larger aircraft.
-        if num_first_class_pax == 0:
+        if num_first_business_pax == 0:
             design_range = inputs[Aircraft.Design.RANGE]
             if design_range < 1250.0:
                 max_lav = 2
@@ -341,7 +389,7 @@ class DetailedCabinLayout(om.ExplicitComponent):
             max_galleys = 2
             max_closets = 2
 
-        if num_first_class_pax == 0 and num_economy_class_pax < 110:
+        if num_first_business_pax == 0 and num_economy_class_pax < 110:
             max_lav = 1
             max_galleys = 1
             max_closets = 1
@@ -355,17 +403,17 @@ class DetailedCabinLayout(om.ExplicitComponent):
             max_galleys = 8
             max_closets = 8
 
-        if num_first_class_pax > 0 and num_seat_abreast_economy < 8:
+        if num_first_business_pax > 0 and num_seat_abreast_economy < 8:
             fuselage_multiplier = 0.95
 
         # Calculate the number of galleys, lavatories and closets
         num_galleys = int(1 + (num_pax / 100))
         if num_galleys > max_galleys:
             num_galleys = max_galleys
-        num_lavas = int(1 + (num_economy_class_pax / 60)) + int(1 + (num_first_class_pax / 100))
+        num_lavas = int(1 + (num_economy_class_pax / 60)) + int(1 + (num_first_business_pax / 100))
         if num_lavas > max_lav:
             num_lavas = max_lav
-        num_closets = int(1 + (num_first_class_pax / 30)) + int(1 + (num_economy_class_pax / 60))
+        num_closets = int(1 + (num_first_business_pax / 30)) + int(1 + (num_economy_class_pax / 60))
         if num_closets > max_closets:
             num_closets = max_closets
 
@@ -374,9 +422,13 @@ class DetailedCabinLayout(om.ExplicitComponent):
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES][0]
         eng_flag = num_engines - 2 * int(num_engines / 2)  # a center mounted engine if 1.
         first_class_len = num_first_class_pax * seat_pitch_first / num_seat_abreast_first
+        business_class_len = (
+            num_business_class_pax * seat_pitch_business / num_seat_abreast_business
+        )
         economy_class_len = num_economy_class_pax * seat_pitch_economy / num_seat_abreast_economy
         pax_compart_length = (
             first_class_len
+            + business_class_len
             + (num_galleys + num_lavas) * 36.0
             + economy_class_len
             + num_closets * 12.0
