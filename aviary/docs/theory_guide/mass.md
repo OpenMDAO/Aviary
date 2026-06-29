@@ -9,6 +9,8 @@ This section is under further development.
 
 ## FLOPS Based Mass Subsystem
 
+FLOPS used a series of regressions and basic relations to estimate the weight of various transport aircraft components. The equations used are well-documented and freely available[^FLOPS_weights]. Aviary uses mass instead of weight, which is a subtle but important change to be aware of.
+
 ### Fuel_Capacity
 
 The Fuel Capacity Group contains 4 subsystems:
@@ -48,3 +50,9 @@ The Fuel Capacity Group contains 4 subsystems:
     Total Fuel Capacity = Wing Fuel Capacity + Fuselage Fuel Capacity + Auxiliary Fuel Capacity
 
 It is possible for Aviary to calculate negative fuel capacities depending on user overrides and the input wing geometry. These situations are not currently flagged to the user.
+
+# References
+For additional information, please see the following resources:
+
+[^FLOPS_weights]: The Flight Optimization System Weights Estimation Method. NASA Technology
+Transfer Program. URL: https://ntrs.nasa.gov/citations/20170005851
