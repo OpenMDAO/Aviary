@@ -2,6 +2,7 @@ import unittest
 from copy import deepcopy
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.takeoff_ode import TakeoffODE
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
@@ -22,6 +23,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 takeoff_subsystem_options = deepcopy(takeoff_subsystem_options)
 
 
+@use_tempdirs
 class TakeoffODETest(unittest.TestCase):
     """Test detailed takeoff ODE."""
 

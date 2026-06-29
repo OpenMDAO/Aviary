@@ -108,6 +108,6 @@ class TestEngineDeckConversion(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = TestEngineDeckConversion()
-    test.test_TF_conversion_GASP()
+    unittest.main()
+    # test = TestEngineDeckConversion()
+    # test.test_TF_conversion_GASP()

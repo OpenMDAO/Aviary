@@ -108,7 +108,9 @@ class TestShapebyConn(unittest.TestCase):
 
         class PostComponent(om.ExplicitComponent):
             def setup(self):
-                self.add_input(Aircraft.Design.DRAG_POLAR, shape_by_conn=True, units='unitless')
+                add_aviary_input(
+                    self, Aircraft.Design.DRAG_POLAR, shape_by_conn=True, units='unitless'
+                )
                 add_aviary_input(
                     self, Aircraft.Design.LIFT_POLAR, shape_by_conn=True, units='unitless'
                 )

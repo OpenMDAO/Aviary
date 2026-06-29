@@ -567,7 +567,8 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         self.add_input(
             'CL_max', val=0.0, units='unitless', desc='CLMX: max CL at approach altitude'
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.MASS,
             val=0.0,
             units='lbm',

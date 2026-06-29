@@ -1,6 +1,7 @@
 import numpy as np
 import openmdao.api as om
 
+from aviary.variable_info.functions import add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -33,7 +34,8 @@ class DistanceComp(om.ExplicitComponent):
             desc='Constant true airspeed at each point in cruise.',
         )
 
-        self.add_output(
+        add_aviary_output(
+            self,
             Dynamic.Mission.DISTANCE,
             shape=(nn,),
             units='NM',

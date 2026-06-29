@@ -2156,7 +2156,7 @@ def reload_aviary_problem(
     # Initialize a new aviary problem and aviary_input data structure
     prob = AviaryProblem()
 
-    filename = get_path(filename)
+    filename = get_path(filename, verbosity)
 
     aviary_inputs = _read_sizing_json(filename, metadata, verbosity)
 

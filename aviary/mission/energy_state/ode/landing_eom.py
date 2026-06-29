@@ -164,7 +164,7 @@ class GlideSlopeForces(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
         add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
 
-        self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
 
         add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
 
@@ -322,7 +322,7 @@ class FlareSumForces(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='N')
         add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
 
-        self.add_input(Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
 
         add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
 

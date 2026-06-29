@@ -23,7 +23,8 @@ class FlightConstraints(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.MASS,
             val=np.ones(nn),
             units='lbm',
@@ -45,7 +46,8 @@ class FlightConstraints(om.ExplicitComponent):
             units='unitless',
             desc='maximum lift coefficient',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
             val=np.ones(nn),
             units='rad',
@@ -54,7 +56,8 @@ class FlightConstraints(om.ExplicitComponent):
 
         add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=1.0, units='rad')
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
             val=np.ones(nn),
             units='rad',
@@ -190,8 +193,8 @@ class ClimbAtTopOfClimb(om.ExplicitComponent):
     """This class is not used nor tested."""
 
     def setup(self):
-        self.add_input(Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
-        self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
         self.add_output('ROC', units='ft/s')
         self.declare_partials('*', '*')
 
