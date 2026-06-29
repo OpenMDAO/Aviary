@@ -2,6 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.constants import GRAV_METRIC_FLOPS as gravity
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Dynamic
 
 
@@ -17,21 +18,28 @@ class SpecificEnergyRate(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
             val=np.ones(nn),
             desc='current velocity',
             units='m/s',
         )
-        self.add_input(Dynamic.Vehicle.MASS, val=np.ones(nn), desc='current mass', units='kg')
-        self.add_input(
+        add_aviary_input(
+            self, Dynamic.Vehicle.MASS, val=np.ones(nn), desc='current mass', units='kg'
+        )
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
             val=np.ones(nn),
             desc='current thrust',
             units='N',
         )
-        self.add_input(Dynamic.Vehicle.DRAG, val=np.ones(nn), desc='current drag', units='N')
-        self.add_output(
+        add_aviary_input(
+            self, Dynamic.Vehicle.DRAG, val=np.ones(nn), desc='current drag', units='N'
+        )
+        add_aviary_output(
+            self,
             Dynamic.Mission.SPECIFIC_ENERGY_RATE,
             val=np.ones(nn),
             desc='current specific power',

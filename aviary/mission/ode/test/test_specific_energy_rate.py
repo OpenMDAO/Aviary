@@ -1,6 +1,7 @@
 import unittest
 
 import openmdao.api as om
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.ode.specific_energy_rate import SpecificEnergyRate
 from aviary.utils.test_utils.variable_test import assert_match_varnames
@@ -9,6 +10,7 @@ from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class SpecificEnergyRateTest(unittest.TestCase):
     def setUp(self):
         prob = self.prob = om.Problem()

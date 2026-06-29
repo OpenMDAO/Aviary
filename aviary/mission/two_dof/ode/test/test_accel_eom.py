@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class AccelerationTestCase(unittest.TestCase):
     """
     These tests compare the output of the accel EOM to the output from GASP. There are some discrepancies.
