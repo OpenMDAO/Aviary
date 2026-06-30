@@ -287,14 +287,19 @@ class FlightPhaseBase(PhaseBuilder):
                 )
 
             else:
+                opt = allocation == ThrottleAllocation.STATIC
+                kwargs = {}
+                if opt:
+                    kwargs['lower'] = 0.0
+                    kwargs['upper'] = 1.0
+
                 phase.add_parameter(
                     'throttle_allocations',
                     units='unitless',
                     val=val,
                     shape=(num_engine_type - 1,),
-                    opt=allocation == ThrottleAllocation.STATIC,
-                    lower=0.0,
-                    upper=1.0,
+                    opt=opt,
+                    **kwargs,
                 )
 
         ##################
