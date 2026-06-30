@@ -118,8 +118,7 @@ def preprocess_options(
         else:
             if design_type == AircraftTypes.BLENDED_WING_BODY:
                 if verbosity >= Verbosity.BRIEF:
-                    # raise UserWarning('Aircraft.Fuselage.SEAT_WIDTH_FIRST is not set.')
-                    pass
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, 'inch')
 
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
