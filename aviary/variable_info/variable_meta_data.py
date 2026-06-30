@@ -332,7 +332,11 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.MAX_BAY_WIDTH,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BAYWMX'},
+    historical_name={
+        'GASP': None,
+        'FLOPS': 'FUSEIN.BAYWMX',
+        'LEAPS1': None,
+    },
     units='ft',
     desc='maximum bay width',
     types=float,
@@ -2149,7 +2153,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.INLET_AREA_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None},
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='unitless',
     option=True,
     default_value=0.0002,  # default in GASP
@@ -2659,7 +2663,7 @@ add_meta_data(
     Aircraft.Engine.Propeller.MASS,
     meta_data=_MetaData,
     # TODO Check if GASP has a variable for this
-    historical_name={'GASP': None, 'FLOPS': None},
+    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
     units='lbm',
     desc='mass of propellers on engine (sum of all blades)',
     option=False,
@@ -3606,7 +3610,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Fuselage.SIDEBODY_THICKNESS_TO_CHORD,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': 'WTIN.TCSOB'},
+    historical_name={'GASP': None, 'FLOPS': 'WTIN.TCSOB', 'LEAPS1': None},
     units='unitless',
     desc='fuselage thickness/chord ratio at side of body',
     default_value=0.0,
