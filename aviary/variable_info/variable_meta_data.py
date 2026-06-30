@@ -332,11 +332,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.BWB.MAX_BAY_WIDTH,
     meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'FUSEIN.BAYWMX',
-        'LEAPS1': None,
-    },
+    historical_name={'GASP': None, 'FLOPS': 'FUSEIN.BAYWMX'},
     units='ft',
     desc='maximum bay width',
     types=float,
