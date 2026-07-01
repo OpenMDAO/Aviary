@@ -2659,7 +2659,7 @@ add_meta_data(
     Aircraft.Engine.Propeller.MASS,
     meta_data=_MetaData,
     # TODO Check if GASP has a variable for this
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
     desc='mass of propellers on engine (sum of all blades)',
     option=False,
