@@ -2149,7 +2149,7 @@ add_meta_data(
 add_meta_data(
     Aircraft.Engine.INLET_AREA_COEFFICIENT,
     meta_data=_MetaData,
-    historical_name={'GASP': None, 'FLOPS': None, 'LEAPS1': None},
+    historical_name={'GASP': None, 'FLOPS': None},
     units='unitless',
     option=True,
     default_value=0.0002,  # default in GASP
