@@ -43,7 +43,7 @@ class EngineMass(om.ExplicitComponent):
         scaled_sls_thrust = np.array(inputs[Aircraft.Engine.SCALED_SLS_THRUST])
         scaling_parameter = np.array(inputs[Aircraft.Engine.MASS_SCALER])
 
-        scale_idx = np.where(scale_mass)
+        scale_idx = np.where(np.atleast_1d(scale_mass))
         # indices where scaling is applied and scaling equation is used
         param_idx = np.where(scaling_parameter[scale_idx] >= 0.3)
 
@@ -99,7 +99,7 @@ class EngineMass(om.ExplicitComponent):
 
         # engine mass derivatives
         # indices where scaling is applied
-        scale_idx = np.where(scale_mass)
+        scale_idx = np.where(np.atleast_1d(scale_mass))
         # indices where scaling is applied and scaling equation is used
         param_idx = np.where(scaling_parameter[scale_idx] >= 0.3)
 
