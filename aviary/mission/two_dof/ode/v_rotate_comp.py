@@ -8,21 +8,20 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 class VRotateComp(om.ExplicitComponent):
     """
     Component that computes V_rotate based on vehicle properties and speed buffers.
-    Note: This component is not used.
+    NOTE: This component is not used.
     """
 
     def setup(self):
-        # Temporarily set this to shape (1, 1) to avoid OpenMDAO bug
+        # TODO: Temporarily set this to shape (1, 1) to avoid OpenMDAO bug
         add_aviary_input(self, Dynamic.Vehicle.MASS, shape=(1, 1), units='lbm')
         add_aviary_input(
             self,
             Dynamic.Atmosphere.DENSITY,
             shape=(1,),
             units='slug/ft**3',
-            val=RHO_SEA_LEVEL_ENGLISH,
-            desc='sea-level atmospheric density',
+            # val=RHO_SEA_LEVEL_ENGLISH,
         )
-        add_aviary_input(self, Aircraft.Wing.AREA, val=1.0)
+        add_aviary_input(self, Aircraft.Wing.AREA)
         self.add_input('CL_max', shape=(1,), units='unitless', desc='Maximum lift coefficient')
         self.add_input(
             'dV1',

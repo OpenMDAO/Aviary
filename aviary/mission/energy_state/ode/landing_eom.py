@@ -160,13 +160,13 @@ class GlideSlopeForces(om.ExplicitComponent):
 
         nn = options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
-        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='rad')
 
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
         self.add_output(
             'forces_perpendicular',
@@ -317,14 +317,14 @@ class FlareSumForces(om.ExplicitComponent):
 
         nn = options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
-        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='rad')
 
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
 
         self.add_output(
             'forces_horizontal',
@@ -475,10 +475,10 @@ class GroundSumForces(om.ExplicitComponent):
 
         nn = options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='kg')
-        add_aviary_input(self, Dynamic.Vehicle.LIFT, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=np.ones(nn), units='N')
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.ones(nn), units='N')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn, units='N')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N')
 
         self.add_output(
             'forces_horizontal',

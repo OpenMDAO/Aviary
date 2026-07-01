@@ -7693,9 +7693,9 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='unitless',
-    desc='speed during taxi, must be nonzero if pycycle is enabled',
-    option=True,
-    default_value=0.0001,
+    desc='speed during taxi',
+    option=False,
+    default_value=0.0,
 )
 
 #  .----------------.  .----------------.  .----------------.  .----------------.  .----------------.  .-----------------. .----------------.  .----------------.

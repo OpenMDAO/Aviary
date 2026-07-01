@@ -47,12 +47,12 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Vehicle.Propulsion.THRUST_TOTAL, shape=nn, units='N')
         add_aviary_input(self, Dynamic.Vehicle.LIFT, shape=nn, desc=Dynamic.Vehicle.LIFT, units='N')
         add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, desc=Dynamic.Vehicle.DRAG, units='N')
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0, units='rad')
-        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='rad')
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='rad')
         add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
         if not self.options['ground_roll']:
-            add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.zeros(nn), units='rad')
+            add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
             self.add_input(
                 'dh_dr', val=np.zeros(nn), desc='d(alt)/d(range)', units='m/distance_units'
             )

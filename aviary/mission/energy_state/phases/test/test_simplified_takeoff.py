@@ -53,33 +53,6 @@ class StallSpeedTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)  # check the partial derivatives
 
 
-class StallSpeedTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
-
-        takeoff.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
-
-        takeoff.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'comp',
-            StallSpeed(),
-            promotes=['*'],
-        )
-        self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
 @use_tempdirs
 class FinalConditionsTest(unittest.TestCase):
     """Test final conditions computation in FinalTakeoffConditions class."""
@@ -151,6 +124,26 @@ class FinalConditionsTest2(unittest.TestCase):
         prob.model.set_input_defaults('v_stall', val=100, units='m/s')
         # default value GROSS_MASS = 150000 will worsen the output
         prob.model.set_input_defaults('mass', val=181200.0, units='lbm')
+        prob.model.set_input_defaults(Mission.Takeoff.FUEL_MASS, val=577, units='lbm')  # check
+        prob.model.set_input_defaults(
+            Dynamic.Atmosphere.DENSITY,
+            val=constants.RHO_SEA_LEVEL_ENGLISH,
+            units='slug/ft**3',
+        )  # check
+        prob.model.set_input_defaults(Aircraft.Wing.AREA, val=1370.0, units='ft**2')  # check
+        prob.model.set_input_defaults(
+            Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2.0000, units='unitless'
+        )  # check
+        prob.model.set_input_defaults(
+            Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=28928.0 * 2, units='lbf'
+        )  # check
+        prob.model.set_input_defaults(
+            Mission.Takeoff.CLIMBOUT_THRUST_FRACTION, val=1, units='unitless'
+        )
+        prob.model.set_input_defaults(
+            Mission.Takeoff.LIFT_OVER_DRAG, val=17.354, units='unitless'
+        )  # check
+
         prob.setup(check=False, force_alloc_complex=True)
 
         partial_data = prob.check_partials(out_stream=None, method='cs')

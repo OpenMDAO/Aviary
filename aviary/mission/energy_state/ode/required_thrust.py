@@ -18,32 +18,28 @@ class RequiredThrust(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='N', desc='drag force')
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N', desc='drag force')
         add_aviary_input(
             self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='m/s',
-            desc='rate of change of altitude',
         )
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.zeros(nn),
+            shape=nn,
             units='m/s',
             desc=Dynamic.Mission.VELOCITY,
         )
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='m/s**2',
-            desc='rate of change of velocity',
         )
-        add_aviary_input(
-            self, Dynamic.Vehicle.MASS, val=np.zeros(nn), units='kg', desc='mass of the aircraft'
-        )
-        self.add_output('thrust_required', val=np.zeros(nn), units='N', desc='required thrust')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        self.add_output('thrust_required', shape=nn, units='N')
 
         ar = np.arange(nn)
         self.declare_partials('thrust_required', Dynamic.Vehicle.DRAG, rows=ar, cols=ar)

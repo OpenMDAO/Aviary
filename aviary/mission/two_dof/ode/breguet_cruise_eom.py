@@ -36,7 +36,7 @@ class RangeComp(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
-            0.74 * np.ones(nn),
+            shape=nn,
             units='lbm/h',
         )
 
@@ -272,16 +272,14 @@ class ElectricRangeComp(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED,
-            10.0 * np.ones(nn),
+            shape=nn,
             units='kW*h',
-            desc='total energy consumption, comes from propulsion',
         )
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
-            0.74 * np.ones(nn),
+            shape=nn,
             units='kW',
-            desc='total energy consumption, comes from propulsion',
         )
 
         self.add_output(

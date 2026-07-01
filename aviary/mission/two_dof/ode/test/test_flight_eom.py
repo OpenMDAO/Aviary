@@ -118,6 +118,7 @@ class ClimbTestCase(unittest.TestCase):
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([171481, 171481]), units='lbm'
         )
+        self.prob.model.set_input_defaults(Dynamic.Vehicle.ANGLE_OF_ATTACK, np.ones(2))
 
         self.prob.setup(check=False, force_alloc_complex=True)
 

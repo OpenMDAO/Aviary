@@ -19,32 +19,26 @@ class SizeBattery(om.ExplicitComponent):
         add_aviary_input(
             self,
             Aircraft.Battery.PACK_MASS,
-            val=0.0,
             units='kg',
             desc='mass of energy-storing components of battery',
         )
         add_aviary_input(
             self,
             Aircraft.Battery.ADDITIONAL_MASS,
-            val=0.0,
             units='kg',
             desc='mass of non energy-storing components of battery',
         )
         add_aviary_input(
             self,
             Aircraft.Battery.PACK_ENERGY_DENSITY,
-            val=0.0,
             units='kJ/kg',
             desc='energy density of battery pack',
         )
 
-        add_aviary_output(
-            self, Aircraft.Battery.MASS, val=0.0, units='kg', desc='total battery mass'
-        )
+        add_aviary_output(self, Aircraft.Battery.MASS, units='kg', desc='total battery mass')
         add_aviary_output(
             self,
             Aircraft.Battery.ENERGY_CAPACITY,
-            val=0.0,
             units='kJ',
             desc='total battery energy storage',
         )

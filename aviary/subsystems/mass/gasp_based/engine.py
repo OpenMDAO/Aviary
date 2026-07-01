@@ -7,9 +7,7 @@ from aviary.variable_info.variables import Aircraft
 
 
 class TotalEngineMass(om.ExplicitComponent):
-    """
-    Computation of total engine mass, nacelle mass, pylon mass.
-    """
+    """Computation of total engine mass, nacelle mass, pylon mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -41,10 +39,8 @@ class TotalEngineMass(om.ExplicitComponent):
         add_aviary_input(
             self,
             Aircraft.Engine.Propeller.MASS,
-            # val=np.full(num_engine_type, 0.000000001),
-            val=np.zeros(num_engine_type),
+            shape=num_engine_type,
             units='lbm',
-            desc='WPROP1: mass of one propeller',
         )
 
         # add_aviary_output(self, Aircraft.Engine.MASS, units='lbm')
@@ -54,7 +50,7 @@ class TotalEngineMass(om.ExplicitComponent):
             'pylon_mass',
             units='lbm',
             desc='WPYLON: mass of each pylon',
-            val=np.zeros(num_engine_type),
+            shape=num_engine_type,
         )
 
     def setup_partials(self):
@@ -189,9 +185,7 @@ class TotalEngineMass(om.ExplicitComponent):
 
 
 class EnginePODMass(om.ExplicitComponent):
-    """
-    Computation of engine pod mass and total engine pod mass.
-    """
+    """Computation of engine pod mass and total engine pod mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -269,9 +263,7 @@ class EnginePODMass(om.ExplicitComponent):
 
 
 class AdditionalEngineMass(om.ExplicitComponent):
-    """
-    Computation of additional engine mass.
-    """
+    """Computation of additional engine mass."""
 
     def initialize(self):
         add_aviary_option(self, Aircraft.Engine.NUM_ENGINES)
@@ -389,10 +381,8 @@ class WingMountEngineMass(om.ExplicitComponent):
         add_aviary_input(
             self,
             Aircraft.Engine.Propeller.MASS,
-            # val=np.full(num_engine_type, 0.000000001),
-            val=np.zeros(num_engine_type),
+            shape=num_engine_type,
             units='lbm',
-            desc='WPROP1: mass of one propeller',
         )
         add_aviary_input(self, Aircraft.Engine.POD_MASS, shape=num_engine_type, units='lbm')
         add_aviary_input(self, Aircraft.Engine.ADDITIONAL_MASS, shape=num_engine_type, units='lbm')

@@ -26,6 +26,7 @@ class TakeoffPhaseTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 200000, units='lbf'
         )
         prob.setup(force_alloc_complex=True)
+        prob.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 2)
         prob.run_model()
         partial_data = prob.check_partials(
             out_stream=None, method='cs', compact_print=False, excludes=['*atmosphere*']

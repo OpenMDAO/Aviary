@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.utils import EngineModelVariables, max_variables
-from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 MACH = EngineModelVariables.MACH
@@ -53,7 +53,7 @@ class EngineScaling(om.ExplicitComponent):
         nn = self.options['num_nodes']
         engine_variables = self.options['engine_variables']
 
-        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR, val=1.0)
+        add_aviary_input(self, Aircraft.Engine.SCALE_FACTOR)
 
         self.add_input(
             Dynamic.Atmosphere.MACH,
@@ -73,15 +73,17 @@ class EngineScaling(om.ExplicitComponent):
                 )
 
                 if variable is FUEL_FLOW:
-                    self.add_output(
+                    add_aviary_output(
+                        self,
                         Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
-                        val=np.zeros(nn),
+                        shape=nn,
                         units=engine_variables[variable],
                     )
                 else:
-                    self.add_output(
+                    add_aviary_output(
+                        self,
                         variable.value,
-                        val=np.zeros(nn),
+                        shape=nn,
                         units=engine_variables[variable],
                     )
 

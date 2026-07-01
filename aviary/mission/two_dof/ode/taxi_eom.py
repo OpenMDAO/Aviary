@@ -14,11 +14,9 @@ class TaxiFuelComponent(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
-            val=1.0,
             units='lbm/s',
-            desc='fuel flow rate',
         )
-        add_aviary_input(self, Mission.GROSS_MASS, val=175400.0)
+        add_aviary_input(self, Mission.GROSS_MASS)
 
         self.add_output(
             'taxi_fuel_consumed',
@@ -29,7 +27,6 @@ class TaxiFuelComponent(om.ExplicitComponent):
         add_aviary_output(
             self,
             Dynamic.Vehicle.MASS,
-            val=175000.0,
             units='lbm',
             desc='mass after taxi',
         )

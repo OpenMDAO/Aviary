@@ -49,6 +49,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
 
         self.prob.run_model()
 

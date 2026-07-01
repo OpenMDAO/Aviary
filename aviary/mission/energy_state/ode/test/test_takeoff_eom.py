@@ -15,12 +15,12 @@ from aviary.mission.energy_state.ode.takeoff_eom import (
     TakeoffEOM,
     VelocityRate,
 )
+from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_data.test_data.advanced_single_aisle_data import (
     detailed_takeoff_climbing,
     detailed_takeoff_ground,
     inputs,
 )
-from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
@@ -134,6 +134,7 @@ class TakeoffEOMTest(unittest.TestCase):
         tol = 1e-6
         prob = om.Problem()
         prob.model.add_subsystem('stall_speed', StallSpeed(num_nodes=2), promotes=['*'])
+        prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.ones(2), units='kg')
         prob.model.set_input_defaults(Dynamic.Atmosphere.DENSITY, np.array([1, 2]), units='kg/m**3')
         prob.model.set_input_defaults('area', 10, units='m**2')
         prob.model.set_input_defaults('lift_coefficient_max', 5000, units='unitless')
@@ -200,6 +201,7 @@ class TakeoffEOMTest(unittest.TestCase):
         prob.model.set_input_defaults('forces_vertical', [50.0, 100.0], units='N')
 
         prob.setup(check=False, force_alloc_complex=True)
+        prob.set_val(Dynamic.Vehicle.MASS, np.ones(2))
         prob.run_model()
 
         assert_near_equal(prob['acceleration_horizontal'], np.array([100.0, 200.0]), tol)

@@ -22,44 +22,38 @@ class AccelerationRates(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Vehicle.MASS,
-            val=np.ones(nn) * 1e6,
+            shape=nn,
             units='lbm',
-            desc='total mass of the aircraft',
         )
         add_aviary_input(
             self,
             Dynamic.Vehicle.DRAG,
-            val=np.zeros(nn),
+            shape=nn,
             units='lbf',
-            desc='drag on aircraft',
         )
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.zeros(nn),
+            shape=nn,
             units='lbf',
-            desc='total thrust',
         )
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
-            desc='true air speed',
         )
 
         self.add_output(
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s**2',
-            desc='rate of change of true air speed',
         )
         add_aviary_output(
             self,
             Dynamic.Mission.DISTANCE_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
-            desc='rate of change of horizontal distance covered',
         )
 
     def setup_partials(self):
