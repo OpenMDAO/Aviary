@@ -21,27 +21,23 @@ class SpecificEnergyRate(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
+            shape=nn,
             desc='current velocity',
             units='m/s',
         )
-        add_aviary_input(
-            self, Dynamic.Vehicle.MASS, val=np.ones(nn), desc='current mass', units='kg'
-        )
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, desc='current mass', units='kg')
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.ones(nn),
+            shape=nn,
             desc='current thrust',
             units='N',
         )
-        add_aviary_input(
-            self, Dynamic.Vehicle.DRAG, val=np.ones(nn), desc='current drag', units='N'
-        )
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, desc='current drag', units='N')
         add_aviary_output(
             self,
             Dynamic.Mission.SPECIFIC_ENERGY_RATE,
-            val=np.ones(nn),
+            shape=nn,
             desc='current specific power',
             units='m/s',
         )

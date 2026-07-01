@@ -716,24 +716,20 @@ class AtmosCalc(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Atmosphere.MACH,
-            val=np.zeros(nn),
-            desc='current Mach number',
+            shape=nn,
             units='unitless',
         )
         add_aviary_input(
             self,
             Dynamic.Atmosphere.TEMPERATURE,
-            val=np.zeros(nn),
-            desc='current atmospheric temperature',
+            shape=nn,
             units='degR',
         )
         add_aviary_input(
             self,
             Dynamic.Atmosphere.STATIC_PRESSURE,
-            _PSLS_PSF,
             units='psf',
             shape=nn,
-            desc='Ambient static pressure',
         )
 
         self.add_output('t2', units='degR', shape=nn, desc='Engine inlet total temperature')

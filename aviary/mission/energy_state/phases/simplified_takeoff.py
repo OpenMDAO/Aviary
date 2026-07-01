@@ -24,9 +24,7 @@ class StallSpeed(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Atmosphere.DENSITY,
-            val=1.225,
             units='kg/m**3',
-            desc='atmospheric density',
         )
 
         self.add_input('planform_area', val=7, units='m**2', desc='area of the wings')

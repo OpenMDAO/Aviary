@@ -37,9 +37,8 @@ class SpeedConstraints(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Atmosphere.MACH,
-            val=np.ones(nn),
+            shape=nn,
             units='unitless',
-            desc='Mach number',
         )
 
         self.add_output(

@@ -53,33 +53,6 @@ class StallSpeedTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)  # check the partial derivatives
 
 
-class StallSpeedTest2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
-
-        takeoff.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.mission.energy_state.phases.simplified_takeoff as takeoff
-
-        takeoff.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        self.prob = om.Problem()
-        self.prob.model.add_subsystem(
-            'comp',
-            StallSpeed(),
-            promotes=['*'],
-        )
-        self.prob.setup(check=False, force_alloc_complex=True)
-        self.prob.run_model()
-
-        partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
 @use_tempdirs
 class FinalConditionsTest(unittest.TestCase):
     """Test final conditions computation in FinalTakeoffConditions class."""

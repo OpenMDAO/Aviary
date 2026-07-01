@@ -20,21 +20,21 @@ class RangeRate(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.ones(nn),
+            shape=nn,
             desc='climb rate',
             units='m/s',
         )
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
+            shape=nn,
             desc='current velocity',
             units='m/s',
         )
         add_aviary_output(
             self,
             Dynamic.Mission.DISTANCE_RATE,
-            val=np.ones(nn),
+            shape=nn,
             desc='current horizontal velocity (assumed no wind)',
             units='m/s',
         )

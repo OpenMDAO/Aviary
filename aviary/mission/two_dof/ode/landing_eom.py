@@ -569,7 +569,6 @@ class LandingGroundRollComponent(om.ExplicitComponent):
         add_aviary_input(
             self,
             Dynamic.Vehicle.MASS,
-            val=0.0,
             units='lbm',
             desc='WL: aircraft mass at start of landing',
         )
