@@ -460,7 +460,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
-        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        self.aviary_options.set_val(Settings.VERBOSITY, 3, units='unitless')
 
         self.prob.model.add_subsystem('bwb_cabin_layout', BWBCabinLayout(), promotes=['*'])
 
@@ -517,16 +517,16 @@ class BWBLayoutTestCase(unittest.TestCase):
     def test_case3(self):
         """Testing case: first class + business class + economy class"""
         self.aviary_options.set_val(
-            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=16, units='unitless'
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=20, units='unitless'
         )
-        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=25, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=25.0, units='inch')
         setup_model_options(self.prob, self.aviary_options)
         self.prob.setup()
 
         self.prob.run_model()
 
         tol = 1e-7
-        assert_near_equal(self.prob['fuselage_station_aft'], 67.83782665, tol)
+        assert_near_equal(self.prob['fuselage_station_aft'], 59.83782665, tol)
 
 
 class BWBFuselageParameters2TestCase(unittest.TestCase):

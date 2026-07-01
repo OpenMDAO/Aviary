@@ -455,10 +455,10 @@ class BWBCabinLayout(om.ExplicitComponent):
         pax_FC = options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
         pax_BC = options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         if pax_FC <= 0:
-            if verbosity > Verbosity.DEBUG:
+            if verbosity >= Verbosity.DEBUG:
                 print('Warning: No first class passengers or cabins are included.')
         if pax_BC <= 0:
-            if verbosity > Verbosity.DEBUG:
+            if verbosity >= Verbosity.DEBUG:
                 print('Warning: No business class passengers or cabins are included.')
         if (pax_FC + pax_BC) > pax:
             raise ValueError(
@@ -470,10 +470,11 @@ class BWBCabinLayout(om.ExplicitComponent):
         pilot_com_length = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH][0]
         if pax_FC > 0:
             fwd_pax_fuselage_station = nose_length + pilot_com_length + FC_lav_galley_length
-            if pax_BC > 0:
-                fwd_pax_fuselage_station = fwd_pax_fuselage_station + BC_lav_galley_length
         else:
-            fwd_pax_fuselage_station = nose_length + pilot_com_length
+            if pax_BC > 0:
+                fwd_pax_fuselage_station = nose_length + pilot_com_length + BC_lav_galley_length
+            else:
+                fwd_pax_fuselage_station = nose_length + pilot_com_length
 
         # First Class
         length_FC_by_row = []  # length in first class, ft
@@ -508,6 +509,12 @@ class BWBCabinLayout(om.ExplicitComponent):
                 EL_FC_ptr = length_FC_by_row[Idx_row_FC - 1]
 
             # sum_num_seats_FC = pax_FC
+            if sum_num_seats_FC > pax_FC:
+                if verbosity >= Verbosity.DEBUG:
+                    print(
+                        f'Number of seats in first class {sum_num_seats_FC} '
+                        f'is above the design limit {pax_FC}.'
+                    )
         else:
             # If no first class
             # EL_FC_last_row = 0
@@ -557,6 +564,12 @@ class BWBCabinLayout(om.ExplicitComponent):
                 EL_BC_ptr = length_BC_by_row[Idx_row_BC - 1]
 
             # sum_num_seats_BC = pax_BC
+            if sum_num_seats_BC > pax_BC:
+                if verbosity >= Verbosity.DEBUG:
+                    print(
+                        f'Number of seats in business class {sum_num_seats_BC} '
+                        f'is above the design limit {pax_BC}.'
+                    )
         else:
             # If no business class
             # EL_BC_last_row = 0
@@ -616,6 +629,13 @@ class BWBCabinLayout(om.ExplicitComponent):
         else:
             # add additional row for lavs & galleys to last row
             EL_AFT = length_TC_by_row[Idx_row_TC] + TC_seat_pitch / 12.0 + TC_lav_width / 12.0
+
+        if sum_num_seats_TC > pax_TC:
+            if verbosity >= Verbosity.DEBUG:
+                print(
+                    f'Number of seats in economy class {sum_num_seats_TC} '
+                    f'is above the design limit {pax_TC}.'
+                )
 
         outputs['fuselage_station_aft'] = EL_AFT
 
