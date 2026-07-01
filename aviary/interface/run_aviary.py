@@ -144,7 +144,7 @@ def run_aviary_cmd(
     }
 
     if isinstance(phase_info, str):
-        phase_info_path = get_path(phase_info)
+        phase_info_path = get_path(phase_info, verbosity)
         spec = spec_from_file_location('phase_info_file', str(phase_info_path))
         phase_info_file = module_from_spec(spec)
         sys.modules['phase_info_file'] = phase_info_file

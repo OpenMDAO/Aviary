@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 
 import aviary.constants as constants
 from aviary.variable_info.variables import Dynamic

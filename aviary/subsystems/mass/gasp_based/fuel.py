@@ -31,12 +31,11 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
         self.add_input(
             'fuel_mass_min',
-            val=2000,
             units='lbm',
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )
         self.add_input('fuel_mass_required', units='lbm', desc='WFAREQ: no margin')
-        self.add_input('max_wingfuel_mass', val=6, units='lbm', desc='WFWMX: maximum wingfuel mass')
+        self.add_input('max_wingfuel_mass', units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_input(self, Aircraft.Fuel.WING_VOLUME_GEOMETRIC_MAX, units='ft**3')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
@@ -50,19 +49,15 @@ class BodyTankCalculations(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY, units='lbm')
         self.add_output(
             'extra_fuel_volume',
-            val=0,
             units='ft**3',
             desc='FVOLXTRA: excess required design fuel volume (including fuel margin) greater than geometric fuel volume of wings',
         )  # there is no FVOLXTRA in GASP
         self.add_output(
             'max_extra_fuel_mass',
-            val=0,
             units='lbm',
             desc='WFXTRAMX: mass of fuel that fits in extra_fuel_volume',
         )  # there is no WFXTRAMX in GASP
-        self.add_output(
-            'wingfuel_mass_min', val=0, units='lbm', desc='WFWMIN: minimum wing fuel mass'
-        )
+        self.add_output('wingfuel_mass_min', units='lbm', desc='WFWMIN: minimum wing fuel mass')
         add_aviary_output(self, Aircraft.Fuel.TOTAL_CAPACITY, units='lbm', desc='WFAMAX')
 
     def setup_partials(self):
@@ -505,13 +500,11 @@ class FuelComponents(om.ExplicitComponent):
 
         self.add_output(
             'OEM_wingfuel_mass',
-            val=0,
             units='lbm',
             desc='WFWOWE: wing fuel mass when operating empty',
         )
         self.add_output(
             'OEM_fuel_vol',
-            val=0,
             units='ft**3',
             desc='FVOLW: wing tank fuel volume when carrying maximum fuel',
         )
@@ -519,19 +512,16 @@ class FuelComponents(om.ExplicitComponent):
 
         self.add_output(
             'payload_mass_max_fuel',
-            val=0,
             units='lbm',
             desc='WPLMXF: allowable payload mass with maximum fuel',
         )
         self.add_output(
             'volume_wingfuel_mass',
-            val=0,
             units='lbm',
-            desc=' mass of wing fuel based on volume, sometimes set as WFWMX in GASP, depending on if it exceeds the OEM fuel mass',
+            desc='mass of wing fuel based on volume, sometimes set as WFWMX in GASP, '
+            'depending on if it exceeds the OEM fuel mass',
         )
-        self.add_output(
-            'max_wingfuel_mass', val=0, units='lbm', desc='WFWMX: maximum wingfuel mass'
-        )
+        self.add_output('max_wingfuel_mass', units='lbm', desc='WFWMX: maximum wingfuel mass')
         add_aviary_output(self, Aircraft.Fuel.WING_VOLUME_STRUCTURAL_MAX, units='ft**3')
 
     def setup_partials(self):
@@ -723,7 +713,6 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Wing.MASS, units='lbm')
         self.add_input(
             'wing_mounted_mass',
-            val=24446.343040697346,
             units='lbm',
             desc='WM: mass of gear and engine (everything on wing that isn`t wing itself or fuel',
         )
@@ -732,13 +721,10 @@ class FuelSysAndFullFuselageMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
         self.add_input('fuel_mass', units='lbm', desc='WFADES')
         add_aviary_input(self, Aircraft.Fuel.VOLUME_MARGIN, units='unitless')
-        self.add_input(
-            'wingfuel_mass_min', val=32850, units='lbm', desc='WFWMIN: minimum wing fuel mass'
-        )
+        self.add_input('wingfuel_mass_min', units='lbm', desc='WFWMIN: minimum wing fuel mass')
 
         self.add_output(
             'fus_mass_full',
-            val=0,
             units='lbm',
             desc='WX: mass of fuselage and contents, including empennage',
         )
@@ -836,7 +822,6 @@ class FuselageMass(om.ExplicitComponent):
     def setup(self):
         self.add_input(
             'fus_mass_full',
-            val=4000,
             units='lbm',
             desc='WX: mass of fuselage and contents, including empennage',
         )
@@ -852,7 +837,7 @@ class FuselageMass(om.ExplicitComponent):
             units='ft',
             desc='ELRW: length of pylon for fuselage mounted engines',
         )
-        self.add_input('min_dive_vel', val=419.75918333, units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.Fuselage.PRESSURE_DIFFERENTIAL, units='psi')
         add_aviary_input(self, Aircraft.Wing.ULTIMATE_LOAD_FACTOR, units='unitless')
         # MAT is not computed in Aviary
@@ -1174,14 +1159,13 @@ class FuelMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Design.GROSS_MASS, units='lbm')
         add_aviary_input(self, Mission.OPERATING_MASS, units='lbm')
-        self.add_input('payload_mass_des', val=36000, units='lbm', desc='WPLDES: design payload')
+        self.add_input('payload_mass_des', units='lbm', desc='WPLDES: design payload')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.FUEL_SYSTEM_MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/galUS')
 
         self.add_input(
             'payload_mass_max',
-            val=46040,
             units='lbm',
             desc='WPLMAX: maximum payload that the aircraft is being asked to carry (design payload + cargo)',
         )
@@ -1192,7 +1176,6 @@ class FuelMass(om.ExplicitComponent):
         self.add_output('fuel_mass_required', units='lbm', desc='WFAREQ')
         self.add_output(
             'fuel_mass_min',
-            val=0,
             units='lbm',
             desc='WFAMIN: minimum value of fuel mass (set when max payload is carried)',
         )

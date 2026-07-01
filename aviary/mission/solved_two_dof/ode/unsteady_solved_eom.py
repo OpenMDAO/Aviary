@@ -36,7 +36,9 @@ class UnsteadySolvedEOM(om.ExplicitComponent):
 
         # Inputs
 
-        self.add_input(Dynamic.Mission.VELOCITY, shape=nn, desc='true air speed', units='m/s')
+        add_aviary_input(
+            self, Dynamic.Mission.VELOCITY, shape=nn, desc='true air speed', units='m/s'
+        )
 
         # TODO: This should probably be declared in Newtons, but the weight variable
         # is really a mass. This should be resolved with an adapter component that

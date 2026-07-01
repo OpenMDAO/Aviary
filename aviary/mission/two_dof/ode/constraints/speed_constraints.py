@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from aviary.variable_info.functions import add_aviary_input
 
 from aviary.variable_info.variables import Dynamic
 
@@ -33,7 +34,8 @@ class SpeedConstraints(om.ExplicitComponent):
             units='kn',
             desc='equivalent airspeed',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.MACH,
             val=np.ones(nn),
             units='unitless',

@@ -21,7 +21,8 @@ class StallSpeed(om.ExplicitComponent):
             desc='mass of the aircraft',
         )
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.DENSITY,
             val=1.225,
             units='kg/m**3',

@@ -295,7 +295,7 @@ class AviaryGroup(om.Group):
         ## LOAD PHASE_INFO ###
         # if phase info is a file, load it
         if isinstance(phase_info, str) or isinstance(phase_info, Path):
-            phase_info_path = get_path(phase_info)
+            phase_info_path = get_path(phase_info, verbosity)
             spec = spec_from_file_location('phase_info_file', str(phase_info_path))
             phase_info_file = module_from_spec(spec)
             sys.modules['phase_info_file'] = phase_info_file

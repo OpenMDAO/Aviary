@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.landing_eom import (
     FlareEOM,
@@ -21,6 +22,7 @@ from aviary.validation_cases.validation_tests import do_validation_test
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class FlareEOMTest(unittest.TestCase):
     """Test against data of detailed_landing_flare from models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py."""
 
@@ -201,7 +203,4 @@ class OtherTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
-    test = FlareEOMTest()
-    test.setUp()
-    test.test_case()
+    unittest.main()

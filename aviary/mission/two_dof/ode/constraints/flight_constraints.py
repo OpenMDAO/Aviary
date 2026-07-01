@@ -189,8 +189,8 @@ class ClimbAtTopOfClimb(om.ExplicitComponent):
     """This class is not used nor tested."""
 
     def setup(self):
-        self.add_input(Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
-        self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
         self.add_output('ROC', units='ft/s')
         self.declare_partials('*', '*')
 
