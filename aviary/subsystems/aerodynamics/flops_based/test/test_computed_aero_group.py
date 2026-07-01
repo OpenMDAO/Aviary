@@ -254,6 +254,7 @@ class MissionDragTest(unittest.TestCase):
         varnames = [
             Aircraft.Fuselage.WETTED_AREA,
             Aircraft.HorizontalTail.WETTED_AREA,
+            Aircraft.Nacelle.WETTED_AREA,
             Aircraft.VerticalTail.WETTED_AREA,
             Aircraft.Wing.AREA,
             Aircraft.Wing.ASPECT_RATIO,
