@@ -242,37 +242,37 @@ class DetailedCabinLayout(om.ExplicitComponent):
                 num_seat_abreast_first = num_seat_abreast_economy - 2
                 if verbosity > Verbosity.BRIEF:
                     print(
-                        f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST = '
-                        '{num_seat_abreast_first}'
+                        'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST = '
+                        f'{num_seat_abreast_first}'
                     )
             if num_business_class_pax > 0 and num_seat_abreast_business <= 0:
                 num_seat_abreast_business = num_seat_abreast_economy - 2
                 if verbosity > Verbosity.BRIEF:
                     print(
-                        f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BASINESS = '
-                        '{num_seat_abreast_business}'
+                        'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BASINESS = '
+                        f'{num_seat_abreast_business}'
                     )
 
         if num_seat_abreast_first <= 0 and num_first_class_pax > 0:
             num_seat_abreast_first = 4
             if verbosity > Verbosity.BRIEF:
                 print(
-                    f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST = '
-                    '{num_seat_abreast_first}'
+                    'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_FIRST = '
+                    f'{num_seat_abreast_first}'
                 )
         if num_seat_abreast_economy <= 0 and num_economy_class_pax > 0:
             num_seat_abreast_economy = 6
             if verbosity > Verbosity.BRIEF:
                 print(
-                    f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = '
-                    '{num_seat_abreast_economy}'
+                    'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = '
+                    f'{num_seat_abreast_economy}'
                 )
         if num_seat_abreast_business <= 0 and num_business_class_pax > 0:
             num_seat_abreast_business = 5
             if verbosity > Verbosity.BRIEF:
                 print(
-                    f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS = '
-                    '{num_seat_abreast_business}'
+                    'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_BUSINESS = '
+                    f'{num_seat_abreast_business}'
                 )
 
         # Though these are not user definable, the values here are typical for most transport
@@ -288,8 +288,8 @@ class DetailedCabinLayout(om.ExplicitComponent):
                 num_seat_abreast_economy = 5
                 if verbosity > Verbosity.BRIEF:
                     print(
-                        f'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = '
-                        '{num_seat_abreast_economy}'
+                        'Set Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY = '
+                        f'{num_seat_abreast_economy}'
                     )
             aisle_width_economy_class = 15.0
 
@@ -543,7 +543,7 @@ class BWBSimpleCabinLayout(om.ExplicitComponent):
 
         if length <= 0.0:
             raise ValueError(
-                f'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
+                'Aircraft.Fuselage.LENGTH must be positive to use simple cabin layout.'
             )
         if max_width <= 0.0:
             raise ValueError(
