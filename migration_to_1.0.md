@@ -8,7 +8,7 @@ The default names for Aviary's included subsystems have been changed to remove t
 
 ### `SubsystemBuilderBase`
 
-Has been renamed to `SubsystemBuilder`
+Has been renamed to `SubsystemBuilder`. The same pattern applies for the builders for specific subsystems included with Aviary. For example, `AerodynamicsBuilderBase` is now simply `AerodynamicsBuilder`.
 
 
 ### `needs_mission_solver(self, aviary_inputs)`
