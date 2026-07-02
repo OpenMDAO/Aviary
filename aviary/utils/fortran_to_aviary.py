@@ -125,7 +125,7 @@ def fortran_to_aviary(
     if legacy_code is GASP:
         vehicle_data = update_gasp_options(vehicle_data, verbosity)
     elif legacy_code is FLOPS:
-        vehicle_data = update_flops_options(vehicle_data, verbosity)
+        vehicle_data = update_flops_options(vehicle_data, comments, verbosity)
     vehicle_data = update_aviary_options(vehicle_data)
 
     # Add settings and engine data file
@@ -982,7 +982,7 @@ def update_gasp_options(vehicle_data, verbosity=Verbosity.BRIEF):
     return vehicle_data
 
 
-def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
+def update_flops_options(vehicle_data, cmts, verbosity=Verbosity.BRIEF):
     """Handles variables that are affected by the values of others."""
     input_values: NamedValues = vehicle_data['input_values']
 
@@ -1266,6 +1266,12 @@ def update_flops_options(vehicle_data, verbosity=Verbosity.BRIEF):
         if Aircraft.HorizontalTail.ASPECT_RATIO in input_values:
             ARHT = input_values.get_val(Aircraft.HorizontalTail.ASPECT_RATIO)[0]
             input_values.set_val(Aircraft.VerticalTail.ASPECT_RATIO, [ARHT / 2.0], 'unitless')
+
+    if Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS in input_values and design_type[0] != 3:
+        if input_values.get_val(Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)[0] > 0:
+            cmts.append(
+                '# business class seats are included. Fuselage layout will be different from FLOPS.'
+            )
 
     # if mission-wide fuel flow factor provided, combine into sub and supersonic fuel flow factors
     if 'MISSIN.fact' in vehicle_data['unused_values']:
