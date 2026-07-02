@@ -4,7 +4,7 @@
 
 
 ## 2. Subsytem API Changes
-
+The default names for Aviary's included subsystems have been changed to remove the "core" prefix (so "core_mass" is now just "mass" in the OpenMDAO problem)
 
 ### `SubsystemBuilderBase`
 
