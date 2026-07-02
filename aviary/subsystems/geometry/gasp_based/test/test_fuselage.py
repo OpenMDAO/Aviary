@@ -30,7 +30,7 @@ class FuselageParametersTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -66,7 +66,7 @@ class FuselageParametersTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -179,7 +179,7 @@ class FuselageGroupTestCase1(
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -230,7 +230,9 @@ class FuselageGroupTestCase2(unittest.TestCase):
         options.set_val(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )  # not actual GASP value
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')  # not actual GASP value
+        options.set_val(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch'
+        )  # not actual GASP value
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -287,7 +289,9 @@ class FuselageGroupTestCase3(unittest.TestCase):
         options.set_val(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )  # not actual GASP value
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')  # not actual GASP value
+        options.set_val(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch'
+        )  # not actual GASP value
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -344,7 +348,9 @@ class FuselageGroupTestCase4(unittest.TestCase):
         options.set_val(
             Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch'
         )  # not actual GASP value
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')  # not actual GASP value
+        options.set_val(
+            Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch'
+        )  # not actual GASP value
 
         self.prob = om.Problem()
         self.prob.model.add_subsystem(
@@ -395,7 +401,7 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
 
         self.aviary_options = AviaryValues()
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
-        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.aviary_options.set_val(
@@ -437,14 +443,15 @@ class BWBFuselageParameters1TestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
 
+@use_tempdirs
 class BWBLayoutTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
 
         self.aviary_options = AviaryValues()
 
-        self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
-        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21.0, units='inch')
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, units='inch')
         self.aviary_options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         self.aviary_options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         self.aviary_options.set_val(
@@ -453,7 +460,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, 150)
         self.aviary_options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
-        self.aviary_options.set_val(Settings.VERBOSITY, 1, units='unitless')
+        self.aviary_options.set_val(Settings.VERBOSITY, 3, units='unitless')
 
         self.prob.model.add_subsystem('bwb_cabin_layout', BWBCabinLayout(), promotes=['*'])
 
@@ -474,7 +481,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         self.prob.setup()
 
     def test_case1(self):
-        """Testing GASP data case."""
+        """Testing GASP data case: first class + economy class"""
         self.prob.run_model()
 
         tol = 1e-7
@@ -493,7 +500,7 @@ class BWBLayoutTestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
 
     def test_case2(self):
-        """Testing 0 First Class case."""
+        """Testing case: economy class only"""
         self.aviary_options.set_val(
             Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
             val=0,
@@ -507,17 +514,19 @@ class BWBLayoutTestCase(unittest.TestCase):
         tol = 1e-7
         assert_near_equal(self.prob['fuselage_station_aft'], 51.25449, tol)
 
-        partial_data = self.prob.check_partials(
-            out_stream=None,
-            compact_print=True,
-            show_only_incorrect=True,
-            form='central',
-            method='fd',
-            minimum_step=1e-12,
-            abs_err_tol=5.0e-4,
-            rel_err_tol=5.0e-5,
+    def test_case3(self):
+        """Testing case: first class + business class + economy class"""
+        self.aviary_options.set_val(
+            Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS, val=20, units='unitless'
         )
-        assert_check_partials(partial_data, atol=1e-5, rtol=1e-5)
+        self.aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, val=25.0, units='inch')
+        setup_model_options(self.prob, self.aviary_options)
+        self.prob.setup()
+
+        self.prob.run_model()
+
+        tol = 1e-7
+        assert_near_equal(self.prob['fuselage_station_aft'], 59.83782665, tol)
 
 
 class BWBFuselageParameters2TestCase(unittest.TestCase):
@@ -611,7 +620,8 @@ class BWBFuselageGroupTestCase(unittest.TestCase):
     def setUp(self):
         options = get_option_defaults()
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')

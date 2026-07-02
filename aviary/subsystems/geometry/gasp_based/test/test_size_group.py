@@ -22,7 +22,7 @@ class SizeGroupTestCase1(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.0003097, units='unitless')
 
         self.prob = om.Problem()
@@ -144,7 +144,7 @@ class SizeGroupTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 6)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
@@ -279,7 +279,7 @@ class SizeGroupTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
@@ -412,7 +412,7 @@ class SizeGroupTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, val=0.00030975, units='unitless')
 
         self.prob = om.Problem()
@@ -543,12 +543,13 @@ class BWBSizeGroupTestCase1(unittest.TestCase):
         )
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
 
         self.prob = om.Problem()

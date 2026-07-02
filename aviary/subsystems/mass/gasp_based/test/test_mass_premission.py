@@ -146,7 +146,7 @@ class MassPremissionTestCase2(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
@@ -498,7 +498,7 @@ class MassPremissionTestCase3(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
@@ -841,7 +841,7 @@ class MassPremissionTestCase4(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
@@ -1192,7 +1192,7 @@ class MassSummationTestCase5(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
@@ -1538,7 +1538,7 @@ class MassSummationTestCase6(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.14, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.00030975, units='unitless')
@@ -1885,7 +1885,7 @@ class MassSummationTestCase7(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 29, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.165, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.0003482075, units='unitless')
@@ -2257,7 +2257,7 @@ class MassSummationTestCase8(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
 
         options.set_val(Aircraft.Engine.INLET_AREA_COEFFICIENT, 0.000474, units='unitless')
@@ -2625,7 +2625,7 @@ class MassSummationTestCase9(unittest.TestCase):
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 24, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 1)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 44.2, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 20.2, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.2, units='inch')
         options.set_val(Aircraft.Engine.ADDITIONAL_MASS_FRACTION, 0.163, units='unitless')
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=True, units='unitless')
 
@@ -3006,12 +3006,13 @@ class BWBMassSummationTestCase(unittest.TestCase):
         options.set_val(Aircraft.Electrical.HAS_HYBRID_SYSTEM, val=False, units='unitless')
         options.set_val(Aircraft.CrewPayload.Design.NUM_PASSENGERS, val=150, units='unitless')
         options.set_val(Aircraft.CrewPayload.NUM_PASSENGERS, val=150, units='unitless')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28, units='inch')
         options.set_val(Aircraft.Fuselage.AISLE_WIDTH, 22, units='inch')
         options.set_val(Aircraft.Fuselage.NUM_AISLES, 3)
         options.set_val(Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY, 18)
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, 36, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, 32, units='inch')
-        options.set_val(Aircraft.Fuselage.SEAT_WIDTH, 21, units='inch')
+        options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 21, units='inch')
         options.set_val(Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, 11)
         # options from MassPremission
         options.set_val(Aircraft.Design.CRUISE_ALTITUDE, val=41000, units='ft')

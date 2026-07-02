@@ -92,6 +92,34 @@ def preprocess_options(
         ):
             aviary_options.set_val(Aircraft.Design.PERCENT_EXCRESCENCE_DRAG, 0.06)
 
+    if Settings.MASS_METHOD in aviary_options:
+        mass_method = aviary_options.get_val(Settings.MASS_METHOD)
+    else:
+        raise UserWarning('MASS_METHOD not specified. Cannot preprocess inputs.')
+
+    if Aircraft.Design.TYPE in aviary_options:
+        design_type = aviary_options.get_val(Aircraft.Design.TYPE)
+    else:
+        design_type = AircraftTypes.TRANSPORT
+
+    if Aircraft.Fuselage.SEAT_WIDTH_ECONOMY not in aviary_options:
+        if mass_method == LegacyCode.FLOPS:
+            if design_type == AircraftTypes.TRANSPORT:
+                aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, 20.0, 'inch')
+        else:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                if verbosity >= Verbosity.BRIEF:
+                    raise UserWarning('Aircraft.Fuselage.SEAT_WIDTH_ECONOMY is not set.')
+
+    if Aircraft.Fuselage.SEAT_WIDTH_FIRST not in aviary_options:
+        if mass_method == LegacyCode.FLOPS:
+            if design_type == AircraftTypes.TRANSPORT:
+                aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 25.0, 'inch')
+        else:
+            if design_type == AircraftTypes.BLENDED_WING_BODY:
+                if verbosity >= Verbosity.BRIEF:
+                    aviary_options.set_val(Aircraft.Fuselage.SEAT_WIDTH_FIRST, 28.0, 'inch')
+
 
 def preprocess_crewpayload(aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None):
     """

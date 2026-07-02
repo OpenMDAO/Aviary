@@ -16,7 +16,7 @@ class FuselageParameters(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
         add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch')
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -44,7 +44,7 @@ class FuselageParameters(om.ExplicitComponent):
         options = self.options
         verbosity = options[Settings.VERBOSITY]
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
+        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -262,7 +262,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch')
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES)
         add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY)
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch')
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch')
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -318,7 +318,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         verbosity = options[Settings.VERBOSITY]
 
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
+        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         PAX = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
@@ -347,7 +347,7 @@ class BWBFuselageParameters1(om.ExplicitComponent):
         options = self.options
 
         seats_abreast = options[Aircraft.CrewPayload.Design.NUM_SEATS_ABREAST_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
+        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
         num_aisle = options[Aircraft.Fuselage.NUM_AISLES]
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         additional_width = inputs[Aircraft.Fuselage.PRESSURIZED_WIDTH_ADDITIONAL]
@@ -384,24 +384,23 @@ class BWBCabinLayout(om.ExplicitComponent):
     """layout of passenger cabin for BWB."""
 
     def initialize(self):
-        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH, units='inch', desc='INGASP.WS')
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_FIRST, units='inch', desc='WS_FC')
+        add_aviary_option(self, Aircraft.Fuselage.SEAT_WIDTH_BUSINESS, units='inch')
+        add_aviary_option(
+            self, Aircraft.Fuselage.SEAT_WIDTH_ECONOMY, units='inch', desc='INGASP.WS'
+        )
         add_aviary_option(self, Aircraft.Fuselage.NUM_AISLES, units='unitless', desc='INGASP.AS')
         add_aviary_option(self, Aircraft.Fuselage.AISLE_WIDTH, units='inch', desc='INGASP.WAS')
         add_aviary_option(
             self, Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST, units='inch', desc='PS_FC'
         )
+        add_aviary_option(self, Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS, units='inch')
         add_aviary_option(
             self, Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY, units='inch', desc='INGASP.PS'
         )
-        add_aviary_option(
-            self, Aircraft.CrewPayload.Design.NUM_PASSENGERS, units='unitless', desc='INGASP.PAX'
-        )
-        add_aviary_option(
-            self,
-            Aircraft.CrewPayload.Design.NUM_FIRST_CLASS,
-            units='unitless',
-            desc='equiv INGASP.PCT_FC',
-        )
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_PASSENGERS, desc='INGASP.PAX')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_FIRST_CLASS, desc='INGASP.PCT_FC')
+        add_aviary_option(self, Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS)
         add_aviary_option(self, Settings.VERBOSITY)
 
     def setup(self):
@@ -425,20 +424,24 @@ class BWBCabinLayout(om.ExplicitComponent):
         rad2deg = 180.0 / np.pi
 
         # Hard code variables in GASP:
-        FC_lav_galley_length = 8.0  # EL_FLGC: length of first class lav, galley & closet, ft
-        FC_seat_width = 28.0  # WS_FC: first class seat width, inch
-        FC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST]
+        FC_lav_galley_length = 8.0  # EL_FLGC: length of first class lavatory, galley & closet, ft
         FC_num_aisles = 2  # AS_FC: num of aisles in first class
         FC_aisle_width = 24.0  # WAS_FC: First class aisle width, inch
-        length_FC_to_TC = 5.0  # Length of first class/economy class aisle, ft
-        TC_num_pax_per_lav = 78  # NLAVTC: economy class passengers per lav
-        TC_lav_width = 42.0  # WIDLAV: Lav width, inches, in FLOPS, WIDTHL
+        FC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_FIRST]
+        FC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_FIRST]
+
+        BC_lav_galley_length = 8.0
+        BC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_BUSINESS]
+        BC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_BUSINESS]
+
+        TC_num_pax_per_lav = 78  # NLAVTC: economy class passengers per lavatory
+        TC_lav_width = 42.0  # WIDLAV: lavatory width, inches, in FLOPS, WIDTHL
         TC_galley_area_per_pax = 0.15  # AGAL_TC: economy class galley area per passenger, ft**2
         # If there is no first class cabin, please set NUM_FIRST_CLASS = 0.
 
         TC_seat_pitch, _ = options[Aircraft.CrewPayload.Design.SEAT_PITCH_ECONOMY]
-        seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH]
-        if seat_width <= 0.0:
+        TC_seat_width, _ = options[Aircraft.Fuselage.SEAT_WIDTH_ECONOMY]
+        if TC_seat_width <= 0.0:
             raise ValueError('fuselage seat width must be positive.')
         aisle_width, _ = options[Aircraft.Fuselage.AISLE_WIDTH]
         num_aisles = options[Aircraft.Fuselage.NUM_AISLES]
@@ -450,21 +453,28 @@ class BWBCabinLayout(om.ExplicitComponent):
         sweep_FB = inputs[Aircraft.BWB.PASSENGER_LEADING_EDGE_SWEEP][0]
         pax = options[Aircraft.CrewPayload.Design.NUM_PASSENGERS]
         pax_FC = options[Aircraft.CrewPayload.Design.NUM_FIRST_CLASS]
+        pax_BC = options[Aircraft.CrewPayload.Design.NUM_BUSINESS_CLASS]
         if pax_FC <= 0:
-            if verbosity > Verbosity.BRIEF:
+            if verbosity >= Verbosity.DEBUG:
                 print('Warning: No first class passengers or cabins are included.')
-        if pax_FC > pax:
+        if pax_BC <= 0:
+            if verbosity >= Verbosity.DEBUG:
+                print('Warning: No business class passengers or cabins are included.')
+        if (pax_FC + pax_BC) > pax:
             raise ValueError(
                 'Number of first class passengers must not exceed the total number of passengers.'
             )
-        pax_TC = pax - pax_FC
+        pax_TC = pax - pax_FC - pax_BC
 
         nose_length = inputs['nose_length'][0]
         pilot_com_length = inputs[Aircraft.Fuselage.PILOT_COMPARTMENT_LENGTH][0]
         if pax_FC > 0:
             fwd_pax_fuselage_station = nose_length + pilot_com_length + FC_lav_galley_length
         else:
-            fwd_pax_fuselage_station = nose_length + pilot_com_length
+            if pax_BC > 0:
+                fwd_pax_fuselage_station = nose_length + pilot_com_length + BC_lav_galley_length
+            else:
+                fwd_pax_fuselage_station = nose_length + pilot_com_length
 
         # First Class
         length_FC_by_row = []  # length in first class, ft
@@ -498,22 +508,90 @@ class BWBCabinLayout(om.ExplicitComponent):
                 EL_FC_last_row = length_FC_by_row[Idx_row_FC - 1]
                 EL_FC_ptr = length_FC_by_row[Idx_row_FC - 1]
 
-            sum_num_seats_FC = pax_FC
+            # sum_num_seats_FC = pax_FC
+            if sum_num_seats_FC > pax_FC:
+                if verbosity >= Verbosity.DEBUG:
+                    print(
+                        f'Number of seats in first class {sum_num_seats_FC} '
+                        f'is above the design limit {pax_FC}.'
+                    )
         else:
-            # If not first class
-            EL_FC_last_row = 0
+            # If no first class
+            # EL_FC_last_row = 0
+            pass
 
-        # First Class/Economy Class Aisle
+        # First Class/Business Class Aisle
         if pax_FC > 0:
-            EL_TC_ptr = EL_FC_last_row + FC_seat_pitch / 12.0
+            EL_BC_ptr = EL_FC_last_row + FC_seat_pitch / 12.0
         else:
-            EL_TC_ptr = fwd_pax_fuselage_station
+            EL_BC_ptr = fwd_pax_fuselage_station
+
+        # Business Class
+        length_FC_to_BC = 5.0  # Length of first class/business class aisle, ft
+
+        if pax_BC > 0:
+            EL_BC_ptr = EL_BC_ptr + length_FC_to_BC - BC_seat_pitch / 12.0
+        else:
+            # EL_BC_ptr = EL_BC_ptr - BC_seat_pitch / 12.0
+            pass
+
+        if pax_BC > 0:
+            length_BC_by_row = []  # length in business class, ft
+            width_BC_by_row = []  # width in business class, ft
+            num_seats_BC_by_row = []  # num of seats in business class
+            sum_num_seats_BC = 0
+            Idx_row_BC = -1
+            while sum_num_seats_BC < pax_BC:
+                Idx_row_BC = Idx_row_BC + 1
+                len = EL_BC_ptr + BC_seat_pitch / 12.0
+                length_BC_by_row.append(len)
+                wid = 2.0 * length_BC_by_row[Idx_row_BC] / np.tan(sweep_FB / rad2deg)
+                wid = np.minimum(wid, cabin_width)
+                width_BC_by_row.append(wid)
+                width_aisle = num_aisles * aisle_width / 12.0
+                num = int((width_BC_by_row[Idx_row_BC] - width_aisle) / (BC_seat_width / 12.0))
+                num_seats_BC_by_row.append(num)
+                prev_sum_num_seats_BC = sum_num_seats_BC
+                sum_num_seats_BC = sum_num_seats_BC + num_seats_BC_by_row[Idx_row_BC]
+                EL_BC_ptr = length_BC_by_row[Idx_row_BC]
+
+            # Last row of business class
+            EL_BC_last_row = length_BC_by_row[Idx_row_BC]
+            num_seats_last_row = pax_BC - prev_sum_num_seats_BC
+            # If only one seat in last row, delete last row & assume seat located forward
+            if num_seats_last_row < 2:
+                EL_BC_last_row = length_BC_by_row[Idx_row_BC - 1]
+                EL_BC_ptr = length_BC_by_row[Idx_row_BC - 1]
+
+            # sum_num_seats_BC = pax_BC
+            if sum_num_seats_BC > pax_BC:
+                if verbosity >= Verbosity.DEBUG:
+                    print(
+                        f'Number of seats in business class {sum_num_seats_BC} '
+                        f'is above the design limit {pax_BC}.'
+                    )
+        else:
+            # If no business class
+            # EL_BC_last_row = 0
+            pass
+
+        # Business Class/economy Class Aisle
+        if pax_BC > 0:
+            EL_TC_ptr = EL_BC_last_row + BC_seat_pitch / 12.0
+        else:
+            EL_TC_ptr = EL_BC_ptr
+
+        length_BC_to_TC = 5.0  # Length of business class/economy class aisle, ft
+
+        if pax_BC > 0:
+            EL_TC_ptr = EL_BC_ptr + length_BC_to_TC - TC_seat_pitch / 12.0
+        else:
+            if pax_FC > 0:
+                EL_TC_ptr = EL_TC_ptr + length_FC_to_BC - TC_seat_pitch / 12.0
+            else:
+                EL_TC_ptr = EL_TC_ptr - TC_seat_pitch / 12.0
 
         # Economy Class
-        if pax_FC > 0:
-            EL_TC_ptr = EL_TC_ptr + length_FC_to_TC - TC_seat_pitch / 12.0
-        else:
-            EL_TC_ptr = EL_TC_ptr - TC_seat_pitch / 12.0
         length_TC_by_row = []  # length in economy class, ft
         width_TC_by_row = []  # width in economy class, ft
         num_seats_TC_by_row = []  # num of seats in economy class
@@ -527,7 +605,7 @@ class BWBCabinLayout(om.ExplicitComponent):
             wid = np.minimum(wid, cabin_width)
             width_TC_by_row.append(wid)
             width_aisle = num_aisles * aisle_width / 12.0
-            num = int((width_TC_by_row[Idx_row_TC] - width_aisle) / (seat_width / 12.0))
+            num = int((width_TC_by_row[Idx_row_TC] - width_aisle) / (TC_seat_width / 12.0))
             num_seats_TC_by_row.append(num)
             prev_num_seats_TC = sum_num_seats_TC
             sum_num_seats_TC = sum_num_seats_TC + num_seats_TC_by_row[Idx_row_TC]
@@ -537,7 +615,7 @@ class BWBCabinLayout(om.ExplicitComponent):
         # last row in economy class: find number of seats in last row
         num_seats_last_row = sum_num_seats_TC - prev_num_seats_TC
         # find width available for last row for lavs/galleys (Assumes Steward's seat in TC aisle)
-        width_last_row = num_seats_last_row * seat_width / 12.0
+        width_last_row = num_seats_last_row * TC_seat_width / 12.0
         width_aisle = num_aisles * aisle_width / 12.0
         wid_last_row_avail = cabin_width - width_last_row - width_aisle
         # find number of economy class lavs and aft galley (galley width = lav width)
@@ -551,6 +629,13 @@ class BWBCabinLayout(om.ExplicitComponent):
         else:
             # add additional row for lavs & galleys to last row
             EL_AFT = length_TC_by_row[Idx_row_TC] + TC_seat_pitch / 12.0 + TC_lav_width / 12.0
+
+        if sum_num_seats_TC > pax_TC:
+            if verbosity >= Verbosity.DEBUG:
+                print(
+                    f'Number of seats in economy class {sum_num_seats_TC} '
+                    f'is above the design limit {pax_TC}.'
+                )
 
         outputs['fuselage_station_aft'] = EL_AFT
 
