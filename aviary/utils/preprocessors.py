@@ -20,7 +20,7 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 # TODO document what kwargs are used, and by which preprocessors in docstring?
-# TODO preprocess needed for design range vs phase_info range in sizing missions? (should be the same)
+# TODO preprocess needed to check design range equals phase_info range in sizing missions?
 def preprocess_options(
     aviary_options: AviaryValues, meta_data=CoreMetaData, verbosity=None, **kwargs
 ):
@@ -622,6 +622,19 @@ def preprocess_fuel_capacities(aviary_options: AviaryValues, verbosity=None):
                     f'Aircraft.Fuel.AUXILIARY_FUEL_CAPACITY ({auxiliary_capacity} lbm) '
                     f'(total of {capacity_check} lbm)'
                 )
+
+        # Set wing reference area, if needed - only used in alternate equation triggered by use of
+        # exponential term
+        if (
+            Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL in aviary_options
+            and aviary_options.get_val(Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL) > 0.0
+        ):
+            if (
+                Aircraft.Fuel.WING_REFERENCE_AREA not in aviary_options
+                and Aircraft.Wing.AREA in aviary_options
+            ):
+                wing_area, units = aviary_options.get_item(Aircraft.Wing.AREA)
+                aviary_options.set_val(Aircraft.Fuel.WING_REFERENCE_AREA, wing_area, units)
 
     return aviary_options
 

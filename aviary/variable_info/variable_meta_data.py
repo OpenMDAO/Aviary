@@ -3016,8 +3016,8 @@ add_meta_data(
     default_value=0.0,
 )
 
-# TODO this should probably get removed and Aircraft.Wing.AREA used in its stead. In fortran-to-aviary
-#      warn the user if they provide this and it differs from wing area (SW)
+# TODO should this get removed and Aircraft.Wing.AREA directly used in its stead? And in
+#      fortran-to-aviary warn the user if they provide this and it differs from wing area (SW)
 add_meta_data(
     Aircraft.Fuel.WING_REFERENCE_AREA,
     meta_data=_MetaData,

@@ -129,7 +129,7 @@ class WingFuelCapacity(om.ExplicitComponent):
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
         add_aviary_input(self, Aircraft.Fuel.WING_REFERENCE_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.WING_REFERENCE_AREA, units='unitless')
+        add_aviary_input(self, Aircraft.Fuel.WING_REFERENCE_AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
@@ -144,18 +144,18 @@ class WingFuelCapacity(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        wing_ref_cap_terma = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL]
+        wing_cap_terma = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL]
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        if wing_ref_cap_terma.real > 0.0:
+        if wing_cap_terma.real > 0.0:
             wing_ref_cap = inputs[Aircraft.Fuel.WING_REFERENCE_CAPACITY]
-            wing_ref_cap_area = inputs[Aircraft.Fuel.WING_REFERENCE_AREA]
-            wing_ref_cap_termb = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR]
+            wing_ref_area = inputs[Aircraft.Fuel.WING_REFERENCE_AREA]
+            wing_cap_termb = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR]
 
             fuel_cap_wing = (
                 wing_ref_cap
-                + wing_ref_cap_terma * (wing_area**1.5 - wing_ref_cap_area**1.5)
-                + wing_ref_cap_termb * (wing_area - wing_ref_cap_area)
+                + wing_cap_terma * (wing_area**1.5 - wing_ref_area**1.5)
+                + wing_cap_termb * (wing_area - wing_ref_area)
             )
 
         else:
@@ -177,12 +177,12 @@ class WingFuelCapacity(om.ExplicitComponent):
         outputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
-        wing_ref_cap_terma = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL]
+        wing_cap_terma = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL]
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        if wing_ref_cap_terma.real > 0.0:
-            wing_ref_cap_area = inputs[Aircraft.Fuel.WING_REFERENCE_AREA]
-            wing_ref_cap_termb = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR]
+        if wing_cap_terma.real > 0.0:
+            wing_ref_area = inputs[Aircraft.Fuel.WING_REFERENCE_AREA]
+            wing_cap_termb = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR]
 
             partials[
                 Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REFERENCE_CAPACITY
@@ -191,18 +191,18 @@ class WingFuelCapacity(om.ExplicitComponent):
             partials[
                 Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
                 Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL,
-            ] = wing_area**1.5 - wing_ref_cap_area**1.5
+            ] = wing_area**1.5 - wing_ref_area**1.5
 
             partials[
                 Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR
-            ] = wing_area - wing_ref_cap_area
+            ] = wing_area - wing_ref_area
 
             partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.AREA] = (
-                1.5 * wing_ref_cap_terma * wing_area**0.5 + wing_ref_cap_termb
+                1.5 * wing_cap_terma * wing_area**0.5 + wing_cap_termb
             )
 
             partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REFERENCE_AREA] = (
-                -1.5 * wing_ref_cap_terma * wing_ref_cap_area**0.5 - wing_ref_cap_termb
+                -1.5 * wing_cap_terma * wing_ref_area**0.5 - wing_cap_termb
             )
 
         else:

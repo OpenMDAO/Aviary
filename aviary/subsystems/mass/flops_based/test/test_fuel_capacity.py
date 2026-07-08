@@ -83,7 +83,7 @@ wing_capacity_data['1'] = AviaryValues(
     {
         Aircraft.Fuel.DENSITY: (8.04, 'lbm/galUS'),
         Aircraft.Fuel.WING_REFERENCE_CAPACITY: (30.0, 'lbm'),
-        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'unitless'),
+        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'ft**2'),
         Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR: (1.3, 'unitless'),
         Aircraft.Fuel.WING_FUEL_FRACTION: (0.7752, 'unitless'),
         Aircraft.Wing.AREA: (150.0, 'ft**2'),
@@ -97,7 +97,7 @@ wing_capacity_data['2'] = AviaryValues(
     {
         Aircraft.Fuel.DENSITY: (8.04, 'lbm/galUS'),
         Aircraft.Fuel.WING_REFERENCE_CAPACITY: (30.0, 'lbm'),
-        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'unitless'),
+        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'ft**2'),
         Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR: (1.3, 'unitless'),
         Aircraft.Fuel.WING_FUEL_FRACTION: (0.7752, 'unitless'),
         Aircraft.Wing.AREA: (150.0, 'ft**2'),
