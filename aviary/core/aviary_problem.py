@@ -1789,7 +1789,7 @@ class AviaryProblem(om.Problem):
             # NOTE this operating mass is based on the previously run mission - assumed this is the
             # design mission!! Includes cargo containers needed for design (max payload)
             operating_mass = float(self.get_val(Mission.OPERATING_MASS)[0])
-            fuel_capacity = float(self.get_val(Aircraft.Fuel.TOTAL_CAPACITY)[0])
+            fuel_capacity = float(self.get_val(Aircraft.Fuel.MAX_CAPACITY_MASS)[0])
             unusable_fuel = float(self.get_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS)[0])
             max_payload = float(self.get_val(Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS)[0])
 

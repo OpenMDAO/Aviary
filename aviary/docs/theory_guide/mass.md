@@ -17,17 +17,17 @@ The Fuel Capacity Group contains 4 subsystems:
 
 1. Wing Fuel Capacity
 
-    There are 2 different relationships that can be used, and Aviary will switch between them based on the value of the Aircraft.Fuel.WING_REF_CAPACITY_TERM_A parameter.
+    There are 2 different relationships that can be used, and Aviary will switch between them based on the value of the Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL parameter.
 
-    If Aircraft.Fuel.WING_REF_CAPACITY_TERM_A > 0:
+    If Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL > 0:
 
     Aviary allows the user to specify their own relationship for fuel capacity as a polynomial function of the difference in wing area to some reference area. This is for compatability to legacy FLOPS, but in reality an aviary user will probably write their own OpenMDAO component for calculating wing fuel capacity rather than fitting their own coefficients to an equation of the form:
 
     Wing Fuel Capacity = Wing_Reference_Capacity * (coeff_a * Area Delta^1.5 + coeff_b * Area_Delta)
 
-    Where coeff_a and coeff_b are user specified (Aircraft.Fuel.WING_REF_CAPACITY_TERM_A, Aircraft.Fuel.WING_REF_CAPACITY_TERM_B)
+    Where coeff_a and coeff_b are user specified (Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL, Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR)
 
-    Where Area_Delta = Aircraft.Wing.AREA - Aircraft.Fuel.WING_REF_CAPACITY_AREA (user specified)
+    Where Area_Delta = Aircraft.Wing.AREA - Aircraft.Fuel.WING_REFERENCE_AREA (user specified)
 
     Else (default):
 

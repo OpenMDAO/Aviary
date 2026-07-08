@@ -72,7 +72,7 @@ class FuelCapacityGroupTest(unittest.TestCase):
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
             ],
-            output_keys=Aircraft.Fuel.TOTAL_CAPACITY,
+            output_keys=Aircraft.Fuel.MAX_CAPACITY_MASS,
             atol=1e-10,
             rtol=1e-10,
         )
@@ -82,29 +82,29 @@ wing_capacity_data = {}
 wing_capacity_data['1'] = AviaryValues(
     {
         Aircraft.Fuel.DENSITY: (8.04, 'lbm/galUS'),
-        Aircraft.Fuel.WING_REF_CAPACITY: (30.0, 'lbm'),
-        Aircraft.Fuel.WING_REF_CAPACITY_AREA: (200.0, 'unitless'),
-        Aircraft.Fuel.WING_REF_CAPACITY_TERM_B: (1.3, 'unitless'),
+        Aircraft.Fuel.WING_REFERENCE_CAPACITY: (30.0, 'lbm'),
+        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'unitless'),
+        Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR: (1.3, 'unitless'),
         Aircraft.Fuel.WING_FUEL_FRACTION: (0.7752, 'unitless'),
         Aircraft.Wing.AREA: (150.0, 'ft**2'),
         Aircraft.Wing.SPAN: (17.0, 'ft'),
         Aircraft.Wing.TAPER_RATIO: (1.5, 'unitless'),
         Aircraft.Wing.THICKNESS_TO_CHORD: (0.33, 'unitless'),
-        Aircraft.Fuel.WING_REF_CAPACITY_TERM_A: (-100.0, 'unitless'),
+        Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL: (-100.0, 'unitless'),
     }
 )
 wing_capacity_data['2'] = AviaryValues(
     {
         Aircraft.Fuel.DENSITY: (8.04, 'lbm/galUS'),
-        Aircraft.Fuel.WING_REF_CAPACITY: (30.0, 'lbm'),
-        Aircraft.Fuel.WING_REF_CAPACITY_AREA: (200.0, 'unitless'),
-        Aircraft.Fuel.WING_REF_CAPACITY_TERM_B: (1.3, 'unitless'),
+        Aircraft.Fuel.WING_REFERENCE_CAPACITY: (30.0, 'lbm'),
+        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'unitless'),
+        Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR: (1.3, 'unitless'),
         Aircraft.Fuel.WING_FUEL_FRACTION: (0.7752, 'unitless'),
         Aircraft.Wing.AREA: (150.0, 'ft**2'),
         Aircraft.Wing.SPAN: (17.0, 'ft'),
         Aircraft.Wing.TAPER_RATIO: (1.5, 'unitless'),
         Aircraft.Wing.THICKNESS_TO_CHORD: (0.33, 'unitless'),
-        Aircraft.Fuel.WING_REF_CAPACITY_TERM_A: (1.2, 'unitless'),
+        Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL: (1.2, 'unitless'),
     }
 )
 
@@ -128,15 +128,15 @@ class WingFuelCapacityTest(unittest.TestCase):
             output_validation_data=validation_data,
             input_keys=[
                 Aircraft.Fuel.DENSITY,
-                Aircraft.Fuel.WING_REF_CAPACITY,
-                Aircraft.Fuel.WING_REF_CAPACITY_AREA,
-                Aircraft.Fuel.WING_REF_CAPACITY_TERM_B,
+                Aircraft.Fuel.WING_REFERENCE_CAPACITY,
+                Aircraft.Fuel.WING_REFERENCE_AREA,
+                Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR,
                 Aircraft.Fuel.WING_FUEL_FRACTION,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.SPAN,
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Fuel.WING_REF_CAPACITY_TERM_A,
+                Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL,
             ],
             output_keys=Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
             atol=1e-10,
@@ -148,7 +148,7 @@ class WingFuelCapacityTest(unittest.TestCase):
 fuse_capacity_data = {}
 fuse_capacity_data['1'] = AviaryValues(
     {
-        Aircraft.Fuel.TOTAL_CAPACITY: (100.0, 'lbm'),
+        Aircraft.Fuel.MAX_CAPACITY_MASS: (100.0, 'lbm'),
         Aircraft.Fuel.WING_FUEL_MASS_CAPACITY: (73.0, 'lbm'),
         Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY: (27.0, 'lbm'),
     }
@@ -172,7 +172,7 @@ class FuselageFuelCapacityTest(unittest.TestCase):
             prob,
             input_validation_data=validation_data,
             output_validation_data=validation_data,
-            input_keys=[Aircraft.Fuel.TOTAL_CAPACITY, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY],
+            input_keys=[Aircraft.Fuel.MAX_CAPACITY_MASS, Aircraft.Fuel.WING_FUEL_MASS_CAPACITY],
             output_keys=Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
             tol=1.0e-10,
             atol=1e-10,
@@ -182,7 +182,7 @@ class FuselageFuelCapacityTest(unittest.TestCase):
 aux_capacity_data = {}
 aux_capacity_data['1'] = AviaryValues(
     {
-        Aircraft.Fuel.TOTAL_CAPACITY: (100.0, 'lbm'),
+        Aircraft.Fuel.MAX_CAPACITY_MASS: (100.0, 'lbm'),
         Aircraft.Fuel.WING_FUEL_MASS_CAPACITY: (25.0, 'lbm'),
         Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY: (33.0, 'lbm'),
         Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: (42.0, 'lbm'),
@@ -212,7 +212,7 @@ class AuxFuelCapacityTest(unittest.TestCase):
             input_validation_data=validation_data,
             output_validation_data=validation_data,
             input_keys=[
-                Aircraft.Fuel.TOTAL_CAPACITY,
+                Aircraft.Fuel.MAX_CAPACITY_MASS,
                 Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
                 Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
             ],
@@ -231,7 +231,7 @@ total_capacity_data['1'] = AviaryValues(
         Aircraft.Fuel.AUXILIARY_FUEL_MASS_CAPACITY: (100.0, 'lbm'),
         Aircraft.Fuel.WING_FUEL_MASS_CAPACITY: (25.0, 'lbm'),
         Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY: (33.0, 'lbm'),
-        Aircraft.Fuel.TOTAL_CAPACITY: (158.0, 'lbm'),
+        Aircraft.Fuel.MAX_CAPACITY_MASS: (158.0, 'lbm'),
     }
 )
 
@@ -261,7 +261,7 @@ class TotalFuelCapacityTest(unittest.TestCase):
                 Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
                 Aircraft.Fuel.FUSELAGE_FUEL_MASS_CAPACITY,
             ],
-            output_keys=Aircraft.Fuel.TOTAL_CAPACITY,
+            output_keys=Aircraft.Fuel.MAX_CAPACITY_MASS,
             tol=1.0e-10,
             atol=1e-10,
         )

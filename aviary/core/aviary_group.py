@@ -1052,7 +1052,7 @@ class AviaryGroup(om.Group):
             'excess_fuel_constraint',
             ecomp,
             promotes_inputs=[
-                ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
+                ('total_fuel_capacity', Aircraft.Fuel.MAX_CAPACITY_MASS),
                 ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
                 ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
