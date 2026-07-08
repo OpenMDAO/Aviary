@@ -280,7 +280,7 @@ def mission_report(prob: AviaryProblem, **kwargs):
 
             totals.set_val(
                 'Total Fuel Capacity',
-                prob.get_val(f'{var_name}aircraft:fuel:total_capacity', units='lbm')[0],
+                prob.get_val(f'{var_name}aircraft:fuel:max_capacity_mass', units='lbm')[0],
                 units='lbm',
             )
             totals.set_val(

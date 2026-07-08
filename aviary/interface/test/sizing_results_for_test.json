@@ -502,7 +502,7 @@
         "<class 'int'>"
     ],
     [
-        "aircraft:fuel:total_capacity",
+        "aircraft:fuel:max_capacity_mass",
         45694.0,
         "lbm",
         "<class 'float'>"
