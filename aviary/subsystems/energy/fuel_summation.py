@@ -9,7 +9,10 @@ from aviary.variable_info.variables import Aircraft, Mission, Settings
 
 
 class FuelSummationGroup(om.Group):
-    """Adds components needed to track aircraft total fuel consumption."""
+    """
+    Adds components needed to track aircraft consumption in main and reserve missions, as well
+    as add excess fuel capacity constraint if requested.
+    """
 
     def initialize(self):
         # TODO should reserve margin & additional remain options? Or make them full inputs?

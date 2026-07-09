@@ -31,7 +31,7 @@ class BatteryBuilder(SubsystemBuilder):
     _default_name = 'battery'
 
     def build_pre_mission(self, aviary_inputs=None, subsystem_options=None):
-        return SizeBattery(aviary_inputs=aviary_inputs)
+        return SizeBattery()
 
     # Special Case: Aviary directly looks for battery mass as part of mass buildup, rather then
     # letting it get summed with other external subsystem masses

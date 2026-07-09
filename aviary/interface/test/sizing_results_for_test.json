@@ -1135,11 +1135,5 @@
         1906.0,
         "NM",
         "<class 'float'>"
-    ],
-    [
-        "aircraft:fuel:ignore_fuel_capacity_constraint",
-        false,
-        "unitless",
-        "<class 'bool'>"
     ]
 ]
