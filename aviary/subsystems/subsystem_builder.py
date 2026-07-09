@@ -1,7 +1,13 @@
+from __future__ import annotations
+
 from abc import ABC
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 from openmdao.core.system import System
 
+if TYPE_CHECKING:
+    from aviary.core.aviary_problem import AviaryProblem
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import CoreMetaData
 
@@ -24,7 +30,7 @@ class SubsystemBuilder(ABC):
     _default_name = 'default_subsystem_name'
     _default_metadata = CoreMetaData
 
-    def __init__(self, name=None, meta_data=None):
+    def __init__(self, name: str | None = None, meta_data: dict | None = None):
         if name is None:
             name = self._default_name
         self.name = name
@@ -33,7 +39,7 @@ class SubsystemBuilder(ABC):
             meta_data = self._default_metadata
         self.meta_data = meta_data
 
-    def needs_mission_solver(self, aviary_inputs, subsystem_options):
+    def needs_mission_solver(self, aviary_inputs: AviaryValues, subsystem_options: dict) -> bool:
         """
         Return True if the mission subsystem needs to be in the solver loop in mission, otherwise
         return False. Aviary will only place it in the solver loop when True. The default is
@@ -41,15 +47,17 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         subsystem_options : dict
             Dictionary of optional arguments for this subsystem in this phase.
 
         """
         return True
 
-    def build_pre_mission(self, aviary_inputs, subsystem_options=None) -> None | System:
+    def build_pre_mission(
+        self, aviary_inputs: AviaryValues, subsystem_options: dict | None = None
+    ) -> None | System:
         """
         Build an OpenMDAO System for the pre-mission computations of the subsystem.
 
@@ -59,8 +67,8 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         subsystem_options : dict
             Dictionary of optional arguments for this subsystem in pre-mission.
 
@@ -73,7 +81,12 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_states(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> dict:
         """
         Return a dictionary of dynamic states defined by this subsystem (Optional).
 
@@ -85,8 +98,8 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -105,14 +118,19 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_controls(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_controls(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> dict:
         """
         Return a dictionary of control variables for the subsystem (Optional).
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -132,7 +150,12 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_parameters(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_parameters(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> dict:
         """
         Return a dictionary of parameters for the subsystem (Optional).
 
@@ -143,8 +166,8 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -164,7 +187,12 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_constraints(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> dict:
         """
         Return a dictionary of constraints for the subsystem.
 
@@ -172,8 +200,8 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -192,15 +220,20 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_linked_variables(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> list:
         """
         Return a list of variable names that will be linked when this phase is connected to another
         phase that shares the variable.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -212,24 +245,26 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def get_bus_variables(self, aviary_inputs=None):
+    def get_bus_variables(self, aviary_inputs: AviaryValues | None = None):
         # This is an error instead of a warning because it has potential to cause your model to
         # fail in ways that are difficult to debug.
         raise RuntimeError(
             '"get_bus_variables()" has been renamed to "get_pre_mission_bus_variables()" to '
             'differentiate it from "get_post_mission_bus_variables()". Please rename this method '
-            'in your subsytem builders.'
+            'in your subsystem builders.'
         )
 
-    def get_pre_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
+    def get_pre_mission_bus_variables(
+        self, aviary_inputs: AviaryValues | None = None, mission_info=None
+    ) -> dict:
         """
         Return a dictionary of variables that will be passed from the pre-mission
         to mission and post-mission systems.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         mission_info : dict
             The mission_info dict containing the phase_info for each phase.
 
@@ -265,8 +300,8 @@ class SubsystemBuilder(ABC):
         ----------
         num_nodes : int
             Number of nodes present in the current Dymos phase of mission analysis.
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -281,15 +316,20 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def mission_inputs(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> list:
         """
         Returns list of mission inputs to be promoted out of the external subsystem. By default, all
         inputs are promoted. Used when only a subset of inputs should be promoted.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -298,19 +338,24 @@ class SubsystemBuilder(ABC):
         Returns
         -------
         list
-            List of all mission inputs.
+            List of all mission inputs. Defaults to ['*']
         """
         return ['*']
 
-    def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def mission_outputs(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> list:
         """
         Returns list of mission outputs to be promoted out of the external subsystem. By default,
         all outputs are promoted. Used when only a subset of outputs should be promoted.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -319,18 +364,18 @@ class SubsystemBuilder(ABC):
         Returns
         -------
         list
-            List of all mission outputs.
+            List of all mission outputs. Defaults to ['*']
         """
         return ['*']
 
-    def get_design_vars(self, aviary_inputs=None):
+    def get_design_vars(self, aviary_inputs: AviaryValues | None = None) -> dict:
         """
         Return a dictionary of design variables for the subsystem.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
 
         Returns
         -------
@@ -342,14 +387,19 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_initial_guesses(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_initial_guesses(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> dict:
         """
         Return a dictionary of initial guesses for the subsystem.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -369,14 +419,14 @@ class SubsystemBuilder(ABC):
         """
         return {}
 
-    def get_mass_names(self, aviary_inputs=None):
+    def get_mass_names(self, aviary_inputs: AviaryValues | None = None) -> list:
         """
         Return a list of names of the mass variables for the subsystem.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
 
         Returns
         -------
@@ -385,7 +435,7 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def preprocess_inputs(self, aviary_inputs=None) -> AviaryValues:
+    def preprocess_inputs(self, aviary_inputs: AviaryValues) -> AviaryValues:
         """
         Preprocess the inputs to the subsystem, returning a modified AviaryValues object.
 
@@ -394,8 +444,13 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
+
+        Returns
+        -------
+        aviary_inputs: AviaryValues
+            The modified AviaryValues object.
         """
         return aviary_inputs
 
@@ -406,15 +461,20 @@ class SubsystemBuilder(ABC):
         )
         return self.get_timeseries()
 
-    def get_timeseries(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+    def get_timeseries(
+        self,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
+    ) -> list:
         """
         Return a list of outputs to add to the Dymos timeseries outputs for use when graphing or
         post-processing the mission.
 
         Parameters
         ----------
-        aviary_inputs : dict
-            Dictionary containing the aircraft definition.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         user_options : dict
             Dictionary of user options for this phase.
         subsystem_options : dict
@@ -427,7 +487,9 @@ class SubsystemBuilder(ABC):
         """
         return []
 
-    def get_post_mission_bus_variables(self, aviary_inputs=None, mission_info=None):
+    def get_post_mission_bus_variables(
+        self, aviary_inputs: AviaryValues | None = None, mission_info=None
+    ) -> dict:
         """
         Return a dict mapping phase names to a dict mapping mission variable names to (a list of)
         post-mission variable names.
@@ -439,8 +501,8 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         mission_info : dict
             The mission_info dict containing the phase_info for each phase.
 
@@ -458,9 +520,9 @@ class SubsystemBuilder(ABC):
 
     def build_post_mission(
         self,
-        aviary_inputs=None,
+        aviary_inputs: AviaryValues | None = None,
         mission_info=None,
-        subsystem_options=None,
+        subsystem_options: dict | None = None,
         phase_mission_bus_lengths=None,
     ) -> None | System:
         """
@@ -470,8 +532,8 @@ class SubsystemBuilder(ABC):
 
         Parameters
         ----------
-        aviary_inputs : dict
-            A dictionary containing the inputs to the subsystem.
+        aviary_inputs : AviaryValues
+            AviaryValues object containing the aircraft definition.
         mission_info : dict
             The mission_info dict containing the phase_info for each phase.
         subsystem_options : dict
@@ -489,7 +551,7 @@ class SubsystemBuilder(ABC):
         """
         return None
 
-    def report(self, prob, reports_folder, **kwargs):
+    def report(self, prob: AviaryProblem, reports_folder: Path | str, **kwargs):
         """
         Generates report file for this subsystem. If this subsystem doesn't need a
         report, do nothing.
@@ -498,7 +560,7 @@ class SubsystemBuilder(ABC):
         ----------
         prob : AviaryProblem
             The AviaryProblem that will be used to generate the report
-        reports_folder : Path
+        reports_folder : Path, str
             Location of the subsystems_report folder this report will be placed in
         """
         return

@@ -447,7 +447,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             promotes_outputs=['mission:*'],
         )
 
-        last_regular_phase = aviary_group.regular_phases[-1]
+        last_regular_phase = aviary_group.main_phases[-1]
         aviary_group.connect(
             f'traj.{last_regular_phase}.control_values:altitude',
             Mission.Landing.INITIAL_ALTITUDE,

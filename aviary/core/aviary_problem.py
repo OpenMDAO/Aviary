@@ -777,7 +777,7 @@ class AviaryProblem(om.Problem):
         if objective_type is not None:
             ref = ref if ref is not None else default_ref_values.get(objective_type, 1)
 
-            final_phase_name = self.model.regular_phases[-1]
+            final_phase_name = self.model.main_phases[-1]
 
             if objective_type == 'mass':
                 self.model.add_objective(

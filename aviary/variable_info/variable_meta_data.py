@@ -2876,6 +2876,7 @@ add_meta_data(
     'and allow mission fuel > total_fuel_capacity. Use carefully!',
     default_value=False,
     types=bool,
+    option=True,
 )
 
 add_meta_data(
@@ -6951,9 +6952,9 @@ add_meta_data(
     historical_name={'GASP': None, 'FLOPS': None},
     option=True,
     units='unitless',
-    desc='required fuel reserves: given as a precentage of mission fuel.'
+    desc='Required fuel reserves, given as a precentage of mission fuel.'
     'Mission fuel only includes normal phases and excludes reserve phases.',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6972,7 +6973,7 @@ add_meta_data(
     option=True,
     units='lbm',
     desc='required fuel reserves: directly in lbm',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
@@ -6992,7 +6993,7 @@ add_meta_data(
     units='lbm',
     desc='the total fuel reserves which is the sum of: '
     'Mission.RESERVE_FUEL_MASS, Mission.RESERVE_FUEL_MASS_ADDITIONAL, Mission.RESERVE_FUEL_MARGIN',
-    default_value=0,
+    default_value=0.0,
 )
 
 add_meta_data(
