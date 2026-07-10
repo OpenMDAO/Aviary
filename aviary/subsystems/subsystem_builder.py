@@ -56,7 +56,7 @@ class SubsystemBuilder(ABC):
         return True
 
     def build_pre_mission(
-        self, aviary_inputs: AviaryValues, subsystem_options: dict | None = None
+        self, aviary_inputs: AviaryValues | None = None, subsystem_options: dict | None = None
     ) -> None | System:
         """
         Build an OpenMDAO System for the pre-mission computations of the subsystem.
@@ -255,7 +255,7 @@ class SubsystemBuilder(ABC):
         )
 
     def get_pre_mission_bus_variables(
-        self, aviary_inputs: AviaryValues | None = None, mission_info=None
+        self, aviary_inputs: AviaryValues | None = None, mission_info: dict | None = None
     ) -> dict:
         """
         Return a dictionary of variables that will be passed from the pre-mission
@@ -287,7 +287,11 @@ class SubsystemBuilder(ABC):
         return {}
 
     def build_mission(
-        self, num_nodes, aviary_inputs, user_options, subsystem_options
+        self,
+        num_nodes: int,
+        aviary_inputs: AviaryValues | None = None,
+        user_options: dict | None = None,
+        subsystem_options: dict | None = None,
     ) -> None | System:
         """
         Build an OpenMDAO System for the mission computations of the subsystem.
@@ -488,7 +492,7 @@ class SubsystemBuilder(ABC):
         return []
 
     def get_post_mission_bus_variables(
-        self, aviary_inputs: AviaryValues | None = None, mission_info=None
+        self, aviary_inputs: AviaryValues | None = None, mission_info: dict | None = None
     ) -> dict:
         """
         Return a dict mapping phase names to a dict mapping mission variable names to (a list of)
@@ -523,7 +527,7 @@ class SubsystemBuilder(ABC):
         aviary_inputs: AviaryValues | None = None,
         mission_info=None,
         subsystem_options: dict | None = None,
-        phase_mission_bus_lengths=None,
+        phase_mission_bus_lengths: dict | None = None,
     ) -> None | System:
         """
         Build an OpenMDAO System for the post-mission computations of the subsystem.
