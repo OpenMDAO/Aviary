@@ -2970,33 +2970,6 @@ add_meta_data(
 )
 
 add_meta_data(
-    Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FUSCLA',  # ['&DEFINE.WTIN.FUSCLA', 'WPAB.FUSCLA'],
-    },
-    units='unitless',
-    desc='Exponential coefficient in alternate sizing equation for Jet-A fuel tanks in wing, based '
-    'on reference wing capacity. Only used when value is above 0.0',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FUSCLB',  # ['&DEFINE.WTIN.FUSCLB', 'WPAB.FUSCLB'],
-    },
-    units='unitless',
-    desc='Linear coefficient in alternate sizing equation for Jet-A fuel tanks in wing, based on'
-    'reference wing capacity.. Only used when value of Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR '
-    'above 0.0',
-    default_value=0.0,
-)
-
-add_meta_data(
     Aircraft.Fuel.WING_FUEL_FRACTION,
     meta_data=_MetaData,
     historical_name={'GASP': 'INGASP.SKWF', 'FLOPS': None},
@@ -3014,32 +2987,6 @@ add_meta_data(
     },
     units='lbm',
     desc='Total mass capacity of Jet-A fuel stored in the wings',
-    default_value=0.0,
-)
-
-# TODO should this get removed and Aircraft.Wing.AREA directly used in its stead? And in
-#      fortran-to-aviary warn the user if they provide this and it differs from wing area (SW)
-add_meta_data(
-    Aircraft.Fuel.WING_REFERENCE_AREA,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FSWREF',  # ['&DEFINE.WTIN.FSWREF', 'WPAB.FSWREF'],
-    },
-    units='ft**2',  # NOTE FLOPS says ft**2 in manual (line 874) but unitless in sfwate.f line 828
-    desc='Reference wing area for fuel Jet-A capacity',
-    default_value=0.0,
-)
-
-add_meta_data(
-    Aircraft.Fuel.WING_REFERENCE_CAPACITY,
-    meta_data=_MetaData,
-    historical_name={
-        'GASP': None,
-        'FLOPS': 'WTIN.FUELRF',  # ['&DEFINE.WTIN.FUELRF', 'WPAB.FUELRF'],
-    },
-    units='lbm',
-    desc='Reference Jet-A fuel mass capacity of wing tanks',
     default_value=0.0,
 )
 

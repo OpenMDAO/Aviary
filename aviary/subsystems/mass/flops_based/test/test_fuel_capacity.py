@@ -82,29 +82,21 @@ wing_capacity_data = {}
 wing_capacity_data['1'] = AviaryValues(
     {
         Aircraft.Fuel.DENSITY: (8.04, 'lbm/galUS'),
-        Aircraft.Fuel.WING_REFERENCE_CAPACITY: (30.0, 'lbm'),
-        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'ft**2'),
-        Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR: (1.3, 'unitless'),
         Aircraft.Fuel.WING_FUEL_FRACTION: (0.7752, 'unitless'),
         Aircraft.Wing.AREA: (150.0, 'ft**2'),
         Aircraft.Wing.SPAN: (17.0, 'ft'),
         Aircraft.Wing.TAPER_RATIO: (1.5, 'unitless'),
         Aircraft.Wing.THICKNESS_TO_CHORD: (0.33, 'unitless'),
-        Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL: (-100.0, 'unitless'),
     }
 )
 wing_capacity_data['2'] = AviaryValues(
     {
         Aircraft.Fuel.DENSITY: (8.04, 'lbm/galUS'),
-        Aircraft.Fuel.WING_REFERENCE_CAPACITY: (30.0, 'lbm'),
-        Aircraft.Fuel.WING_REFERENCE_AREA: (200.0, 'ft**2'),
-        Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR: (1.3, 'unitless'),
         Aircraft.Fuel.WING_FUEL_FRACTION: (0.7752, 'unitless'),
         Aircraft.Wing.AREA: (150.0, 'ft**2'),
         Aircraft.Wing.SPAN: (17.0, 'ft'),
         Aircraft.Wing.TAPER_RATIO: (1.5, 'unitless'),
         Aircraft.Wing.THICKNESS_TO_CHORD: (0.33, 'unitless'),
-        Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL: (1.2, 'unitless'),
     }
 )
 
@@ -128,15 +120,11 @@ class WingFuelCapacityTest(unittest.TestCase):
             output_validation_data=validation_data,
             input_keys=[
                 Aircraft.Fuel.DENSITY,
-                Aircraft.Fuel.WING_REFERENCE_CAPACITY,
-                Aircraft.Fuel.WING_REFERENCE_AREA,
-                Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR,
                 Aircraft.Fuel.WING_FUEL_FRACTION,
                 Aircraft.Wing.AREA,
                 Aircraft.Wing.SPAN,
                 Aircraft.Wing.TAPER_RATIO,
                 Aircraft.Wing.THICKNESS_TO_CHORD,
-                Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL,
             ],
             output_keys=Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
             atol=1e-10,

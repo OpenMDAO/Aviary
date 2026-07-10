@@ -128,10 +128,6 @@ class WingFuelCapacity(om.ExplicitComponent):
 
     def setup(self):
         add_aviary_input(self, Aircraft.Fuel.DENSITY, units='lbm/ft**3')
-        add_aviary_input(self, Aircraft.Fuel.WING_REFERENCE_CAPACITY, units='lbm')
-        add_aviary_input(self, Aircraft.Fuel.WING_REFERENCE_AREA, units='ft**2')
-        add_aviary_input(self, Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL, units='unitless')
-        add_aviary_input(self, Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR, units='unitless')
         add_aviary_input(self, Aircraft.Fuel.WING_FUEL_FRACTION, units='unitless')
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
@@ -144,117 +140,77 @@ class WingFuelCapacity(om.ExplicitComponent):
         self.declare_partials('*', '*')
 
     def compute(self, inputs, outputs):
-        wing_cap_terma = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL]
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        if wing_cap_terma.real > 0.0:
-            wing_ref_cap = inputs[Aircraft.Fuel.WING_REFERENCE_CAPACITY]
-            wing_ref_area = inputs[Aircraft.Fuel.WING_REFERENCE_AREA]
-            wing_cap_termb = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR]
-
-            fuel_cap_wing = (
-                wing_ref_cap
-                + wing_cap_terma * (wing_area**1.5 - wing_ref_area**1.5)
-                + wing_cap_termb * (wing_area - wing_ref_area)
-            )
-
-        else:
-            fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
-            volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-            span = inputs[Aircraft.Wing.SPAN]
-            taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
-            thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
-            # calculate volume of wing assuming truncated rectangular based pyramid:
-            volume_of_wing = (
-                (2 / 3)
-                * wing_area**2
-                * thickness_to_chord
-                * (1.0 - taper_ratio / (1.0 + taper_ratio) ** 2)
-                / span
-            )
-            fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
+        fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        span = inputs[Aircraft.Wing.SPAN]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
+        # calculate volume of wing assuming truncated rectangular based pyramid:
+        volume_of_wing = (
+            (2 / 3)
+            * wing_area**2
+            * thickness_to_chord
+            * (1.0 - taper_ratio / (1.0 + taper_ratio) ** 2)
+            / span
+        )
+        fuel_cap_wing = fuel_density * volume_fraction * volume_of_wing
 
         outputs[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY] = fuel_cap_wing / GRAV_ENGLISH_LBM
 
     def compute_partials(self, inputs, partials):
-        wing_cap_terma = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL]
         wing_area = inputs[Aircraft.Wing.AREA]
 
-        if wing_cap_terma.real > 0.0:
-            wing_ref_area = inputs[Aircraft.Fuel.WING_REFERENCE_AREA]
-            wing_cap_termb = inputs[Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR]
+        fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
+        volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
+        span = inputs[Aircraft.Wing.SPAN]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
 
-            partials[
-                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REFERENCE_CAPACITY
-            ] = 1.0
+        den = 1.0 + taper_ratio
+        tr_fact = 1.0 - taper_ratio / den**2
+        dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
 
-            partials[
-                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY,
-                Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL,
-            ] = wing_area**1.5 - wing_ref_area**1.5
+        partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.DENSITY] = (
+            volume_fraction * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
+        )
 
-            partials[
-                Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR
-            ] = wing_area - wing_ref_area
+        partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_FUEL_FRACTION] = (
+            fuel_density * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
+        )
 
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.AREA] = (
-                1.5 * wing_cap_terma * wing_area**0.5 + wing_cap_termb
-            )
+        partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.SPAN] = (
+            -fuel_density
+            * volume_fraction
+            * (2 / 3)
+            * wing_area**2
+            * thickness_to_chord
+            * tr_fact
+            / span**2
+        )
 
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_REFERENCE_AREA] = (
-                -1.5 * wing_cap_terma * wing_ref_area**0.5 - wing_cap_termb
-            )
+        partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.TAPER_RATIO] = (
+            fuel_density
+            * volume_fraction
+            * (2 / 3)
+            * wing_area**2
+            * thickness_to_chord
+            * dfact
+            / span
+        )
 
-        else:
-            fuel_density = inputs[Aircraft.Fuel.DENSITY] * GRAV_ENGLISH_LBM
-            volume_fraction = inputs[Aircraft.Fuel.WING_FUEL_FRACTION]
-            span = inputs[Aircraft.Wing.SPAN]
-            taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
-            thickness_to_chord = inputs[Aircraft.Wing.THICKNESS_TO_CHORD]
+        partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.THICKNESS_TO_CHORD] = (
+            fuel_density * volume_fraction * (2 / 3) * wing_area**2 * tr_fact / span
+        )
 
-            den = 1.0 + taper_ratio
-            tr_fact = 1.0 - taper_ratio / den**2
-            dfact = -1.0 / den**2 + 2.0 * taper_ratio / den**3
-
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.DENSITY] = (
-                volume_fraction * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
-            )
-
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Fuel.WING_FUEL_FRACTION] = (
-                fuel_density * (2 / 3) * wing_area**2 * thickness_to_chord * tr_fact / span
-            )
-
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.SPAN] = (
-                -fuel_density
-                * volume_fraction
-                * (2 / 3)
-                * wing_area**2
-                * thickness_to_chord
-                * tr_fact
-                / span**2
-            )
-
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.TAPER_RATIO] = (
-                fuel_density
-                * volume_fraction
-                * (2 / 3)
-                * wing_area**2
-                * thickness_to_chord
-                * dfact
-                / span
-            )
-
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.THICKNESS_TO_CHORD] = (
-                fuel_density * volume_fraction * (2 / 3) * wing_area**2 * tr_fact / span
-            )
-
-            partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.AREA] = (
-                2.0
-                * fuel_density
-                * volume_fraction
-                * (2 / 3)
-                * wing_area
-                * thickness_to_chord
-                * tr_fact
-                / span
-            )
+        partials[Aircraft.Fuel.WING_FUEL_MASS_CAPACITY, Aircraft.Wing.AREA] = (
+            2.0
+            * fuel_density
+            * volume_fraction
+            * (2 / 3)
+            * wing_area
+            * thickness_to_chord
+            * tr_fact
+            / span
+        )

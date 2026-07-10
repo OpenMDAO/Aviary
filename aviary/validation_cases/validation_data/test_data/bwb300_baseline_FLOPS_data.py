@@ -97,9 +97,6 @@ inputs.set_val(Aircraft.Fuel.NUM_TANKS, 7)  # NTANK
 inputs.set_val(Aircraft.Fuel.UNUSABLE_FUEL_MASS_SCALER, 1.0)  # WUF
 inputs.set_val(Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT, False)  # IFUFU
 inputs.set_val(Aircraft.Fuel.WING_FUEL_FRACTION, 0.6883549569366508, 'unitless')
-inputs.set_val(Aircraft.Fuel.WING_REFERENCE_CAPACITY, 0.0, 'lbm')  # FUELRF
-inputs.set_val(Aircraft.Fuel.WING_CAPACITY_TERM_EXPONENTIAL, 0.0)  # FUSCLA
-inputs.set_val(Aircraft.Fuel.WING_CAPACITY_TERM_LINEAR, 0.0)  # FUSCLB
 inputs.set_val(Aircraft.Fuel.DENSITY, 6.7, 'lbm/galUS')
 
 # Furnishings
