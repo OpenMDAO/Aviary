@@ -6889,10 +6889,10 @@ add_meta_data(
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
     units='lbm',
-    desc='Fuel burned from taxi-out through all regular phases of the mission (e.g. takeoff, climb, cruse, descent, landing).'
-    'This does not include fuel burned in reserve phases or taxi-in.'
-    'The only time taxi-in would be included in this is if the user'
-    'specifies a taxi phase as part of the regular mission phases.',
+    desc='Fuel burned from taxi-out through all regular phases of the mission (e.g. takeoff, climb, '
+    'cruse, descent, landing). This does not include fuel burned in reserve phases or taxi-in. The '
+    'only time taxi-in would be included in this is if the user specifies a taxi phase as part of '
+    'the regular mission phases.',
 )
 
 add_meta_data(

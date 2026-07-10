@@ -51,14 +51,14 @@ class FuelSummationGroup(om.Group):
         self.add_subsystem(
             'fuel_burned',
             om.ExecComp(
-                'fuel_burned = initial_mass - mass_final',
-                initial_mass={'units': 'lbm'},
+                'fuel_burned = mass_initial - mass_final',
+                mass_initial={'units': 'lbm'},
                 mass_final={
                     'units': 'lbm'
                 },  # this final mass already includes fuel burned in taxi and takeoff
                 fuel_burned={'units': 'lbm'},
             ),
-            promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
+            promotes_inputs=[('mass_initial', Mission.GROSS_MASS)],
             promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
         )
 
@@ -71,8 +71,8 @@ class FuelSummationGroup(om.Group):
         # Fuel burn in reserve phases
         if reserve_phases:
             ecomp = om.ExecComp(
-                'reserve_fuel_burned = initial_mass - mass_final',
-                initial_mass={'units': 'lbm'},
+                'reserve_fuel_burned = mass_initial - mass_final',
+                mass_initial={'units': 'lbm'},
                 mass_final={'units': 'lbm'},
                 reserve_fuel_burned={'units': 'lbm'},
             )
@@ -87,7 +87,7 @@ class FuelSummationGroup(om.Group):
             # states
             # self.connect(
             #     f'traj.{reserve_phases[0]}.timeseries.mass',
-            #     'reserve_fuel_burned.initial_mass',
+            #     'reserve_fuel_burned.mass_initial',
             #     src_indices=[0],
             # )
             # self.connect(
@@ -100,13 +100,13 @@ class FuelSummationGroup(om.Group):
         if reserve_fuel_margin != 0:
             # Originally tried to reference Mission.FUEL_MASS for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
-                'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
+                'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (mass_initial - final_mass)',
                 reserve_fuel_margin_mass={'units': 'lbm'},
                 reserve_fuel_margin={
                     'units': 'unitless',
                     'val': reserve_fuel_margin,
                 },
-                initial_mass={'units': 'lbm'},
+                mass_initial={'units': 'lbm'},
                 final_mass={'units': 'lbm'},
             )
 
@@ -114,7 +114,7 @@ class FuelSummationGroup(om.Group):
                 'reserve_fuel_frac',
                 reserve_fuel_frac,
                 promotes_inputs=[
-                    ('initial_mass', Mission.GROSS_MASS),
+                    ('mass_initial', Mission.GROSS_MASS),
                     ('reserve_fuel_margin', Mission.RESERVE_FUEL_MARGIN),
                 ],
                 promotes_outputs=['reserve_fuel_margin_mass'],
