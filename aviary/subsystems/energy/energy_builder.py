@@ -83,7 +83,7 @@ class CoreEnergyBuilder(EnergyBuilder):
         if reserve_phases:
             post_mission_bus[reserve_phases[0]] = {
                 f'mass': {
-                    'post_mission_name': f'{self.name}.reserve_fuel_burned.initial_mass',
+                    'post_mission_name': f'{self.name}.reserve_fuel_burned.mass_initial',
                     'src_indices': [0],
                 }
             }
