@@ -541,19 +541,19 @@ class AviaryGroup(om.Group):
         )
 
         # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
-        core_subsystems = self.subsystems[0:5]
+        core_subsystems = self.subsystems[0:6]
 
         # Propulsion isn't included in core pre-mission group to avoid override step in
         # configure() - instead add it now
         pre_mission.add_subsystem(
-            'propulsion',
+            core_subsystems[0].name,
             core_subsystems[0].build_pre_mission(
                 self.aviary_inputs,
-                subsystem_options=all_subsystem_options.get('propulsion', {}),
+                subsystem_options=all_subsystem_options.get(core_subsystems[0].name, {}),
             ),
         )
 
-        default_subsystems = core_subsystems[1:5]
+        default_subsystems = core_subsystems[1:6]
 
         pre_mission.add_subsystem(
             'core_subsystems',
