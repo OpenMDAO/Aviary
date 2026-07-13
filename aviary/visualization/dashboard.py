@@ -1135,6 +1135,18 @@ def dashboard(script_name, port=0, run_in_background=False):
         reports_dir / 'driver_scaling_report.html',
     )
 
+    #  Options List
+    create_report_frame(
+        'Model Options List',
+        model_tabs_list,
+        """
+        A plain text display of the options for the Problem.
+        """,
+        'text',
+        reports_dir / 'options.txt',
+    )
+
+
     ####### Optimization Tab #######
     optimization_tabs_list = []
 

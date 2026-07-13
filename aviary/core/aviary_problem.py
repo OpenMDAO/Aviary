@@ -89,6 +89,7 @@ class AviaryProblem(om.Problem):
             'sizing_results',
             'input_checks',
             'overridden_variables',
+            'list_options',
         ]
         for report in new_reports:
             if report not in _default_reports:
