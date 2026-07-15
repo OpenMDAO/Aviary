@@ -98,15 +98,19 @@ def convert_geopotential_altitude(altitude):
     except TypeError:
         altitude = [altitude]
 
-    g = constants.GRAV_EARTH
-    radius_earth = constants.RADIUS_EARTH[0]  # meters
+    grav_metric = constants.GRAV_EARTH[0]
+    if constants.GRAV_EARTH[1] != 'm/s**2':
+        warnings.warn(
+            'convert_geopotential_altitude() only functions properly when constants.GRAV_EARTH is specified in m/s**2'
+        )
+    radius_earth = constants.RADIUS_EARTH[0]
     if constants.RADIUS_EARTH[1] != 'm':
         warnings.warn(
             'convert_geopotential_altitude() only functions properly when constants.RADIUS_EARTH is specified in meters!'
         )
+
     CM1 = 0.99850  # Center of mass (Earth)? Unknown
     OC2 = 26.76566e-10  # Unknown
-    GNS = 9.8236930  # grav_accel_at_surface_earth?
 
     for i, alt in enumerate(altitude):
         HFT = alt
@@ -117,8 +121,10 @@ def convert_geopotential_altitude(altitude):
 
         while abs(DH) > 1.0:
             R = radius_earth + Z
-            GN = GNS * (radius_earth / R) ** (CM1 + 1.0)
-            H = (R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2) / g
+            GN = grav_metric * (radius_earth / R) ** (CM1 + 1.0)
+            H = (
+                R * GN * ((R / radius_earth) ** CM1 - 1.0) / CM1 - Z * (R - Z / 2.0) * OC2
+            ) / grav_metric
 
             DH = HO - H
             Z += DH
