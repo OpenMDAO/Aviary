@@ -2,9 +2,8 @@ import numpy as np
 import openmdao.api as om
 from openmdao.utils import cs_safe as cs
 
-from aviary.constants import GRAV_ENGLISH_GASP
-from aviary.variable_info.functions import add_aviary_input
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.functions import add_aviary_input, add_aviary_option
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 FCFWC = 1  # Excrescence drag factor
 FCFWT = 1  # Aero technology factors for wing
@@ -335,6 +334,8 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
     def initialize(self):
         self.options.declare('num_nodes', default=1, types=int)
 
+        add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
+
     def setup(self):
         nn = self.options['num_nodes']
 
@@ -378,11 +379,12 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
+        grav_english = self.options[Mission.GRAVITY][0]
         CKW, CBARW, EM, T0, XKV, AREASHIELDWF, FEINTWF = inputs.values()
 
         # from gaspmain.f
         # reli = reynolds number per foot
-        RELI = np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32) * EM * np.sqrt(T0) / XKV  # dynamic
+        RELI = np.sqrt(1.4 * grav_english * 53.32) * EM * np.sqrt(T0) / XKV  # dynamic
 
         # from aero.f
         # CFIN CALCULATION FROM SCHLICHTING PG. 635-665
@@ -396,10 +398,11 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
         outputs['wing_fuselage_interference_flat_plate_equivalent'] = FEIWF
 
     def compute_partials(self, inputs, J):
+        grav_english = self.options[Mission.GRAVITY][0]
         CKW, CBARW, EM, T0, XKV, AREASHIELDWF, FEINTWF = inputs.values()
 
-        RELI = np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32) * EM * np.sqrt(T0) / XKV
-        dRELI_dEM = np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32) * np.sqrt(T0) / XKV
+        RELI = np.sqrt(1.4 * grav_english * 53.32) * EM * np.sqrt(T0) / XKV
+        dRELI_dEM = np.sqrt(1.4 * grav_english * 53.32) * np.sqrt(T0) / XKV
 
         CFIN = 0.455 / 7**2.58 / (1.0 + 0.144 * EM**2) ** 0.65
         dCFIN_dEM = -0.65 * CFIN / (1.0 + 0.144 * EM**2) * 0.288 * EM
@@ -446,7 +449,7 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
             * AREASHIELDWF
             * 1
             / (np.log(10) * (RELI) * 7)
-            * np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32)
+            * np.sqrt(1.4 * grav_english * 53.32)
             * EM
             * 0.5
             / (XKV * np.sqrt(T0))
@@ -462,7 +465,7 @@ class WingFuselageInterferenceMission(om.ExplicitComponent):
             * AREASHIELDWF
             * 1
             / (np.log(10) * (RELI) * 7)
-            * np.sqrt(1.4 * GRAV_ENGLISH_GASP * 53.32)
+            * np.sqrt(1.4 * grav_english * 53.32)
             * EM
             * np.sqrt(T0)
             / XKV**2
