@@ -136,7 +136,7 @@ class GroundrollEOM(om.ExplicitComponent):
 
     def compute(self, inputs, outputs):
         grav_english = self.options[Mission.GRAVITY][0]
-        
+
         mu = inputs[Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT]
         weight = inputs[Dynamic.Vehicle.MASS] * GRAV_ENGLISH_LBM
         thrust = inputs[Dynamic.Vehicle.Propulsion.THRUST_TOTAL]

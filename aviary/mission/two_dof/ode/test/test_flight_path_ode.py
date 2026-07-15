@@ -15,6 +15,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 from aviary.utils.preprocessors import preprocess_options
 
+
 @use_tempdirs
 class FlightPathODETestCase(unittest.TestCase):
     """Test 2-degrees-of-freedom flight path ODE."""

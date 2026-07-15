@@ -44,7 +44,7 @@ class GlideTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem('group', GlideConditionComponent(**options), promotes=['*'])
 
         self.prob.model.set_input_defaults(
@@ -112,7 +112,7 @@ class GlideTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         prob.model.add_subsystem('group', GlideConditionComponent(**options), promotes=['*'])
         prob.model.set_input_defaults(
             Dynamic.Atmosphere.DENSITY, RHO_SEA_LEVEL_ENGLISH, units='slug/ft**3'
@@ -142,8 +142,10 @@ class GroundRollTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
-        self.prob.model.add_subsystem('group', LandingGroundRollComponent(**options), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', LandingGroundRollComponent(**options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)
@@ -200,8 +202,10 @@ class GroundRollTestCase2(unittest.TestCase):
 
     def test_case1(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
-        self.prob.model.add_subsystem('group', LandingGroundRollComponent(**options), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', LandingGroundRollComponent(**options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults('touchdown_CD', val=0.07344)
         self.prob.model.set_input_defaults('touchdown_CL', val=1.18694)

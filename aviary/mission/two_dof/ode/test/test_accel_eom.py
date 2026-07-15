@@ -19,8 +19,10 @@ class AccelerationTestCase(unittest.TestCase):
 
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
-        self.prob.model.add_subsystem('group', AccelerationRates(num_nodes=2, **options), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        self.prob.model.add_subsystem(
+            'group', AccelerationRates(num_nodes=2, **options), promotes=['*']
+        )
 
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, np.array([174878, 174878]), units='lbm'

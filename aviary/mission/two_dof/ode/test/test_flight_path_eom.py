@@ -14,9 +14,11 @@ class FlightPathEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.ground_roll = False
         self.prob = om.Problem()
-        options ={Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.fp = self.prob.model.add_subsystem(
-            'group', FlightPathEOM(num_nodes=2, ground_roll=self.ground_roll, **options), promotes=['*']
+            'group',
+            FlightPathEOM(num_nodes=2, ground_roll=self.ground_roll, **options),
+            promotes=['*'],
         )
         self.prob.model.set_input_defaults(Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, 0.02)
         self.prob.setup(check=False, force_alloc_complex=True)

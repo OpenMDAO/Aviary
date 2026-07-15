@@ -13,7 +13,7 @@ from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 class GroundrollEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem(
             'group', TakeoffEOM(num_nodes=2, ground_roll=True, **options), promotes=['*']
         )
@@ -73,8 +73,10 @@ class GroundrollEOMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
-        prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, ground_roll=True, **options), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        prob.model.add_subsystem(
+            'group', TakeoffEOM(num_nodes=2, ground_roll=True, **options), promotes=['*']
+        )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
@@ -97,7 +99,7 @@ class GroundrollEOMTestCase2(unittest.TestCase):
 class RotationEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem(
             'group', TakeoffEOM(num_nodes=2, rotation=True, **options), promotes=['*']
         )
@@ -161,8 +163,10 @@ class RotationEOMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
-        prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, rotation=True, **options), promotes=['*'])
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
+        prob.model.add_subsystem(
+            'group', TakeoffEOM(num_nodes=2, rotation=True, **options), promotes=['*']
+        )
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL, val=22000 * np.ones(2), units='lbf'
@@ -186,7 +190,7 @@ class RotationEOMTestCase2(unittest.TestCase):
 class AscentEOMTestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         self.prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, **options), promotes=['*'])
         self.prob.model.set_input_defaults(
             Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm'
@@ -246,7 +250,7 @@ class AscentEOMTestCase2(unittest.TestCase):
 
     def test_case1(self):
         prob = om.Problem()
-        options = {Mission.GRAVITY:(32.2, 'ft/s**2')}
+        options = {Mission.GRAVITY: (32.2, 'ft/s**2')}
         prob.model.add_subsystem('group', TakeoffEOM(num_nodes=2, **options), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, val=175400 * np.ones(2), units='lbm')
         prob.model.set_input_defaults(

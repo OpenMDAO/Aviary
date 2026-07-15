@@ -5,6 +5,7 @@ from aviary import constants
 from aviary.variable_info.variables import Dynamic, Mission
 from aviary.variable_info.functions import add_aviary_option
 
+
 class SolveAlphaGroup(om.Group):
     """
     Group that contains components needed to determine angle of attack. Must be paired with

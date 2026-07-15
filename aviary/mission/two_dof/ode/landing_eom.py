@@ -533,9 +533,9 @@ class GlideConditionComponent(om.ExplicitComponent):
 
 class LandingGroundRollComponent(om.ExplicitComponent):
     """Compute the groundroll distance and average acceleration/deceleration."""
+
     def initialize(self):
         add_aviary_option(self, Mission.GRAVITY, units='ft/s**2')
-
 
     def setup(self):
         self.add_input('touchdown_CD', val=0.0, units='unitless', desc='CDRL: CD at touchdown')

@@ -158,9 +158,7 @@ class AscentODETestCase(unittest.TestCase):
             num_nodes=2, aviary_options=aviary_options, subsystems=default_mission_subsystems
         )
 
-        setup_model_options(
-            self.prob, AviaryValues(aviary_options)
-        )
+        setup_model_options(self.prob, AviaryValues(aviary_options))
 
     def test_ascent_partials(self):
         # Test partial derivatives
