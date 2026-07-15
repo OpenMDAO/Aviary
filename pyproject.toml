@@ -27,7 +27,6 @@ docs = [
 dev = [
     "pre-commit",
     "testflo",
-    "ambiance",
     "openaerostruct",
 ]
 all = [

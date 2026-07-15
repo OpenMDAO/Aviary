@@ -47,7 +47,7 @@ class PropulsionMissionTest(unittest.TestCase):
         options.set_val(Aircraft.Engine.SUPERSONIC_FUEL_FLOW_SCALER, 1.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_CONSTANT_TERM, 0.0)
         options.set_val(Aircraft.Engine.FUEL_FLOW_SCALER_LINEAR_TERM, 1.0)
-        options.set_val(Aircraft.Engine.CONSTANT_FUEL_CONSUMPTION, 0.0, units='lbm/h')
+        options.set_val(Aircraft.Engine.CONSTANT_FUEL_MASS_CONSUMPTION, 0.0, units='lbm/h')
         options.set_val(Aircraft.Engine.SCALE_FACTOR, 0.5)
         options.set_val(Aircraft.Engine.IGNORE_NEGATIVE_THRUST, False)
 
@@ -84,7 +84,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
         )
 
         expected_thrust = np.array(
@@ -163,7 +163,7 @@ class PropulsionMissionTest(unittest.TestCase):
             np.array([[602.11, 3554], [100, 9000]]),
         )
         self.prob.set_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE,
             np.array([[123, -221.44], [-765.2, -1]]),
         )
         self.prob.set_val(
@@ -178,7 +178,7 @@ class PropulsionMissionTest(unittest.TestCase):
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         thrust_max = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lb/h'
         )
         electric_power_in = self.prob.get_val(
             Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL, units='kW'
@@ -255,7 +255,7 @@ class PropulsionMissionTest(unittest.TestCase):
 
         thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_TOTAL, units='lbf')
         fuel_flow = self.prob.get_val(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/h'
         )
         nox_rate = self.prob.get_val(Dynamic.Vehicle.Propulsion.NOX_RATE_TOTAL, units='lbm/h')
 
@@ -494,11 +494,11 @@ class PropulsionMissionTest(unittest.TestCase):
         max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
 
         expected_thrust = np.array(
-            [42629.8926234, 34593.95599731, 20003.65216215, 12039.90789131, 8385.52777847]
+            [42629.8926234, 34593.95597499, 20003.65216215, 12039.90789131, 8385.527778477]
         )
 
         expected_max_thrust = np.array(
-            [42629.8926234, 41028.5558649, 29561.74, 22590.025, 20411.435]
+            [42629.8926234, 41028.55584259, 29561.74, 22590.025, 20411.435]
         )
 
         assert_near_equal(thrust, expected_thrust, tolerance=1e-10)

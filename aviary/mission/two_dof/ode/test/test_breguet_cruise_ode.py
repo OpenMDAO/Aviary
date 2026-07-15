@@ -3,11 +3,9 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
-from aviary.mission.two_dof.ode.breguet_cruise_ode import (
-    BreguetCruiseODE,
-    ElectricBreguetCruiseODE,
-)
+from aviary.mission.two_dof.ode.breguet_cruise_ode import BreguetCruiseODE, ElectricBreguetCruiseODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
 from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.test_utils.default_subsystems import get_default_mission_subsystems
@@ -16,6 +14,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class CruiseODETestCase(unittest.TestCase):
     def setUp(self):
         self.prob = om.Problem()
@@ -57,17 +56,17 @@ class CruiseODETestCase(unittest.TestCase):
         self.prob.run_model()
 
         tol = tol = 1e-6
-        assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 923.39168758]), tol)
-        assert_near_equal(self.prob['time'], np.array([0, 8280.30660691]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([0.0, 0.0]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 923.38992577]), tol)
+        assert_near_equal(self.prob['time'], np.array([0, 8280.29080821]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.88465429, 4.90288541]),
+            np.array([3.88463177, 4.90286726]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.17541759, -16.15718646]),
+            np.array([3.88463177, 4.90286726]),
             tol,
         )
 
@@ -77,6 +76,7 @@ class CruiseODETestCase(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-8, rtol=1e-8)
 
 
+@use_tempdirs
 class ElectricCruiseODETestCase(unittest.TestCase):
     """This test uses a makeup electrical engine to test electrical Breguet cruise ODE."""
 
@@ -115,28 +115,29 @@ class ElectricCruiseODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Dynamic.Vehicle.CUMULATIVE_ELECTRIC_ENERGY_USED, [10, 10])
 
         set_params_for_unit_tests(self.prob)
 
         self.prob.run_model()
 
         tol = tol = 1e-6
-        assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([1.0, 1.0]), tol)
-        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.37436515]), tol)
-        assert_near_equal(self.prob['time'], np.array([0, 595.19714299]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.VELOCITY_RATE], np.array([0.0, 0.0]), tol)
+        assert_near_equal(self.prob[Dynamic.Mission.DISTANCE], np.array([0.0, 66.37459993]), tol)
+        assert_near_equal(self.prob['time'], np.array([0, 595.19924828]), tol)
         assert_near_equal(
             self.prob[Dynamic.Mission.SPECIFIC_ENERGY_RATE_EXCESS],
-            np.array([3.89228205, 4.91098053]),
+            np.array([3.89225953, 4.91096237]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Mission.ALTITUDE_RATE_MAX],
-            np.array([-17.16778983, -16.14909135]),
+            np.array([3.89225953, 4.91096237]),
             tol,
         )
         assert_near_equal(
             self.prob[Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL],
-            np.array([4.45946124, 4.15324496]),
+            np.array([4.45947061, 4.15325208]),
             tol,
         )
 

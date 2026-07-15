@@ -2,11 +2,13 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.phases.build_takeoff import Takeoff
 from aviary.variable_info.variables import Aircraft, Mission
 
 
+@use_tempdirs
 class TakeoffPhaseTest(unittest.TestCase):
     """Test takeoff phase builder."""
 
@@ -24,6 +26,7 @@ class TakeoffPhaseTest(unittest.TestCase):
             Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, 200000, units='lbf'
         )
         prob.setup(force_alloc_complex=True)
+        prob.set_val(Mission.Takeoff.LIFT_OVER_DRAG, 2)
         prob.run_model()
         partial_data = prob.check_partials(
             out_stream=None, method='cs', compact_print=False, excludes=['*atmosphere*']

@@ -28,22 +28,40 @@ import numpy as np
 import openmdao.api as om
 
 try:
-    import ambiance
-except ImportError:
-    raise ImportError(
-        "ambiance package not found. You can install it by running 'pip install ambiance'."
-    )
-
-try:
     import openaerostruct
 except ImportError:
     raise ImportError(
         "openaerostruct package not found. You can install it by running 'pip install openaerostruct'."
     )
 
-from ambiance import Atmosphere
 from openaerostruct.integration.aerostruct_groups import AerostructGeometry, AerostructPoint
 from openaerostruct.structures.wingbox_fuel_vol_delta import WingboxFuelVolDelta
+
+from aviary.subsystems.atmosphere.atmosphere import Atmosphere
+from aviary.variable_info.variables import Dynamic
+
+
+def _get_atmospheric_properties(altitude):
+    """
+    Compute speed of sound, density, and dynamic viscosity at the given
+    altitude(s) [m] using Aviary's own Atmosphere group, in place of the
+    external ambiance package.
+    """
+    atmos_prob = om.Problem()
+    atmos_prob.model.add_subsystem(
+        name='atmosphere',
+        subsys=Atmosphere(num_nodes=len(altitude)),
+        promotes=['*'],
+    )
+    atmos_prob.setup()
+    atmos_prob.set_val(Dynamic.Mission.ALTITUDE, altitude, units='m')
+    atmos_prob.run_model()
+
+    speed_of_sound = atmos_prob.get_val(Dynamic.Atmosphere.SPEED_OF_SOUND, units='m/s')
+    density = atmos_prob.get_val(Dynamic.Atmosphere.DENSITY, units='kg/m**3')
+    dynamic_viscosity = atmos_prob.get_val(Dynamic.Atmosphere.DYNAMIC_VISCOSITY, units='Pa*s')
+
+    return speed_of_sound, density, dynamic_viscosity
 
 
 def user_mesh():
@@ -305,11 +323,7 @@ class OAStructures(om.ExplicitComponent):
         altitude = np.array([inputs['cruise_altitude'][0], 0.0])
         cruise_range = inputs['cruise_range'][0]
 
-        atmos = Atmosphere(altitude)
-
-        speed_of_sound = atmos.speed_of_sound
-        rho = atmos.density
-        dynamic_viscosity = atmos.dynamic_viscosity
+        speed_of_sound, rho, dynamic_viscosity = _get_atmospheric_properties(altitude)
 
         velocity = np.array([mach[0] * speed_of_sound[0], mach[1] * speed_of_sound[1]])
 

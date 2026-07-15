@@ -39,13 +39,6 @@ class SkinFrictionDrag(om.ExplicitComponent):
         add_aviary_option(self, Aircraft.VerticalTail.NUM_TAILS)
         add_aviary_option(self, Aircraft.Wing.AIRFOIL_TECHNOLOGY)
 
-        # TODO: Bring this into the variable hierarchy.
-        self.options.declare(
-            'excrescences_drag',
-            default=0.06,
-            desc='Drag contribution of excrescences as a percentage.',
-        )
-
     def setup(self):
         nn = self.options['num_nodes']
 
@@ -85,6 +78,11 @@ class SkinFrictionDrag(om.ExplicitComponent):
             units=get_units(Aircraft.Wing.LAMINAR_FLOW_LOWER),
             desc='Vector of component lower-surface laminar-flow fractions.',
         )
+        add_aviary_input(
+            self,
+            Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
+            desc='Drag contribution of excrescences as a percentage.',
+        )
 
         # Aircraft design inputs
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
@@ -102,7 +100,10 @@ class SkinFrictionDrag(om.ExplicitComponent):
         nc = self.nc
         n = nn * nc
 
-        self.declare_partials(of='skin_friction_drag_coeff', wrt=[Aircraft.Wing.AREA])
+        self.declare_partials(
+            of='skin_friction_drag_coeff',
+            wrt=[Aircraft.Wing.AREA, Aircraft.Design.PERCENT_EXCRESCENCE_DRAG],
+        )
 
         rows = np.repeat(np.arange(nn), nc)
         cols = np.tile(np.arange(nc), nn)
@@ -177,14 +178,14 @@ class SkinFrictionDrag(om.ExplicitComponent):
 
         # Add drag for excrescences.
 
-        # TODO - Per component not completely implemented in aviary 1.0
+        # See issue #1184 - Per component not completely implemented in aviary 1.0
         # Var mission_skin_friction_drag_corrections_count is a vector over components and is added
         # to the drag.
         # This may be "dead weight" from FLOPS - D.J.
 
-        # An additional six percent of the skin friction drag is added to for excrescences
+        # An additional percentage of the skin friction drag is added to for excrescences
         # (miscellaneous).
-        CDF *= 1.0 + self.options['excrescences_drag']
+        CDF *= 1.0 + inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
 
         outputs['skin_friction_drag_coeff'] = CDF
 
@@ -255,10 +256,10 @@ class SkinFrictionDrag(om.ExplicitComponent):
         dform_dfine[idx_surf] = dFF1 * (2.0 - airfoil) + dFF2 * (airfoil - 1.0)
 
         den = 1.0 / mission_wing_area
-        CDF = np.einsum('j,ij,j->i', wetted_area, cf, form_factor) * den
+        CDF = CDF0 = np.einsum('j,ij,j->i', wetted_area, cf, form_factor) * den
 
-        excr = 1.0 + self.options['excrescences_drag']
-        CDF *= excr
+        excr = 1.0 + inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
+        CDF = CDF * excr
         DCDF_dwet = excr * np.einsum('ij,j->ij', cf, form_factor) * den
         DCDF_dcf = excr * wetted_area * form_factor * den
         DCDF_dform = excr * np.einsum('j,ij->ij', wetted_area, cf) * den
@@ -287,6 +288,10 @@ class SkinFrictionDrag(om.ExplicitComponent):
         partials['skin_friction_drag_coeff', 'laminar_fractions_lower'] = DCDF_dlamlow.ravel()
 
         partials['skin_friction_drag_coeff', Aircraft.Wing.AREA] = DCDF_dmwa.ravel()
+
+        partials['skin_friction_drag_coeff', Aircraft.Design.PERCENT_EXCRESCENCE_DRAG] = (
+            CDF0.ravel()
+        )
 
 
 def _calc_laminar_flow(lam):

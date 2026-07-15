@@ -796,6 +796,7 @@ COMPUTED_CORE_INPUTS = [
     # Mission.GROSS_MASS,
     Aircraft.Design.LIFT_COEFFICIENT,
     Aircraft.Design.MACH,
+    Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
 ]
 
 COMPUTED_CORE_INPUTS_BWB = [
@@ -827,6 +828,7 @@ COMPUTED_CORE_INPUTS_BWB = [
     # Mission.GROSS_MASS,
     Aircraft.Design.LIFT_COEFFICIENT,
     Aircraft.Design.MACH,
+    Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
 ]
 
 HORIZONTAL_TAIL_INPUTS = [

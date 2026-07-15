@@ -3,11 +3,13 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.two_dof.ode.accel_eom import AccelerationRates
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class AccelerationTestCase(unittest.TestCase):
     """
     These tests compare the output of the accel EOM to the output from GASP. There are some discrepancies.
@@ -52,28 +54,6 @@ class AccelerationTestCase(unittest.TestCase):
                 assert_near_equal(self.prob[var_name], expected, tol)
 
         partial_data = self.prob.check_partials(out_stream=None, method='cs')
-        assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
-
-
-class AccelerationTestCase2(unittest.TestCase):
-    """Test mass-weight conversion."""
-
-    def setUp(self):
-        import aviary.mission.two_dof.ode.accel_eom as accel
-
-        accel.GRAV_ENGLISH_LBM = 1.1
-
-    def tearDown(self):
-        import aviary.mission.two_dof.ode.accel_eom as accel
-
-        accel.GRAV_ENGLISH_LBM = 1.0
-
-    def test_case1(self):
-        prob = om.Problem()
-        prob.model.add_subsystem('group', AccelerationRates(num_nodes=2), promotes=['*'])
-        prob.setup(check=False, force_alloc_complex=True)
-
-        partial_data = prob.check_partials(out_stream=None, method='cs')
         assert_check_partials(partial_data, atol=1e-12, rtol=1e-12)
 
 

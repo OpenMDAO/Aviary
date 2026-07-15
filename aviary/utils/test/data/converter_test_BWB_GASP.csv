@@ -38,6 +38,7 @@ aircraft:design:lift_dependent_drag_coeff_factor,0.85,unitless
 aircraft:design:mach,0.8,unitless
 aircraft:design:max_structural_speed,402.5,mi/h
 aircraft:design:part25_structural_category,3.0,unitless
+aircraft:design:percent_excrescence_drag,0.075,unitless
 aircraft:design:range,3500.0,NM
 aircraft:design:static_margin,0.05,unitless
 aircraft:design:structural_mass_increment,0.0,lbm
@@ -45,12 +46,14 @@ aircraft:design:type,BWB,unitless
 aircraft:design:wing_loading,70.0,lbf/ft**2
 aircraft:electrical:system_mass_per_passenger,11.45,lbm
 aircraft:engine:additional_mass_fraction,0.04373,unitless
+aircraft:engine:gearbox:shaft_power_design,0.0,unitless
 aircraft:engine:global_throttle,True,unitless
 aircraft:engine:mass_scaler,1.0,unitless
 aircraft:engine:mass_specific,0.178884,lbm/lbf
 aircraft:engine:num_engines,2,unitless
 aircraft:engine:num_fuselage_engines,2,unitless
 aircraft:engine:pod_mass_scaler,1.0,unitless
+aircraft:engine:propeller:tip_speed_max,1000.0,ft/s
 aircraft:engine:pylon_factor,1.25,unitless
 aircraft:engine:reference_sls_thrust,28690.0,lbf
 aircraft:engine:scaled_sls_thrust,19580.2,lbf
@@ -170,8 +173,8 @@ mission:landing:maximum_flare_load_factor,1.15,unitless
 mission:landing:maximum_sink_rate,900.0,ft/min
 mission:landing:obstacle_height,50.0,ft
 mission:landing:touchdown_sink_rate,5.0,ft/s
-mission:reserve_fuel_additional,0,lbm
 mission:reserve_fuel_margin,10.0,unitless
+mission:reserve_fuel_mass_additional,0,lbm
 mission:takeoff:decision_speed_increment,10.0,kn
 mission:takeoff:rolling_friction_coefficient,0.02,unitless
 mission:takeoff:rotation_speed_increment,5.0,kn

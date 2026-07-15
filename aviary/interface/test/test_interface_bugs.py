@@ -10,13 +10,14 @@ from aviary.validation_cases.validation_data.test_models.GwFm_phase_info import 
 )
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.functions import get_aviary_resource_path
+from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft
 
 
 class WingWeightSubsys(om.ExplicitComponent):
     def setup(self):
-        self.add_input(Aircraft.Engine.MASS, 1.0, units='lbm')
-        self.add_output(Aircraft.Canard.ASPECT_RATIO, 1.0, units='unitless')
+        add_aviary_input(self, Aircraft.Engine.MASS, 1.0, units='lbm')
+        add_aviary_output(self, Aircraft.Canard.ASPECT_RATIO, 1.0, units='unitless')
         self.add_output('Tail', 1.0, units='unitless')
 
         self.declare_partials(Aircraft.Canard.ASPECT_RATIO, Aircraft.Engine.MASS, val=2.0)

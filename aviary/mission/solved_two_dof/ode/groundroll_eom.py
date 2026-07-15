@@ -14,60 +14,60 @@ class GroundrollEOM(om.ExplicitComponent):
 
     def setup(self):
         nn = self.options['num_nodes']
-        arange = np.arange(nn)
 
-        add_aviary_input(self, Dynamic.Vehicle.MASS, val=np.ones(nn), units='lbm')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='lbm')
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.Propulsion.THRUST_TOTAL,
+            shape=nn,
             units='lbf',
         )
         add_aviary_input(
             self,
             Dynamic.Vehicle.LIFT,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.LIFT,
+            shape=nn,
             units='lbf',
         )
         add_aviary_input(
             self,
             Dynamic.Vehicle.DRAG,
-            val=np.ones(nn),
-            desc=Dynamic.Vehicle.DRAG,
+            shape=nn,
             units='lbf',
         )
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
-            desc='true air speed',
+            shape=nn,
             units='ft/s',
         )
-        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, val=np.ones(nn), units='rad')
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=0)
-        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, val=np.zeros(nn), units='deg')
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, shape=nn, units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE)
+        add_aviary_input(self, Dynamic.Vehicle.ANGLE_OF_ATTACK, shape=nn, units='deg')
         add_aviary_input(self, Mission.Takeoff.ROLLING_FRICTION_COEFFICIENT, units='unitless')
 
         add_aviary_output(
             self,
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.ones(nn),
-            desc='TAS rate',
+            shape=nn,
             units='ft/s**2',
         )
         add_aviary_output(
             self,
             Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE,
-            val=np.ones(nn),
-            desc='flight path angle rate',
+            shape=nn,
             units='rad/s',
         )
-        add_aviary_output(self, Dynamic.Mission.ALTITUDE_RATE, val=np.ones(nn), units='ft/s')
-        add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, val=np.ones(nn), units='ft/s')
+        add_aviary_output(self, Dynamic.Mission.ALTITUDE_RATE, shape=nn, units='ft/s')
+        add_aviary_output(self, Dynamic.Mission.DISTANCE_RATE, shape=nn, units='ft/s')
         self.add_output('normal_force', val=np.ones(nn), desc='normal forces', units='lbf')
         self.add_output('fuselage_pitch', val=np.ones(nn), desc='fuselage pitch angle', units='deg')
+        self.add_output(
+            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
+        )
+
+    def setup_partials(self):
+        nn = self.options['num_nodes']
+        arange = np.arange(nn)
 
         self.declare_partials(Dynamic.Mission.FLIGHT_PATH_ANGLE_RATE, '*')
         self.declare_partials(
@@ -129,10 +129,6 @@ class GroundrollEOM(om.ExplicitComponent):
             val=1,
         )
         self.declare_partials('fuselage_pitch', Aircraft.Wing.INCIDENCE, val=-1)
-
-        self.add_output(
-            'angle_of_attack_rate', val=np.ones(nn), desc='angle of attack rate', units='deg/s'
-        )
 
         self.declare_partials('angle_of_attack_rate', ['*'])
 

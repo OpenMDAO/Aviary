@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.constants import RHO_SEA_LEVEL_METRIC
 from aviary.mission.solved_two_dof.ode.unsteady_solved_flight_conditions import (
@@ -13,6 +14,7 @@ from aviary.variable_info.enums import SpeedType
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class TestUnsteadyFlightConditions(unittest.TestCase):
     """Unit test for UnsteadySolvedFlightConditions."""
 

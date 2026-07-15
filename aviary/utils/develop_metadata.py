@@ -1,14 +1,14 @@
 def add_meta_data(
     key: str,
     meta_data: dict,
-    units='unitless',
+    units: str = 'unitless',
     default_value=0.0,
-    types=None,
+    types: type | None = None,
     multivalue: bool = False,
     option: bool = False,
-    desc: str = None,
-    historical_name=None,
-    _check_unique=True,
+    desc: str | None = None,
+    historical_name: dict | None = None,
+    _check_unique: bool = True,
 ):
     """
     Add new meta data associated with variables in the Aviary data hierarchy.

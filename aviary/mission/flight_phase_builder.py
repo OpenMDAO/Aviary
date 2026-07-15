@@ -44,6 +44,7 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'mass_ref': 1e4,
             'mass_bounds': (0.0, None),
+            'mass_direct_link': True,
         }
         self.add_state_options('mass', units='kg', defaults=defaults)
 
@@ -51,18 +52,26 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
         defaults = {
             'distance_ref': 1e6,
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='m', defaults=defaults)
 
-        self.add_control_options('altitude', units='ft')
+        defaults = {
+            'altitude_direct_link': False,
+        }
+        self.add_control_options('altitude', units='ft', defaults=defaults)
 
         # TODO: These defaults aren't great, but need to keep things the same for now.
         defaults = {
             'mach_ref': 0.5,
+            'mach_direct_link': False,
         }
         self.add_control_options('mach', units='unitless', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             name='throttle_enforcement',
@@ -217,7 +226,7 @@ class FlightPhaseBase(PhaseBuilder):
         # Add States #
         ##############
         if phase_type is EquationsOfMotion.ENERGY_STATE:
-            rate_source = Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL
+            rate_source = Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL
         else:
             rate_source = 'dmass_dr'
 
@@ -287,14 +296,19 @@ class FlightPhaseBase(PhaseBuilder):
                 )
 
             else:
+                opt = allocation == ThrottleAllocation.STATIC
+                kwargs = {}
+                if opt:
+                    kwargs['lower'] = 0.0
+                    kwargs['upper'] = 1.0
+
                 phase.add_parameter(
                     'throttle_allocations',
                     units='unitless',
                     val=val,
                     shape=(num_engine_type - 1,),
-                    opt=allocation == ThrottleAllocation.STATIC,
-                    lower=0.0,
-                    upper=1.0,
+                    opt=opt,
+                    **kwargs,
                 )
 
         ##################
@@ -307,7 +321,7 @@ class FlightPhaseBase(PhaseBuilder):
             units='kW',
         )
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             units='lbm/h',
         )
 
@@ -412,6 +426,16 @@ class FlightPhaseBase(PhaseBuilder):
             )
 
         return transcription
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
 
     def _extra_ode_init_kwargs(self):
         """Return extra kwargs required for initializing the ODE."""

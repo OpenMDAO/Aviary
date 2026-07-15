@@ -629,6 +629,21 @@ class PhaseBuilder(ABC):
         """
         return {}
 
+    def get_linked_variables(self):
+        """
+        Return a list of variable names that will be linked when this phase is connected to another
+        phase that shares the variable.
+
+        If you have an analytic phase, and you need to link an input parameter to the upstream
+        phase, prepend the name with _initial. For example, if you need to connect to mass, name
+        your parameter 'initial_mass'.
+
+        Returns
+        -------
+        linked_vars : list of variables to link between phases
+        """
+        return []
+
 
 _registered_phase_builder_types = []
 

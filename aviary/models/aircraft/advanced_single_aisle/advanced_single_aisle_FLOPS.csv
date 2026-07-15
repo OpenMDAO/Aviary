@@ -38,7 +38,7 @@ aircraft:design:zero_lift_drag_coeff_factor,0.96,unitless
 aircraft:electrical:mass_scaler,1.1976,unitless
 aircraft:engine:data_file,models/engines/turbofan_22k.csv,unitless
 aircraft:engine:additional_mass_fraction,0,unitless
-aircraft:engine:constant_fuel_consumption,0,lbm/h
+aircraft:engine:constant_fuel_mass_consumption,0,lbm/h
 aircraft:engine:flight_idle_max_fraction,1,unitless
 aircraft:engine:flight_idle_min_fraction,0.08,unitless
 aircraft:engine:flight_idle_thrust_fraction,0,unitless
@@ -64,14 +64,14 @@ aircraft:fins:area,0,ft**2
 aircraft:fins:mass_scaler,1,unitless
 aircraft:fins:num_fins,0,unitless
 aircraft:fins:taper_ratio,-10,unitless
-aircraft:fuel:auxiliary_fuel_capacity,0,lbm
+aircraft:fuel:auxiliary_fuel_mass_capacity,0,lbm
 aircraft:fuel:wing_fuel_fraction,0.7752,unitless
 aircraft:fuel:fuel_system_mass_scaler,0.93202,unitless
-aircraft:fuel:fuselage_fuel_capacity,0,lbm
+aircraft:fuel:fuselage_fuel_mass_capacity,0,lbm
 aircraft:fuel:num_tanks,7,unitless
 aircraft:fuel:total_capacity,33136.4,lbm
 aircraft:fuel:unusable_fuel_mass_scaler,1,unitless
-aircraft:fuel:wing_fuel_capacity,33136.4,lbm
+aircraft:fuel:wing_fuel_mass_capacity,33136.4,lbm
 aircraft:furnishings:mass_scaler,0.81859,unitless
 aircraft:fuselage:laminar_flow_lower,0,unitless
 aircraft:fuselage:laminar_flow_upper,0,unitless
@@ -185,7 +185,7 @@ mission:takeoff:angle_of_attack_runway,0,deg
 mission:takeoff:braking_friction_coefficient,0.35,unitless
 mission:takeoff:drag_coefficient_min,0.045,unitless
 mission:takeoff:final_altitude,35,ft
-mission:takeoff:fuel,577,lbm
+mission:takeoff:fuel_mass,577,lbm
 mission:takeoff:lift_coefficient_max,2,unitless
 mission:takeoff:obstacle_height,35,ft
 mission:takeoff:rolling_friction_coefficient,0.0175,unitless

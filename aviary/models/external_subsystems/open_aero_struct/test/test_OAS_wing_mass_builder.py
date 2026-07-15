@@ -1,4 +1,3 @@
-import importlib.util
 import unittest
 
 import aviary.api as av
@@ -9,7 +8,6 @@ OASWingWeightBuilder = av.TestSubsystemBuilder.import_builder(path_to_builder)
 
 
 @skipIfMissingDependencies(OASWingWeightBuilder)
-@unittest.skipUnless(importlib.util.find_spec('ambiance'), "'ambiance' is not installed")
 class TestStructures(av.TestSubsystemBuilder):
     """Test OAS structure builder."""
 

@@ -144,6 +144,7 @@ class ComputedAeroGroup(om.Group):
                 'laminar_fractions_upper',
                 'laminar_fractions_lower',
                 Aircraft.Wing.AREA,
+                Aircraft.Design.PERCENT_EXCRESCENCE_DRAG,
             ],
         )
 

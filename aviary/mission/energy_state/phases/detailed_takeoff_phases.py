@@ -235,7 +235,7 @@ class TakeoffBrakeReleaseToDecisionSpeed(PhaseBuilder):
             upper=1e9,
             ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -430,7 +430,7 @@ class TakeoffDecisionSpeedToRotate(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -755,7 +755,7 @@ class TakeoffRotateToLiftoff(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1026,7 +1026,7 @@ class TakeoffLiftoffToObstacle(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1330,7 +1330,7 @@ class TakeoffObstacleToMicP2(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1628,7 +1628,7 @@ class TakeoffMicP2ToEngineCutback(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -1905,7 +1905,7 @@ class TakeoffEngineCutback(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -2188,7 +2188,7 @@ class TakeoffEngineCutbackToMicP1(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -2482,7 +2482,7 @@ class TakeoffMicP1ToClimb(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 
@@ -2708,7 +2708,7 @@ class TakeoffBrakeToAbort(PhaseBuilder):
             ref=5e4,
             defect_ref=5e4,
             units='kg',
-            rate_source=Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            rate_source=Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
             targets=Dynamic.Vehicle.MASS,
         )
 

@@ -295,7 +295,7 @@ class AviaryGroup(om.Group):
         ## LOAD PHASE_INFO ###
         # if phase info is a file, load it
         if isinstance(phase_info, str) or isinstance(phase_info, Path):
-            phase_info_path = get_path(phase_info)
+            phase_info_path = get_path(phase_info, verbosity)
             spec = spec_from_file_location('phase_info_file', str(phase_info_path))
             phase_info_file = module_from_spec(spec)
             sys.modules['phase_info_file'] = phase_info_file
@@ -488,7 +488,7 @@ class AviaryGroup(om.Group):
             geom_code_origin = (FLOPS, GASP)
 
         # which geometry method gets prioritized in case of conflicting outputs
-        code_origin_to_prioritize = self.configurator.get_code_origin(self)
+        code_origin_to_prioritize = self.configurator.get_code_origin()
 
         geom = CoreGeometryBuilder(
             'geometry',
@@ -631,7 +631,7 @@ class AviaryGroup(om.Group):
                 ('gross_mass', Mission.GROSS_MASS),
                 ('zero_fuel_mass', Mission.ZERO_FUEL_MASS),
             ],
-            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL)],
+            promotes_outputs=[('total_fuel_mass', Mission.TOTAL_FUEL_MASS)],
         )
 
     def _add_premission_external_subsystem_masses(self):
@@ -900,7 +900,7 @@ class AviaryGroup(om.Group):
                 fuel_burned={'units': 'lbm'},
             ),
             promotes_inputs=[('initial_mass', Mission.GROSS_MASS)],
-            promotes_outputs=[('fuel_burned', Mission.FUEL)],
+            promotes_outputs=[('fuel_burned', Mission.FUEL_MASS)],
         )
 
         self.connect(
@@ -921,7 +921,7 @@ class AviaryGroup(om.Group):
             post_mission.add_subsystem(
                 'reserve_fuel_burned',
                 ecomp,
-                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL)],
+                promotes=[('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS)],
             )
 
             # timeseries has to be used because Breguet cruise phases don't have
@@ -944,16 +944,16 @@ class AviaryGroup(om.Group):
         post_mission.add_subsystem(
             'total_fuel_mass_con',
             om.ExecComp(
-                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel',
+                'total_fuel_mass_constraint = total_fuel_mass - mission_fuel_burned - reserve_fuel_mass',
                 total_fuel_mass_constraint={'units': 'lbm'},
                 total_fuel_mass={'units': 'lbm'},
                 mission_fuel_burned={'units': 'lbm'},
-                reserve_fuel={'units': 'lbm'},
+                reserve_fuel_mass={'units': 'lbm'},
             ),
             promotes_inputs=[
-                ('total_fuel_mass', Mission.TOTAL_FUEL),
-                ('mission_fuel_burned', Mission.FUEL),
-                ('reserve_fuel', Mission.TOTAL_RESERVE_FUEL),
+                ('total_fuel_mass', Mission.TOTAL_FUEL_MASS),
+                ('mission_fuel_burned', Mission.FUEL_MASS),
+                ('reserve_fuel_mass', Mission.TOTAL_RESERVE_FUEL_MASS),
             ],
             promotes_outputs=[('total_fuel_mass_constraint', Mission.Constraints.MASS_RESIDUAL)],
         )
@@ -1054,9 +1054,11 @@ class AviaryGroup(om.Group):
             promotes_inputs=[
                 ('total_fuel_capacity', Aircraft.Fuel.TOTAL_CAPACITY),
                 ('unusable_fuel', Aircraft.Fuel.UNUSABLE_FUEL_MASS),
-                ('overall_fuel', Mission.TOTAL_FUEL),
+                ('overall_fuel', Mission.TOTAL_FUEL_MASS),
             ],
-            promotes_outputs=[('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_CAPACITY)],
+            promotes_outputs=[
+                ('excess_fuel_capacity', Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY)
+            ],
         )
 
         # determine if the user wants the excess_fuel_capacity constraint active and if so add it to the problem
@@ -1076,15 +1078,15 @@ class AviaryGroup(om.Group):
 
         if not ignore_capacity_constraint:
             self.add_constraint(
-                Mission.Constraints.EXCESS_FUEL_CAPACITY, lower=0, ref=1.0e5, units='lbm'
+                Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY, lower=0, ref=1.0e5, units='lbm'
             )
         else:
             if verbosity >= Verbosity.BRIEF:
                 warnings.warn(
                     'Aircraft.Fuel.IGNORE_FUEL_CAPACITY_CONSTRAINT = True, therefore '
-                    'EXCESS_FUEL_CAPACITY constraint was not added to the Aviary problem. The '
+                    'EXCESS_FUEL_MASS_CAPACITY constraint was not added to the Aviary problem. The '
                     'aircraft may not have enough space for fuel, so check the value of '
-                    'Mission.Constraints.EXCESS_FUEL_CAPACITY for details.'
+                    'Mission.Constraints.EXCESS_FUEL_MASS_CAPACITY for details.'
                 )
 
         post_mission.add_subsystem(
@@ -1096,19 +1098,18 @@ class AviaryGroup(om.Group):
                 fuel_burned_taxi_in={'units': 'lbm'},
             ),
             promotes_inputs=[
-                ('mission_fuel_burned', Mission.FUEL),
-                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_TAXI_IN),
+                ('mission_fuel_burned', Mission.FUEL_MASS),
+                ('fuel_burned_taxi_in', Mission.Taxi.FUEL_MASS_TAXI_IN),
             ],
-            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL)],
+            promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL_MASS)],
         )
 
     def link_phases(self, verbosity=None, comm=None):
         """
         Link phases together after they've been added.
 
-        Based on which phases the user has selected, we might need special logic to do the Dymos
-        linkages correctly. Some of those connections for the simple GASP and FLOPS mission are
-        shown here.
+        If a variable is common to two phases, it can be linked via a direct connection or a
+        constraint.
         """
         # `self.verbosity` is "true" verbosity for entire run. `verbosity` is verbosity override for
         # just this method
@@ -1145,66 +1146,206 @@ class AviaryGroup(om.Group):
         if len(phases) <= 1:
             return
 
-        # In summary, the following code loops over all phases in self.mission_info, gets the linked
-        # variables from each external subsystem in each phase, and stores the lists of linked
-        # variables in lists_to_link. It then gets a list of unique variable names from
-        # lists_to_link and loops over them, creating a list of phase names for each variable and
-        # linking the phases using self.traj.link_phases().
-
-        lists_to_link = []
-        for idx, phase_name in enumerate(self.mission_info):
-            phase_info = self.mission_info[phase_name]
-            all_subsystem_options = phase_info.get('subsystem_options', {})
-
-            lists_to_link.append([])
-            for subsys in self.external_subsystems:
-                lists_to_link[idx].extend(
-                    subsys.get_linked_variables(
-                        aviary_inputs=self.aviary_inputs,
-                        user_options=self.mission_info[phase_name]['user_options'],
-                        subsystem_options=all_subsystem_options.get(subsys.name, {}),
-                    )
-                )
-
-        # get unique variable names from lists_to_link
-        unique_vars = list(set([var for sublist in lists_to_link for var in sublist]))
-
         # Phase linking.
         # If we are under mpi, and traj.phases is running in parallel, then let the optimizer handle
         # the linkage constraints.  Note that we can technically parallelize connected phases, but
         # it requires a solver that we would like to avoid.
-        true_unless_mpi = True
+        connect_directly = True
         if comm.size > 1 and self.traj.options['parallel_phases']:
-            true_unless_mpi = False
+            connect_directly = False
 
-        # loop over unique variable names
-        for var in unique_vars:
-            phases_to_link = []
-            for idx, phase_name in enumerate(self.mission_info):
-                if var in lists_to_link[idx]:
-                    phases_to_link.append(phase_name)
+        # Assemble all linkable variables in the phases.
+        link_vars_dict = {}
+        for builder in self.phase_objects:
+            phase_name = builder.name
+            phase_info = self.mission_info[phase_name]
+            all_subsystem_options = phase_info.get('subsystem_options', {})
 
-            if len(phases_to_link) > 1:  # TODO: hack
-                # go phase by phase and either directly link if two standard phases, or use linkage
-                # constraint if either are analytic
-                # TODO need more unified way to handle this instead of splitting between AviaryGroup
-                #      and configurators
-                for ii in range(len(phases) - 1):
-                    phase1, phase2 = phases[ii : ii + 2]
-                    opt1 = self.mission_info[phase1]['user_options']
-                    opt2 = self.mission_info[phase2]['user_options']
-                    integrates_mass1 = opt1['phase_type'] is PhaseType.BREGUET_RANGE
-                    integrates_mass2 = opt2['phase_type'] is PhaseType.BREGUET_RANGE
+            link_vars = set()
+            for subsys in self.subsystems:
+                sub_vars = subsys.get_linked_variables(
+                    aviary_inputs=self.aviary_inputs,
+                    user_options=self.mission_info[phase_name]['user_options'],
+                    subsystem_options=all_subsystem_options.get(subsys.name, {}),
+                )
+                link_vars = link_vars.union(sub_vars)
 
-                    if integrates_mass1 or integrates_mass2:
-                        # TODO need ref value for these linkage constraints
-                        self.traj.add_linkage_constraint(phase1, phase2, var, var, connected=False)
-                    else:
-                        self.traj.link_phases(phases=[phase1, phase2], vars=[var], connected=True)
+            phase_vars = builder.get_linked_variables()
+            link_vars = link_vars.union(phase_vars)
 
-        self.configurator.link_phases(self, phases, connect_directly=true_unless_mpi)
+            link_vars_dict[phase_name] = link_vars
+
+        builder2 = self.phase_objects[0]
+        for builder in self.phase_objects[1:]:
+            # Upstream phase is previous phase.
+            # TODO: Linking a different phase should be possible.
+            builder1 = builder2
+            builder2 = builder
+
+            phase1 = builder1.name
+            phase_info1 = self.mission_info[phase1]['user_options']
+            vars1 = link_vars_dict[phase1]
+
+            phase2 = builder2.name
+            phase_info2 = self.mission_info[phase2]['user_options']
+            vars2 = link_vars_dict[phase2]
+
+            if self.reserve_phases and phase2 == self.reserve_phases[0]:
+                # Don't link to first reserve phase.
+                continue
+
+            # Find common vars across 1-2 boundary
+            common = vars1.intersection(vars2)
+            upstream_analytic = [item for item in vars1 if item.startswith('initial_')]
+            downstream_analytic = [item for item in vars2 if item.startswith('initial_')]
+
+            # Sort because of MPI
+            for var in sorted(common):
+                # Controls: True or False, everything else: None
+                opt1 = phase_info1.get(f'{var}_optimize', None)
+                opt2 = phase_info2.get(f'{var}_optimize', None)
+
+                if opt1 is False and opt2 is False:
+                    # If both sides are static controls, don't link.
+                    continue
+
+                pin1 = phase_info1.get(f'{var}_final', (None, None))[0]
+                pin2 = phase_info2.get(f'{var}_initial', (None, None))[0]
+                if pin1 and pin2:
+                    # When both ends are pinned, no need to add a duplicate constraint.
+                    continue
+
+                # MPI takes precedence, since we can't connect directly in the parallel group.
+                # Otherwise, this key allows the user to control whether the phase is connected
+                # or constrained on each input.
+                if var == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{var}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
+
+                if opt2 is False:
+                    # Controls cannot connect directly.
+                    connect = False
+
+                elif pin2:
+                    # Pinned front can't take input.
+                    connect = False
+
+                kwargs = {}
+                if not connect:
+                    kwargs = self._find_scaling(var, phase1, phase_info1, phase2, phase_info2, opt2)
+
+                self.traj.link_phases(
+                    phases=[phase1, phase2],
+                    connected=connect,
+                    vars=[var],
+                    **kwargs,
+                )
+
+            # Target analytic phases may take a single start input that needs to connect
+            # Sort because of MPI
+            for var in sorted(downstream_analytic):
+                source = var.removeprefix('initial_')
+                if source not in vars1:
+                    continue
+
+                if source == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{source}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
+
+                kwargs = {}
+                if not connect:
+                    kwargs = self._find_scaling(
+                        source, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
+
+                self.traj.add_linkage_constraint(
+                    phase1, phase2, source, var, connected=connect, **kwargs
+                )
+
+            # Source analytic phases should still connect to the timeseries.
+            # Sort because of MPI
+            for var in sorted(upstream_analytic):
+                target = var.removeprefix('initial_')
+                if target not in vars2:
+                    continue
+
+                if var in downstream_analytic or target in downstream_analytic:
+                    # Both phases are analytic, and we already linked this.
+                    continue
+
+                if target == 'time':
+                    key = f'time_initial_direct_link'
+                else:
+                    key = f'{target}_direct_link'
+                connect = connect_directly and phase_info2.get(key, connect_directly)
+
+                kwargs = {}
+                if not connect:
+                    kwargs = self._find_scaling(
+                        target, phase1, phase_info1, phase2, phase_info2, opt2
+                    )
+
+                self.traj.link_phases(
+                    phases=[phase1, phase2],
+                    connected=connect,
+                    vars=[target],
+                    **kwargs,
+                )
+
+        self.configurator.configure_trajectory(self, phases)
 
         self.configurator.check_trajectory(self)
+
+    def _find_scaling(self, var, phase1, phase_info1, phase2, phase_info2, opt2):
+        """
+        Returns a dictionary of scaling keyword arguments for a dymos linkage constraint.
+        """
+        phase = self.traj._phases[phase1]
+        integrated_var = phase.time_options['name']
+        analytic = len(phase.state_options) < 1
+
+        if not analytic:
+            if var == 'time':
+                if integrated_var != 'time':
+                    # Time is not being integrated.
+                    return {}
+            elif var == integrated_var:
+                # This is the integration variable, and its scaling is currently stored as time.
+                var = 'time'
+
+        if var == 'time':
+            # Time behaves a bit differently than the others.
+            ref0 = None
+            ref, units = phase_info2.get(f'{var}_initial_ref', (None, None))
+            if ref is None:
+                ref, units = phase_info1.get(f'{var}_duration_ref', (None, None))
+        else:
+            # First, pull from the scaling from upstream phase.
+            ref, units = phase_info1.get(f'{var}_ref', (None, None))
+            ref0 = phase_info1.get(f'{var}_ref0', (None, None))[0]
+            if ref is None:
+                ref, units = phase_info2.get(f'{var}_ref', (None, None))
+                ref0 = phase_info2.get(f'{var}_ref0', (None, None))[0]
+
+        kwargs = {}
+        if ref is not None:
+            kwargs['ref'] = ref
+        if ref0 is not None:
+            kwargs['ref0'] = ref0
+        if units is not None:
+            kwargs['units'] = units
+
+        # Make sure states options are correct for this.
+        if opt2 is None and var != 'time':
+            phase = self.traj._phases[phase2]
+            if var in phase.state_options:
+                phase.set_state_options(var, input_initial=False)
+
+        return kwargs
 
     def _add_bus_variables_and_connect(self):
         all_subsystems = self.subsystems
@@ -1590,7 +1731,7 @@ class AviaryGroup(om.Group):
                     phase.set_control_val(key, vals=val, units=units)
 
     def add_fuel_reserve_component(
-        self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL
+        self, post_mission=True, reserves_name=Mission.TOTAL_RESERVE_FUEL_MASS
     ):
         if post_mission:
             reserve_calc_location = self.post_mission
@@ -1601,7 +1742,7 @@ class AviaryGroup(om.Group):
             Mission.RESERVE_FUEL_MARGIN, units='unitless'
         )
         if reserve_fuel_margin != 0:
-            # Originally tried to reference Mission.FUEL for fuel burn but in some tests this led to errors
+            # Originally tried to reference Mission.FUEL_MASS for fuel burn but in some tests this led to errors
             reserve_fuel_frac = om.ExecComp(
                 'reserve_fuel_margin_mass = reserve_fuel_margin / 100 * (initial_mass - final_mass)',
                 reserve_fuel_margin_mass={'units': 'lbm'},
@@ -1629,26 +1770,26 @@ class AviaryGroup(om.Group):
                 src_indices=[-1],
             )
 
-        reserve_fuel_additional = self.aviary_inputs.get_val(
-            Mission.RESERVE_FUEL_ADDITIONAL, units='lbm'
+        reserve_fuel_mass_additional = self.aviary_inputs.get_val(
+            Mission.RESERVE_FUEL_MASS_ADDITIONAL, units='lbm'
         )
-        reserve_fuel = om.ExecComp(
-            'reserve_fuel = reserve_fuel_margin_mass + reserve_fuel_additional + reserve_fuel_burned',
-            reserve_fuel={'units': 'lbm', 'shape': 1},
+        reserve_fuel_mass = om.ExecComp(
+            'reserve_fuel_mass = reserve_fuel_margin_mass + reserve_fuel_mass_additional + reserve_fuel_burned',
+            reserve_fuel_mass={'units': 'lbm', 'shape': 1},
             reserve_fuel_margin_mass={'units': 'lbm', 'val': 0},
-            reserve_fuel_additional={'units': 'lbm', 'val': reserve_fuel_additional},
+            reserve_fuel_mass_additional={'units': 'lbm', 'val': reserve_fuel_mass_additional},
             reserve_fuel_burned={'units': 'lbm', 'val': 0},
         )
 
         reserve_calc_location.add_subsystem(
-            'reserve_fuel',
-            reserve_fuel,
+            'reserve_fuel_mass',
+            reserve_fuel_mass,
             promotes_inputs=[
                 'reserve_fuel_margin_mass',
-                ('reserve_fuel_additional', Mission.RESERVE_FUEL_ADDITIONAL),
-                ('reserve_fuel_burned', Mission.RESERVE_FUEL),
+                ('reserve_fuel_mass_additional', Mission.RESERVE_FUEL_MASS_ADDITIONAL),
+                ('reserve_fuel_burned', Mission.RESERVE_FUEL_MASS),
             ],
-            promotes_outputs=[('reserve_fuel', reserves_name)],
+            promotes_outputs=[('reserve_fuel_mass', reserves_name)],
         )
 
     def _validate_phase_info_modifier(self, phase_info_modifier):

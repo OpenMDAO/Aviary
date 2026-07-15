@@ -397,6 +397,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.CrewPayload.PASSENGER_SERVICE_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Fuel.UNUSABLE_FUEL_MASS, units='lbm')
         add_aviary_input(self, Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS, units='lbm')
+        add_aviary_input(self, Mission.OPERATING_ITEMS_MASS_ADDITIONAL, units='lbm')
 
         add_aviary_output(self, Mission.OPERATING_ITEMS_MASS, units='lbm')
 
@@ -410,6 +411,7 @@ class OperatingItemsMass(om.ExplicitComponent):
         oil_mass = inputs[Aircraft.Propulsion.TOTAL_ENGINE_OIL_MASS]
         pass_service_mass = inputs[Aircraft.CrewPayload.PASSENGER_SERVICE_MASS]
         unusable_fuel_mass = inputs[Aircraft.Fuel.UNUSABLE_FUEL_MASS]
+        additional_operating_mass = inputs[Mission.OPERATING_ITEMS_MASS_ADDITIONAL]
 
         outputs[Mission.OPERATING_ITEMS_MASS] = (
             cabin_crew_mass
@@ -418,6 +420,7 @@ class OperatingItemsMass(om.ExplicitComponent):
             + oil_mass
             + pass_service_mass
             + cargo_container_mass
+            + additional_operating_mass
         )
 
 

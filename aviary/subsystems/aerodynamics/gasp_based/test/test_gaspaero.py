@@ -9,7 +9,13 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
+    BWBSIWB,
+    SIWB,
     AeroGeom,
+    BWBAeroSetup,
+    BWBBodyLiftCurveSlope,
+    BWBLiftCoeff,
+    BWBLiftCoeffClean,
     CruiseAero,
     DragCoef,
     DragCoefClean,
@@ -17,21 +23,14 @@ from aviary.subsystems.aerodynamics.gasp_based.gaspaero import (
     LiftCoeff,
     LiftCoeffClean,
     LowSpeedAero,
-    SIWB,
     UFac,
-    Xlifts,
     WingTailRatios,
-    BWBBodyLiftCurveSlope,
-    BWBLiftCoeff,
-    BWBLiftCoeffClean,
-    BWBAeroSetup,
-    BWBSIWB,
+    Xlifts,
 )
-from aviary.subsystems.aerodynamics.gasp_based.gasp_aero_coeffs import FormFactor, BWBFormFactor
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.functions import setup_model_options
 from aviary.variable_info.options import get_option_defaults
-from aviary.variable_info.variables import Aircraft, Dynamic, Mission
+from aviary.variable_info.variables import Aircraft, Dynamic
 
 here = os.path.abspath(os.path.dirname(__file__))
 cruise_data = pd.read_csv(os.path.join(here, 'data', 'aero_data_cruise.csv'))
@@ -378,7 +377,7 @@ class XLiftsTest(unittest.TestCase):
 
 
 class LiftCoeffTest(unittest.TestCase):
-    """Test partials of LiftCoeff"""
+    """Test partials of LiftCoeff."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -406,7 +405,7 @@ class LiftCoeffTest(unittest.TestCase):
 
 
 class LiftCoeffCleanTest(unittest.TestCase):
-    """Test partials of LiftCoeffClean"""
+    """Test partials of LiftCoeffClean."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -470,12 +469,10 @@ class LiftCoeffCleanTest(unittest.TestCase):
 
 
 class UFacTest(unittest.TestCase):
-    """Test UFac computation"""
+    """Test UFac computation."""
 
     def test_case1(self):
-        """
-        aircraft of tube and wing type (not used in AeroSetup)
-        """
+        """Aircraft of tube and wing type (not used in AeroSetup)."""
         prob = om.Problem()
 
         prob.model.add_subsystem(
@@ -501,9 +498,7 @@ class UFacTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
     def test_case2(self):
-        """
-        BWB case with smooth derivative (used in BWBAeroSetup)
-        """
+        """BWB case with smooth derivative (used in BWBAeroSetup)."""
         options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
 
@@ -533,9 +528,7 @@ class UFacTest(unittest.TestCase):
         assert_check_partials(partial_data, atol=1e-11, rtol=1e-11)
 
     def test_case3(self):
-        """
-        BWB case without smoothness, hence exactly the same as GASP (used in BWBAeroSetup)
-        """
+        """BWB case without smoothness, hence exactly the same as GASP (used in BWBAeroSetup)."""
         options = get_option_defaults()
         options.set_val(Aircraft.Design.TYPE, val='BWB', units='unitless')
 
@@ -566,7 +559,7 @@ class UFacTest(unittest.TestCase):
 
 
 class SIWBTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
+    """Test fuselage form factor computation and SIWB computation."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -591,7 +584,7 @@ class SIWBTest(unittest.TestCase):
 
 
 class BWBSIWBTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
+    """Test fuselage form factor computation and SIWB computation."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -617,7 +610,7 @@ class BWBSIWBTest(unittest.TestCase):
 
 class WingTailRatiosTest(unittest.TestCase):
     def test_case1(self):
-        """BWB data"""
+        """BWB data."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'wing_tail_ratio',
@@ -929,7 +922,7 @@ class BWBAeroSetupTest(unittest.TestCase):
 
 
 class GroundEffectTest(unittest.TestCase):
-    """Test fuselage form factor computation and SIWB computation"""
+    """Test fuselage form factor computation and SIWB computation."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -969,7 +962,7 @@ class GroundEffectTest(unittest.TestCase):
 
 
 class BWBBodyLiftCurveSlopeTest(unittest.TestCase):
-    """Body lift curve slope test for BWB"""
+    """Body lift curve slope test for BWB."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -995,7 +988,7 @@ class BWBBodyLiftCurveSlopeTest(unittest.TestCase):
 
 
 class BWBLiftCoeffTest(unittest.TestCase):
-    """Body lift curve slope test for BWB"""
+    """Body lift curve slope test for BWB."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -1071,7 +1064,7 @@ class BWBLiftCoeffTest(unittest.TestCase):
 
 
 class BWBLiftCoeffCleanTest(unittest.TestCase):
-    """Body lift curve slope test for BWB"""
+    """Body lift curve slope test for BWB."""
 
     def test_case1(self):
         prob = om.Problem()
@@ -1145,7 +1138,7 @@ class BWBLiftCoeffCleanTest(unittest.TestCase):
 
 class DragCoefTest(unittest.TestCase):
     def test_case1(self):
-        """BWB data"""
+        """BWB data."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'drag_coeff',
@@ -1190,7 +1183,7 @@ class DragCoefTest(unittest.TestCase):
         assert_near_equal(prob['dCD_gear_full'], [0.01619421, 0.01619421], tol)
 
     def test_case2(self):
-        """BWB data"""
+        """BWB data."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'drag_coeff',
@@ -1237,7 +1230,7 @@ class DragCoefTest(unittest.TestCase):
 
 class DragCoefCleanTest(unittest.TestCase):
     def test_case1(self):
-        """BWB data"""
+        """BWB data."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'drag_coeff_clean',
@@ -1284,7 +1277,7 @@ class DragCoefCleanTest(unittest.TestCase):
         assert_near_equal(prob[Dynamic.Vehicle.DRAG_COEFFICIENT], [0.02251097, 0.02251097], tol)
 
     def test_case2(self):
-        """BWB data"""
+        """BWB data."""
         prob = om.Problem()
         prob.model.add_subsystem(
             'drag_coeff_clean',
@@ -1449,7 +1442,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
         GASP resport by ctaer.f
         ALPHA = 3.611767
         CL = CLREQ = 0.41069
-        CD = 0.014738
+        CD = 0.014738.
         """
         prob = self.prob
         options = self.options
@@ -1490,7 +1483,7 @@ class BWBCruiseAeroTest(unittest.TestCase):
         assert_near_equal(prob[Dynamic.Vehicle.DRAG], [43.92679357, 43.92679357], tol)
 
     def test_case2(self):
-        """output_alpha = True"""
+        """output_alpha = True."""
         prob = self.prob
         options = self.options
 
@@ -1629,7 +1622,7 @@ class BWBLowSpeedAeroTest1(unittest.TestCase):
         prob.model.set_input_defaults(Dynamic.Atmosphere.DYNAMIC_PRESSURE, [1.0, 1.0], units='psf')
 
     def test_case1(self):
-        """BWB data with lift_required = False"""
+        """BWB data with lift_required = False."""
         prob = self.prob
         options = self.options
         options.set_val('output_alpha', False)
@@ -1793,9 +1786,8 @@ class BWBLowSpeedAeroTest2(unittest.TestCase):
           DELCDF = DCDTO = 0.0062256
           CL = 0.07507, 0.23964, 0.40422
           CD = 0.01853, 0.01866, 0.02070
-          CL/CD = 4.05136, 12.84433, 19.53199
+          CL/CD = 4.05136, 12.84433, 19.53199.
         """
-
         prob = self.prob
         tol = 1e-6
         aoas = [-2.0, 0.0, 2.0]
@@ -1948,9 +1940,8 @@ class BWBLowSpeedAeroTest3(unittest.TestCase):
           DELCDF = DCDLD = 0.0105864
           CL = 0.18551, 0.35009, 0.51467
           CD = 0.02299, 0.02292, 0.02482
-          CL/CD = 8.06918, 15.27225, 20.74018
+          CL/CD = 8.06918, 15.27225, 20.74018.
         """
-
         prob = self.prob
         tol = 1e-6
         aoas = [-2.0, 0.0, 2.0]

@@ -1,5 +1,6 @@
 import numpy as np
 import openmdao.api as om
+from aviary.variable_info.functions import add_aviary_input
 
 from aviary.constants import GRAV_METRIC_FLOPS as gravity
 from aviary.variable_info.variables import Dynamic
@@ -17,29 +18,28 @@ class RequiredThrust(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        self.add_input(Dynamic.Vehicle.DRAG, val=np.zeros(nn), units='N', desc='drag force')
-        self.add_input(
+        add_aviary_input(self, Dynamic.Vehicle.DRAG, shape=nn, units='N', desc='drag force')
+        add_aviary_input(
+            self,
             Dynamic.Mission.ALTITUDE_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='m/s',
-            desc='rate of change of altitude',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY,
-            val=np.zeros(nn),
+            shape=nn,
             units='m/s',
             desc=Dynamic.Mission.VELOCITY,
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.VELOCITY_RATE,
-            val=np.zeros(nn),
+            shape=nn,
             units='m/s**2',
-            desc='rate of change of velocity',
         )
-        self.add_input(
-            Dynamic.Vehicle.MASS, val=np.zeros(nn), units='kg', desc='mass of the aircraft'
-        )
-        self.add_output('thrust_required', val=np.zeros(nn), units='N', desc='required thrust')
+        add_aviary_input(self, Dynamic.Vehicle.MASS, shape=nn, units='kg')
+        self.add_output('thrust_required', shape=nn, units='N')
 
         ar = np.arange(nn)
         self.declare_partials('thrust_required', Dynamic.Vehicle.DRAG, rows=ar, cols=ar)

@@ -32,13 +32,13 @@ class BatteryPreMission(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.Battery.VOLTAGE, meta_data=ExtendedMetaData)
         add_aviary_input(self, Aircraft.Battery.Cell.VOLUME, meta_data=ExtendedMetaData)
 
-        add_aviary_output(self, Aircraft.Battery.N_SERIES, val=0.0, meta_data=ExtendedMetaData)
-        add_aviary_output(self, Aircraft.Battery.N_PARALLEL, val=0.0, meta_data=ExtendedMetaData)
+        add_aviary_output(self, Aircraft.Battery.N_SERIES, meta_data=ExtendedMetaData)
+        add_aviary_output(self, Aircraft.Battery.N_PARALLEL, meta_data=ExtendedMetaData)
 
-        add_aviary_output(self, Aircraft.Battery.MASS, val=0.0, meta_data=ExtendedMetaData)
-        add_aviary_output(self, Aircraft.Battery.HEAT_CAPACITY, val=0.0, meta_data=ExtendedMetaData)
+        add_aviary_output(self, Aircraft.Battery.MASS, meta_data=ExtendedMetaData)
+        add_aviary_output(self, Aircraft.Battery.HEAT_CAPACITY, meta_data=ExtendedMetaData)
         # unconnected output used for test checking
-        add_aviary_output(self, Aircraft.Battery.VOLUME, val=0.0, meta_data=ExtendedMetaData)
+        add_aviary_output(self, Aircraft.Battery.VOLUME, meta_data=ExtendedMetaData)
 
         self.declare_partials(
             Aircraft.Battery.N_SERIES, [Aircraft.Battery.VOLTAGE, Aircraft.Battery.Cell.VOLTAGE_LOW]

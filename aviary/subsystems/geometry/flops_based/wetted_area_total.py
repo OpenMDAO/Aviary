@@ -3,7 +3,10 @@ import openmdao.api as om
 from numpy import pi
 
 from aviary.subsystems.geometry.flops_based.canard import CanardWettedArea
-from aviary.subsystems.geometry.flops_based.nacelle import NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.nacelle import (
+    NacelleWettedArea,
+    NacelleTotalWettedArea,
+)
 from aviary.subsystems.geometry.flops_based.utils import (
     Names,
     calc_fuselage_adjustment,
@@ -73,6 +76,13 @@ class WettedAreaGroup(om.Group):
             'nacelles_swet',
             NacelleWettedArea(),
             promotes_inputs=['aircraft*'],
+            promotes_outputs=['*'],
+        )
+
+        self.add_subsystem(
+            'nacelles_total_swet',
+            NacelleTotalWettedArea(),
+            promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
 

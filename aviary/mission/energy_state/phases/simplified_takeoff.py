@@ -21,11 +21,10 @@ class StallSpeed(om.ExplicitComponent):
             desc='mass of the aircraft',
         )
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.DENSITY,
-            val=1.225,
             units='kg/m**3',
-            desc='atmospheric density',
         )
 
         self.add_input('planform_area', val=7, units='m**2', desc='area of the wings')
@@ -103,25 +102,24 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             desc='mass of the aircraft',
         )
 
-        add_aviary_input(self, Mission.Takeoff.FUEL, val=10.0e3)
+        add_aviary_input(self, Mission.Takeoff.FUEL_MASS)
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Atmosphere.DENSITY,
-            val=1.225,
             units='kg/m**3',
-            desc='atmospheric density',
         )
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=7)
-        add_aviary_input(self, Mission.Takeoff.LIFT_COEFFICIENT_MAX, val=2)
-        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST, val=100_000)
-        add_aviary_input(self, Mission.Takeoff.LIFT_OVER_DRAG, val=2)
-        add_aviary_input(self, Mission.Takeoff.CLIMBOUT_THRUST_FRACTION, val=1)
+        add_aviary_input(self, Aircraft.Wing.AREA)
+        add_aviary_input(self, Mission.Takeoff.LIFT_COEFFICIENT_MAX)
+        add_aviary_input(self, Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST)
+        add_aviary_input(self, Mission.Takeoff.LIFT_OVER_DRAG)
+        add_aviary_input(self, Mission.Takeoff.CLIMBOUT_THRUST_FRACTION)
 
-        add_aviary_output(self, Mission.Takeoff.GROUND_DISTANCE, val=0)
-        add_aviary_output(self, Mission.Takeoff.FINAL_VELOCITY, val=0, units='m/s')
-        add_aviary_output(self, Mission.Takeoff.FINAL_MASS, val=0)
-        add_aviary_output(self, Mission.Takeoff.FINAL_ALTITUDE, val=0)
+        add_aviary_output(self, Mission.Takeoff.GROUND_DISTANCE)
+        add_aviary_output(self, Mission.Takeoff.FINAL_VELOCITY, units='m/s')
+        add_aviary_output(self, Mission.Takeoff.FINAL_MASS)
+        add_aviary_output(self, Mission.Takeoff.FINAL_ALTITUDE)
 
     def setup_partials(self):
         self.declare_partials(
@@ -148,7 +146,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         )
         self.declare_partials(
             Mission.Takeoff.FINAL_MASS,
-            Mission.Takeoff.FUEL,
+            Mission.Takeoff.FUEL_MASS,
             val=-1.0,
         )
 
@@ -193,7 +191,7 @@ class FinalTakeoffConditions(om.ExplicitComponent):
             rolling_distance + rotation_distance + climbout_distance
         )
         outputs[Mission.Takeoff.FINAL_VELOCITY] = V2
-        outputs[Mission.Takeoff.FINAL_MASS] = gross_mass - inputs[Mission.Takeoff.FUEL]
+        outputs[Mission.Takeoff.FINAL_MASS] = gross_mass - inputs[Mission.Takeoff.FUEL_MASS]
         outputs[Mission.Takeoff.FINAL_ALTITUDE] = 35
 
     def compute_partials(self, inputs, J):
@@ -212,9 +210,6 @@ class FinalTakeoffConditions(om.ExplicitComponent):
         den_RD = S * Cl_max * (thrust / ramp_weight - (0.20 + 0.00550 * ramp_weight / S) / L_over_D)
         rad_Rot = ramp_weight / (S * Cl_max * rho_ratio)
         den_Cout = 1.0 + climbout_thrust / ramp_weight - 0.90 / L_over_D
-
-        S * Cl_max * (thrust / ramp_weight - (0.20 + 0.00550 * ramp_weight / S) / L_over_D)
-        S * Cl_max * (-thrust / ramp_weight**2 - (0.00550 / S) / L_over_D)
 
         dRD_dM = (
             17 / den_RD
@@ -319,7 +314,7 @@ class TakeoffGroup(om.Group):
             ),
             promotes_inputs=[
                 ('gross_mass', Mission.GROSS_MASS),
-                ('taxi_out_fuel_burned', Mission.Taxi.FUEL_TAXI_OUT),
+                ('taxi_out_fuel_burned', Mission.Taxi.FUEL_MASS_TAXI_OUT),
             ],
             promotes_outputs=['end_of_taxi_mass'],
         )
@@ -346,7 +341,7 @@ class TakeoffGroup(om.Group):
                 ('mass', 'end_of_taxi_mass'),
                 Dynamic.Atmosphere.DENSITY,
                 Aircraft.Wing.AREA,
-                Mission.Takeoff.FUEL,
+                Mission.Takeoff.FUEL_MASS,
                 Mission.Takeoff.LIFT_COEFFICIENT_MAX,
                 Aircraft.Propulsion.TOTAL_SCALED_SLS_THRUST,
                 Mission.Takeoff.CLIMBOUT_THRUST_FRACTION,

@@ -3,12 +3,14 @@ import unittest
 import numpy as np
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.energy_state.ode.required_thrust import RequiredThrust
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.variable_info.variables import Dynamic
 
 
+@use_tempdirs
 class RequiredThrustTest(unittest.TestCase):
     """Test required thrust."""
 

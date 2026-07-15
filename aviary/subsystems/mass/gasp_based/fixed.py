@@ -35,7 +35,6 @@ class MassParameters(om.ExplicitComponent):
 
         self.add_input(
             'max_mach',
-            val=0.9,
             units='unitless',
             desc='EMM0: maximum operating Mach number',
         )
@@ -47,13 +46,11 @@ class MassParameters(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.Wing.MATERIAL_FACTOR, units='unitless')
         self.add_output(
             'c_strut_braced',
-            val=0,
             units='unitless',
             desc='SKSTR: reduction in bending moment factor for strut braced wing',
         )
         self.add_output(
             'c_gear_loc',
-            val=0,
             units='unitless',
             desc='SKGEAR: landing gear location factor',
         )
@@ -63,7 +60,7 @@ class MassParameters(om.ExplicitComponent):
             shape=num_engine_type,
             units='unitless',
         )
-        self.add_output('half_sweep', val=0, units='rad', desc='SWC2: wing chord half sweep angle')
+        self.add_output('half_sweep', units='rad', desc='SWC2: wing chord half sweep angle')
 
     def setup_partials(self):
         self.declare_partials(
@@ -238,10 +235,9 @@ class PayloadGroup(om.ExplicitComponent):
         add_aviary_output(self, Aircraft.CrewPayload.PASSENGER_PAYLOAD_MASS, units='lbm')
         add_aviary_output(self, Aircraft.CrewPayload.TOTAL_PAYLOAD_MASS, units='lbm')
 
-        self.add_output('payload_mass_des', val=0, units='lbm', desc='WPLDES: design payload')
+        self.add_output('payload_mass_des', units='lbm', desc='WPLDES: design payload')
         self.add_output(
             'payload_mass_max',
-            val=0,
             units='lbm',
             desc='WPLMAX: maximum payload that the aircraft is being asked to carry'
             ' (design payload + cargo)',
@@ -281,25 +277,21 @@ class ElectricAugmentationMass(om.ExplicitComponent):
     def setup(self):
         self.add_input(
             'motor_power',
-            val=200,
             units='kW',
             desc='MOTRKW: power of augmentation motor',
         )
         self.add_input(
             'motor_voltage',
-            val=50,
             units='V',
             desc='VOLTS: voltage of augmentation system',
         )
         self.add_input(
             'max_amp_per_wire',
-            val=50,
             units='A',
             desc='AMPSPW: maximum amperage of each cable in augmentation system',
         )
         self.add_input(
             'safety_factor',
-            val=1.33,
             units='unitless',
             desc='REDUNCY: cable mass redundancy/safety factor',
         )
@@ -308,74 +300,62 @@ class ElectricAugmentationMass(om.ExplicitComponent):
 
         self.add_input(
             'wire_area',
-            val=0.0015,
             units='ft**2',
             desc='ACSWIRE: cross sectional area of electrical augmentation system wire',
         )
         self.add_input(
             'rho_wire',
-            val=1,
             units='lbm/ft**3',
             desc='DENWIRE: density of wire for electrical augmentation system',
         )
         self.add_input(
             'battery_energy',
-            val=1,
             units='MJ',
             desc='EBATT: energy coming from the battery',
         )
         self.add_input(
             'motor_eff',
-            val=1,
             units='unitless',
             desc='EFF_MTR: efficiency of electrical augmentation motor',
         )
         self.add_input(
             'inverter_eff',
-            val=1,
             units='unitless',
             desc='EFF_INV: efficiency of electrical augmentation inverter/controller',
         )
         self.add_input(
             'transmission_eff',
-            val=1,
             units='unitless',
             desc='EFF_TRN: efficiency of electrical augmentation system power transmission',
         )
         self.add_input(
             'battery_eff',
-            val=1,
             units='unitless',
             desc='EFF_BAT: efficiency of electrical augmentation battery storage',
         )
         self.add_input(
             'rho_battery',
-            val=200,
             units='MJ/lb',
             desc='ENGYDEN: energy density of electrical augmentation system battery',
         )
         self.add_input(
             'motor_spec_mass',
-            val=10,
             units='hp/lbm',
             desc='SWT_MTR: specific mass of electrical augmentation motor',
         )
         self.add_input(
             'inverter_spec_mass',
-            val=10,
             units='kW/lbm',
             desc='SWT_INV: specific mass of electrical augmentation inverter',
         )
         self.add_input(
             'TMS_spec_mass',
-            val=10,
             units='lbm/kW',
             desc='SWT_TMS: specific mass of thermal managements system',
         )
 
         self.add_output(
             'aug_mass',
-            val=0,
             units='lbm',
             desc='WEAUG: mass of electrical augmentation system',
         )
@@ -552,7 +532,7 @@ class HorizontalTailMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.LandingGear.TAIL_HOOK_MASS_SCALER, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.TAPER_RATIO, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
-        self.add_input('min_dive_vel', val=200, units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_ARM, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
@@ -858,7 +838,7 @@ class VerticalTailMass(om.ExplicitComponent):
         add_aviary_input(self, Aircraft.VerticalTail.MASS_COEFFICIENT, units='unitless')
         add_aviary_input(self, Aircraft.Wing.SPAN, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
-        self.add_input('min_dive_vel', val=200, units='kn', desc='VDMIN: dive velocity')
+        self.add_input('min_dive_vel', units='kn', desc='VDMIN: dive velocity')
         add_aviary_input(self, Aircraft.HorizontalTail.MOMENT_ARM, units='ft')
         add_aviary_input(self, Aircraft.HorizontalTail.THICKNESS_TO_CHORD, units='unitless')
         add_aviary_input(self, Aircraft.HorizontalTail.ROOT_CHORD, units='ft')
@@ -874,7 +854,6 @@ class VerticalTailMass(om.ExplicitComponent):
 
         self.add_output(
             'loc_MAC_vtail',
-            val=0,
             units='ft',
             desc='XVMAC: location of mean aerodynamic chord on the vertical tail',
         )
@@ -1344,16 +1323,14 @@ class HighLiftMass(om.ExplicitComponent):
         add_aviary_input(self, Mission.Landing.LIFT_COEFFICIENT_MAX, units='unitless')
         self.add_input(
             'density',
-            val=RHO_SEA_LEVEL_ENGLISH,
+            val=RHO_SEA_LEVEL_ENGLISH,  # see issue #1191
             units='slug/ft**3',
             desc='RHO: Density of air',
         )
 
         add_aviary_output(self, Aircraft.Wing.HIGH_LIFT_MASS, units='lbm')
-        self.add_output(
-            'flap_mass', val=0, units='lbm', desc='WFLAP: mass of trailing edge devices'
-        )
-        self.add_output('slat_mass', val=0, units='lbm', desc='WLED: mass of leading edge devices')
+        self.add_output('flap_mass', units='lbm', desc='WFLAP: mass of trailing edge devices')
+        self.add_output('slat_mass', units='lbm', desc='WLED: mass of leading edge devices')
 
     def setup_partials(self):
         self.declare_partials(
@@ -2240,4 +2217,4 @@ class FixedMassGroup(om.Group):
                 inputs=['aug_mass'],
             )
 
-        self.set_input_defaults('min_dive_vel', val=420, units='kn')
+        self.set_input_defaults('min_dive_vel', units='kn')

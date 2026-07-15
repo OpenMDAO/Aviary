@@ -23,21 +23,20 @@ class FlightConstraints(om.ExplicitComponent):
         nn = self.options['num_nodes']
         arange = np.arange(nn)
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.MASS,
-            val=np.ones(nn),
+            shape=nn,
             units='lbm',
-            desc='mass of aircraft',
         )
 
-        add_aviary_input(self, Aircraft.Wing.AREA, val=2)
+        add_aviary_input(self, Aircraft.Wing.AREA)
 
         add_aviary_input(
             self,
             Dynamic.Atmosphere.DENSITY,
-            val=np.ones(nn),
+            shape=nn,
             units='slug/ft**3',
-            desc='density of air',
         )
         self.add_input(
             'CL_max',
@@ -45,27 +44,27 @@ class FlightConstraints(om.ExplicitComponent):
             units='unitless',
             desc='maximum lift coefficient',
         )
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Mission.FLIGHT_PATH_ANGLE,
-            val=np.ones(nn),
+            shape=nn,
             units='rad',
-            desc='flight path angle',
         )
 
-        add_aviary_input(self, Aircraft.Wing.INCIDENCE, val=1.0, units='rad')
+        add_aviary_input(self, Aircraft.Wing.INCIDENCE, units='rad')
 
-        self.add_input(
+        add_aviary_input(
+            self,
             Dynamic.Vehicle.ANGLE_OF_ATTACK,
-            val=np.ones(nn),
+            shape=nn,
             units='rad',
-            desc='angle of attack',
         )
+
         add_aviary_input(
             self,
             Dynamic.Mission.VELOCITY,
-            val=np.ones(nn),
+            shape=nn,
             units='ft/s',
-            desc='true airspeed',
         )
 
         self.add_output(
@@ -190,8 +189,8 @@ class ClimbAtTopOfClimb(om.ExplicitComponent):
     """This class is not used nor tested."""
 
     def setup(self):
-        self.add_input(Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
-        self.add_input(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, units='ft/s', val=-200)
+        add_aviary_input(self, Dynamic.Mission.FLIGHT_PATH_ANGLE, units='rad', val=0.0)
         self.add_output('ROC', units='ft/s')
         self.declare_partials('*', '*')
 

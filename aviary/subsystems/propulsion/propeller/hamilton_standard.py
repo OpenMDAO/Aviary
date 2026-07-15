@@ -466,17 +466,17 @@ class PreHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, val=0.0, units='ft')
+        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, units='ft')
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
         )
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.SHAFT_POWER, val=np.zeros(nn), units='hp')
-        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='slug/ft**3')
-        add_aviary_input(self, Dynamic.Mission.VELOCITY, val=np.zeros(nn), units='ft/s')
-        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, val=np.zeros(nn), units='ft/s')
+        add_aviary_input(self, Dynamic.Vehicle.Propulsion.SHAFT_POWER, shape=nn, units='hp')
+        add_aviary_input(self, Dynamic.Atmosphere.DENSITY, shape=nn, units='slug/ft**3')
+        add_aviary_input(self, Dynamic.Mission.VELOCITY, shape=nn, units='ft/s')
+        add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, shape=nn, units='ft/s')
 
         self.add_output('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_output('advance_ratio', val=np.zeros(nn), units='unitless')
@@ -615,15 +615,14 @@ class HamiltonStandard(om.ExplicitComponent):
 
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('advance_ratio', val=np.zeros(nn), units='unitless')
-        add_aviary_input(self, Dynamic.Atmosphere.MACH, val=np.zeros(nn), units='unitless')
+        add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
         self.add_input('tip_mach', val=np.zeros(nn), units='unitless')
         add_aviary_input(
-            self, Aircraft.Engine.Propeller.ACTIVITY_FACTOR, val=0.0, units='unitless'
+            self, Aircraft.Engine.Propeller.ACTIVITY_FACTOR, units='unitless'
         )  # Actitivty Factor per Blade
         add_aviary_input(
             self,
             Aircraft.Engine.Propeller.INTEGRATED_LIFT_COEFFICIENT,
-            val=0.0,
             units='unitless',
         )  # blade integrated lift coeff
 
@@ -957,14 +956,14 @@ class PostHamiltonStandard(om.ExplicitComponent):
     def setup(self):
         nn = self.options['num_nodes']
 
-        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, val=0.0, units='ft')
+        add_aviary_input(self, Aircraft.Engine.Propeller.DIAMETER, units='ft')
         self.add_input('install_loss_factor', val=np.zeros(nn), units='unitless')
         self.add_input('thrust_coefficient', val=np.zeros(nn), units='unitless')
         self.add_input('comp_tip_loss_factor', val=np.zeros(nn), units='unitless')
         add_aviary_input(
             self,
             Dynamic.Vehicle.Propulsion.PROPELLER_TIP_SPEED,
-            val=np.zeros(nn),
+            shape=nn,
             units='ft/s',
         )
         self.add_input(Dynamic.Atmosphere.DENSITY, val=np.zeros(nn), units='slug/ft**3')
@@ -972,7 +971,7 @@ class PostHamiltonStandard(om.ExplicitComponent):
         self.add_input('power_coefficient', val=np.zeros(nn), units='unitless')
 
         self.add_output('thrust_coefficient_comp_loss', val=np.zeros(nn), units='unitless')
-        add_aviary_output(self, Dynamic.Vehicle.Propulsion.THRUST, val=np.zeros(nn), units='lbf')
+        add_aviary_output(self, Dynamic.Vehicle.Propulsion.THRUST, shape=nn, units='lbf')
         # keep them for reporting but don't seem to be required
         self.add_output('propeller_efficiency', val=np.zeros(nn), units='unitless')
         self.add_output('install_efficiency', val=np.zeros(nn), units='unitless')

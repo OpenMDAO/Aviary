@@ -16,7 +16,10 @@ from aviary.subsystems.geometry.flops_based.characteristic_lengths import (
     WingCharacteristicLength,
 )
 from aviary.subsystems.geometry.flops_based.fuselage import FuselagePrelim
-from aviary.subsystems.geometry.flops_based.nacelle import NacelleWettedArea
+from aviary.subsystems.geometry.flops_based.nacelle import (
+    NacelleWettedArea,
+    NacelleTotalWettedArea,
+)
 from aviary.subsystems.geometry.flops_based.prep_geom import _FuselageRatios, PrepGeom
 from aviary.subsystems.geometry.flops_based.wetted_area_total import (
     BWBWingWettedArea,
@@ -459,6 +462,12 @@ class NacellesTest(unittest.TestCase):
         options[Aircraft.Engine.NUM_ENGINES] = np.array([2])
 
         prob.model.add_subsystem('nacelles', NacelleWettedArea(**options), promotes=['*'])
+        prob.model.add_subsystem(
+            'nacelles_total',
+            NacelleTotalWettedArea(**options),
+            promotes_outputs=['*'],
+            promotes_inputs=['*'],
+        )
 
         prob.setup(check=False, force_alloc_complex=True)
 

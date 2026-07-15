@@ -86,14 +86,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
 
         return phase_info
 
-    def get_code_origin(self, aviary_group):
+    def get_code_origin(self):
         """
         Return the legacy of this problem configurator.
-
-        Parameters
-        ----------
-        aviary_group : AviaryGroup
-            Aviary model that owns this configurator.
 
         Returns
         -------
@@ -228,12 +223,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             **extra_options,
         )
 
-    def link_phases(self, aviary_group, phases, connect_directly=True):
+    def configure_trajectory(self, aviary_group, phases):
         """
-        Apply any additional phase linking.
-
-        Note that some phase variables are handled in the AviaryProblem. Only
-        problem-specific ones need to be linked here.
+        Link or configure phase connections to other upstream or downstream components.
 
         This is called from AviaryProblem.link_phases
 
@@ -241,61 +233,10 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
         ----------
         aviary_group : AviaryGroup
             Aviary model that owns this configurator.
-        phases : Phase
-            Phases to be linked.
-        connect_directly : bool
-            When True, then connected=True. This allows the connections to be
-            handled by constraints if `phases` is a parallel group under MPI.
+        phases : list[Phase]
+            List of all phases in the trajectory.
         """
-        # connect regular_phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.regular_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group, aviary_group.regular_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
-        )
-
-        # connect reserve phases with each other if you are optimizing alt or mach
-        self.link_phases_helper_with_options(
-            aviary_group,
-            aviary_group.reserve_phases,
-            'altitude_optimize',
-            Dynamic.Mission.ALTITUDE,
-            ref=1.0e4,
-        )
-        self.link_phases_helper_with_options(
-            aviary_group, aviary_group.reserve_phases, 'mach_optimize', Dynamic.Atmosphere.MACH
-        )
-
-        # connect mass and distance between all phases regardless of reserve /
-        # non-reserve status
-        aviary_group.traj.link_phases(
-            phases, ['time'], ref=None if connect_directly else 1e3, connected=connect_directly
-        )
-        aviary_group.traj.link_phases(
-            phases,
-            [Dynamic.Vehicle.MASS],
-            ref=None if connect_directly else 1e6,
-            connected=connect_directly,
-        )
-        aviary_group.traj.link_phases(
-            phases,
-            [Dynamic.Mission.DISTANCE],
-            ref=None if connect_directly else 1e3,
-            connected=connect_directly,
-        )
-
-        # Under MPI, the states aren't directly connected.
-        if not connect_directly:
-            for phase_name in phases[1:]:
-                phase = aviary_group.traj._phases[phase_name]
-                phase.set_state_options(Dynamic.Vehicle.MASS, input_initial=False)
-                phase.set_state_options(Dynamic.Mission.DISTANCE, input_initial=False)
-
+        # Boundary conditions for the first phase.
         phase = aviary_group.traj._phases[phases[0]]
 
         # Currently expects Distance to be an input.
@@ -384,8 +325,8 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
                 ),
                 promotes_inputs=[
                     ('gross_mass', Mission.GROSS_MASS),
-                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_TAXI_OUT),
-                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL),
+                    ('taxi_out_fuel_burn', Mission.Taxi.FUEL_MASS_TAXI_OUT),
+                    ('takeoff_fuel_burn', Mission.Takeoff.FUEL_MASS),
                 ],
                 promotes_outputs=[('takeoff_mass', Mission.Takeoff.FINAL_MASS)],
             )
@@ -410,11 +351,7 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             )
 
         if aviary_group.post_mission_info['include_landing']:
-            if 'aircraft:wing:area' in aviary_group.aviary_inputs:
-                self._add_landing_systems(aviary_group)
-            else:
-                print('Aircraft.Wing.AREA is not given. Set include_landing = False')
-                aviary_group.post_mission_info['include_landing'] = False
+            self._add_landing_systems(aviary_group)
 
         aviary_group.add_subsystem(
             'range_constraint',
@@ -490,14 +427,9 @@ class EnergyStateProblemConfigurator(ProblemConfiguratorBase):
             )
 
     def _add_landing_systems(self, aviary_group):
-        landing_options = Landing(
-            ref_wing_area=aviary_group.aviary_inputs.get_val(Aircraft.Wing.AREA, units='ft**2'),
-            Cl_max_ldg=aviary_group.aviary_inputs.get_val(
-                Mission.Landing.LIFT_COEFFICIENT_MAX
-            ),  # no units
-        )
+        landing_options = Landing()
 
-        landing = landing_options.build_phase(False)
+        landing = landing_options.build_phase(use_detailed=False)
 
         aviary_group.add_subsystem(
             'landing',

@@ -172,20 +172,18 @@ class WingTailRatios(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        (
-            wing_area,
-            wingspan,
-            avg_chord,
-            taper_ratio,
-            tc_ratio_root,
-            wing_loc,
-            htail_loc,
-            span_htail,
-            span_vtail,
-            htail_area,
-            htail_chord,
-            cabin_width,
-        ) = inputs.values()
+        wing_area = inputs[Aircraft.Wing.AREA]
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        tc_ratio_root = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_ROOT]
+        wing_loc = inputs[Aircraft.Wing.VERTICAL_MOUNT_LOCATION]
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
+        span_htail = inputs[Aircraft.HorizontalTail.SPAN]
+        span_vtail = inputs[Aircraft.VerticalTail.SPAN]
+        htail_area = inputs[Aircraft.HorizontalTail.AREA]
+        htail_chord = inputs[Aircraft.HorizontalTail.AVERAGE_CHORD]
+        cabin_width = inputs[Aircraft.Fuselage.AVG_DIAMETER]
         verbosity = self.options[Settings.VERBOSITY]
 
         if wing_area == 0.0:
@@ -341,20 +339,18 @@ class Xlifts(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        (
-            mach,
-            static_margin,
-            delta_cg,
-            AR,
-            sweep_c4,
-            htail_loc,
-            htail_sweep,
-            h_tail_moment,
-            sbar,
-            cbar,
-            hbar,
-            bbar,
-        ) = inputs.values()
+        mach = inputs[Dynamic.Atmosphere.MACH]
+        static_margin = inputs[Aircraft.Design.STATIC_MARGIN]
+        delta_cg = inputs[Aircraft.Design.CG_DELTA]
+        AR = inputs[Aircraft.Wing.ASPECT_RATIO]
+        sweep_c4 = inputs[Aircraft.Wing.SWEEP]
+        htail_loc = inputs[Aircraft.HorizontalTail.VERTICAL_TAIL_MOUNT_LOCATION]
+        htail_sweep = inputs[Aircraft.HorizontalTail.SWEEP]
+        h_tail_moment = inputs[Aircraft.HorizontalTail.MOMENT_RATIO]
+        sbar = inputs['sbar']
+        cbar = inputs['cbar']
+        hbar = inputs['hbar']
+        bbar = inputs['bbar']
         verbosity = self.options[Settings.VERBOSITY]
 
         if h_tail_moment == 0.0:
@@ -683,7 +679,7 @@ class AeroGeom(om.ExplicitComponent):
         add_aviary_input(self, Dynamic.Atmosphere.MACH, shape=nn, units='unitless')
         add_aviary_input(self, Dynamic.Atmosphere.SPEED_OF_SOUND, shape=nn, units='ft/s')
         add_aviary_input(
-            self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, val=1.0, shape=nn, units='ft**2/s'
+            self, Dynamic.Atmosphere.KINEMATIC_VISCOSITY, shape=nn, units='ft**2/s'
         )
 
         self.add_input('ufac', units='unitless', shape=nn, desc='UFAC')
@@ -692,12 +688,10 @@ class AeroGeom(om.ExplicitComponent):
         # user could input these directly or use functions to estimate from geometry
 
         add_aviary_input(self, Aircraft.Wing.FORM_FACTOR, units='unitless')
-
         add_aviary_input(
             self,
             Aircraft.Fuselage.FORM_FACTOR,
             units='unitless',
-            desc='FFFUS: fuselage form drag factor',
         )
 
         add_aviary_input(
@@ -705,63 +699,40 @@ class AeroGeom(om.ExplicitComponent):
         )
 
         add_aviary_input(self, Aircraft.VerticalTail.FORM_FACTOR, units='unitless')
-
         add_aviary_input(self, Aircraft.HorizontalTail.FORM_FACTOR, units='unitless')
-
         add_aviary_input(self, Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
-
         add_aviary_input(self, Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR, units='unitless')
 
         # miscellaneous top-level inputs
-
         add_aviary_input(self, Aircraft.Design.DRAG_COEFFICIENT_INCREMENT, units='unitless')
-
         add_aviary_input(self, Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT, units='ft**2')
-
         add_aviary_input(self, Aircraft.Wing.MIN_PRESSURE_LOCATION, units='unitless')
-
         add_aviary_input(self, Aircraft.Wing.MAX_THICKNESS_LOCATION, units='unitless')
 
         # geometric user inputs
-
         add_aviary_input(self, Aircraft.Wing.ASPECT_RATIO, units='unitless')
-
         add_aviary_input(self, Aircraft.Wing.SWEEP, units='deg')
-
         add_aviary_input(self, Aircraft.Wing.TAPER_RATIO, units='unitless')
-
         add_aviary_input(self, Aircraft.Strut.AREA_RATIO, units='unitless')
 
         # geometric data from sizing
-
         add_aviary_input(self, Aircraft.Wing.AVERAGE_CHORD, units='ft')
-
         add_aviary_input(self, Aircraft.HorizontalTail.AVERAGE_CHORD, units='ft')
-
         add_aviary_input(self, Aircraft.VerticalTail.AVERAGE_CHORD, units='ft')
-
         add_aviary_input(self, Aircraft.Fuselage.LENGTH, units='ft')
-
         add_aviary_input(self, Aircraft.Nacelle.AVG_LENGTH, shape=num_engine_type, units='ft')
-
         add_aviary_input(self, Aircraft.HorizontalTail.AREA, units='ft**2')
-
         add_aviary_input(self, Aircraft.Fuselage.WETTED_AREA, units='ft**2')
-
         add_aviary_input(self, Aircraft.Nacelle.SURFACE_AREA, shape=num_engine_type, units='ft**2')
-
         add_aviary_input(self, Aircraft.Wing.AREA, units='ft**2')
-
         add_aviary_input(self, Aircraft.VerticalTail.AREA, units='ft**2')
-
         add_aviary_input(self, Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED, units='unitless')
-
         add_aviary_input(self, Aircraft.Strut.CHORD, units='ft')
 
         self.add_input(
             'interference_independent_of_shielded_area', units='unitless'
-        )  # Is this used?
-        (self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless'),)  # Is this used?
+        )
+        self.add_input('drag_loss_due_to_shielded_wing_area', units='unitless')
         self.add_input(
             'siwb',
             units='unitless',
@@ -923,52 +894,50 @@ class AeroGeom(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        (
-            mach,
-            sos,
-            nu,
-            ufac,
-            ff_wing,
-            ff_fus,
-            ff_nac,
-            ff_vtail,
-            ff_htail,
-            wing_fus_intf,
-            strut_fus_intf,
-            cd0_inc,
-            fe_fus_inc,
-            wing_min_pressure_loc,
-            wing_max_thickness_loc,
-            AR,
-            sweep_c4,
-            taper_ratio,
-            strut_wing_area_ratio,
-            avg_chord,
-            htail_chord,
-            vtail_chord,
-            fus_len,
-            nac_len,
-            htail_area,
-            fus_SA,
-            nacelle_area,
-            wing_area,
-            vtail_area,
-            tc_ratio,
-            strut_chord,
-            feintwf,
-            areashieldwf,
-            siwb,
-            fcffc,
-            fcfhtc,
-            fckic,
-            fcfnc,
-            fpylnd,
-            fcfstrc,
-            fcfvtc,
-            fcfwc,
-            fexcrt,
-            pct_excr,
-        ) = inputs.values()
+        mach = inputs[Dynamic.Atmosphere.MACH]
+        sos = inputs[Dynamic.Atmosphere.SPEED_OF_SOUND]
+        nu = inputs[Dynamic.Atmosphere.KINEMATIC_VISCOSITY]
+        ufac = inputs['ufac']
+        ff_wing = inputs[Aircraft.Wing.FORM_FACTOR]
+        ff_fus = inputs[Aircraft.Fuselage.FORM_FACTOR]
+        ff_nac = inputs[Aircraft.Nacelle.FORM_FACTOR]
+        ff_vtail = inputs[Aircraft.VerticalTail.FORM_FACTOR]
+        ff_htail = inputs[Aircraft.HorizontalTail.FORM_FACTOR]
+        wing_fus_intf = inputs[Aircraft.Wing.FUSELAGE_INTERFERENCE_FACTOR]
+        strut_fus_intf = inputs[Aircraft.Strut.FUSELAGE_INTERFERENCE_FACTOR]
+        cd0_inc = inputs[Aircraft.Design.DRAG_COEFFICIENT_INCREMENT]
+        fe_fus_inc = inputs[Aircraft.Fuselage.FLAT_PLATE_AREA_INCREMENT]
+        wing_min_pressure_loc = inputs[Aircraft.Wing.MIN_PRESSURE_LOCATION]
+        wing_max_thickness_loc = inputs[Aircraft.Wing.MAX_THICKNESS_LOCATION]
+        AR = inputs[Aircraft.Wing.ASPECT_RATIO]
+        sweep_c4 = inputs[Aircraft.Wing.SWEEP]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        strut_wing_area_ratio = inputs[Aircraft.Strut.AREA_RATIO]
+        avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
+        htail_chord = inputs[Aircraft.HorizontalTail.AVERAGE_CHORD]
+        vtail_chord = inputs[Aircraft.VerticalTail.AVERAGE_CHORD]
+        fus_len = inputs[Aircraft.Fuselage.LENGTH]
+        nac_len = inputs[Aircraft.Nacelle.AVG_LENGTH]
+        htail_area = inputs[Aircraft.HorizontalTail.AREA]
+        fus_SA = inputs[Aircraft.Fuselage.WETTED_AREA]
+        nacelle_area = inputs[Aircraft.Nacelle.SURFACE_AREA]
+        wing_area = inputs[Aircraft.Wing.AREA]
+        vtail_area = inputs[Aircraft.VerticalTail.AREA]
+        tc_ratio = inputs[Aircraft.Wing.THICKNESS_TO_CHORD_UNWEIGHTED]
+        strut_chord = inputs[Aircraft.Strut.CHORD]
+        feintwf = inputs['interference_independent_of_shielded_area']
+        areashieldwf = inputs['drag_loss_due_to_shielded_wing_area']
+        siwb = inputs['siwb']
+        fcffc = inputs[Aircraft.Fuselage.DRAG_FACTOR]
+        fcfhtc = inputs[Aircraft.HorizontalTail.DRAG_FACTOR]
+        fckic = inputs[Aircraft.Design.INTERFERENCE_DRAG_FACTOR]
+        fcfnc = inputs[Aircraft.Nacelle.DRAG_FACTOR]
+        fpylnd = inputs[Aircraft.Nacelle.PYLON_DRAG_FACTOR]
+        fcfstrc = inputs[Aircraft.Strut.DRAG_FACTOR]
+        fcfvtc = inputs[Aircraft.VerticalTail.DRAG_FACTOR]
+        fcfwc = inputs[Aircraft.Wing.DRAG_FACTOR]
+        fexcrt = inputs[Aircraft.Design.EXCRESCENCE_DRAG_FACTOR]
+        pct_excr = inputs[Aircraft.Design.PERCENT_EXCRESCENCE_DRAG]
 
         num_engines = self.options[Aircraft.Engine.NUM_ENGINES]
         num_engine_type = len(num_engines)
@@ -1329,26 +1298,24 @@ class DragCoef(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        (
-            alt,
-            CL,
-            gross_mass_initial,
-            flap_defl,
-            wing_height,
-            airport_alt,
-            flap_chord_ratio,
-            dCL_flaps_model,
-            dCD_flaps_model,
-            dCL_flaps_coef,
-            CDI_factor,
-            avg_chord,
-            wingspan,
-            wing_area,
-            cf,
-            SA5,
-            SA6,
-            SA7,
-        ) = inputs.values()
+        alt = inputs[Dynamic.Mission.ALTITUDE]
+        CL = inputs[Dynamic.Vehicle.LIFT_COEFFICIENT]
+        gross_mass_initial = inputs[Aircraft.Design.GROSS_MASS]
+        flap_defl = inputs['flap_defl']
+        wing_height = inputs[Aircraft.Wing.HEIGHT]
+        airport_alt = inputs['airport_alt']
+        flap_chord_ratio = inputs[Aircraft.Wing.FLAP_CHORD_RATIO]
+        dCL_flaps_model = inputs['dCL_flaps_model']
+        dCD_flaps_model = inputs['dCD_flaps_model']
+        dCL_flaps_coef = inputs['dCL_flaps_coef']
+        CDI_factor = inputs['CDI_factor']
+        avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
+        wingspan = inputs[Aircraft.Wing.SPAN]
+        wing_area = inputs[Aircraft.Wing.AREA]
+        cf = inputs['cf']
+        SA5 = inputs['SA5']
+        SA6 = inputs['SA6']
+        SA7 = inputs['SA7']
         gross_wt_initial = gross_mass_initial * GRAV_ENGLISH_LBM
 
         # profile drag
@@ -1432,22 +1399,20 @@ class DragCoefClean(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        (
-            mach,
-            CL,
-            div_drag_supercrit,
-            subsonic_factor,
-            supersonic_factor,
-            lift_factor,
-            zero_lift_factor,
-            fcmpc,
-            cf,
-            SA1,
-            SA2,
-            SA5,
-            SA6,
-            SA7,
-        ) = inputs.values()
+        mach = inputs[Dynamic.Atmosphere.MACH]
+        CL = inputs[Dynamic.Vehicle.LIFT_COEFFICIENT]
+        div_drag_supercrit = inputs[Aircraft.Design.DRAG_DIVERGENCE_SHIFT]
+        subsonic_factor = inputs[Aircraft.Design.SUBSONIC_DRAG_COEFF_FACTOR]
+        supersonic_factor = inputs[Aircraft.Design.SUPERSONIC_DRAG_COEFF_FACTOR]
+        lift_factor = inputs[Aircraft.Design.LIFT_DEPENDENT_DRAG_COEFF_FACTOR]
+        zero_lift_factor = inputs[Aircraft.Design.ZERO_LIFT_DRAG_COEFF_FACTOR]
+        fcmpc = inputs[Aircraft.Design.COMPRESSIBILITY_DRAG_FACTOR]
+        cf = inputs['cf']
+        SA1 = inputs['SA1']
+        SA2 = inputs['SA2']
+        SA5 = inputs['SA5']
+        SA6 = inputs['SA6']
+        SA7 = inputs['SA7']
 
         mach_div = SA1 + SA2 * CL + div_drag_supercrit
 
@@ -1530,22 +1495,20 @@ class GroundEffect(om.ExplicitComponent):
         self.declare_partials('kclge', dynvars, rows=ar, cols=ar, method='cs')
 
     def compute(self, inputs, outputs):
-        (
-            alpha,
-            alt,
-            lift_curve_slope,
-            alpha0,
-            sweep_c4,
-            AR,
-            wing_height,
-            airport_alt,
-            flap_defl,
-            flap_chord_ratio,
-            taper_ratio,
-            dCL_flaps_model,
-            avg_chord,
-            wingspan,
-        ) = inputs.values()
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
+        alt = inputs[Dynamic.Mission.ALTITUDE]
+        lift_curve_slope = inputs['lift_curve_slope']
+        alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
+        sweep_c4 = inputs[Aircraft.Wing.SWEEP]
+        AR = inputs[Aircraft.Wing.ASPECT_RATIO]
+        wing_height = inputs[Aircraft.Wing.HEIGHT]
+        airport_alt = inputs['airport_alt']
+        flap_defl = inputs['flap_defl']
+        flap_chord_ratio = inputs[Aircraft.Wing.FLAP_CHORD_RATIO]
+        taper_ratio = inputs[Aircraft.Wing.TAPER_RATIO]
+        dCL_flaps_model = inputs['dCL_flaps_model']
+        avg_chord = inputs[Aircraft.Wing.AVERAGE_CHORD]
+        wingspan = inputs[Aircraft.Wing.SPAN]
 
         # ground effects - factor on lift-curve slope
         hac = wing_height + alt - airport_alt
@@ -1670,16 +1633,14 @@ class LiftCoeff(om.ExplicitComponent):
         )
 
     def compute(self, inputs, outputs):
-        (
-            alpha,
-            lift_curve_slope,
-            lift_ratio,
-            alpha0,
-            CL_max_flaps,
-            dCL_flaps_model,
-            kclge,
-            flap_factor,
-        ) = inputs.values()
+        alpha = inputs[Dynamic.Vehicle.ANGLE_OF_ATTACK]
+        lift_curve_slope = inputs['lift_curve_slope']
+        lift_ratio = inputs['lift_ratio']
+        alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
+        CL_max_flaps = inputs['CL_max_flaps']
+        dCL_flaps_model = inputs['dCL_flaps_model']
+        kclge = inputs['kclge']
+        flap_factor = inputs['flap_factor']
 
         # clw_base = kclge * lift_curve_slope * deg2rad(alpha - alpha0)
         # clw = clw_base + dCL_flaps_model
@@ -2156,7 +2117,10 @@ class LiftCoeffClean(om.ExplicitComponent):
         self.declare_partials('CL_max', [Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP])
 
     def compute(self, inputs, outputs):
-        _, lift_curve_slope, lift_ratio, alpha0, CL_max_flaps = inputs.values()
+        lift_curve_slope = inputs['lift_curve_slope']
+        lift_ratio = inputs['lift_ratio']
+        alpha0 = inputs[Aircraft.Wing.ZERO_LIFT_ANGLE]
+        CL_max_flaps = inputs[Aircraft.Design.LIFT_COEFFICIENT_MAX_FLAPS_UP]
         if self.options['output_alpha']:
             CL = inputs[Dynamic.Vehicle.LIFT_COEFFICIENT]
             clw = CL / (1 + lift_ratio)

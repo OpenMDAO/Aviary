@@ -43,6 +43,7 @@ class GroundrollPhaseOptions(AviaryOptionsDictionary):
             'time_duration_bounds': (0.0, 3600.0),
             'time_initial_ref': 100.0,
             'time_duration_ref': 100.0,
+            'time_initial_direct_link': False,
         }
         self.add_time_options(units='kn', defaults=defaults)
 
@@ -198,6 +199,15 @@ class GroundrollPhase(PhaseBuilder):
             'subsystem_options': self.subsystem_options,
             'set_input_defaults': False,
         }
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Atmosphere.MACH,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
 
     def get_parameters(self):
         params = {}

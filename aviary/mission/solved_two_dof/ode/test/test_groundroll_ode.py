@@ -2,6 +2,7 @@ import unittest
 
 import openmdao.api as om
 from openmdao.utils.assert_utils import assert_check_partials
+from openmdao.utils.testing_utils import use_tempdirs
 
 from aviary.mission.solved_two_dof.ode.groundroll_ode import GroundrollODE
 from aviary.mission.two_dof.ode.test.params import set_params_for_unit_tests
@@ -13,6 +14,7 @@ from aviary.variable_info.options import get_option_defaults
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 
+@use_tempdirs
 class GroundrollODETestCase(unittest.TestCase):
     """Test groundroll ODE."""
 
@@ -47,6 +49,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.set_val(Aircraft.Wing.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.VerticalTail.FORM_FACTOR, 1.25)
         self.prob.set_val(Aircraft.HorizontalTail.FORM_FACTOR, 1.25)
+        self.prob.set_val(Dynamic.Vehicle.MASS, [1.0, 1.0], units='lbm')
 
         self.prob.run_model()
 

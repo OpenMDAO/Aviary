@@ -31,20 +31,26 @@ class FlightPhaseOptions(AviaryOptionsDictionary):
 
         defaults = {
             'mass_bounds': (0.0, None),
+            'mass_direct_link': False,
         }
         self.add_state_options('mass', units='lbm', defaults=defaults)
 
         defaults = {
             'distance_bounds': (0.0, None),
+            'distance_direct_link': True,
         }
         self.add_state_options('distance', units='NM', defaults=defaults)
 
         defaults = {
             'altitude_bounds': (0.0, None),
+            'altitude_direct_link': True,
         }
         self.add_state_options('altitude', units='ft', defaults=defaults)
 
-        self.add_time_options(units='s')
+        defaults = {
+            'initial_time_direct_link': True,
+        }
+        self.add_time_options(units='s', defaults=defaults)
 
         self.declare(
             'reserve',
@@ -144,7 +150,7 @@ class FlightPhase(PhaseBuilder):
         self.add_state(
             'mass',
             Dynamic.Vehicle.MASS,
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL,
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL,
         )
         self.add_state('distance', Dynamic.Mission.DISTANCE, Dynamic.Mission.DISTANCE_RATE)
 
@@ -174,7 +180,7 @@ class FlightPhase(PhaseBuilder):
         phase.add_timeseries_output('EAS', output_name='EAS', units='kn')
         phase.add_timeseries_output(Dynamic.Mission.FLIGHT_PATH_ANGLE, units='deg')
         phase.add_timeseries_output(
-            Dynamic.Vehicle.Propulsion.FUEL_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
+            Dynamic.Vehicle.Propulsion.FUEL_MASS_FLOW_RATE_NEGATIVE_TOTAL, units='lbm/s'
         )
         phase.add_timeseries_output(Dynamic.Vehicle.LIFT, units='lbf')
         phase.add_timeseries_output(Dynamic.Atmosphere.MACH, units='unitless')
@@ -193,6 +199,15 @@ class FlightPhase(PhaseBuilder):
             'mach_target': self.user_options.get_val('mach_target'),
             'EAS_target': self.user_options.get_val('EAS_target', 'kn'),
         }
+
+    def get_linked_variables(self, aviary_inputs=None, user_options=None, subsystem_options=None):
+        linked_vars = [
+            Dynamic.Mission.ALTITUDE,
+            Dynamic.Mission.DISTANCE,
+            Dynamic.Vehicle.MASS,
+            'time',
+        ]
+        return linked_vars
 
     def get_parameters(self):
         params = {}
