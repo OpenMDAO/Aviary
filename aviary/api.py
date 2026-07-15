@@ -55,7 +55,6 @@ from aviary.utils.functions import (
 )
 from aviary.utils.options import list_options
 from aviary.constants import (
-    GRAV_ENGLISH_GASP,
     GRAV_ENGLISH_LBM,
     PSLS_PSF,
     RHO_SEA_LEVEL_ENGLISH,

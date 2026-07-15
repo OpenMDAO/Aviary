@@ -25,6 +25,7 @@ class GroundrollODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
         )
@@ -32,7 +33,7 @@ class GroundrollODETestCase(unittest.TestCase):
         self.prob.model = TakeOffODE(
             num_nodes=2,
             ground_roll=True,
-            aviary_options=get_option_defaults(),
+            aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
         )
 
@@ -83,6 +84,7 @@ class RotationODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
         )
@@ -90,7 +92,7 @@ class RotationODETestCase(unittest.TestCase):
         self.prob.model = TakeOffODE(
             num_nodes=2,
             rotation=True,
-            aviary_options=get_option_defaults(),
+            aviary_options=aviary_options,
             subsystems=default_mission_subsystems,
         )
         setup_model_options(self.prob, aviary_options)
@@ -146,6 +148,8 @@ class AscentODETestCase(unittest.TestCase):
 
         aviary_options = get_option_defaults()
         aviary_options.set_val(Aircraft.Engine.GLOBAL_THROTTLE, True)
+        aviary_options.set_val(Mission.GRAVITY, val=32.2, units='ft/s**2')
+        aviary_options.set_val(Aircraft.Engine.NUM_ENGINES, val=[2], units='unitless')
         default_mission_subsystems = get_default_mission_subsystems(
             'GASP', [build_engine_deck(aviary_options)]
         )
@@ -155,7 +159,7 @@ class AscentODETestCase(unittest.TestCase):
         )
 
         setup_model_options(
-            self.prob, AviaryValues({Aircraft.Engine.NUM_ENGINES: ([2], 'unitless')})
+            self.prob, AviaryValues(aviary_options)
         )
 
     def test_ascent_partials(self):
