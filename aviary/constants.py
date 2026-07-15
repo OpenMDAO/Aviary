@@ -7,6 +7,7 @@ GRAV_EARTH = (
     'm/s**2',
 )
 # NIST https://physics.nist.gov/cgi-bin/cuu/Value?gn|search_for=gravity
+# convert_geopotential_altitude() is a python utility function for engine decs that require GRAV_EARTH to be specified in m/s**2!
 
 GRAV_MARS = (
     3.712,
@@ -24,7 +25,7 @@ RADIUS_EARTH = (
     6371009.0,
     'm',
 )  # Source: GRS80, mean earth radius (rounded to nearest meter)
-# convert_geopotential_altitude() is a python utility function that require RADIUS_EARTH to be specified in meters!
+# convert_geopotential_altitude() is a python utility function for engine decs that require RADIUS_EARTH to be specified in meters!
 
 RADIUS_MARS = (
     3386200.0,

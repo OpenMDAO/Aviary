@@ -81,6 +81,7 @@ max_variables = {
 def convert_geopotential_altitude(altitude):
     """
     Converts altitudes from geopotential to geometric altitude
+    Only used for engine decks
     Assumes altitude is provided in feet.
 
     Parameters
