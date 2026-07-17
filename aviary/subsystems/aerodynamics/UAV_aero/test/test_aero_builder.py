@@ -1,6 +1,6 @@
 import unittest
 
-from aviary.subsystems.aerodynamics.rc_aero.rc_aero_builder import RCAeroBuilder
+from aviary.subsystems.aerodynamics.UAV_aero.aero_builder import RCAeroBuilder
 from aviary.variable_info.variables import Aircraft, Dynamic
 
 class TestRCAeroBuilder(unittest.TestCase):

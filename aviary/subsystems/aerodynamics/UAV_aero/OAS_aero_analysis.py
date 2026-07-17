@@ -1,3 +1,15 @@
+'''
+This is the part of the aero model that uses OAS to compute lift and drag of wing and htail,
+as well as aerodynamic conditions and angle of attack.
+
+It's hard to tell what is good here and what is broken without knowing how 
+OpenAeroStruct works, so it would be a good idea to investigate further in the docs:
+
+https://mdolab-openaerostruct.readthedocs-hosted.com/en/latest/installation.html
+
+I am highly suspicious of the viability of this file and how it is implemented on aero_model.
+'''
+
 import numpy as np
 
 import openmdao.api as om
@@ -10,7 +22,6 @@ from openaerostruct.meshing.mesh_generator import generate_mesh
 
 from aviary.variable_info.functions import add_aviary_input, add_aviary_output
 from aviary.variable_info.variables import Aircraft, Dynamic
-
 
 class AeroConditions(om.ExplicitComponent):
     # compute atmospheric conditions, Reynolds number, dynamic pressure
