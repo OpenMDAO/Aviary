@@ -43,10 +43,10 @@ phase_info = {
         'user_options': {
             'num_segments': 5,
             'order': 3,
-            'mach_optimize': False,
+            'mach_optimize': True,
             'mach_polynomial_order': 1,
-            'mach_initial': (0.0538, 'unitless'),
-            'mach_final': (0.0538, 'unitless'),
+            # 'mach_initial': (0.0538, 'unitless'),
+            # 'mach_final': (0.0538, 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
             'distance_ref': (1.0e2, 'ft'),
@@ -67,7 +67,7 @@ phase_info = {
             
             #Time 
             'time_initial': (0.0, 's'),
-            'time_duration_bounds': ((20,90.0), 's'),
+            'time_duration_bounds': ((20,180.0), 's'),
         },
         'initial_guesses': {
             'distance': ([0, 200], 'ft'),
@@ -106,6 +106,7 @@ def get_cruise_phase_info(
     *,
     throttle_enforcement='control',
     throttle_bounds=None,
+    rc_dof_relief=False,
     external_subsystems=None,
     include_climb=False,
     include_descent=False,
@@ -127,6 +128,15 @@ def get_cruise_phase_info(
         cruise_options.pop('throttle_bounds', None)
     else:
         cruise_options['throttle_bounds'] = throttle_bounds
+
+    if rc_dof_relief:
+        cruise_options['throttle_enforcement'] = 'bounded'
+        cruise_options['throttle_bounds'] = ((0.2, 0.9), 'unitless')
+        rc_opts = cruise_phase_info['cruise']['subsystem_options'].setdefault('rc_electric', {})
+        rc_opts['current_control_continuity'] = False
+        rc_opts['current_control_rate_continuity'] = False
+        rc_opts['rpm_slack_control_continuity'] = False
+        rc_opts['rpm_slack_control_rate_continuity'] = False
 
     if external_subsystems is not None:
         cruise_phase_info['cruise']['external_subsystems'] = list(external_subsystems)

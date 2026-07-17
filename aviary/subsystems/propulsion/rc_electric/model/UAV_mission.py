@@ -43,13 +43,14 @@ class RCPropMission(om.Group):
             rpm_in = []  # solver mode: motor RPM is connected straight in below
 
 
-        self.set_input_defaults(Aircraft.Battery.VOLTAGE, val=22.2, units='V')
-
+       
+       
+        
         self.add_subsystem(
-            'battery', 
-            Battery(num_nodes=nn), 
+            'battery',
+            Battery(num_nodes=nn),
             promotes_inputs=[
-                Aircraft.Battery.VOLTAGE,  
+                Aircraft.Battery.VOLTAGE,
                 Aircraft.Battery.RESISTANCE,
                 Dynamic.Vehicle.Propulsion.CURRENT,
             ]
@@ -162,7 +163,6 @@ class RCPropMission(om.Group):
             )
         
 
-       
         self.add_subsystem(
             'electric_power',
             om.ExecComp(
@@ -288,8 +288,6 @@ class RCPropMission(om.Group):
         # self.connect('battery_max.voltage_out', 'esc_max.voltage_in')
         # self.connect('esc_max.voltage_out', 'motor_max.voltage_in')
         # self.connect('esc_max.current_out', 'motor_max.current')
-
-
         self.connect('battery.voltage_out', 'esc.voltage_in')
         self.connect('esc.voltage_out', 'motor.voltage_in')
         self.connect('esc.current_out', 'motor.current')
@@ -298,7 +296,6 @@ class RCPropMission(om.Group):
         
         #TODO Alex from phase builder base import add_control
 
-       
         self.connect('battery.power', 'power_net.power_batt')
         self.connect('esc.power', 'power_net.power_esc')
         self.connect('motor.power', 'power_net.power_motor')
@@ -333,7 +330,7 @@ class RCPropMission(om.Group):
             self.linear_solver = om.LinearBlockGS()
 
             # Enforce motor continuous-current limit on nominal branch in solver mode.
-            self.add_constraint('current_constraint_nominal', upper=0, ref=1e2)
+            self.add_constraint('current_constraint_nominal', upper=0, ref=1)
 
         
         self.add_constraint('prop.rpm_constraint', upper=0.0, ref=1e2, units='rev/s')

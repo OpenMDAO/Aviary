@@ -36,11 +36,9 @@ class RCPropPreMission(om.Group):
         # max continuous current
         # motor mass
         
-        #TODO: CITE!
         self.add_subsystem(
             'energy_calc',
             om.ExecComp(
-                #TODO: may add options here
                 'energy = voltage_in * (battery_mass * 7.3 - 0.246)',
                 energy={'val': 0.0, 'units': 'W*h'},
                 voltage_in={'val': 0.0, 'units': 'V'},
@@ -92,3 +90,8 @@ class RCPropPreMission(om.Group):
         #     promotes_inputs=[('batt_mass', Aircraft.Battery.MASS), ('motor_mass', Aircraft.Engine.Motor.MASS)],
         #     promotes_outputs=[('engine_mass', Aircraft.Engine.MASS)]
         # )
+
+
+        self.set_input_defaults(Aircraft.Battery.VOLTAGE, val=22.2, units='V')
+        self.set_input_defaults(Aircraft.Engine.Motor.MAX_CONT_CURRENT, val=100.0, units='A')
+        self.set_input_defaults(Aircraft.Engine.Motor.IDLE_CURRENT, val=2.2, units='A')

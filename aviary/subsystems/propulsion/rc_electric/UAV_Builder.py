@@ -12,7 +12,7 @@ class RCBuilder(EngineModel):
     # RCPropMission computes its own max-power chain (battery_max ... prop_max),
     # so tell Aviary NOT to build a duplicate full-throttle copy of the engine.
     # The duplicate re-declared every constraint and broke the optimizer (TOO_FEW_DOF).
-    compute_max_values = True
+    compute_max_values =True
 
     def __init__(self, options: AviaryValues = None, name='rc_electric', power_balance_mode='feedforward'):
         """Initializes the PropellerBuilder object with a given name."""
@@ -114,20 +114,8 @@ class RCBuilder(EngineModel):
         A dict of names for the propeller subsystem.
         """
 
-        # Use loaded prop geometry when available.
-        #Is needed because the prop geometry is used to compute the propeller 
-        # performance in the mission phase.
-        #  If the prop geometry is not available, then the default values are used.
-        def _maybe(name, units, default=0.0):
-            if aviary_inputs is None:
-                return default
-            try:
-                return aviary_inputs.get_val(name, units)
-            except KeyError:
-                return default
-
-        prop_diam = _maybe(Aircraft.Engine.Propeller.DIAMETER, 'inch')
-        prop_pitch = _maybe(Aircraft.Engine.Propeller.PITCH, 'inch')
+       
+       
 
         parameters = {
             Aircraft.Battery.VOLTAGE: {
@@ -157,11 +145,11 @@ class RCBuilder(EngineModel):
                 'units': 'A',
             },
             Aircraft.Engine.Propeller.DIAMETER: {
-                'val': prop_diam,
+                'val': 19,
                 'units': 'inch',
             },
             Aircraft.Engine.Propeller.PITCH: {
-                'val': prop_pitch,
+                'val': 12,
                 'units': 'inch',
             },
         }
@@ -171,7 +159,7 @@ class RCBuilder(EngineModel):
     def get_controls(self, aviary_inputs = None, user_options = None, subsystem_options = None, phase_name=None):
 
         if self.power_balance_mode == 'feedforward':
-           return{Dynamic.Vehicle.Propulsion.CURRENT: {
+           controls = {Dynamic.Vehicle.Propulsion.CURRENT: {
                 'targets': Dynamic.Vehicle.Propulsion.CURRENT,
                 'units': 'A',
                 'opt': True,
@@ -203,13 +191,25 @@ class RCBuilder(EngineModel):
             #     'ref': 1.0e2,
             # },
             }
+
+           return controls
         # Solver mode computes current/current_max internally in RCPropMission.
         # Declaring them as Dymos controls creates duplicate connections.
+
         return {}
         
        
     def get_mass_names(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+
+        
         return [Aircraft.Battery.MASS, Aircraft.Engine.Motor.MASS]#, Aircraft.Engine.MASS]
+    
+
+   
+
+
+
+
     
     #TODO add new outputs
     def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
