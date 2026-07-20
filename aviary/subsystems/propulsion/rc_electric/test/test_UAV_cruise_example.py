@@ -29,8 +29,7 @@ rc_prop = RCBuilder()  # or 'solver' for the solver-based power balance mode
 def CruiseExample():
     prob = av.AviaryProblem(verbosity=0)
     prob.options['group_by_pre_opt_post'] = True
-
-    #just selecting cruise
+        #just selecting cruise
     cruise_phase_info = {
         'pre_mission': deepcopy(phase_info['pre_mission']),
         'cruise': deepcopy(phase_info['cruise']),
@@ -63,19 +62,7 @@ def CruiseExample():
     prob.driver.options['debug_print'] = ['desvars', 'objs', 'nl_cons', 'ln_cons']
 
     prob.add_design_variables()
-
-    # Set UAV-scale gross mass DV for this test setup.
-    # prob.model.add_design_var(Mission.GROSS_MASS, units='kg', lower=0.5, upper=20, ref=4)
-
-    # Geometry design variables at UAV scale.
-    
-
-    
-    # Keep direct geometric bounds.
-
-
-
-    # prob.model.add_constraint(Mission.TOTAL_FUEL_MASS, equals=0.0, units='kg', ref=1e2)
+  
     prob.add_objective(objective_type='time')
     
 
@@ -86,17 +73,10 @@ def CruiseExample():
     prob.set_solver_print(level=0)
     prob.set_initial_guesses()
     
-    prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
+    # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
 
-
-    
-    
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
     
-    
-    prob.set_val('traj.cruise.states:mass', 4.4, units='kg')
-        
-
     prob.run_aviary_problem(run_driver=True)
 
 

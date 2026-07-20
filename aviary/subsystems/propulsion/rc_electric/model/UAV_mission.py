@@ -82,11 +82,9 @@ class RCPropMission(om.Group):
                 Aircraft.Engine.Motor.IDLE_CURRENT, 
                 Aircraft.Engine.Motor.RESISTANCE, 
                 Aircraft.Engine.Motor.KV,
-                Dynamic.Vehicle.Propulsion.CURRENT,
                 ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,
-                
                 ]
         )
 
@@ -161,12 +159,7 @@ class RCPropMission(om.Group):
             promotes_outputs=[('p_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
         )
 
-        self.connect('esc.voltage_out', 'electric_power.v_batt')
-
-
-
-
-      
+        self.connect('battery.voltage_out', 'electric_power.v_batt')
         self.connect('battery.voltage_out', 'esc.voltage_in')
         self.connect('esc.voltage_out', 'motor.voltage_in')
         self.connect('esc.current_out', 'motor.current')
@@ -183,13 +176,8 @@ class RCPropMission(om.Group):
 
 
         """Constraints"""
-        
-       
-
-        
-
-        # Force commanded cruise RPM to match motor-computed RPM.
-        self.add_constraint('rpm_balance.rpm_defect', equals=0.0)
+              # Force commanded cruise RPM to match motor-computed RPM.
+        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref=1.0, units='rev/s')
        
         
 
