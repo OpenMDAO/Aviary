@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import \
-    Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, PowerImplicit, Vectorization, PowerResiduals
+    Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
@@ -134,16 +134,7 @@ class RCPropMission(om.Group):
        
 
        
-        self.add_subsystem(
-            'power_net',
-            PowerResiduals(num_nodes=nn),
-            promotes_inputs=[
-                Dynamic.Vehicle.Propulsion.PROP_POWER,
-            ],
-            promotes_outputs=[
-                'power_net',
-            ]
-        )
+        
        
         
 
@@ -172,31 +163,25 @@ class RCPropMission(om.Group):
 
        
         
-        #TODO Alex from phase builder base import add_control
+        
 
-        self.connect('battery.power', 'power_net.power_batt')
-        self.connect('esc.power', 'power_net.power_esc')
-        self.connect('motor.power', 'power_net.power_motor')
+       
 
         
 
 
 
 
-
+        """Constraints"""
         
-        # Keep electrical power mismatch near zero 
-        self.add_constraint('power_net', equals=0.0, units='W')
+       
 
-        # Enforce motor continuous-current limit on nominal branch.
+        # Enforce motor continuous-current limit 
         self.add_constraint('current_constraint_nominal', upper=0, ref=1e2)
 
         # Force commanded cruise RPM to match motor-computed RPM.
         self.add_constraint('rpm_balance.rpm_defect', equals=0.0)
-        # Max-capability constraints removed with the max branch.
        
-
-        
         self.add_constraint('prop.rpm_constraint', upper=0.0, ref=1e2, units='rev/s')
         # self.add_constraint('prop_max.rpm_constraint', upper=0.0, ref=1e2, units='rev/s')
 

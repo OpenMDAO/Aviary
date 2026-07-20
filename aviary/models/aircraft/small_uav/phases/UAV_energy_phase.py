@@ -1,10 +1,11 @@
 from copy import deepcopy
+from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 
 
 phase_info = {
     'pre_mission': {'include_takeoff': False,  'optimize_mass': False},
     'climb': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 1,
             'order': 3,
@@ -21,8 +22,6 @@ phase_info = {
             'altitude_final': (200.0, 'ft'),
             'throttle_enforcement': 'control',
             'throttle_polynomial_order': 1,
-            'electric_current_polynomial_order': 3,
-            'electric_current_max_polynomial_order': 3,
             'time_initial': (0.0, 'min'),
             'time_duration_bounds': ((0.1, 25), 's'),
             'constraints': {
@@ -39,7 +38,7 @@ phase_info = {
         },
     },
     'cruise': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'external'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -61,13 +60,11 @@ phase_info = {
             'distance_ref': (1000.0, 'm'),
             'target_distance': (1000.0, 'm'),
             'throttle_enforcement': 'control',
-            'electric_current_polynomial_order': 3,
-            'electric_current_max_polynomial_order': 3,
             # 'throttle_polynomial_order': 1,
             
             #Time 
             'time_initial': (0.0, 's'),
-            'time_duration_bounds': ((20,180.0), 's'),
+            'time_duration_bounds': ((20,90.0), 's'),
         },
         'initial_guesses': {
             'distance': ([0, 200], 'ft'),
@@ -76,7 +73,7 @@ phase_info = {
         },
     },
     'descent': {
-        'subsystem_options': {'core_aerodynamics': {'method': 'computed'}},
+        'subsystem_options': {'aerodynamics': {'method': 'computed'}},
         'user_options': {
             'num_segments': 5,
             'order': 3,
@@ -102,47 +99,3 @@ phase_info = {
 }
 
 
-def get_cruise_phase_info(
-    *,
-    throttle_enforcement='control',
-    throttle_bounds=None,
-    rc_dof_relief=False,
-    external_subsystems=None,
-    include_climb=False,
-    include_descent=False,
-):
-    """Return a cruise-focused phase_info copy with unsupported cruise options removed."""
-    cruise_phase_info = deepcopy(phase_info)
-
-    if not include_climb:
-        cruise_phase_info.pop('climb', None)
-    if not include_descent:
-        cruise_phase_info.pop('descent', None)
-
-    cruise_options = cruise_phase_info['cruise']['user_options']
-    cruise_options.pop('electric_current_polynomial_order', None)
-    cruise_options.pop('electric_current_max_polynomial_order', None)
-    cruise_options['throttle_enforcement'] = throttle_enforcement
-
-    if throttle_bounds is None:
-        cruise_options.pop('throttle_bounds', None)
-    else:
-        cruise_options['throttle_bounds'] = throttle_bounds
-
-    if rc_dof_relief:
-        cruise_options['throttle_enforcement'] = 'bounded'
-        cruise_options['throttle_bounds'] = ((0.2, 0.9), 'unitless')
-        rc_opts = cruise_phase_info['cruise']['subsystem_options'].setdefault('rc_electric', {})
-        rc_opts['current_control_continuity'] = False
-        rc_opts['current_control_rate_continuity'] = False
-        rc_opts['rpm_slack_control_continuity'] = False
-        rc_opts['rpm_slack_control_rate_continuity'] = False
-
-    if external_subsystems is not None:
-        cruise_phase_info['cruise']['external_subsystems'] = list(external_subsystems)
-
-    cruise_phase_info['cruise']['subsystem_options']['aerodynamics'] = {
-        'method': 'external',
-    }
-
-    return cruise_phase_info

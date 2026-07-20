@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 
 import aviary.api as av
 import numpy as np
@@ -7,7 +8,7 @@ from openmdao.utils.assert_utils import assert_check_partials, assert_near_equal
 
 from aviary.subsystems.aerodynamics.UAV_Aero.custom_aero_builder import CustomAeroBuilder
 from aviary.subsystems.mass.UAV_mass.mass_builder import MassBuilder as DBFMassBuilder
-from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import get_cruise_phase_info
+from aviary.models.aircraft.small_uav.phases.UAV_energy_phase import phase_info
 from aviary.subsystems.propulsion.rc_electric.UAV_Builder import RCBuilder
 from aviary.subsystems.propulsion.rc_electric.model.UAV_mission import RCPropMission
 from aviary.subsystems.propulsion.rc_electric.model.UAV_premission import RCPropPreMission
@@ -22,23 +23,23 @@ from aviary.subsystems.mass.UAV_mass.variable_info.mass_variables import Aircraf
 rc_prop = RCBuilder()  # or 'solver' for the solver-based power balance mode
 
 
-def _build_cruise_phase_info():
-    phase_kwargs = {
-        'external_subsystems': [CustomAeroBuilder()],
-    }
 
-    
-
-    return get_cruise_phase_info(**phase_kwargs)
 
 
 def CruiseExample():
     prob = av.AviaryProblem(verbosity=0)
     prob.options['group_by_pre_opt_post'] = True
 
+    #just selecting cruise
+    cruise_phase_info = {
+        'pre_mission': deepcopy(phase_info['pre_mission']),
+        'cruise': deepcopy(phase_info['cruise']),
+        'post_mission': deepcopy(phase_info['post_mission']),
+    }
+    
     prob.load_inputs(
         'validation_cases/validation_data/test_models/small_scale_uav.csv',
-        _build_cruise_phase_info(),
+        cruise_phase_info
     )
     
     prob.load_external_subsystems(external_subsystems=[rc_prop, CustomAeroBuilder(), DBFMassBuilder()])
@@ -127,7 +128,7 @@ class TestUAVCruiseExample(unittest.TestCase):
             units=True,
             print_arrays=True,
             prom_name=True,
-            includes=['*power_net*'],
+            
         )
 
         # Print only driver-level constraints in a list_vars-like table.

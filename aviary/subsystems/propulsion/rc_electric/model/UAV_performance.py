@@ -365,52 +365,5 @@ class Propeller(om.ExplicitComponent):
         partials['rpm_constraint', Aircraft.Engine.Propeller.DIAMETER] = 63.5 / D**2
 
 
-class PowerResiduals(om.ExplicitComponent):
-    def initialize(self):
-        self.options.declare('num_nodes', default=1, types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        self.add_input('power_batt', val=np.zeros(nn), units='W')
-        self.add_input('power_esc', val=np.zeros(nn), units='W')
-        self.add_input('power_motor', val=np.zeros(nn), units='W')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.PROP_POWER, shape=(nn,), units='W')
-
-        self.add_output('power_net', val=np.ones(nn), ref=1e3, units='W')
-
-        self.declare_partials('*', '*', method='cs')
-
-    def compute(self, inputs, outputs):
-        outputs['power_net'] = inputs['power_batt'] + inputs['power_esc'] + inputs['power_motor'] - inputs[Dynamic.Vehicle.Propulsion.PROP_POWER]
-
-
-class PowerImplicit(om.ImplicitComponent):
-    def initialize(self):
-        self.options.declare('num_nodes', default=1, types=int)
-
-    def setup(self):
-        nn = self.options['num_nodes']
-        self.add_input('power_batt', val=np.zeros(nn), units='W')
-        self.add_input('power_esc', val=np.zeros(nn), units='W')
-        self.add_input('power_motor', val=np.zeros(nn), units='W')
-        add_aviary_input(self, Dynamic.Vehicle.Propulsion.PROP_POWER, shape=(nn,), units='W')
-
-        self.add_output(Dynamic.Vehicle.Propulsion.CURRENT, lower=np.zeros(nn), val=np.ones(nn)*30, units='A')
-
-        # Residual depends only on the input powers, not on its own CURRENT state
-        # (that coupling is resolved at the group level), so declaring '*','*' would
-        # flag the zero (CURRENT, CURRENT) self-derivative. List the inputs explicitly.
-        self.declare_partials(
-            Dynamic.Vehicle.Propulsion.CURRENT,
-            ['power_batt', 'power_esc', 'power_motor', Dynamic.Vehicle.Propulsion.PROP_POWER],
-            method='cs',
-        )
-
-    def apply_nonlinear(self, inputs, outputs, residuals):
-        power_in = inputs['power_batt'] + inputs['power_esc'] + inputs['power_motor']
-        residuals[Dynamic.Vehicle.Propulsion.CURRENT] = power_in - inputs[Dynamic.Vehicle.Propulsion.PROP_POWER]
-
-
-
 
 
