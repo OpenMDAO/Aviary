@@ -17,7 +17,7 @@ class TestRCPropPre(unittest.TestCase):
 
         options.set_val(Aircraft.Engine.Motor.KV_EQ_SLOPE, 2105.53674)
         options.set_val(Aircraft.Engine.Motor.KV_EQ_INT, -80.83469)
-
+        
         prob.model.add_subsystem(
             'rc_calcs',
             RCPropPreMission(aviary_options=options),
@@ -29,7 +29,7 @@ class TestRCPropPre(unittest.TestCase):
         prob.set_val(Aircraft.Battery.MASS, 0.707, units='kg')
         prob.set_val(Aircraft.Battery.VOLTAGE, 22.2, units='V')
         prob.set_val(Aircraft.Engine.Motor.IDLE_CURRENT, 0.91, units='A')
-        prob.set_val(Aircraft.Engine.Motor.MAX_CONT_CURRENT, 80, units='A')
+        
         prob.set_val(Aircraft.Engine.Motor.MASS, 0.288, units='kg')
 
         prob.run_model()
@@ -39,7 +39,7 @@ class TestRCPropPre(unittest.TestCase):
         resistance = prob.get_val(Aircraft.Engine.Motor.RESISTANCE, 'ohm')
         energy = prob.get_val(Aircraft.Battery.ENERGY_CAPACITY, 'W*h')
 
-        kv_expected = 2105.53674 * 80 / 288 - 80.83469
+        kv_expected = 2105.53674 * 100 / 288 - 80.83469
         resistance_expected = 0.05582266503
         energy_expected = 109.11522
 

@@ -2,7 +2,7 @@ import numpy as np
 import openmdao.api as om
 
 from aviary.subsystems.propulsion.rc_electric.model.UAV_performance import \
-    Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
+    Throttle, Battery, ElectronicSpeedController, Motor, PropCoefficients, Propeller, Vectorization
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
@@ -43,7 +43,17 @@ class RCPropMission(om.Group):
             rpm_in = []  # solver mode: motor RPM is connected straight in below
 
 
-       
+        self.add_subsystem(
+            'throttle',
+            Throttle(num_nodes=nn),
+            promotes_inputs=[
+                Dynamic.Vehicle.Propulsion.THROTTLE,
+            ],
+
+            promotes_outputs = [
+                Dynamic.Vehicle.Propulsion.CURRENT,]
+        )
+
        
         
         self.add_subsystem(
@@ -70,18 +80,17 @@ class RCPropMission(om.Group):
             Motor(num_nodes=nn, load_factor=motor_load_factor),
             promotes_inputs=[
                 Aircraft.Engine.Motor.IDLE_CURRENT, 
-                Aircraft.Engine.Motor.MAX_CONT_CURRENT,
                 Aircraft.Engine.Motor.RESISTANCE, 
                 Aircraft.Engine.Motor.KV,
                 Dynamic.Vehicle.Propulsion.CURRENT,
                 ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,
-                ('current_constraint', 'current_constraint_nominal'),
+                
                 ]
         )
 
-
+      
         self.add_subsystem('vectorize_geo', Vectorization(num_nodes=nn), 
             promotes_inputs=[Aircraft.Engine.Propeller.DIAMETER, Aircraft.Engine.Propeller.PITCH],
             promotes_outputs=['temp_diameter', 'temp_pitch']
@@ -108,13 +117,13 @@ class RCPropMission(om.Group):
                 Aircraft.Engine.Propeller.DIAMETER,
                 'ct',
                 'cp',
-                # Aircraft.Engine.NUM_ENGINES,
+                
                 Dynamic.Atmosphere.DENSITY
                 ] + rpm_in,
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.PROP_POWER,
                 Dynamic.Vehicle.Propulsion.THRUST,
-                # Dynamic.Vehicle.Propulsion.THRUST_MAX,
+                
                 ]
         )
 
@@ -177,14 +186,12 @@ class RCPropMission(om.Group):
         
        
 
-        # Enforce motor continuous-current limit 
-        self.add_constraint('current_constraint_nominal', upper=0, ref=1e2)
+        
 
         # Force commanded cruise RPM to match motor-computed RPM.
         self.add_constraint('rpm_balance.rpm_defect', equals=0.0)
        
-        self.add_constraint('prop.rpm_constraint', upper=0.0, ref=1e2, units='rev/s')
-        # self.add_constraint('prop_max.rpm_constraint', upper=0.0, ref=1e2, units='rev/s')
+        
 
         self.options['auto_order'] = True
 

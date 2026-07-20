@@ -6,6 +6,7 @@ from copy import deepcopy
 import aviary.api as av
 from aviary.variable_info.dbf_variables import Aircraft, Dynamic
 
+
 ExtendedMetaData = deepcopy(av.CoreMetaData)
 
 
@@ -38,7 +39,8 @@ av.add_meta_data(
 )
 
 av.add_meta_data(
-    Aircraft.Engine.Motor.MAX_CONT_CURRENT,
+    Aircraft.Engine.Motor.MAX_CONT_CURRENT, 
+    option=True,
     meta_data=ExtendedMetaData,
     units='A',
     desc='Maximum continuous current that flows through a single motor.',

@@ -53,7 +53,7 @@ def CruiseExample():
 
     
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=0)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=15)
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'adaptive'
     prob.driver.opt_settings['tol'] = 1e-6
@@ -92,8 +92,8 @@ def CruiseExample():
     
     
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
-    prob.set_val('traj.cruise.controls:throttle', 0.7, units='unitless')
-    prob.set_val('traj.cruise.controls:current_flow', 40.0, units='A')
+    
+    
     prob.set_val('traj.cruise.states:mass', 4.4, units='kg')
         
 
@@ -124,19 +124,19 @@ class TestUAVCruiseExample(unittest.TestCase):
         # distance_resid = abs(distance_resid)
         # self.assertTrue(np.isfinite(distance_resid))
         # self.assertLess(distance_resid, 0.25, 'Cruise distance residual is unexpectedly large.')
-        prob.model.traj.phases.cruise.rhs_all.list_vars(
-            units=True,
-            print_arrays=True,
-            prom_name=True,
+        # prob.model.traj.phases.cruise.rhs_all.list_vars(
+        #     units=True,
+        #     print_arrays=True,
+        #     prom_name=True,
             
-        )
+        # )
 
-        # Print only driver-level constraints in a list_vars-like table.
-        prob.list_driver_vars(
-            print_arrays=True,
-            desvar_opts=[],
-            objs_opts=[],
-        )
+        # # Print only driver-level constraints in a list_vars-like table.
+        # prob.list_driver_vars(
+        #     print_arrays=True,
+        #     desvar_opts=[],
+        #     objs_opts=[],
+        # )
         
 
 

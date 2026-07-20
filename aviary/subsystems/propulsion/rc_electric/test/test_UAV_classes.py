@@ -52,7 +52,6 @@ class TestMotor(unittest.TestCase):
         prob.setup(force_alloc_complex=True)
 
         prob.set_val(Aircraft.Engine.Motor.IDLE_CURRENT, 0.91, units='A')
-        prob.set_val(Aircraft.Engine.Motor.MAX_CONT_CURRENT, 120, units='A')
         prob.set_val(Aircraft.Engine.Motor.RESISTANCE, 0.032, units='ohm')
         prob.set_val(Aircraft.Engine.Motor.KV, 420, units='rpm/V')
         prob.set_val('voltage_in', 22.2, units='V')
@@ -70,19 +69,13 @@ class TestMotor(unittest.TestCase):
         
         rpm = prob.get_val(Dynamic.Vehicle.Propulsion.RPM, units='rpm')
         power = prob.get_val('power', units='W')
-        current_constraint = prob.get_val('current_constraint', units='A')
+        
 
-        #power = -I**2 * R - idle * voltage_prop = -10**2 * 0.032 - 0.91 * 21.88 = -32 - 19.9 = -51.9 W
-
-        # current_constraint = Dynamic.Vehicle.Propulsion.CURRENT - Aircraft.Engine.Motor.MAX_CONT_CURRENT = 10 - 120 = -110 A
-
-
-        # prob.model.list_inputs(units=True, prom_name=True)
-        # prob.model.list_outputs(units=True, prom_name=True, residuals=True)
+        
 
         assert_near_equal(rpm, np.full(nn, 9189.6), tolerance=1e-5)
         assert_near_equal(power, np.full(nn, -23.1108), tolerance=1e-5)
-        assert_near_equal(current_constraint, np.full(nn, -110.0), tolerance=1e-8)
+        
        
         partial_data = prob.check_partials(
             out_stream=None,

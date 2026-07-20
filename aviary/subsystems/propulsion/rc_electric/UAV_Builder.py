@@ -29,19 +29,7 @@ class RCBuilder(EngineModel):
 
 
         return RCPropMission(num_nodes=num_nodes, aviary_options=self.options, power_balance_mode=self.power_balance_mode)
-    # def get_constraints(self):
-    #     constraints = {
-    #         Dynamic.Vehicle.Propulsion.CURRENT: {
-    #             'lower': 0,
-    #             'type': 'path',
-    #         },
-    #         Dynamic.Vehicle.Propulsion.CURRENT_CON: {
-    #             'upper': 0, 
-    #             'type': 'path',1
-    #         }1
-    #     }1
-
-    #     return constraints
+   
 
     def get_design_vars(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
         """
@@ -72,29 +60,14 @@ class RCBuilder(EngineModel):
                 # 'val': 2.2,  
             },
            
-            
-
-
-
-        
+                    
             Aircraft.Engine.Motor.MASS: {
                
                 'units': 'lbm',
                 'lower': 1.0362,   # 0.47 kg -> KV low enough to keep rpm_max in the prop grid
                 'upper': 1.4330,   # 0.65 kg
             },
-            # Aircraft.Engine.Propeller.PITCH: {
-            #     'units': 'inch',
-            #     'lower': 3.0,
-            #     'upper': 15.0,
-            #     # 'val': 100,  # initial value
-            # },
-            # Aircraft.Engine.Propeller.DIAMETER: {
-            #     'units': 'inch',
-            #     'lower': 10.0,
-            #     'upper': 20.0,
-            #     # 'val': 8,  # initial value
-            # },
+           
 
         }
         return DVs
@@ -139,11 +112,9 @@ class RCBuilder(EngineModel):
                 'units': 'A',
             },
 
-            #Single value for the motor's maximum continuous current, this cannot change during the mission, but can be optimized as a design variable.
-            Aircraft.Engine.Motor.MAX_CONT_CURRENT: {
-                'val': 100,  
-                'units': 'A',
-            },
+            
+
+
             Aircraft.Engine.Propeller.DIAMETER: {
                 'val': 19,
                 'units': 'inch',
@@ -158,48 +129,27 @@ class RCBuilder(EngineModel):
 
     def get_controls(self, aviary_inputs = None, user_options = None, subsystem_options = None, phase_name=None):
 
-        if self.power_balance_mode == 'feedforward':
-           controls = {Dynamic.Vehicle.Propulsion.CURRENT: {
-                'targets': Dynamic.Vehicle.Propulsion.CURRENT,
-                'units': 'A',
-                'opt': True,
-                # 1 A floor, not 10: at light cruise the balanced current is only a
-                # few amps; a 10 A floor forces ~250 W through the powertrain and
-                # makes the thrust=drag constraint infeasible (IPOPT local infeas).
-                'lower': 1.0,
-                'upper': 100.0,
-                'ref': 1.0e2,
-            },
+        
+        controls = {
 
 
-            # SAND: the RPM the prop table sees. Bounds keep it inside the
-            # training data (16.7 - 183 rev/s), so ct/cp are never extrapolated.
-            'rpm_slack': {
-                'targets': 'rpm_slack',
-                'units': 'rev/s',
-                'opt': True,
-                'lower': 20.0,
-                'upper': 180.0,
-                'ref': 1.0e2,
-            },
-            # 'rpm_slack_max': {
-            #     'targets': 'rpm_slack_max',
-            #     'units': 'rev/s',
-            #     'opt': True,
-            #     'lower': 20.0,
-            #     'upper': 180.0,
-            #     'ref': 1.0e2,
-            # },
-            }
+        #Rpm slack variable the optimizer chooses to keep the propeller RPM within the bounds of the training data. The motor RPM is forced to match this value at the optimum.
+        'rpm_slack': {
+            'targets': 'rpm_slack',
+            'units': 'rev/s',
+            'opt': True,
+            'lower': 20.0,
+            'upper': 180.0,
+            'ref': 1.0e2,
+        },
+        }
 
-           return controls
         # Solver mode computes current/current_max internally in RCPropMission.
         # Declaring them as Dymos controls creates duplicate connections.
-
-        return {}
+        return controls
         
     def needs_mission_solver(self, aviary_inputs, subsystem_options):
-        return False
+        return True
 
 
     def get_mass_names(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
