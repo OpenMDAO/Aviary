@@ -76,6 +76,7 @@ def CruiseExample():
     # prob.set_val('traj.cruise.states:mass', 4.1, units='kg')
 
     prob.set_val('traj.cruise.controls:rpm_slack', 4000.0, units='rpm')
+    prob.set_val('traj.cruise.controls:throttle', 0.3)
     
     prob.run_aviary_problem(run_driver=True)
 
