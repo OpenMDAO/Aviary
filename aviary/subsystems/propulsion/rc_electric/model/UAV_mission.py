@@ -143,15 +143,16 @@ class RCPropMission(om.Group):
             om.ExecComp(
                 'p_elec = v_batt * current',
                 p_elec={'val': np.zeros(nn), 'units': 'W'},
-                v_batt={'val': 22.2, 'units': 'V'},
+                v_batt={'val': np.zeros(nn), 'units': 'V'},
                 current={'val': np.zeros(nn), 'units': 'A'},
             ),
             promotes_inputs=[
-                ('v_batt', Aircraft.Battery.VOLTAGE),
                 ('current', Dynamic.Vehicle.Propulsion.CURRENT),
             ],
             promotes_outputs=[('p_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
         )
+
+        self.connect('esc.voltage_out', 'electric_power.v_batt')
 
 
 
