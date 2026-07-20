@@ -198,7 +198,10 @@ class RCBuilder(EngineModel):
 
         return {}
         
-       
+    def needs_mission_solver(self, aviary_inputs, subsystem_options):
+        return False
+
+
     def get_mass_names(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
 
         
