@@ -26,24 +26,34 @@ from aviary.variable_info.variables import Aircraft, Dynamic
 from aviary.utils.aviary_values import AviaryValues
 
 class AeroBuilder(SubsystemBuilder):
-    def __init__(self, name='core_aerodynamics'):
+    def __init__(self, name='UAV_aero'):
         super().__init__(name)
-
-    def get_inputs(self, **kwargs):
-        inputs = [
+#changed any def get input/output to mission inputs and outputs
+    def mission_inputs(self, aviary_inputs=None, user_options=None, subsystem_options=None,
+    ):
+        return [
             Dynamic.Mission.ALTITUDE,
             Dynamic.Mission.VELOCITY,
+            Dynamic.Vehicle.MASS,
+            'aircraft:*',
         ]
-        inputs.extend(self.get_parameters(**kwargs).keys())
-        return inputs
     
-    def get_outputs(self, **kwargs):
+    def mission_outputs(
+    self,
+    aviary_inputs=None,
+    user_options=None,
+    subsystem_options=None,
+):
         return [
             Dynamic.Vehicle.LIFT,
             Dynamic.Vehicle.DRAG,
+            Dynamic.Vehicle.DRAG_COEFFICIENT,
             'alpha',
+            'lifting_surface_CL',
             'lifting_surface_CD',
-            'avg_CL',
+            'CD_fus',
+            'CD_vtail',
+            'CD_gear',
         ]
     
     def get_parameters(self, aviary_inputs=None, **kwargs):
@@ -106,4 +116,4 @@ class AeroBuilder(SubsystemBuilder):
         )
     
     def needs_mission_solver(self, aviary_inputs=None, subsystem_options=None, **kwargs):
-        return False
+        return True      #changed from false to true

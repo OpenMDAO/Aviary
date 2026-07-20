@@ -28,34 +28,35 @@ from aviary.utils.aviary_values import AviaryValues
 
 from aviary.variable_info.variables import Aircraft, Dynamic
 
-aero_builder = AeroBuilder()
+aero_builder = AeroBuilder(name='uav_aero')
 
 phase_info = {
     'pre_mission': {
         'include_takeoff': False,
-        'external_subsystems': [],
         'optimize_mass': True,
     },
 
     'cruise': {
-        'external_subsystems': ['aero_builder'],
         'subsystem_options': {
-            'aero_builder': {'method': 'external'},
+            'aerodynamics': {'method': 'external'}, # Changed aero_builder to aerodynamics 
         },
 
         'user_options': {
             'num_segments': 1,
             'order': 3,
+
             'mach_optimize': False,
             'mach_polynomial_order': 1,
             'mach_initial': (0.08, 'unitless'),
             'mach_final': (0.09, 'unitless'),
             'mach_bounds': ((0.07, 0.11), 'unitless'),
+
             'altitude_optimize': False,
             'altitude_polynomial_order': 1,
             'altitude_initial': (520, 'm'),
             'altitude_final': (520, 'm'),
             'altitude_bounds': ((500, 600), 'm'),
+
             'throttle_enforcement': 'boundary_constraint',
             'time_initial': (0, 's'),
             'time_duration_bounds': ((1.0, 300.0), 's'),
@@ -74,8 +75,6 @@ phase_info = {
     },
 }
 
-phase_info['cruise']['subsystem_options']['aero_builder'] = {'method': 'external'}
-phase_info['cruise']['user_options']['num_segments'] = 1
 
 max_iter = 50
 optimizer = 'IPOPT' 
@@ -158,7 +157,7 @@ prob.run_model()
 print('Lift:', prob.get_val('traj.cruise.rhs_all.lift', units='lbf')) 
 print('Drag:', prob.get_val('traj.cruise.rhs_all.drag', units='lbf'))
 print('CL:', prob.get_val('traj.cruise.rhs_all.lifting_surface_CL'))
-print('CD:', prob.get_val('traj.cruise.rhs_all.CD'))
+print('CD:', prob.get_val('traj.cruise.rhs_all.drag_coefficient'))
 
 print('CD_fus:', prob.get_val('traj.cruise.rhs_all.CD_fus'))
 print('CD_vtail:', prob.get_val('traj.cruise.rhs_all.CD_vtail'))

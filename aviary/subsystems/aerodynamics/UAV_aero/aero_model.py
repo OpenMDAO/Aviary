@@ -246,7 +246,16 @@ class TotalAircraftAero(om.Group):
             'OAS_aero',
             OASAero(num_nodes=nn, aviary_inputs=aviary_inputs),
             promotes_inputs=['*'],
-            promotes_outputs=[]
+            promotes_outputs=[      #added outputs to be promoted
+                Dynamic.Vehicle.LIFT,
+                Dynamic.Atmosphere.DYNAMIC_PRESSURE,
+                'alpha',
+                'lifting_surface_drag',
+                ('lifting_surface_CL',
+                Dynamic.Vehicle.LIFT_COEFFICIENT,
+                ),
+                'lifting_surface_CD',
+            ]
         )
 
         self.add_subsystem(
@@ -279,7 +288,7 @@ class TotalAircraftAero(om.Group):
                         CD_gear={'shape': (nn,), 'units': 'unitless'},
                         CD={'shape': (nn,), 'units': 'unitless'}),
             promotes_inputs=['CD_fus', 'CD_vtail', 'lifting_surface_CD', 'CD_gear'],
-            promotes_outputs=['CD']
+            promotes_outputs=[('CD', Dynamic.Vehicle.DRAG_COEFFICIENT)]
         )
 
         self.add_subsystem(
@@ -291,18 +300,19 @@ class TotalAircraftAero(om.Group):
                         D_gear={'shape': (nn,), 'units': 'N'},
                         drag={'shape': (nn,), 'units': 'N'}),
             promotes_inputs=['D_fus', 'D_vtail', 'lifting_surface_drag', 'D_gear'],
-            promotes_outputs=[Dynamic.Vehicle.DRAG]
+            promotes_outputs=[('drag', Dynamic.Vehicle.DRAG)]
         )
 
         # would like to not need this
         self.add_subsystem(
             'averages',
             Averages(num_nodes=nn),
-            promotes_inputs=['CD', 'CD_fus', 'lifting_surface_CL'],
+            promotes_inputs=[('CD', Dynamic.Vehicle.DRAG_COEFFICIENT), 'CD_fus', 'lifting_surface_CL'],
             promotes_outputs=['avg_CD', 'avg_CD_fus', 'avg_CL']
         )
         
         self.connect('OAS_aero.aero_point_0.wing.S_ref', 'aircraft:wing:area')
-        self.connect('aircraft:wing:root_chord', 'OAS_aero.aero_point_0.wing.c_root')
-        
+        #self.connect('aircraft:wing:root_chord', 'OAS_aero.aero_point_0.wing.c_root') #removed this connection because the wing root chord is already changing the mesh through:
+        #  broadcast_wing_chord connect to wing.mesh.scale_x.chord      
+ 
         self.options['auto_order'] = True
