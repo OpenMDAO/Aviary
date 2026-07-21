@@ -89,7 +89,6 @@ aircraft:wing:thickness_to_chord,0.11,unitless
 aircraft:wing:ultimate_load_factor,3.75,unitless
 aircraft:wing:var_sweep_mass_penalty,0,unitless
 mission:constraints:max_mach,0.85,unitless
-mission:landing:initial_velocity,140,ft/s
 mission:landing:lift_coefficient_max,3.0,unitless
 mission:takeoff:braking_friction_coefficient,0.3,unitless
 mission:takeoff:rolling_friction_coefficient,0.025,unitless
@@ -103,6 +102,7 @@ AERIN.FLTO,11000
 AERIN.ITPAER,2
 AERIN.MYAERO,0
 AERIN.THROFF,0.25
+AERIN.VAPPR,140
 AERIN.XLLAM,0
 CONFIN.CH,39000
 CONFIN.GW,874099

@@ -19,7 +19,9 @@ from aviary.subsystems.propulsion.utils import build_engine_deck
 from aviary.utils.preprocessors import preprocess_options
 from aviary.utils.test_utils.variable_test import assert_match_varnames
 from aviary.validation_cases.validation_tests import do_validation_test
-from aviary.variable_info.variables import Dynamic
+from aviary.variable_info.variables import Dynamic, Mission
+from aviary.variable_info.functions import setup_model_options
+from aviary.utils.aviary_values import AviaryValues
 
 
 @use_tempdirs
@@ -37,10 +39,12 @@ class FlareEOMTest(unittest.TestCase):
 
         prob.model.add_subsystem(
             'landing_flare_eom',
-            FlareEOM(num_nodes=nn, aviary_options=aviary_options),
+            FlareEOM(num_nodes=nn),
             promotes_inputs=['*'],
             promotes_outputs=['*'],
         )
+
+        setup_model_options(prob, AviaryValues(aviary_options))
 
         prob.setup(check=False, force_alloc_complex=True)
 
@@ -101,13 +105,15 @@ class OtherTest(unittest.TestCase):
         # test on single component GlideSlopeForces
 
         tol = 1e-6
-        aviary_options = inputs
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+            Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY: (0, 'rad'),
+            Mission.Takeoff.THRUST_INCIDENCE: (0, 'rad'),
+        }
         prob = om.Problem()
 
         # use data from detailed_landing_flare in models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py
-        prob.model.add_subsystem(
-            'glide', GlideSlopeForces(num_nodes=2, aviary_options=aviary_options), promotes=['*']
-        )
+        prob.model.add_subsystem('glide', GlideSlopeForces(num_nodes=2, **options), promotes=['*'])
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')
         prob.model.set_input_defaults(
             Dynamic.Vehicle.DRAG, np.array([47447.13138523, 44343.01567596]), units='N'
@@ -136,11 +142,13 @@ class OtherTest(unittest.TestCase):
         # test on single component FlareSumForces
 
         tol = 1e-6
-        aviary_options = inputs
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+            Mission.Takeoff.ANGLE_OF_ATTACK_RUNWAY: (0, 'rad'),
+            Mission.Takeoff.THRUST_INCIDENCE: (0, 'rad'),
+        }
         prob = om.Problem()
-        prob.model.add_subsystem(
-            'flare', FlareSumForces(num_nodes=2, aviary_options=aviary_options), promotes=['*']
-        )
+        prob.model.add_subsystem('flare', FlareSumForces(num_nodes=2, **options), promotes=['*'])
 
         # use data from detailed_landing_flare in models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')
@@ -174,10 +182,12 @@ class OtherTest(unittest.TestCase):
         # test on single component GroundSumForces
 
         tol = 1e-6
+        options = {
+            Mission.GRAVITY: (9.80665, 'm/s**2'),
+            'friction_coefficient': (0.025),
+        }
         prob = om.Problem()
-        prob.model.add_subsystem(
-            'ground', GroundSumForces(num_nodes=2, friction_coefficient=0.025), promotes=['*']
-        )
+        prob.model.add_subsystem('ground', GroundSumForces(num_nodes=2, **options), promotes=['*'])
 
         # use data from detailed_landing_flare in models/aircraft/advanced_single_aisle/advanced_single_aisle_data.py
         prob.model.set_input_defaults(Dynamic.Vehicle.MASS, np.array([106292, 106292]), units='lbm')

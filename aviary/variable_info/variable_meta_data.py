@@ -17,6 +17,7 @@ from aviary.variable_info.enums import (
     AtmosphereModel,
 )
 from aviary.variable_info.variables import Aircraft, Dynamic, Mission, Settings
+import aviary.constants as Constants
 
 # ---------------------------
 # Meta data associated with variables in the aircraft data hierarchy.
@@ -6893,6 +6894,20 @@ add_meta_data(
 )
 
 add_meta_data(
+    Mission.GRAVITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    desc='Gravitational acceleration of the planet. This model is updated'
+    'in preprocess_options() based on which atmosphere is selected.'
+    'This ensures the gravity model matches the planet.',
+    types=float,
+    option=True,
+    #
+    units=Constants.GRAV_EARTH[1],
+    default_value=Constants.GRAV_EARTH[0],
+)
+
+add_meta_data(
     Mission.GROSS_MASS,
     meta_data=_MetaData,
     historical_name={'GASP': None, 'FLOPS': None},
@@ -6971,6 +6986,18 @@ add_meta_data(
     units='lbm',
     desc='required fuel reserves: directly in lbm',
     default_value=0,
+)
+
+add_meta_data(
+    Mission.SEA_LEVEL_DENSITY,
+    meta_data=_MetaData,
+    historical_name={'GASP': None, 'FLOPS': None},
+    desc='Atmospheric density at seal level for this planet.',
+    types=float,
+    option=True,
+    # The default density model is set based on Settings.ATMOSPHERE_MODEL
+    units='kg/m**3',
+    default_value=1.225,
 )
 
 add_meta_data(
@@ -7202,8 +7229,8 @@ add_meta_data(
     Mission.Landing.INITIAL_VELOCITY,
     meta_data=_MetaData,
     historical_name={
-        'GASP': 'INGASP.VGL',
-        'FLOPS': 'AERIN.VAPPR',
+        'GASP': 'VGL',  # DLAND
+        'FLOPS': None,  # output: SUMMARY VAPP
     },
     units='ft/s',
     desc='approach velocity',

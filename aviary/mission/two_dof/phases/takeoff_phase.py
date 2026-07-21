@@ -10,7 +10,7 @@ from aviary.mission.two_dof.ode.takeoff_ode import TakeOffODE
 from aviary.utils.aviary_options_dict import AviaryOptionsDictionary
 from aviary.utils.aviary_values import AviaryValues
 from aviary.variable_info.variable_meta_data import CoreMetaData
-from aviary.variable_info.variables import Aircraft, Dynamic
+from aviary.variable_info.variables import Aircraft, Dynamic, Mission
 
 
 class TakeoffPhaseOptions(AviaryOptionsDictionary):
@@ -308,12 +308,36 @@ class TakeoffPhase(PhaseBuilder):
         return linked_vars
 
     def get_parameters(self):
+        ground_roll = self.user_options.get_val('ground_roll')
+
         params = {}
         params[Aircraft.Wing.INCIDENCE] = {
             'shape': (1,),
             'units': CoreMetaData[Aircraft.Wing.INCIDENCE]['units'],
             'static_target': True,
         }
+
+        if ground_roll:
+            params[Aircraft.Wing.AREA] = {
+                'shape': (1,),
+                'units': CoreMetaData[Aircraft.Wing.AREA]['units'],
+                'static_target': True,
+            }
+            params[Mission.Takeoff.DECISION_SPEED_INCREMENT] = {
+                'shape': (1,),
+                'units': CoreMetaData[Mission.Takeoff.DECISION_SPEED_INCREMENT]['units'],
+                'static_target': True,
+            }
+            params[Mission.Takeoff.ROTATION_SPEED_INCREMENT] = {
+                'shape': (1,),
+                'units': CoreMetaData[Mission.Takeoff.ROTATION_SPEED_INCREMENT]['units'],
+                'static_target': True,
+            }
+            params[Mission.Takeoff.LIFT_COEFFICIENT_MAX] = {
+                'shape': (1,),
+                'units': CoreMetaData[Mission.Takeoff.LIFT_COEFFICIENT_MAX]['units'],
+                'static_target': True,
+            }
         return params
 
 

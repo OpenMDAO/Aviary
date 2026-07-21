@@ -434,6 +434,7 @@ class PropulsionMissionTest(unittest.TestCase):
             val=True,
             units='unitless',
         )
+        options.set_val(Mission.SEA_LEVEL_DENSITY, 0.0023769, units='slug/ft**3')
         options.set_val(Aircraft.Engine.Propeller.NUM_BLADES, val=4, units='unitless')
 
         # turboprop using turboshaft engine deck and hamilton standard propeller model
@@ -494,11 +495,11 @@ class PropulsionMissionTest(unittest.TestCase):
         max_thrust = self.prob.get_val(Dynamic.Vehicle.Propulsion.THRUST_MAX_TOTAL, units='lbf')
 
         expected_thrust = np.array(
-            [42629.8926234, 34593.95599731, 20003.65216215, 12039.90789131, 8385.52777847]
+            [42629.8926234, 34593.95597499, 20003.65216215, 12039.90789131, 8385.527778477]
         )
 
         expected_max_thrust = np.array(
-            [42629.8926234, 41028.5558649, 29561.74, 22590.025, 20411.435]
+            [42629.8926234, 41028.55584259, 29561.74, 22590.025, 20411.435]
         )
 
         assert_near_equal(thrust, expected_thrust, tolerance=1e-10)
