@@ -82,6 +82,7 @@ class RCPropMission(om.Group):
                 Aircraft.Engine.Motor.IDLE_CURRENT, 
                 Aircraft.Engine.Motor.RESISTANCE, 
                 Aircraft.Engine.Motor.KV,
+                Dynamic.Vehicle.Propulsion.CURRENT,
                 ],
             promotes_outputs=[
                 Dynamic.Vehicle.Propulsion.RPM,
