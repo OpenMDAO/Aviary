@@ -43,10 +43,10 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'mach_optimize': True,
-            'mach_polynomial_order': 3,
+            
             'mach_initial': (0.0538, 'unitless'),
            
-            'mach_bounds': ((0.05, 0.1), 'unitless'),
+            'mach_bounds': ((0.05, 0.3), 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
          

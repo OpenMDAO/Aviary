@@ -53,7 +53,7 @@ def CruiseExample():
 
     
 
-    prob.add_driver('IPOPT', use_coloring=False, max_iter=100)
+    prob.add_driver('IPOPT', use_coloring=False, max_iter=200)
    
     prob.driver.opt_settings['print_level'] = 5
     prob.driver.opt_settings['mu_strategy'] = 'adaptive'

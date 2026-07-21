@@ -165,20 +165,9 @@ class RCPropMission(om.Group):
         self.connect('esc.voltage_out', 'motor.voltage_in')
         self.connect('esc.current_out', 'motor.current')
 
-       
-        
-        
-
-       
-
-        
-
-
-
-
         """Constraints"""
               # Force commanded cruise RPM to match motor-computed RPM.
-        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 1, units='rev/s')
+        self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 100, units='rev/s')
        
         
 
