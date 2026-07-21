@@ -43,13 +43,13 @@ phase_info = {
             'num_segments': 5,
             'order': 3,
             'mach_optimize': True,
-            'mach_polynomial_order': 1,
+            'mach_polynomial_order': 3,
             'mach_initial': (0.0538, 'unitless'),
             'mach_final': (0.0538, 'unitless'),
             'mach_bounds': ((0.05, 0.1), 'unitless'),
             # 'mach_ref': (0.05, 'unitless'),
             'mass_ref': (4.0, 'kg'),
-            'distance_ref': (1.0e2, 'ft'),
+         
             # 'alt_ref': (100, 'ft'),
             # 'mach_final': (0.05, 'unitless'),
             
@@ -65,7 +65,7 @@ phase_info = {
             
             #Time 
             'time_initial': (0.0, 's'),
-            'time_duration_bounds': ((20,180.0), 's'),
+            'time_duration_bounds': ((0,180.0), 's'),
         },
         'initial_guesses': {
             'distance': ([0, 1000], 'm'),

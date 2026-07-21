@@ -153,8 +153,10 @@ mission:landing:lift_coefficient_max,1.4,unitless
 mission:summary:cruise_mach,0.0314,unitless
 mission:summary:fuel_flow_scaler,1.0,unitless
 mission:takeoff:fuel_simple,0,lbm
+mission:total_fuel_mass,0,lbm
 mission:takeoff:lift_coefficient_max,1.4,unitless
 mission:takeoff:lift_over_drag,8,unitless
+
 settings:equations_of_motion,ENERGY_STATE
 settings:aerodynamics_method,FLOPS
 settings:mass_method,FLOPS

@@ -140,7 +140,7 @@ class RCBuilder(EngineModel):
             'opt': True,
             'lower': 20.0,
             'upper': 180.0,
-            'ref': 1.0,
+            'ref': 180.0,
         },
         }
 
