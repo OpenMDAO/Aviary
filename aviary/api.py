@@ -77,7 +77,7 @@ from aviary.variable_info.functions import (
 )
 
 # Miscellaneous
-from aviary.subsystems.premission import CorePreMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.subsystem_builder import SubsystemBuilder
 from aviary.utils.process_input_decks import create_vehicle
 
@@ -134,6 +134,7 @@ from aviary.mission.energy_state.phases.detailed_landing_phases import (
     LandingNoseDownToStop as DetailedLandingNoseDownToStopPhaseBuilder,
 )
 from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
+DetailedTakeoffPhaseBuilder,
     TakeoffBrakeReleaseToDecisionSpeed as DetailedTakeoffBrakeReleaseToDecisionSpeedPhaseBuilder,
     TakeoffDecisionSpeedToRotate as DetailedTakeoffDecisionSpeedToRotatePhaseBuilder,
     TakeoffDecisionSpeedBrakeDelay as DetailedTakeoffDecisionSpeedBrakeDelayPhaseBuilder,
@@ -163,6 +164,9 @@ from aviary.mission.energy_state.phases.detailed_landing_phases import (
 from aviary.mission.energy_state.phases.detailed_takeoff_phases import (
     TakeoffTrajectory as DetailedTakeoffTrajectoryBuilder,
 )
+
+from aviary.mission.energy_state.phases.balanced_field_trajectory import BalancedFieldPhaseBuilder
+from aviary.mission.balanced_field_traj_builder import BalancedFieldTrajectoryBuilder
 
 ##############
 # Subsystems #

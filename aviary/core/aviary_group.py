@@ -17,10 +17,11 @@ from aviary.mission.solved_two_dof_problem_configurator import SolvedTwoDOFProbl
 from aviary.mission.two_dof_problem_configurator import TwoDOFProblemConfigurator
 from aviary.mission.utils import get_phase_mission_bus_lengths, process_guess_var
 from aviary.subsystems.aerodynamics.aerodynamics_builder import CoreAerodynamicsBuilder
+from aviary.subsystems.core_postmission import CorePostMission
+from aviary.subsystems.core_premission import CorePreMission
 from aviary.subsystems.geometry.geometry_builder import CoreGeometryBuilder
 from aviary.subsystems.mass.mass_builder import CoreMassBuilder
 from aviary.subsystems.performance.performance_builder import CorePerformanceBuilder
-from aviary.subsystems.premission import CorePreMission
 from aviary.subsystems.propulsion.engine_model import EngineModel
 from aviary.subsystems.propulsion.propulsion_builder import CorePropulsionBuilder
 from aviary.subsystems.propulsion.utils import build_engine_deck
@@ -1102,6 +1103,23 @@ class AviaryGroup(om.Group):
                 ('fuel_burned_taxi_in', Mission.Taxi.FUEL_MASS_TAXI_IN),
             ],
             promotes_outputs=[('block_fuel', Mission.BLOCK_FUEL_MASS)],
+        )
+
+        # TODO temporary until way to merge PreMissionGroup and CorePreMission group is found
+        core_subsystems = self.subsystems[4:5]
+        all_subsystem_options = self.post_mission_info.get('subsystem_options', {})
+
+        post_mission.add_subsystem(
+            'core_subsystems',
+            CorePostMission(
+                aviary_options=self.aviary_inputs,
+                subsystems=core_subsystems,
+                phase_info=self.mission_info,
+                phase_mission_bus_lengths=phase_mission_bus_lengths,
+                subsystem_options=all_subsystem_options,
+            ),
+            promotes_inputs=['*'],
+            promotes_outputs=['*'],
         )
 
     def link_phases(self, verbosity=None, comm=None):
