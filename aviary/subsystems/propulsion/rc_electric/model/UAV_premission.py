@@ -38,6 +38,7 @@ class RCPropPreMission(om.Group):
 
         max_cont_current = self.options[Aircraft.Engine.Motor.MAX_CONT_CURRENT][0]
         
+        
         self.add_subsystem(
             'energy_calc',
             om.ExecComp(

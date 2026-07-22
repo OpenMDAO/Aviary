@@ -79,6 +79,7 @@ class RCPropMission(om.Group):
             'motor',
             Motor(num_nodes=nn, load_factor=motor_load_factor),
             promotes_inputs=[
+                Aircraft.Engine.Motor.MASS,
                 Aircraft.Engine.Motor.IDLE_CURRENT, 
                 Aircraft.Engine.Motor.RESISTANCE, 
                 Aircraft.Engine.Motor.KV,
@@ -145,19 +146,46 @@ class RCPropMission(om.Group):
         
        
         
-
+        """This is dt_soc"""
         self.add_subsystem(
             'electric_power',
             om.ExecComp(
-                'p_elec = v_batt * current',
+                [
+                    'p_elec = v_batt * current',
+                    'energy_used_rate = v_batt * current / 3600.0',
+                ],
                 p_elec={'val': np.zeros(nn), 'units': 'W'},
+                energy_used_rate={'val': np.zeros(nn), 'units': 'W*h/s'},
                 v_batt={'val': np.zeros(nn), 'units': 'V'},
                 current={'val': np.zeros(nn), 'units': 'A'},
+                has_diag_partials=True,
             ),
             promotes_inputs=[
                 ('current', Dynamic.Vehicle.Propulsion.CURRENT),
             ],
-            promotes_outputs=[('p_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN)],
+            promotes_outputs=[
+                ('p_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN),
+                'energy_used_rate',
+            ],
+        )
+
+
+        self.add_subsystem(
+            'soc_constraint',
+            om.ExecComp(
+                'soc_constraint = energy - energy_used',
+                soc_constraint={'val': np.zeros(nn), 'units': 'W*h'},
+                energy={'val': np.zeros(nn), 'units': 'W*h'},
+                energy_used={'val': np.zeros(nn), 'units': 'W*h'},
+                has_diag_partials=True,
+            ),
+
+            promotes_inputs=[
+                ('energy', Aircraft.Battery.ENERGY_CAPACITY), ('energy_used')
+                ],
+            promotes_outputs=[
+                'soc_constraint'
+                ],
         )
 
         self.connect('battery.voltage_out', 'electric_power.v_batt')

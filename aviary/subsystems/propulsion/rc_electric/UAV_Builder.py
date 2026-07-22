@@ -91,6 +91,10 @@ class RCBuilder(EngineModel):
        
 
         parameters = {
+            Aircraft.Battery.ENERGY_CAPACITY: {
+                'val': 0.0,
+                'units': 'W*h',
+            },
             Aircraft.Battery.VOLTAGE: {
                 'val': 22.2, 
                 'units': 'V',
@@ -126,6 +130,28 @@ class RCBuilder(EngineModel):
         }
 
         return parameters
+
+    def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+        return {
+            'energy_used': {
+                'units': 'W*h',
+                'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
+                'targets': 'energy_used',
+                'lower': 0.0,
+                'ref': 100.0,
+                
+            }
+        }
+
+    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
+        return {
+            'soc_constraint': {
+                'type': 'boundary',
+                'loc': 'final',
+                'lower': 0.0,
+                'units': 'W*h',
+            }
+        }
 
     def get_controls(self, aviary_inputs = None, user_options = None, subsystem_options = None, phase_name=None):
 
@@ -166,10 +192,5 @@ class RCBuilder(EngineModel):
     
     #TODO add new outputs
     def mission_outputs(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
-        return [
-            #TODO: Alex see why this is an issue 
-            # Dynamic.Vehicle.Propulsion.THROTTLE,
-            # Dynamic.Vehicle.Propulsion.SHAFT_POWER + '_out',
-            # Dynamic.Vehicle.Propulsion.RPM + '_out',
-            # Dynamic.Vehicle.Propulsion.THRUST + '_out',
-        ]
+       
+        return ['*']
