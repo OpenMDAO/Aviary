@@ -132,26 +132,22 @@ class RCBuilder(EngineModel):
         return parameters
 
     def get_states(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
-        return {
+        states = {
             'energy_used': {
                 'units': 'W*h',
                 'rate_source': Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN_TOTAL,
                 'targets': 'energy_used',
+                'val': 0.0,
+                'fix_initial': True,
                 'lower': 0.0,
                 'ref': 100.0,
                 
-            }
+            },
         }
+            
+        return states
 
-    def get_constraints(self, aviary_inputs=None, user_options=None, subsystem_options=None, phase_info=None):
-        return {
-            'soc_constraint': {
-                'type': 'boundary',
-                'loc': 'final',
-                'lower': 0.0,
-                'units': 'W*h',
-            }
-        }
+    
 
     def get_controls(self, aviary_inputs = None, user_options = None, subsystem_options = None, phase_name=None):
 

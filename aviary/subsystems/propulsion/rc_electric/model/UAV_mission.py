@@ -152,10 +152,9 @@ class RCPropMission(om.Group):
             om.ExecComp(
                 [
                     'p_elec = v_batt * current',
-                    'energy_used_rate = v_batt * current / 3600.0',
+                   
                 ],
                 p_elec={'val': np.zeros(nn), 'units': 'W'},
-                energy_used_rate={'val': np.zeros(nn), 'units': 'W*h/s'},
                 v_batt={'val': np.zeros(nn), 'units': 'V'},
                 current={'val': np.zeros(nn), 'units': 'A'},
                 has_diag_partials=True,
@@ -165,29 +164,31 @@ class RCPropMission(om.Group):
             ],
             promotes_outputs=[
                 ('p_elec', Dynamic.Vehicle.Propulsion.ELECTRIC_POWER_IN),
-                'energy_used_rate',
+                
             ],
         )
 
 
         self.add_subsystem(
-            'soc_constraint',
+            'energy_con',
             om.ExecComp(
-                'soc_constraint = energy - energy_used',
-                soc_constraint={'val': np.zeros(nn), 'units': 'W*h'},
-                energy={'val': np.zeros(nn), 'units': 'W*h'},
-                energy_used={'val': np.zeros(nn), 'units': 'W*h'},
+                'energy_constraint = energy_capacity-energy_used',
+                energy_constraint={'val':np.zeros(nn), 'units': 'W*h'},
+                energy_capacity={'val':1.0 , 'units': 'W*h'},
+                energy_used={'val':np.zeros(nn), 'units': 'W*h'},
                 has_diag_partials=True,
             ),
 
             promotes_inputs=[
-                ('energy', Aircraft.Battery.ENERGY_CAPACITY), ('energy_used')
+                ('energy_capacity', Aircraft.Battery.ENERGY_CAPACITY), 
+                'energy_used'
                 ],
             promotes_outputs=[
-                'soc_constraint'
+                'energy_constraint'
                 ],
         )
 
+        
         self.connect('battery.voltage_out', 'electric_power.v_batt')
         self.connect('battery.voltage_out', 'esc.voltage_in')
         self.connect('esc.voltage_out', 'motor.voltage_in')
@@ -196,7 +197,7 @@ class RCPropMission(om.Group):
         """Constraints"""
               # Force commanded cruise RPM to match motor-computed RPM.
         self.add_constraint('rpm_balance.rpm_defect', upper=0.004, lower=-0.004, ref = 100, units='rev/s')
-       
+        self.add_constraint('energy_constraint', lower=0.0, indices=[-1], units='W*h')
         
 
         self.options['auto_order'] = True
