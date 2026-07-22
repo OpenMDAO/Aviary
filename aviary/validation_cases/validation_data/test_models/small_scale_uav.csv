@@ -184,8 +184,8 @@ aircraft:fuselage:misc_mass,1.37,kg
 aircraft:horizontal_tail:span,0.8,m
 aircraft:horizontal_tail:root_chord,0.3048,m
 aircraft:horizontal_tail:rib_materials,[Balsa],unitless
-aircraft:horizontal_tail:airfoil_path,../../../mass/UAV_mass/utils/n0012-il.csv,unitless
-aircraft:horizontal_tail:airfoil_path,aviary/examples/external_subsystems/dbf_based_mass/n0012-il.csv,unitless
+aircraft:horizontal_tail:airfoil_path,subsystems/mass/UAV_mass/utils/n0012-il.csv,unitless
+aircraft:horizontal_tail:airfoil_path,subsystems/mass/UAV_mass/utils/n0012-il.csv,unitless
 aircraft:horizontal_tail:glue_factor,0.01,unitless
 aircraft:horizontal_tail:misc_mass,2.5,lbm
 aircraft:horizontal_tail:number_of_ribs,14,unitless
@@ -207,8 +207,7 @@ aircraft:horizontal_tail:stringer_thickness,0.1,inch
 aircraft:vertical_tail:root_chord,0.3048,m
 aircraft:vertical_tail:span,0.8,m
 aircraft:vertical_tail:rib_materials,[Balsa],unitless
-aircraft:vertical_tail:airfoil_path,../../../mass/UAV_mass/utils/n0012-il.csv,unitless
-aircraft:vertical_tail:airfoil_path,aviary/examples/external_subsystems/dbf_based_mass/n0012-il.csv,unitless
+aircraft:vertical_tail:airfoil_path,subsystems/mass/UAV_mass/utils/n0012-il.csv,unitless
 aircraft:vertical_tail:glue_factor,0.01,unitless
 aircraft:vertical_tail:misc_mass,2.5,lbm
 aircraft:vertical_tail:number_of_ribs,12,unitless
@@ -227,8 +226,7 @@ aircraft:vertical_tail:spar_wall_thickness,0.125,inch
 aircraft:vertical_tail:skin_density,20.0,g/m**2
 aircraft:vertical_tail:stringer_density,2.2,lbm/ft**3
 aircraft:vertical_tail:stringer_thickness,0.1,inch
-aircraft:wing:airfoil_path,../../../mass/UAV_mass/utils/mh84-il.csv,unitless
-aircraft:wing:airfoil_path,aviary/examples/external_subsystems/dbf_based_mass/mh84-il.csv,unitless
+aircraft:wing:airfoil_path,subsystems/mass/UAV_mass/utils/mh84-il.csv,unitless
 aircraft:wing:rib_materials,[Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Balsa,Ply,Ply,Ply,Ply,Ply],unitless
 aircraft:wing:rib_thickness,[0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125,0.125],inch
 aircraft:wing:sheeting_coverage,0.4,unitless

@@ -39,8 +39,7 @@ def load_airfoil_if_needed(comp, Part):
         return
 
     path = comp.options[Part.AIRFOIL_PATH]
-    print("Im here", path, flush=True)
-    exit()
+    
     path = get_path(path)
     
 
